@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} · PuppyMacro {{VERSION}} guide</title>
+<meta name="description" content="PuppyMacro {{VERSION}} guide: {{TITLE}}.">
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+
+{{HEADER}}
+
+<div class="wrap guide">
+  <aside class="guide-sidebar">
+    <div class="version-picker">
+      <label for="version">Version</label>
+      <select id="version" class="version-select">
+{{VERSION_OPTIONS}}
+      </select>
+    </div>
+    <nav class="guide-nav" aria-label="Guide sections">
+{{SECTION_LINKS}}
+    </nav>
+  </aside>
+
+  <main class="guide-content">
+    <p class="guide-version">Guide · PuppyMacro {{VERSION}}</p>
+    <h1>{{TITLE}}</h1>
+{{CONTENT}}
+    <nav class="pager" aria-label="Previous and next section">
+{{PAGER}}
+    </nav>
+  </main>
+</div>
+
+{{FOOTER}}
+
+<script src="../../assets/site.js"></script>
+</body>
+</html>

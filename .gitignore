@@ -4,6 +4,8 @@ obj/
 publish/
 dist/
 .tools/
+site-preview/
+_site/
 *.puppymacro.tmp
 
 # IDE

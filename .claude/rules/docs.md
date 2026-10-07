@@ -1,20 +1,41 @@
 # Documentation and website
 
-The website is in `docs/`, published by GitHub Pages from the `main` branch, folder `/docs`:
-`https://giuvincenzi.github.io/puppymacro/`.
+Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built by
+`scripts/site.ps1`, published to GitHub Pages by `.github/workflows/site.yml`.
 
-- `docs/index.html`: home (features, install, code signing policy).
-- `docs/guide.html`: user guide, one section per feature.
-- `docs/assets/style.css`, `docs/assets/img/` (screenshots, logo), `docs/favicon.ico`.
-- Plain HTML and CSS, no build step. `docs/.nojekyll` keeps GitHub Pages from processing it.
+- `site/index.html`: home (features, install, code signing policy). `{{VERSION}}` is the latest
+  released version.
+- `site/_header.html`, `site/_footer.html`: shared header and footer (`{{ROOT}}` is the path
+  to the site root).
+- `site/guide/sections.txt`: guide sections in order (`file|Title`). One file per section,
+  `site/guide/<file>.html`, with the section content only; `site/guide/_page.html` is the
+  page around it (sticky sidebar, version select, previous/next).
+- `site/guide/img/`: guide screenshots. `site/assets/`: style, script, logo, home screenshot.
+
+## Versions and publishing
+
+- Until the 1.7.1 release, GitHub Pages still serves the old single-page site from `docs/`
+  (branch `main`, folder `/docs`). At that release: set Pages to "GitHub Actions"
+  (`gh api -X PUT repos/giuvincenzi/puppymacro/pages -f build_type=workflow`), release, then
+  delete `docs/` and this note.
+
+- The site is published only by releases: the Release workflow runs the Site workflow after
+  the GitHub Release. Pushing to `main` does not change the published site.
+- Each guide version is built from `site/guide/` at the tag `vX.Y.Z` of that release, so a
+  released guide never changes. Home, template and style come from the latest release.
+  `guide/latest/` redirects to the newest version.
+- `make docs` builds a preview in `site-preview/` with the guide of the current code as
+  version "next". Released versions are added only when git is available to Windows
+  PowerShell (in WSL it usually is not).
 
 ## Every user-visible change updates the documentation
 
 In the same change as the code, for a new feature, changed behavior, new or renamed setting
 or UI text:
 
-- update the matching section of `docs/guide.html` (add a section for a new feature);
-- update the feature cards in `docs/index.html` when the feature list changes;
+- update the matching file in `site/guide/` (new feature: new file and a line in
+  `sections.txt`);
+- update the feature cards in `site/index.html` when the feature list changes;
 - update `CHANGELOG.md` and, if behavior changed, `README.md`;
 - replace screenshots that no longer match the app.
 

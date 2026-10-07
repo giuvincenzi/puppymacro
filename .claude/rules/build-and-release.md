@@ -8,8 +8,9 @@
   - `make dev-reset`: deletes the dev data folder; the next `make dev` starts with the samples.
   - `make build`: the distribution in `dist/` (Velopack: `PuppyMacro-win-Setup.exe`, full
     package, `releases.win.json`) for the version in the csproj. Nothing is uploaded.
+  - `make docs`: website preview in `site-preview/` (see `docs.md`).
   - `make release`: runs the GitHub workflow `release.yml` (same `scripts/build.ps1`, then
-    uploads the GitHub Release `vX.Y.Z`).
+    uploads the GitHub Release `vX.Y.Z`, then publishes the website with `site.yml`).
   - `make clean`.
 - From WSL the Makefile calls Windows PowerShell (`powershell.exe`), so builds use the Windows
   .NET SDK and the app starts on Windows. The repository is then on a network path

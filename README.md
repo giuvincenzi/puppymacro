@@ -51,6 +51,7 @@ runs only on Windows.
 make dev       Build the current code and start it. Closes a running PuppyMacro first.
 make dev-reset Delete the development build's data; the next make dev starts with the samples.
 make build     Create the distribution in dist/: PuppyMacro-win-Setup.exe and update packages.
+make docs      Build the website in site-preview/ with the guide of the current code.
 make release   Publish the version in PuppyMacro.csproj to GitHub Releases.
 make clean     Remove build output.
 ```
@@ -71,7 +72,8 @@ make clean     Remove build output.
 1. Bump `<Version>` in `PuppyMacro/PuppyMacro.csproj` and add its section to `CHANGELOG.md`.
 2. Commit and push to `main`.
 3. `make release`: the Release workflow on GitHub runs `scripts/build.ps1` (the same as
-   `make build`) and creates the release `vX.Y.Z` with the CHANGELOG section as notes.
+   `make build`) and creates the release `vX.Y.Z` with the CHANGELOG section as notes. Then it
+   publishes the website, with the user guide of the new version added to the older ones.
 
 ## Project structure
 
@@ -80,7 +82,7 @@ PuppyMacro.sln
 Makefile                           make dev / build / release / clean
 scripts/                           PowerShell scripts run by the Makefile
 .github/workflows/release.yml      Release workflow (make release)
-docs/                              Website and user guide (GitHub Pages)
+site/                              Website and user guide sources (make docs, published on release)
 PuppyMacro/
   App.xaml(.cs)                    Startup: single instance, data migration, theme, tray start
   MainWindow.xaml(.cs)             Side rail: Loops, Macros, Remap, Settings; game mode; tray

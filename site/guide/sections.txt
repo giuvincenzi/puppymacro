@@ -1,0 +1,10 @@
+# Guide sections in order: file name (without .html) | title
+install|Install and update
+loops|Loops
+macros|Macros
+remap|Remap
+game-mode|Game mode
+hotkeys|Hotkeys
+tray|System tray and startup
+backup|Backup and your data
+good-to-know|Good to know
