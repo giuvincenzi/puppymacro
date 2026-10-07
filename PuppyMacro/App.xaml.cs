@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
+using Velopack;
 using Wpf.Ui.Appearance;
 
 namespace PuppyMacro;
@@ -26,6 +27,20 @@ public partial class App : Application
     }
 
     public const string RestartArgument = "--restart";
+
+    [STAThread]
+    private static void Main()
+    {
+        // Handles install, update and uninstall hooks (it exits the process for those),
+        // and applies an update that was downloaded but not applied yet.
+        VelopackApp.Build()
+            .OnBeforeUninstallFastCallback(_ => StartupService.Apply(false))
+            .Run();
+
+        var app = new App();
+        app.InitializeComponent();
+        app.Run();
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
