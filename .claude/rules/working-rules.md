@@ -4,8 +4,15 @@
   tooltips, messages, README, CHANGELOG, rules.
 - **Ask before changing code.** Describe what you want to change and why, wait for an
   explicit OK, then write the code. This applies to small fixes and refactors too.
-- **UI changes: show the UI first.** Propose the visual result (ideally with more than one
-  option) and wait for a choice before implementing. Details of the look: `ui.md`.
+- **UI changes: visual proposals first.** For any change to the UI, before writing code:
+  1. Describe in text what would change, then ask the user whether they want visual
+     proposals.
+  2. If yes, make them as a claude.ai **Design** canvas artifact (Artifact tool, Design
+     type): one artboard per option, more than one option when there is a real choice,
+     drawn in the app's Fluent look (`ui.md`) with the sample data. Send the link.
+     If no, wait for an OK on the text description.
+  3. Wait for the user to choose and approve. Only then create the worktree and implement
+     (`git-workflow.md`).
 - **Fix bugs at the root cause.** No workarounds or "patch" fixes. Explain the cause first.
 - **Do not guess.** If something is uncertain (an API, a Windows behavior, a library
   version), check the source or documentation before relying on it, and say what was
