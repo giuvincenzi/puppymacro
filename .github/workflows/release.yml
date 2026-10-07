@@ -53,6 +53,10 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version" -Encoding utf8
           Write-Host "Releasing PuppyMacro $version"
 
+      # A release never ships with failing tests.
+      - name: Unit tests
+        run: dotnet test --project tests/PuppyMacro.Tests/PuppyMacro.Tests.csproj -c Release
+
       # Same script as `make build`; also downloads the previous release for the delta package.
       - name: Build the distribution
         shell: pwsh

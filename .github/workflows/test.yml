@@ -1,0 +1,24 @@
+# Unit tests on every push and pull request (same command as `make test`).
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Unit tests
+        run: dotnet test --project tests/PuppyMacro.Tests/PuppyMacro.Tests.csproj -c Release

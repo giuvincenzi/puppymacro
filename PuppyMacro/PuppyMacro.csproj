@@ -27,6 +27,10 @@
     <PackageReference Include="Velopack" Version="1.2.161" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="PuppyMacro.Tests" />
+  </ItemGroup>
+
   <!-- App.xaml as a Page, so WPF does not generate its own Main. -->
   <ItemGroup>
     <ApplicationDefinition Remove="App.xaml" />
