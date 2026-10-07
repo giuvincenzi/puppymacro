@@ -178,6 +178,10 @@ internal static class NativeMethods
     public static extern bool PlaySound(IntPtr pszSound, IntPtr hmod, uint fdwSound);
 
     // ---------------- Cursor / windows ----------------
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool AllowSetForegroundWindow(uint dwProcessId);
+
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool GetCursorPos(out POINT lpPoint);

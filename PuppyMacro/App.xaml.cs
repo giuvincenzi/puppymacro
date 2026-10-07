@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using PuppyMacro.Models;
+using PuppyMacro.Native;
 using PuppyMacro.Services;
 using Velopack;
 using Wpf.Ui.Appearance;
@@ -15,6 +17,11 @@ public partial class App : Application
 {
     private Mutex? _singleInstance;
     private bool _ownsMutex;
+
+    // Starting PuppyMacro while it runs signals this event: the running instance shows its window.
+    private const string ShowWindowEventName = "PuppyMacro.ShowWindow";
+    private EventWaitHandle? _showWindowRequest;
+    private RegisteredWaitHandle? _showWindowWait;
     private static bool _watchingSystemTheme;
 
     /// <summary>"PuppyMacro v1.1.0", from the version in PuppyMacro.csproj.</summary>
@@ -73,12 +80,17 @@ public partial class App : Application
         }
         if (!_ownsMutex)
         {
+            // Started with Windows while already running: nothing to do.
             if (!startInTray)
-                MessageBox.Show("PuppyMacro is already running. Open it from the system tray.", "PuppyMacro",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowRunningInstance();
             Shutdown();
             return;
         }
+
+        _showWindowRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowEventName);
+        _showWindowWait = ThreadPool.RegisterWaitForSingleObject(_showWindowRequest,
+            (_, _) => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.ShowFromTray()),
+            null, Timeout.Infinite, executeOnlyOnce: false);
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
 
@@ -121,6 +133,25 @@ public partial class App : Application
             MessageBox.Show(warning, "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Warning);
     }
 
+    /// <summary>
+    /// Asks the running instance to show its window. This process was started by the user, so it
+    /// may bring a window to the front; it lets the running instance do it.
+    /// </summary>
+    private static void ShowRunningInstance()
+    {
+        foreach (Process running in Process.GetProcessesByName("PuppyMacro"))
+        {
+            if (running.Id != Environment.ProcessId)
+                NativeMethods.AllowSetForegroundWindow((uint)running.Id);
+            running.Dispose();
+        }
+        if (EventWaitHandle.TryOpenExisting(ShowWindowEventName, out EventWaitHandle? request))
+        {
+            using (request)
+                request.Set();
+        }
+    }
+
     /// <summary>Starts a new instance (used after Import) and closes this one.</summary>
     public static void Restart()
     {
@@ -161,6 +192,8 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _showWindowWait?.Unregister(null);
+        _showWindowRequest?.Dispose();
         if (_ownsMutex)
             _singleInstance?.ReleaseMutex();
         _singleInstance?.Dispose();

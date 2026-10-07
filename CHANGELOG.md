@@ -3,6 +3,8 @@
 ## 1.7.1
 - Loop editor: a key row shows Repeat / Hold down on the first line and the interval on the
   second, so the options are no longer cut off.
+- Starting PuppyMacro while it is already running opens its window (also from the system tray
+  or game mode) instead of showing "PuppyMacro is already running".
 
 ## 1.7.0
 - **Installer and automatic updates**: PuppyMacro is now installed with

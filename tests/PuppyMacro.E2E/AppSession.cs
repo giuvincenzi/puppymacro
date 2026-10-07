@@ -44,7 +44,7 @@ public sealed class AppSession : IDisposable
     public static string SettingsFile => Path.Combine(DataFolder, "settings.json");
 
     /// <summary>The dev build next to this repository's tests folder.</summary>
-    private static string ExePath
+    public static string ExePath
     {
         get
         {
@@ -66,9 +66,25 @@ public sealed class AppSession : IDisposable
 
     public int ProcessId => _app.ProcessId;
 
-    public AutomationElement Find(AutomationElement root, string name) =>
-        Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name)), Timeout, throwOnTimeout: true,
-            timeoutMessage: $"\"{name}\" not found").Result!;
+    public AutomationElement Find(AutomationElement root, string name)
+    {
+        AutomationElement? found = Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name)), Timeout).Result;
+        return found ?? throw new TimeoutException($"\"{name}\" not found. {Describe(root)}");
+    }
+
+    /// <summary>State of a window, for failure messages.</summary>
+    private static string Describe(AutomationElement root)
+    {
+        try
+        {
+            string names = string.Join(" | ", root.FindAllChildren().Select(c => $"{c.ControlType}:{c.Name}").Take(15));
+            return $"Window \"{root.Name}\" offscreen={root.IsOffscreen} available={root.IsAvailable} children=[{names}]";
+        }
+        catch (Exception ex)
+        {
+            return "Window state not readable: " + ex.Message;
+        }
+    }
 
     public AutomationElement FindById(AutomationElement root, string automationId) =>
         Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByAutomationId(automationId)), Timeout, throwOnTimeout: true,

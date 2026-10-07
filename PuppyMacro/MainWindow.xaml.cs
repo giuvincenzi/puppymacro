@@ -201,7 +201,8 @@ public partial class MainWindow
 
     // ================= System tray =================
 
-    private void ShowFromTray()
+    /// <summary>Shows the window from the tray or game mode (tray icon, or PuppyMacro started again).</summary>
+    internal void ShowFromTray()
     {
         if (_gameModeActive)
             ToggleGameMode(); // also shows the window

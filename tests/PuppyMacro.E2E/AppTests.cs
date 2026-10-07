@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
@@ -64,6 +65,22 @@ public class AppTests
 
         app.FindById(app.MainWindow, "StopAllButton").AsButton().Click();
         Assert.True(Retry.WhileFalse(() => startStop.Name == "Start", AppSession.Timeout).Success);
+    }
+
+    [Fact]
+    public void Starting_PuppyMacro_again_shows_the_running_one()
+    {
+        using var app = new AppSession();
+
+        // Close to the system tray (on by default).
+        app.FindById(app.MainWindow, "TitleBarCloseButton").AsButton().Click();
+        Assert.True(Retry.WhileFalse(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
+
+        using Process second = Process.Start(AppSession.ExePath)!;
+
+        Assert.True(second.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the second PuppyMacro did not exit");
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
+        Assert.Single(Process.GetProcessesByName("PuppyMacro"));
     }
 
     [Fact]
