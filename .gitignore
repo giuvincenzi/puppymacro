@@ -5,6 +5,7 @@ publish/
 dist/
 .tools/
 site-preview/
+.worktrees/
 _site/
 *.puppymacro.tmp
 

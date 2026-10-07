@@ -7,6 +7,7 @@
 #   make e2e        run the end-to-end tests on the development build (do not use the PC meanwhile)
 #   make build      create the distribution in dist/ (Setup.exe + update packages), no upload
 #   make docs       build the website in site-preview/ with the guide of the current code
+#   make docs-serve same, then serve it at http://localhost:8080/ (Ctrl+C to stop)
 #   make release    publish the version in PuppyMacro.csproj to GitHub Releases (runs the Release workflow)
 #   make clean      remove build output
 
@@ -18,7 +19,7 @@ endif
 
 RUN_SCRIPT = $(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/$(1).ps1
 
-.PHONY: dev dev-keep test e2e build docs release clean
+.PHONY: dev dev-keep test e2e build docs docs-serve release clean
 
 dev:
 	$(call RUN_SCRIPT,dev)
@@ -37,6 +38,9 @@ build:
 
 docs:
 	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/site.ps1 -Preview
+
+docs-serve:
+	$(call RUN_SCRIPT,site-serve)
 
 release:
 	gh workflow run release.yml --ref main

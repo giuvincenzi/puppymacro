@@ -19,10 +19,11 @@
 - `tests/PuppyMacro.E2E`: xUnit v3 + FlaUI (UIA3). `AppSession` closes any running PuppyMacro,
   deletes `%AppData%\PuppyMacro Dev` and starts the development build
   (`PuppyMacro/bin/Debug/...`), so every test starts from the sample data.
-- They run on GitHub (`.github/workflows/e2e.yml`) on every push to `main` and before every
-  release (the Release workflow stops when they fail). The runner's screen is 1024x768: do not
-  click controls that may be off screen there (for example the title bar of a tall window);
-  use UI Automation patterns instead (`Window.Close()`, `Invoke`).
+- They run on GitHub (`.github/workflows/e2e.yml`) on every pull request (a required check for
+  merging into `main`), on every push to `main` and before every release (the Release workflow
+  stops when they fail). The runner's screen is 1024x768: do not click controls that may be off
+  screen there (for example the title bar of a tall window); use UI Automation patterns
+  instead (`Window.Close()`, `Invoke`).
 - `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one
   PuppyMacro at a time).
 - They take over the desktop: windows open and close, the mouse moves, keys are pressed.
@@ -35,10 +36,15 @@
 - A test that sends input must be harmless: use F24 (no keyboard has it), never clicks or
   keys that could reach another app.
 
-## When to add tests
+## When to add and run tests
 
 - New logic outside the UI (models, storage, migrations, input decisions): add unit tests in
-  the same change. A settings migration always gets a test with an old file.
-- A new screen or user flow: add or extend an end-to-end test when it can run without
-  touching other apps.
-- Run `make test` before every commit; run `make e2e` before a release.
+  the same change. A settings migration always gets a test with an old file. Run `make test`
+  before every commit.
+- **A change that touches the UI** (XAML, windows, view models, what the user sees or does):
+  add or update the end-to-end tests that cover it, then run all the end-to-end tests to
+  check that nothing else broke. **Ask the user where to run them:**
+  - **locally** (`make e2e`): faster, but they cannot use the PC meanwhile;
+  - **on the branch** (GitHub): push the branch and start the workflow on it with
+    `gh workflow run e2e.yml --ref <branch>`, then `gh run watch`; the pull request also runs
+    them. The PC stays free.

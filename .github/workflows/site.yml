@@ -18,6 +18,8 @@ concurrency:
 
 jobs:
   site:
+    # The site is published only from main (also when the Release workflow calls it).
+    if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     environment:
       name: github-pages
