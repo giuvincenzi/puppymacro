@@ -110,9 +110,6 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
 
                                         <Border Grid.Column="0" Width="28" Height="28" Margin="0,0,10,0" CornerRadius="4"
@@ -142,45 +139,48 @@
                                                        Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
                                         </Grid>
 
-                                        <TextBlock Grid.Column="2" Grid.ColumnSpan="3" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"
-                                                   HorizontalAlignment="Right"
+                                        <ui:Button Grid.Column="2" Margin="4,0,0,0" Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}"
+                                                   ToolTip="Remove" Tag="{Binding}" Click="OnRemoveActionClick" />
+                                    </Grid>
+
+                                    <!-- Second line: the interval, or the hold note for a held key -->
+                                    <Grid Margin="38,6,0,0">
+                                        <StackPanel Orientation="Horizontal"
+                                                    Visibility="{Binding ShowInterval, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" FontSize="12"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="every" />
+                                            <Grid VerticalAlignment="Center">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <ui:NumberBox Width="128" VerticalAlignment="Center"
+                                                              Minimum="0" Maximum="86400000" MaxDecimalPlaces="2"
+                                                              SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
+                                                              HorizontalContentAlignment="Right"
+                                                              Value="{Binding IntervalValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <StackPanel Grid.Column="1" Margin="2,0,0,0" VerticalAlignment="Center">
+                                                    <RepeatButton Style="{StaticResource SpinButton}" ToolTip="Increase"
+                                                                  Tag="{Binding}" Click="OnStepUpClick">
+                                                        <ui:SymbolIcon Symbol="ChevronUp12" FontSize="10" />
+                                                    </RepeatButton>
+                                                    <RepeatButton Style="{StaticResource SpinButton}" ToolTip="Decrease"
+                                                                  Tag="{Binding}" Click="OnStepDownClick">
+                                                        <ui:SymbolIcon Symbol="ChevronDown12" FontSize="10" />
+                                                    </RepeatButton>
+                                                </StackPanel>
+                                            </Grid>
+                                            <ComboBox Margin="6,0,0,0" MinWidth="72" VerticalAlignment="Center"
+                                                      SelectedIndex="{Binding UnitIndex, Mode=TwoWay}">
+                                                <ComboBoxItem Content="ms" />
+                                                <ComboBoxItem Content="s" />
+                                                <ComboBoxItem Content="min" />
+                                                <ComboBoxItem Content="h" />
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <TextBlock VerticalAlignment="Center" FontSize="12"
                                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Held down while the loop runs"
                                                    Visibility="{Binding IsHoldKey, Converter={StaticResource BoolToVisibility}}" />
-                                        <TextBlock Grid.Column="2" Margin="8,0,6,0" VerticalAlignment="Center" FontSize="12"
-                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="every"
-                                                   Visibility="{Binding ShowInterval, Converter={StaticResource BoolToVisibility}}" />
-                                        <Grid Grid.Column="3" VerticalAlignment="Center"
-                                              Visibility="{Binding ShowInterval, Converter={StaticResource BoolToVisibility}}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <ui:NumberBox Width="128" VerticalAlignment="Center"
-                                                          Minimum="0" Maximum="86400000" MaxDecimalPlaces="2"
-                                                          SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
-                                                          HorizontalContentAlignment="Right"
-                                                          Value="{Binding IntervalValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <StackPanel Grid.Column="1" Margin="2,0,0,0" VerticalAlignment="Center">
-                                                <RepeatButton Style="{StaticResource SpinButton}" ToolTip="Increase"
-                                                              Tag="{Binding}" Click="OnStepUpClick">
-                                                    <ui:SymbolIcon Symbol="ChevronUp12" FontSize="10" />
-                                                </RepeatButton>
-                                                <RepeatButton Style="{StaticResource SpinButton}" ToolTip="Decrease"
-                                                              Tag="{Binding}" Click="OnStepDownClick">
-                                                    <ui:SymbolIcon Symbol="ChevronDown12" FontSize="10" />
-                                                </RepeatButton>
-                                            </StackPanel>
-                                        </Grid>
-                                        <ComboBox Grid.Column="4" Margin="6,0,0,0" MinWidth="72" VerticalAlignment="Center"
-                                                  SelectedIndex="{Binding UnitIndex, Mode=TwoWay}"
-                                                  Visibility="{Binding ShowInterval, Converter={StaticResource BoolToVisibility}}">
-                                            <ComboBoxItem Content="ms" />
-                                            <ComboBoxItem Content="s" />
-                                            <ComboBoxItem Content="min" />
-                                            <ComboBoxItem Content="h" />
-                                        </ComboBox>
-                                        <ui:Button Grid.Column="5" Margin="4,0,0,0" Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}"
-                                                   ToolTip="Remove" Tag="{Binding}" Click="OnRemoveActionClick" />
                                     </Grid>
 
                                     <StackPanel Margin="38,8,0,0" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.1
+- Loop editor: a key row shows Repeat / Hold down on the first line and the interval on the
+  second, so the options are no longer cut off.
+
 ## 1.7.0
 - **Installer and automatic updates**: PuppyMacro is now installed with
   `PuppyMacro-win-Setup.exe` from the GitHub Releases (per user, no administrator rights; it
