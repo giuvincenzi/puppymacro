@@ -1,11 +1,13 @@
 # PuppyMacro
 
+**[Website](https://giuvincenzi.github.io/puppymacro/)** ·
+**[Download for Windows](https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe)** ·
+**[User guide](https://giuvincenzi.github.io/puppymacro/guide/latest/)**
+
 General-purpose input automation for Windows 10/11: loops, recorded macros, key remaps and
 an in-game panel. Built with .NET 10, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 
 Current version: **1.7.1** (see [CHANGELOG.md](CHANGELOG.md)).
-
-Website, download and user guide: **https://giuvincenzi.github.io/puppymacro/**
 
 ## Features
 
