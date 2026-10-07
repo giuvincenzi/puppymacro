@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.7.2
+## Unreleased
 - Small screens: the main window and the editors open inside the visible part of the screen
   (above the taskbar), shorter when needed, so the title bar and the Save button are always
   reachable. On a 1024x768 screen the main window used to open with its title bar off screen.

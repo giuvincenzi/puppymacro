@@ -1,7 +1,7 @@
 # Working rules
 
 - **English only in the project**: code, identifiers, comments, XAML text, UI labels,
-  tooltips, messages, README, CHANGELOG.
+  tooltips, messages, README, CHANGELOG, rules.
 - **Ask before changing code.** Describe what you want to change and why, wait for an
   explicit OK, then write the code. This applies to small fixes and refactors too.
 - **UI changes: show the UI first.** Propose the visual result (ideally with more than one
