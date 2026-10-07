@@ -4,6 +4,7 @@
 #   make dev        build the current code and start it with fresh sample data (development build)
 #   make dev-keep   same, keeping the development build's data from the last run
 #   make test       run the unit tests
+#   make e2e        run the end-to-end tests on the development build (do not use the PC meanwhile)
 #   make build      create the distribution in dist/ (Setup.exe + update packages), no upload
 #   make docs       build the website in site-preview/ with the guide of the current code
 #   make release    publish the version in PuppyMacro.csproj to GitHub Releases (runs the Release workflow)
@@ -17,7 +18,7 @@ endif
 
 RUN_SCRIPT = $(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/$(1).ps1
 
-.PHONY: dev dev-keep test build docs release clean
+.PHONY: dev dev-keep test e2e build docs release clean
 
 dev:
 	$(call RUN_SCRIPT,dev)
@@ -27,6 +28,9 @@ dev-keep:
 
 test:
 	$(call RUN_SCRIPT,test)
+
+e2e:
+	$(call RUN_SCRIPT,e2e)
 
 build:
 	$(call RUN_SCRIPT,build)
