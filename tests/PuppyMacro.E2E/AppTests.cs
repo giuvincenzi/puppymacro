@@ -72,8 +72,9 @@ public class AppTests
     {
         using var app = new AppSession();
 
-        // Close to the system tray (on by default).
-        app.FindById(app.MainWindow, "TitleBarCloseButton").AsButton().Click();
+        // Close to the system tray (on by default). WM_CLOSE, like the title bar's X, which may be
+        // off screen on a small screen (the window is 820 px high).
+        app.MainWindow.Close();
         Assert.True(Retry.WhileFalse(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
 
         using Process second = Process.Start(AppSession.ExePath)!;

@@ -20,6 +20,12 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Screen
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.Windows.Forms
+          [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+
       - name: Development build
         run: dotnet build PuppyMacro/PuppyMacro.csproj -c Debug
 
