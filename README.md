@@ -5,6 +5,8 @@ an in-game panel. Built with .NET 10, WPF and [WPF-UI](https://github.com/lepoco
 
 Current version: **1.7.0** (see [CHANGELOG.md](CHANGELOG.md)).
 
+Website, download and user guide: **https://giuvincenzi.github.io/puppymacro/**
+
 ## Features
 
 - **Loops**: one or more rows, each on its own timer (10 ms to 24 h):
@@ -78,6 +80,7 @@ PuppyMacro.sln
 Makefile                           make dev / build / release / clean
 scripts/                           PowerShell scripts run by the Makefile
 .github/workflows/release.yml      Release workflow (make release)
+docs/                              Website and user guide (GitHub Pages)
 PuppyMacro/
   App.xaml(.cs)                    Startup: single instance, data migration, theme, tray start
   MainWindow.xaml(.cs)             Side rail: Loops, Macros, Remap, Settings; game mode; tray

@@ -10,6 +10,7 @@ the others load when matching files are read or edited:
 |---|---|---|
 | `working-rules.md` | always | How to work on this project |
 | `build-and-release.md` | always | `make` commands, dev and prod builds, releases |
+| `docs.md` | always | Website and user guide in `docs/`, kept in sync with every change |
 | `architecture.md` | `PuppyMacro/**` | Threads, engine snapshot, feature map |
 | `input.md` | input pipeline files | Hooks, modifiers, injected input, routing order |
 | `data.md` | models and storage | Data folders, settings migrations, compatibility |
