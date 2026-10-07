@@ -20,8 +20,11 @@
   deletes `%AppData%\PuppyMacro Dev` and starts the development build
   (`PuppyMacro/bin/Debug/...`), so every test starts from the sample data.
 - `make e2e` builds the dev build first. Tests run one at a time (one PuppyMacro at a time).
-- They move the mouse and press keys: nobody may use the PC while they run. They run only
-  locally, not on GitHub (not verified on GitHub's runners).
+- They take over the desktop: windows open and close, the mouse moves, keys are pressed.
+  **Never run `make e2e` (or anything else that drives the UI, like screenshot captures that
+  bring PuppyMacro to the front) on a contributor's PC without asking first**: they cannot
+  use the PC meanwhile, and their input can make the tests fail. Unit tests (`make test`) run
+  in the background and can be run any time.
 - Find controls by their UI text (`Find`) or by `x:Name` (`FindById`). Wait with `Retry` and
   check `.Success`, never fixed sleeps.
 - A test that sends input must be harmless: use F24 (no keyboard has it), never clicks or

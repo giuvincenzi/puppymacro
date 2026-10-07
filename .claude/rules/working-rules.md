@@ -10,6 +10,12 @@
 - **Do not guess.** If something is uncertain (an API, a Windows behavior, a library
   version), check the source or documentation before relying on it, and say what was
   verified and what was not.
+- **Project knowledge goes in the repository, not in personal memory.** Every rule, decision,
+  convention or lesson about this project goes in `.claude/CLAUDE.md` or `.claude/rules/` (or
+  the code, README, docs), so it holds for every contributor and every PC. Claude's personal
+  memory on a contributor's PC is only for things that do not affect the project (for example,
+  how that person likes explanations). When asked to "remember" something about the project,
+  write or update a rule and commit it.
 - **Do not assume the machine.** Rules in these files must hold on any contributor's PC:
   no user names, absolute paths or tools that only one machine has.
 - No analogies or metaphors in explanations; be direct.
