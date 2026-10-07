@@ -1,0 +1,261 @@
+<ui:FluentWindow
+    x:Class="PuppyMacro.MacroEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    Title="Edit macro"
+    Width="680"
+    SizeToContent="Height"
+    MaxHeight="940"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <Window.Resources>
+        <Style x:Key="SoundTile" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Back" Height="44" Padding="10,0" CornerRadius="6" BorderThickness="1"
+                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Grid Width="22" Height="22">
+                                    <Ellipse x:Name="Circle" Fill="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                    <Path x:Name="Play" Data="M0,0 L6,4 L0,8 Z" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Fill="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </Grid>
+                                <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Back" Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                <Setter TargetName="Play" Property="Fill" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="ActionRow" DataType="{x:Type views:MacroActionRowViewModel}">
+            <StackPanel>
+                <Border Height="3" Margin="0,0,0,3" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                        Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
+                <Grid Background="Transparent" Cursor="SizeAll" AllowDrop="True" Tag="{Binding}"
+                      PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseMove="OnRowMouseMove"
+                      DragOver="OnRowDragOver" DragLeave="OnRowDragLeave" Drop="OnRowDrop">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="26" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                               Text="{Binding Number}" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow"
+                                ToolTip="Delay before this action">
+                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="+" VerticalAlignment="Center" />
+                        <ui:NumberBox Width="96" Margin="2,0,0,0" Minimum="0" Maximum="86400000" MaxDecimalPlaces="0"
+                                      SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False" FontSize="12"
+                                      Value="{Binding Delay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Margin="4,0,10,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Border Grid.Column="2" Width="30" Height="30" Margin="0,0,10,0" CornerRadius="6" VerticalAlignment="Center"
+                            Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                        <Grid>
+                            <ui:SymbolIcon Symbol="Keyboard24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                           Visibility="{Binding IsKeyIcon, Converter={StaticResource BoolToVisibility}}" />
+                            <ui:SymbolIcon Symbol="CursorClick24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                           Visibility="{Binding IsMouseIcon, Converter={StaticResource BoolToVisibility}}" />
+                            <ui:SymbolIcon Symbol="ArrowMove24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                           Visibility="{Binding IsMoveIcon, Converter={StaticResource BoolToVisibility}}" />
+                            <ui:SymbolIcon Symbol="ArrowSortDown24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                           Visibility="{Binding IsScrollIcon, Converter={StaticResource BoolToVisibility}}" />
+                            <TextBlock Text="Aa" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                       Visibility="{Binding IsTextIcon, Converter={StaticResource BoolToVisibility}}" />
+                        </Grid>
+                    </Border>
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                        <Run Text="{Binding Title, Mode=OneWay}" />
+                        <Run Text="  " />
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
+                    </TextBlock>
+                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
+                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" Tag="{Binding}"
+                                   Click="OnEditActionClick" Visibility="{Binding IsEditable, Converter={StaticResource BoolToVisibility}}" />
+                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" Tag="{Binding}"
+                                   Click="OnDuplicateActionClick" />
+                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove action" Tag="{Binding}"
+                                   Click="OnRemoveActionClick" />
+                    </StackPanel>
+                </Grid>
+                <Border Height="3" Margin="0,3,0,0" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                        Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar x:Name="EditorTitleBar" Grid.Row="0" Title="Edit macro" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24,8,24,12">
+                <TextBlock Margin="0,0,0,6" Text="Name" />
+                <ui:TextBox x:Name="NameBox" PlaceholderText="e.g. Craft and salvage" TextChanged="OnNameChanged" />
+
+                <!-- Actions -->
+                <TextBlock Margin="0,18,0,8" Text="Actions" />
+                <Grid Margin="0,0,0,8">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:Button x:Name="AddActionButton" Content="Add action" Icon="{ui:SymbolIcon Add24}" Click="OnAddActionClick" />
+                        <ui:Button Margin="8,0,0,0" Click="OnRecordClick">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="9" Height="9" Fill="#C42B1C" VerticalAlignment="Center" />
+                                <TextBlock Margin="8,0,0,0" Text="Record actions" />
+                            </StackPanel>
+                        </ui:Button>
+                    </StackPanel>
+                    <TextBlock x:Name="InsertHint" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="12"
+                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                </Grid>
+
+                <ListBox x:Name="ActionList" MaxHeight="380" SelectionMode="Single"
+                         ItemTemplate="{StaticResource ActionRow}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionChanged="OnSelectionChanged" PreviewKeyDown="OnListKeyDown">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="6,4" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+                <TextBlock x:Name="EmptyActionsText" Margin="0,6,0,0" FontSize="12" Visibility="Collapsed"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="No actions yet. Record actions or add them one by one." />
+                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap"
+                           Text="Click an action to select it, drag it (or Alt+Up / Alt+Down) to move it, Ctrl+D to duplicate it. New actions go after the selected one, or at the end." />
+                <TextBlock x:Name="TotalText" Margin="0,4,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+                <!-- Playback -->
+                <Grid Margin="0,18,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Margin="0,0,0,6" Text="Repeat" />
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="OnceRadio" Content="Once" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <RadioButton x:Name="LoopRadio" Margin="12,0,0,0" Content="Loop" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <RadioButton x:Name="TimesRadio" Margin="12,0,0,0" Content="N times" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <ui:NumberBox x:Name="TimesBox" Width="80" Margin="8,0,0,0" Minimum="1" Maximum="100000" MaxDecimalPlaces="0"
+                                          SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock x:Name="SpeedLabel" Margin="0,0,0,6" Text="Speed" />
+                        <Slider x:Name="SpeedSlider" Minimum="0" Maximum="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                                AutomationProperties.Name="Speed" ValueChanged="OnSpeedChanged" />
+                        <Grid>
+                            <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×0.25" />
+                            <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×1" HorizontalAlignment="Center" />
+                            <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×4" HorizontalAlignment="Right" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Activation -->
+                <TextBlock Margin="0,18,0,6" Text="Activation" />
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="ToggleRadio" Content="Toggle" GroupName="Activation" Checked="OnActivationChanged" />
+                    <RadioButton x:Name="HoldRadio" Margin="16,0,0,0" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
+                </StackPanel>
+                <TextBlock x:Name="ActivationHint" Margin="0,4,0,0" FontSize="12" TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+                <!-- Hotkey -->
+                <TextBlock Margin="0,18,0,6" Text="Hotkey" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ItemsControl x:Name="HotkeyCaps" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,4,0" Padding="8,2" Style="{StaticResource KeyCap}">
+                                    <TextBlock FontSize="13" Text="{Binding}" />
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock x:Name="HotkeyCaptureText" FontSize="13" VerticalAlignment="Center" Visibility="Collapsed"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the hotkey (Esc cancels)" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <ui:Button MinWidth="80" Content="Change" Click="OnChangeHotkeyClick" />
+                        <ui:Button x:Name="ClearHotkeyButton" Margin="8,0,0,0" MinWidth="70" Content="Clear" Click="OnClearHotkeyClick" />
+                    </StackPanel>
+                </Grid>
+                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                           Text="Optional. Without a hotkey, start it with Play or from the game mode panel. Hold needs a hotkey." />
+
+                <!-- Sound -->
+                <Grid Margin="0,18,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Sound" />
+                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Plays when the macro starts and stops" />
+                    </StackPanel>
+                    <ui:ToggleSwitch x:Name="SoundSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                     OffContent="Off" OnContent="On" Checked="OnSoundSwitchChanged" Unchecked="OnSoundSwitchChanged" />
+                </Grid>
+                <StackPanel x:Name="SoundPanel" Margin="0,10,0,0" Visibility="Collapsed">
+                    <UniformGrid x:Name="SoundGrid" Columns="3" />
+                </StackPanel>
+
+                <TextBlock x:Name="ErrorText" Margin="0,12,0,0" FontSize="12" TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Padding="24,16" BorderThickness="0,1,0,0"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:Button x:Name="SaveButton" Grid.Column="0" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
+                <ui:Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+            </Grid>
+        </Border>
+    </Grid>
+</ui:FluentWindow>

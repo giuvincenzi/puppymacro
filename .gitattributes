@@ -1,0 +1,14 @@
+# Normalize text files; Windows scripts keep CRLF so cmd.exe runs them correctly.
+* text=auto
+*.cs text eol=crlf diff=csharp
+*.xaml text eol=crlf
+*.csproj text eol=crlf
+*.pubxml text eol=crlf
+*.sln text eol=crlf
+*.cmd text eol=crlf
+*.md text eol=lf
+
+# Binary assets
+*.png binary
+*.ico binary
+*.wav binary

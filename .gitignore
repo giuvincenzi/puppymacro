@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+publish/
+release/
+*.puppymacro.tmp
+
+# IDE
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.user
+*.suo
+
+# Local data (now stored in %AppData%\PuppyMacro, kept here only by old versions)
+settings.json
+settings.invalid.json
+macros/

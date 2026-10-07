@@ -1,93 +1,110 @@
 # PuppyMacro
 
+General-purpose input automation for Windows 10/11: loops, recorded macros, key remaps and
+an in-game panel. Built with .NET 10, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 
+Current version: **1.6.0** (see [CHANGELOG.md](CHANGELOG.md)).
 
-## Getting started
+## Features
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- **Loops**: one or more rows, each on its own timer (10 ms to 24 h):
+  - **Key**: presses a key or mouse button, or keeps it **held down** while the loop runs.
+  - **Text**: pastes a text through the clipboard (Ctrl+V), optionally with Enter before
+    and/or after. The previous clipboard content is restored and kept out of Win+V history.
+- **Macros**: record keys, clicks, scroll and (optionally) mouse movement, or build them by
+  hand, then edit the list of actions (Press key, Key down/up, Click, Mouse button down/up,
+  Move to instantly or smoothly with Pick on screen, Scroll, Paste text, recorded Move
+  paths). Every action has its own delay; Press key and Click can repeat N times. Repeat
+  once, in a loop or N times, at ×0.25 to ×4 speed.
+- **Remap**: a key or mouse button sends another key, mouse button or combination, in all
+  apps or only while a specific app (.exe) is in front.
+- **Activation**: optional hotkey per loop or macro (single key, mouse button or combination
+  with Ctrl, Alt, Shift, Win), **Toggle** or **Hold**; Start/Play buttons; global
+  **Stop all** (F10), **Game mode** (F11) and **Record** (F8) hotkeys.
+- **Game mode**: a small always-on-top, click-through panel with the enabled loops and
+  macros; items can be clicked to start or stop them without the game losing focus.
+  Opacity and position are configurable (Position on screen).
+- **Sounds**: optional start/stop sound per loop or macro, with volume.
+- **System tray**: closing keeps PuppyMacro running in the tray; **Start with Windows**.
+- **Data** in `%AppData%\PuppyMacro`, with **Export / Import** of everything as one
+  `.puppymacro` file.
+- Light, Dark (default) or System theme.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Requirements
 
-## Add your files
+- Windows 10 or 11 (x64)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download) to build:
+  `winget install --id Microsoft.DotNet.SDK.10 --exact`
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## Build and run
+
+```powershell
+git clone <repository-url>
+cd puppymacro
+
+# Development build and run
+dotnet build PuppyMacro\PuppyMacro.csproj
+dotnet run --project PuppyMacro\PuppyMacro.csproj
+
+# Local publish: exe + dll files in publish\ (works with Smart App Control on)
+dotnet publish PuppyMacro\PuppyMacro.csproj -c Release -p:PublishProfile=Folder
+
+# Release publish: one PuppyMacro.exe in release\ (for distribution / code signing)
+dotnet publish PuppyMacro\PuppyMacro.csproj -c Release -p:PublishProfile=SingleFile
+```
+
+`build.cmd` and `build-release.cmd` run the two publish commands. The app is
+framework-dependent: the PC needs the .NET 10 Desktop Runtime (included in the SDK).
+
+## Project structure
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/giuvincenzi/puppymacro.git
-git branch -M main
-git push -uf origin main
+PuppyMacro.sln
+build.cmd / build-release.cmd      Publish shortcuts (Folder / SingleFile profiles)
+PuppyMacro/
+  App.xaml(.cs)                    Startup: single instance, data migration, theme, tray start
+  MainWindow.xaml(.cs)             Side rail: Loops, Macros, Remap, Settings; game mode; tray
+  LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow
+  GameModeWindow, PlacementWindow, PickPointWindow, RecordPromptWindow, RecordingBarWindow
+  Models/      AppSettings (settings.json), LoopDefinition, MacroDefinition, RemapDefinition
+  Services/    InputThread + InputHook (low-level hooks), LoopEngine (routing), runners,
+               InputSender (SendInput), recording, sounds, storage, tray, startup
+  Views/       View models and the shared game mode panel
+  Native/      Win32 interop
+  Assets/      Icon and the built-in sounds
+  Properties/PublishProfiles/      Folder.pubxml, SingleFile.pubxml
 ```
 
-## Integrate with your tools
+See [CLAUDE.md](CLAUDE.md) for the architecture, threading model and conventions.
 
-* [Set up project integrations](https://gitlab.com/giuvincenzi/puppymacro/-/settings/integrations)
+## Data
 
-## Collaborate with your team
+| What | Where |
+|---|---|
+| Settings, loops, remaps | `%AppData%\PuppyMacro\settings.json` |
+| Macros (one file each) | `%AppData%\PuppyMacro\macros\{id}.json` |
+| Backups made before Import | `%AppData%\PuppyMacro\backup-before-import-*.puppymacro` |
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+Data from versions before 1.6 (next to the exe) is copied there on first start.
 
-## Test and Deploy
+## Windows Smart App Control
 
-Use the built-in continuous integration in GitLab.
+On Windows 11 with **Smart App Control** on, unsigned files from the internet are blocked
+with no "Run anyway" option:
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+- Scripts (`build.cmd`, `build-release.cmd`) from a downloaded ZIP: drag them into a
+  PowerShell window and press Enter, or unblock the ZIP before extracting it
+  (right-click > Properties > Unblock). Builds from a `git clone` are not affected.
+- The single-file exe in `release\` is usually blocked; the `publish\` build starts normally.
 
-***
+Smart App Control can also be turned off (Settings > Privacy & security > Windows Security >
+App & browser control > Smart App Control settings); on Windows 11 updated to April 2026 or
+later it can be turned back on without reinstalling Windows.
 
-# Editing this README
+## Notes
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- Fullscreen games must run in **Windowed Fullscreen / Borderless** for the game mode panel
+  to be visible.
+- If the target application runs as administrator, run PuppyMacro as administrator too.
+- Mouse rows and macro clicks never click on PuppyMacro's own windows.
+- Hotkeys and remap source keys are blocked from reaching other applications.

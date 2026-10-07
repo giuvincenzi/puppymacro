@@ -1,0 +1,771 @@
+<ui:FluentWindow
+    x:Class="PuppyMacro.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    Title="PuppyMacro"
+    Icon="pack://application:,,,/Assets/PuppyMacro.ico"
+    Width="620"
+    Height="820"
+    MinWidth="560"
+    MinHeight="560"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterScreen"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <Window.Resources>
+        <!-- Key caps for a hotkey, e.g. [Ctrl] [F9] -->
+        <DataTemplate x:Key="KeyCapItem">
+            <Border Margin="0,0,4,0" Style="{StaticResource KeyCap}">
+                <TextBlock FontSize="12" Text="{Binding}" />
+            </Border>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="HorizontalPanel">
+            <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar x:Name="AppTitleBar" Grid.Row="0" Title="PuppyMacro" ShowMaximize="False" CanMaximize="False">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/Assets/PuppyMacro-256.png" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="72" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ================= Side rail ================= -->
+            <StackPanel Grid.Column="0" Margin="8,4,8,0">
+                <RadioButton x:Name="LoopsNav" GroupName="Nav" IsChecked="True" Style="{StaticResource RailButton}"
+                             AutomationProperties.Name="Loops" Checked="OnNavChanged">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="ArrowRepeatAll24" FontSize="18" HorizontalAlignment="Center" />
+                        <TextBlock Margin="0,2,0,0" FontSize="11" Text="Loops" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="MacrosNav" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
+                             AutomationProperties.Name="Macros" Checked="OnNavChanged">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="DocumentBulletList24" FontSize="18" HorizontalAlignment="Center" />
+                        <TextBlock Margin="0,2,0,0" FontSize="11" Text="Macros" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="RemapNav" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
+                             AutomationProperties.Name="Remap" Checked="OnNavChanged">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="ArrowSwap24" FontSize="18" HorizontalAlignment="Center" />
+                        <TextBlock Margin="0,2,0,0" FontSize="11" Text="Remap" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="SettingsNav" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
+                             AutomationProperties.Name="Settings" Checked="OnNavChanged">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="Settings24" FontSize="18" HorizontalAlignment="Center" />
+                        <TextBlock Margin="0,2,0,0" FontSize="11" Text="Settings" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </RadioButton>
+            </StackPanel>
+
+            <!-- ================= Loops page ================= -->
+            <Grid x:Name="LoopsPage" Grid.Column="1" Margin="8,0,20,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Loops" />
+                    <ui:Button
+                        x:Name="AddLoopButton"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Appearance="Primary"
+                        Content="Add loop"
+                        Icon="{ui:SymbolIcon Add24}"
+                        ToolTipService.ShowOnDisabled="True"
+                        Click="OnAddLoopClick" />
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,10,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:TextBox
+                        x:Name="SearchBox"
+                        Grid.Column="0"
+                        PlaceholderText="Search loops"
+                        Icon="{ui:SymbolIcon Search24}"
+                        IconPlacement="Right"
+                        TextChanged="OnSearchChanged" />
+                    <TextBlock Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center" FontSize="13"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Filter by" />
+                    <ComboBox x:Name="FilterBox" Grid.Column="2" MinWidth="130" SelectionChanged="OnFilterChanged">
+                        <ComboBoxItem Content="All loops" />
+                        <ComboBoxItem Content="Enabled" />
+                        <ComboBoxItem Content="Disabled" />
+                        <ComboBoxItem Content="Running" />
+                    </ComboBox>
+                </Grid>
+
+                <TextBlock x:Name="CountText" Grid.Row="2" Margin="0,0,0,10" FontSize="13"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+                <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock x:Name="EmptyLoopsText" Margin="0,8,0,8"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                   Visibility="Collapsed" />
+
+                        <ItemsControl x:Name="LoopList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type views:LoopItemViewModel}">
+                                    <StackPanel>
+                                    <Border Height="3" Margin="0,0,0,3" CornerRadius="2"
+                                            Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                            Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
+                                    <Border x:Name="Card" Margin="0,0,0,4" Style="{StaticResource CardBorder}"
+                                            Cursor="SizeAll" AllowDrop="True" Tag="{Binding}"
+                                            PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
+                                            DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Type icon -->
+                                            <Border Grid.Column="0" Width="34" Height="34" Margin="0,0,12,0" CornerRadius="6"
+                                                    VerticalAlignment="Center" Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                                                <Grid>
+                                                    <ui:SymbolIcon Symbol="Keyboard24" FontSize="18"
+                                                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                                   Visibility="{Binding ShowKeyIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                    <TextBlock Text="Aa" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                               Visibility="{Binding ShowTextIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                    <ui:SymbolIcon Symbol="List24" FontSize="18"
+                                                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                                   Visibility="{Binding ShowListIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                </Grid>
+                                            </Border>
+
+                                            <!-- Name, status, summary, hotkey -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock MaxWidth="200" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                    <Ellipse x:Name="StatusDot" Width="7" Height="7" Margin="10,0,5,0" VerticalAlignment="Center"
+                                                             Fill="{DynamicResource TextFillColorTertiaryBrush}" />
+                                                    <TextBlock x:Name="StatusText" FontSize="12" VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
+                                                </StackPanel>
+                                                <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                           Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
+                                                <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                                    <TextBlock Margin="0,0,6,0" FontSize="12" VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                               Text="{Binding ActivationText}" />
+                                                    <ItemsControl ItemsSource="{Binding HotkeyParts}"
+                                                                  ItemTemplate="{StaticResource KeyCapItem}"
+                                                                  ItemsPanel="{StaticResource HorizontalPanel}"
+                                                                  Visibility="{Binding HasHotkey, Converter={StaticResource BoolToVisibility}}" />
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <!-- Start/Stop (Toggle) or hint (Hold) -->
+                                            <Grid Grid.Column="2" MinWidth="72" Margin="8,0,0,0" VerticalAlignment="Center" Cursor="Arrow">
+                                                <ui:Button HorizontalAlignment="Right" Content="{Binding StartStopText}" Tag="{Binding}"
+                                                           Click="OnStartStopClick"
+                                                           Visibility="{Binding IsToggleMode, Converter={StaticResource BoolToVisibility}}" />
+                                                <TextBlock HorizontalAlignment="Right" FontSize="12" Text="While held"
+                                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                           Visibility="{Binding IsHoldMode, Converter={StaticResource BoolToVisibility}}" />
+                                            </Grid>
+
+                                            <ui:ToggleSwitch Grid.Column="3" Margin="12,0,4,0" VerticalAlignment="Center" Cursor="Arrow"
+                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" />
+
+                                            <ui:Button Grid.Column="4" Appearance="Transparent" Icon="{ui:SymbolIcon MoreHorizontal24}" Cursor="Arrow"
+                                                       ToolTip="More options" Tag="{Binding}" IsEnabled="{Binding IsNotRunning}"
+                                                       Click="OnMoreClick" />
+                                        </Grid>
+                                    </Border>
+                                    <Border Height="3" Margin="0,-1,0,4" CornerRadius="2"
+                                            Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                            Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
+                                    </StackPanel>
+
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsDragging}" Value="True">
+                                            <Setter TargetName="Card" Property="Opacity" Value="0.45" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                                            <Setter TargetName="Card" Property="Opacity" Value="0.6" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                            <Setter TargetName="Card" Property="Background" Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
+                                            <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                            <Setter TargetName="StatusDot" Property="Fill" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                            <Setter TargetName="StatusText" Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ================= Macros page ================= -->
+            <Grid x:Name="MacrosPage" Grid.Column="1" Margin="8,0,20,0" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Macros" />
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
+                        <ui:Button x:Name="NewMacroButton" Content="New macro" Icon="{ui:SymbolIcon Add24}"
+                                   ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
+                        <ui:Button x:Name="RecordMacroButton" Margin="8,0,0,0" Appearance="Primary"
+                                   ToolTipService.ShowOnDisabled="True" Click="OnRecordMacroClick">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="10" Height="10" Fill="#C42B1C" VerticalAlignment="Center" />
+                                <TextBlock Margin="8,0,0,0" Text="Record macro" />
+                            </StackPanel>
+                        </ui:Button>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,10,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:TextBox x:Name="MacroSearchBox" PlaceholderText="Search macros" Icon="{ui:SymbolIcon Search24}"
+                                IconPlacement="Right" TextChanged="OnMacroSearchChanged" />
+                    <TextBlock Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center" FontSize="13"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Filter by" />
+                    <ComboBox x:Name="MacroFilterBox" Grid.Column="2" MinWidth="130" SelectionChanged="OnMacroFilterChanged">
+                        <ComboBoxItem Content="All macros" />
+                        <ComboBoxItem Content="Enabled" />
+                        <ComboBoxItem Content="Disabled" />
+                        <ComboBoxItem Content="Running" />
+                    </ComboBox>
+                </Grid>
+
+                <TextBlock x:Name="MacroCountText" Grid.Row="2" Margin="0,0,0,10" FontSize="13"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+                <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock x:Name="EmptyMacrosText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <ItemsControl x:Name="MacroList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type views:MacroItemViewModel}">
+                                    <StackPanel>
+                                    <Border Height="3" Margin="0,0,0,3" CornerRadius="2"
+                                            Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                            Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
+                                    <Border x:Name="Card" Margin="0,0,0,4" Style="{StaticResource CardBorder}"
+                                            Cursor="SizeAll" AllowDrop="True" Tag="{Binding}"
+                                            PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
+                                            DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="34" Height="34" Margin="0,0,12,0" CornerRadius="6"
+                                                    VerticalAlignment="Center" Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                                                <ui:SymbolIcon Symbol="DocumentBulletList24" FontSize="18"
+                                                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock MaxWidth="200" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                    <Ellipse x:Name="StatusDot" Width="7" Height="7" Margin="10,0,5,0" VerticalAlignment="Center"
+                                                             Fill="{DynamicResource TextFillColorTertiaryBrush}" />
+                                                    <TextBlock x:Name="StatusText" FontSize="12" VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
+                                                </StackPanel>
+                                                <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                           Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
+                                                <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                                    <TextBlock Margin="0,0,6,0" FontSize="12" VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                               Text="{Binding ActivationText}" />
+                                                    <ItemsControl ItemsSource="{Binding HotkeyParts}"
+                                                                  ItemTemplate="{StaticResource KeyCapItem}"
+                                                                  ItemsPanel="{StaticResource HorizontalPanel}"
+                                                                  Visibility="{Binding HasHotkey, Converter={StaticResource BoolToVisibility}}" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Grid Grid.Column="2" MinWidth="72" Margin="8,0,0,0" VerticalAlignment="Center" Cursor="Arrow">
+                                                <ui:Button HorizontalAlignment="Right" Content="{Binding StartStopText}" Tag="{Binding}"
+                                                           Click="OnMacroStartStopClick"
+                                                           Visibility="{Binding IsToggleMode, Converter={StaticResource BoolToVisibility}}" />
+                                                <TextBlock HorizontalAlignment="Right" FontSize="12" Text="While held"
+                                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                           Visibility="{Binding IsHoldMode, Converter={StaticResource BoolToVisibility}}" />
+                                            </Grid>
+                                            <ui:ToggleSwitch Grid.Column="3" Margin="12,0,4,0" VerticalAlignment="Center" Cursor="Arrow"
+                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" />
+                                            <ui:Button Grid.Column="4" Appearance="Transparent" Icon="{ui:SymbolIcon MoreHorizontal24}" Cursor="Arrow"
+                                                       ToolTip="More options" Tag="{Binding}" IsEnabled="{Binding IsNotRunning}"
+                                                       Click="OnMacroMoreClick" />
+                                        </Grid>
+                                    </Border>
+                                    <Border Height="3" Margin="0,-1,0,4" CornerRadius="2"
+                                            Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                            Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsDragging}" Value="True">
+                                            <Setter TargetName="Card" Property="Opacity" Value="0.45" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                                            <Setter TargetName="Card" Property="Opacity" Value="0.6" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                            <Setter TargetName="Card" Property="Background" Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
+                                            <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                            <Setter TargetName="StatusDot" Property="Fill" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                            <Setter TargetName="StatusText" Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ================= Remap page ================= -->
+            <Grid x:Name="RemapsPage" Grid.Column="1" Margin="8,0,20,0" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Remap" />
+                    <ui:Button HorizontalAlignment="Right" VerticalAlignment="Center" Appearance="Primary" Content="Add remap"
+                               Icon="{ui:SymbolIcon Add24}" Click="OnAddRemapClick" />
+                </Grid>
+                <TextBlock Grid.Row="1" Margin="0,6,0,0" FontSize="13" TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Text="Press a key or mouse button and PuppyMacro sends another one instead. Remaps work while PuppyMacro is running, also in the system tray." />
+                <Grid Grid.Row="2" Margin="0,10,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:TextBox x:Name="RemapSearchBox" PlaceholderText="Search remaps" Icon="{ui:SymbolIcon Search24}"
+                                IconPlacement="Right" TextChanged="OnRemapSearchChanged" />
+                    <TextBlock Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center" FontSize="13"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Filter by" />
+                    <ComboBox x:Name="RemapFilterBox" Grid.Column="2" MinWidth="130" SelectionChanged="OnRemapFilterChanged">
+                        <ComboBoxItem Content="All remaps" />
+                        <ComboBoxItem Content="Enabled" />
+                        <ComboBoxItem Content="Disabled" />
+                    </ComboBox>
+                </Grid>
+                <TextBlock x:Name="RemapCountText" Grid.Row="3" Margin="0,0,0,10" FontSize="13"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock x:Name="EmptyRemapsText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <ItemsControl x:Name="RemapList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type views:RemapItemViewModel}">
+                                    <Border x:Name="Card" Margin="0,0,0,4" Style="{StaticResource CardBorder}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <WrapPanel>
+                                                    <Border Margin="0,0,8,0" Padding="8,2" Style="{StaticResource KeyCap}">
+                                                        <TextBlock FontSize="13" Text="{Binding SourceText}" />
+                                                    </Border>
+                                                    <ui:SymbolIcon Symbol="ArrowRight24" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                                    <ItemsControl ItemsSource="{Binding TargetParts}" VerticalAlignment="Center"
+                                                                  ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource HorizontalPanel}" />
+                                                    <Border x:Name="Scope" Margin="8,0,0,0" Padding="8,1" CornerRadius="10" BorderThickness="1"
+                                                            VerticalAlignment="Center" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                                                        <TextBlock x:Name="ScopeText" FontSize="12" Text="{Binding ScopeText}"
+                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                    </Border>
+                                                </WrapPanel>
+                                                <TextBlock Margin="0,4,0,0" FontSize="12" Text="{Binding Note}" TextTrimming="CharacterEllipsis"
+                                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                           Visibility="{Binding HasNote, Converter={StaticResource BoolToVisibility}}" />
+                                            </StackPanel>
+                                            <ui:ToggleSwitch Grid.Column="1" Margin="12,0,4,0" VerticalAlignment="Center"
+                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" />
+                                            <ui:Button Grid.Column="2" Appearance="Transparent" Icon="{ui:SymbolIcon MoreHorizontal24}"
+                                                       ToolTip="More options" Tag="{Binding}" Click="OnRemapMoreClick" />
+                                        </Grid>
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                                            <Setter TargetName="Card" Property="Opacity" Value="0.6" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsSpecificApp}" Value="True">
+                                            <Setter TargetName="Scope" Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                            <Setter TargetName="ScopeText" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ================= Settings page ================= -->
+            <ScrollViewer x:Name="SettingsPage" Grid.Column="1" Margin="8,0,20,0" Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,0,0,12">
+                    <TextBlock Margin="0,0,0,14" Style="{StaticResource PageTitle}" Text="Settings" />
+
+                    <!-- Theme -->
+                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Symbol="DarkTheme24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Theme" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="System follows your Windows setting" />
+                            </StackPanel>
+                            <ComboBox x:Name="ThemeComboBox" Grid.Column="2" MinWidth="130" VerticalAlignment="Center"
+                                      SelectionChanged="OnThemeChanged">
+                                <ComboBoxItem Content="System" />
+                                <ComboBoxItem Content="Light" />
+                                <ComboBoxItem Content="Dark" />
+                            </ComboBox>
+                        </Grid>
+                    </Border>
+
+                    <!-- System tray and startup -->
+                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Symbol="Desktop24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Close to system tray" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                           Text="When you close the window, PuppyMacro keeps running in the system tray" />
+                            </StackPanel>
+                            <ui:ToggleSwitch x:Name="CloseToTraySwitch" Grid.Column="2" VerticalAlignment="Center"
+                                             OffContent="Off" OnContent="On" Checked="OnCloseToTrayChanged" Unchecked="OnCloseToTrayChanged" />
+                        </Grid>
+                    </Border>
+                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Symbol="Power24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Start with Windows" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                           Text="Starts in the system tray when you sign in" />
+                            </StackPanel>
+                            <ui:ToggleSwitch x:Name="StartWithWindowsSwitch" Grid.Column="2" VerticalAlignment="Center"
+                                             OffContent="Off" OnContent="On" Checked="OnStartWithWindowsChanged" Unchecked="OnStartWithWindowsChanged" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Hotkeys -->
+                    <ui:CardExpander x:Name="HotkeysGroup" Margin="0,0,0,4" Tag="Hotkeys" Icon="{ui:SymbolIcon Keyboard24}"
+                                     Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                        <ui:CardExpander.Header>
+                            <StackPanel>
+                                <TextBlock Text="Hotkeys" />
+                                <TextBlock x:Name="HotkeysSummary" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </ui:CardExpander.Header>
+                        <StackPanel>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Stop all" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Stops every running loop" />
+                                </StackPanel>
+                                <ItemsControl x:Name="StopAllHotkeyCaps" Grid.Column="1" Margin="8,0,4,0" VerticalAlignment="Center"
+                                              ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource HorizontalPanel}" />
+                                <ui:Button x:Name="StopAllChangeButton" Grid.Column="2" MinWidth="80" Content="Change" Click="OnChangeStopAllHotkeyClick" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Game mode" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Text="Switches between this window and the in-game panel" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <ItemsControl x:Name="GameModeHotkeyCaps" Grid.Column="1" Margin="8,0,4,0" VerticalAlignment="Center"
+                                              ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource HorizontalPanel}" />
+                                <ui:Button x:Name="GameModeChangeButton" Grid.Column="2" MinWidth="80" Content="Change" Click="OnChangeGameModeHotkeyClick" />
+                            </Grid>
+                            <Grid Margin="0,4,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Record" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Starts and stops macro recording" />
+                                </StackPanel>
+                                <ItemsControl x:Name="RecordHotkeyCaps" Grid.Column="1" Margin="8,0,4,0" VerticalAlignment="Center"
+                                              ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource HorizontalPanel}" />
+                                <ui:Button x:Name="RecordChangeButton" Grid.Column="2" MinWidth="80" Content="Change" Click="OnChangeRecordHotkeyClick" />
+                            </Grid>
+                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                       Text="Press any key or mouse button. For a combination, hold Ctrl, Alt, Shift or Win first. Esc cancels." />
+                        </StackPanel>
+                    </ui:CardExpander>
+
+                    <!-- Game mode panel -->
+                    <ui:CardExpander x:Name="GameModeGroup" Margin="0,0,0,4" Tag="GameModePanel" Icon="{ui:SymbolIcon Games24}"
+                                     Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                        <ui:CardExpander.Header>
+                            <StackPanel>
+                                <TextBlock Text="Game mode panel" />
+                                <TextBlock x:Name="GameModeSummary" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </ui:CardExpander.Header>
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="Opacity" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Text="Background of the in-game panel. Text stays fully visible." TextWrapping="Wrap" />
+                                </StackPanel>
+                                <TextBlock x:Name="OpacityValueText" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Slider x:Name="OpacitySlider" VerticalAlignment="Center"
+                                        Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
+                                        SmallChange="5" LargeChange="10"
+                                        AutomationProperties.Name="Game mode opacity"
+                                        ValueChanged="OnOpacityChanged" />
+                                <Border Grid.Column="1" Width="132" Height="52" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C"
+                                        ClipToBounds="True">
+                                    <Border x:Name="OpacityPreviewPanel" Margin="10,9,10,0" Padding="8,6" VerticalAlignment="Top"
+                                            CornerRadius="5" BorderThickness="1" BorderBrush="#1AFFFFFF" Background="#D9202020">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Ellipse Width="6" Height="6" Fill="#6CCB5F" VerticalAlignment="Center" />
+                                                <TextBlock Margin="5,0,0,0" FontSize="10" Foreground="White" Text="Left click spam" />
+                                            </StackPanel>
+                                            <Border Width="60" Height="4" Margin="0,4,0,0" HorizontalAlignment="Left"
+                                                    CornerRadius="2" Background="#40FFFFFF" />
+                                        </StackPanel>
+                                    </Border>
+                                </Border>
+                            </Grid>
+
+                            <Border Margin="0,14,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
+
+                            <TextBlock Text="Position" />
+                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                       Text="Where the panel appears, measured from the top-left corner of the main screen." />
+                            <WrapPanel Margin="0,10,0,0">
+                                <StackPanel Margin="0,0,10,0">
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="X" />
+                                    <ui:NumberBox x:Name="PositionXBox" Width="110" Minimum="-100000" Maximum="100000" MaxDecimalPlaces="0"
+                                                  SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
+                                                  ValueChanged="OnPositionBoxChanged" />
+                                </StackPanel>
+                                <StackPanel Margin="0,0,16,0">
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Y" />
+                                    <ui:NumberBox x:Name="PositionYBox" Width="110" Minimum="-100000" Maximum="100000" MaxDecimalPlaces="0"
+                                                  SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
+                                                  ValueChanged="OnPositionBoxChanged" />
+                                </StackPanel>
+                                <ui:Button Margin="0,16,8,0" VerticalAlignment="Bottom" Appearance="Primary" Content="Position on screen"
+                                           Icon="{ui:SymbolIcon ArrowMove24}" Click="OnPositionOnScreenClick" />
+                                <ui:Button Margin="0,16,0,0" VerticalAlignment="Bottom" Content="Reset" Click="OnResetPositionClick"
+                                           ToolTip="Back to the top-left corner of the main screen" />
+                            </WrapPanel>
+
+                            <Border Margin="0,14,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
+
+                            <Grid>
+                                <StackPanel Margin="0,0,90,0">
+                                    <TextBlock Text="Click items in the panel to start or stop them" TextWrapping="Wrap" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                               Text="Loops and macros in the in-game panel become clickable. Hold items stay hotkey only." />
+                                </StackPanel>
+                                <ui:ToggleSwitch x:Name="ClickInPanelSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                 OffContent="Off" OnContent="On"
+                                                 Checked="OnClickInPanelChanged" Unchecked="OnClickInPanelChanged" />
+                            </Grid>
+                            <ui:InfoBar Margin="0,10,0,0" IsOpen="True" IsClosable="False" Severity="Warning" Title=""
+                                        Message="Some fullscreen games may react to the click or briefly lose focus. If you notice problems, turn this off and use hotkeys only." />
+                        </StackPanel>
+                    </ui:CardExpander>
+
+                    <!-- Sound -->
+                    <ui:CardExpander x:Name="SoundGroup" Margin="0,0,0,4" Tag="Sound" Icon="{ui:SymbolIcon Speaker224}"
+                                     Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                        <ui:CardExpander.Header>
+                            <StackPanel>
+                                <TextBlock Text="Sound" />
+                                <TextBlock x:Name="SoundSummary" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </ui:CardExpander.Header>
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="Volume" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Start and stop sounds of every loop" />
+                                </StackPanel>
+                                <TextBlock x:Name="VolumeValueText" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+                            <Slider x:Name="VolumeSlider" Margin="0,10,0,0" Minimum="0" Maximum="100" TickFrequency="5"
+                                    IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
+                                    AutomationProperties.Name="Sound volume"
+                                    ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
+                        </StackPanel>
+                    </ui:CardExpander>
+
+                    <!-- Backup -->
+                    <ui:CardExpander x:Name="BackupGroup" Margin="0,0,0,4" Tag="Backup" Icon="{ui:SymbolIcon ArrowDownload24}"
+                                     Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                        <ui:CardExpander.Header>
+                            <StackPanel>
+                                <TextBlock Text="Backup" />
+                                <TextBlock x:Name="DataFolderText" FontSize="12" TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </ui:CardExpander.Header>
+                        <StackPanel>
+                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                       Text="Loops, macros, remaps and settings are kept in your user folder, so every new version finds them. Export them to one file to move them to another PC or keep a copy." />
+                            <WrapPanel Margin="0,10,0,0">
+                                <ui:Button Margin="0,0,8,0" Content="Export…" Icon="{ui:SymbolIcon ArrowUpload24}" Click="OnExportClick" />
+                                <ui:Button Margin="0,0,8,0" Content="Import…" Icon="{ui:SymbolIcon ArrowDownload24}" Click="OnImportClick" />
+                                <ui:Button Content="Open data folder" Icon="{ui:SymbolIcon FolderOpen24}" Click="OnOpenDataFolderClick" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </ui:CardExpander>
+
+                    <!-- About -->
+                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Symbol="Info24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="About" />
+                                <TextBlock x:Name="AboutText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Name="SettingsErrorText" Margin="2,6,0,0" FontSize="12" TextWrapping="Wrap"
+                               Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- ================= Always visible: game mode and stop all ================= -->
+        <Grid Grid.Row="2" Margin="20,10,20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ui:Button
+                x:Name="GameModeButton"
+                Grid.Column="0"
+                Height="40"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                BorderBrush="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                Click="OnGameModeClick">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Enable game mode" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock x:Name="GameModeButtonHotkeyText" Margin="10,0,0,0" FontSize="12" Opacity="0.85" VerticalAlignment="Center" />
+                </StackPanel>
+            </ui:Button>
+            <ui:Button
+                x:Name="StopAllButton"
+                Grid.Column="2"
+                Height="40"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Appearance="Danger"
+                IsEnabled="False"
+                Click="OnStopAllClick">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Stop all" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock x:Name="StopAllButtonHotkeyText" Margin="10,0,0,0" FontSize="12" Opacity="0.85" VerticalAlignment="Center" />
+                </StackPanel>
+            </ui:Button>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

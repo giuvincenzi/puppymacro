@@ -1,0 +1,69 @@
+<Window
+    x:Class="PuppyMacro.RecordingBarWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Recording"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    Topmost="True"
+    ShowInTaskbar="False"
+    ShowActivated="False"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="Manual"
+    FontFamily="Segoe UI Variable Text, Segoe UI"
+    Foreground="White">
+
+    <Border Padding="16,8,8,8" CornerRadius="8" BorderThickness="1" Background="#F2202020" BorderBrush="#1FFFFFFF">
+        <Grid>
+        <StackPanel x:Name="CountdownPanel" Orientation="Horizontal" Visibility="Collapsed">
+            <Ellipse Width="10" Height="10" Fill="#FCE100" VerticalAlignment="Center" />
+            <TextBlock x:Name="CountdownText" Margin="8,0,0,0" FontSize="13" FontWeight="SemiBold" Text="Recording starts in 3" VerticalAlignment="Center" />
+            <TextBlock Margin="14,0,14,0" FontSize="13" Foreground="#C5C5C5" Text="Switch to the window to record. Clicks now are not recorded." VerticalAlignment="Center" />
+            <Button Click="OnCancelCountdownClick" Cursor="Hand" Focusable="False">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Back" Height="30" Padding="12,0" CornerRadius="4" Background="#373737" BorderBrush="#5A5A5A" BorderThickness="1">
+                            <TextBlock FontSize="13" Foreground="White" Text="Cancel" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Back" Property="Background" Value="#454545" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+        <StackPanel x:Name="RecordingPanel" Orientation="Horizontal">
+            <Ellipse Width="10" Height="10" Fill="#FF4B4B" VerticalAlignment="Center" />
+            <TextBlock Margin="8,0,0,0" FontSize="13" FontWeight="SemiBold" Text="Recording" VerticalAlignment="Center" />
+            <TextBlock x:Name="TimeText" Margin="6,0,0,0" FontSize="13" Text="00:00" VerticalAlignment="Center" />
+            <TextBlock x:Name="CountText" Margin="14,0,0,0" FontSize="13" Foreground="#C5C5C5" Text="0 events" VerticalAlignment="Center" />
+            <TextBlock Margin="14,0,6,0" FontSize="13" Foreground="#C5C5C5" Text="Press" VerticalAlignment="Center" />
+            <Border Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737" VerticalAlignment="Center">
+                <TextBlock x:Name="HotkeyText" FontSize="12" />
+            </Border>
+            <TextBlock Margin="6,0,14,0" FontSize="13" Foreground="#C5C5C5" Text="to stop" VerticalAlignment="Center" />
+            <Button Click="OnStopClick" Cursor="Hand" Focusable="False">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Back" Height="30" Padding="12,0" CornerRadius="4" Background="#C42B1C">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="White" VerticalAlignment="Center" />
+                                <TextBlock Margin="6,0,0,0" FontSize="13" FontWeight="SemiBold" Foreground="White" Text="Stop" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Back" Property="Background" Value="#D13D2E" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+        </Grid>
+    </Border>
+</Window>

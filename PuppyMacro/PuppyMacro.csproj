@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>PuppyMacro</AssemblyName>
+    <RootNamespace>PuppyMacro</RootNamespace>
+    <Version>1.6.0</Version>
+    <Product>PuppyMacro</Product>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\PuppyMacro.ico</ApplicationIcon>
+
+    <!-- Framework-dependent (uses the .NET 10 Desktop Runtime).
+         Folder or single-file output is chosen by the publish profiles in Properties\PublishProfiles. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\PuppyMacro-256.png" />
+    <Resource Include="Assets\PuppyMacro.ico" />
+    <Resource Include="Assets\Sounds\*.wav" />
+  </ItemGroup>
+
+</Project>

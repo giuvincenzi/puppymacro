@@ -1,0 +1,42 @@
+# Changelog
+
+## 1.6.0
+- Loops: Key rows can be **held down** while the loop runs.
+- **System tray**: Close to system tray (on by default), tray menu (Open, Stop all, Exit),
+  **Start with Windows**.
+- **Remap** section: key/mouse button to key, mouse button or combination; all apps or a
+  specific app; left/right click only for a specific app.
+- Data moved to `%AppData%\PuppyMacro` (automatic migration); **Backup**: Export / Import /
+  Open data folder.
+- Input rework: low-level hooks on a dedicated thread; modifier state only from physical
+  key events; exact hotkey matching (removed the "loose" matching added in 1.2.1).
+
+## 1.5.0
+- Recording: window hidden while recording, **Start recording** with a 3-second countdown,
+  New macro opens focused after stopping.
+- Hotkeys optional for loops and macros (Hold still needs one); Clear button.
+- Press key and Click repeat N times with a pause; Duplicate action (Ctrl+D).
+- Click items in the game mode panel on by default.
+
+## 1.4.0
+- **Macros** section: recording, action editor, Pick on screen, repeat and speed.
+- Clickable game mode panel (optional), Record hotkey, Dark theme by default.
+- Position on screen shows the real panel.
+
+## 1.3.0
+- Game mode title with name and version, drag and drop reordering, built-in sounds with
+  volume, game mode position (X/Y, Position on screen), Settings in expandable groups.
+
+## 1.2.x
+- 1.2.1: modifiers no longer re-pressed after sending keys (stuck Alt).
+- 1.2.0: wider interval field and value binding fix, hints at the bottom of the game mode
+  panel, game mode opacity, hotkeys paused while dialogs are open.
+
+## 1.1.x
+- 1.1.1: Folder and SingleFile publish profiles.
+- 1.1.0: side rail (Loops / Settings), multiple Key/Text rows per loop with their own
+  interval, hotkeys with modifiers, search and filter, version in the title bar.
+
+## 1.0.0
+- First native version (C#, WPF, WPF-UI): loops, Toggle/Hold, global hotkeys, game mode,
+  System/Light/Dark theme. Replaced the earlier AutoHotkey v2 script.

@@ -1,0 +1,19 @@
+using System;
+
+namespace PuppyMacro.Views;
+
+/// <summary>What the lists (drag and drop) and the game mode panel need from a loop or a macro.</summary>
+public interface IListItem
+{
+    Guid Id { get; }
+    string Name { get; }
+    string HotkeyText { get; }
+    bool HasHotkey { get; }
+    string Status { get; }
+    bool IsRunning { get; set; }
+    bool IsItemEnabled { get; }
+    bool IsHoldMode { get; }
+    bool DropBefore { get; set; }
+    bool DropAfter { get; set; }
+    bool IsDragging { get; set; }
+}
