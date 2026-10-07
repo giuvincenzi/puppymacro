@@ -2,10 +2,10 @@
 
 Guidance for Claude Code when working on PuppyMacro.
 
-## Working with the owner
+## Working rules
 
-- **Talk to the user in Italian.** Everything in the software is in **English**: code,
-  identifiers, comments, XAML text, UI labels, tooltips, messages, README, CHANGELOG.
+- **English only in the project**: code, identifiers, comments, XAML text, UI labels,
+  tooltips, messages, README, CHANGELOG.
 - **Ask before changing code.** Describe what you want to change and why, wait for an
   explicit OK, then write the code. This applies to small fixes and refactors too.
 - **UI changes: show the UI first.** Propose the visual result (ideally with more than one
@@ -15,20 +15,28 @@ Guidance for Claude Code when working on PuppyMacro.
 - **Do not guess.** If something is uncertain (an API, a Windows behavior, a library
   version), check the source or documentation before relying on it, and say what was
   verified and what was not.
+- **Do not assume the machine.** Rules in this file must hold on any contributor's PC:
+  no user names, absolute paths or tools that only one machine has.
 - No analogies or metaphors in explanations; be direct.
-- When pointing to Windows settings or menus, use the English names (the owner's Windows is
-  in English).
-- Do not lecture about game terms of service or anti-cheat; that is the owner's choice.
+- When pointing to Windows settings or menus, use their English names.
+- Do not lecture about game terms of service or anti-cheat.
 
 ## Build
 
-- Requires the **.NET 10 SDK** on Windows. WPF does not run on Linux/WSL: build and run
-  from Windows (PowerShell), not from WSL.
-- Debug: `dotnet build PuppyMacro\PuppyMacro.csproj`, run: `dotnet run --project PuppyMacro\PuppyMacro.csproj`
-- Local publish (exe + dlls in `publish\`): `dotnet publish PuppyMacro\PuppyMacro.csproj -c Release -p:PublishProfile=Folder`
-- Single-file publish (`release\`): `... -p:PublishProfile=SingleFile`
-- The single-file exe is usually blocked by Smart App Control on the owner's PC; test with
-  the Folder build.
+- Requires a **.NET 10 SDK**. The app runs only on Windows.
+- Use whichever .NET 10 SDK is available:
+  - Windows: `dotnet`.
+  - WSL: a Linux SDK (`dotnet`), or the Windows SDK through WSL interop (`dotnet.exe`,
+    found through the Windows PATH that WSL adds by default). A Linux SDK needs
+    `-p:EnableWindowsTargeting=true` to build a Windows project (SDK error NETSDK1100).
+    From WSL the app can be built but not run; run it on Windows.
+- Debug build: `dotnet build PuppyMacro/PuppyMacro.csproj`
+- Run (Windows): `dotnet run --project PuppyMacro/PuppyMacro.csproj`
+- Local publish (exe + dlls in `publish/`):
+  `dotnet publish PuppyMacro/PuppyMacro.csproj -c Release -p:PublishProfile=Folder`
+- Single-file publish (`release/`): same command with `-p:PublishProfile=SingleFile`.
+  An unsigned single-file exe is often blocked by Smart App Control; test with the Folder
+  build.
 - Always build after changes and fix all errors and warnings you introduced.
 
 ## Releases
@@ -81,8 +89,8 @@ Rules:
 - When a blocked key is pressed with Alt or Win held, a mask key (VK 0xE8) is sent so no
   menu / Start opens.
 - Left and right click can never be hotkeys (capture lets them pass so the UI stays
-  clickable); they can be remap sources only for a specific app. This is a decision of the
-  owner: keep it.
+  clickable); they can be remap sources only for a specific app. This is a deliberate
+  design decision: keep it.
 - Routing order in `LoopEngine.OnKey`: modifiers → key capture → record hotkey/recording →
   key-up handling (swallowed ups, remap ups, Hold release) → auto-repeat → global hotkeys,
   loop and macro hotkeys (skipped while `HotkeysSuspended`) → remaps.
