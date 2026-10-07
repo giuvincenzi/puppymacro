@@ -57,6 +57,19 @@ jobs:
           $notes = ($notes -join "`n").Trim()
           if (-not $notes) { throw "CHANGELOG.md has no '## $version' section." }
 
+          # Nothing may stay under "## Unreleased": it belongs to this release.
+          $unreleased = @()
+          $inUnreleased = $false
+          foreach ($line in Get-Content CHANGELOG.md) {
+              if ($line -match '^## ') {
+                  if ($inUnreleased) { break }
+                  $inUnreleased = $line.Trim() -eq '## Unreleased'
+                  continue
+              }
+              if ($inUnreleased -and $line.Trim()) { $unreleased += $line }
+          }
+          if ($unreleased) { throw "CHANGELOG.md still has entries under '## Unreleased': move them to '## $version'." }
+
           Set-Content -Path "$env:RUNNER_TEMP/notes.md" -Value $notes -Encoding utf8
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version" -Encoding utf8
           Write-Host "Releasing PuppyMacro $version"

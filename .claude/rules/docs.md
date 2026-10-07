@@ -26,6 +26,12 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
   Released versions are added only when git is available to Windows PowerShell (in WSL it
   usually is not).
 
+## README
+
+`README.md` holds only: the links (website, download, user guide), a short description of
+the app, the download, "Development: see `.claude/rules/`" and the license. Everything for
+developers goes in `.claude/rules/`; how to use the app goes in the user guide.
+
 ## Every user-visible change updates the documentation
 
 In the same change as the code, for a new feature, changed behavior, new or renamed setting
@@ -34,7 +40,7 @@ or UI text:
 - update the matching file in `site/guide/` (new feature: new file and a line in
   `sections.txt`);
 - update the feature cards in `site/index.html` when the feature list changes;
-- update `CHANGELOG.md` and, if behavior changed, `README.md`;
+- add a line under `## Unreleased` in `CHANGELOG.md`;
 - replace screenshots that no longer match the app.
 
 ## Accuracy

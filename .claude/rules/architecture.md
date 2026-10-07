@@ -13,6 +13,29 @@ paths:
   P/Invoke in `Native/NativeMethods.cs`.
 - Nullable reference types on, implicit usings off (explicit `using`s).
 
+## Repository layout
+
+```
+PuppyMacro.sln, Makefile, global.json
+scripts/                        PowerShell scripts run by the Makefile
+.github/workflows/              test.yml, e2e.yml, release.yml, site.yml
+site/                           website and user guide sources (docs.md)
+tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end tests (testing.md)
+PuppyMacro/
+  App.xaml(.cs)                 Main (Velopack), single instance, data migration, theme, tray start
+  MainWindow.xaml(.cs)          side rail: Loops, Macros, Remap, Settings; game mode; tray
+  MainWindow.Updates.cs         update bar, Settings dot and Updates card
+  LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow
+  GameModeWindow, PlacementWindow, PickPointWindow, RecordPromptWindow, RecordingBarWindow
+  Models/                       AppSettings (settings.json), loops, macros, remaps
+  Services/                     input thread and hooks, LoopEngine, runners, InputSender,
+                                recording, sounds, storage, tray, startup, updates
+  Views/                        view models, game mode panel, WindowFit
+  Native/                       Win32 interop
+  Assets/                       icon and built-in sounds
+  Properties/PublishProfiles/   Folder.pubxml (used by scripts/build.ps1)
+```
+
 ## Threads
 
 | Thread | What runs there |
