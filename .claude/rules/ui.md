@@ -8,6 +8,6 @@ paths:
 
 # UI
 
-- Show the UI first: propose the visual result (ideally with more than one option) and wait
-  for a choice before implementing.
+- Before a UI change, follow "UI changes" in `working-rules.md` (ask whether the user wants
+  visual proposals as a Design artifact, wait for approval, then implement).
 - Keep the Windows 11 / Fluent look: WPF-UI controls, Settings-style cards, side rail.
