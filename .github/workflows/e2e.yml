@@ -1,11 +1,13 @@
 # End-to-end tests on a GitHub Windows machine (same as `make e2e`), so they never take over
-# a contributor's desktop. Runs on every push to main and can be started from the Actions tab.
+# a contributor's desktop. Runs on every push to main, before every release (the Release
+# workflow calls it) and from the Actions tab. The runner's screen is 1024x768.
 name: E2E
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read

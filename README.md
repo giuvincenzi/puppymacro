@@ -51,7 +51,7 @@ runs only on Windows.
 make dev       Build the current code and start it with fresh sample data. Closes a running PuppyMacro first.
 make dev-keep  Same, keeping the development build's data from the last run.
 make test      Run the unit tests (also on GitHub at every push).
-make e2e       Run the end-to-end tests on the development build. Do not use the PC meanwhile.
+make e2e       Run the end-to-end tests locally (they also run on GitHub). Do not use the PC meanwhile.
 make build     Create the distribution in dist/: PuppyMacro-win-Setup.exe and update packages.
 make docs      Build the website in site-preview/ with the guide of the current code.
 make release   Publish the version in PuppyMacro.csproj to GitHub Releases.
@@ -87,6 +87,7 @@ tests/PuppyMacro.Tests/            Unit tests (xUnit)
 tests/PuppyMacro.E2E/              End-to-end tests (xUnit + FlaUI)
 .github/workflows/release.yml      Release workflow (make release)
 .github/workflows/test.yml         Unit tests on every push
+.github/workflows/e2e.yml          End-to-end tests on every push and before a release
 .github/workflows/site.yml         Website publishing (after a release)
 site/                              Website and user guide sources (make docs, published on release)
 PuppyMacro/

@@ -19,7 +19,12 @@
 - `tests/PuppyMacro.E2E`: xUnit v3 + FlaUI (UIA3). `AppSession` closes any running PuppyMacro,
   deletes `%AppData%\PuppyMacro Dev` and starts the development build
   (`PuppyMacro/bin/Debug/...`), so every test starts from the sample data.
-- `make e2e` builds the dev build first. Tests run one at a time (one PuppyMacro at a time).
+- They run on GitHub (`.github/workflows/e2e.yml`) on every push to `main` and before every
+  release (the Release workflow stops when they fail). The runner's screen is 1024x768: do not
+  click controls that may be off screen there (for example the title bar of a tall window);
+  use UI Automation patterns instead (`Window.Close()`, `Invoke`).
+- `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one
+  PuppyMacro at a time).
 - They take over the desktop: windows open and close, the mouse moves, keys are pressed.
   **Never run `make e2e` (or anything else that drives the UI, like screenshot captures that
   bring PuppyMacro to the front) on a contributor's PC without asking first**: they cannot
