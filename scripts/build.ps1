@@ -47,6 +47,7 @@ $pack = @(
     '--mainExe', 'PuppyMacro.exe',
     '--icon', 'PuppyMacro/Assets/PuppyMacro.ico',
     '--framework', 'net10.0-x64-desktop',
+    '--noPortable',   # a portable copy would not update itself
     '--outputDir', 'dist'
 )
 if ($ReleaseNotes) { $pack += @('--releaseNotes', $ReleaseNotes) }
