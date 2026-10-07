@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.7.2
+
 ### Fixed
 - Small screens: the main window and the editors open inside the visible part of the screen
   (above the taskbar), shorter when needed, so the title bar and the Save button are always
