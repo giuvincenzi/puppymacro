@@ -52,7 +52,7 @@ else {
     Get-NextVersion ([version]'0.0.0') $section $version | Out-Null # validates the section
 }
 
-[System.IO.File]::WriteAllText([System.IO.Path]::GetFullPath((Join-Path (Get-Location).ProviderPath $NotesFile)),
-    (($section -join "`n").Trim() + "`n"), (New-Object System.Text.UTF8Encoding $false))
+[System.IO.File]::WriteAllText((Get-FullPath $NotesFile), (($section -join "`n").Trim() + "`n"),
+    (New-Object System.Text.UTF8Encoding $false))
 Write-Host "Releasing PuppyMacro $version"
 Set-Output 'publish' 'true'

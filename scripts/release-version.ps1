@@ -6,6 +6,13 @@
 
 $script:Subsections = @('Added', 'Changed', 'Fixed')
 
+# Full path of a path given on the command line (.NET file calls do not follow PowerShell's
+# current location). Absolute paths stay as they are.
+function Get-FullPath([string]$Path) {
+    if ([System.IO.Path]::IsPathRooted($Path)) { return [System.IO.Path]::GetFullPath($Path) }
+    return [System.IO.Path]::GetFullPath((Join-Path (Get-Location).ProviderPath $Path))
+}
+
 # Lines of a "## <title>" section of CHANGELOG.md, without its heading. $null if missing.
 function Get-ChangelogSection([string[]]$Lines, [string]$Title) {
     $found = $false

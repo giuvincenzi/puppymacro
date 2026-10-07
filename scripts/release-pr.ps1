@@ -13,10 +13,9 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'release-version.ps1')
 $utf8 = New-Object System.Text.UTF8Encoding $false
-# .NET file calls do not follow PowerShell's current location: use full paths.
-$Worktree = [System.IO.Path]::GetFullPath((Join-Path (Get-Location).ProviderPath $Worktree))
-$TagsFile = [System.IO.Path]::GetFullPath((Join-Path (Get-Location).ProviderPath $TagsFile))
-$MessageFile = [System.IO.Path]::GetFullPath((Join-Path (Get-Location).ProviderPath $MessageFile))
+$Worktree = Get-FullPath $Worktree
+$TagsFile = Get-FullPath $TagsFile
+$MessageFile = Get-FullPath $MessageFile
 
 $latest = Get-LatestVersion @(Get-Content $TagsFile)
 if (-not $latest) { throw 'No release tag vX.Y.Z found.' }
