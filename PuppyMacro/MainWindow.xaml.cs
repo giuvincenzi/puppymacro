@@ -58,6 +58,7 @@ public partial class MainWindow
         Title = App.DisplayTitle;
         AppTitleBar.Title = App.DisplayTitle;
         AboutText.Text = App.DisplayTitle;
+        DevBuildStrip.Visibility = App.IsDevBuild ? Visibility.Visible : Visibility.Collapsed;
 
         _sounds = new SoundService(Dispatcher) { Volume = settings.SoundVolume };
 
@@ -107,6 +108,13 @@ public partial class MainWindow
         ClickInPanelSwitch.IsChecked = settings.ClickItemsInPanel;
         CloseToTraySwitch.IsChecked = settings.CloseToTray;
         StartWithWindowsSwitch.IsChecked = settings.StartWithWindows;
+        if (App.IsDevBuild)
+        {
+            // The Run entry belongs to the installed app.
+            StartWithWindowsSwitch.IsEnabled = false;
+            StartWithWindowsText.Text = "Not available in the development build";
+        }
+        InitializeUpdates();
         BackupGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Backup");
         DataFolderText.Text = $"Data saved in {AppPaths.DataFolder}";
         RemapFilterBox.SelectedIndex = 0;

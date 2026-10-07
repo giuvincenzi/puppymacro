@@ -1,6 +1,6 @@
-# Publishes a release: builds the version in PuppyMacro.csproj, packages it with Velopack
-# (Setup.exe + update packages) and creates the GitHub Release vX.Y.Z.
-# Run it from the Actions tab (Release > Run workflow) or with: gh workflow run release.yml
+# Publishes a release: builds the distribution of the version in PuppyMacro.csproj with
+# scripts/build.ps1 (the same as `make build`) and uploads it as the GitHub Release vX.Y.Z.
+# Run it with `make release`, or from the Actions tab (Release > Run workflow).
 name: Release
 
 on:
@@ -11,9 +11,6 @@ permissions:
 
 concurrency:
   group: release
-
-env:
-  VPK_VERSION: 1.2.161
 
 jobs:
   release:
@@ -56,41 +53,22 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version" -Encoding utf8
           Write-Host "Releasing PuppyMacro $version"
 
-      - name: Publish
-        run: dotnet publish PuppyMacro/PuppyMacro.csproj -c Release -p:PublishProfile=Folder
-
-      - name: Install vpk
-        run: dotnet tool install --global vpk --version ${{ env.VPK_VERSION }}
-
-      # The previous release is needed to build the delta update package.
-      - name: Download previous release
+      # Same script as `make build`; also downloads the previous release for the delta package.
+      - name: Build the distribution
+        shell: pwsh
         run: >
-          vpk download github
-          --repoUrl ${{ github.server_url }}/${{ github.repository }}
-          --token ${{ secrets.GITHUB_TOKEN }}
-          --outputDir Releases
-
-      - name: Package
-        run: >
-          vpk pack
-          --packId PuppyMacro
-          --packVersion ${{ env.VERSION }}
-          --packTitle PuppyMacro
-          --packAuthors "Giuseppe Vincenzi"
-          --packDir publish
-          --mainExe PuppyMacro.exe
-          --icon PuppyMacro/Assets/PuppyMacro.ico
-          --framework net10.0-x64-desktop
-          --releaseNotes ${{ runner.temp }}/notes.md
-          --outputDir Releases
+          ./scripts/build.ps1
+          -ReleaseNotes "$env:RUNNER_TEMP/notes.md"
+          -PreviousReleaseRepo "${{ github.server_url }}/${{ github.repository }}"
+          -Token "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Create GitHub Release
         run: >
-          vpk upload github
+          ./.tools/vpk.exe upload github
           --repoUrl ${{ github.server_url }}/${{ github.repository }}
           --token ${{ secrets.GITHUB_TOKEN }}
           --publish
           --releaseName "PuppyMacro ${{ env.VERSION }}"
           --tag v${{ env.VERSION }}
           --targetCommitish ${{ github.sha }}
-          --outputDir Releases
+          --outputDir dist

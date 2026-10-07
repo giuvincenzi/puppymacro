@@ -18,12 +18,22 @@ public partial class App : Application
     private static bool _watchingSystemTheme;
 
     /// <summary>"PuppyMacro v1.1.0", from the version in PuppyMacro.csproj.</summary>
+    /// <summary>Debug build (make dev): marked as DEV in the window and the tray.</summary>
+    /// <remarks>Declared before <see cref="DisplayTitle"/>: static initializers run in declaration order.</remarks>
+    public static bool IsDevBuild { get; } =
+#if DEBUG
+        true;
+#else
+        false;
+#endif
+
     public static string DisplayTitle { get; } = BuildDisplayTitle();
 
     private static string BuildDisplayTitle()
     {
         Version? version = typeof(App).Assembly.GetName().Version;
-        return version == null ? "PuppyMacro" : $"PuppyMacro v{version.Major}.{version.Minor}.{version.Build}";
+        string title = version == null ? "PuppyMacro" : $"PuppyMacro v{version.Major}.{version.Minor}.{version.Build}";
+        return IsDevBuild ? $"{title} DEV" : title;
     }
 
     public const string RestartArgument = "--restart";
@@ -73,6 +83,9 @@ public partial class App : Application
         DispatcherUnhandledException += OnDispatcherUnhandledException;
 
         string? warning = null;
+#if DEBUG
+        DevSampleData.WriteIfEmpty();
+#else
         try
         {
             AppPaths.MigrateFromExeFolder();
@@ -81,6 +94,7 @@ public partial class App : Application
         {
             warning = $"Your loops and macros could not be copied to {AppPaths.DataFolder}.\n\nDetails: {ex.Message}";
         }
+#endif
 
         var store = new SettingsStore(AppPaths.SettingsFile);
         AppSettings settings = store.Load(out string? loadWarning);
@@ -91,7 +105,8 @@ public partial class App : Application
         warning ??= macroWarning;
 
         // Keep the Run entry pointing at this exe (new versions live in new folders).
-        if (settings.StartWithWindows)
+        // The development build never touches it: the entry belongs to the installed app.
+        if (settings.StartWithWindows && !IsDevBuild)
             StartupService.Apply(true);
 
         var window = new MainWindow(store, settings, macros);

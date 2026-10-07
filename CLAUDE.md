@@ -23,17 +23,26 @@ Guidance for Claude Code when working on PuppyMacro.
 
 ## Build
 
-- Requires a **.NET 10 SDK**. The app runs only on Windows.
-- Use whichever .NET 10 SDK is available:
-  - Windows: `dotnet`.
-  - WSL: a Linux SDK (`dotnet`), or the Windows SDK through WSL interop (`dotnet.exe`,
-    found through the Windows PATH that WSL adds by default). A Linux SDK needs
-    `-p:EnableWindowsTargeting=true` to build a Windows project (SDK error NETSDK1100).
-    From WSL the app can be built but not run; run it on Windows.
-- Debug build: `dotnet build PuppyMacro/PuppyMacro.csproj`
-- Run (Windows): `dotnet run --project PuppyMacro/PuppyMacro.csproj`
-- Local publish (exe + dlls in `publish/`):
-  `dotnet publish PuppyMacro/PuppyMacro.csproj -c Release -p:PublishProfile=Folder`
+- Requires a **.NET 10 SDK** and GNU make. The app runs only on Windows.
+- Commands (`Makefile`, which runs the PowerShell scripts in `scripts/`):
+  - `make dev`: closes a running PuppyMacro, builds Debug and starts it. Use it to try changes.
+  - `make dev-reset`: deletes the dev data folder; the next `make dev` starts with the samples.
+  - `make build`: the distribution in `dist/` (Velopack: `PuppyMacro-win-Setup.exe`, full
+    package, `releases.win.json`) for the version in the csproj. Nothing is uploaded.
+  - `make release`: runs the GitHub workflow `release.yml` (same `scripts/build.ps1`, then
+    uploads the GitHub Release `vX.Y.Z`).
+  - `make clean`.
+- From WSL the Makefile calls Windows PowerShell (`powershell.exe`), so builds use the Windows
+  .NET SDK and the app starts on Windows. The repository is then on a network path
+  (`\\wsl.localhost\...`): that is why `vpk` is installed in `.tools/` instead of a dotnet tool
+  manifest (manifests on network paths are refused).
+- Debug builds (`App.IsDevBuild`, `#if DEBUG`) show the orange "Development build" strip and
+  "DEV" in the title and tray tooltip, use their own data folder `%AppData%\PuppyMacro Dev`
+  (`AppPaths`), fill it with disabled samples when empty (`Services/DevSampleData.cs`, Debug
+  only), never touch the Start with Windows Run entry and skip the pre-1.6 data migration.
+  Release builds never do any of this. Keep the samples working when models change.
+- Smart App Control (Windows 11) blocks unsigned builds it has no reputation for; development
+  needs it off.
 - Always build after changes and fix all errors and warnings you introduced.
 
 ## Releases
@@ -41,13 +50,23 @@ Guidance for Claude Code when working on PuppyMacro.
 - Version lives only in `PuppyMacro/PuppyMacro.csproj` (`<Version>`); the title bar and
   About read it at runtime (`App.DisplayTitle`). Semantic versioning: features = minor,
   fixes = patch.
-- Each release: bump the version, update `CHANGELOG.md` and, if behavior changed, `README.md`.
+- Each release: bump the version, update `CHANGELOG.md` (the release notes are its
+  `## X.Y.Z` section; the workflow fails without it) and, if behavior changed, `README.md`.
+  Then push and `make release`.
+- The installed app updates from GitHub Releases (`Services/UpdateService.cs`,
+  `MainWindow.Updates.cs`): check at startup and every 12 hours, bar at the top + dot on
+  Settings while an update is available, Update stops all loops and macros, downloads,
+  exits normally and Velopack restarts the new version.
+- Velopack: `App.Main` runs `VelopackApp.Build().Run()` before WPF starts (App.xaml is a
+  Page, `StartupObject` is `PuppyMacro.App`). Keep the `Velopack` package version and
+  `$VpkVersion` in `scripts/build.ps1` equal.
 
 ## Stack
 
 - .NET 10 (`net10.0-windows`, `win-x64`, framework-dependent), WPF, **WPF-UI 4.1.0**
   (`FluentWindow`, `TitleBar`, `CardExpander`, `NumberBox`, `ToggleSwitch`, `SymbolIcon`...).
-- No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
+- **Velopack 1.2.161** (installer and updates). No other NuGet packages. Win32 through
+  P/Invoke in `Native/NativeMethods.cs`.
 - Nullable reference types on, implicit usings off (explicit `using`s).
 
 ## Architecture
@@ -102,10 +121,12 @@ Rules:
 - Game mode: `Views/GameModePanel`, `GameModeWindow` (click-through, no-activate),
   `PlacementWindow`.
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
-  (HKCU Run key, `--tray`).
+  (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
+- Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs`.
 
 ### Data and compatibility
-- Data folder: `%AppData%\PuppyMacro` (`AppPaths`). `settings.json` + `macros\{id}.json`.
+- Data folder: `%AppData%\PuppyMacro` (`AppPaths`; `PuppyMacro Dev` for Debug builds).
+  `settings.json` + `macros\{id}.json`.
 - `SettingsStore.Sanitize` validates and **migrates** old files. When the settings format
   or a default changes for existing users, bump `AppSettings.CurrentSchemaVersion` and add
   the migration there. Never break existing user data.

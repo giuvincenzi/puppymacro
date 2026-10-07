@@ -6,9 +6,13 @@ namespace PuppyMacro.Services;
 /// <summary>Where PuppyMacro keeps its data and where its exe is.</summary>
 internal static class AppPaths
 {
-    /// <summary>%AppData%\PuppyMacro: survives new versions extracted to other folders.</summary>
+    /// <summary>
+    /// %AppData%\PuppyMacro: survives new versions extracted to other folders.
+    /// The development build uses %AppData%\PuppyMacro Dev, so it never touches the user's data.
+    /// </summary>
     public static string DataFolder { get; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PuppyMacro");
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        App.IsDevBuild ? "PuppyMacro Dev" : "PuppyMacro");
 
     public static string SettingsFile => Path.Combine(DataFolder, "settings.json");
 

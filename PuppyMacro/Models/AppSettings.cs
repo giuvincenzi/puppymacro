@@ -177,6 +177,9 @@ public sealed class AppSettings
     /// <summary>Start in the system tray when the user signs in to Windows.</summary>
     public bool StartWithWindows { get; set; }
 
+    /// <summary>Check GitHub for a new version at startup and every few hours.</summary>
+    public bool CheckForUpdates { get; set; } = true;
+
     /// <summary>The "still running in the system tray" notification was shown once.</summary>
     public bool TrayNoticeShown { get; set; }
 

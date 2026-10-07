@@ -26,6 +26,8 @@ Current version: **1.6.0** (see [CHANGELOG.md](CHANGELOG.md)).
   Opacity and position are configurable (Position on screen).
 - **Sounds**: optional start/stop sound per loop or macro, with volume.
 - **System tray**: closing keeps PuppyMacro running in the tray; **Start with Windows**.
+- **Install and updates**: `PuppyMacro-win-Setup.exe` from GitHub Releases; the app checks for
+  new versions and updates itself (Settings > Updates).
 - **Data** in `%AppData%\PuppyMacro`, with **Export / Import** of everything as one
   `.puppymacro` file.
 - Light, Dark (default) or System theme.
@@ -33,31 +35,49 @@ Current version: **1.6.0** (see [CHANGELOG.md](CHANGELOG.md)).
 ## Requirements
 
 - Windows 10 or 11 (x64)
-- [.NET 10 SDK](https://dotnet.microsoft.com/download) to build:
-  `winget install --id Microsoft.DotNet.SDK.10 --exact`
+- To build: the [.NET 10 SDK](https://dotnet.microsoft.com/download)
+  (`winget install --id Microsoft.DotNet.SDK.10 --exact`) and GNU make.
+  In WSL `make` is usually installed already; on Windows: `winget install --id ezwinports.make --exact`.
+- To publish a release: the [GitHub CLI](https://cli.github.com/) (`gh`), signed in.
+
+From WSL the commands use the Windows .NET SDK (through Windows PowerShell), because the app
+runs only on Windows.
 
 ## Build and run
 
-```powershell
-git clone <repository-url>
-cd puppymacro
-
-# Development build and run
-dotnet build PuppyMacro\PuppyMacro.csproj
-dotnet run --project PuppyMacro\PuppyMacro.csproj
-
-# Local publish: exe + dll files in publish\ (works with Smart App Control on)
-dotnet publish PuppyMacro\PuppyMacro.csproj -c Release -p:PublishProfile=Folder
+```
+make dev       Build the current code and start it. Closes a running PuppyMacro first.
+make dev-reset Delete the development build's data; the next make dev starts with the samples.
+make build     Create the distribution in dist/: PuppyMacro-win-Setup.exe and update packages.
+make release   Publish the version in PuppyMacro.csproj to GitHub Releases.
+make clean     Remove build output.
 ```
 
-`build.cmd` runs the publish command. The app is
-framework-dependent: the PC needs the .NET 10 Desktop Runtime (included in the SDK).
+- **Dev** (`make dev`): a Debug build started from `PuppyMacro/bin/Debug/...`, not installed.
+  An orange **Development build** strip and **DEV** in the title mark it. It keeps its own data
+  in `%AppData%\PuppyMacro Dev` and never reads or changes the installed app's data: on first
+  start it creates sample loops, macros and remaps, all disabled. It does not update itself
+  and cannot turn on Start with Windows.
+- **Prod** (`make build`, `make release`): the same code built in Release and packaged with
+  [Velopack](https://velopack.io). `PuppyMacro-win-Setup.exe` installs PuppyMacro for the current user in
+  `%LocalAppData%\PuppyMacro` (no administrator rights), with Start menu and desktop shortcuts and
+  an entry in Settings > Apps > Installed apps. It installs the .NET 10 Desktop Runtime if missing.
+  The installed app checks GitHub Releases for new versions and updates itself.
+
+### Release
+
+1. Bump `<Version>` in `PuppyMacro/PuppyMacro.csproj` and add its section to `CHANGELOG.md`.
+2. Commit and push to `main`.
+3. `make release`: the Release workflow on GitHub runs `scripts/build.ps1` (the same as
+   `make build`) and creates the release `vX.Y.Z` with the CHANGELOG section as notes.
 
 ## Project structure
 
 ```
 PuppyMacro.sln
-build.cmd                          Publish shortcut (Folder profile)
+Makefile                           make dev / build / release / clean
+scripts/                           PowerShell scripts run by the Makefile
+.github/workflows/release.yml      Release workflow (make release)
 PuppyMacro/
   App.xaml(.cs)                    Startup: single instance, data migration, theme, tray start
   MainWindow.xaml(.cs)             Side rail: Loops, Macros, Remap, Settings; game mode; tray
@@ -69,7 +89,7 @@ PuppyMacro/
   Views/       View models and the shared game mode panel
   Native/      Win32 interop
   Assets/      Icon and the built-in sounds
-  Properties/PublishProfiles/      Folder.pubxml
+  Properties/PublishProfiles/      Folder.pubxml (used by make build)
 ```
 
 See [CLAUDE.md](CLAUDE.md) for the architecture, threading model and conventions.
@@ -81,21 +101,18 @@ See [CLAUDE.md](CLAUDE.md) for the architecture, threading model and conventions
 | Settings, loops, remaps | `%AppData%\PuppyMacro\settings.json` |
 | Macros (one file each) | `%AppData%\PuppyMacro\macros\{id}.json` |
 | Backups made before Import | `%AppData%\PuppyMacro\backup-before-import-*.puppymacro` |
+| Development build (`make dev`) | `%AppData%\PuppyMacro Dev` (same layout) |
 
 Data from versions before 1.6 (next to the exe) is copied there on first start.
 
 ## Windows Smart App Control
 
-On Windows 11 with **Smart App Control** on, unsigned files from the internet are blocked
-with no "Run anyway" option:
-
-- Scripts (`build.cmd`) from a downloaded ZIP: drag them into a PowerShell window and
-  press Enter, or unblock the ZIP before extracting it (right-click > Properties >
-  Unblock). Builds from a `git clone` are not affected.
-
-Smart App Control can also be turned off (Settings > Privacy & security > Windows Security >
-App & browser control > Smart App Control settings); on Windows 11 updated to April 2026 or
-later it can be turned back on without reinstalling Windows.
+On Windows 11 with **Smart App Control** on, files that are not signed and have no
+reputation yet are blocked with no "Run anyway" option. Every new build is a new file, so
+`make dev` builds can be blocked ("Part of this app has been blocked"). Development needs
+Smart App Control off: Settings > Privacy & security > Windows Security > App & browser
+control > Smart App Control settings. On Windows 11 updated to April 2026 or later it can be
+turned back on without reinstalling Windows.
 
 ## Notes
 
