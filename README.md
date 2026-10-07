@@ -92,7 +92,7 @@ PuppyMacro/
   Properties/PublishProfiles/      Folder.pubxml (used by make build)
 ```
 
-See [CLAUDE.md](CLAUDE.md) for the architecture, threading model and conventions.
+See [.claude/CLAUDE.md](.claude/CLAUDE.md) and [.claude/rules/](.claude/rules/) for the architecture, threading model and conventions.
 
 ## Data
 
