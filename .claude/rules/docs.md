@@ -14,12 +14,7 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
 
 ## Versions and publishing
 
-- Until the 1.7.1 release, GitHub Pages still serves the old single-page site from `docs/`
-  (branch `main`, folder `/docs`). At that release: set Pages to "GitHub Actions"
-  (`gh api -X PUT repos/giuvincenzi/puppymacro/pages -f build_type=workflow`), release, then
-  delete `docs/` and this note.
-
-- The site is published only by releases: the Release workflow runs the Site workflow after
+- GitHub Pages is set to "GitHub Actions". The site is published only by releases: the Release workflow runs the Site workflow after
   the GitHub Release. Pushing to `main` does not change the published site.
 - Each guide version is built from `site/guide/` at the tag `vX.Y.Z` of that release, so a
   released guide never changes. Home, template and style come from the latest release.
