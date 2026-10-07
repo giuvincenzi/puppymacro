@@ -40,7 +40,8 @@ or UI text:
 - update the matching file in `site/guide/` (new feature: new file and a line in
   `sections.txt`);
 - update the feature cards in `site/index.html` when the feature list changes;
-- add a line under `## Unreleased` in `CHANGELOG.md`;
+- add a line under `## Unreleased` in `CHANGELOG.md`, in the right subsection (see
+  `build-and-release.md`);
 - replace screenshots that no longer match the app.
 
 ## Accuracy

@@ -18,8 +18,7 @@
   - `make test`: unit tests; `make e2e`: end-to-end tests (see `testing.md`).
   - `make docs`, `make docs-serve`: website preview in `site-preview/`, served locally by
     `docs-serve` (see `docs.md`).
-  - `make release`: runs the GitHub workflow `release.yml` (same `scripts/build.ps1`, then
-    uploads the GitHub Release `vX.Y.Z`, then publishes the website with `site.yml`).
+  - `make release-pr`, `make release`: see Releases below.
   - `make clean`.
 - From WSL the Makefile calls Windows PowerShell (`powershell.exe`), so builds use the Windows
   .NET SDK and the app starts on Windows. The repository is then on a network path
@@ -47,18 +46,23 @@
 
 ## Releases
 
-- Version lives only in `PuppyMacro/PuppyMacro.csproj` (`<Version>`); the title bar and
-  About read it at runtime (`App.DisplayTitle`). Semantic versioning: features = minor,
-  fixes = patch.
-- **Between releases**, `CHANGELOG.md` starts with a `## Unreleased` section. Every
-  user-visible change adds its line there, in its own pull request. A change never touches the
-  version number.
-- **A release** is decided by the user. Its pull request:
-  - chooses the version from what is under `## Unreleased`: patch if it holds only fixes,
-    minor if it holds at least one new feature;
-  - renames `## Unreleased` to `## X.Y.Z` and adds a new empty `## Unreleased` above it;
-  - sets `<Version>` in the csproj.
-  After the user approves and it is merged, `make release` (or Actions > Release > Run
-  workflow) starts the Release workflow on `main`: `make release` only starts it, all the work
-  runs on GitHub. The workflow fails if the tag already exists, if `## X.Y.Z` is missing or if
-  entries are left under `## Unreleased`. Nothing is released automatically on merge.
+Releases are deterministic: never edit the version number or move CHANGELOG entries by hand.
+The version lives only in `PuppyMacro/PuppyMacro.csproj` (`<Version>`); the app reads it at
+runtime (`App.DisplayTitle`).
+
+### Between releases
+- `CHANGELOG.md` starts with `## Unreleased`, split into `### Added`, `### Changed`,
+  `### Fixed`. Every user-visible change adds its line there, in its own pull request.
+- A normal pull request never changes `<Version>` in `PuppyMacro/PuppyMacro.csproj`.
+
+### Making a release
+1. `make release-pr`, only when the user asks for a release: computes the next version from
+   the latest tag and `## Unreleased` (minor if Added/Changed, patch if only Fixed), prepares
+   the CHANGELOG and the csproj, and opens the pull request "Release X.Y.Z". Details:
+   `scripts/release-pr.ps1`.
+2. The user approves the merge.
+3. The merge publishes it: the Release workflow tests, builds, creates the GitHub Release
+   (GitHub creates the tag `vX.Y.Z`) and updates the website. Details:
+   `.github/workflows/release.yml`.
+
+`make release` only retries a release that failed; it never republishes an existing tag.

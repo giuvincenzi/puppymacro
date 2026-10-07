@@ -1,9 +1,13 @@
-# Publishes a release: builds the distribution of the version in PuppyMacro.csproj with
-# scripts/build.ps1 (the same as `make build`) and uploads it as the GitHub Release vX.Y.Z.
-# Run it with `make release`, or from the Actions tab (Release > Run workflow).
+# Publishes a release: when a push to main changes PuppyMacro.csproj (the merge of a "Release X.Y.Z"
+# pull request from `make release-pr`) and its version has no tag yet. scripts/release-check.ps1
+# decides and checks it; GitHub creates the tag vX.Y.Z with the release. `make release` (or
+# Actions > Release > Run workflow) only retries; an existing tag is never published again.
 name: Release
 
 on:
+  push:
+    branches: [main]
+    paths: [PuppyMacro/PuppyMacro.csproj]
   workflow_dispatch:
 
 permissions:
@@ -14,67 +18,45 @@ concurrency:
 
 # Releases come only from main: on another branch every job is skipped.
 jobs:
+  check:
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    outputs:
+      publish: ${{ steps.check.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # tags: the next version is computed from the latest one
+
+      - id: check
+        name: Version, tag and changelog
+        shell: pwsh
+        run: ./scripts/release-check.ps1 -NotesFile "$env:RUNNER_TEMP/notes.md"
+
   # A release never ships with failing end-to-end tests.
   e2e:
-    if: github.ref == 'refs/heads/main'
+    needs: check
+    if: needs.check.outputs.publish == 'true'
     uses: ./.github/workflows/e2e.yml
 
   release:
-    needs: e2e
-    if: github.ref == 'refs/heads/main'
+    needs: [check, e2e]
+    if: needs.check.outputs.publish == 'true'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
-      - name: Check version, tag and changelog
+      - id: check
+        name: Version, tag and changelog
         shell: pwsh
-        run: |
-          $version = ([xml](Get-Content PuppyMacro/PuppyMacro.csproj)).Project.PropertyGroup.Version |
-              Where-Object { $_ } | Select-Object -First 1
-          if (-not $version) { throw "No <Version> in PuppyMacro/PuppyMacro.csproj." }
+        run: ./scripts/release-check.ps1 -NotesFile "$env:RUNNER_TEMP/notes.md"
 
-          $existingTag = git ls-remote --tags origin "refs/tags/v$version"
-          if ($LASTEXITCODE -ne 0) { throw "Could not read the tags of origin." }
-          if ($existingTag) {
-              throw "Tag v$version already exists. Bump <Version> in PuppyMacro/PuppyMacro.csproj."
-          }
-
-          # Release notes: the CHANGELOG.md section of this version.
-          $notes = @()
-          $inSection = $false
-          foreach ($line in Get-Content CHANGELOG.md) {
-              if ($line -match '^## ') {
-                  if ($inSection) { break }
-                  $inSection = $line.Trim() -eq "## $version"
-                  continue
-              }
-              if ($inSection) { $notes += $line }
-          }
-          $notes = ($notes -join "`n").Trim()
-          if (-not $notes) { throw "CHANGELOG.md has no '## $version' section." }
-
-          # Nothing may stay under "## Unreleased": it belongs to this release.
-          $unreleased = @()
-          $inUnreleased = $false
-          foreach ($line in Get-Content CHANGELOG.md) {
-              if ($line -match '^## ') {
-                  if ($inUnreleased) { break }
-                  $inUnreleased = $line.Trim() -eq '## Unreleased'
-                  continue
-              }
-              if ($inUnreleased -and $line.Trim()) { $unreleased += $line }
-          }
-          if ($unreleased) { throw "CHANGELOG.md still has entries under '## Unreleased': move them to '## $version'." }
-
-          Set-Content -Path "$env:RUNNER_TEMP/notes.md" -Value $notes -Encoding utf8
-          Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version" -Encoding utf8
-          Write-Host "Releasing PuppyMacro $version"
-
-      # A release never ships with failing tests.
       - name: Unit tests
         run: dotnet test --project tests/PuppyMacro.Tests/PuppyMacro.Tests.csproj -c Release
 
@@ -93,8 +75,8 @@ jobs:
           --repoUrl ${{ github.server_url }}/${{ github.repository }}
           --token ${{ secrets.GITHUB_TOKEN }}
           --publish
-          --releaseName "PuppyMacro ${{ env.VERSION }}"
-          --tag v${{ env.VERSION }}
+          --releaseName "PuppyMacro ${{ steps.check.outputs.version }}"
+          --tag v${{ steps.check.outputs.version }}
           --targetCommitish ${{ github.sha }}
           --outputDir dist
 
