@@ -7,7 +7,7 @@ namespace PuppyMacro.Services;
 
 /// <summary>
 /// Development build only: fills an empty dev data folder with example loops, macros and
-/// remaps, all disabled. `make dev-reset` deletes the folder to start again from these.
+/// remaps, all disabled. `make dev` deletes the folder first, so every run starts from these.
 /// </summary>
 internal static class DevSampleData
 {

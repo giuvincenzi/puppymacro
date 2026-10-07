@@ -4,8 +4,9 @@
 
 - Requires a **.NET 10 SDK** and GNU make. The app runs only on Windows.
 - `Makefile`, which runs the PowerShell scripts in `scripts/`:
-  - `make dev`: closes a running PuppyMacro, builds Debug and starts it. Use it to try changes.
-  - `make dev-reset`: deletes the dev data folder; the next `make dev` starts with the samples.
+  - `make dev`: closes a running PuppyMacro, deletes the dev data folder, builds Debug and
+    starts it, so every run starts from the samples. Use it to try changes.
+  - `make dev-keep`: same, keeping the dev data (to check that something stays saved).
   - `make build`: the distribution in `dist/` (Velopack: `PuppyMacro-win-Setup.exe`, full
     package, `releases.win.json`) for the version in the csproj. Nothing is uploaded.
   - `make docs`: website preview in `site-preview/` (see `docs.md`).

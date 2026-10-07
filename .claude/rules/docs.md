@@ -44,8 +44,7 @@ or UI text:
 - Describe only what the code does. Check the code before writing a sentence about
   behavior, defaults or limits.
 - Use the exact UI texts from the XAML (button, setting and window names).
-- Screenshots: from the development build with the sample data (`make dev-reset`, then
-  `make dev`), capturing only PuppyMacro's window. Never show personal data, user names or
-  other windows.
+- Screenshots: from the development build with the sample data (`make dev`), capturing only
+  PuppyMacro's window. Never show personal data, user names or other windows.
 - The download link is `https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe`:
   keep the Setup file name stable.

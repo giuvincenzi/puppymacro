@@ -48,8 +48,8 @@ runs only on Windows.
 ## Build and run
 
 ```
-make dev       Build the current code and start it. Closes a running PuppyMacro first.
-make dev-reset Delete the development build's data; the next make dev starts with the samples.
+make dev       Build the current code and start it with fresh sample data. Closes a running PuppyMacro first.
+make dev-keep  Same, keeping the development build's data from the last run.
 make build     Create the distribution in dist/: PuppyMacro-win-Setup.exe and update packages.
 make docs      Build the website in site-preview/ with the guide of the current code.
 make release   Publish the version in PuppyMacro.csproj to GitHub Releases.
@@ -58,8 +58,8 @@ make clean     Remove build output.
 
 - **Dev** (`make dev`): a Debug build started from `PuppyMacro/bin/Debug/...`, not installed.
   An orange **Development build** strip and **DEV** in the title mark it. It keeps its own data
-  in `%AppData%\PuppyMacro Dev` and never reads or changes the installed app's data: on first
-  start it creates sample loops, macros and remaps, all disabled. It does not update itself
+  in `%AppData%\PuppyMacro Dev` and never reads or changes the installed app's data: `make dev`
+  recreates it with sample loops, macros and remaps, all disabled. It does not update itself
   and cannot turn on Start with Windows.
 - **Prod** (`make build`, `make release`): the same code built in Release and packaged with
   [Velopack](https://velopack.io). `PuppyMacro-win-Setup.exe` installs PuppyMacro for the current user in
