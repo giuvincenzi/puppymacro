@@ -34,9 +34,6 @@ Guidance for Claude Code when working on PuppyMacro.
 - Run (Windows): `dotnet run --project PuppyMacro/PuppyMacro.csproj`
 - Local publish (exe + dlls in `publish/`):
   `dotnet publish PuppyMacro/PuppyMacro.csproj -c Release -p:PublishProfile=Folder`
-- Single-file publish (`release/`): same command with `-p:PublishProfile=SingleFile`.
-  An unsigned single-file exe is often blocked by Smart App Control; test with the Folder
-  build.
 - Always build after changes and fix all errors and warnings you introduced.
 
 ## Releases

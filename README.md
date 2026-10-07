@@ -48,19 +48,16 @@ dotnet run --project PuppyMacro\PuppyMacro.csproj
 
 # Local publish: exe + dll files in publish\ (works with Smart App Control on)
 dotnet publish PuppyMacro\PuppyMacro.csproj -c Release -p:PublishProfile=Folder
-
-# Release publish: one PuppyMacro.exe in release\ (for distribution / code signing)
-dotnet publish PuppyMacro\PuppyMacro.csproj -c Release -p:PublishProfile=SingleFile
 ```
 
-`build.cmd` and `build-release.cmd` run the two publish commands. The app is
+`build.cmd` runs the publish command. The app is
 framework-dependent: the PC needs the .NET 10 Desktop Runtime (included in the SDK).
 
 ## Project structure
 
 ```
 PuppyMacro.sln
-build.cmd / build-release.cmd      Publish shortcuts (Folder / SingleFile profiles)
+build.cmd                          Publish shortcut (Folder profile)
 PuppyMacro/
   App.xaml(.cs)                    Startup: single instance, data migration, theme, tray start
   MainWindow.xaml(.cs)             Side rail: Loops, Macros, Remap, Settings; game mode; tray
@@ -72,7 +69,7 @@ PuppyMacro/
   Views/       View models and the shared game mode panel
   Native/      Win32 interop
   Assets/      Icon and the built-in sounds
-  Properties/PublishProfiles/      Folder.pubxml, SingleFile.pubxml
+  Properties/PublishProfiles/      Folder.pubxml
 ```
 
 See [CLAUDE.md](CLAUDE.md) for the architecture, threading model and conventions.
@@ -92,10 +89,9 @@ Data from versions before 1.6 (next to the exe) is copied there on first start.
 On Windows 11 with **Smart App Control** on, unsigned files from the internet are blocked
 with no "Run anyway" option:
 
-- Scripts (`build.cmd`, `build-release.cmd`) from a downloaded ZIP: drag them into a
-  PowerShell window and press Enter, or unblock the ZIP before extracting it
-  (right-click > Properties > Unblock). Builds from a `git clone` are not affected.
-- The single-file exe in `release\` is usually blocked; the `publish\` build starts normally.
+- Scripts (`build.cmd`) from a downloaded ZIP: drag them into a PowerShell window and
+  press Enter, or unblock the ZIP before extracting it (right-click > Properties >
+  Unblock). Builds from a `git clone` are not affected.
 
 Smart App Control can also be turned off (Settings > Privacy & security > Windows Security >
 App & browser control > Smart App Control settings); on Windows 11 updated to April 2026 or

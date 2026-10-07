@@ -16,7 +16,7 @@
     <StartupObject>PuppyMacro.App</StartupObject>
 
     <!-- Framework-dependent (uses the .NET 10 Desktop Runtime).
-         Folder or single-file output is chosen by the publish profiles in Properties\PublishProfiles. -->
+         Publish with the Folder profile in Properties\PublishProfiles. -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <DebugType>embedded</DebugType>

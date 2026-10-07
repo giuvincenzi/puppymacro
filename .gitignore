@@ -2,7 +2,6 @@
 bin/
 obj/
 publish/
-release/
 *.puppymacro.tmp
 
 # IDE
