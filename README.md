@@ -104,3 +104,8 @@ later it can be turned back on without reinstalling Windows.
 - If the target application runs as administrator, run PuppyMacro as administrator too.
 - Mouse rows and macro clicks never click on PuppyMacro's own windows.
 - Hotkeys and remap source keys are blocked from reaching other applications.
+
+## License
+
+[MIT](LICENSE). Third-party components: [WPF-UI](https://github.com/lepoco/wpfui) (MIT),
+[Velopack](https://github.com/velopack/velopack) (MIT).
