@@ -1,4 +1,5 @@
 using System.Windows;
+using PuppyMacro.Views;
 
 namespace PuppyMacro;
 
@@ -8,6 +9,7 @@ public partial class RecordPromptWindow
     public RecordPromptWindow(string hotkey, bool recordMouseMovement)
     {
         InitializeComponent();
+        WindowFit.Apply(this);
         HotkeyText.Text = hotkey;
         _recordMouseMovement = recordMouseMovement;
         MouseMovementBox.IsChecked = recordMouseMovement;

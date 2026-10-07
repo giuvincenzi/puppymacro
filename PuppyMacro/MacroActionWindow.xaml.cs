@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
+using PuppyMacro.Views;
 
 namespace PuppyMacro;
 
@@ -17,6 +18,7 @@ public partial class MacroActionWindow
     internal MacroActionWindow(LoopEngine engine, MacroAction action, bool isNew)
     {
         InitializeComponent();
+        WindowFit.Apply(this);
         _engine = engine;
         _action = action.Clone();
         _keyVk = _action.Vk;

@@ -34,6 +34,7 @@ public partial class MacroEditorWindow
         MacroDefinition? existing, IEnumerable<MacroAction>? recorded = null)
     {
         InitializeComponent();
+        WindowFit.Apply(this);
         _engine = engine;
         _settings = settings;
         _macros = macros;

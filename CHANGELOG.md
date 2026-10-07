@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.2
+- Small screens: the main window and the editors open inside the visible part of the screen
+  (above the taskbar), shorter when needed, so the title bar and the Save button are always
+  reachable. On a 1024x768 screen the main window used to open with its title bar off screen.
+
 ## 1.7.1
 - Loop editor: a key row shows Repeat / Hold down on the first line and the interval on the
   second, so the options are no longer cut off.

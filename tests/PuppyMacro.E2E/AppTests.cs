@@ -85,6 +85,29 @@ public class AppTests
     }
 
     [Fact]
+    public void Windows_fit_on_a_small_screen()
+    {
+        // On GitHub the screen is 1024x768: the main window (820 high) and the macro editor
+        // (about 790) do not fit unless they are made shorter.
+        using var app = new AppSession();
+        System.Drawing.Rectangle workArea = System.Windows.Forms.Screen.PrimaryScreen!.WorkingArea;
+
+        AssertInside(workArea, app.MainWindow);
+
+        app.GoTo("Macros");
+        app.ItemMenu("Sample: type and confirm", "Edit");
+        Window editor = app.Dialog("Edit macro");
+        AssertInside(workArea, editor);
+        AssertInside(workArea, app.FindById(editor, "SaveButton"));
+    }
+
+    private static void AssertInside(System.Drawing.Rectangle workArea, AutomationElement element)
+    {
+        System.Drawing.Rectangle bounds = element.BoundingRectangle;
+        Assert.True(workArea.Contains(bounds), $"\"{element.Name}\" {bounds} is not inside the work area {workArea}");
+    }
+
+    [Fact]
     public void Game_mode_hides_the_window_and_F11_brings_it_back()
     {
         using var app = new AppSession();

@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
+using PuppyMacro.Views;
 
 namespace PuppyMacro;
 
@@ -24,6 +25,7 @@ public partial class RemapEditorWindow
     internal RemapEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, RemapDefinition? existing)
     {
         InitializeComponent();
+        WindowFit.Apply(this);
         _engine = engine;
         _settings = settings;
         _macros = macros;

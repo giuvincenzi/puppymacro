@@ -98,6 +98,24 @@ public sealed class AppSession : IDisposable
         Find(MainWindow, page).AsRadioButton().IsChecked = true;
     }
 
+    /// <summary>Opens the "…" menu of the list item showing <paramref name="itemText"/> and selects <paramref name="menuItem"/>.</summary>
+    public void ItemMenu(string itemText, string menuItem)
+    {
+        AutomationElement text = Find(MainWindow, itemText);
+        double y = text.BoundingRectangle.Y;
+        // The "…" button is the right-most unnamed button on the item's row.
+        AutomationElement more = MainWindow
+            .FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))
+            .Where(b => string.IsNullOrEmpty(b.Name) && string.IsNullOrEmpty(b.AutomationId)
+                        && Math.Abs(b.BoundingRectangle.Y + b.BoundingRectangle.Height / 2 - y) < 40)
+            .OrderBy(b => b.BoundingRectangle.X)
+            .Last();
+        more.Click();
+        Retry.WhileNull(() => Automation.GetDesktop().FindFirstDescendant(cf =>
+                cf.ByControlType(FlaUI.Core.Definitions.ControlType.MenuItem).And(cf.ByName(menuItem))),
+            Timeout, throwOnTimeout: true, timeoutMessage: $"menu item \"{menuItem}\" not found").Result!.Click();
+    }
+
     /// <summary>A window of PuppyMacro with this title (dialogs are children of the main window).</summary>
     public Window Dialog(string title) =>
         Retry.WhileNull(() => MainWindow.ModalWindows.FirstOrDefault(w => w.Title == title), Timeout, throwOnTimeout: true,

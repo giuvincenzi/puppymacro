@@ -50,6 +50,7 @@ public partial class MainWindow
     {
         _initializing = true;
         InitializeComponent();
+        WindowFit.Apply(this);
 
         _store = store;
         _settings = settings;

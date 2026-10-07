@@ -8,6 +8,8 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <IsPackable>false</IsPackable>
     <RootNamespace>PuppyMacro.E2E</RootNamespace>
+    <!-- Screen.WorkingArea: the screen without the taskbar -->
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>

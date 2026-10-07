@@ -31,6 +31,7 @@ public partial class LoopEditorWindow
     internal LoopEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds, LoopDefinition? existing)
     {
         InitializeComponent();
+        WindowFit.Apply(this);
         _engine = engine;
         _settings = settings;
         _macros = macros;
