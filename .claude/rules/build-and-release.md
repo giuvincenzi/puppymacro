@@ -9,7 +9,8 @@
   - `make dev-keep`: same, keeping the dev data (to check that something stays saved).
   - `make build`: the distribution in `dist/` (Velopack: `PuppyMacro-win-Setup.exe`, full
     package, `releases.win.json`) for the version in the csproj. Nothing is uploaded.
-  - `make docs`: website preview in `site-preview/` (see `docs.md`).
+  - `make docs`, `make docs-serve`: website preview in `site-preview/`, served locally by
+    `docs-serve` (see `docs.md`).
   - `make release`: runs the GitHub workflow `release.yml` (same `scripts/build.ps1`, then
     uploads the GitHub Release `vX.Y.Z`, then publishes the website with `site.yml`).
   - `make clean`.
@@ -36,4 +37,4 @@
   fixes = patch.
 - Each release: bump the version, update `CHANGELOG.md` (the release notes are its
   `## X.Y.Z` section; the workflow fails without it) and, if behavior changed, `README.md`.
-  Then push and `make release`.
+  Merge them into `main` through a pull request (see `git-workflow.md`), then `make release`.

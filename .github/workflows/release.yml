@@ -12,13 +12,16 @@ permissions:
 concurrency:
   group: release
 
+# Releases come only from main: on another branch every job is skipped.
 jobs:
   # A release never ships with failing end-to-end tests.
   e2e:
+    if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/e2e.yml
 
   release:
     needs: e2e
+    if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7

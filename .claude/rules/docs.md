@@ -14,14 +14,17 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
 
 ## Versions and publishing
 
-- GitHub Pages is set to "GitHub Actions". The site is published only by releases: the Release workflow runs the Site workflow after
-  the GitHub Release. Pushing to `main` does not change the published site.
+- GitHub Pages is set to "GitHub Actions". The site is published only by releases, which run
+  only on `main`: the Release workflow runs the Site workflow after the GitHub Release. Pushing
+  to `main` does not change the published site.
 - Each guide version is built from `site/guide/` at the tag `vX.Y.Z` of that release, so a
   released guide never changes. Home, template and style come from the latest release.
   `guide/latest/` redirects to the newest version.
 - `make docs` builds a preview in `site-preview/` with the guide of the current code as
-  version "next". Released versions are added only when git is available to Windows
-  PowerShell (in WSL it usually is not).
+  version "next". `make docs-serve` builds it and serves it at `http://localhost:8080/`
+  (`scripts/site-serve.ps1`, .NET `HttpListener`), so links work as on the real site.
+  Released versions are added only when git is available to Windows PowerShell (in WSL it
+  usually is not).
 
 ## Every user-visible change updates the documentation
 

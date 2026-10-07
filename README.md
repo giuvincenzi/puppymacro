@@ -56,6 +56,7 @@ make test      Run the unit tests (also on GitHub at every push).
 make e2e       Run the end-to-end tests locally (they also run on GitHub). Do not use the PC meanwhile.
 make build     Create the distribution in dist/: PuppyMacro-win-Setup.exe and update packages.
 make docs      Build the website in site-preview/ with the guide of the current code.
+make docs-serve  Same, then serve it at http://localhost:8080/ (Ctrl+C to stop).
 make release   Publish the version in PuppyMacro.csproj to GitHub Releases.
 make clean     Remove build output.
 ```
