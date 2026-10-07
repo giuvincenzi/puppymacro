@@ -21,3 +21,4 @@ Never commit directly on `main` and never push to `main`.
 - Changes reach `main` only through a pull request.
 - The pull request needs the checks **Test** (unit tests) and **E2E** (end-to-end tests) to pass.
 - Release and Site workflows run only on `main`: on another branch they do nothing.
+- Merging a "Release X.Y.Z" pull request publishes the release.
