@@ -3,7 +3,7 @@
 General-purpose input automation for Windows 10/11: loops, recorded macros, key remaps and
 an in-game panel. Built with .NET 10, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 
-Current version: **1.6.0** (see [CHANGELOG.md](CHANGELOG.md)).
+Current version: **1.7.0** (see [CHANGELOG.md](CHANGELOG.md)).
 
 ## Features
 

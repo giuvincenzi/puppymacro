@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.7.0
+- **Installer and automatic updates**: PuppyMacro is now installed with
+  `PuppyMacro-win-Setup.exe` from the GitHub Releases (per user, no administrator rights; it
+  installs the .NET 10 Desktop Runtime if missing). The app checks for new versions at startup
+  and every 12 hours: a bar at the top and a dot on Settings show an available update, and
+  **Update** downloads it and restarts PuppyMacro. Settings > Updates, with
+  **Check for updates automatically**.
+- Uninstalling (Settings > Apps > Installed apps) also removes the Start with Windows entry.
+- Coming from 1.6: install with Setup, then delete the old 1.6 folder. Loops, macros, remaps
+  and settings stay in `%AppData%\PuppyMacro` and are kept; Start with Windows moves to the
+  installed app at its first start.
+
 ## 1.6.0
 - Loops: Key rows can be **held down** while the loop runs.
 - **System tray**: Close to system tray (on by default), tray menu (Open, Stop all, Exit),
