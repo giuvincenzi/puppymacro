@@ -211,6 +211,13 @@ public partial class MainWindow
         e.Handled = true;
     }
 
+    /// <summary>About's User guide and GitHub: opens the button's Tag in the browser.</summary>
+    private void OnOpenLinkClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is string url)
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+    }
+
     private async void OnCheckForUpdatesChanged(object sender, RoutedEventArgs e)
     {
         if (_initializing)

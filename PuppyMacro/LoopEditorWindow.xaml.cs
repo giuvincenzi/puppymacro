@@ -59,10 +59,10 @@ public partial class LoopEditorWindow
         LoadLoop(source);
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
 
-        _code = new CodeViewSwitch<LoopDefinition>(this, ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
+        _code = new CodeViewSwitch<LoopDefinition>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForLoop(_itemId), FormLoop, LoopJson.Serialize,
             (string text, out List<CodeProblem> problems) => LoopJson.Parse(text, _itemId, HotkeyConflict, out problems),
-            LoadLoop, Validate, new Size(820, 680));
+            LoadLoop, Validate);
         _code.Opening += () =>
         {
             _engine.CancelCapture();

@@ -5,9 +5,11 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="Add remap"
-    Width="500"
-    SizeToContent="Height"
-    ResizeMode="NoResize"
+    Width="900"
+    Height="560"
+    MinWidth="760"
+    MinHeight="440"
+    ResizeMode="CanResize"
     ShowInTaskbar="False"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="Mica"
@@ -37,11 +39,12 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="160" />
                     <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="160" />
                 </Grid.ColumnDefinitions>
-                <ui:Button x:Name="SaveButton" Grid.Column="0" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button x:Name="CancelButton" Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <ui:Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
+                <ui:Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
 
@@ -50,7 +53,13 @@
 
         <Grid>
             <views:CodeView x:Name="CodeView" Margin="24,0,24,12" Visibility="Collapsed" />
-            <StackPanel x:Name="FormBody" Margin="24,4,24,12">
+            <!-- Form view: the keys on the left, where and why on the right -->
+            <Grid x:Name="FormBody">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="400" />
+                </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="24,4,24,12">
                 <!-- Source -->
                 <TextBlock Margin="0,0,0,6" Text="When I press" />
                 <Grid>
@@ -71,9 +80,12 @@
                 </Grid>
                 <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
                            Text="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first." />
+            </StackPanel>
 
+            <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+            <StackPanel Margin="24,4,24,12">
                 <!-- Scope -->
-                <TextBlock Margin="0,18,0,6" Text="Works in" />
+                <TextBlock Margin="0,0,0,6" Text="Works in" />
                 <StackPanel Orientation="Horizontal">
                     <RadioButton x:Name="AllAppsRadio" Content="All apps" GroupName="Scope" Checked="OnScopeChanged" />
                     <RadioButton x:Name="OneAppRadio" Margin="16,0,0,0" Content="A specific app" GroupName="Scope" Checked="OnScopeChanged" />
@@ -95,8 +107,9 @@
                 <!-- Note -->
                 <TextBlock Margin="0,18,0,6" Text="Note (optional)" />
                 <ui:TextBox x:Name="NoteBox" PlaceholderText="e.g. Refresh with side button" />
-
             </StackPanel>
+            </Border>
+            </Grid>
         </Grid>
     </DockPanel>
 </ui:FluentWindow>

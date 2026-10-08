@@ -6,8 +6,8 @@
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="PuppyMacro"
     Icon="pack://application:,,,/Assets/PuppyMacro.ico"
-    Width="620"
-    Height="820"
+    Width="2130"
+    Height="1350"
     MinWidth="560"
     MinHeight="560"
     ExtendsContentIntoTitleBar="True"
@@ -579,7 +579,7 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="Stop all" />
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Stops every running loop" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Stops everything that is running: every loop and macro" />
                                 </StackPanel>
                                 <ItemsControl x:Name="StopAllHotkeyCaps" Grid.Column="1" Margin="8,0,4,0" VerticalAlignment="Center"
                                               ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource HorizontalPanel}" />
@@ -703,7 +703,7 @@
                                     <StackPanel Margin="0,0,90,0">
                                         <TextBlock Text="Click items in the panel to start or stop them" TextWrapping="Wrap" />
                                         <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                                   Text="Loops and macros in the overlay panel become clickable. Hold items stay hotkey only. Floating buttons are always clickable." />
+                                                   Text="Loops, macros, Stop all and the exit button in the overlay panel become clickable. Hold items stay hotkey only. Floating buttons are always clickable." />
                                     </StackPanel>
                                     <ui:ToggleSwitch x:Name="ClickInPanelSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                      OffContent="Off" OnContent="On"
@@ -781,60 +781,61 @@
                         </StackPanel>
                     </ui:CardExpander>
 
-                    <!-- Updates -->
+                    <!-- Updates: the status and the automatic check in one card -->
                     <Border x:Name="UpdateCard" Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon x:Name="UpdateCardIcon" Symbol="ArrowSync24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Updates" />
-                                <TextBlock x:Name="UpdateStatusText" FontSize="12" TextWrapping="Wrap"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                <TextBlock x:Name="UpdateWhatsNew" Margin="0,2,0,0" FontSize="12" Visibility="Collapsed">
-                                    <Hyperlink x:Name="UpdateWhatsNewLink" RequestNavigate="OnWhatsNewNavigate">What's new</Hyperlink>
-                                </TextBlock>
-                                <ProgressBar x:Name="UpdateCardProgress" Margin="0,6,0,0" Maximum="100" Visibility="Collapsed" />
-                            </StackPanel>
-                            <ui:Button x:Name="UpdateCardButton" Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center"
-                                       Click="OnUpdateActionClick" />
-                        </Grid>
-                    </Border>
-                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="ArrowCircleDown24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Check for updates automatically" />
-                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                           Text="When PuppyMacro starts and every 12 hours" />
-                            </StackPanel>
-                            <ui:ToggleSwitch x:Name="CheckForUpdatesSwitch" Grid.Column="2" VerticalAlignment="Center"
-                                             OffContent="Off" OnContent="On" Checked="OnCheckForUpdatesChanged" Unchecked="OnCheckForUpdatesChanged" />
-                        </Grid>
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ui:SymbolIcon x:Name="UpdateCardIcon" Symbol="ArrowSync24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Updates" />
+                                    <TextBlock x:Name="UpdateStatusText" FontSize="12" TextWrapping="Wrap"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    <TextBlock x:Name="UpdateWhatsNew" Margin="0,2,0,0" FontSize="12" Visibility="Collapsed">
+                                        <Hyperlink x:Name="UpdateWhatsNewLink" RequestNavigate="OnWhatsNewNavigate">What's new</Hyperlink>
+                                    </TextBlock>
+                                    <ProgressBar x:Name="UpdateCardProgress" Margin="0,6,0,0" Maximum="100" Visibility="Collapsed" />
+                                </StackPanel>
+                                <ui:Button x:Name="UpdateCardButton" Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center"
+                                           Click="OnUpdateActionClick" />
+                            </Grid>
+                            <Border Margin="36,12,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
+                            <Grid Margin="36,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Check for updates automatically" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                               Text="When PuppyMacro starts and every 12 hours" />
+                                </StackPanel>
+                                <ui:ToggleSwitch x:Name="CheckForUpdatesSwitch" Grid.Column="1" VerticalAlignment="Center"
+                                                 OffContent="Off" OnContent="On" Checked="OnCheckForUpdatesChanged" Unchecked="OnCheckForUpdatesChanged" />
+                            </Grid>
+                        </StackPanel>
                     </Border>
 
-                    <!-- About -->
-                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="Info24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1">
+                    <!-- About: opens like the other groups -->
+                    <ui:CardExpander x:Name="AboutGroup" Margin="0,0,0,4" Tag="About" Icon="{ui:SymbolIcon Info24}"
+                                     Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                        <ui:CardExpander.Header>
+                            <StackPanel>
                                 <TextBlock Text="About" />
                                 <TextBlock x:Name="AboutText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                             </StackPanel>
-                        </Grid>
-                    </Border>
+                        </ui:CardExpander.Header>
+                        <WrapPanel>
+                            <ui:Button x:Name="UserGuideButton" Margin="0,0,8,0" Content="User guide" Icon="{ui:SymbolIcon BookOpen24}"
+                                       Tag="https://giuvincenzi.github.io/puppymacro/guide/latest/" Click="OnOpenLinkClick" />
+                            <ui:Button x:Name="GitHubButton" Content="GitHub" Icon="{ui:SymbolIcon BranchFork24}"
+                                       Tag="https://github.com/giuvincenzi/puppymacro" Click="OnOpenLinkClick" />
+                        </WrapPanel>
+                    </ui:CardExpander>
 
                     <TextBlock x:Name="SettingsErrorText" Margin="2,6,0,0" FontSize="12" TextWrapping="Wrap"
                                Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />

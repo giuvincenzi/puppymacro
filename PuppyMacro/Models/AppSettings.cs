@@ -322,6 +322,10 @@ public sealed class AppSettings
     public List<string> ExpandedSettingsGroups { get; set; } = new();
     public double? WindowLeft { get; set; }
     public double? WindowTop { get; set; }
+
+    /// <summary>Size of the main window (WPF units), kept between sessions. Null = default size.</summary>
+    public double? WindowWidth { get; set; }
+    public double? WindowHeight { get; set; }
     public List<LoopDefinition> Loops { get; set; } = new();
 
     // ---- v1.0 fields, read once and converted by SettingsStore ----

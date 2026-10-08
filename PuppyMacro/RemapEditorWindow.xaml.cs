@@ -46,10 +46,10 @@ public partial class RemapEditorWindow
             new TextChangedEventHandler((_, _) => Validate()));
         LoadRemap(source);
 
-        _code = new CodeViewSwitch<RemapDefinition>(this, ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
+        _code = new CodeViewSwitch<RemapDefinition>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForRemap(_itemId), FormRemap, RemapJson.Serialize,
             (string text, out List<CodeProblem> problems) => RemapJson.Parse(text, _itemId, SourceClash, out problems),
-            LoadRemap, Validate, new Size(760, 600));
+            LoadRemap, Validate);
         _code.Opening += () =>
         {
             _engine.CancelCapture();

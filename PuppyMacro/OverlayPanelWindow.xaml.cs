@@ -23,6 +23,8 @@ public partial class OverlayPanelWindow
 
     public void SetBackgroundOpacity(int percent) => PanelView.SetBackgroundOpacity(percent);
 
+    public void SetState(bool anyRunning, bool clickable) => PanelView.SetState(anyRunning, clickable);
+
     public void RefreshList() => PanelView.RefreshList();
 
     /// <summary>Clickable rows of the panel, in physical screen pixels.</summary>

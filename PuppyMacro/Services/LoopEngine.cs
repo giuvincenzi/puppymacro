@@ -30,8 +30,19 @@ internal sealed class EngineSnapshot
     };
 }
 
-/// <summary>A clickable row of the overlay panel, in physical screen pixels.</summary>
-internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bottom, Guid Id);
+/// <summary>
+/// A clickable part of the overlay (a panel row, a floating button, the panel's Stop all or exit
+/// button), in physical screen pixels. <see cref="Id"/> is the loop's or macro's, or
+/// <see cref="StopAllId"/> or <see cref="ExitOverlayId"/>.
+/// </summary>
+internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bottom, Guid Id)
+{
+    /// <summary>The overlay panel's Stop all button.</summary>
+    public static readonly Guid StopAllId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d01");
+
+    /// <summary>The overlay panel's exit button: leaves overlay mode.</summary>
+    public static readonly Guid ExitOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d02");
+}
 
 /// <summary>
 /// Routes global input to loops, macros, remaps and global hotkeys, records macros, and owns
@@ -255,6 +266,16 @@ internal sealed class LoopEngine : IDisposable
 
     private void ToggleById(Guid id)
     {
+        if (id == PanelTarget.StopAllId)
+        {
+            StopAll();
+            return;
+        }
+        if (id == PanelTarget.ExitOverlayId)
+        {
+            _dispatcher.InvokeAsync(() => OverlayModeToggleRequested?.Invoke());
+            return;
+        }
         var snap = _snapshot;
         var loop = snap.Loops.FirstOrDefault(l => l.Id == id);
         if (loop != null)
@@ -397,7 +418,7 @@ internal sealed class LoopEngine : IDisposable
     }
 
     // Runs on the input thread. Returns true to block the event.
-    private bool OnMouseDetail(InputHook.MouseKind kind, int vk, int x, int y, int wheelDelta)
+    internal bool OnMouseDetail(InputHook.MouseKind kind, int vk, int x, int y, int wheelDelta)
     {
         lock (_sync)
         {

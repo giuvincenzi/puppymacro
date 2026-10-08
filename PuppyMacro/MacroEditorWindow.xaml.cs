@@ -999,7 +999,7 @@ public partial class MacroEditorWindow
 
     private CodeViewSwitch<MacroDefinition> CreateCodeSwitch()
     {
-        var code = new CodeViewSwitch<MacroDefinition>(this, ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
+        var code = new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForMacro(_itemId), BuildMacro, MacroJson.Serialize,
             (string text, out List<CodeProblem> problems) => MacroJson.Parse(text, _itemId, HotkeyConflict, out problems),
             LoadMacro, Validate);

@@ -30,10 +30,10 @@ public partial class MacroActionWindow
         _action = action.Clone();
         LoadAction(_action);
 
-        _code = new CodeViewSwitch<MacroAction>(this, ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
+        _code = new CodeViewSwitch<MacroAction>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForAction(allowedGroups, groupNames, action.GroupId), FormAction, MacroJson.Serialize,
             (string text, out List<CodeProblem> problems) => MacroJson.ParseAction(text, allowedGroups, groupNames, out problems),
-            LoadAction, Validate, new Size(760, 620));
+            LoadAction, Validate);
         _code.Opening += () => _engine.CancelCapture();
 
         _ready = true;

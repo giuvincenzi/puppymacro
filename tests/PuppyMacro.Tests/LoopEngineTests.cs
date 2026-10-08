@@ -74,6 +74,24 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void A_click_on_the_overlay_panel_Stop_all_stops_everything_and_never_reaches_the_app()
+    {
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+        _engine.StartLoop(loop);
+        _engine.SetPanelTargets(new[] { new PanelTarget(100, 100, 200, 130, PanelTarget.StopAllId) });
+
+        // A click elsewhere passes.
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 50, 50, 0));
+        Assert.True(_engine.IsRunning(loop.Id));
+
+        // On Stop all: blocked, down and up, and the loop stops.
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 150, 115, 0));
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_LBUTTON, 150, 115, 0));
+        Assert.False(_engine.IsRunning(loop.Id));
+    }
+
+    [Fact]
     public void A_wheel_hotkey_toggles_once_per_notch_and_smaller_steps_add_up()
     {
         LoopDefinition loop = TapLoop(new HotkeyBinding { Vk = KeyNames.VK_WHEEL_DOWN, Ctrl = true });

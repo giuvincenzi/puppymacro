@@ -121,6 +121,7 @@ public partial class MainWindow
         }
         InitializeUpdates();
         BackupGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Backup");
+        AboutGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("About");
         DataFolderText.Text = $"Data saved in {AppPaths.DataFolder}";
         RemapFilterBox.SelectedIndex = 0;
         UpdateRemapState();
@@ -129,7 +130,7 @@ public partial class MainWindow
         ThemeComboBox.SelectedIndex = (int)settings.Theme;
         UpdateHotkeyLabels();
         UpdateLoopState();
-        RestorePosition();
+        RestorePlacement();
 
         Loaded += OnLoaded;
         Closing += OnClosing;
@@ -160,12 +161,14 @@ public partial class MainWindow
     /// <summary>Started with Windows: hotkeys work, the window stays in the system tray.</summary>
     internal void StartInTray() => EnsureEngineStarted();
 
-    private void RememberPosition()
+    private void RememberPlacement()
     {
         if (IsVisible && WindowState == WindowState.Normal)
         {
             _settings.WindowLeft = Left;
             _settings.WindowTop = Top;
+            _settings.WindowWidth = Math.Round(ActualWidth);
+            _settings.WindowHeight = Math.Round(ActualHeight);
         }
     }
 
@@ -173,7 +176,7 @@ public partial class MainWindow
     {
         if (_importing)
             return; // the imported settings.json must not be overwritten
-        RememberPosition();
+        RememberPlacement();
         if (!_exiting && _settings.CloseToTray)
         {
             e.Cancel = true;
@@ -241,8 +244,15 @@ public partial class MainWindow
         menu.IsOpen = true;
     }
 
-    private void RestorePosition()
+    private void RestorePlacement()
     {
+        // The size kept from the last session (WindowFit makes it smaller when the screen is).
+        if (_settings.WindowWidth is double width && _settings.WindowHeight is double height)
+        {
+            Width = Math.Max(MinWidth, width);
+            Height = Math.Max(MinHeight, height);
+        }
+
         if (_settings.WindowLeft is not double left || _settings.WindowTop is not double top)
             return;
 
@@ -345,7 +355,11 @@ public partial class MainWindow
         if (MacroFilterBox.SelectedIndex == (int)LoopFilter.Running)
             _macroView.Refresh();
         UpdateLoopState();
+        UpdatePanelState();
     }
+
+    /// <summary>The overlay panel's Stop all (red while something runs) and exit button.</summary>
+    private void UpdatePanelState() => _overlayPanelWindow.SetState(_engine.AnyRunning, PanelClickable);
 
     /// <summary>Count line, empty state, and the buttons that depend on running loops.</summary>
     private void UpdateLoopState()
@@ -755,6 +769,7 @@ public partial class MainWindow
     /// </summary>
     private void UpdatePanelClicks()
     {
+        UpdatePanelState();
         if (_overlayModeActive && (PanelClickable || _buttonWindows.Count > 0))
         {
             // Rows are measured once the panel is on screen, then kept up to date.

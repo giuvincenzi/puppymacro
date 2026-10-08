@@ -124,6 +124,20 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void The_main_window_size_is_kept_and_invalid_sizes_are_dropped()
+    {
+        AppSettings kept = LoadJson("""{ "WindowWidth": 1600, "WindowHeight": 1000 }""", out _);
+        AppSettings dropped = LoadJson("""{ "WindowWidth": -1, "WindowHeight": 1000 }""", out _);
+        AppSettings half = LoadJson("""{ "WindowWidth": 1600 }""", out _);
+
+        Assert.Equal(1600, kept.WindowWidth);
+        Assert.Equal(1000, kept.WindowHeight);
+        Assert.Null(dropped.WindowWidth);
+        Assert.Null(dropped.WindowHeight);
+        Assert.Null(half.WindowWidth);
+    }
+
+    [Fact]
     public void Files_before_schema_5_drop_the_width_of_the_one_column_macro_editor()
     {
         AppSettings settings = LoadJson("""{ "SchemaVersion": 4, "MacroEditorWidth": 720, "MacroEditorHeight": 1000 }""", out _);

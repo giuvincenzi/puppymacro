@@ -106,6 +106,8 @@ internal sealed class SettingsStore
             settings.MacroEditorWidth = null;
         if (settings.MacroEditorHeight is not (> 0 and < 100_000))
             settings.MacroEditorHeight = null;
+        if (settings.WindowWidth is not (> 0 and < 100_000) || settings.WindowHeight is not (> 0 and < 100_000))
+            settings.WindowWidth = settings.WindowHeight = null;
         settings.StopAllHotkeyVk = null;
         settings.LegacyOverlayModeHotkeyVk = null;
 

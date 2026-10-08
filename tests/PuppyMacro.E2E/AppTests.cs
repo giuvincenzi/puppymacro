@@ -368,9 +368,12 @@ public class AppTests
     private static void OpenCodeView(AppSession app, Window window, string? problem = null)
     {
         app.FindById(window, "CodeViewButton").Patterns.SelectionItem.Pattern.Select();
-        string expected = problem ?? "No problems.";
-        Assert.True(Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByName(expected)), TimeSpan.FromSeconds(30)).Success,
-            $"the Code view did not show \"{expected}\"");
+        // A problem is a row (ARIA option) named "message Ln x, Col y": its text is not exposed on its own.
+        bool shown = problem == null
+            ? Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByName("No problems.")), TimeSpan.FromSeconds(30)).Success
+            : Retry.WhileFalse(() => window.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.ListItem))
+                .Any(row => row.Name.StartsWith(problem)), TimeSpan.FromSeconds(30)).Success;
+        Assert.True(shown, $"the Code view did not show \"{problem ?? "No problems."}\"");
     }
 
     /// <summary>Discard changes: back to the Form view, with Cancel again.</summary>
