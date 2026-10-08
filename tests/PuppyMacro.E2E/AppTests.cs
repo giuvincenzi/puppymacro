@@ -156,7 +156,8 @@ public class AppTests
         app.FindById(editor, "AddActionButton").AsButton().Invoke();
         Retry.WhileNull(() => app.Automation.GetDesktop().FindFirstDescendant(cf =>
                 cf.ByControlType(FlaUI.Core.Definitions.ControlType.MenuItem).And(cf.ByName("Press key"))),
-            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "menu item \"Press key\" not found").Result!.Click();
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "menu item \"Press key\" not found").Result!
+            .AsMenuItem().Invoke(); // UI Automation: a mouse click can miss the menu while its popup opens
         Window action = ChildDialog(editor, "Add press key");
         app.FindById(action, "KeyButton").AsButton().Invoke();
         app.Find(action, "Press a key (Esc cancels)");
