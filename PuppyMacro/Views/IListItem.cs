@@ -13,6 +13,7 @@ public interface IListItem
     bool IsRunning { get; set; }
     bool IsItemEnabled { get; }
     bool IsHoldMode { get; }
+    Models.FloatingButton FloatingButton { get; }
     bool DropBefore { get; set; }
     bool DropAfter { get; set; }
     bool IsDragging { get; set; }

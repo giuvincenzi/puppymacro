@@ -26,7 +26,8 @@ PuppyMacro/
   MainWindow.xaml(.cs)          side rail: Loops, Macros, Remap, Settings; game mode; tray
   MainWindow.Updates.cs         update bar, Settings dot and Updates card
   LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow
-  GameModeWindow, PlacementWindow, PickPointWindow, RecordPromptWindow, RecordingBarWindow
+  GameModeWindow, FloatingButtonWindow, PlacementWindow, PickPointWindow, RecordPromptWindow,
+  RecordingBarWindow
   Models/                       AppSettings (settings.json), loops, macros, remaps
   Services/                     input thread and hooks, LoopEngine, runners, InputSender,
                                 recording, sounds, storage, tray, startup, updates
@@ -54,8 +55,9 @@ Rules:
   to settings, loops, macros or remaps, the UI must publish a new snapshot**
   (`MainWindow.Save()` and `SaveMacro()` already do it).
 - UI notifications from the engine go through `Dispatcher.InvokeAsync`.
-- Clicks on the game mode panel are matched against row rectangles (`PanelTarget`, physical
-  pixels) published by the UI every 300 ms while game mode is on.
+- Clicks on the game mode panel and on the floating buttons are matched against rectangles
+  (`PanelTarget`, physical pixels) published by the UI every 300 ms while game mode is on.
+  Floating buttons are always clickable; panel rows only with `ClickItemsInPanel`.
 
 ## Features map
 
@@ -69,7 +71,11 @@ Rules:
   list to rows and group headers.
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.
 - Game mode: `Views/GameModePanel`, `GameModeWindow` (click-through, no-activate),
-  `PlacementWindow`.
+  `PlacementWindow` (panel and floating buttons).
+- Floating buttons: `FloatingButton` (in `AppSettings.cs`, on loops and macros),
+  `Views/FloatingButtons` (which items get one: enabled, Toggle, option on; those are left out
+  of the panel list), `FloatingButtonWindow` (one per button, click-through, no-activate),
+  `Views/FloatingButtonView` (the round button), `Views/FloatingButtonEditor` (editor card).
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).

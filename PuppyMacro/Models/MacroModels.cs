@@ -155,6 +155,7 @@ public sealed class MacroDefinition
     public bool Enabled { get; set; } = true;
     public bool SoundEnabled { get; set; }
     public string SoundName { get; set; } = "Chime";
+    public FloatingButton FloatingButton { get; set; } = new();
 
     [System.Text.Json.Serialization.JsonIgnore]
     public double TotalMs
@@ -174,6 +175,7 @@ public sealed class MacroDefinition
         copy.Actions = Actions.ConvertAll(a => a.Clone());
         copy.Groups = Groups.ConvertAll(g => g.Clone());
         copy.Hotkey = Hotkey?.Clone();
+        copy.FloatingButton = FloatingButton.Clone();
         return copy;
     }
 
@@ -190,6 +192,7 @@ public sealed class MacroDefinition
         Enabled = other.Enabled;
         SoundEnabled = other.SoundEnabled;
         SoundName = other.SoundName;
+        FloatingButton = other.FloatingButton.Clone();
     }
 
     /// <summary>

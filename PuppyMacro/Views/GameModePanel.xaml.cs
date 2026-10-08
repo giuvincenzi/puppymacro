@@ -36,7 +36,9 @@ public partial class GameModePanel
         UpdateEmptyState();
     }
 
-    private static bool IsEnabledItem(object item) => item is IListItem { IsItemEnabled: true };
+    /// <summary>Enabled items, except those shown as floating buttons.</summary>
+    private static bool IsEnabledItem(object item) =>
+        item is IListItem { IsItemEnabled: true } listItem && !FloatingButtons.HasButton(listItem);
 
     public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey)
     {
@@ -90,7 +92,21 @@ public partial class GameModePanel
     {
         int loops = _loops?.Count ?? 0;
         int macros = _macros?.Count ?? 0;
+        bool anyButton = HasAnyButton(_loops) || HasAnyButton(_macros);
+        EmptyText.Text = anyButton ? "Everything is on floating buttons." : "No enabled loops.";
         EmptyText.Visibility = loops + macros == 0 ? Visibility.Visible : Visibility.Collapsed;
         MacrosHeader.Visibility = macros > 0 && loops > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private static bool HasAnyButton(ListCollectionView? view)
+    {
+        if (view?.SourceCollection is not IEnumerable items)
+            return false;
+        foreach (object item in items)
+        {
+            if (item is IListItem listItem && FloatingButtons.HasButton(listItem))
+                return true;
+        }
+        return false;
     }
 }

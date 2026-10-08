@@ -1,0 +1,22 @@
+<UserControl
+    x:Class="PuppyMacro.Views.FloatingButtonView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    FontFamily="Segoe UI Variable Text, Segoe UI"
+    Foreground="White">
+
+    <!-- Fixed dark look, like the game mode panel. The margin leaves room for the running halo. -->
+    <Grid Margin="4">
+        <Ellipse x:Name="Halo" Margin="-4,-4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                 Fill="#386CCB5F" Visibility="Collapsed" />
+        <Border x:Name="Circle" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Background="#D9202020" BorderBrush="#2EFFFFFF" BorderThickness="1">
+            <TextBlock x:Name="LabelText" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <!-- Hotkey, as a key cap on the bottom-right edge of the circle -->
+        <Border x:Name="Badge" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="4,0" CornerRadius="4"
+                BorderThickness="1,1,1,2" BorderBrush="#4C4C4C" Background="#373737">
+            <TextBlock x:Name="BadgeText" FontSize="10" />
+        </Border>
+    </Grid>
+</UserControl>

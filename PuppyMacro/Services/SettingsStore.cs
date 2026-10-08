@@ -116,6 +116,8 @@ internal sealed class SettingsStore
             loop.KeyVk = null;
             loop.IntervalMs = null;
             loop.HotkeyVk = null;
+            loop.FloatingButton ??= new();
+            loop.FloatingButton.Sanitize();
 
             foreach (var action in loop.Actions)
             {

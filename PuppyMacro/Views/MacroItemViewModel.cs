@@ -36,6 +36,7 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     public string ActivationText => HasHotkey ? $"{ModeText} with" : $"{ModeText}, no hotkey";
     public bool IsToggleMode => Definition.Mode == ActivationMode.Toggle;
     public bool IsHoldMode => Definition.Mode == ActivationMode.Hold;
+    public FloatingButton FloatingButton => Definition.FloatingButton;
     public bool IsItemEnabled => Definition.Enabled;
 
     public string Summary

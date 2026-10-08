@@ -12,7 +12,7 @@
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), `HotkeyConflicts`, `ModifierTracker`, `KeyNames`,
-  `HotkeyBinding`, loop intervals.
+  `HotkeyBinding`, loop intervals, `FloatingButton` (labels, sanitizing, old files).
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test.
 
 ## End-to-end tests: `make e2e`

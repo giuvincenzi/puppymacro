@@ -3,6 +3,12 @@
 ## Unreleased
 
 ### Added
+- **Floating buttons**: a loop or macro can have its own round button in game mode, placed
+  anywhere on the screen, that starts and stops it with a click without the game losing focus.
+  Turn it on in the editor with **Floating button** and choose its **Label** and **Size** (S,
+  M, L); the hotkey is shown on its edge. A loop or macro with a floating button is not listed
+  in the game mode panel. **Position…** in the editor and **Position on screen** in Settings
+  place the panel and all floating buttons together.
 - Macro editor: select more actions with Ctrl+click or Shift+click, then group, duplicate,
   copy (also to paste into another macro) or delete them together, from the new bar above the
   list or with Ctrl+G, Ctrl+D, Ctrl+C / Ctrl+V and Delete. Dragging and Alt+Up / Alt+Down move

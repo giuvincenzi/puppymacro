@@ -243,6 +243,9 @@
                 <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
                            Text="Optional. Press any key or mouse button, like F2 or A; for a combination, hold Ctrl, Alt, Shift or Win first. Without a hotkey, start it with Start or from the game mode panel. Hold needs a hotkey." />
 
+                <!-- Floating button -->
+                <views:FloatingButtonEditor x:Name="FloatingEditor" Margin="0,18,0,0" />
+
                 <!-- Sound -->
                 <Grid Margin="0,18,0,0">
                     <StackPanel>

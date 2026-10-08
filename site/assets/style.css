@@ -224,3 +224,20 @@ kbd {
   border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; color: #c5c5c5;
 }
 .game-panel .hints span { display: flex; align-items: center; gap: 8px; }
+.floating-buttons {
+  display: flex; align-items: center; gap: 22px; width: fit-content; padding: 18px 22px;
+  border-radius: 8px; background: #2e4157;
+}
+.floating-button {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; box-sizing: border-box; border-radius: 50%;
+  background: rgba(32, 32, 32, 0.85); border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff; font: 600 15px 'Segoe UI', system-ui, sans-serif;
+}
+.floating-button.small { width: 36px; height: 36px; font-size: 12px; }
+.floating-button.running { border: 2px solid #6ccb5f; box-shadow: 0 0 0 4px rgba(108, 203, 95, 0.22); color: #6ccb5f; }
+.floating-button kbd {
+  position: absolute; left: 28px; top: 34px; padding: 0 4px;
+  font: 400 10px/14px 'Segoe UI', system-ui, sans-serif; color: #ffffff;
+  background: #373737; border: 1px solid #4c4c4c; border-bottom-width: 2px; border-radius: 4px;
+}

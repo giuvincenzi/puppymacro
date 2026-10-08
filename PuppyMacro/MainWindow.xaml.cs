@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -31,6 +32,7 @@ public partial class MainWindow
     private readonly ObservableCollection<MacroItemViewModel> _macroItems;
     private readonly ListCollectionView _macroView;
     private readonly GameModeWindow _gameWindow;
+    private readonly List<FloatingButtonWindow> _buttonWindows = new();
     private readonly DispatcherTimer _saveOpacityTimer;
     private readonly DispatcherTimer _saveVolumeTimer;
     private readonly SoundService _sounds;
@@ -380,7 +382,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return;
 
-        var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, null) { Owner = this };
+        var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, null, PlaceFromEditor) { Owner = this };
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
 
@@ -442,7 +444,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return;
 
-        var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, item.Definition) { Owner = this };
+        var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
 
@@ -584,7 +586,7 @@ public partial class MainWindow
     {
         if (_engine.AnyRunning)
             return;
-        var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, null, recorded) { Owner = this };
+        var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, null, PlaceFromEditor, recorded) { Owner = this };
         if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
 
@@ -632,7 +634,7 @@ public partial class MainWindow
     {
         if (_engine.AnyRunning)
             return;
-        var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition) { Owner = this };
+        var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
         if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
 
@@ -722,10 +724,13 @@ public partial class MainWindow
         Save();
     }
 
-    /// <summary>Clicks on the panel are handled by the input hook, so the game never loses focus.</summary>
+    /// <summary>
+    /// Clicks on the panel and on the floating buttons are handled by the input hook, so the game
+    /// never loses focus. Floating buttons are always clickable; the panel only when the setting is on.
+    /// </summary>
     private void UpdatePanelClicks()
     {
-        if (_gameModeActive && _settings.ClickItemsInPanel)
+        if (_gameModeActive && (_settings.ClickItemsInPanel || _buttonWindows.Count > 0))
         {
             // Rows are measured once the panel is on screen, then kept up to date.
             Dispatcher.InvokeAsync(PublishPanelTargets, DispatcherPriority.Loaded);
@@ -740,8 +745,15 @@ public partial class MainWindow
 
     private void PublishPanelTargets()
     {
-        if (_gameModeActive && _settings.ClickItemsInPanel)
-            _engine.SetPanelTargets(_gameWindow.GetClickTargets());
+        if (!_gameModeActive)
+            return;
+        var targets = _settings.ClickItemsInPanel ? _gameWindow.GetClickTargets() : new List<PanelTarget>();
+        foreach (var window in _buttonWindows)
+        {
+            if (window.GetClickTarget() is PanelTarget target)
+                targets.Add(target);
+        }
+        _engine.SetPanelTargets(targets);
     }
 
     // ================= Reordering =================
@@ -895,6 +907,8 @@ public partial class MainWindow
     /// <summary>Shows a dialog with every hotkey ignored until it closes.</summary>
     private bool? ShowDialogWithoutHotkeys(Window dialog)
     {
+        // Restores the previous state: the placement overlay can open from an editor.
+        bool wasSuspended = _engine.HotkeysSuspended;
         _engine.HotkeysSuspended = true;
         try
         {
@@ -902,7 +916,7 @@ public partial class MainWindow
         }
         finally
         {
-            _engine.HotkeysSuspended = false;
+            _engine.HotkeysSuspended = wasSuspended;
         }
     }
 
@@ -1035,17 +1049,111 @@ public partial class MainWindow
         }
     }
 
-    private void OnPositionOnScreenClick(object sender, RoutedEventArgs e)
+    private void OnPositionOnScreenClick(object sender, RoutedEventArgs e) => OpenPlacement(null, null);
+
+    /// <summary>
+    /// The editors' Position… button: places the panel and every floating button. The edited item
+    /// is shown as in the editor (its button is left out when off); its new position is returned to
+    /// the editor, which saves it with the item. Null when cancelled.
+    /// </summary>
+    private Point? PlaceFromEditor(EditedFloatingButton edited)
     {
+        PlacementButton? editing = null;
+        if (edited.Button.Enabled)
+        {
+            var saved = edited.Button.X is double x && edited.Button.Y is double y ? new Point(x, y) : (Point?)null;
+            editing = new PlacementButton(edited.Id, edited.Name,
+                string.IsNullOrEmpty(edited.Button.Label) ? FloatingButton.DefaultLabel(edited.Name) : edited.Button.Label,
+                edited.HotkeyText, edited.Button.Size, ButtonPosition(saved, edited.Button.Size, FloatingButtonItems().Count(i => i.Id != edited.Id)));
+        }
+        return OpenPlacement(edited.Id, editing);
+    }
+
+    private Point? OpenPlacement(Guid? editingId, PlacementButton? editing)
+    {
+        var buttons = new List<PlacementButton>();
+        foreach (IListItem item in FloatingButtonItems())
+        {
+            if (item.Id == editingId)
+                continue;
+            buttons.Add(new PlacementButton(item.Id, item.Name, FloatingButtonWindow.LabelOf(item),
+                item.HasHotkey ? item.HotkeyText : "", item.FloatingButton.Size, ButtonPosition(item.FloatingButton, buttons.Count)));
+        }
+        if (editing != null)
+            buttons.Add(editing);
+
         var placement = new PlacementWindow(_items, _macroItems, GamePosition(), _settings.GameModeOpacity,
-            KeyNames.Format(_settings.GameModeHotkey), KeyNames.Format(_settings.StopAllHotkey));
+            KeyNames.Format(_settings.GameModeHotkey), KeyNames.Format(_settings.StopAllHotkey), buttons, editing?.Id);
         if (ShowDialogWithoutHotkeys(placement) != true)
-            return;
+            return null;
 
         _settings.GameModeX = Math.Round(placement.Result.X);
         _settings.GameModeY = Math.Round(placement.Result.Y);
         UpdatePositionBoxes();
+
+        Point? editingPosition = null;
+        foreach (IListItem item in FloatingButtonItems())
+        {
+            if (item.Id == editingId || !placement.ButtonResults.TryGetValue(item.Id, out Point p))
+                continue;
+            item.FloatingButton.X = Math.Round(p.X);
+            item.FloatingButton.Y = Math.Round(p.Y);
+            if (item is MacroItemViewModel macro)
+                SaveMacro(macro.Definition);
+        }
         Save();
+        if (editing != null && placement.ButtonResults.TryGetValue(editing.Id, out Point edited))
+            editingPosition = new Point(Math.Round(edited.X), Math.Round(edited.Y));
+        return editingPosition;
+    }
+
+    // ---- Floating buttons ----
+
+    /// <summary>Loops then macros that show a floating button in game mode, in list order.</summary>
+    private IEnumerable<IListItem> FloatingButtonItems() =>
+        _items.Cast<IListItem>().Concat(_macroItems).Where(FloatingButtons.HasButton);
+
+    private static Point ButtonPosition(FloatingButton button, int index) =>
+        ButtonPosition(button.X is double x && button.Y is double y ? new Point(x, y) : null, button.Size, index);
+
+    /// <summary>
+    /// Saved position when it is still on a screen; otherwise a column along the right edge of the
+    /// main screen's work area, one slot per button.
+    /// </summary>
+    private static Point ButtonPosition(Point? saved, FloatingButtonSize size, int index)
+    {
+        double diameter = FloatingButton.DiameterOf(size);
+        if (saved is Point p &&
+            p.X >= SystemParameters.VirtualScreenLeft &&
+            p.Y >= SystemParameters.VirtualScreenTop &&
+            p.X <= SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - diameter &&
+            p.Y <= SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - diameter)
+            return p;
+
+        const double slot = 72; // the largest button plus a gap
+        Rect work = SystemParameters.WorkArea;
+        int perColumn = Math.Max(1, (int)((work.Height - 40) / slot));
+        return new Point(
+            work.Right - 20 - slot * (index / perColumn + 1) + (slot - diameter),
+            work.Top + 20 + slot * (index % perColumn));
+    }
+
+    private void ShowFloatingButtons()
+    {
+        int index = 0;
+        foreach (IListItem item in FloatingButtonItems())
+        {
+            var window = new FloatingButtonWindow(item, ButtonPosition(item.FloatingButton, index++), _settings.GameModeOpacity);
+            _buttonWindows.Add(window);
+            window.Show();
+        }
+    }
+
+    private void CloseFloatingButtons()
+    {
+        foreach (var window in _buttonWindows)
+            window.Close();
+        _buttonWindows.Clear();
     }
 
     private void OnResetPositionClick(object sender, RoutedEventArgs e)
@@ -1142,12 +1250,14 @@ public partial class MainWindow
             _gameWindow.Top = position.Y;
             Hide();
             _gameWindow.Show();
+            ShowFloatingButtons();
             _gameModeActive = true;
             UpdatePanelClicks();
         }
         else
         {
             _gameWindow.Hide();
+            CloseFloatingButtons();
             _gameModeActive = false;
             UpdatePanelClicks();
             // Bring the window to the front: it is not topmost, so it would
