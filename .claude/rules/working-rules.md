@@ -4,6 +4,8 @@
   tooltips, messages, README, CHANGELOG, rules.
 - **Ask before changing code.** Describe what you want to change and why, wait for an
   explicit OK, then write the code. This applies to small fixes and refactors too.
+  For a user-visible change the description includes the documentation checklist of
+  `docs.md` (guide, home feature cards, CHANGELOG, screenshots), item by item.
 - **UI changes: visual proposals first.** For any change to the UI, before writing code:
   1. Describe in text what would change, then ask the user whether they want visual
      proposals.

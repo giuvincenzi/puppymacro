@@ -44,6 +44,12 @@ or UI text:
   `build-and-release.md`);
 - replace screenshots that no longer match the app.
 
+The plan given to the user before implementing (`working-rules.md`) lists every item of this
+checklist, each marked as needed or not needed with the reason: the guide file, the feature
+cards in `site/index.html`, the `CHANGELOG.md` line and each screenshot by file name.
+Screenshots need the app running on the contributor's PC, so the plan names them and asks
+before capturing (`testing.md`).
+
 ## Accuracy
 
 - Describe only what the code does. Check the code before writing a sentence about
