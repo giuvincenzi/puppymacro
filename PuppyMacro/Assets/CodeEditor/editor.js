@@ -16,6 +16,8 @@
     let lastSent = '';
     let generation = 0;
     let checkedVersion = -1;
+    let workerReady = false;   // Monaco's JSON worker runs: suggestions, schema checks, Format
+    let workerError = '';
     let selected = 0;
 
     const list = document.getElementById('list');
@@ -89,7 +91,9 @@
         count.hidden = items.length === 0;
         count.textContent = String(items.length);
         empty.hidden = items.length > 0;
-        empty.textContent = checkedVersion === model.getVersionId() ? 'No problems.' : 'Checking…';
+        // "No problems." only once both checkers looked at this text: Monaco's worker and the app.
+        empty.textContent = workerError ? 'The code checker could not start: ' + workerError
+            : workerReady && checkedVersion === model.getVersionId() ? 'No problems.' : 'Checking…';
     }
 
     function select(index) {
@@ -153,6 +157,11 @@
         editor.focus();
         renderProblems();
         sendChanged();
+
+        monaco.languages.json.getWorker()
+            .then(getWorker => getWorker(model.uri))
+            .then(() => { workerReady = true; renderProblems(); })
+            .catch(e => { workerError = String(e && e.message || e); renderProblems(); });
     }
 
     host.addEventListener('message', event => {
@@ -199,6 +208,8 @@
         }
     });
 
-    require.config({ paths: { vs: '../Monaco/vs' } });
+    // An absolute address: Monaco's JSON worker (suggestions, schema checks, Format) loads its code
+    // with this path from its own context, where a relative one cannot be resolved.
+    require.config({ paths: { vs: new URL('../Monaco/vs', document.baseURI).href } });
     require(['vs/editor/editor.main'], () => post({ type: 'ready' }));
 })();

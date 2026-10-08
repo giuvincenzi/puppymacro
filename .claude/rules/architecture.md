@@ -13,7 +13,10 @@ paths:
   Code view). No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
 - **Monaco editor 0.52.2** (MIT, the editor of VS Code), only the files JSON needs, in
   `Assets/Monaco` with its license; `Assets/CodeEditor` is the page around it. To update it, copy
-  the same files from the npm package's `min/vs` and keep the version here.
+  the same files from the npm package's `min/vs` and keep the version here. The loader's `vs`
+  path must be an absolute address: the JSON worker (suggestions, schema checks, Format) resolves
+  it from its own context, where a relative path fails silently. "No problems." shows only once
+  the worker runs, so the Code view end-to-end test catches a broken worker.
 - Nullable reference types on, implicit usings off (explicit `using`s).
 
 ## Repository layout
