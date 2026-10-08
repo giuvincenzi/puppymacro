@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.10.0
+
 ### Added
 - **Code view**, next to **Form view**, in the macro, action, loop and remap editors: the item's
   JSON, as it is saved, in a code editor like VS Code's, with Ctrl+Space suggestions and
