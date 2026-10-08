@@ -76,8 +76,8 @@ Rules:
   editor off screen, hides the main window, focuses the window behind, waits 200 ms) plays
   `MacroDefinition.ForTest` through `LoopEngine.TestMacroAction`.
   Code view: `Views/MacroCodeView` (WebView2 with `Assets/CodeEditor` and Monaco, served from
-  disk at `https://puppymacro.editor/`, data in `AppPaths.WebViewFolder`; Problems panel in
-  WPF), `Services/MacroJson.cs` (the file's text, strict reading and every check, with line and
+  disk at `https://puppymacro.editor/`, data in `AppPaths.WebViewFolder`; the Problems panel is
+  HTML in the same page, like VS Code's: Monaco has none of its own), `Services/MacroJson.cs` (the file's text, strict reading and every check, with line and
   column; unit tested) and `Services/MacroSchema.cs` (JSON Schema from the models, for Monaco's
   suggestions and inline errors). Monaco's problems come first; `MacroJson.Parse` decides Save.
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.

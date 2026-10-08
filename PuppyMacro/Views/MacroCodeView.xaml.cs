@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using PuppyMacro.Services;
@@ -15,9 +14,9 @@ namespace PuppyMacro.Views;
 
 /// <summary>
 /// The macro editor's Code view: the macro file's JSON in Monaco (Assets\CodeEditor, Assets\Monaco)
-/// inside a WebView2, and the Problems panel. Problems come from Monaco (JSON syntax and
-/// <see cref="MacroSchema"/>) and, when Monaco finds none, from <see cref="Check"/> (MacroJson.Parse),
-/// which also underlines them in the editor.
+/// inside a WebView2, with a Problems panel like VS Code's in the same page. Problems come from
+/// Monaco (JSON syntax and <see cref="MacroSchema"/>) and, when Monaco finds none, from
+/// <see cref="Check"/> (MacroJson.Parse), which the page underlines and lists too.
 /// </summary>
 public partial class MacroCodeView
 {
@@ -59,7 +58,6 @@ public partial class MacroCodeView
         IsUpToDate = false;
         _editorProblems = new();
         _appProblems = new();
-        UpdateProblems();
 
         if (_webView == null)
             return await CreateAsync();
@@ -166,12 +164,12 @@ public partial class MacroCodeView
                 Post(new JsonObject
                 {
                     ["type"] = "appMarkers",
+                    ["version"] = (int?)message["version"],
                     ["markers"] = new JsonArray(_appProblems
                         .Select(p => (JsonNode?)new JsonObject { ["line"] = p.Line, ["column"] = p.Column, ["message"] = p.Message })
                         .ToArray()),
                 });
                 IsUpToDate = true;
-                UpdateProblems();
                 Changed?.Invoke();
                 break;
         }
@@ -183,41 +181,6 @@ public partial class MacroCodeView
         StatusText.Visibility = Visibility.Visible;
         if (_webView != null)
             _webView.Visibility = Visibility.Collapsed;
-    }
-
-    private sealed record ProblemRow(CodeProblem Problem)
-    {
-        public string Message => Problem.Message;
-        public string Position => $"Ln {Problem.Line}, Col {Problem.Column}";
-        public string Text => $"{Message} {Position}";
-    }
-
-    private void UpdateProblems()
-    {
-        var rows = Problems.Select(p => new ProblemRow(p)).ToList();
-        ProblemList.ItemsSource = rows;
-        NoProblemsText.Visibility = rows.Count == 0 && IsUpToDate ? Visibility.Visible : Visibility.Collapsed;
-        ProblemCountBadge.Visibility = rows.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        ProblemCountText.Text = rows.Count.ToString();
-    }
-
-    private void Reveal(ProblemRow? row)
-    {
-        if (row == null)
-            return;
-        _webView?.Focus();
-        Post(new JsonObject { ["type"] = "reveal", ["line"] = row.Problem.Line, ["column"] = row.Problem.Column });
-    }
-
-    private void OnProblemClick(object sender, MouseButtonEventArgs e) => Reveal(ProblemList.SelectedItem as ProblemRow);
-
-    private void OnProblemKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            Reveal(ProblemList.SelectedItem as ProblemRow);
-            e.Handled = true;
-        }
     }
 
     private void Close()

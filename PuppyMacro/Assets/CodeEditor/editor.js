@@ -1,8 +1,10 @@
-// The macro editor's Code view, inside a WebView2 (Views/MacroCodeView.xaml.cs).
-// Messages from the app: init { text, generation, schema, dark }, setText { text, generation }, format, reveal { line, column },
-// appMarkers { markers: [{ line, column, message }] }, theme { dark }, focus.
-// Messages to the app: ready, changed { text, generation, version, markers: [{ line, column, message }] }, cursor { line, column }.
+// The macro editor's Code view, inside a WebView2 (Views/MacroCodeView.xaml.cs): Monaco and a
+// Problems panel like VS Code's (Monaco has no panel of its own: it is only VS Code's editor).
+// Messages from the app: init { text, generation, schema, dark }, setText { text, generation }, format,
+// appMarkers { version, markers: [{ line, column, message }] }, theme { dark }, focus.
+// Messages to the app: ready, changed { text, generation, version, markers: [{ line, column, message }] }.
 // generation: which text the app last set, so it can ignore reports about older text.
+// version: Monaco's version of the text the app checked, so "No problems." is only shown for checked text.
 (function () {
     'use strict';
 
@@ -13,9 +15,20 @@
     let changeTimer = 0;
     let lastSent = '';
     let generation = 0;
+    let checkedVersion = -1;
+    let selected = 0;
+
+    const list = document.getElementById('list');
+    const empty = document.getElementById('empty');
+    const count = document.getElementById('count');
 
     function post(message) {
         host.postMessage(message);
+    }
+
+    function setTheme(dark) {
+        document.body.className = dark ? 'vs-dark' : 'vs';
+        monaco.editor.setTheme(dark ? 'vs-dark' : 'vs');
     }
 
     // Monaco's own markers: JSON syntax and the schema (not the app's, which it sends itself).
@@ -40,6 +53,68 @@
             clearTimeout(changeTimer);
         changeTimer = setTimeout(sendChanged, 200);
     }
+
+    // ---- Problems panel ----
+
+    function problems() {
+        return monaco.editor.getModelMarkers({ resource: model.uri })
+            .filter(m => m.severity >= monaco.MarkerSeverity.Warning)
+            .sort((a, b) => a.startLineNumber - b.startLineNumber || a.startColumn - b.startColumn);
+    }
+
+    function renderProblems() {
+        const items = problems();
+        list.replaceChildren();
+        items.forEach((marker, index) => {
+            const row = document.createElement('li');
+            row.setAttribute('role', 'option');
+            row.className = index === selected ? 'selected' : '';
+            const icon = document.createElement('span');
+            icon.className = 'codicon codicon-error';
+            icon.setAttribute('aria-hidden', 'true');
+            const message = document.createElement('span');
+            message.className = 'message';
+            message.textContent = marker.message;
+            message.title = marker.message;
+            const position = document.createElement('span');
+            position.className = 'position';
+            position.textContent = `Ln ${marker.startLineNumber}, Col ${marker.startColumn}`;
+            row.append(icon, message, position);
+            row.setAttribute('aria-label', `${marker.message} Ln ${marker.startLineNumber}, Col ${marker.startColumn}`);
+            row.addEventListener('click', () => { select(index); reveal(marker); });
+            list.append(row);
+        });
+        if (selected >= items.length)
+            selected = 0;
+        count.hidden = items.length === 0;
+        count.textContent = String(items.length);
+        empty.hidden = items.length > 0;
+        empty.textContent = checkedVersion === model.getVersionId() ? 'No problems.' : 'Checking…';
+    }
+
+    function select(index) {
+        const rows = list.children;
+        if (rows.length === 0)
+            return;
+        selected = Math.max(0, Math.min(index, rows.length - 1));
+        for (let i = 0; i < rows.length; i++)
+            rows[i].className = i === selected ? 'selected' : '';
+        rows[selected].scrollIntoView({ block: 'nearest' });
+    }
+
+    function reveal(marker) {
+        editor.revealLineInCenter(marker.startLineNumber);
+        editor.setPosition({ lineNumber: marker.startLineNumber, column: marker.startColumn });
+        editor.focus();
+    }
+
+    list.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown') select(selected + 1);
+        else if (e.key === 'ArrowUp') select(selected - 1);
+        else if (e.key === 'Enter') { const marker = problems()[selected]; if (marker) reveal(marker); }
+        else return;
+        e.preventDefault();
+    });
 
     function init(message) {
         generation = message.generation;
@@ -66,14 +141,17 @@
             wordBasedSuggestions: 'off',
             formatOnPaste: false,
         });
+        setTheme(message.dark);
 
-        model.onDidChangeContent(scheduleChanged);
+        model.onDidChangeContent(() => { renderProblems(); scheduleChanged(); });
         monaco.editor.onDidChangeMarkers(uris => {
-            if (uris.some(uri => uri.toString() === model.uri.toString()))
-                scheduleChanged();
+            if (!uris.some(uri => uri.toString() === model.uri.toString()))
+                return;
+            renderProblems();
+            scheduleChanged();
         });
-        editor.onDidChangeCursorPosition(e => post({ type: 'cursor', line: e.position.lineNumber, column: e.position.column }));
         editor.focus();
+        renderProblems();
         sendChanged();
     }
 
@@ -89,6 +167,7 @@
             case 'setText':
                 generation = message.generation;
                 lastSent = '';
+                checkedVersion = -1;
                 model.setValue(message.text);
                 editor.setPosition({ lineNumber: 1, column: 1 });
                 editor.focus();
@@ -96,12 +175,8 @@
             case 'format':
                 editor.getAction('editor.action.formatDocument').run().then(() => editor.focus());
                 break;
-            case 'reveal':
-                editor.revealLineInCenter(message.line);
-                editor.setPosition({ lineNumber: message.line, column: message.column });
-                editor.focus();
-                break;
             case 'appMarkers':
+                checkedVersion = message.version;
                 monaco.editor.setModelMarkers(model, APP_OWNER, message.markers.map(m => {
                     const line = Math.min(Math.max(m.line, 1), model.getLineCount());
                     return {
@@ -113,9 +188,10 @@
                         severity: monaco.MarkerSeverity.Error,
                     };
                 }));
+                renderProblems();
                 break;
             case 'theme':
-                monaco.editor.setTheme(message.dark ? 'vs-dark' : 'vs');
+                setTheme(message.dark);
                 break;
             case 'focus':
                 editor.focus();
