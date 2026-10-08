@@ -6,8 +6,8 @@
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="PuppyMacro"
     Icon="pack://application:,,,/Assets/PuppyMacro.ico"
-    Width="2130"
-    Height="1350"
+    Width="1420"
+    Height="900"
     MinWidth="560"
     MinHeight="560"
     ExtendsContentIntoTitleBar="True"
@@ -104,12 +104,9 @@
                     </StackPanel>
                 </RadioButton>
                 <RadioButton x:Name="SettingsNav" DockPanel.Dock="Bottom" GroupName="Nav" Style="{StaticResource RailButton}"
-                             AutomationProperties.Name="Settings" Checked="OnNavChanged">
+                             AutomationProperties.Name="Settings" ToolTip="Settings" Checked="OnNavChanged">
                     <Grid>
-                        <StackPanel>
-                            <ui:SymbolIcon Symbol="Settings24" FontSize="18" HorizontalAlignment="Center" />
-                            <TextBlock Margin="0,2,0,0" FontSize="11" Text="Settings" HorizontalAlignment="Center" />
-                        </StackPanel>
+                        <ui:SymbolIcon Symbol="Settings24" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <!-- Update available: stays until the update is installed. -->
                         <Ellipse x:Name="SettingsUpdateDot" Width="8" Height="8" Margin="0,-1,-2,0"
                                  HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed"
@@ -128,7 +125,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
-                    <TextBlock Style="{StaticResource PageTitle}" Text="Loops" />
+                    <ui:TextBlock FontTypography="Title" VerticalAlignment="Center" Text="Loops" />
                     <ui:Button
                         x:Name="AddLoopButton"
                         HorizontalAlignment="Right"
@@ -179,59 +176,59 @@
                                     <Border Height="3" Margin="0,0,0,3" CornerRadius="2"
                                             Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
                                             Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
-                                    <Border x:Name="Card" Margin="0,0,0,4" Style="{StaticResource CardBorder}"
-                                            Cursor="SizeAll" AllowDrop="True" Tag="{Binding}"
+                                    <ui:CardControl x:Name="Card" Margin="0,0,0,4" MinHeight="68"
+                                            AllowDrop="True" Tag="{Binding}"
                                             PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
                                             DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
+                                        <ui:CardControl.Header>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
 
-                                            <!-- Type icon -->
-                                            <Border Grid.Column="0" Width="34" Height="34" Margin="0,0,12,0" CornerRadius="6"
-                                                    VerticalAlignment="Center" Background="{DynamicResource SubtleFillColorSecondaryBrush}">
-                                                <Grid>
-                                                    <ui:SymbolIcon Symbol="Keyboard24" FontSize="18"
+                                                <!-- Type icon -->
+                                                <Border Grid.Column="0" Width="34" Height="34" Margin="0,0,12,0" CornerRadius="6"
+                                                        VerticalAlignment="Center" Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                                                    <Grid>
+                                                        <ui:SymbolIcon Symbol="Keyboard24" FontSize="18"
+                                                                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                                       Visibility="{Binding ShowKeyIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                        <TextBlock Text="Aa" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                    Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                                   Visibility="{Binding ShowKeyIcon, Converter={StaticResource BoolToVisibility}}" />
-                                                    <TextBlock Text="Aa" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                               Visibility="{Binding ShowTextIcon, Converter={StaticResource BoolToVisibility}}" />
-                                                    <ui:SymbolIcon Symbol="List24" FontSize="18"
-                                                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                                   Visibility="{Binding ShowListIcon, Converter={StaticResource BoolToVisibility}}" />
-                                                </Grid>
-                                            </Border>
+                                                                   Visibility="{Binding ShowTextIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                        <ui:SymbolIcon Symbol="List24" FontSize="18"
+                                                                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                                       Visibility="{Binding ShowListIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                    </Grid>
+                                                </Border>
 
-                                            <!-- Name, status, summary, hotkey -->
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock MaxWidth="200" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                                                    <Ellipse x:Name="StatusDot" Width="7" Height="7" Margin="10,0,5,0" VerticalAlignment="Center"
-                                                             Fill="{DynamicResource TextFillColorTertiaryBrush}" />
-                                                    <TextBlock x:Name="StatusText" FontSize="12" VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
+                                                <!-- Name, status, summary, hotkey -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock MaxWidth="200" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                        <Ellipse x:Name="StatusDot" Width="7" Height="7" Margin="10,0,5,0" VerticalAlignment="Center"
+                                                                 Fill="{DynamicResource TextFillColorTertiaryBrush}" />
+                                                        <TextBlock x:Name="StatusText" FontSize="12" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
+                                                    </StackPanel>
+                                                    <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                               Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
+                                                    <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                                        <TextBlock Margin="0,0,6,0" FontSize="12" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                                   Text="{Binding ActivationText}" />
+                                                        <ItemsControl ItemsSource="{Binding HotkeyParts}"
+                                                                      ItemTemplate="{StaticResource KeyCapItem}"
+                                                                      ItemsPanel="{StaticResource HorizontalPanel}"
+                                                                      Visibility="{Binding HasHotkey, Converter={StaticResource BoolToVisibility}}" />
+                                                    </StackPanel>
                                                 </StackPanel>
-                                                <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                           Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
-                                                <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
-                                                    <TextBlock Margin="0,0,6,0" FontSize="12" VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                                               Text="{Binding ActivationText}" />
-                                                    <ItemsControl ItemsSource="{Binding HotkeyParts}"
-                                                                  ItemTemplate="{StaticResource KeyCapItem}"
-                                                                  ItemsPanel="{StaticResource HorizontalPanel}"
-                                                                  Visibility="{Binding HasHotkey, Converter={StaticResource BoolToVisibility}}" />
-                                                </StackPanel>
-                                            </StackPanel>
-
+                                            </Grid>
+                                        </ui:CardControl.Header>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <!-- Start/Stop (Toggle) or hint (Hold) -->
-                                            <Grid Grid.Column="2" MinWidth="72" Margin="8,0,0,0" VerticalAlignment="Center" Cursor="Arrow">
+                                            <Grid MinWidth="72" Margin="8,0,0,0" VerticalAlignment="Center">
                                                 <ui:Button HorizontalAlignment="Right" Content="{Binding StartStopText}" Tag="{Binding}"
                                                            Click="OnStartStopClick"
                                                            Visibility="{Binding IsToggleMode, Converter={StaticResource BoolToVisibility}}" />
@@ -240,14 +237,16 @@
                                                            Visibility="{Binding IsHoldMode, Converter={StaticResource BoolToVisibility}}" />
                                             </Grid>
 
-                                            <ui:ToggleSwitch Grid.Column="3" Margin="12,0,4,0" VerticalAlignment="Center" Cursor="Arrow"
-                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" />
+                                            <ui:ToggleSwitch VerticalAlignment="Center"
+                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" Margin="12,0,12,0" />
 
-                                            <ui:Button Grid.Column="4" Appearance="Transparent" Icon="{ui:SymbolIcon MoreHorizontal24}" Cursor="Arrow"
+                                            <ui:Button Style="{StaticResource MoreButton}"
                                                        ToolTip="More options" Tag="{Binding}" IsEnabled="{Binding IsNotRunning}"
-                                                       Click="OnMoreClick" />
-                                        </Grid>
-                                    </Border>
+                                                       Click="OnMoreClick">
+                                                <ui:FontIcon Glyph="&#xE712;" Style="{StaticResource MoreGlyph}" />
+                                            </ui:Button>
+                                        </StackPanel>
+                                    </ui:CardControl>
                                     <Border Height="3" Margin="0,-1,0,4" CornerRadius="2"
                                             Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
                                             Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
@@ -284,7 +283,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
-                    <TextBlock Style="{StaticResource PageTitle}" Text="Macros" />
+                    <ui:TextBlock FontTypography="Title" VerticalAlignment="Center" Text="Macros" />
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
                         <ui:Button x:Name="NewMacroButton" Content="New macro" Icon="{ui:SymbolIcon Add24}"
                                    ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
@@ -330,44 +329,45 @@
                                     <Border Height="3" Margin="0,0,0,3" CornerRadius="2"
                                             Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
                                             Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
-                                    <Border x:Name="Card" Margin="0,0,0,4" Style="{StaticResource CardBorder}"
-                                            Cursor="SizeAll" AllowDrop="True" Tag="{Binding}"
+                                    <ui:CardControl x:Name="Card" Margin="0,0,0,4" MinHeight="68"
+                                            AllowDrop="True" Tag="{Binding}"
                                             PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
                                             DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="34" Height="34" Margin="0,0,12,0" CornerRadius="6"
-                                                    VerticalAlignment="Center" Background="{DynamicResource SubtleFillColorSecondaryBrush}">
-                                                <ui:SymbolIcon Symbol="DocumentBulletList24" FontSize="18"
-                                                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                            </Border>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock MaxWidth="200" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                                                    <Ellipse x:Name="StatusDot" Width="7" Height="7" Margin="10,0,5,0" VerticalAlignment="Center"
-                                                             Fill="{DynamicResource TextFillColorTertiaryBrush}" />
-                                                    <TextBlock x:Name="StatusText" FontSize="12" VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
+                                        <ui:CardControl.Header>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" Width="34" Height="34" Margin="0,0,12,0" CornerRadius="6"
+                                                        VerticalAlignment="Center" Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                                                    <ui:SymbolIcon Symbol="DocumentBulletList24" FontSize="18"
+                                                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                                </Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock MaxWidth="200" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                        <Ellipse x:Name="StatusDot" Width="7" Height="7" Margin="10,0,5,0" VerticalAlignment="Center"
+                                                                 Fill="{DynamicResource TextFillColorTertiaryBrush}" />
+                                                        <TextBlock x:Name="StatusText" FontSize="12" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
+                                                    </StackPanel>
+                                                    <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                               Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
+                                                    <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                                        <TextBlock Margin="0,0,6,0" FontSize="12" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                                   Text="{Binding ActivationText}" />
+                                                        <ItemsControl ItemsSource="{Binding HotkeyParts}"
+                                                                      ItemTemplate="{StaticResource KeyCapItem}"
+                                                                      ItemsPanel="{StaticResource HorizontalPanel}"
+                                                                      Visibility="{Binding HasHotkey, Converter={StaticResource BoolToVisibility}}" />
+                                                    </StackPanel>
                                                 </StackPanel>
-                                                <TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                           Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
-                                                <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
-                                                    <TextBlock Margin="0,0,6,0" FontSize="12" VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                                               Text="{Binding ActivationText}" />
-                                                    <ItemsControl ItemsSource="{Binding HotkeyParts}"
-                                                                  ItemTemplate="{StaticResource KeyCapItem}"
-                                                                  ItemsPanel="{StaticResource HorizontalPanel}"
-                                                                  Visibility="{Binding HasHotkey, Converter={StaticResource BoolToVisibility}}" />
-                                                </StackPanel>
-                                            </StackPanel>
-                                            <Grid Grid.Column="2" MinWidth="72" Margin="8,0,0,0" VerticalAlignment="Center" Cursor="Arrow">
+                                            </Grid>
+                                        </ui:CardControl.Header>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid MinWidth="72" Margin="8,0,0,0" VerticalAlignment="Center">
                                                 <ui:Button HorizontalAlignment="Right" Content="{Binding StartStopText}" Tag="{Binding}"
                                                            Click="OnMacroStartStopClick"
                                                            Visibility="{Binding IsToggleMode, Converter={StaticResource BoolToVisibility}}" />
@@ -375,13 +375,15 @@
                                                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                                                            Visibility="{Binding IsHoldMode, Converter={StaticResource BoolToVisibility}}" />
                                             </Grid>
-                                            <ui:ToggleSwitch Grid.Column="3" Margin="12,0,4,0" VerticalAlignment="Center" Cursor="Arrow"
-                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" />
-                                            <ui:Button Grid.Column="4" Appearance="Transparent" Icon="{ui:SymbolIcon MoreHorizontal24}" Cursor="Arrow"
+                                            <ui:ToggleSwitch VerticalAlignment="Center"
+                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" Margin="12,0,12,0" />
+                                            <ui:Button Style="{StaticResource MoreButton}"
                                                        ToolTip="More options" Tag="{Binding}" IsEnabled="{Binding IsNotRunning}"
-                                                       Click="OnMacroMoreClick" />
-                                        </Grid>
-                                    </Border>
+                                                       Click="OnMacroMoreClick">
+                                                <ui:FontIcon Glyph="&#xE712;" Style="{StaticResource MoreGlyph}" />
+                                            </ui:Button>
+                                        </StackPanel>
+                                    </ui:CardControl>
                                     <Border Height="3" Margin="0,-1,0,4" CornerRadius="2"
                                             Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
                                             Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
@@ -417,7 +419,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
-                    <TextBlock Style="{StaticResource PageTitle}" Text="Remap" />
+                    <ui:TextBlock FontTypography="Title" VerticalAlignment="Center" Text="Remap" />
                     <ui:Button HorizontalAlignment="Right" VerticalAlignment="Center" Appearance="Primary" Content="Add remap"
                                Icon="{ui:SymbolIcon Add24}" Click="OnAddRemapClick" />
                 </Grid>
@@ -449,13 +451,8 @@
                         <ItemsControl x:Name="RemapList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type views:RemapItemViewModel}">
-                                    <Border x:Name="Card" Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
+                                    <ui:CardControl x:Name="Card" Margin="0,0,0,4" MinHeight="68">
+                                        <ui:CardControl.Header>
                                             <StackPanel VerticalAlignment="Center">
                                                 <WrapPanel>
                                                     <Border Margin="0,0,8,0" Padding="8,2" Style="{StaticResource KeyCap}">
@@ -475,12 +472,16 @@
                                                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                                                            Visibility="{Binding HasNote, Converter={StaticResource BoolToVisibility}}" />
                                             </StackPanel>
-                                            <ui:ToggleSwitch Grid.Column="1" Margin="12,0,4,0" VerticalAlignment="Center"
-                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" />
-                                            <ui:Button Grid.Column="2" Appearance="Transparent" Icon="{ui:SymbolIcon MoreHorizontal24}"
-                                                       ToolTip="More options" Tag="{Binding}" Click="OnRemapMoreClick" />
-                                        </Grid>
-                                    </Border>
+                                        </ui:CardControl.Header>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <ui:ToggleSwitch VerticalAlignment="Center"
+                                                             ToolTip="Enabled" IsChecked="{Binding IsLoopEnabled, Mode=TwoWay}" Margin="12,0,12,0" />
+                                            <ui:Button Style="{StaticResource MoreButton}"
+                                                       ToolTip="More options" Tag="{Binding}" Click="OnRemapMoreClick">
+                                                <ui:FontIcon Glyph="&#xE712;" Style="{StaticResource MoreGlyph}" />
+                                            </ui:Button>
+                                        </StackPanel>
+                                    </ui:CardControl>
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
                                             <Setter TargetName="Card" Property="Opacity" Value="0.6" />
@@ -500,67 +501,48 @@
             <!-- ================= Settings page ================= -->
             <ScrollViewer x:Name="SettingsPage" Grid.Column="1" Margin="8,0,20,0" Visibility="Collapsed"
                           VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="0,0,0,12">
-                    <TextBlock Margin="0,0,0,14" Style="{StaticResource PageTitle}" Text="Settings" />
+                <StackPanel MaxWidth="1064" Margin="0,0,0,12">
+                    <ui:TextBlock FontTypography="Title" VerticalAlignment="Center" Text="Settings" />
 
-                    <!-- Theme -->
-                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="DarkTheme24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <!-- Sections and cards as in Windows Settings: standard WPF-UI controls only. -->
+                    <ui:TextBlock Margin="1,30,0,10" FontTypography="BodyStrong" Text="General" />
+                    <ui:CardControl Margin="0,0,0,4" MinHeight="68" Icon="{ui:SymbolIcon DarkTheme24}">
+                        <ui:CardControl.Header>
+                            <StackPanel>
                                 <TextBlock Text="Theme" />
                                 <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="System follows your Windows setting" />
                             </StackPanel>
-                            <ComboBox x:Name="ThemeComboBox" Grid.Column="2" MinWidth="130" VerticalAlignment="Center"
-                                      SelectionChanged="OnThemeChanged">
-                                <ComboBoxItem Content="System" />
-                                <ComboBoxItem Content="Light" />
-                                <ComboBoxItem Content="Dark" />
-                            </ComboBox>
-                        </Grid>
-                    </Border>
-
-                    <!-- System tray and startup -->
-                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="Desktop24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        </ui:CardControl.Header>
+                        <ComboBox x:Name="ThemeComboBox" MinWidth="130" SelectionChanged="OnThemeChanged">
+                            <ComboBoxItem Content="System" />
+                            <ComboBoxItem Content="Light" />
+                            <ComboBoxItem Content="Dark" />
+                        </ComboBox>
+                    </ui:CardControl>
+                    <ui:CardControl Margin="0,0,0,4" MinHeight="68" Icon="{ui:SymbolIcon Desktop24}">
+                        <ui:CardControl.Header>
+                            <StackPanel>
                                 <TextBlock Text="Close to system tray" />
                                 <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
                                            Text="When you close the window, PuppyMacro keeps running in the system tray" />
                             </StackPanel>
-                            <ui:ToggleSwitch x:Name="CloseToTraySwitch" Grid.Column="2" VerticalAlignment="Center"
-                                             OffContent="Off" OnContent="On" Checked="OnCloseToTrayChanged" Unchecked="OnCloseToTrayChanged" />
-                        </Grid>
-                    </Border>
-                    <Border Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="Power24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        </ui:CardControl.Header>
+                        <ui:ToggleSwitch x:Name="CloseToTraySwitch" OffContent="Off" OnContent="On"
+                                         Checked="OnCloseToTrayChanged" Unchecked="OnCloseToTrayChanged" />
+                    </ui:CardControl>
+                    <ui:CardControl Margin="0,0,0,4" MinHeight="68" Icon="{ui:SymbolIcon Power24}">
+                        <ui:CardControl.Header>
+                            <StackPanel>
                                 <TextBlock Text="Start with Windows" />
                                 <TextBlock x:Name="StartWithWindowsText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
                                            Text="Starts in the system tray when you sign in" />
                             </StackPanel>
-                            <ui:ToggleSwitch x:Name="StartWithWindowsSwitch" Grid.Column="2" VerticalAlignment="Center"
-                                             OffContent="Off" OnContent="On" Checked="OnStartWithWindowsChanged" Unchecked="OnStartWithWindowsChanged" />
-                        </Grid>
-                    </Border>
+                        </ui:CardControl.Header>
+                        <ui:ToggleSwitch x:Name="StartWithWindowsSwitch" OffContent="Off" OnContent="On"
+                                         Checked="OnStartWithWindowsChanged" Unchecked="OnStartWithWindowsChanged" />
+                    </ui:CardControl>
 
+                    <ui:TextBlock Margin="1,30,0,10" FontTypography="BodyStrong" Text="Hotkeys and overlay" />
                     <!-- Hotkeys -->
                     <ui:CardExpander x:Name="HotkeysGroup" Margin="0,0,0,4" Tag="Hotkeys" Icon="{ui:SymbolIcon Keyboard24}"
                                      Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
@@ -760,6 +742,7 @@
                         </StackPanel>
                     </ui:CardExpander>
 
+                    <ui:TextBlock Margin="1,30,0,10" FontTypography="BodyStrong" Text="Data and updates" />
                     <!-- Backup -->
                     <ui:CardExpander x:Name="BackupGroup" Margin="0,0,0,4" Tag="Backup" Icon="{ui:SymbolIcon ArrowDownload24}"
                                      Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
@@ -781,60 +764,52 @@
                         </StackPanel>
                     </ui:CardExpander>
 
-                    <!-- Updates: the status and the automatic check in one card -->
-                    <Border x:Name="UpdateCard" Margin="0,0,0,4" Style="{StaticResource CardBorder}">
-                        <StackPanel>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <ui:SymbolIcon x:Name="UpdateCardIcon" Symbol="ArrowSync24" FontSize="20" Margin="2,0,16,0" VerticalAlignment="Center" />
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="Updates" />
-                                    <TextBlock x:Name="UpdateStatusText" FontSize="12" TextWrapping="Wrap"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                    <TextBlock x:Name="UpdateWhatsNew" Margin="0,2,0,0" FontSize="12" Visibility="Collapsed">
-                                        <Hyperlink x:Name="UpdateWhatsNewLink" RequestNavigate="OnWhatsNewNavigate">What's new</Hyperlink>
-                                    </TextBlock>
-                                    <ProgressBar x:Name="UpdateCardProgress" Margin="0,6,0,0" Maximum="100" Visibility="Collapsed" />
-                                </StackPanel>
-                                <ui:Button x:Name="UpdateCardButton" Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center"
-                                           Click="OnUpdateActionClick" />
-                            </Grid>
-                            <Border Margin="36,12,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
-                            <Grid Margin="36,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="Check for updates automatically" />
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                               Text="When PuppyMacro starts and every 12 hours" />
-                                </StackPanel>
-                                <ui:ToggleSwitch x:Name="CheckForUpdatesSwitch" Grid.Column="1" VerticalAlignment="Center"
-                                                 OffContent="Off" OnContent="On" Checked="OnCheckForUpdatesChanged" Unchecked="OnCheckForUpdatesChanged" />
-                            </Grid>
-                        </StackPanel>
-                    </Border>
+                    <!-- Updates: the status, then the automatic check, as on the Windows Update page -->
+                    <ui:CardControl x:Name="UpdateCard" Margin="0,0,0,4" MinHeight="68">
+                        <ui:CardControl.Icon>
+                            <ui:SymbolIcon x:Name="UpdateCardIcon" Symbol="ArrowSync24" />
+                        </ui:CardControl.Icon>
+                        <ui:CardControl.Header>
+                            <StackPanel>
+                                <TextBlock Text="Updates" />
+                                <TextBlock x:Name="UpdateStatusText" FontSize="12" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                <TextBlock x:Name="UpdateWhatsNew" Margin="0,2,0,0" FontSize="12" Visibility="Collapsed">
+                                    <Hyperlink x:Name="UpdateWhatsNewLink" RequestNavigate="OnWhatsNewNavigate">What's new</Hyperlink>
+                                </TextBlock>
+                                <ProgressBar x:Name="UpdateCardProgress" Margin="0,6,0,0" Maximum="100" Visibility="Collapsed" />
+                            </StackPanel>
+                        </ui:CardControl.Header>
+                        <ui:Button x:Name="UpdateCardButton" Click="OnUpdateActionClick" />
+                    </ui:CardControl>
+                    <ui:CardControl Margin="0,0,0,4" MinHeight="68" Icon="{ui:SymbolIcon ArrowClockwise24}">
+                        <ui:CardControl.Header>
+                            <StackPanel>
+                                <TextBlock Text="Check for updates automatically" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                           Text="When PuppyMacro starts and every 12 hours" />
+                            </StackPanel>
+                        </ui:CardControl.Header>
+                        <ui:ToggleSwitch x:Name="CheckForUpdatesSwitch" OffContent="Off" OnContent="On"
+                                         Checked="OnCheckForUpdatesChanged" Unchecked="OnCheckForUpdatesChanged" />
+                    </ui:CardControl>
 
-                    <!-- About: opens like the other groups -->
+                    <!-- About: links inside, like "Related support" in Windows Settings -->
+                    <ui:TextBlock Margin="1,30,0,10" FontTypography="BodyStrong" Text="About" />
                     <ui:CardExpander x:Name="AboutGroup" Margin="0,0,0,4" Tag="About" Icon="{ui:SymbolIcon Info24}"
                                      Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
                         <ui:CardExpander.Header>
                             <StackPanel>
-                                <TextBlock Text="About" />
+                                <TextBlock Text="Help and source code" />
                                 <TextBlock x:Name="AboutText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                             </StackPanel>
                         </ui:CardExpander.Header>
-                        <WrapPanel>
-                            <ui:Button x:Name="UserGuideButton" Margin="0,0,8,0" Content="User guide" Icon="{ui:SymbolIcon BookOpen24}"
-                                       Tag="https://giuvincenzi.github.io/puppymacro/guide/latest/" Click="OnOpenLinkClick" />
-                            <ui:Button x:Name="GitHubButton" Content="GitHub" Icon="{ui:SymbolIcon BranchFork24}"
-                                       Tag="https://github.com/giuvincenzi/puppymacro" Click="OnOpenLinkClick" />
-                        </WrapPanel>
+                        <StackPanel HorizontalAlignment="Left">
+                            <ui:HyperlinkButton x:Name="UserGuideButton" Content="User guide"
+                                                NavigateUri="https://giuvincenzi.github.io/puppymacro/guide/latest/" />
+                            <ui:HyperlinkButton x:Name="GitHubButton" Content="GitHub"
+                                                NavigateUri="https://github.com/giuvincenzi/puppymacro" />
+                        </StackPanel>
                     </ui:CardExpander>
 
                     <TextBlock x:Name="SettingsErrorText" Margin="2,6,0,0" FontSize="12" TextWrapping="Wrap"
@@ -856,8 +831,8 @@
                 Height="40"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
-                BorderBrush="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                Appearance="Primary"
+                AutomationProperties.Name="Enable overlay mode"
                 Click="OnOverlayModeClick">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Enable overlay mode" FontWeight="SemiBold" VerticalAlignment="Center" />
@@ -870,8 +845,9 @@
                 Height="40"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
-                Appearance="Danger"
                 IsEnabled="False"
+                Appearance="Danger"
+                AutomationProperties.Name="Stop all"
                 Click="OnStopAllClick">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Stop all" FontWeight="SemiBold" VerticalAlignment="Center" />

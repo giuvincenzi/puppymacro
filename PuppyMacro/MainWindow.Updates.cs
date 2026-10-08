@@ -125,7 +125,7 @@ public partial class MainWindow
         UpdateBar.Visibility = version != null && (downloading || version != _dismissedUpdateVersion)
             ? Visibility.Visible
             : Visibility.Collapsed;
-        UpdateCard.SetResourceReference(System.Windows.Controls.Border.BorderBrushProperty,
+        UpdateCard.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty,
             version != null ? "AccentTextFillColorPrimaryBrush" : "CardStrokeColorDefaultBrush");
         UpdateCardIcon.SetResourceReference(ForegroundProperty,
             version != null ? "AccentTextFillColorPrimaryBrush" : "TextFillColorPrimaryBrush");
@@ -209,13 +209,6 @@ public partial class MainWindow
     {
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
         e.Handled = true;
-    }
-
-    /// <summary>About's User guide and GitHub: opens the button's Tag in the browser.</summary>
-    private void OnOpenLinkClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is string url)
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     }
 
     private async void OnCheckForUpdatesChanged(object sender, RoutedEventArgs e)

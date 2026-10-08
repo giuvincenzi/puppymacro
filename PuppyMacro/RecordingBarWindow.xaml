@@ -21,7 +21,7 @@
             <Ellipse Width="10" Height="10" Fill="#FCE100" VerticalAlignment="Center" />
             <TextBlock x:Name="CountdownText" Margin="8,0,0,0" FontSize="13" FontWeight="SemiBold" Text="Recording starts in 3" VerticalAlignment="Center" />
             <TextBlock Margin="14,0,14,0" FontSize="13" Foreground="#C5C5C5" Text="Switch to the window to record. Clicks now are not recorded." VerticalAlignment="Center" />
-            <Button Click="OnCancelCountdownClick" Cursor="Hand" Focusable="False">
+            <Button Click="OnCancelCountdownClick" Focusable="False">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Back" Height="30" Padding="12,0" CornerRadius="4" Background="#373737" BorderBrush="#5A5A5A" BorderThickness="1">
@@ -46,7 +46,7 @@
                 <TextBlock x:Name="HotkeyText" FontSize="12" />
             </Border>
             <TextBlock Margin="6,0,14,0" FontSize="13" Foreground="#C5C5C5" Text="to stop" VerticalAlignment="Center" />
-            <Button Click="OnStopClick" Cursor="Hand" Focusable="False">
+            <Button Click="OnStopClick" Focusable="False">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Back" Height="30" Padding="12,0" CornerRadius="4" Background="#C42B1C">

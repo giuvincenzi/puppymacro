@@ -8,7 +8,6 @@
         <!-- The checked view has a fill and an accent bar -->
         <Style x:Key="ViewSwitch" TargetType="RadioButton">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-            <Setter Property="Cursor" Value="Hand" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Template">
                 <Setter.Value>

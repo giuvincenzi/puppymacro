@@ -13,6 +13,7 @@ public partial class RecordingBarWindow
     private readonly Stopwatch _clock = Stopwatch.StartNew();
     private readonly DispatcherTimer _timer;
     private DispatcherTimer? _countdown;
+    private CountdownWindow? _bigCountdown;
 
     public RecordingBarWindow(string hotkey)
     {
@@ -28,6 +29,7 @@ public partial class RecordingBarWindow
         {
             _timer.Stop();
             _countdown?.Stop();
+            CloseBigCountdown();
         };
     }
 
@@ -37,13 +39,16 @@ public partial class RecordingBarWindow
     /// <summary>Raised when the countdown is cancelled.</summary>
     public event Action? CountdownCancelled;
 
-    /// <summary>Shows "Recording starts in N", then calls <paramref name="done"/>.</summary>
+    /// <summary>Shows "Recording starts in N" here and big in the middle of the screen, then calls <paramref name="done"/>.</summary>
     public void StartCountdown(int seconds, Action done)
     {
         CountdownPanel.Visibility = Visibility.Visible;
         RecordingPanel.Visibility = Visibility.Collapsed;
         int left = seconds;
         CountdownText.Text = $"Recording starts in {left}";
+        _bigCountdown = new CountdownWindow();
+        _bigCountdown.Show();
+        _bigCountdown.SetNumber(left);
         _countdown = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _countdown.Tick += (_, _) =>
         {
@@ -51,6 +56,7 @@ public partial class RecordingBarWindow
             if (left > 0)
             {
                 CountdownText.Text = $"Recording starts in {left}";
+                _bigCountdown?.SetNumber(left);
                 return;
             }
             _countdown.Stop();
@@ -64,6 +70,7 @@ public partial class RecordingBarWindow
     public void ShowRecording()
     {
         _countdown?.Stop();
+        CloseBigCountdown();
         CountdownPanel.Visibility = Visibility.Collapsed;
         RecordingPanel.Visibility = Visibility.Visible;
         _clock.Restart();
@@ -73,7 +80,14 @@ public partial class RecordingBarWindow
     private void OnCancelCountdownClick(object sender, RoutedEventArgs e)
     {
         _countdown?.Stop();
+        CloseBigCountdown();
         CountdownCancelled?.Invoke();
+    }
+
+    private void CloseBigCountdown()
+    {
+        _bigCountdown?.Close();
+        _bigCountdown = null;
     }
 
     private void CenterOnTop()

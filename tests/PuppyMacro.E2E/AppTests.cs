@@ -38,6 +38,11 @@ public class AppTests
         app.GoTo("Settings");
         Assert.True(app.Has(app.MainWindow, "Updates are available when PuppyMacro is installed with Setup."));
         Assert.True(app.Has(app.MainWindow, "Not available in the development build"));
+
+        // About opens like the other groups. Its buttons open the browser: never clicked.
+        app.FindById(app.MainWindow, "AboutGroup").Patterns.ExpandCollapse.Pattern.Expand();
+        Assert.True(app.FindById(app.MainWindow, "UserGuideButton").IsEnabled);
+        Assert.True(app.FindById(app.MainWindow, "GitHubButton").IsEnabled);
     }
 
     [Fact]
@@ -75,9 +80,12 @@ public class AppTests
         using var app = new AppSession();
 
         // Close to the system tray (on by default). WM_CLOSE, like the title bar's X, which may be
-        // off screen on a small screen (the window is 820 px high).
+        // off screen on a small screen. The window's size is saved.
         app.MainWindow.Close();
         Assert.True(Retry.WhileFalse(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
+        Assert.True(Retry.WhileFalse(() => System.Text.RegularExpressions.Regex.IsMatch(
+                File.ReadAllText(AppSession.SettingsFile), "\"WindowWidth\": [0-9]"),
+            AppSession.Timeout).Success, "the window size was not saved");
 
         using Process second = Process.Start(AppSession.ExePath)!;
 
@@ -89,7 +97,7 @@ public class AppTests
     [Fact]
     public void Windows_fit_on_a_small_screen()
     {
-        // On GitHub the screen is 1024x768: the main window (820 high) and the macro editor
+        // On GitHub the screen is 1024x768: the main window (1420 x 900) and the macro editor
         // (1180 x 820) do not fit unless they are made smaller.
         using var app = new AppSession();
         System.Drawing.Rectangle workArea = System.Windows.Forms.Screen.PrimaryScreen!.WorkingArea;
@@ -275,6 +283,7 @@ public class AppTests
         Assert.NotNull(panel);
         Assert.True(app.Has(panel!, "Everything is on floating buttons."));
         Assert.False(app.Has(panel!, "E2E F24 loop"));
+        Assert.True(app.Has(panel!, "Stop all"));
 
         PressF24(); // the Overlay mode hotkey
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
@@ -386,20 +395,21 @@ public class AppTests
     }
 
     [Fact]
-    public void A_loop_and_a_remap_have_a_code_view_that_grows_the_window()
+    public void A_loop_and_a_remap_have_a_code_view_in_the_same_window()
     {
         using var app = new AppSession();
 
         // A new loop: the code shows what is missing, Form view stays off, Discard changes goes back.
+        // The window keeps its place and size in both views.
         app.Find(app.MainWindow, "Add loop").AsButton().Click();
         Window loop = app.Dialog("Add loop");
-        int formWidth = loop.BoundingRectangle.Width;
+        System.Drawing.Rectangle formPlace = loop.BoundingRectangle;
         OpenCodeView(app, loop, "Name: Enter a name.");
-        Assert.True(loop.BoundingRectangle.Width > formWidth, "the window did not grow for the code");
+        Assert.Equal(formPlace, loop.BoundingRectangle);
         Assert.False(app.FindById(loop, "FormViewButton").IsEnabled);
         Assert.False(app.FindById(loop, "SaveButton").IsEnabled);
         DiscardCodeChanges(app, loop);
-        Assert.True(Retry.WhileFalse(() => loop.BoundingRectangle.Width == formWidth, AppSession.Timeout).Success, "the window did not get its size back");
+        Assert.Equal(formPlace, loop.BoundingRectangle);
         app.FindById(loop, "CancelButton").AsButton().Invoke();
 
         // A sample remap: its code has no problems and goes back to the form.

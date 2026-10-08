@@ -23,10 +23,30 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
 
+            <!-- Icon button like the ⋯ of Windows Settings: no border, a light fill on mouse over.
+                 WPF-UI's Transparent appearance keeps the standard button's border on mouse over. -->
+            <Style x:Key="SubtleButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                <Setter Property="Appearance" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="MouseOverBackground" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                <Setter Property="MouseOverBorderBrush" Value="Transparent" />
+                <Setter Property="PressedBackground" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                <Setter Property="PressedBorderBrush" Value="Transparent" />
+            </Style>
+
+            <!-- The ⋯ "More options" button of a list card, standard padding. Its content is the "More" glyph
+                 of the Windows icon font: <ui:FontIcon Glyph="&#xE712;" Style="{StaticResource MoreGlyph}" />. -->
+            <Style x:Key="MoreButton" TargetType="ui:Button" BasedOn="{StaticResource SubtleButton}">
+                <Setter Property="ToolTip" Value="More options" />
+            </Style>
+            <Style x:Key="MoreGlyph" TargetType="ui:FontIcon">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />
+            </Style>
+
             <!-- Side rail item (Loops / Settings) -->
             <Style x:Key="RailButton" TargetType="RadioButton">
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -56,12 +76,6 @@
                 </Setter>
             </Style>
 
-            <!-- Big page title -->
-            <Style x:Key="PageTitle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
 
             <!-- Settings and loop card -->
             <Style x:Key="CardBorder" TargetType="Border">

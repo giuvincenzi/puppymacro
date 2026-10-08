@@ -20,7 +20,6 @@
     <Window.Resources>
         <Style x:Key="SoundTile" TargetType="RadioButton">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-            <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
@@ -77,7 +76,7 @@
         <DataTemplate DataType="{x:Type views:MacroGroupViewModel}">
             <StackPanel>
                 <Border Style="{StaticResource DropLineBefore}" />
-                <Border Height="40" CornerRadius="6" BorderThickness="1" Cursor="SizeAll" Tag="{Binding}"
+                <Border Height="40" CornerRadius="6" BorderThickness="1" Tag="{Binding}"
                         Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                         PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseLeftButtonUp="OnRowMouseUp" PreviewMouseMove="OnRowMouseMove">
@@ -89,7 +88,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ui:Button Grid.Column="0" Appearance="Transparent" Padding="6" Margin="2,0,0,0" Cursor="Arrow" Tag="{Binding}"
+                        <ui:Button Grid.Column="0" Style="{StaticResource SubtleButton}" Padding="6" Margin="2,0,0,0" Tag="{Binding}"
                                    ToolTip="{Binding ToggleText}" AutomationProperties.Name="{Binding ToggleText}" Click="OnToggleGroupClick">
                             <ui:SymbolIcon FontSize="14">
                                 <ui:SymbolIcon.Style>
@@ -110,14 +109,14 @@
                                    TextTrimming="CharacterEllipsis" MaxWidth="260" />
                         <TextBlock Grid.Column="3" Margin="10,0,0,0" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info}" />
-                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Rename24}" ToolTip="Rename group" AutomationProperties.Name="Rename group"
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ui:Button Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Rename24}" ToolTip="Rename group" AutomationProperties.Name="Rename group"
                                        Tag="{Binding}" Click="OnRenameGroupClick" />
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate group" AutomationProperties.Name="Duplicate group"
+                            <ui:Button Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate group" AutomationProperties.Name="Duplicate group"
                                        Tag="{Binding}" Click="OnDuplicateGroupClick" />
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon GroupDismiss24}" ToolTip="Ungroup (keep the actions)" AutomationProperties.Name="Ungroup"
+                            <ui:Button Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon GroupDismiss24}" ToolTip="Ungroup (keep the actions)" AutomationProperties.Name="Ungroup"
                                        Tag="{Binding}" Click="OnUngroupClick" />
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove the group and its actions" AutomationProperties.Name="Remove group"
+                            <ui:Button Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove the group and its actions" AutomationProperties.Name="Remove group"
                                        Tag="{Binding}" Click="OnRemoveGroupClick" />
                         </StackPanel>
                     </Grid>
@@ -129,7 +128,7 @@
         <DataTemplate DataType="{x:Type views:MacroActionRowViewModel}">
             <StackPanel>
                 <Border Style="{StaticResource DropLineBefore}" />
-                <Grid Cursor="SizeAll" Tag="{Binding}"
+                <Grid Tag="{Binding}"
                       PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseLeftButtonUp="OnRowMouseUp" PreviewMouseMove="OnRowMouseMove">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -150,7 +149,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                                Text="{Binding Number}" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow"
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
                                 ToolTip="Delay before this action">
                         <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="+" VerticalAlignment="Center" />
                         <ui:NumberBox Width="96" Margin="2,0,0,0" Minimum="0" Maximum="86400000" MaxDecimalPlaces="0"
@@ -189,12 +188,12 @@
                         <Run Text="  " />
                         <Run FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
                     </TextBlock>
-                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Play24}" ToolTip="Test action: PuppyMacro hides and plays it once in the window behind it"
+                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:Button Icon="{ui:SymbolIcon Play24}" ToolTip="Test action: PuppyMacro hides and plays it once in the window behind it"
                                    AutomationProperties.Name="Test action" Tag="{Binding}" Click="OnTestActionClick">
                             <ui:Button.Style>
                                 <!-- Accent color, except on a selected row (accent background): there like the other buttons. -->
-                                <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                <Style TargetType="ui:Button" BasedOn="{StaticResource SubtleButton}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
@@ -204,11 +203,11 @@
                                 </Style>
                             </ui:Button.Style>
                         </ui:Button>
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" AutomationProperties.Name="Edit action"
+                        <ui:Button Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" AutomationProperties.Name="Edit action"
                                    Tag="{Binding}" Click="OnEditActionClick" Visibility="{Binding IsEditable, Converter={StaticResource BoolToVisibility}}" />
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" AutomationProperties.Name="Duplicate action"
+                        <ui:Button Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" AutomationProperties.Name="Duplicate action"
                                    Tag="{Binding}" Click="OnDuplicateActionClick" />
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove action" AutomationProperties.Name="Remove action"
+                        <ui:Button Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove action" AutomationProperties.Name="Remove action"
                                    Tag="{Binding}" Click="OnRemoveActionClick" />
                     </StackPanel>
                 </Grid>
@@ -296,15 +295,15 @@
                         <TextBlock x:Name="SelectionText" VerticalAlignment="Center" FontSize="13" TextTrimming="CharacterEllipsis" />
                     </DockPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,6,0" VerticalAlignment="Center">
-                        <ui:Button x:Name="GroupButton" Appearance="Transparent" Icon="{ui:SymbolIcon GroupList24}" Content="Group"
+                        <ui:Button x:Name="GroupButton" Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon GroupList24}" Content="Group"
                                    ToolTip="Put the selected actions in a group (Ctrl+G)" Click="OnGroupSelectedClick" />
-                        <ui:Button x:Name="DuplicateButton" Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" Content="Duplicate"
+                        <ui:Button x:Name="DuplicateButton" Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Copy24}" Content="Duplicate"
                                    ToolTip="Duplicate the selected actions (Ctrl+D)" Click="OnDuplicateSelectedClick" />
-                        <ui:Button x:Name="CopyButton" Appearance="Transparent" Icon="{ui:SymbolIcon Clipboard24}" Content="Copy"
+                        <ui:Button x:Name="CopyButton" Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Clipboard24}" Content="Copy"
                                    ToolTip="Copy the selected actions, also to paste them in another macro (Ctrl+C)" Click="OnCopySelectedClick" />
-                        <ui:Button x:Name="PasteButton" Appearance="Transparent" Icon="{ui:SymbolIcon ClipboardPaste24}" Content="Paste"
+                        <ui:Button x:Name="PasteButton" Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon ClipboardPaste24}" Content="Paste"
                                    ToolTip="Paste the copied actions where new actions go (Ctrl+V)" Click="OnPasteClick" />
-                        <ui:Button x:Name="DeleteButton" Appearance="Transparent" Icon="{ui:SymbolIcon Delete24}" Content="Delete"
+                        <ui:Button x:Name="DeleteButton" Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Delete24}" Content="Delete"
                                    ToolTip="Delete the selected actions (Delete)" Click="OnDeleteSelectedClick" />
                     </StackPanel>
                 </Grid>

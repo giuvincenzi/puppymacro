@@ -46,7 +46,6 @@
         <!-- Sound tile: play circle + name, selected = accent outline -->
         <Style x:Key="SoundTile" TargetType="RadioButton">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-            <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
@@ -152,7 +151,7 @@
                                                                Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
                                                 </Grid>
 
-                                                <ui:Button Grid.Column="2" Margin="4,0,0,0" Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}"
+                                                <ui:Button Grid.Column="2" Margin="4,0,0,0" Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Dismiss24}"
                                                            ToolTip="Remove" Tag="{Binding}" Click="OnRemoveActionClick" />
                                             </Grid>
 

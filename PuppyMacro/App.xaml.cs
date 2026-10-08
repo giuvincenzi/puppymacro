@@ -62,6 +62,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        Views.CardExpanderHover.Register();
         bool startInTray = e.Args.Contains(StartupService.TrayArgument);
         bool restarting = e.Args.Contains(RestartArgument);
 
