@@ -33,8 +33,8 @@
 - **Prod** (`make build`, `make release`): built in Release and packaged with Velopack.
   `PuppyMacro-win-Setup.exe` installs PuppyMacro for the current user in
   `%LocalAppData%\PuppyMacro` (no administrator rights), with Start menu and desktop shortcuts
-  and an entry in Settings > Apps > Installed apps, and installs the .NET 10 Desktop Runtime if
-  missing. The installed app updates itself from GitHub Releases (`updates.md`).
+  and an entry in Settings > Apps > Installed apps, and installs the .NET 10 Desktop Runtime and
+  the Microsoft Edge WebView2 Runtime if missing. The installed app updates itself from GitHub Releases (`updates.md`).
 - Debug builds (`App.IsDevBuild`, `#if DEBUG`) show the orange "Development build" strip and
   "DEV" in the title and tray tooltip, use their own data folder `%AppData%\PuppyMacro Dev`
   (`AppPaths`), fill it with disabled samples when empty (`Services/DevSampleData.cs`, Debug

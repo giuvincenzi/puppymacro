@@ -36,3 +36,18 @@
   <li>On the header: <strong>Rename group</strong>, <strong>Duplicate group</strong>, <strong>Ungroup</strong> (the actions stay where they are) and <strong>Remove group</strong> (removes the group and its actions). Drag the header to move the whole group.</li>
   <li>A group cannot go into another group. Groups only organize the list: the macro plays its actions in order, grouped or not.</li>
 </ul>
+<h3>Code view</h3>
+<figure class="shot">
+  <img src="img/macro-editor-code.png" alt="The Edit macro window in Code view, with the macro's JSON and the Problems panel" loading="lazy">
+  <figcaption>The same macro as its file: every setting, every action, every group.</figcaption>
+</figure>
+<p><strong>Code view</strong>, at the top of the editor, shows the macro exactly as PuppyMacro saves it: the JSON of its file, with name, actions, groups, repeat, speed, activation, hotkey, floating button and sound. <strong>List view</strong> goes back to the list.</p>
+<ul>
+  <li>It is a code editor like the one of VS Code: colors, line numbers, find (<kbd>Ctrl</kbd>+<kbd>F</kbd>), undo and redo, several cursors.</li>
+  <li><kbd>Ctrl</kbd>+<kbd>Space</kbd> suggests what can go where, with a description: the properties of an action, the action types, the sounds, the speeds.</li>
+  <li><strong>Format</strong> (or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>) lays the code out again.</li>
+  <li>Mistakes are underlined in red as you type, and listed in <strong>Problems</strong> below the code with their line and column: broken JSON, unknown properties, values that are not allowed, numbers out of range, a group whose actions are not next to each other, a hotkey that is already used. Click a problem to go to its line.</li>
+  <li>While there are problems, <strong>Save</strong> and <strong>List view</strong> are off.</li>
+  <li>Everything can be changed except <strong>Id</strong>, which is the name of the macro's file.</li>
+  <li>Keys and mouse buttons are virtual-key codes (65 is A, 112 is F1; 1 is the left button). The scroll wheel in a hotkey is 256 up, 257 down, 258 left, 259 right.</li>
+</ul>

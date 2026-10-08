@@ -17,3 +17,6 @@ paths:
 - Velopack: `App.Main` runs `VelopackApp.Build().Run()` before WPF starts (App.xaml is a
   Page, `StartupObject` is `PuppyMacro.App`). Keep the `Velopack` package version and
   `$VpkVersion` in `scripts/build.ps1` equal.
+- The package depends on the .NET 10 Desktop Runtime and the Microsoft Edge WebView2 Runtime
+  (vpk frameworks `net10.0-x64-desktop,webview2`, for the macro editor's Code view): the Setup
+  installs them when missing, and an update that adds one installs it first.

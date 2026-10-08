@@ -1,6 +1,6 @@
 # PuppyMacro
 
-Input automation for Windows 10/11 (loops, recorded macros, key remaps, in-game panel).
+Input automation for Windows 10/11 (loops, recorded macros, key remaps, overlay over fullscreen apps).
 .NET 10 WPF app with WPF-UI, installed and updated with Velopack from GitHub Releases.
 
 The rules in `.claude/rules/` hold the details. Rules without `paths` load in every session;
@@ -21,7 +21,7 @@ the others load when matching files are read or edited:
 
 ## Known limits and decisions
 
-- No overlay inside exclusive-fullscreen games (would need DLL injection): game mode needs
+- No overlay inside exclusive-fullscreen apps (would need DLL injection): overlay mode needs
   windowed fullscreen / borderless.
 - If the target app runs as administrator, PuppyMacro must run as administrator too.
 - Start with Windows uses the user Run key, so it cannot start elevated.

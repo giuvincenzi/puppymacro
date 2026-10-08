@@ -1,4 +1,5 @@
-# make screenshots: retakes the editor screenshots of the user guide (site/guide/img) from the
+# make screenshots: retakes the editor screenshots of the user guide (site/guide/img: loop-editor.png,
+# macro-editor.png, macro-editor-code.png) from the
 # running development build (start it first with make dev, so it shows the sample data).
 # It drives the UI with UI Automation: do not use the mouse or keyboard while it runs.
 # Each window is captured alone, at its visible edges, and saved at 100% scale.
@@ -90,6 +91,14 @@ $list = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::Automa
 $rows = $list.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
 $rows[$rows.Count - 1].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
 Capture $editor (Join-Path $OutDir 'macro-editor.png')
+
+# The same macro in the Code view, once the code editor has loaded and checked it.
+$editor = OpenEditor 'Sample: type and confirm' 'Edit macro'
+$code = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'CodeViewButton'))) } 'CodeViewButton'
+$code.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+WaitFor { ByName $editor 'No problems.' } 'the Code view checked' | Out-Null
+Start-Sleep -Seconds 1
+Capture $editor (Join-Path $OutDir 'macro-editor-code.png')
 
 $loops = ByName $main 'Loops'
 $loops.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()

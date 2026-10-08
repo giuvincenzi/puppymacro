@@ -1,28 +1,36 @@
-<p>Select <strong>Enable game mode</strong> or press <kbd>F11</kbd>. The main window hides and a small panel stays on top of your game, showing the enabled loops and macros.</p>
-<div class="game-panel" role="img" aria-label="The game mode panel with one running loop">
+<p>Select <strong>Enable overlay mode</strong> or press the Overlay mode hotkey (<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd> on a new install). The main window hides and the <strong>overlay</strong> stays on top of the app you are using, for example a game in windowed fullscreen. The overlay is made of the <strong>overlay panel</strong>, with the enabled loops and macros, and the <strong>floating buttons</strong>.</p>
+<div class="overlay-panel" role="img" aria-label="The overlay panel with one running loop">
   <div class="title"><img src="../../assets/logo.png" alt="">PuppyMacro</div>
   <div class="row running"><span class="dot"></span><span class="name">Auto attack</span><span class="key">F6</span><span class="status">Running</span></div>
   <div class="row"><span class="dot"></span><span class="name">Hold run</span><span class="key">F7</span><span class="status">Idle</span></div>
-  <div class="hints"><span><kbd>F10</kbd>Stop all</span><span><kbd>F11</kbd>Exit game mode</span></div>
+  <div class="hints"><span><kbd>Alt + Shift + S</kbd>Stop all</span><span><kbd>Alt + Shift + W</kbd>Exit overlay mode</span></div>
 </div>
 <ul>
-  <li>The panel never takes focus from the game. With <strong>Click items in the panel to start or stop them</strong> (Settings &gt; Game mode panel, on by default), you can click loops and macros to start or stop them. Hold items stay hotkey only.</li>
-  <li>In <strong>Settings &gt; Game mode panel</strong> you can set the <strong>Opacity</strong> of the panel background and its <strong>Position</strong>. <strong>Position on screen</strong> shows the real panel: drag it, or nudge it with the arrow keys (<kbd>Shift</kbd> moves ×10), then press <kbd>Enter</kbd>.</li>
-  <li>The panel is visible only in windowed fullscreen or borderless games, not in exclusive fullscreen.</li>
+  <li>The overlay never takes focus from the app below it. With <strong>Click items in the panel to start or stop them</strong> (Settings &gt; Overlay, on by default), you can click loops and macros in the overlay panel to start or stop them. Hold items stay hotkey only.</li>
+  <li>The overlay is visible only on windowed fullscreen or borderless windows, not on apps in exclusive fullscreen.</li>
+</ul>
+
+<h3>Overlay panel</h3>
+<ul>
+  <li><strong>Show the overlay panel</strong> in Settings &gt; Overlay is on by default. Turn it off to have only the floating buttons in overlay mode; the panel's other settings are off meanwhile. Without the panel, leave overlay mode with the Overlay mode hotkey.</li>
+  <li><strong>Opacity</strong> sets the panel's background; the text stays fully visible. <strong>Position</strong> is where the panel appears, measured from the top-left corner of the main screen; <strong>Reset</strong> puts it back there.</li>
 </ul>
 
 <h3>Floating buttons</h3>
-<p>A loop or macro can also have its own round button in game mode, which you can put anywhere on the screen: next to the game's action bar, in a corner, on another monitor. Click it to start or stop the loop or macro. Like the panel, it never takes focus from the game, and the click never reaches the game.</p>
+<p>A loop or macro can also have its own round button in overlay mode, which you can put anywhere on the screen: next to a game's action bar, in a corner, on another monitor. Click it to start or stop the loop or macro. Like the panel, it never takes focus from the app below, and the click never reaches that app.</p>
 <div class="floating-buttons" role="img" aria-label="Three floating buttons, one running">
   <span class="floating-button running">AA<kbd>F6</kbd></span>
   <span class="floating-button">CH</span>
   <span class="floating-button small">TC</span>
 </div>
 <ul>
-  <li>Turn it on in the loop or macro editor with <strong>Floating button</strong>. <strong>Label</strong> sets the one or two characters in the button (proposed from the name) and <strong>Size</strong> is <strong>S</strong>, <strong>M</strong> or <strong>L</strong>. The hotkey, if any, is shown on the edge of the button.</li>
+  <li>Turn it on in the loop or macro editor with <strong>Floating button</strong>. <strong>Label</strong> sets the one or two characters in the button (proposed from the name), <strong>Size</strong> is <strong>S</strong>, <strong>M</strong> or <strong>L</strong>, and <strong>Opacity</strong> sets the button's background, from 20% to 100%. Each button has its own opacity. The hotkey, if any, is shown on the edge of the button.</li>
   <li>A running loop or macro has a green ring, like its row in the panel.</li>
   <li>A loop or macro with a floating button is not listed in the panel, so it is never shown twice. Turn the button off to get its row back.</li>
-  <li><strong>Position…</strong> in the editor and <strong>Position on screen</strong> in Settings &gt; Game mode panel open the same overlay with the panel and every floating button: drag each one where you want it. The last one you clicked is selected and moves with the arrow keys. Press <kbd>Enter</kbd> to save. Buttons not placed yet start along the right edge of the main screen.</li>
+  <li>A new button appears in the middle of the main screen until you place it.</li>
   <li>Floating buttons are always clickable, also when <strong>Click items in the panel to start or stop them</strong> is off.</li>
   <li>Hold loops and macros cannot have a floating button: a click can only start and stop.</li>
 </ul>
+
+<h3>Position on screen</h3>
+<p><strong>Position on screen</strong> in Settings &gt; Overlay and <strong>Position…</strong> in the loop or macro editor open the same view of the whole overlay, as overlay mode shows it: the overlay panel (when <strong>Show the overlay panel</strong> is on) and every floating button. Drag each one where you want it. The last one you clicked is selected and moves with the arrow keys (<kbd>Shift</kbd> moves ×10). Press <kbd>Enter</kbd> to save or <kbd>Esc</kbd> to cancel.</p>

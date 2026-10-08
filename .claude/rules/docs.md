@@ -57,8 +57,8 @@ before capturing (`testing.md`).
 - Use the exact UI texts from the XAML (button, setting and window names).
 - Screenshots: from the development build with the sample data (`make dev`), capturing only
   PuppyMacro's window. Never show personal data, user names or other windows.
-  `make screenshots` retakes the editor screenshots (`loop-editor.png`, `macro-editor.png`)
-  this way (`scripts/screenshots.ps1`). It drives the UI: ask the contributor before running
+  `make screenshots` retakes the editor screenshots (`loop-editor.png`, `macro-editor.png`,
+  `macro-editor-code.png`) this way (`scripts/screenshots.ps1`). It drives the UI: ask the contributor before running
   it, like `make e2e`.
 - The download link is `https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe`:
   keep the Setup file name stable.

@@ -196,34 +196,35 @@ kbd {
   padding: 14px 18px; margin: 16px 0; font-size: 15px; color: var(--muted);
 }
 
-/* Game mode panel drawn in HTML, with the same layout and texts as Views/GameModePanel.xaml */
-.game-panel {
+/* Overlay panel drawn in HTML, with the same layout and texts as Views/OverlayPanel.xaml.
+   .game-panel: the same, for the guides of 1.9.0 and earlier (released guides never change). */
+.overlay-panel, .game-panel {
   width: 260px; padding: 12px; border-radius: 8px;
   background: rgba(32, 32, 32, 0.85); border: 1px solid rgba(255, 255, 255, 0.1);
   color: #ffffff; font-family: 'Segoe UI', system-ui, sans-serif;
 }
-.game-panel .title { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; font-weight: 600; }
-.game-panel .title img { width: 14px; height: 14px; }
-.game-panel .row {
+.overlay-panel .title, .game-panel .title { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; font-weight: 600; }
+.overlay-panel .title img, .game-panel .title img { width: 14px; height: 14px; }
+.overlay-panel .row, .game-panel .row {
   display: flex; align-items: center; gap: 8px; margin-bottom: 6px; padding: 7px 10px;
   border-radius: 6px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 13px;
 }
-.game-panel .row.running { border-color: rgba(108, 203, 95, 0.45); }
-.game-panel .dot { width: 8px; height: 8px; border-radius: 4px; background: #6e6e6e; flex: none; }
-.game-panel .running .dot { background: #6ccb5f; }
-.game-panel .name { flex: 1; }
-.game-panel .key {
+.overlay-panel .row.running, .game-panel .row.running { border-color: rgba(108, 203, 95, 0.45); }
+.overlay-panel .dot, .game-panel .dot { width: 8px; height: 8px; border-radius: 4px; background: #6e6e6e; flex: none; }
+.overlay-panel .running .dot, .game-panel .running .dot { background: #6ccb5f; }
+.overlay-panel .name, .game-panel .name { flex: 1; }
+.overlay-panel .key, .game-panel .key {
   font-size: 11px; padding: 0 6px; border-radius: 4px;
   background: #373737; border: 1px solid #4c4c4c; border-bottom-width: 2px;
 }
-.game-panel .status { font-size: 11px; color: #c5c5c5; min-width: 44px; text-align: right; }
-.game-panel .running .status { color: #6ccb5f; }
-.game-panel .hints {
+.overlay-panel .status, .game-panel .status { font-size: 11px; color: #c5c5c5; min-width: 44px; text-align: right; }
+.overlay-panel .running .status, .game-panel .running .status { color: #6ccb5f; }
+.overlay-panel .hints, .game-panel .hints {
   display: flex; gap: 14px; margin-top: 2px; padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; color: #c5c5c5;
 }
-.game-panel .hints span { display: flex; align-items: center; gap: 8px; }
+.overlay-panel .hints span, .game-panel .hints span { display: flex; align-items: center; gap: 8px; }
 .floating-buttons {
   display: flex; align-items: center; gap: 22px; width: fit-content; padding: 18px 22px;
   border-radius: 8px; background: #2e4157;

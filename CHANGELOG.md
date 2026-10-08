@@ -2,6 +2,32 @@
 
 ## Unreleased
 
+### Added
+- Macro editor: **Code view**, next to **List view**, shows the macro's file as JSON in a code
+  editor like VS Code's: Ctrl+Space suggestions with descriptions, **Format**, errors underlined
+  as you type and listed in a **Problems** panel (click one to go to its line). Save and List
+  view stay off while there are problems; the Id cannot be changed. The installer adds the
+  Microsoft Edge WebView2 Runtime when Windows does not have it.
+- Overlay: **Show the overlay panel** (Settings > Overlay) can be turned off, so overlay mode
+  shows only the floating buttons.
+- Every floating button has its own **Opacity**, in the loop and macro editors. Existing buttons
+  keep the opacity of the panel they had before.
+- Hotkeys: with Ctrl, Alt, Shift or Win held, left and right click, the scroll wheel (up, down,
+  left, right) and Esc can be hotkeys too. A scroll wheel hotkey counts each notch as one press
+  and works with Toggle only.
+
+### Changed
+- "Game mode" is now **Overlay mode**, and its panel the **overlay panel**: Settings >
+  **Overlay** groups the panel and the floating buttons, and **Position on screen** always shows
+  the whole overlay, also from a button's **Position…**.
+- A new floating button appears in the middle of the main screen until it is placed.
+- New installs: **Stop all** is Alt+Shift+S and **Overlay mode** is Alt+Shift+W. Existing
+  settings keep their hotkeys.
+
+### Fixed
+- A loop row set to **Hold down** stopped holding its key or mouse button after you pressed and
+  released that same key or button yourself, while the loop still showed as running.
+
 ## 1.9.0
 
 ### Added

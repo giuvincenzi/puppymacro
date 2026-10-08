@@ -5,8 +5,8 @@
 **[User guide](https://giuvincenzi.github.io/puppymacro/guide/latest/)**
 
 PuppyMacro automates keyboard and mouse input on Windows 10 and 11: loops that repeat keys and
-texts, recorded macros you can edit, key and mouse button remaps, and an in-game panel to start
-and stop them without leaving your game. Free and open source.
+texts, recorded macros you can edit (also as code), key and mouse button remaps, and an overlay to
+start and stop them without leaving your game or fullscreen app. Free and open source.
 
 ## Download
 

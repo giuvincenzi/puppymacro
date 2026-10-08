@@ -9,8 +9,11 @@ paths:
 
 - .NET 10 (`net10.0-windows`, `win-x64`, framework-dependent), WPF, **WPF-UI 4.1.0**
   (`FluentWindow`, `TitleBar`, `CardExpander`, `NumberBox`, `ToggleSwitch`, `SymbolIcon`...).
-- **Velopack 1.2.161** (installer and updates). No other NuGet packages. Win32 through
-  P/Invoke in `Native/NativeMethods.cs`.
+- **Velopack 1.2.161** (installer and updates) and **Microsoft.Web.WebView2** (the macro editor's
+  Code view). No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
+- **Monaco editor 0.52.2** (MIT, the editor of VS Code), only the files JSON needs, in
+  `Assets/Monaco` with its license; `Assets/CodeEditor` is the page around it. To update it, copy
+  the same files from the npm package's `min/vs` and keep the version here.
 - Nullable reference types on, implicit usings off (explicit `using`s).
 
 ## Repository layout
@@ -23,17 +26,17 @@ site/                           website and user guide sources (docs.md)
 tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end tests (testing.md)
 PuppyMacro/
   App.xaml(.cs)                 Main (Velopack), single instance, data migration, theme, tray start
-  MainWindow.xaml(.cs)          side rail: Loops, Macros, Remap, Settings; game mode; tray
+  MainWindow.xaml(.cs)          side rail: Loops, Macros, Remap, Settings; overlay mode; tray
   MainWindow.Updates.cs         update bar, Settings dot and Updates card
   LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow
-  GameModeWindow, FloatingButtonWindow, PlacementWindow, PickPointWindow, RecordPromptWindow,
+  OverlayPanelWindow, FloatingButtonWindow, PlacementWindow, PickPointWindow, RecordPromptWindow,
   RecordingBarWindow
   Models/                       AppSettings (settings.json), loops, macros, remaps
   Services/                     input thread and hooks, LoopEngine, runners, InputSender,
                                 recording, sounds, storage, tray, startup, updates
-  Views/                        view models, game mode panel, WindowFit
+  Views/                        view models, overlay panel, macro Code view, WindowFit
   Native/                       Win32 interop
-  Assets/                       icon and built-in sounds
+  Assets/                       icon, built-in sounds, Code view page (CodeEditor) and Monaco
   Properties/PublishProfiles/   Folder.pubxml (used by scripts/build.ps1)
 ```
 
@@ -55,9 +58,10 @@ Rules:
   to settings, loops, macros or remaps, the UI must publish a new snapshot**
   (`MainWindow.Save()` and `SaveMacro()` already do it).
 - UI notifications from the engine go through `Dispatcher.InvokeAsync`.
-- Clicks on the game mode panel and on the floating buttons are matched against rectangles
-  (`PanelTarget`, physical pixels) published by the UI every 300 ms while game mode is on.
-  Floating buttons are always clickable; panel rows only with `ClickItemsInPanel`.
+- Clicks on the overlay panel and on the floating buttons are matched against rectangles
+  (`PanelTarget`, physical pixels) published by the UI every 300 ms while overlay mode is on.
+  Floating buttons are always clickable; panel rows only with `ShowOverlayPanel` and
+  `ClickItemsInPanel`.
 
 ## Features map
 
@@ -71,13 +75,24 @@ Rules:
   list to rows and group headers. Test action: `Services/ActionTestSession.cs` (moves the
   editor off screen, hides the main window, focuses the window behind, waits 200 ms) plays
   `MacroDefinition.ForTest` through `LoopEngine.TestMacroAction`.
+  Code view: `Views/MacroCodeView` (WebView2 with `Assets/CodeEditor` and Monaco, served from
+  disk at `https://puppymacro.editor/`, data in `AppPaths.WebViewFolder`; Problems panel in
+  WPF), `Services/MacroJson.cs` (the file's text, strict reading and every check, with line and
+  column; unit tested) and `Services/MacroSchema.cs` (JSON Schema from the models, for Monaco's
+  suggestions and inline errors). Monaco's problems come first; `MacroJson.Parse` decides Save.
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.
-- Game mode: `Views/GameModePanel`, `GameModeWindow` (click-through, no-activate),
-  `PlacementWindow` (panel and floating buttons).
+- Hotkeys: `HotkeyBinding`, `Services/HotkeyRules.cs` (which keys need a modifier),
+  `HotkeyConflicts`, `KeyNames` (names, wheel codes), `LoopEngine.OnKey` / `OnWheel` (input.md).
+- Overlay mode: the overlay is the overlay panel (`Views/OverlayPanel`, `OverlayPanelWindow`,
+  click-through, no-activate, shown when `ShowOverlayPanel`) and the floating buttons.
+  `PlacementWindow` (Position on screen, Position…) always shows the whole overlay as overlay
+  mode shows it.
 - Floating buttons: `FloatingButton` (in `AppSettings.cs`, on loops and macros),
   `Views/FloatingButtons` (which items get one: enabled, Toggle, option on; those are left out
   of the panel list), `FloatingButtonWindow` (one per button, click-through, no-activate),
-  `Views/FloatingButtonView` (the round button), `Views/FloatingButtonEditor` (editor card).
+  `Views/FloatingButtonView` (the round button), `Views/FloatingButtonEditor` (editor card:
+  label, size, opacity, Position…). A button without a saved position is in the middle of the
+  main screen (`MainWindow.ButtonPositions`).
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).

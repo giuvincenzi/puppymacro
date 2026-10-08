@@ -12,9 +12,13 @@
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
-  `HotkeyConflicts`, `ModifierTracker`, `KeyNames`, `HotkeyBinding`, loop intervals,
-  `FloatingButton` (labels, sanitizing, old files).
-- Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test.
+  `HotkeyConflicts`, `HotkeyRules`, `ModifierTracker`, `KeyNames`, `HotkeyBinding`, loop intervals,
+  `FloatingButton` (labels, sanitizing, opacity, old files), the macro Code view's checks and
+  schema (`MacroJson`, `MacroSchema`), and `LoopEngine`'s input decisions (keys held by a Hold
+  down loop, wheel hotkeys, hotkey capture), driven through `OnKey` / `OnWheel` without hooks.
+- Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
+  and put the test class in `[Collection(nameof(ModifierTracker))]` so they never run at the
+  same time. A unit test that starts a loop makes it press F24 only.
 
 ## End-to-end tests: `make e2e`
 
