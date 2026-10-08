@@ -115,6 +115,8 @@ public partial class App : Application
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
         macros.Load(settings.MacroOrder, out string? macroWarning);
         warning ??= macroWarning;
+        if (settings.LoadedSchemaVersion < 6 && !macros.FillButtonOpacity(settings.OverlayPanelOpacity))
+            warning ??= "Some macro files could not be updated to this version.";
 
         // Keep the Run entry pointing at this exe (new versions live in new folders).
         // The development build never touches it: the entry belongs to the installed app.

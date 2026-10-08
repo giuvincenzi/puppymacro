@@ -2,7 +2,7 @@ using System;
 
 namespace PuppyMacro.Views;
 
-/// <summary>What the lists (drag and drop) and the game mode panel need from a loop or a macro.</summary>
+/// <summary>What the lists (drag and drop) and the overlay panel need from a loop or a macro.</summary>
 public interface IListItem
 {
     Guid Id { get; }

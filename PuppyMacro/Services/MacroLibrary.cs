@@ -55,6 +55,24 @@ internal sealed class MacroLibrary
             .ToList();
     }
 
+    /// <summary>
+    /// Settings schema 6: floating buttons saved before it have no opacity and used the overlay
+    /// panel's; they keep it. Called once, when settings.json was older. Returns false if a file
+    /// could not be saved.
+    /// </summary>
+    public bool FillButtonOpacity(int panelOpacity)
+    {
+        bool allSaved = true;
+        foreach (var macro in Macros)
+        {
+            if (macro.FloatingButton.Opacity != null)
+                continue;
+            macro.FloatingButton.Opacity = panelOpacity;
+            allSaved &= TrySave(macro, out _);
+        }
+        return allSaved;
+    }
+
     public bool TrySave(MacroDefinition macro, out string? error)
     {
         error = null;

@@ -13,7 +13,7 @@ namespace PuppyMacro.Services;
 internal sealed class EngineSnapshot
 {
     public HotkeyBinding? StopAll { get; init; }
-    public HotkeyBinding? GameMode { get; init; }
+    public HotkeyBinding? OverlayMode { get; init; }
     public HotkeyBinding? Record { get; init; }
     public LoopDefinition[] Loops { get; init; } = Array.Empty<LoopDefinition>();
     public MacroDefinition[] Macros { get; init; } = Array.Empty<MacroDefinition>();
@@ -22,7 +22,7 @@ internal sealed class EngineSnapshot
     public static EngineSnapshot From(AppSettings settings, MacroLibrary macros) => new()
     {
         StopAll = settings.StopAllHotkey?.Clone(),
-        GameMode = settings.GameModeHotkey?.Clone(),
+        OverlayMode = settings.OverlayModeHotkey?.Clone(),
         Record = settings.RecordHotkey?.Clone(),
         Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
         Macros = macros.Macros.Select(m => m.Clone()).ToArray(),
@@ -30,7 +30,7 @@ internal sealed class EngineSnapshot
     };
 }
 
-/// <summary>A clickable row of the game mode panel, in physical screen pixels.</summary>
+/// <summary>A clickable row of the overlay panel, in physical screen pixels.</summary>
 internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bottom, Guid Id);
 
 /// <summary>
@@ -73,7 +73,7 @@ internal sealed class LoopEngine : IDisposable
     private List<RawEvent> _recorded = new();
     private Action<List<RawEvent>>? _recordStopped;
 
-    // ---- Clickable game mode panel ----
+    // ---- Clickable overlay panel ----
     private IReadOnlyList<PanelTarget>? _panelTargets;
     private bool _swallowLeftUp;
 
@@ -92,8 +92,8 @@ internal sealed class LoopEngine : IDisposable
     /// <summary>Raised (asynchronously, on the UI thread) when any loop or macro starts or stops.</summary>
     public event Action? StateChanged;
 
-    /// <summary>Raised (asynchronously, on the UI thread) when the game mode hotkey is pressed.</summary>
-    public event Action? GameModeToggleRequested;
+    /// <summary>Raised (asynchronously, on the UI thread) when the overlay mode hotkey is pressed.</summary>
+    public event Action? OverlayModeToggleRequested;
 
     /// <summary>Raised (asynchronously, on the UI thread) to play a sound: name, start (true) or stop (false).</summary>
     public event Action<string, bool>? SoundRequested;
@@ -372,7 +372,7 @@ internal sealed class LoopEngine : IDisposable
 
     // ================= Clickable panel =================
 
-    /// <summary>Clickable rows of the visible game mode panel, or null when clicks are off.</summary>
+    /// <summary>Clickable rows of the visible overlay panel, or null when clicks are off.</summary>
     public void SetPanelTargets(IReadOnlyList<PanelTarget>? targets)
     {
         lock (_sync)
@@ -573,10 +573,10 @@ internal sealed class LoopEngine : IDisposable
 
             if (!_hotkeysSuspended)
             {
-                if (Matches(snap.GameMode, pressed))
+                if (Matches(snap.OverlayMode, pressed))
                 {
                     _heldHotkeys.Add(vk);
-                    _dispatcher.InvokeAsync(() => GameModeToggleRequested?.Invoke());
+                    _dispatcher.InvokeAsync(() => OverlayModeToggleRequested?.Invoke());
                     return Block();
                 }
 

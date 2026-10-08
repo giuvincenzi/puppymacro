@@ -60,7 +60,7 @@ public partial class FloatingButtonView
         }
     }
 
-    /// <summary>Sets the circle background opacity (percent), like the game mode panel.</summary>
+    /// <summary>Sets the circle background opacity (percent), like the overlay panel.</summary>
     public void SetBackgroundOpacity(int percent)
     {
         byte alpha = (byte)Math.Round(Math.Clamp(percent, 0, 100) * 255 / 100.0);

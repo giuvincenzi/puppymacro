@@ -48,7 +48,7 @@ public class MacroLibraryTests : IDisposable
 public class HotkeyConflictsTests : IDisposable
 {
     private readonly TempFolder _folder = new();
-    private readonly AppSettings _settings = AppSettings.CreateDefault(); // Stop all F10, Game mode F11, Record F8, a loop on F9
+    private readonly AppSettings _settings = AppSettings.CreateDefault(); // Stop all Alt+Shift+S, Overlay mode Alt+Shift+W, Record F8, a loop on F9
     private readonly MacroLibrary _macros;
     private readonly MacroDefinition _macro = new() { Name = "Craft", Hotkey = new HotkeyBinding { Vk = 0x75, Ctrl = true } };
 
@@ -67,10 +67,11 @@ public class HotkeyConflictsTests : IDisposable
     [Fact]
     public void Global_hotkeys_conflict_unless_that_one_is_being_changed()
     {
-        Assert.Equal("F10 is already used by Stop all.", Find(HotkeyBinding.FromKey(0x79)));
-        Assert.Equal("F11 is already used by Game mode.", Find(HotkeyBinding.FromKey(0x7A)));
+        Assert.Equal("Alt + Shift + S is already used by Stop all.", Find(AppSettings.DefaultStopAllHotkey()));
+        Assert.Equal("Alt + Shift + W is already used by Overlay mode.", Find(AppSettings.DefaultOverlayModeHotkey()));
         Assert.Equal("F8 is already used by Record.", Find(HotkeyBinding.FromKey(0x77)));
-        Assert.Null(Find(HotkeyBinding.FromKey(0x79), ignoreGlobal: "StopAll"));
+        Assert.Null(Find(AppSettings.DefaultStopAllHotkey(), ignoreGlobal: "StopAll"));
+        Assert.Null(Find(AppSettings.DefaultOverlayModeHotkey(), ignoreGlobal: "OverlayMode"));
     }
 
     [Fact]
@@ -88,6 +89,6 @@ public class HotkeyConflictsTests : IDisposable
     public void Matching_is_exact()
     {
         Assert.Null(Find(HotkeyBinding.FromKey(0x75)));                          // F6 alone, the macro uses Ctrl+F6
-        Assert.Null(Find(new HotkeyBinding { Vk = 0x79, Shift = true }));        // Shift+F10, Stop all is F10
+        Assert.Null(Find(new HotkeyBinding { Vk = 0x53, Alt = true }));          // Alt+S, Stop all is Alt+Shift+S
     }
 }

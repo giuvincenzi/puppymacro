@@ -199,7 +199,7 @@ internal static class InputSender
 
     private static NativeMethods.INPUT BuildKeyboard(int vk, bool isDown)
     {
-        // Games usually read scan codes, so send the scan code when Windows knows one.
+        // Many fullscreen apps read scan codes, so send the scan code when Windows knows one.
         uint scanCode = NativeMethods.MapVirtualKey((uint)vk, NativeMethods.MAPVK_VK_TO_VSC_EX);
         uint flags;
         ushort scan = 0;

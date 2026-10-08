@@ -10,13 +10,13 @@ using System.Windows.Media;
 
 namespace PuppyMacro.Views;
 
-/// <summary>Content of the game mode panel. Used by the game mode window and by the placement overlay.</summary>
-public partial class GameModePanel
+/// <summary>Content of the overlay panel. Used by the overlay mode window and by the placement overlay.</summary>
+public partial class OverlayPanel
 {
     private ListCollectionView? _loops;
     private ListCollectionView? _macros;
 
-    public GameModePanel()
+    public OverlayPanel()
     {
         InitializeComponent();
         TitleText.Text = App.DisplayTitle;

@@ -12,10 +12,10 @@ using PuppyMacro.Views;
 namespace PuppyMacro;
 
 /// <summary>A floating button shown in the placement overlay.</summary>
-internal sealed record PlacementButton(Guid Id, string Name, string Label, string HotkeyText, FloatingButtonSize Size, Point Position);
+internal sealed record PlacementButton(Guid Id, string Name, string Label, string HotkeyText, FloatingButtonSize Size, int Opacity, Point Position);
 
 /// <summary>
-/// Full-screen overlay to choose where the game mode panel and the floating buttons appear.
+/// Full-screen overlay to choose where the overlay panel and the floating buttons appear.
 /// Covers every monitor; each element is dragged on its own, the last one clicked is selected
 /// and moves with the arrows. Enter saves, Esc cancels.
 /// </summary>
@@ -38,7 +38,7 @@ public partial class PlacementWindow
     private static readonly DoubleCollection Dashes = new() { 4, 3 };
 
     private readonly List<Draggable> _ghosts = new();
-    private Draggable _selected;
+    private Draggable? _selected;
     private Point _dragStart;
     private Point _ghostStart;
     private bool _dragging;
@@ -49,28 +49,40 @@ public partial class PlacementWindow
     /// <summary>Chosen floating button positions (top-left of the circle), by item id.</summary>
     internal Dictionary<Guid, Point> ButtonResults { get; } = new();
 
-    internal PlacementWindow(IList loops, IList macros, Point start, int opacity,
+    /// <param name="showPanel">The overlay panel is shown in overlay mode; when false it is left out
+    /// and <see cref="Result"/> stays <paramref name="start"/>.</param>
+    internal PlacementWindow(IList loops, IList macros, bool showPanel, Point start, int opacity,
         string exitHotkey, string stopAllHotkey, IReadOnlyList<PlacementButton> buttons, Guid? select = null)
     {
         InitializeComponent();
-        // The real panel, exactly as in game mode (same items, opacity and hotkeys).
-        GhostPanel.Bind(loops, macros);
-        GhostPanel.SetBackgroundOpacity(opacity);
-        GhostPanel.SetHotkeyLabels(exitHotkey, stopAllHotkey);
+        Result = start;
 
         Left = SystemParameters.VirtualScreenLeft;
         Top = SystemParameters.VirtualScreenTop;
         Width = SystemParameters.VirtualScreenWidth;
         Height = SystemParameters.VirtualScreenHeight;
 
-        _selected = AddGhost(new Draggable { Element = Ghost, Outline = GhostOutline, Name = "Game mode panel" });
-        MoveTo(_selected, start);
+        // The whole overlay as in overlay mode: the real panel (same items, opacity and hotkeys), if shown, and every button.
+        Draggable? first = null;
+        if (showPanel)
+        {
+            GhostPanel.Bind(loops, macros);
+            GhostPanel.SetBackgroundOpacity(opacity);
+            GhostPanel.SetHotkeyLabels(exitHotkey, stopAllHotkey);
+            first = AddGhost(new Draggable { Element = Ghost, Outline = GhostOutline, Name = "Overlay panel" });
+            _selected = first;
+            MoveTo(first, start);
+        }
+        else
+        {
+            Ghost.Visibility = Visibility.Collapsed;
+        }
 
         foreach (PlacementButton button in buttons)
         {
             var view = new FloatingButtonView();
             view.Show(button.Label, button.HotkeyText, button.Size);
-            view.SetBackgroundOpacity(opacity);
+            view.SetBackgroundOpacity(button.Opacity);
             double diameter = FloatingButton.DiameterOf(button.Size);
             var outline = new Ellipse
             {
@@ -96,17 +108,20 @@ public partial class PlacementWindow
                 Id = button.Id,
                 Offset = FloatingButtonView.Inset,
             });
-            MoveTo(ghost, button.Position);
-            if (button.Id == select)
+            first ??= ghost;
+            if (button.Id == select || _selected == null)
                 _selected = ghost;
+            MoveTo(ghost, button.Position);
         }
 
         if (buttons.Count > 0)
         {
-            InstructionsText.Text = "Drag the panel and the buttons where you want them";
+            InstructionsText.Text = showPanel
+                ? "Drag the panel and the buttons where you want them"
+                : buttons.Count == 1 ? "Drag the button where you want it" : "Drag the buttons where you want them";
             NudgeText.Text = "Nudge the selected one (Shift ×10)";
         }
-        Select(_selected);
+        Select(_selected ?? first ?? throw new InvalidOperationException("Nothing to position."));
 
         Loaded += (_, _) =>
         {
@@ -140,10 +155,12 @@ public partial class PlacementWindow
 
     private void UpdateSelectionTag()
     {
-        Point p = PositionOf(_selected);
-        SelectionText.Text = $"{_selected.Name}   X {p.X}   Y {p.Y}";
-        Canvas.SetLeft(SelectionTag, Canvas.GetLeft(_selected.Element));
-        Canvas.SetTop(SelectionTag, Canvas.GetTop(_selected.Element) - 28);
+        if (_selected is not Draggable selected)
+            return;
+        Point p = PositionOf(selected);
+        SelectionText.Text = $"{selected.Name}   X {p.X}   Y {p.Y}";
+        Canvas.SetLeft(SelectionTag, Canvas.GetLeft(selected.Element));
+        Canvas.SetTop(SelectionTag, Canvas.GetTop(selected.Element) - 28);
     }
 
     private void MoveTo(Draggable ghost, Point screen)
@@ -189,8 +206,10 @@ public partial class PlacementWindow
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
+        if (_selected is not Draggable selected)
+            return;
         double step = (Keyboard.Modifiers & ModifierKeys.Shift) != 0 ? 10 : 1;
-        Point p = PositionOf(_selected);
+        Point p = PositionOf(selected);
         switch (e.Key)
         {
             case Key.Enter:
@@ -206,10 +225,10 @@ public partial class PlacementWindow
             case Key.Escape:
                 DialogResult = false;
                 break;
-            case Key.Left: MoveTo(_selected, new Point(p.X - step, p.Y)); break;
-            case Key.Right: MoveTo(_selected, new Point(p.X + step, p.Y)); break;
-            case Key.Up: MoveTo(_selected, new Point(p.X, p.Y - step)); break;
-            case Key.Down: MoveTo(_selected, new Point(p.X, p.Y + step)); break;
+            case Key.Left: MoveTo(selected, new Point(p.X - step, p.Y)); break;
+            case Key.Right: MoveTo(selected, new Point(p.X + step, p.Y)); break;
+            case Key.Up: MoveTo(selected, new Point(p.X, p.Y - step)); break;
+            case Key.Down: MoveTo(selected, new Point(p.X, p.Y + step)); break;
             default: return;
         }
         e.Handled = true;

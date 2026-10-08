@@ -37,12 +37,18 @@ public partial class FloatingButtonEditor
         SmallRadio.IsChecked = _button.Size == FloatingButtonSize.Small;
         MediumRadio.IsChecked = _button.Size == FloatingButtonSize.Medium;
         LargeRadio.IsChecked = _button.Size == FloatingButtonSize.Large;
+        OpacitySlider.Value = _button.EffectiveOpacity;
         _loading = false;
         Update();
     }
 
     /// <summary>The edited settings (a copy).</summary>
-    internal FloatingButton ToModel() => _button.Clone();
+    internal FloatingButton ToModel()
+    {
+        FloatingButton copy = _button.Clone();
+        copy.Opacity = copy.EffectiveOpacity;
+        return copy;
+    }
 
     public void SetName(string name)
     {
@@ -99,6 +105,14 @@ public partial class FloatingButtonEditor
         Update();
     }
 
+    private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_loading || OpacityValueText == null)
+            return;
+        _button.Opacity = (int)Math.Round(e.NewValue);
+        Update();
+    }
+
     private void OnPositionClick(object sender, RoutedEventArgs e) => PositionRequested?.Invoke();
 
     private void Update()
@@ -108,13 +122,15 @@ public partial class FloatingButtonEditor
         FloatingSwitch.IsEnabled = !_holdMode;
         DescriptionText.Text = _holdMode
             ? "Not available with Hold: a click can only start and stop. Switch to Toggle to use it."
-            : "A round button in game mode that starts and stops it. It replaces its row in the game mode panel.";
+            : "A round button in overlay mode that starts and stops it. It replaces its row in the overlay panel.";
         DetailsPanel.Visibility = _button.Enabled && !_holdMode ? Visibility.Visible : Visibility.Collapsed;
 
         string label = string.IsNullOrEmpty(_button.Label) ? FloatingButton.DefaultLabel(_name) : _button.Label;
         Preview.Show(label, _hotkeyText, _button.Size);
+        Preview.SetBackgroundOpacity(_button.EffectiveOpacity);
+        OpacityValueText.Text = $"{_button.EffectiveOpacity}%";
         PositionText.Text = _button.X is double x && _button.Y is double y
             ? $"X {Math.Round(x)}, Y {Math.Round(y)}"
-            : "Default position (right edge of the screen)";
+            : "Middle of the main screen until you place it";
     }
 }

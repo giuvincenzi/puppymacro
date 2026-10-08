@@ -9,8 +9,8 @@ using PuppyMacro.Views;
 namespace PuppyMacro;
 
 /// <summary>
-/// One floating button in game mode: borderless, always on top, click-through and never
-/// activated, like the game mode panel. Clicks are handled by the input hook.
+/// One floating button in overlay mode: borderless, always on top, click-through and never
+/// activated, like the overlay panel. Clicks are handled by the input hook.
 /// </summary>
 public partial class FloatingButtonWindow
 {

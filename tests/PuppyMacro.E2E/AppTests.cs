@@ -211,7 +211,7 @@ public class AppTests
     }
 
     [Fact]
-    public void A_floating_button_is_saved_and_shown_in_game_mode_instead_of_its_panel_row()
+    public void A_floating_button_is_saved_and_shown_in_overlay_mode_instead_of_its_panel_row()
     {
         using var app = new AppSession();
 
@@ -230,13 +230,13 @@ public class AppTests
 
         Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"Label\": \"EF\""), AppSession.Timeout).Success);
 
-        app.FindById(app.MainWindow, "GameModeButton").AsButton().Click();
+        app.FindById(app.MainWindow, "OverlayModeButton").AsButton().Click();
         AutomationElement? button = app.TopWindow("PuppyMacro floating button: E2E F24 loop");
         Assert.NotNull(button);
         Assert.True(app.Has(button!, "EF"));
 
         // The samples are disabled and the new loop is on its button: the panel lists nothing.
-        AutomationElement? panel = app.TopWindow("PuppyMacro game mode");
+        AutomationElement? panel = app.TopWindow("PuppyMacro overlay panel");
         Assert.NotNull(panel);
         Assert.True(app.Has(panel!, "Everything is on floating buttons."));
         Assert.False(app.Has(panel!, "E2E F24 loop"));
@@ -248,11 +248,11 @@ public class AppTests
     }
 
     [Fact]
-    public void Game_mode_hides_the_window_and_F11_brings_it_back()
+    public void Overlay_mode_hides_the_window_and_F11_brings_it_back()
     {
         using var app = new AppSession();
 
-        app.FindById(app.MainWindow, "GameModeButton").AsButton().Click();
+        app.FindById(app.MainWindow, "OverlayModeButton").AsButton().Click();
         Assert.True(Retry.WhileFalse(() => app.MainWindow.IsOffscreen || !app.MainWindow.IsAvailable, AppSession.Timeout).Success);
 
         Keyboard.Press(VirtualKeyShort.F11);

@@ -592,13 +592,13 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="Game mode" />
+                                    <TextBlock Text="Overlay mode" />
                                     <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                               Text="Switches between this window and the in-game panel" TextWrapping="Wrap" />
+                                               Text="Switches between this window and the overlay" TextWrapping="Wrap" />
                                 </StackPanel>
-                                <ItemsControl x:Name="GameModeHotkeyCaps" Grid.Column="1" Margin="8,0,4,0" VerticalAlignment="Center"
+                                <ItemsControl x:Name="OverlayModeHotkeyCaps" Grid.Column="1" Margin="8,0,4,0" VerticalAlignment="Center"
                                               ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource HorizontalPanel}" />
-                                <ui:Button x:Name="GameModeChangeButton" Grid.Column="2" MinWidth="80" Content="Change" Click="OnChangeGameModeHotkeyClick" />
+                                <ui:Button x:Name="OverlayModeChangeButton" Grid.Column="2" MinWidth="80" Content="Change" Click="OnChangeOverlayModeHotkeyClick" />
                             </Grid>
                             <Grid Margin="0,4,0,10">
                                 <Grid.ColumnDefinitions>
@@ -619,88 +619,120 @@
                         </StackPanel>
                     </ui:CardExpander>
 
-                    <!-- Game mode panel -->
-                    <ui:CardExpander x:Name="GameModeGroup" Margin="0,0,0,4" Tag="GameModePanel" Icon="{ui:SymbolIcon Games24}"
+                    <!-- Overlay: the overlay panel and the floating buttons -->
+                    <ui:CardExpander x:Name="OverlayGroup" Margin="0,0,0,4" Tag="Overlay" Icon="{ui:SymbolIcon Layer24}"
                                      Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
                         <ui:CardExpander.Header>
                             <StackPanel>
-                                <TextBlock Text="Game mode panel" />
-                                <TextBlock x:Name="GameModeSummary" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Text="Overlay" />
+                                <TextBlock x:Name="OverlaySummary" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                             </StackPanel>
                         </ui:CardExpander.Header>
                         <StackPanel>
+                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                       Text="What overlay mode shows on top of fullscreen apps: the overlay panel and the floating buttons." />
+
+                            <TextBlock Margin="0,14,0,8" FontWeight="SemiBold" Text="Overlay panel" />
                             <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="Opacity" />
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                               Text="Background of the in-game panel. Text stays fully visible." TextWrapping="Wrap" />
+                                <StackPanel Margin="0,0,90,0">
+                                    <TextBlock Text="Show the overlay panel" />
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                               Text="The list of loops and macros with their hotkeys. Off: overlay mode shows only the floating buttons, and you leave it with the Overlay mode hotkey." />
                                 </StackPanel>
-                                <TextBlock x:Name="OpacityValueText" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                <ui:ToggleSwitch x:Name="ShowPanelSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                 OffContent="Off" OnContent="On" AutomationProperties.Name="Show the overlay panel"
+                                                 Checked="OnShowPanelChanged" Unchecked="OnShowPanelChanged" />
                             </Grid>
-                            <Grid Margin="0,10,0,0">
+
+                            <StackPanel x:Name="PanelOptions" Margin="0,14,0,0">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="Opacity" />
+                                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                   Text="Background of the overlay panel. Text stays fully visible." TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <TextBlock x:Name="OpacityValueText" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="OpacitySlider" VerticalAlignment="Center"
+                                            Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
+                                            SmallChange="5" LargeChange="10"
+                                            AutomationProperties.Name="Overlay panel opacity"
+                                            ValueChanged="OnOpacityChanged" />
+                                    <Border Grid.Column="1" Width="132" Height="52" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C"
+                                            ClipToBounds="True">
+                                        <Border x:Name="OpacityPreviewPanel" Margin="10,9,10,0" Padding="8,6" VerticalAlignment="Top"
+                                                CornerRadius="5" BorderThickness="1" BorderBrush="#1AFFFFFF" Background="#D9202020">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Ellipse Width="6" Height="6" Fill="#6CCB5F" VerticalAlignment="Center" />
+                                                    <TextBlock Margin="5,0,0,0" FontSize="10" Foreground="White" Text="Left click spam" />
+                                                </StackPanel>
+                                                <Border Width="60" Height="4" Margin="0,4,0,0" HorizontalAlignment="Left"
+                                                        CornerRadius="2" Background="#40FFFFFF" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Border>
+                                </Grid>
+
+                                <TextBlock Margin="0,14,0,0" Text="Position" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                           Text="Where the overlay panel appears, measured from the top-left corner of the main screen." />
+                                <WrapPanel Margin="0,10,0,0">
+                                    <StackPanel Margin="0,0,10,0">
+                                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="X" />
+                                        <ui:NumberBox x:Name="PositionXBox" Width="110" Minimum="-100000" Maximum="100000" MaxDecimalPlaces="0"
+                                                      SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
+                                                      ValueChanged="OnPositionBoxChanged" />
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,16,0">
+                                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Y" />
+                                        <ui:NumberBox x:Name="PositionYBox" Width="110" Minimum="-100000" Maximum="100000" MaxDecimalPlaces="0"
+                                                      SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
+                                                      ValueChanged="OnPositionBoxChanged" />
+                                    </StackPanel>
+                                    <ui:Button Margin="0,16,0,0" VerticalAlignment="Bottom" Content="Reset" Click="OnResetPositionClick"
+                                               ToolTip="Back to the top-left corner of the main screen" />
+                                </WrapPanel>
+
+                                <Grid Margin="0,14,0,0">
+                                    <StackPanel Margin="0,0,90,0">
+                                        <TextBlock Text="Click items in the panel to start or stop them" TextWrapping="Wrap" />
+                                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                                   Text="Loops and macros in the overlay panel become clickable. Hold items stay hotkey only. Floating buttons are always clickable." />
+                                    </StackPanel>
+                                    <ui:ToggleSwitch x:Name="ClickInPanelSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                     OffContent="Off" OnContent="On"
+                                                     Checked="OnClickInPanelChanged" Unchecked="OnClickInPanelChanged" />
+                                </Grid>
+                                <ui:InfoBar Margin="0,10,0,0" IsOpen="True" IsClosable="False" Severity="Warning" Title=""
+                                            Message="Some fullscreen apps may react to the click or briefly lose focus. If you notice problems, turn this off and use hotkeys only." />
+                            </StackPanel>
+
+                            <Border Margin="0,14,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
+
+                            <TextBlock Margin="0,0,0,8" FontWeight="SemiBold" Text="Floating buttons" />
+                            <TextBlock x:Name="FloatingButtonsText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+
+                            <Border Margin="0,14,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
+
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Slider x:Name="OpacitySlider" VerticalAlignment="Center"
-                                        Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
-                                        SmallChange="5" LargeChange="10"
-                                        AutomationProperties.Name="Game mode opacity"
-                                        ValueChanged="OnOpacityChanged" />
-                                <Border Grid.Column="1" Width="132" Height="52" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C"
-                                        ClipToBounds="True">
-                                    <Border x:Name="OpacityPreviewPanel" Margin="10,9,10,0" Padding="8,6" VerticalAlignment="Top"
-                                            CornerRadius="5" BorderThickness="1" BorderBrush="#1AFFFFFF" Background="#D9202020">
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Ellipse Width="6" Height="6" Fill="#6CCB5F" VerticalAlignment="Center" />
-                                                <TextBlock Margin="5,0,0,0" FontSize="10" Foreground="White" Text="Left click spam" />
-                                            </StackPanel>
-                                            <Border Width="60" Height="4" Margin="0,4,0,0" HorizontalAlignment="Left"
-                                                    CornerRadius="2" Background="#40FFFFFF" />
-                                        </StackPanel>
-                                    </Border>
-                                </Border>
-                            </Grid>
-
-                            <Border Margin="0,14,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
-
-                            <TextBlock Text="Position" />
-                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                       Text="Where the panel appears, measured from the top-left corner of the main screen. Position on screen also moves the floating buttons." />
-                            <WrapPanel Margin="0,10,0,0">
-                                <StackPanel Margin="0,0,10,0">
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="X" />
-                                    <ui:NumberBox x:Name="PositionXBox" Width="110" Minimum="-100000" Maximum="100000" MaxDecimalPlaces="0"
-                                                  SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
-                                                  ValueChanged="OnPositionBoxChanged" />
-                                </StackPanel>
-                                <StackPanel Margin="0,0,16,0">
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Y" />
-                                    <ui:NumberBox x:Name="PositionYBox" Width="110" Minimum="-100000" Maximum="100000" MaxDecimalPlaces="0"
-                                                  SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
-                                                  ValueChanged="OnPositionBoxChanged" />
-                                </StackPanel>
-                                <ui:Button Margin="0,16,8,0" VerticalAlignment="Bottom" Appearance="Primary" Content="Position on screen"
-                                           Icon="{ui:SymbolIcon ArrowMove24}" Click="OnPositionOnScreenClick" />
-                                <ui:Button Margin="0,16,0,0" VerticalAlignment="Bottom" Content="Reset" Click="OnResetPositionClick"
-                                           ToolTip="Back to the top-left corner of the main screen" />
-                            </WrapPanel>
-
-                            <Border Margin="0,14,0,12" Height="1" Background="{DynamicResource CardStrokeColorDefaultBrush}" />
-
-                            <Grid>
-                                <StackPanel Margin="0,0,90,0">
-                                    <TextBlock Text="Click items in the panel to start or stop them" TextWrapping="Wrap" />
+                                <StackPanel Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <TextBlock Text="Position on screen" />
                                     <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                               Text="Loops and macros in the in-game panel become clickable. Hold items stay hotkey only. Floating buttons are always clickable." />
+                                               Text="Shows the whole overlay as it appears in overlay mode: drag the overlay panel and every floating button where you want them." />
                                 </StackPanel>
-                                <ui:ToggleSwitch x:Name="ClickInPanelSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                 OffContent="Off" OnContent="On"
-                                                 Checked="OnClickInPanelChanged" Unchecked="OnClickInPanelChanged" />
+                                <ui:Button Grid.Column="1" VerticalAlignment="Center" Appearance="Primary" Content="Position on screen"
+                                           Icon="{ui:SymbolIcon ArrowMove24}" Click="OnPositionOnScreenClick" />
                             </Grid>
-                            <ui:InfoBar Margin="0,10,0,0" IsOpen="True" IsClosable="False" Severity="Warning" Title=""
-                                        Message="Some fullscreen games may react to the click or briefly lose focus. If you notice problems, turn this off and use hotkeys only." />
                         </StackPanel>
                     </ui:CardExpander>
 
@@ -810,7 +842,7 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- ================= Always visible: game mode and stop all ================= -->
+        <!-- ================= Always visible: overlay mode and stop all ================= -->
         <Grid Grid.Row="3" Margin="20,10,20,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -818,17 +850,17 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <ui:Button
-                x:Name="GameModeButton"
+                x:Name="OverlayModeButton"
                 Grid.Column="0"
                 Height="40"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
                 BorderBrush="{DynamicResource AccentTextFillColorPrimaryBrush}"
                 Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                Click="OnGameModeClick">
+                Click="OnOverlayModeClick">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Enable game mode" FontWeight="SemiBold" VerticalAlignment="Center" />
-                    <TextBlock x:Name="GameModeButtonHotkeyText" Margin="10,0,0,0" FontSize="12" Opacity="0.85" VerticalAlignment="Center" />
+                    <TextBlock Text="Enable overlay mode" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock x:Name="OverlayModeButtonHotkeyText" Margin="10,0,0,0" FontSize="12" Opacity="0.85" VerticalAlignment="Center" />
                 </StackPanel>
             </ui:Button>
             <ui:Button

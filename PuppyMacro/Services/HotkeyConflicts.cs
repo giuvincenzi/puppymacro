@@ -8,15 +8,15 @@ namespace PuppyMacro.Services;
 internal static class HotkeyConflicts
 {
     /// <param name="ignoreId">Loop or macro being edited (its own hotkey is not a conflict).</param>
-    /// <param name="ignoreGlobal">"StopAll", "GameMode" or "Record" when changing that global hotkey.</param>
+    /// <param name="ignoreGlobal">"StopAll", "OverlayMode" or "Record" when changing that global hotkey.</param>
     public static string? Find(HotkeyBinding binding, AppSettings settings, MacroLibrary macros,
         Guid? ignoreId = null, string? ignoreGlobal = null)
     {
         string name = KeyNames.Format(binding);
         if (ignoreGlobal != "StopAll" && binding.SameAs(settings.StopAllHotkey))
             return $"{name} is already used by Stop all.";
-        if (ignoreGlobal != "GameMode" && binding.SameAs(settings.GameModeHotkey))
-            return $"{name} is already used by Game mode.";
+        if (ignoreGlobal != "OverlayMode" && binding.SameAs(settings.OverlayModeHotkey))
+            return $"{name} is already used by Overlay mode.";
         if (ignoreGlobal != "Record" && binding.SameAs(settings.RecordHotkey))
             return $"{name} is already used by Record.";
 

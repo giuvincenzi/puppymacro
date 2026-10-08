@@ -9,7 +9,7 @@ using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
 
-/// <summary>Bindable wrapper around a <see cref="LoopDefinition"/>, shared by the main window and game mode.</summary>
+/// <summary>Bindable wrapper around a <see cref="LoopDefinition"/>, shared by the main window and overlay mode.</summary>
 public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
 {
     private bool _isRunning;

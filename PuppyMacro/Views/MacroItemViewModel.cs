@@ -8,7 +8,7 @@ using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
 
-/// <summary>Bindable wrapper around a <see cref="MacroDefinition"/> for the Macros list and game mode.</summary>
+/// <summary>Bindable wrapper around a <see cref="MacroDefinition"/> for the Macros list and overlay mode.</summary>
 public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
 {
     private bool _isRunning;

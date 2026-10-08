@@ -19,7 +19,7 @@
                     <TextBlock Text="Floating button" />
                     <TextBlock x:Name="DescriptionText" FontSize="12" TextWrapping="Wrap"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               Text="A round button in game mode that starts and stops it. It replaces its row in the game mode panel." />
+                               Text="A round button in overlay mode that starts and stops it. It replaces its row in the overlay panel." />
                 </StackPanel>
                 <ui:ToggleSwitch x:Name="FloatingSwitch" Grid.Column="1" VerticalAlignment="Center"
                                  OffContent="Off" OnContent="On"
@@ -35,7 +35,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!-- Preview on a dark disc, as it looks over a game -->
+                        <!-- Preview on a dark disc, as it looks over a fullscreen app -->
                         <Border Width="72" Height="72" CornerRadius="8" Background="#2E4157" HorizontalAlignment="Left">
                             <views:FloatingButtonView x:Name="Preview" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
@@ -56,13 +56,25 @@
                 </Border>
                 <Grid Margin="0,12,0,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="44" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Opacity" VerticalAlignment="Center" />
+                    <Slider x:Name="OpacitySlider" Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center"
+                            Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
+                            AutomationProperties.Name="Floating button opacity" ValueChanged="OnOpacityChanged" />
+                    <TextBlock x:Name="OpacityValueText" Grid.Column="2" FontSize="12" TextAlignment="Right" VerticalAlignment="Center" />
+                </Grid>
+                <Grid Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Margin="0,0,12,0" VerticalAlignment="Center">
                         <TextBlock x:Name="PositionText" FontSize="12" />
                         <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                   Text="Position… moves the game mode panel and all floating buttons." />
+                                   Text="Position… shows the whole overlay: drag this button, the other floating buttons and the overlay panel." />
                     </StackPanel>
                     <ui:Button x:Name="PositionButton" Grid.Column="1" Content="Position…" Click="OnPositionClick" />
                 </Grid>
