@@ -39,6 +39,9 @@ public partial class MacroCodeView
     /// <summary>Checks the text (MacroJson.Parse) and returns its problems.</summary>
     internal Func<string, List<CodeProblem>>? Check { get; set; }
 
+    /// <summary>The JSON Schema for the edited macro (<see cref="MacroSchema.Build"/>).</summary>
+    internal string Schema { get; set; } = "{}";
+
     /// <summary>Raised when the text or the problems change.</summary>
     public event Action? Changed;
 
@@ -146,7 +149,7 @@ public partial class MacroCodeView
                     ["type"] = "init",
                     ["text"] = _text,
                     ["generation"] = _generation,
-                    ["schema"] = JsonNode.Parse(MacroSchema.Build()),
+                    ["schema"] = JsonNode.Parse(Schema),
                     ["dark"] = IsDark,
                 });
                 break;

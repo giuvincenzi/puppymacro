@@ -341,6 +341,14 @@ public class AppTests
         AutomationElement total = app.FindById(editor, "TotalText");
         Assert.True(Retry.WhileFalse(() => !total.IsOffscreen && total.Name.StartsWith("3 actions in 1 group"), AppSession.Timeout).Success, total.Name);
 
+        // Discard changes (Cancel in the Code view): back to the list, the editor stays open.
+        app.FindById(editor, "CodeViewButton").Patterns.SelectionItem.Pattern.Select();
+        AutomationElement discard = app.FindById(editor, "CancelButton");
+        Assert.True(Retry.WhileFalse(() => discard.Name == "Discard changes", AppSession.Timeout).Success, discard.Name);
+        discard.AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => app.FindById(editor, "CancelButton").Name == "Cancel", AppSession.Timeout).Success);
+        Assert.True(app.FindById(editor, "TotalText").Name.StartsWith("3 actions in 1 group"));
+
         // Saved from the Code view, the file keeps the macro.
         app.FindById(editor, "CodeViewButton").Patterns.SelectionItem.Pattern.Select();
         Assert.True(Retry.WhileNull(() => editor.FindFirstDescendant(cf => cf.ByName("No problems.")), TimeSpan.FromSeconds(30)).Success);

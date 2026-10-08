@@ -170,13 +170,16 @@ public class MacroJsonTests : IDisposable
     [Fact]
     public void The_schema_lists_the_values_and_forbids_unknown_properties()
     {
-        JsonObject schema = JsonNode.Parse(MacroSchema.Build())!.AsObject();
+        JsonObject schema = JsonNode.Parse(MacroSchema.Build(_macro.Id))!.AsObject();
         string text = schema.ToJsonString();
 
         Assert.Contains("\"enumDescriptions\"", text);
         Assert.Contains("\"PasteText\"", text);
         Assert.Contains("\"additionalProperties\":false", text);
         Assert.StartsWith("The macro's id", schema["properties"]!["Id"]!["description"]!.GetValue<string>());
+        // A deleted Id comes back with Ctrl+Space: its value is the default and the only one allowed.
+        Assert.Equal(_macro.Id.ToString(), schema["properties"]!["Id"]!["default"]!.GetValue<string>());
+        Assert.Equal(_macro.Id.ToString(), Assert.Single(schema["properties"]!["Id"]!["enum"]!.AsArray())!.GetValue<string>());
         JsonObject speed = schema["properties"]!["Speed"]!.AsObject();
         Assert.Equal(5, speed["enum"]!.AsArray().Count);
     }

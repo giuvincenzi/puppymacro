@@ -101,7 +101,8 @@ internal static class MacroSchema
         [MacroActionType.PasteText] = "Paste Text, with Enter before or after if set.",
     };
 
-    public static string Build()
+    /// <summary>The schema for the macro <paramref name="id"/>: its Id is the only value allowed, and suggested.</summary>
+    public static string Build(System.Guid id)
     {
         var exporter = new JsonSchemaExporterOptions
         {
@@ -109,6 +110,12 @@ internal static class MacroSchema
             TransformSchemaNode = Transform,
         };
         JsonNode schema = MacroJson.StrictOptions.GetJsonSchemaAsNode(typeof(MacroDefinition), exporter);
+        // A deleted or changed Id comes back with Ctrl+Space.
+        if (schema["properties"]?["Id"] is JsonObject idSchema)
+        {
+            idSchema["default"] = id.ToString();
+            idSchema["enum"] = new JsonArray(JsonValue.Create(id.ToString()));
+        }
         return schema.ToJsonString();
     }
 

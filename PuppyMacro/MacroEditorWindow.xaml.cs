@@ -82,6 +82,7 @@ public partial class MacroEditorWindow
 
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
         CodeView.Check = CheckCode;
+        CodeView.Schema = MacroSchema.Build(_itemId);
         CodeView.Changed += Validate;
         _ready = true;
         Validate();
@@ -992,7 +993,17 @@ public partial class MacroEditorWindow
         DialogResult = true;
     }
 
-    private void OnCancelClick(object sender, RoutedEventArgs e) => DialogResult = false;
+    /// <summary>
+    /// List view: closes the editor without saving. Code view (Discard changes): drops the code's
+    /// changes and goes back to the List view as it was, the way out when the code has problems.
+    /// </summary>
+    private void OnCancelClick(object sender, RoutedEventArgs e)
+    {
+        if (_codeView)
+            SetView(code: false);
+        else
+            DialogResult = false;
+    }
 
     // ================= Code view =================
 
@@ -1028,11 +1039,7 @@ public partial class MacroEditorWindow
         UpdateHotkeyLabel();
         string text = MacroJson.Serialize(BuildMacro());
 
-        _codeView = true;
-        ListBody.Visibility = Visibility.Collapsed;
-        CodeView.Visibility = Visibility.Visible;
-        FormatButton.Visibility = Visibility.Visible;
-        Validate();
+        SetView(code: true);
 
         if (await CodeView.ShowAsync(text) is string error)
         {
@@ -1064,6 +1071,8 @@ public partial class MacroEditorWindow
         ListBody.Visibility = code ? Visibility.Collapsed : Visibility.Visible;
         CodeView.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
         FormatButton.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
+        CancelButton.Content = code ? "Discard changes" : "Cancel";
+        CancelButton.ToolTip = code ? "Drop the changes made in the code and go back to List view" : null;
         Validate();
     }
 

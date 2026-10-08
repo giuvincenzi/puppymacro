@@ -6,7 +6,8 @@
 - Macro editor: **Code view**, next to **List view**, shows the macro's file as JSON in a code
   editor like VS Code's: Ctrl+Space suggestions with descriptions, **Format**, errors underlined
   as you type and listed in a **Problems** panel (click one to go to its line). Save and List
-  view stay off while there are problems; the Id cannot be changed. The installer adds the
+  view stay off while there are problems; **Discard changes** drops the code's changes and goes
+  back to List view. The Id cannot be changed, and Ctrl+Space suggests it again if deleted. The installer adds the
   Microsoft Edge WebView2 Runtime when Windows does not have it.
 - Overlay: **Show the overlay panel** (Settings > Overlay) can be turned off, so overlay mode
   shows only the floating buttons.
