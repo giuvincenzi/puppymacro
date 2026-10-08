@@ -18,6 +18,8 @@
   - `make test`: unit tests; `make e2e`: end-to-end tests (see `testing.md`).
   - `make docs`, `make docs-serve`: website preview in `site-preview/`, served locally by
     `docs-serve` (see `docs.md`).
+  - `make screenshots`: `make dev`, then retakes the guide's editor screenshots (drives the
+    UI, see `docs.md`).
   - `make release-pr`, `make release`: see Releases below.
   - `make clean`.
 - From WSL the Makefile calls Windows PowerShell (`powershell.exe`), so builds use the Windows

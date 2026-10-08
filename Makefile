@@ -8,6 +8,7 @@
 #   make build      create the distribution in dist/ (Setup.exe + update packages), no upload
 #   make docs       build the website in site-preview/ with the guide of the current code
 #   make docs-serve same, then serve it at http://localhost:8080/ (Ctrl+C to stop)
+#   make screenshots make dev, then retake the editor screenshots of the guide (drives the UI)
 #   make release-pr open the release pull request (next version from the latest tag and CHANGELOG);
 #                   merging it publishes the release
 #   make release    retry the Release workflow on main (it never republishes an existing tag)
@@ -21,7 +22,7 @@ endif
 
 RUN_SCRIPT = $(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/$(1).ps1
 
-.PHONY: dev dev-keep test e2e build docs docs-serve release-pr release clean
+.PHONY: dev dev-keep test e2e build docs docs-serve screenshots release-pr release clean
 
 dev:
 	$(call RUN_SCRIPT,dev)
@@ -37,6 +38,9 @@ e2e:
 
 build:
 	$(call RUN_SCRIPT,build)
+
+screenshots: dev
+	$(call RUN_SCRIPT,screenshots)
 
 docs:
 	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/site.ps1 -Preview
