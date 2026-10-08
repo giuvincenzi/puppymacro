@@ -85,6 +85,10 @@ $macros = WaitFor { ByName $main 'Macros' } 'Macros page'
 $macros.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
 Start-Sleep -Seconds 1
 $editor = OpenEditor 'Sample: type and confirm' 'Edit macro'
+# Select the last action (the sample's named action "Send"), so the selection bar shows as in the guide.
+$list = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'ActionList'))) } 'ActionList'
+$rows = $list.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
+$rows[$rows.Count - 1].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
 Capture $editor (Join-Path $OutDir 'macro-editor.png')
 
 $loops = ByName $main 'Loops'
