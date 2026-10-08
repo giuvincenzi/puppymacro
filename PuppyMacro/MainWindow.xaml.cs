@@ -1312,11 +1312,19 @@ public partial class MainWindow
         _overlayPanelWindow.Show();
     }
 
+    /// <summary>How the main window was when overlay mode started, so leaving it gives that back.</summary>
+    private enum WindowBeforeOverlay { Open, Minimized, InTray }
+
+    private WindowBeforeOverlay _windowBeforeOverlay;
+
     private void ToggleOverlayMode()
     {
         if (!_overlayModeActive)
         {
             _engine.CancelCapture();
+            _windowBeforeOverlay = !IsVisible ? WindowBeforeOverlay.InTray
+                : WindowState == WindowState.Minimized ? WindowBeforeOverlay.Minimized
+                : WindowBeforeOverlay.Open;
             Hide();
             if (_settings.ShowOverlayPanel)
                 ShowOverlayPanel();
@@ -1330,11 +1338,18 @@ public partial class MainWindow
             CloseFloatingButtons();
             _overlayModeActive = false;
             UpdatePanelClicks();
-            // Bring the window to the front: it is not topmost, so it would
-            // otherwise reappear behind the fullscreen app.
-            Show();
-            Activate();
-            _overlayModeActive = false;
+            // The window goes back to how it was: still in the tray, minimized, or open. Open, it
+            // comes to the front: it is not topmost, so it would otherwise stay behind the fullscreen app.
+            switch (_windowBeforeOverlay)
+            {
+                case WindowBeforeOverlay.Open:
+                    Show();
+                    Activate();
+                    break;
+                case WindowBeforeOverlay.Minimized:
+                    Show(); // still minimized, on the taskbar
+                    break;
+            }
         }
     }
 

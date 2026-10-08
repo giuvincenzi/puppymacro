@@ -41,13 +41,15 @@
   <img src="img/macro-editor-code.png" alt="The Edit macro window in Code view, with the macro's JSON and the Problems panel" loading="lazy">
   <figcaption>The same macro as its file: every setting, every action, every group.</figcaption>
 </figure>
-<p><strong>Code view</strong>, at the top of the editor, shows the macro exactly as PuppyMacro saves it: the JSON of its file, with name, actions, groups, repeat, speed, activation, hotkey, floating button and sound. <strong>List view</strong> goes back to the list.</p>
+<p><strong>Code view</strong>, at the top of the editor, shows the macro exactly as PuppyMacro saves it: the JSON of its file, with name, actions, groups, repeat, speed, activation, hotkey, floating button and sound. <strong>Form view</strong> goes back to the list and the fields.</p>
+<p>The windows of one action, of a loop and of a remap have the same <strong>Form view</strong> and <strong>Code view</strong>, for that item only: the action as it is in the macro's file, the loop or the remap as in <code>settings.json</code>. In the Code view these small windows grow, and get their size back in the Form view.</p>
 <ul>
   <li>It is a code editor like the one of VS Code: colors, line numbers, find (<kbd>Ctrl</kbd>+<kbd>F</kbd>), undo and redo, several cursors.</li>
   <li><kbd>Ctrl</kbd>+<kbd>Space</kbd> suggests what can go where, with a description: the properties of an action, the action types, the sounds, the speeds.</li>
   <li><strong>Format</strong> (or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>) lays the code out again.</li>
   <li>Mistakes are underlined in red as you type, and listed in <strong>Problems</strong> below the code with their line and column: broken JSON, unknown properties, values that are not allowed, numbers out of range, a group whose actions are not next to each other, a hotkey that is already used. Click a problem (or select it with the arrow keys and press <kbd>Enter</kbd>) to go to its line; in the code, <kbd>F8</kbd> and <kbd>Shift</kbd>+<kbd>F8</kbd> go to the next and previous problem.</li>
-  <li>While there are problems, <strong>Save</strong> and <strong>List view</strong> are off. In the Code view, <strong>Cancel</strong> becomes <strong>Discard changes</strong>: it drops the changes made in the code and goes back to List view as it was. In List view, <strong>Cancel</strong> closes the editor without saving.</li>
-  <li>Everything can be changed except <strong>Id</strong>, which is the name of the macro's file. If you delete it, <kbd>Ctrl</kbd>+<kbd>Space</kbd> on its value suggests it again.</li>
+  <li>While there are problems, <strong>Save</strong> (and <strong>Test</strong> for an action) and <strong>Form view</strong> are off. In the Code view, <strong>Cancel</strong> becomes <strong>Discard changes</strong>: it drops the changes made in the code and goes back to Form view as it was. In Form view, <strong>Cancel</strong> closes the window without saving.</li>
+  <li>Everything can be changed except the <strong>Id</strong> of a macro, a loop or a remap. If you delete it, <kbd>Ctrl</kbd>+<kbd>Space</kbd> on its value suggests it again.</li>
+  <li>In an action's code, <strong>GroupId</strong> can move the action into the group of the action before or after it, or out of its group (null), as long as every group's actions stay next to each other. <kbd>Ctrl</kbd>+<kbd>Space</kbd> lists the groups it can be in, by name.</li>
   <li>Keys and mouse buttons are virtual-key codes (65 is A, 112 is F1; 1 is the left button). The scroll wheel in a hotkey is 256 up, 257 down, 258 left, 259 right.</li>
 </ul>

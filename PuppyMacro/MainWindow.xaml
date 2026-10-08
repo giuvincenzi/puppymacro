@@ -80,30 +80,30 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- ================= Side rail ================= -->
-            <StackPanel Grid.Column="0" Margin="8,4,8,0">
-                <RadioButton x:Name="LoopsNav" GroupName="Nav" IsChecked="True" Style="{StaticResource RailButton}"
+            <!-- ================= Side rail: the pages at the top, Settings at the bottom ================= -->
+            <DockPanel Grid.Column="0" Margin="8,4,8,8" LastChildFill="False">
+                <RadioButton x:Name="LoopsNav" DockPanel.Dock="Top" GroupName="Nav" IsChecked="True" Style="{StaticResource RailButton}"
                              AutomationProperties.Name="Loops" Checked="OnNavChanged">
                     <StackPanel>
                         <ui:SymbolIcon Symbol="ArrowRepeatAll24" FontSize="18" HorizontalAlignment="Center" />
                         <TextBlock Margin="0,2,0,0" FontSize="11" Text="Loops" HorizontalAlignment="Center" />
                     </StackPanel>
                 </RadioButton>
-                <RadioButton x:Name="MacrosNav" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
+                <RadioButton x:Name="MacrosNav" DockPanel.Dock="Top" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
                              AutomationProperties.Name="Macros" Checked="OnNavChanged">
                     <StackPanel>
                         <ui:SymbolIcon Symbol="DocumentBulletList24" FontSize="18" HorizontalAlignment="Center" />
                         <TextBlock Margin="0,2,0,0" FontSize="11" Text="Macros" HorizontalAlignment="Center" />
                     </StackPanel>
                 </RadioButton>
-                <RadioButton x:Name="RemapNav" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
+                <RadioButton x:Name="RemapNav" DockPanel.Dock="Top" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
                              AutomationProperties.Name="Remap" Checked="OnNavChanged">
                     <StackPanel>
                         <ui:SymbolIcon Symbol="ArrowSwap24" FontSize="18" HorizontalAlignment="Center" />
                         <TextBlock Margin="0,2,0,0" FontSize="11" Text="Remap" HorizontalAlignment="Center" />
                     </StackPanel>
                 </RadioButton>
-                <RadioButton x:Name="SettingsNav" Margin="0,4,0,0" GroupName="Nav" Style="{StaticResource RailButton}"
+                <RadioButton x:Name="SettingsNav" DockPanel.Dock="Bottom" GroupName="Nav" Style="{StaticResource RailButton}"
                              AutomationProperties.Name="Settings" Checked="OnNavChanged">
                     <Grid>
                         <StackPanel>
@@ -116,7 +116,7 @@
                                  Fill="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
                 </RadioButton>
-            </StackPanel>
+            </DockPanel>
 
             <!-- ================= Loops page ================= -->
             <Grid x:Name="LoopsPage" Grid.Column="1" Margin="8,0,20,0">

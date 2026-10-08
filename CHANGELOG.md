@@ -3,12 +3,13 @@
 ## Unreleased
 
 ### Added
-- Macro editor: **Code view**, next to **List view**, shows the macro's file as JSON in a code
-  editor like VS Code's: Ctrl+Space suggestions with descriptions, **Format**, errors underlined
-  as you type and listed in a **Problems** panel (click one to go to its line). Save and List
-  view stay off while there are problems; **Discard changes** drops the code's changes and goes
-  back to List view. The Id cannot be changed, and Ctrl+Space suggests it again if deleted. The installer adds the
-  Microsoft Edge WebView2 Runtime when Windows does not have it.
+- **Code view**, next to **Form view**, in the macro, action, loop and remap editors: the item's
+  JSON, as it is saved, in a code editor like VS Code's, with Ctrl+Space suggestions and
+  descriptions, **Format**, errors underlined as you type and listed in a **Problems** panel
+  (click one to go to its line). Save and Form view stay off while there are problems;
+  **Discard changes** drops the code's changes and goes back to Form view. Ids cannot be changed
+  (Ctrl+Space suggests them again); an action's GroupId can move it to a group next to it. The
+  installer adds the Microsoft Edge WebView2 Runtime when Windows does not have it.
 - Overlay: **Show the overlay panel** (Settings > Overlay) can be turned off, so overlay mode
   shows only the floating buttons.
 - Every floating button has its own **Opacity**, in the loop and macro editors. Existing buttons
@@ -22,6 +23,9 @@
   **Overlay** groups the panel and the floating buttons, and **Position on screen** always shows
   the whole overlay, also from a button's **Position…**.
 - A new floating button appears in the middle of the main screen until it is placed.
+- **Settings** is at the bottom of the side rail.
+- Leaving overlay mode puts the main window back as it was: open, minimized or in the system tray
+  (before, it always opened).
 - New installs: **Stop all** is Alt+Shift+S and **Overlay mode** is Alt+Shift+W. Existing
   settings keep their hotkeys.
 

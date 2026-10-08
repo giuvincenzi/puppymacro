@@ -13,8 +13,8 @@
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
   `HotkeyConflicts`, `HotkeyRules`, `ModifierTracker`, `KeyNames`, `HotkeyBinding`, loop intervals,
-  `FloatingButton` (labels, sanitizing, opacity, old files), the macro Code view's checks and
-  schema (`MacroJson`, `MacroSchema`), and `LoopEngine`'s input decisions (keys held by a Hold
+  `FloatingButton` (labels, sanitizing, opacity, old files), the Code views' checks and
+  schemas (`MacroJson`, `LoopJson`, `RemapJson`, `CodeSchema`, the groups an action can be in), and `LoopEngine`'s input decisions (keys held by a Hold
   down loop, wheel hotkeys, hotkey capture), driven through `OnKey` / `OnWheel` without hooks.
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
   and put the test class in `[Collection(nameof(ModifierTracker))]` so they never run at the

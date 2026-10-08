@@ -78,11 +78,16 @@ Rules:
   list to rows and group headers. Test action: `Services/ActionTestSession.cs` (moves the
   editor off screen, hides the main window, focuses the window behind, waits 200 ms) plays
   `MacroDefinition.ForTest` through `LoopEngine.TestMacroAction`.
-  Code view: `Views/MacroCodeView` (WebView2 with `Assets/CodeEditor` and Monaco, served from
+- Form view / Code view (macro, action, loop and remap editors): `Views/ViewSwitchBar` (the
+  switch and Format), `Views/CodeView` (WebView2 with `Assets/CodeEditor` and Monaco, served from
   disk at `https://puppymacro.editor/`, data in `AppPaths.WebViewFolder`; the Problems panel is
-  HTML in the same page, like VS Code's: Monaco has none of its own), `Services/MacroJson.cs` (the file's text, strict reading and every check, with line and
-  column; unit tested) and `Services/MacroSchema.cs` (JSON Schema from the models, for Monaco's
-  suggestions and inline errors). Monaco's problems come first; `MacroJson.Parse` decides Save.
+  HTML in the same page, like VS Code's: Monaco has none of its own) and `Views/CodeViewSwitch`
+  (switching, Discard changes, Save and Form view only without problems, small windows grow).
+  `Services/CodeJson.cs` reads the code strictly and finds lines and columns; the checks of each
+  item are in `MacroJson` (macro, one action and the groups it can be in), `LoopJson` and
+  `RemapJson` (in `LoopJson.cs`), equal to the windows' checks; unit tested.
+  `Services/CodeSchema.cs` gives Monaco the JSON Schema of each item (suggestions, inline errors).
+  Monaco's problems come first; the app's checks decide Save.
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.
 - Hotkeys: `HotkeyBinding`, `Services/HotkeyRules.cs` (which keys need a modifier),
   `HotkeyConflicts`, `KeyNames` (names, wheel codes), `LoopEngine.OnKey` / `OnWheel` (input.md).

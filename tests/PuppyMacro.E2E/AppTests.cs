@@ -333,11 +333,11 @@ public class AppTests
             "the Code view did not report on the code");
         AutomationElement format = app.FindById(editor, "FormatButton");
         Assert.True(app.FindById(editor, "SaveButton").IsEnabled);
-        Assert.True(app.FindById(editor, "ListViewButton").IsEnabled);
+        Assert.True(app.FindById(editor, "FormViewButton").IsEnabled);
         format.AsButton().Invoke();
 
         // Back to the list: the same three actions.
-        app.FindById(editor, "ListViewButton").Patterns.SelectionItem.Pattern.Select();
+        app.FindById(editor, "FormViewButton").Patterns.SelectionItem.Pattern.Select();
         AutomationElement total = app.FindById(editor, "TotalText");
         Assert.True(Retry.WhileFalse(() => !total.IsOffscreen && total.Name.StartsWith("3 actions in 1 group"), AppSession.Timeout).Success, total.Name);
 
@@ -347,7 +347,7 @@ public class AppTests
         Assert.True(Retry.WhileFalse(() => discard.Name == "Discard changes", AppSession.Timeout).Success, discard.Name);
         discard.AsButton().Invoke();
         Assert.True(Retry.WhileFalse(() => app.FindById(editor, "CancelButton").Name == "Cancel", AppSession.Timeout).Success);
-        Assert.True(app.FindById(editor, "TotalText").Name.StartsWith("3 actions in 1 group"));
+        Assert.StartsWith("3 actions in 1 group", app.FindById(editor, "TotalText").Name);
 
         // Saved from the Code view, the file keeps the macro.
         app.FindById(editor, "CodeViewButton").Patterns.SelectionItem.Pattern.Select();
@@ -359,5 +359,70 @@ public class AppTests
                 string json = File.ReadAllText(f);
                 return json.Contains("\"Sample: type and confirm\"") && json.Contains("\"Send\"") && json.Contains("\"Type hi\"");
             }), AppSession.Timeout).Success);
+    }
+
+    /// <summary>
+    /// Opens the Code view of an editor window and waits until the code editor checked the code:
+    /// "No problems." when <paramref name="problem"/> is null, otherwise that problem in the list.
+    /// </summary>
+    private static void OpenCodeView(AppSession app, Window window, string? problem = null)
+    {
+        app.FindById(window, "CodeViewButton").Patterns.SelectionItem.Pattern.Select();
+        string expected = problem ?? "No problems.";
+        Assert.True(Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByName(expected)), TimeSpan.FromSeconds(30)).Success,
+            $"the Code view did not show \"{expected}\"");
+    }
+
+    /// <summary>Discard changes: back to the Form view, with Cancel again.</summary>
+    private static void DiscardCodeChanges(AppSession app, Window window)
+    {
+        AutomationElement discard = app.FindById(window, "CancelButton");
+        Assert.True(Retry.WhileFalse(() => discard.Name == "Discard changes", AppSession.Timeout).Success, discard.Name);
+        discard.AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => app.FindById(window, "CancelButton").Name == "Cancel", AppSession.Timeout).Success);
+    }
+
+    [Fact]
+    public void A_loop_and_a_remap_have_a_code_view_that_grows_the_window()
+    {
+        using var app = new AppSession();
+
+        // A new loop: the code shows what is missing, Form view stays off, Discard changes goes back.
+        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        Window loop = app.Dialog("Add loop");
+        int formWidth = loop.BoundingRectangle.Width;
+        OpenCodeView(app, loop, "Name: Enter a name.");
+        Assert.True(loop.BoundingRectangle.Width > formWidth, "the window did not grow for the code");
+        Assert.False(app.FindById(loop, "FormViewButton").IsEnabled);
+        Assert.False(app.FindById(loop, "SaveButton").IsEnabled);
+        DiscardCodeChanges(app, loop);
+        Assert.True(Retry.WhileFalse(() => loop.BoundingRectangle.Width == formWidth, AppSession.Timeout).Success, "the window did not get its size back");
+        app.FindById(loop, "CancelButton").AsButton().Invoke();
+
+        // A sample remap: its code has no problems and goes back to the form.
+        app.GoTo("Remap");
+        app.ItemMenu("Sample: Caps Lock to Esc", "Edit");
+        Window remap = app.Dialog("Edit remap");
+        OpenCodeView(app, remap);
+        Assert.True(app.FindById(remap, "SaveButton").IsEnabled);
+        app.FindById(remap, "FormViewButton").Patterns.SelectionItem.Pattern.Select();
+        Assert.True(Retry.WhileFalse(() => app.FindById(remap, "CancelButton").Name == "Cancel", AppSession.Timeout).Success);
+        app.FindById(remap, "CancelButton").AsButton().Invoke();
+    }
+
+    [Fact]
+    public void A_macro_action_has_a_code_view()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.ItemMenu("Sample: click and scroll", "Edit");
+        Window editor = app.Dialog("Edit macro");
+
+        app.Find(editor, "Edit action").AsButton().Invoke();
+        Window action = ChildDialog(editor, "Edit click");
+        OpenCodeView(app, action);
+        Assert.True(app.FindById(action, "TestButton").IsEnabled);
+        DiscardCodeChanges(app, action);
+        app.FindById(action, "CancelButton").AsButton().Invoke();
     }
 }

@@ -1,7 +1,7 @@
 ---
 paths:
   - "PuppyMacro/Models/**"
-  - "PuppyMacro/Services/{SettingsStore,MacroLibrary,MacroJson,MacroSchema,AppPaths,BackupService,DevSampleData}.cs"
+  - "PuppyMacro/Services/{SettingsStore,MacroLibrary,CodeJson,MacroJson,LoopJson,CodeSchema,AppPaths,BackupService,DevSampleData}.cs"
 ---
 
 # Data and compatibility
@@ -14,10 +14,11 @@ paths:
   and a group's actions are consecutive: `MacroDefinition.NormalizeGroups` enforces it when a
   macro is loaded (`MacroLibrary.Sanitize`) and saved by the editor. Playback ignores groups.
   Files without these fields load with no names and no groups.
-- The macro file's format is `MacroJson.Options` (`MacroLibrary` uses it). The editor's Code view
-  shows that exact text and reads it back strictly (`MacroJson.StrictOptions` and checks): keep
-  `MacroJson`'s limits equal to the editor's fields and `MacroSchema`'s descriptions up to date
-  when the models change.
+- The data files' format is `CodeJson.Options` (`MacroLibrary` uses it; settings.json has the same
+  options). The Code views show that exact text for a macro, an action, a loop or a remap and read
+  it back strictly (`CodeJson.StrictOptions` and the checks in `MacroJson`, `LoopJson`,
+  `RemapJson`): keep their checks and limits equal to the editor windows' and `CodeSchema`'s
+  descriptions up to date when the models change.
 - Versions before 1.6 kept the data next to the exe; `AppPaths.MigrateFromExeFolder` copies it
   to the data folder on first start (Release builds only).
 - `SettingsStore.Sanitize` validates and **migrates** old files. When the settings format

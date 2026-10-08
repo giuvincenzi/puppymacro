@@ -1,5 +1,5 @@
 # make screenshots: retakes the editor screenshots of the user guide (site/guide/img: loop-editor.png,
-# macro-editor.png, macro-editor-code.png) from the
+# macro-editor.png, macro-editor-code.png, remap-editor.png) from the
 # running development build (start it first with make dev, so it shows the sample data).
 # It drives the UI with UI Automation: do not use the mouse or keyboard while it runs.
 # Each window is captured alone, at its visible edges, and saved at 100% scale.
@@ -99,6 +99,12 @@ $code.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Patter
 WaitFor { ByName $editor 'No problems.' } 'the Code view checked' | Out-Null
 Start-Sleep -Seconds 1
 Capture $editor (Join-Path $OutDir 'macro-editor-code.png')
+
+$remaps = WaitFor { ByName $main 'Remap' } 'Remap page'
+$remaps.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+Start-Sleep -Seconds 1
+$editor = OpenEditor 'Sample: Caps Lock to Esc' 'Edit remap'
+Capture $editor (Join-Path $OutDir 'remap-editor.png')
 
 $loops = ByName $main 'Loops'
 $loops.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
