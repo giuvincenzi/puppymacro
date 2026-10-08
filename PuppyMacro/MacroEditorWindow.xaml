@@ -191,8 +191,19 @@
                     </TextBlock>
                     <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
                         <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Play24}" ToolTip="Test action: PuppyMacro hides and plays it once in the window behind it"
-                                   AutomationProperties.Name="Test action" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                   Tag="{Binding}" Click="OnTestActionClick" />
+                                   AutomationProperties.Name="Test action" Tag="{Binding}" Click="OnTestActionClick">
+                            <ui:Button.Style>
+                                <!-- Accent color, except on a selected row (accent background): there like the other buttons. -->
+                                <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                            <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ui:Button.Style>
+                        </ui:Button>
                         <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" AutomationProperties.Name="Edit action"
                                    Tag="{Binding}" Click="OnEditActionClick" Visibility="{Binding IsEditable, Converter={StaticResource BoolToVisibility}}" />
                         <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" AutomationProperties.Name="Duplicate action"
