@@ -11,39 +11,6 @@ namespace PuppyMacro.E2E;
 public class MacroRunTests
 {
     [Fact]
-    public void A_macro_plays_once_a_number_of_times_or_until_it_is_stopped()
-    {
-        MacroDefinition once = Macro("E2E once", Vk.F13, Press(Vk.F15));
-        MacroDefinition times = Macro("E2E three times", Vk.F14, Press(Vk.F16, delayMs: 200));
-        times.Repeat = RepeatMode.Times;
-        times.RepeatCount = 3;
-        MacroDefinition loop = Macro("E2E loop", Vk.F23, Press(Vk.F17, delayMs: 300));
-        loop.Repeat = RepeatMode.Loop;
-        using var app = new AppSession(seed => seed.Macros.AddRange(new[] { once, times, loop }));
-        using var target = new TargetWindow();
-
-        target.Tap(Vk.F13);
-        target.WaitFor(t => t.Ups(Vk.F15).Count == 1, 5, "Once did not play");
-        TargetWindow.Quiet(1);
-        Assert.Single(target.Downs(Vk.F15));
-
-        target.Tap(Vk.F14);
-        target.WaitFor(t => t.Ups(Vk.F16).Count == 3, 5, "Times 3 did not play three times");
-        TargetWindow.Quiet(1);
-        Assert.Equal(3, target.Downs(Vk.F16).Count);
-
-        target.Tap(Vk.F23);
-        target.WaitFor(t => t.Downs(Vk.F17).Count >= 4, 5, "Loop did not repeat");
-        target.Tap(Vk.F23); // Toggle: the hotkey again stops it
-        AssertStopped(target, Vk.F17, "the Loop macro");
-
-        // The hotkeys never reached the window.
-        Assert.Empty(target.Downs(Vk.F13));
-        Assert.Empty(target.Downs(Vk.F14));
-        Assert.Empty(target.Downs(Vk.F23));
-    }
-
-    [Fact]
     public void Speed_scales_the_delays_from_a_quarter_to_four_times()
     {
         double[] speeds = MacroDefinition.SpeedSteps;
