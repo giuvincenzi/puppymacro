@@ -170,7 +170,7 @@ public class MacroJsonTests : IDisposable
     [Fact]
     public void The_schema_lists_the_values_and_forbids_unknown_properties()
     {
-        JsonObject schema = JsonNode.Parse(MacroSchema.Build(_macro.Id))!.AsObject();
+        JsonObject schema = JsonNode.Parse(CodeSchema.ForMacro(_macro.Id))!.AsObject();
         string text = schema.ToJsonString();
 
         Assert.Contains("\"enumDescriptions\"", text);

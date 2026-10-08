@@ -215,43 +215,6 @@
                 <Border Style="{StaticResource DropLineAfter}" />
             </StackPanel>
         </DataTemplate>
-
-        <!-- List view / Code view switch: the checked one has a fill and an accent bar -->
-        <Style x:Key="ViewSwitch" TargetType="RadioButton">
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Grid>
-                            <Border x:Name="Back" Padding="14,6" CornerRadius="4" Background="Transparent">
-                                <ContentPresenter VerticalAlignment="Center" />
-                            </Border>
-                            <Border x:Name="Bar" Width="16" Height="3" Margin="0,0,0,1" CornerRadius="1.5" VerticalAlignment="Bottom"
-                                    Background="{DynamicResource AccentFillColorDefaultBrush}" Visibility="Collapsed" />
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                                <Setter TargetName="Bar" Property="Visibility" Value="Visible" />
-                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="Back" Property="BorderBrush" Value="{DynamicResource FocusStrokeColorOuterBrush}" />
-                                <Setter TargetName="Back" Property="BorderThickness" Value="1" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
     <Grid>
@@ -264,33 +227,10 @@
 
         <ui:TitleBar x:Name="EditorTitleBar" Grid.Row="0" Title="Edit macro" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
 
-        <!-- List view: the actions as rows. Code view: the macro file's JSON in a code editor. -->
-        <Grid Grid.Row="1" Margin="24,0,24,8">
-            <Border HorizontalAlignment="Left" Padding="2" CornerRadius="6" BorderThickness="1"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton x:Name="ListViewButton" Style="{StaticResource ViewSwitch}" GroupName="EditorView" IsChecked="True"
-                                 AutomationProperties.Name="List view" Checked="OnViewChecked">
-                        <StackPanel Orientation="Horizontal">
-                            <ui:SymbolIcon Symbol="TextBulletListLtr24" FontSize="16" />
-                            <TextBlock Margin="8,0,0,0" Text="List view" />
-                        </StackPanel>
-                    </RadioButton>
-                    <RadioButton x:Name="CodeViewButton" Margin="2,0,0,0" Style="{StaticResource ViewSwitch}" GroupName="EditorView"
-                                 AutomationProperties.Name="Code view" Checked="OnViewChecked"
-                                 ToolTip="The macro file's JSON in a code editor: Ctrl+Space suggests what can go where">
-                        <StackPanel Orientation="Horizontal">
-                            <ui:SymbolIcon Symbol="CodeBlock24" FontSize="16" />
-                            <TextBlock Margin="8,0,0,0" Text="Code view" />
-                        </StackPanel>
-                    </RadioButton>
-                </StackPanel>
-            </Border>
-            <ui:Button x:Name="FormatButton" HorizontalAlignment="Right" Content="Format" Icon="{ui:SymbolIcon TextAlignLeft24}"
-                       ToolTip="Format the code (Shift+Alt+F)" Visibility="Collapsed" Click="OnFormatClick" />
-        </Grid>
+        <!-- Form view: the actions as rows. Code view: the macro file's JSON in a code editor. -->
+        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="1" Margin="24,0,24,8" />
 
-        <views:MacroCodeView x:Name="CodeView" Grid.Row="2" Margin="24,0,24,12" Visibility="Collapsed" />
+        <views:CodeView x:Name="CodeView" Grid.Row="2" Margin="24,0,24,12" Visibility="Collapsed" />
 
         <Grid x:Name="ListBody" Grid.Row="2">
             <Grid.ColumnDefinitions>

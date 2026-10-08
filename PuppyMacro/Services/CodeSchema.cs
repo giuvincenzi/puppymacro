@@ -7,11 +7,12 @@ using PuppyMacro.Models;
 namespace PuppyMacro.Services;
 
 /// <summary>
-/// JSON Schema of a macro file, generated from the models with <see cref="MacroJson.StrictOptions"/>.
-/// The Code view's editor uses it for Ctrl+Space suggestions, descriptions and inline errors;
-/// <see cref="MacroJson.Parse"/> stays the check that decides.
+/// JSON Schemas of the Code views (a macro, one action, a loop, a remap), generated from the models
+/// with <see cref="CodeJson.StrictOptions"/>. The editor uses them for Ctrl+Space suggestions,
+/// descriptions and inline errors; <see cref="MacroJson"/>, <see cref="LoopJson"/> and
+/// <see cref="RemapJson"/> stay the checks that decide.
 /// </summary>
-internal static class MacroSchema
+internal static class CodeSchema
 {
     private static readonly Dictionary<string, string> Descriptions = new()
     {
@@ -66,6 +67,32 @@ internal static class MacroSchema
         ["FloatingButton.Y"] = "Position (WPF units), or null with X for the middle of the main screen.",
         ["FloatingButton.Opacity"] = "Background opacity, in percent.",
 
+        ["LoopDefinition.Id"] = "The loop's id. It cannot be changed.",
+        ["LoopDefinition.Name"] = "Name shown in the Loops list.",
+        ["LoopDefinition.Actions"] = "The rows: keys or texts, each on its own interval.",
+        ["LoopDefinition.Mode"] = "Toggle: the hotkey starts and stops it. Hold: it runs only while the hotkey is held.",
+        ["LoopDefinition.Hotkey"] = "Hotkey, or null for none.",
+        ["LoopDefinition.Enabled"] = "Off: the hotkey and the floating button do nothing.",
+        ["LoopDefinition.SoundEnabled"] = "Plays SoundName when the loop starts and stops.",
+        ["LoopDefinition.SoundName"] = "One of the built-in sounds.",
+        ["LoopDefinition.FloatingButton"] = "Round button shown in overlay mode (Toggle only).",
+
+        ["LoopAction.Type"] = "Key: press a key or mouse button. Text: paste a text.",
+        ["LoopAction.KeyVk"] = "Key rows: virtual-key code of the key or mouse button (65 = A, 112 = F1, 1 = left button).",
+        ["LoopAction.Text"] = "Text rows: the text to paste.",
+        ["LoopAction.EnterBefore"] = "Text rows: press Enter before pasting.",
+        ["LoopAction.EnterAfter"] = "Text rows: press Enter after pasting.",
+        ["LoopAction.HoldDown"] = "Key rows: keep the key held down while the loop runs, instead of repeating it.",
+        ["LoopAction.IntervalValue"] = "Repeat every IntervalValue IntervalUnit (10 ms to 24 h).",
+        ["LoopAction.IntervalUnit"] = "Milliseconds, Seconds, Minutes or Hours.",
+
+        ["RemapDefinition.Id"] = "The remap's id. It cannot be changed.",
+        ["RemapDefinition.SourceVk"] = "Virtual-key code of the key or mouse button you press (65 = A, 112 = F1, 5 = back button).",
+        ["RemapDefinition.Target"] = "The key, mouse button or combination sent instead.",
+        ["RemapDefinition.AppExe"] = "File name of the app it works in, like \"notepad.exe\"; null for all apps.",
+        ["RemapDefinition.Note"] = "Optional note shown in the Remap list.",
+        ["RemapDefinition.Enabled"] = "Off: the key works as usual.",
+
         ["PathPoint.X"] = "Screen position in physical pixels.",
         ["PathPoint.Y"] = "Screen position in physical pixels.",
         ["PathPoint.T"] = "Time from the start of the path, in ms.",
@@ -85,6 +112,9 @@ internal static class MacroSchema
         ["MacroAction.ScrollSteps"] = MacroJson.ScrollSteps,
         ["FloatingButton.Opacity"] = (AppSettings.MinOpacity, AppSettings.MaxOpacity),
         ["PathPoint.T"] = (0, double.MaxValue),
+        ["LoopAction.KeyVk"] = (0, 254),
+        ["LoopAction.IntervalValue"] = (0, double.MaxValue),
+        ["RemapDefinition.SourceVk"] = (1, 254),
     };
 
     private static readonly Dictionary<MacroActionType, string> ActionTypes = new()
@@ -101,27 +131,64 @@ internal static class MacroSchema
         [MacroActionType.PasteText] = "Paste Text, with Enter before or after if set.",
     };
 
-    /// <summary>The schema for the macro <paramref name="id"/>: its Id is the only value allowed, and suggested.</summary>
-    public static string Build(System.Guid id)
+    /// <summary>A whole macro: its Id is the only value allowed, and suggested.</summary>
+    public static string ForMacro(System.Guid id) => Build(typeof(MacroDefinition), schema => FixId(schema, id));
+
+    /// <summary>A loop: its Id is the only value allowed, and suggested. The fields of version 1.0 are left out.</summary>
+    public static string ForLoop(System.Guid id) => Build(typeof(LoopDefinition), schema =>
+    {
+        FixId(schema, id);
+        if (schema["properties"] is JsonObject properties)
+        {
+            properties.Remove("KeyVk");
+            properties.Remove("IntervalMs");
+            properties.Remove("HotkeyVk");
+        }
+    });
+
+    /// <summary>A remap: its Id is the only value allowed, and suggested.</summary>
+    public static string ForRemap(System.Guid id) => Build(typeof(RemapDefinition), schema => FixId(schema, id));
+
+    /// <summary>
+    /// One macro action: its GroupId can be one of <paramref name="allowedGroups"/> (see
+    /// <see cref="MacroJson.AllowedGroupIds"/>), suggested with the group names.
+    /// </summary>
+    public static string ForAction(IReadOnlyList<System.Guid?> allowedGroups, IReadOnlyDictionary<System.Guid, string> groupNames,
+        System.Guid? current) => Build(typeof(MacroAction), schema =>
+    {
+        if (schema["properties"]?["GroupId"] is not JsonObject group)
+            return;
+        group["enum"] = new JsonArray(allowedGroups.Select(g => (JsonNode?)(g is System.Guid id ? JsonValue.Create(id.ToString()) : null)).ToArray());
+        group["enumDescriptions"] = new JsonArray(allowedGroups
+            .Select(g => (JsonNode?)JsonValue.Create(g is System.Guid id && groupNames.TryGetValue(id, out string? name) ? $"Group \"{name}\"" : "No group"))
+            .ToArray());
+        group["default"] = current?.ToString();
+    });
+
+    private static string Build(System.Type type, System.Action<JsonObject> customize)
     {
         var exporter = new JsonSchemaExporterOptions
         {
             TreatNullObliviousAsNonNullable = true,
             TransformSchemaNode = Transform,
         };
-        JsonNode schema = MacroJson.StrictOptions.GetJsonSchemaAsNode(typeof(MacroDefinition), exporter);
-        // A deleted or changed Id comes back with Ctrl+Space.
-        if (schema["properties"]?["Id"] is JsonObject idSchema)
-        {
-            idSchema["default"] = id.ToString();
-            idSchema["enum"] = new JsonArray(JsonValue.Create(id.ToString()));
-        }
+        JsonObject schema = CodeJson.StrictOptions.GetJsonSchemaAsNode(type, exporter).AsObject();
+        customize(schema);
         return schema.ToJsonString();
+    }
+
+    /// <summary>A deleted or changed Id comes back with Ctrl+Space.</summary>
+    private static void FixId(JsonObject schema, System.Guid id)
+    {
+        if (schema["properties"]?["Id"] is not JsonObject idSchema)
+            return;
+        idSchema["default"] = id.ToString();
+        idSchema["enum"] = new JsonArray(JsonValue.Create(id.ToString()));
     }
 
     private static JsonNode Transform(JsonSchemaExporterContext context, JsonNode node)
     {
-        // Enums are read by MacroJson's own converter, so the exporter only says "true" (anything).
+        // Enums are read by CodeJson's own converter, so the exporter only says "true" (anything).
         if (context.TypeInfo.Type.IsEnum)
         {
             node = new JsonObject
@@ -133,7 +200,7 @@ internal static class MacroSchema
         if (node is not JsonObject schema)
             return node;
 
-        // Unknown properties are problems (MacroJson.StrictOptions); the exporter does not say so.
+        // Unknown properties are problems (CodeJson.StrictOptions); the exporter does not say so.
         if (schema.ContainsKey("properties"))
             schema["additionalProperties"] = false;
 
@@ -154,6 +221,7 @@ internal static class MacroSchema
                     schema["enum"] = new JsonArray(MacroDefinition.SpeedSteps.Select(s => (JsonNode)JsonValue.Create(s)).ToArray());
                     break;
                 case "MacroDefinition.SoundName":
+                case "LoopDefinition.SoundName":
                     schema["enum"] = new JsonArray(SoundService.Names.Select(n => (JsonNode)JsonValue.Create(n)).ToArray());
                     break;
                 case "FloatingButton.Label":

@@ -13,12 +13,12 @@ using Wpf.Ui.Appearance;
 namespace PuppyMacro.Views;
 
 /// <summary>
-/// The macro editor's Code view: the macro file's JSON in Monaco (Assets\CodeEditor, Assets\Monaco)
+/// The Code view of the editors (macro, action, loop, remap): the item's JSON in Monaco (Assets\CodeEditor, Assets\Monaco)
 /// inside a WebView2, with a Problems panel like VS Code's in the same page. Problems come from
-/// Monaco (JSON syntax and <see cref="MacroSchema"/>) and, when Monaco finds none, from
-/// <see cref="Check"/> (MacroJson.Parse), which the page underlines and lists too.
+/// Monaco (JSON syntax and <see cref="CodeSchema"/>) and, when Monaco finds none, from
+/// <see cref="Check"/> (MacroJson, LoopJson, RemapJson), which the page underlines and lists too.
 /// </summary>
-public partial class MacroCodeView
+public partial class CodeView
 {
     private const string Host = "puppymacro.editor";
     private const string PageUrl = "https://" + Host + "/CodeEditor/editor.html";
@@ -30,7 +30,7 @@ public partial class MacroCodeView
     private List<CodeProblem> _editorProblems = new();
     private List<CodeProblem> _appProblems = new();
 
-    public MacroCodeView()
+    public CodeView()
     {
         InitializeComponent();
         Unloaded += (_, _) => Close();
@@ -39,7 +39,7 @@ public partial class MacroCodeView
     /// <summary>Checks the text (MacroJson.Parse) and returns its problems.</summary>
     internal Func<string, List<CodeProblem>>? Check { get; set; }
 
-    /// <summary>The JSON Schema for the edited macro (<see cref="MacroSchema.Build"/>).</summary>
+    /// <summary>The JSON Schema of the edited item (<see cref="CodeSchema"/>).</summary>
     internal string Schema { get; set; } = "{}";
 
     /// <summary>Raised when the text or the problems change.</summary>

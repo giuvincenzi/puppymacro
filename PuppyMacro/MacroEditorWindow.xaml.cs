@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -38,8 +37,7 @@ public partial class MacroEditorWindow
     private HotkeyBinding? _hotkey;
     private string _soundName;
     private bool _ready;
-    private bool _codeView;
-    private bool _switchingView;
+    private readonly CodeViewSwitch<MacroDefinition> _code;
     private Point _dragStart;
     private MacroEditorItem? _dragCandidate;
     private MacroEditorItem? _selectOnlyOnRelease;
@@ -81,9 +79,7 @@ public partial class MacroEditorWindow
         BuildSoundTiles();
 
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
-        CodeView.Check = CheckCode;
-        CodeView.Schema = MacroSchema.Build(_itemId);
-        CodeView.Changed += Validate;
+        _code = CreateCodeSwitch();
         _ready = true;
         Validate();
         Closing += (_, _) => RememberSize();
@@ -944,37 +940,20 @@ public partial class MacroEditorWindow
 
     private void Validate()
     {
-        if (!_ready)
+        if (!_ready || _code.ValidateCode())
             return;
-        if (_codeView)
-        {
-            // Code view: Save and List view need code without problems.
-            int problems = CodeView.Problems.Count;
-            bool valid = CodeView.IsUpToDate && problems == 0;
-            ErrorText.Text = problems switch
-            {
-                0 => "",
-                1 => "Fix the problem to save or go back to List view.",
-                _ => $"Fix the {problems} problems to save or go back to List view.",
-            };
-            ErrorText.Visibility = problems > 0 ? Visibility.Visible : Visibility.Collapsed;
-            SaveButton.IsEnabled = valid;
-            ListViewButton.IsEnabled = valid;
-            return;
-        }
         string? error = GetValidationError();
         ErrorText.Text = error ?? "";
         ErrorText.Visibility = error == null ? Visibility.Collapsed : Visibility.Visible;
         SaveButton.IsEnabled = error == null;
-        ListViewButton.IsEnabled = true;
     }
 
     private void OnSaveClick(object sender, RoutedEventArgs e)
     {
         SaveButton.Focus(); // commit the delay field being edited
-        if (_codeView)
+        if (_code.IsCode)
         {
-            if (ReadCode() is not MacroDefinition fromCode)
+            if (_code.Read() is not MacroDefinition fromCode)
             {
                 Validate();
                 return;
@@ -993,14 +972,11 @@ public partial class MacroEditorWindow
         DialogResult = true;
     }
 
-    /// <summary>
-    /// List view: closes the editor without saving. Code view (Discard changes): drops the code's
-    /// changes and goes back to the List view as it was, the way out when the code has problems.
-    /// </summary>
+    /// <summary>Form view: closes the editor without saving. Code view: Discard changes (see <see cref="CodeViewSwitch{T}"/>).</summary>
     private void OnCancelClick(object sender, RoutedEventArgs e)
     {
-        if (_codeView)
-            SetView(code: false);
+        if (_code.IsCode)
+            _code.Discard();
         else
             DialogResult = false;
     }
@@ -1009,79 +985,17 @@ public partial class MacroEditorWindow
 
     private string? HotkeyConflict(HotkeyBinding binding) => HotkeyConflicts.Find(binding, _settings, _macros, _editingId);
 
-    private List<CodeProblem> CheckCode(string text)
+    private CodeViewSwitch<MacroDefinition> CreateCodeSwitch()
     {
-        MacroJson.Parse(text, _itemId, HotkeyConflict, out var problems);
-        return problems;
-    }
-
-    /// <summary>The Code view's macro, or null while the editor has problems or has not checked the text yet.</summary>
-    private MacroDefinition? ReadCode()
-    {
-        if (!CodeView.IsUpToDate || CodeView.Problems.Count > 0)
-            return null;
-        return MacroJson.Parse(CodeView.Text, _itemId, HotkeyConflict, out _);
-    }
-
-    private async void OnViewChecked(object sender, RoutedEventArgs e)
-    {
-        if (!_ready || _switchingView)
-            return;
-        if (sender == CodeViewButton && !_codeView)
-            await ShowCodeView();
-        else if (sender == ListViewButton && _codeView)
-            ShowListView();
-    }
-
-    private async Task ShowCodeView()
-    {
-        _engine.CancelCapture();
-        UpdateHotkeyLabel();
-        string text = MacroJson.Serialize(BuildMacro());
-
-        SetView(code: true);
-
-        if (await CodeView.ShowAsync(text) is string error)
+        var code = new CodeViewSwitch<MacroDefinition>(this, ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
+            CodeSchema.ForMacro(_itemId), BuildMacro, MacroJson.Serialize,
+            (string text, out List<CodeProblem> problems) => MacroJson.Parse(text, _itemId, HotkeyConflict, out problems),
+            LoadMacro, Validate);
+        code.Opening += () =>
         {
-            SetView(code: false);
-            ErrorText.Text = error;
-            ErrorText.Visibility = Visibility.Visible;
-            return;
-        }
-        CodeView.FocusEditor();
+            _engine.CancelCapture();
+            UpdateHotkeyLabel();
+        };
+        return code;
     }
-
-    private void ShowListView()
-    {
-        if (ReadCode() is not MacroDefinition fromCode)
-        {
-            // Problems: stay in the Code view (List view is disabled meanwhile, see Validate).
-            SetChecked(CodeViewButton);
-            Validate();
-            return;
-        }
-        LoadMacro(fromCode);
-        SetView(code: false);
-    }
-
-    private void SetView(bool code)
-    {
-        _codeView = code;
-        SetChecked(code ? CodeViewButton : ListViewButton);
-        ListBody.Visibility = code ? Visibility.Collapsed : Visibility.Visible;
-        CodeView.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
-        FormatButton.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
-        CancelButton.Content = code ? "Discard changes" : "Cancel";
-        CancelButton.ToolTip = code ? "Drop the changes made in the code and go back to List view" : null;
-        Validate();
-    }
-
-    private void SetChecked(RadioButton button)
-    {
-        _switchingView = true;
-        button.IsChecked = true;
-        _switchingView = false;
-    }
-
-    private void OnFormatClick(object sender, RoutedEventArgs e) => CodeView.Format();
 }
