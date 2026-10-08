@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using PuppyMacro.Models;
 
 namespace PuppyMacro.Services;
@@ -11,11 +10,8 @@ namespace PuppyMacro.Services;
 /// <summary>All macros, in display order. Each macro is saved as macros\{id}.json next to the exe.</summary>
 internal sealed class MacroLibrary
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true,
-        Converters = { new JsonStringEnumConverter() },
-    };
+    // The same format as the macro editor's Code view.
+    private static JsonSerializerOptions JsonOptions => MacroJson.Options;
 
     private readonly string _folder;
 
