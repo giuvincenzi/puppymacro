@@ -43,6 +43,12 @@ internal sealed class InputHook : IDisposable
     /// <summary>Optional: set only while something needs positions (recording, clickable panel).</summary>
     public MouseEventHandler? MouseDetail { get; set; }
 
+    /// <summary>Scroll wheel event: horizontal or vertical, signed delta (WHEEL_DELTA = one notch). Return true to block it.</summary>
+    public delegate bool WheelEventHandler(bool horizontal, int delta);
+
+    /// <summary>Called for every real wheel event, after <see cref="MouseDetail"/> (wheel hotkeys).</summary>
+    public WheelEventHandler? Wheel { get; set; }
+
     public void Install()
     {
         IntPtr module = NativeMethods.GetModuleHandle(null);
@@ -130,6 +136,9 @@ internal sealed class InputHook : IDisposable
                     kind = isDown ? MouseKind.ButtonDown : MouseKind.ButtonUp;
 
                 if (kind != null && detail != null && detail(kind.Value, vk, data.pt.X, data.pt.Y, wheel))
+                    return new IntPtr(1);
+
+                if (kind is MouseKind.Wheel or MouseKind.HWheel && Wheel?.Invoke(kind == MouseKind.HWheel, wheel) == true)
                     return new IntPtr(1);
 
                 if (vk != 0 && Handler?.Invoke(vk, isDown, true) == true)

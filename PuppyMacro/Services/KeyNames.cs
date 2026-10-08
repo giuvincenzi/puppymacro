@@ -26,6 +26,22 @@ internal static class KeyNames
     public const int VK_RWIN = 0x5C;
     public const int VK_V = 0x56;
 
+    // Scroll wheel as a hotkey key. Not virtual-key codes: keyboard hooks only report 1 to 254
+    // (KBDLLHOOKSTRUCT.vkCode), so these can never collide with a real key.
+    public const int VK_WHEEL_UP = 0x100;
+    public const int VK_WHEEL_DOWN = 0x101;
+    public const int VK_WHEEL_LEFT = 0x102;
+    public const int VK_WHEEL_RIGHT = 0x103;
+
+    /// <summary>One notch of the scroll wheel (Windows' WHEEL_DELTA).</summary>
+    public const int WheelDelta = 120;
+
+    public static bool IsWheel(int vk) => vk is >= VK_WHEEL_UP and <= VK_WHEEL_RIGHT;
+
+    /// <summary>The wheel "key" for a wheel event: positive delta is up (vertical) or right (horizontal).</summary>
+    public static int WheelVk(bool horizontal, int delta) =>
+        horizontal ? (delta > 0 ? VK_WHEEL_RIGHT : VK_WHEEL_LEFT) : (delta > 0 ? VK_WHEEL_UP : VK_WHEEL_DOWN);
+
     /// <summary>Ctrl, Alt, Shift and Win (generic, left and right codes).</summary>
     public static bool IsModifier(int vk) =>
         vk is 0x10 or 0x11 or 0x12 or VK_LSHIFT or VK_RSHIFT or VK_LCONTROL or VK_RCONTROL
@@ -53,12 +69,16 @@ internal static class KeyNames
     public static bool IsMouse(int vk) =>
         vk is VK_LBUTTON or VK_RBUTTON or VK_MBUTTON or VK_XBUTTON1 or VK_XBUTTON2;
 
-    /// <summary>Left and right click cannot be hotkeys: blocking them would break the mouse.</summary>
+    /// <summary>Left and right click: hotkeys only with a modifier, since blocking them alone would break the mouse.</summary>
     public static bool IsPrimaryMouse(int vk) => vk is VK_LBUTTON or VK_RBUTTON;
 
     public static string Get(int vk) => vk switch
     {
         0 => "None",
+        VK_WHEEL_UP => "Wheel up",
+        VK_WHEEL_DOWN => "Wheel down",
+        VK_WHEEL_LEFT => "Wheel left",
+        VK_WHEEL_RIGHT => "Wheel right",
         VK_LBUTTON => "LButton",
         VK_RBUTTON => "RButton",
         VK_MBUTTON => "MButton",

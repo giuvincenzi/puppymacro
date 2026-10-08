@@ -615,7 +615,7 @@
                                 <ui:Button x:Name="RecordChangeButton" Grid.Column="2" MinWidth="80" Content="Change" Click="OnChangeRecordHotkeyClick" />
                             </Grid>
                             <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                       Text="Press any key or mouse button. For a combination, hold Ctrl, Alt, Shift or Win first. Esc cancels." />
+                                       Text="Press any key or mouse button. For a combination, hold Ctrl, Alt, Shift or Win first; with one of them held, left and right click, the scroll wheel and Esc work too. Esc alone cancels." />
                         </StackPanel>
                     </ui:CardExpander>
 

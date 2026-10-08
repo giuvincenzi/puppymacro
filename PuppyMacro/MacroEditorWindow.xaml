@@ -380,7 +380,7 @@
                             </StackPanel>
                         </Grid>
                         <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                   Text="Optional. Without a hotkey, start it with Play or from the overlay panel. Hold needs a hotkey." />
+                                   Text="Optional. With Ctrl, Alt, Shift or Win held, left and right click, the scroll wheel and Esc work too. Without a hotkey, start it with Play or from the overlay panel. Hold needs a hotkey." />
 
                         <!-- Floating button -->
                         <views:FloatingButtonEditor x:Name="FloatingEditor" Margin="0,18,0,0" />

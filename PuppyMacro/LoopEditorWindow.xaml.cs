@@ -202,7 +202,7 @@ public partial class LoopEditorWindow
                 Validate();
             },
             UpdateHotkeyLabel,
-            allowPrimaryMouse: false); // left/right click are never hotkeys
+            allowPrimaryMouse: false, hotkey: true); // left/right click and the wheel only with a modifier
     }
 
     private void UpdateHotkeyLabel()
@@ -274,8 +274,8 @@ public partial class LoopEditorWindow
 
         if (_hotkey == null || !_hotkey.IsSet)
             return HoldRadio.IsChecked == true ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
-        if (KeyNames.IsPrimaryMouse(_hotkey.Vk))
-            return "Left and right click cannot be used as a hotkey.";
+        if (HotkeyRules.Problem(_hotkey, hold: HoldRadio.IsChecked == true) is string problem)
+            return problem;
         if (!_hotkey.HasModifiers && _actions.Any(a => a.IsKey && a.KeyVk == _hotkey.Vk))
             return "The hotkey cannot be one of the keys this loop presses.";
 

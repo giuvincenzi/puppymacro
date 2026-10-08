@@ -63,6 +63,11 @@ internal sealed class LoopEngine : IDisposable
     private Action<HotkeyBinding>? _captureDone;
     private Action? _captureCancelled;
     private bool _captureAllowsPrimaryMouse;
+    private bool _captureHotkey;
+
+    // ---- Wheel hotkeys: one notch (WHEEL_DELTA) is one press; smaller steps (touchpads) add up ----
+    private int _wheelVk;
+    private int _wheelAccumulated;
 
     // ---- Recording ----
     private Action? _recordArmedStart;
@@ -130,6 +135,7 @@ internal sealed class LoopEngine : IDisposable
         _input = new InputThread(hook =>
         {
             hook.Handler = OnKey;
+            hook.Wheel = OnWheel;
         }, OnDesktopSwitch);
         _input.Start();
     }
@@ -446,8 +452,11 @@ internal sealed class LoopEngine : IDisposable
     /// Captures the next key or mouse button, with the Ctrl/Alt/Shift/Win physically held at that
     /// moment. Esc cancels. When <paramref name="allowPrimaryMouse"/> is false, left and right
     /// click pass through so the user can still click the UI.
+    /// With <paramref name="hotkey"/>, while a modifier is held, left and right click, the scroll
+    /// wheel and Esc are captured too (see <see cref="HotkeyRules"/>); alone they still pass
+    /// through, scroll and cancel.
     /// </summary>
-    public void BeginCapture(Action<HotkeyBinding> done, Action cancelled, bool allowPrimaryMouse)
+    public void BeginCapture(Action<HotkeyBinding> done, Action cancelled, bool allowPrimaryMouse, bool hotkey = false)
     {
         CancelCapture();
         lock (_sync)
@@ -455,6 +464,7 @@ internal sealed class LoopEngine : IDisposable
             _captureDone = done;
             _captureCancelled = cancelled;
             _captureAllowsPrimaryMouse = allowPrimaryMouse;
+            _captureHotkey = hotkey;
         }
     }
 
@@ -484,8 +494,8 @@ internal sealed class LoopEngine : IDisposable
 
     // ================= Key routing (input thread) =================
 
-    // Returns true to block the event.
-    private bool OnKey(int vk, bool isDown, bool physicalModifierEvent)
+    // Returns true to block the event. Internal for the unit tests.
+    internal bool OnKey(int vk, bool isDown, bool physicalModifierEvent)
     {
         lock (_sync)
         {
@@ -554,6 +564,11 @@ internal sealed class LoopEngine : IDisposable
                     }
                     return Block();
                 }
+
+                // Released while a running loop holds it (pressed before the loop started): the
+                // release would let go of the loop's key.
+                if (IsHeldByLoop(vk))
+                    return Block();
                 return false;
             }
 
@@ -571,43 +586,18 @@ internal sealed class LoopEngine : IDisposable
 
             var pressed = CurrentBinding(vk);
 
-            if (!_hotkeysSuspended)
+            if (!_hotkeysSuspended && RunHotkey(snap, pressed, canHold: true, run: true))
             {
-                if (Matches(snap.OverlayMode, pressed))
-                {
-                    _heldHotkeys.Add(vk);
-                    _dispatcher.InvokeAsync(() => OverlayModeToggleRequested?.Invoke());
-                    return Block();
-                }
+                _heldHotkeys.Add(vk);
+                return Block();
+            }
 
-                if (Matches(snap.StopAll, pressed))
-                {
-                    _heldHotkeys.Add(vk);
-                    StopAll();
-                    return Block();
-                }
-
-                var loopTarget = snap.Loops.FirstOrDefault(l => l.Enabled && Matches(l.Hotkey, pressed));
-                if (loopTarget != null)
-                {
-                    _heldHotkeys.Add(vk);
-                    if (loopTarget.Mode == ActivationMode.Toggle)
-                        ToggleLoop(loopTarget);
-                    else
-                        StartLoop(loopTarget);
-                    return Block();
-                }
-
-                var macroTarget = snap.Macros.FirstOrDefault(m => m.Enabled && Matches(m.Hotkey, pressed));
-                if (macroTarget != null)
-                {
-                    _heldHotkeys.Add(vk);
-                    if (macroTarget.Mode == ActivationMode.Toggle)
-                        ToggleMacro(macroTarget);
-                    else
-                        StartMacro(macroTarget);
-                    return Block();
-                }
+            // A running loop holds this key down (Hold down row): the physical press changes
+            // nothing, and its release would let go of the loop's key. Swallow both.
+            if (IsHeldByLoop(vk))
+            {
+                _swallowUp.Add(vk);
+                return Block();
             }
 
             // Remaps: an app-specific remap wins over an "all apps" one.
@@ -620,6 +610,125 @@ internal sealed class LoopEngine : IDisposable
             }
 
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Finds the global, loop or macro hotkey that matches <paramref name="pressed"/> and, with
+    /// <paramref name="run"/>, runs it. Without <paramref name="canHold"/> (the wheel, which has
+    /// no release) Hold loops and macros are skipped. Called with the lock held.
+    /// </summary>
+    private bool RunHotkey(EngineSnapshot snap, HotkeyBinding pressed, bool canHold, bool run)
+    {
+        if (Matches(snap.OverlayMode, pressed))
+        {
+            if (run)
+                _dispatcher.InvokeAsync(() => OverlayModeToggleRequested?.Invoke());
+            return true;
+        }
+
+        if (Matches(snap.StopAll, pressed))
+        {
+            if (run)
+                StopAll();
+            return true;
+        }
+
+        var loopTarget = snap.Loops.FirstOrDefault(l =>
+            l.Enabled && Matches(l.Hotkey, pressed) && (canHold || l.Mode == ActivationMode.Toggle));
+        if (loopTarget != null)
+        {
+            if (!run)
+                return true;
+            if (loopTarget.Mode == ActivationMode.Toggle)
+                ToggleLoop(loopTarget);
+            else
+                StartLoop(loopTarget);
+            return true;
+        }
+
+        var macroTarget = snap.Macros.FirstOrDefault(m =>
+            m.Enabled && Matches(m.Hotkey, pressed) && (canHold || m.Mode == ActivationMode.Toggle));
+        if (macroTarget != null)
+        {
+            if (!run)
+                return true;
+            if (macroTarget.Mode == ActivationMode.Toggle)
+                ToggleMacro(macroTarget);
+            else
+                StartMacro(macroTarget);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>A running loop holds this key or button down (Hold down row). Called with the lock held.</summary>
+    private bool IsHeldByLoop(int vk)
+    {
+        foreach (var runners in _running.Values)
+        {
+            foreach (var runner in runners)
+            {
+                if (runner.HeldVk == vk && !runner.StopRequested)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    // Runs on the input thread. Returns true to block the event.
+    internal bool OnWheel(bool horizontal, int delta)
+    {
+        if (delta == 0)
+            return false;
+        lock (_sync)
+        {
+            int vk = KeyNames.WheelVk(horizontal, delta);
+            bool modifier = ModifierTracker.Any;
+
+            // Capturing a hotkey: Ctrl/Alt/Shift/Win + wheel is captured; the wheel alone scrolls.
+            if (_captureDone != null)
+            {
+                if (!_captureHotkey || !modifier)
+                    return false;
+                var done = _captureDone;
+                var binding = CurrentBinding(vk);
+                _captureDone = null;
+                _captureCancelled = null;
+                _dispatcher.InvokeAsync(() => done(binding));
+                return Block();
+            }
+
+            // Wheel hotkeys always have a modifier (HotkeyRules); recording keeps every wheel event.
+            if (_recording || _hotkeysSuspended || !modifier)
+            {
+                _wheelVk = 0;
+                return false;
+            }
+
+            var snap = _snapshot;
+            var pressed = CurrentBinding(vk);
+            if (!RunHotkey(snap, pressed, canHold: false, run: false))
+            {
+                _wheelVk = 0;
+                return false;
+            }
+
+            // One notch (WHEEL_DELTA) is one press. Touchpads and free-spinning wheels send
+            // smaller steps: they add up, in the same direction, to whole notches.
+            if (vk != _wheelVk)
+            {
+                _wheelVk = vk;
+                _wheelAccumulated = 0;
+            }
+            _wheelAccumulated += Math.Abs(delta);
+            while (_wheelAccumulated >= KeyNames.WheelDelta)
+            {
+                _wheelAccumulated -= KeyNames.WheelDelta;
+                RunHotkey(snap, pressed, canHold: false, run: true);
+            }
+            // Blocked even below a notch: the app must not scroll or zoom with the hotkey's modifiers.
+            return Block();
         }
     }
 
@@ -702,12 +811,13 @@ internal sealed class LoopEngine : IDisposable
         if (!isDown)
             return _swallowUp.Remove(vk);
 
-        if (!_captureAllowsPrimaryMouse && KeyNames.IsPrimaryMouse(vk))
+        bool withModifier = _captureHotkey && ModifierTracker.Any;
+        if (!_captureAllowsPrimaryMouse && !withModifier && KeyNames.IsPrimaryMouse(vk))
             return false;
 
         _swallowUp.Add(vk);
 
-        if (vk == KeyNames.VK_ESCAPE)
+        if (vk == KeyNames.VK_ESCAPE && !withModifier)
         {
             var cancelled = _captureCancelled;
             _captureDone = null;

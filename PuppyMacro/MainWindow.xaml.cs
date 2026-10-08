@@ -1260,9 +1260,8 @@ public partial class MainWindow
             binding =>
             {
                 button.Content = "Change";
-                string? error = KeyNames.IsPrimaryMouse(binding.Vk)
-                    ? "Left and right click cannot be used as a hotkey."
-                    : HotkeyConflicts.Find(binding, _settings, _macros, ignoreGlobal: which);
+                string? error = HotkeyRules.Problem(binding, hold: false)
+                    ?? HotkeyConflicts.Find(binding, _settings, _macros, ignoreGlobal: which);
                 if (error != null)
                 {
                     ShowSettingsError(error);
@@ -1279,7 +1278,7 @@ public partial class MainWindow
                 Save();
             },
             () => button.Content = "Change",
-            allowPrimaryMouse: false);
+            allowPrimaryMouse: false, hotkey: true);
     }
 
     private void UpdateHotkeyLabels()

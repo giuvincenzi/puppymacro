@@ -846,7 +846,7 @@ public partial class MacroEditorWindow
                 Validate();
             },
             UpdateHotkeyLabel,
-            allowPrimaryMouse: false);
+            allowPrimaryMouse: false, hotkey: true);
     }
 
     private void UpdateHotkeyLabel()
@@ -895,8 +895,8 @@ public partial class MacroEditorWindow
             return "Add or record at least one action.";
         if (_hotkey == null || !_hotkey.IsSet)
             return HoldRadio.IsChecked == true ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
-        if (KeyNames.IsPrimaryMouse(_hotkey.Vk))
-            return "Left and right click cannot be used as a hotkey.";
+        if (HotkeyRules.Problem(_hotkey, hold: HoldRadio.IsChecked == true) is string problem)
+            return problem;
         return HotkeyConflicts.Find(_hotkey, _settings, _macros, _editingId);
     }
 
