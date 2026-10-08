@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.9.0
+
 ### Added
 - Macro editor: **Test action** (▶ on every action, and **Test** in the action's window, also
   before saving) plays one action once: PuppyMacro hides, the window behind it gets the focus
