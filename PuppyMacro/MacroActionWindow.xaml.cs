@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using PuppyMacro.Models;
@@ -11,19 +12,44 @@ namespace PuppyMacro;
 public partial class MacroActionWindow
 {
     private readonly LoopEngine _engine;
-    private readonly MacroAction _action;
+    private readonly bool _isNew;
+    private readonly CodeViewSwitch<MacroAction> _code;
+    private MacroAction _action;
     private int _keyVk;
     private bool _ready;
 
-    internal MacroActionWindow(LoopEngine engine, MacroAction action, bool isNew)
+    /// <param name="allowedGroups">The groups the action can be in (<see cref="MacroJson.AllowedGroupIds"/>), for its Code view.</param>
+    /// <param name="groupNames">The macro's group names, by id.</param>
+    internal MacroActionWindow(LoopEngine engine, MacroAction action, bool isNew,
+        IReadOnlyList<Guid?> allowedGroups, IReadOnlyDictionary<Guid, string> groupNames)
     {
         InitializeComponent();
         WindowFit.Apply(this);
         _engine = engine;
+        _isNew = isNew;
+        _action = action.Clone();
+        LoadAction(_action);
+
+        _code = new CodeViewSwitch<MacroAction>(this, ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
+            CodeSchema.ForAction(allowedGroups, groupNames, action.GroupId), FormAction, MacroJson.Serialize,
+            (string text, out List<CodeProblem> problems) => MacroJson.ParseAction(text, allowedGroups, groupNames, out problems),
+            LoadAction, Validate, new Size(760, 620));
+        _code.Opening += () => _engine.CancelCapture();
+
+        _ready = true;
+        Validate();
+        Closed += (_, _) => _engine.CancelCapture();
+    }
+
+    public MacroAction? Result { get; private set; }
+
+    /// <summary>Shows <paramref name="action"/> in the Form view: the fields of its type, with its values.</summary>
+    private void LoadAction(MacroAction action)
+    {
         _action = action.Clone();
         _keyVk = _action.Vk;
 
-        string title = (isNew ? "Add " : "Edit ") + TypeName(_action.Type).ToLowerInvariant();
+        string title = (_isNew ? "Add " : "Edit ") + TypeName(_action.Type).ToLowerInvariant();
         Title = title;
         ActionTitleBar.Title = title;
 
@@ -64,12 +90,8 @@ public partial class MacroActionWindow
         DelayBox.Value = _action.DelayMs;
 
         UpdateSpeedLabel();
-        _ready = true;
         Validate();
-        Closed += (_, _) => _engine.CancelCapture();
     }
-
-    public MacroAction? Result { get; private set; }
 
     public static string TypeName(MacroActionType type) => type switch
     {
@@ -165,6 +187,11 @@ public partial class MacroActionWindow
     {
         if (!_ready)
             return;
+        if (_code.ValidateCode())
+        {
+            TestButton.IsEnabled = SaveButton.IsEnabled;
+            return;
+        }
         string? error = GetValidationError();
         if (error == null)
             ErrorText.Visibility = Visibility.Collapsed;
@@ -182,6 +209,15 @@ public partial class MacroActionWindow
 
     private void OnSaveClick(object sender, RoutedEventArgs e)
     {
+        if (_code.IsCode)
+        {
+            if (_code.Read() is { } fromCode)
+            {
+                Result = fromCode;
+                DialogResult = true;
+            }
+            return;
+        }
         if (BuildAction(SaveButton) is { } action)
         {
             Result = action;
@@ -192,7 +228,7 @@ public partial class MacroActionWindow
     /// <summary>Plays the action as it is now in the window, also before it is saved.</summary>
     private void OnTestClick(object sender, RoutedEventArgs e)
     {
-        if (BuildAction(TestButton) is { } action)
+        if ((_code.IsCode ? _code.Read() : BuildAction(TestButton)) is { } action)
             ActionTestSession.Run(_engine, action, this);
     }
 
@@ -205,7 +241,12 @@ public partial class MacroActionWindow
             Validate();
             return null;
         }
+        return FormAction();
+    }
 
+    /// <summary>The action as the Form view's fields describe it, also when they are not valid yet.</summary>
+    private MacroAction FormAction()
+    {
         var a = _action.Clone();
         var t = a.Type;
         a.Name = ActionNameBox.Text.Trim();
@@ -250,5 +291,12 @@ public partial class MacroActionWindow
         return a;
     }
 
-    private void OnCancelClick(object sender, RoutedEventArgs e) => DialogResult = false;
+    /// <summary>Form view: closes without saving. Code view: Discard changes (see <see cref="CodeViewSwitch{T}"/>).</summary>
+    private void OnCancelClick(object sender, RoutedEventArgs e)
+    {
+        if (_code.IsCode)
+            _code.Discard();
+        else
+            DialogResult = false;
+    }
 }

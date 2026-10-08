@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -25,7 +26,8 @@ public partial class LoopEditorWindow
     private readonly Guid _editingId;
     private readonly Guid _itemId;
     private readonly Func<EditedFloatingButton, Point?>? _placeButton;
-    private readonly bool _wasEnabled;
+    private readonly CodeViewSwitch<LoopDefinition> _code;
+    private bool _enabled;
     private readonly ObservableCollection<ActionEditorViewModel> _actions = new();
     private HotkeyBinding? _hotkey;
     private bool _ready;
@@ -41,32 +43,31 @@ public partial class LoopEditorWindow
         _sounds = sounds;
 
         var source = existing?.Clone() ?? new LoopDefinition();
-        _soundName = source.SoundName;
-        BuildSoundTiles();
-        SoundSwitch.IsChecked = source.SoundEnabled;
-        SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
         _editingId = existing?.Id ?? Guid.Empty;
         _itemId = existing?.Id ?? Guid.NewGuid();
+        source.Id = _itemId;
         _placeButton = placeButton;
-        _wasEnabled = source.Enabled;
-        _hotkey = source.Hotkey?.Clone();
 
         string title = existing == null ? "Add loop" : "Edit loop";
         Title = title;
         EditorTitleBar.Title = title;
 
-        NameBox.Text = source.Name;
-        foreach (var action in source.Actions)
-            AddRow(new ActionEditorViewModel(action));
+        _soundName = source.SoundName;
+        BuildSoundTiles();
         _actions.CollectionChanged += OnActionsChanged;
         ActionsList.ItemsSource = _actions;
-
-        ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
-        HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
-
-        UpdateHotkeyLabel();
-        FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
+        LoadLoop(source);
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
+
+        _code = new CodeViewSwitch<LoopDefinition>(this, ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
+            CodeSchema.ForLoop(_itemId), FormLoop, LoopJson.Serialize,
+            (string text, out List<CodeProblem> problems) => LoopJson.Parse(text, _itemId, HotkeyConflict, out problems),
+            LoadLoop, Validate, new Size(820, 680));
+        _code.Opening += () =>
+        {
+            _engine.CancelCapture();
+            UpdateHotkeyLabel();
+        };
         _ready = true;
         Validate();
 
@@ -74,6 +75,48 @@ public partial class LoopEditorWindow
     }
 
     public LoopDefinition? Result { get; private set; }
+
+    /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
+    private void LoadLoop(LoopDefinition source)
+    {
+        _enabled = source.Enabled;
+        _hotkey = source.Hotkey?.Clone();
+        _soundName = source.SoundName;
+        SoundSwitch.IsChecked = source.SoundEnabled;
+        SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
+        foreach (RadioButton tile in SoundGrid.Children.OfType<RadioButton>())
+            tile.IsChecked = (string)tile.Tag == _soundName;
+
+        NameBox.Text = source.Name;
+        foreach (var row in _actions)
+            row.PropertyChanged -= OnRowChanged;
+        _actions.Clear();
+        foreach (var action in source.Actions)
+            AddRow(new ActionEditorViewModel(action));
+
+        ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
+        HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
+
+        UpdateHotkeyLabel();
+        FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
+        Validate();
+    }
+
+    /// <summary>The loop as the Form view's fields describe it, also when they are not valid yet.</summary>
+    private LoopDefinition FormLoop() => new()
+    {
+        Id = _itemId,
+        Name = NameBox.Text.Trim(),
+        Actions = _actions.Select(a => a.ToAction()).ToList(),
+        Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
+        Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
+        Enabled = _enabled,
+        SoundEnabled = SoundSwitch.IsChecked == true,
+        SoundName = _soundName,
+        FloatingButton = FloatingEditor.ToModel(),
+    };
+
+    private string? HotkeyConflict(HotkeyBinding binding) => HotkeyConflicts.Find(binding, _settings, _macros, _editingId);
 
     // ================= Rows =================
 
@@ -284,7 +327,7 @@ public partial class LoopEditorWindow
 
     private void Validate()
     {
-        if (!_ready)
+        if (!_ready || _code.ValidateCode())
             return;
 
         string? error = GetValidationError();
@@ -300,29 +343,32 @@ public partial class LoopEditorWindow
         // Move focus off the field being edited so its last typed value is committed.
         SaveButton.Focus();
 
+        if (_code.IsCode)
+        {
+            if (_code.Read() is { } fromCode)
+            {
+                Result = fromCode;
+                DialogResult = true;
+            }
+            return;
+        }
+
         if (GetValidationError() != null)
         {
             Validate();
             return;
         }
 
-        Result = new LoopDefinition
-        {
-            Id = _itemId,
-            Name = NameBox.Text.Trim(),
-            Actions = _actions.Select(a => a.ToAction()).ToList(),
-            Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
-            Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
-            Enabled = _wasEnabled,
-            SoundEnabled = SoundSwitch.IsChecked == true,
-            SoundName = _soundName,
-            FloatingButton = FloatingEditor.ToModel(),
-        };
+        Result = FormLoop();
         DialogResult = true;
     }
 
+    /// <summary>Form view: closes without saving. Code view: Discard changes (see <see cref="CodeViewSwitch{T}"/>).</summary>
     private void OnCancelClick(object sender, RoutedEventArgs e)
     {
-        DialogResult = false;
+        if (_code.IsCode)
+            _code.Discard();
+        else
+            DialogResult = false;
     }
 }

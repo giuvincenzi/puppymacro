@@ -381,22 +381,34 @@ public partial class MacroEditorWindow
             Y = cursor.Y,
             Smooth = type == MacroActionType.MoveTo,
         };
-        var dialog = new MacroActionWindow(_engine, action, isNew: true) { Owner = this };
-        if (dialog.ShowDialog() == true && dialog.Result != null)
-            InsertActions(new[] { dialog.Result });
+        var (index, into) = InsertPoint();
+        action.GroupId = into?.Id;
+        var dialog = new MacroActionWindow(_engine, action, isNew: true,
+            MacroJson.AllowedGroupIds(_list.Actions, index, replacing: false), GroupNames()) { Owner = this };
+        if (dialog.ShowDialog() != true || dialog.Result is not { } added)
+            return;
+        // Its group: the insert point's, or the one chosen in the Code view (always next to its actions).
+        MacroGroup? group = _list.Groups.FirstOrDefault(g => g.Id == added.GroupId);
+        var block = new ActionBlock();
+        block.Actions.Add(added);
+        var inserted = _list.Insert(block, index, group);
+        Refresh(ItemsFor(inserted, group));
     }
+
+    private Dictionary<Guid, string> GroupNames() => _list.Groups.ToDictionary(g => g.Id, g => g.Name);
 
     private void OnEditActionClick(object sender, RoutedEventArgs e)
     {
         if ((sender as FrameworkElement)?.Tag is not MacroActionRowViewModel row)
             return;
-        var dialog = new MacroActionWindow(_engine, row.Action, isNew: false) { Owner = this };
-        if (dialog.ShowDialog() != true || dialog.Result is not { } edited)
-            return;
         int index = _list.Actions.IndexOf(row.Action);
         if (index < 0)
             return;
-        edited.GroupId = row.Action.GroupId;
+        var dialog = new MacroActionWindow(_engine, row.Action, isNew: false,
+            MacroJson.AllowedGroupIds(_list.Actions, index, replacing: true), GroupNames()) { Owner = this };
+        if (dialog.ShowDialog() != true || dialog.Result is not { } edited)
+            return;
+        // GroupId: the same, or another one allowed by the Code view (the groups stay together).
         _list.Actions[index] = edited;
         _rowOf.Remove(row.Action);
         _rowOf[edited] = row;

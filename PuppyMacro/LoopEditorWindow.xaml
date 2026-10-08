@@ -83,13 +83,20 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <ui:TitleBar x:Name="EditorTitleBar" Grid.Row="0" Title="Add loop" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <!-- Form view: the loop's fields. Code view: the loop's JSON, as in settings.json. -->
+        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="1" Margin="24,4,24,4" />
+
+        <views:CodeView x:Name="CodeView" Grid.Row="2" Margin="24,4,24,12" Visibility="Collapsed" />
+
+        <ScrollViewer x:Name="FormBody" Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="24,8,24,12">
                 <!-- Name -->
                 <TextBlock Margin="0,0,0,6" Text="Name" />
@@ -262,14 +269,14 @@
                     <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                Text="Click a sound to pick it and hear the start and stop versions." />
                 </StackPanel>
-
-                <TextBlock x:Name="ErrorText" Margin="0,12,0,0" FontSize="12" TextWrapping="Wrap"
-                           Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
             </StackPanel>
         </ScrollViewer>
 
+        <TextBlock x:Name="ErrorText" Grid.Row="3" Margin="24,0,24,12" FontSize="12" TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
+
         <!-- Buttons -->
-        <Border Grid.Row="2" Padding="24,16" BorderThickness="0,1,0,0"
+        <Border Grid.Row="4" Padding="24,16" BorderThickness="0,1,0,0"
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
             <Grid>
@@ -279,7 +286,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ui:Button x:Name="SaveButton" Grid.Column="0" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <ui:Button x:Name="CancelButton" Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
     </Grid>

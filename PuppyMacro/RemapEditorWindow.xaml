@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="Add remap"
     Width="500"
     SizeToContent="Height"
@@ -25,60 +26,13 @@
         </ItemsPanelTemplate>
     </Window.Resources>
 
-    <StackPanel>
-        <ui:TitleBar x:Name="EditorTitleBar" Title="Add remap" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
+    <DockPanel LastChildFill="True">
+        <ui:TitleBar x:Name="EditorTitleBar" DockPanel.Dock="Top" Title="Add remap" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
 
-        <StackPanel Margin="24,4,24,12">
-            <!-- Source -->
-            <TextBlock Margin="0,0,0,6" Text="When I press" />
-            <Grid>
-                <ItemsControl x:Name="SourceCaps" VerticalAlignment="Center" ItemTemplate="{StaticResource Cap}" ItemsPanel="{StaticResource Row}" />
-                <TextBlock x:Name="SourceCaptureText" VerticalAlignment="Center" Visibility="Collapsed"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press a key or mouse button (Esc cancels)" />
-                <ui:Button HorizontalAlignment="Right" MinWidth="80" Content="Change" Click="OnChangeSourceClick" />
-            </Grid>
-            <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="A key or mouse button." />
+        <!-- Form view: the remap's fields. Code view: the remap's JSON, as in settings.json. -->
+        <views:ViewSwitchBar x:Name="ViewBar" DockPanel.Dock="Top" Margin="24,4,24,8" />
 
-            <!-- Target -->
-            <TextBlock Margin="0,18,0,6" Text="Send instead" />
-            <Grid>
-                <ItemsControl x:Name="TargetCaps" VerticalAlignment="Center" ItemTemplate="{StaticResource Cap}" ItemsPanel="{StaticResource Row}" />
-                <TextBlock x:Name="TargetCaptureText" VerticalAlignment="Center" Visibility="Collapsed"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the key or combination (Esc cancels)" />
-                <ui:Button HorizontalAlignment="Right" MinWidth="80" Content="Change" Click="OnChangeTargetClick" />
-            </Grid>
-            <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                       Text="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first." />
-
-            <!-- Scope -->
-            <TextBlock Margin="0,18,0,6" Text="Works in" />
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="AllAppsRadio" Content="All apps" GroupName="Scope" Checked="OnScopeChanged" />
-                <RadioButton x:Name="OneAppRadio" Margin="16,0,0,0" Content="A specific app" GroupName="Scope" Checked="OnScopeChanged" />
-            </StackPanel>
-            <StackPanel x:Name="AppPanel" Margin="0,10,0,0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <ComboBox x:Name="AppBox" IsEditable="True" IsTextSearchEnabled="True" DropDownOpened="OnAppDropDownOpened"
-                              ToolTip="The app's .exe name, e.g. Diablo IV.exe" />
-                    <ui:Button Grid.Column="1" Margin="8,0,0,0" Content="Browse…" Click="OnBrowseClick" />
-                </Grid>
-                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                           Text="Pick a running app or browse for its .exe. The remap works only while that app is in front." />
-            </StackPanel>
-
-            <!-- Note -->
-            <TextBlock Margin="0,18,0,6" Text="Note (optional)" />
-            <ui:TextBox x:Name="NoteBox" PlaceholderText="e.g. Refresh with side button" />
-
-            <TextBlock x:Name="ErrorText" Margin="0,12,0,0" FontSize="12" TextWrapping="Wrap"
-                       Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
-        </StackPanel>
-
-        <Border Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+        <Border DockPanel.Dock="Bottom" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -87,8 +41,62 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ui:Button x:Name="SaveButton" Grid.Column="0" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <ui:Button x:Name="CancelButton" Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
-    </StackPanel>
+
+        <TextBlock x:Name="ErrorText" DockPanel.Dock="Bottom" Margin="24,0,24,12" FontSize="12" TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
+
+        <Grid>
+            <views:CodeView x:Name="CodeView" Margin="24,0,24,12" Visibility="Collapsed" />
+            <StackPanel x:Name="FormBody" Margin="24,4,24,12">
+                <!-- Source -->
+                <TextBlock Margin="0,0,0,6" Text="When I press" />
+                <Grid>
+                    <ItemsControl x:Name="SourceCaps" VerticalAlignment="Center" ItemTemplate="{StaticResource Cap}" ItemsPanel="{StaticResource Row}" />
+                    <TextBlock x:Name="SourceCaptureText" VerticalAlignment="Center" Visibility="Collapsed"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press a key or mouse button (Esc cancels)" />
+                    <ui:Button HorizontalAlignment="Right" MinWidth="80" Content="Change" Click="OnChangeSourceClick" />
+                </Grid>
+                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="A key or mouse button." />
+
+                <!-- Target -->
+                <TextBlock Margin="0,18,0,6" Text="Send instead" />
+                <Grid>
+                    <ItemsControl x:Name="TargetCaps" VerticalAlignment="Center" ItemTemplate="{StaticResource Cap}" ItemsPanel="{StaticResource Row}" />
+                    <TextBlock x:Name="TargetCaptureText" VerticalAlignment="Center" Visibility="Collapsed"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the key or combination (Esc cancels)" />
+                    <ui:Button HorizontalAlignment="Right" MinWidth="80" Content="Change" Click="OnChangeTargetClick" />
+                </Grid>
+                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                           Text="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first." />
+
+                <!-- Scope -->
+                <TextBlock Margin="0,18,0,6" Text="Works in" />
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="AllAppsRadio" Content="All apps" GroupName="Scope" Checked="OnScopeChanged" />
+                    <RadioButton x:Name="OneAppRadio" Margin="16,0,0,0" Content="A specific app" GroupName="Scope" Checked="OnScopeChanged" />
+                </StackPanel>
+                <StackPanel x:Name="AppPanel" Margin="0,10,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="AppBox" IsEditable="True" IsTextSearchEnabled="True" DropDownOpened="OnAppDropDownOpened"
+                                  ToolTip="The app's .exe name, e.g. Diablo IV.exe" />
+                        <ui:Button Grid.Column="1" Margin="8,0,0,0" Content="Browse…" Click="OnBrowseClick" />
+                    </Grid>
+                    <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                               Text="Pick a running app or browse for its .exe. The remap works only while that app is in front." />
+                </StackPanel>
+
+                <!-- Note -->
+                <TextBlock Margin="0,18,0,6" Text="Note (optional)" />
+                <ui:TextBox x:Name="NoteBox" PlaceholderText="e.g. Refresh with side button" />
+
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </ui:FluentWindow>
