@@ -25,6 +25,9 @@
   <ItemGroup>
     <PackageReference Include="WPF-UI" Version="4.1.0" />
     <PackageReference Include="Velopack" Version="1.2.161" />
+    <!-- The macro editor's Code view (Monaco in Assets\Monaco). The runtime comes with Windows 11;
+         the Setup installs it when missing (the vpk framework "webview2" in scripts\build.ps1). -->
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +44,12 @@
     <Resource Include="Assets\PuppyMacro-256.png" />
     <Resource Include="Assets\PuppyMacro.ico" />
     <Resource Include="Assets\Sounds\*.wav" />
+  </ItemGroup>
+
+  <!-- Files the Code view's WebView2 loads from disk (AppPaths.WebAssetsFolder). -->
+  <ItemGroup>
+    <Content Include="Assets\CodeEditor\**" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\Monaco\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

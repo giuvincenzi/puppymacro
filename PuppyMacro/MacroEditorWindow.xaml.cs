@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -28,14 +30,16 @@ public partial class MacroEditorWindow
     private readonly Guid _editingId;
     private readonly Guid _itemId;
     private readonly Func<EditedFloatingButton, Point?>? _placeButton;
-    private readonly bool _wasEnabled;
-    private readonly MacroEditList _list;
+    private bool _enabled;
+    private MacroEditList _list;
     private readonly ObservableCollection<MacroEditorItem> _items = new();
     private readonly Dictionary<MacroAction, MacroActionRowViewModel> _rowOf = new();
     private readonly Dictionary<Guid, MacroGroupViewModel> _headerOf = new();
     private HotkeyBinding? _hotkey;
     private string _soundName;
     private bool _ready;
+    private bool _codeView;
+    private bool _switchingView;
     private Point _dragStart;
     private MacroEditorItem? _dragCandidate;
     private MacroEditorItem? _selectOnlyOnRelease;
@@ -59,26 +63,47 @@ public partial class MacroEditorWindow
         _editingId = existing?.Id ?? Guid.Empty;
         _itemId = existing?.Id ?? Guid.NewGuid();
         _placeButton = placeButton;
-        _wasEnabled = source.Enabled;
-        _hotkey = source.Hotkey?.Clone();
-        _soundName = source.SoundName;
 
         string title = existing == null ? "New macro" : "Edit macro";
         Title = title;
         EditorTitleBar.Title = title;
 
-        NameBox.Text = source.Name;
-        var actions = source.Actions.ToList();
         if (recorded != null)
         {
             foreach (var action in recorded)
             {
                 action.GroupId = null;
-                actions.Add(action);
+                source.Actions.Add(action);
             }
         }
-        _list = new MacroEditList(actions, source.Groups);
         ActionList.ItemsSource = _items;
+        LoadMacro(source);
+        BuildSoundTiles();
+
+        FloatingEditor.PositionRequested += OnFloatingPositionRequested;
+        CodeView.Check = CheckCode;
+        CodeView.Changed += Validate;
+        _ready = true;
+        Validate();
+        Closing += (_, _) => RememberSize();
+        Closed += (_, _) => _engine.CancelCapture();
+        Loaded += (_, _) => Activate(); // e.g. right after a recording, with the main window just restored
+    }
+
+    public MacroDefinition? Result { get; private set; }
+
+    /// <summary>Shows <paramref name="source"/> in the List view's fields (at start, and when leaving the Code view).</summary>
+    [MemberNotNull(nameof(_list), nameof(_soundName))]
+    private void LoadMacro(MacroDefinition source)
+    {
+        _enabled = source.Enabled;
+        _hotkey = source.Hotkey?.Clone();
+        _soundName = source.SoundName;
+
+        NameBox.Text = source.Name;
+        _list = new MacroEditList(source.Actions.ToList(), source.Groups);
+        _rowOf.Clear();
+        _headerOf.Clear();
         Refresh();
 
         OnceRadio.IsChecked = source.Repeat == RepeatMode.Once;
@@ -93,21 +118,37 @@ public partial class MacroEditorWindow
         ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
         HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
 
-        BuildSoundTiles();
         SoundSwitch.IsChecked = source.SoundEnabled;
         SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
+        foreach (RadioButton tile in SoundGrid.Children.OfType<RadioButton>())
+            tile.IsChecked = (string)tile.Tag == _soundName;
 
         UpdateHotkeyLabel();
         FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
-        FloatingEditor.PositionRequested += OnFloatingPositionRequested;
-        _ready = true;
-        Validate();
-        Closing += (_, _) => RememberSize();
-        Closed += (_, _) => _engine.CancelCapture();
-        Loaded += (_, _) => Activate(); // e.g. right after a recording, with the main window just restored
     }
 
-    public MacroDefinition? Result { get; private set; }
+    /// <summary>The macro as the List view's fields describe it.</summary>
+    private MacroDefinition BuildMacro()
+    {
+        var macro = new MacroDefinition
+        {
+            Id = _itemId,
+            Name = NameBox.Text.Trim(),
+            Actions = _list.Actions.Select(a => a.Clone()).ToList(),
+            Groups = _list.Groups.Select(g => g.Clone()).ToList(),
+            Repeat = TimesRadio.IsChecked == true ? RepeatMode.Times : LoopRadio.IsChecked == true ? RepeatMode.Loop : RepeatMode.Once,
+            RepeatCount = (int)Math.Max(1, Math.Round(TimesBox.Value ?? 3)),
+            Speed = SelectedSpeed,
+            Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
+            Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
+            Enabled = _enabled,
+            SoundEnabled = SoundSwitch.IsChecked == true,
+            SoundName = _soundName,
+            FloatingButton = FloatingEditor.ToModel(),
+        };
+        macro.NormalizeGroups();
+        return macro;
+    }
 
     // ================= Window size =================
 
@@ -904,40 +945,134 @@ public partial class MacroEditorWindow
     {
         if (!_ready)
             return;
+        if (_codeView)
+        {
+            // Code view: Save and List view need code without problems.
+            int problems = CodeView.Problems.Count;
+            bool valid = CodeView.IsUpToDate && problems == 0;
+            ErrorText.Text = problems switch
+            {
+                0 => "",
+                1 => "Fix the problem to save or go back to List view.",
+                _ => $"Fix the {problems} problems to save or go back to List view.",
+            };
+            ErrorText.Visibility = problems > 0 ? Visibility.Visible : Visibility.Collapsed;
+            SaveButton.IsEnabled = valid;
+            ListViewButton.IsEnabled = valid;
+            return;
+        }
         string? error = GetValidationError();
         ErrorText.Text = error ?? "";
         ErrorText.Visibility = error == null ? Visibility.Collapsed : Visibility.Visible;
         SaveButton.IsEnabled = error == null;
+        ListViewButton.IsEnabled = true;
     }
 
     private void OnSaveClick(object sender, RoutedEventArgs e)
     {
         SaveButton.Focus(); // commit the delay field being edited
+        if (_codeView)
+        {
+            if (ReadCode() is not MacroDefinition fromCode)
+            {
+                Validate();
+                return;
+            }
+            Result = fromCode;
+            DialogResult = true;
+            return;
+        }
+
         if (GetValidationError() != null)
         {
             Validate();
             return;
         }
-
-        Result = new MacroDefinition
-        {
-            Id = _itemId,
-            Name = NameBox.Text.Trim(),
-            Actions = _list.Actions.Select(a => a.Clone()).ToList(),
-            Groups = _list.Groups.Select(g => g.Clone()).ToList(),
-            Repeat = TimesRadio.IsChecked == true ? RepeatMode.Times : LoopRadio.IsChecked == true ? RepeatMode.Loop : RepeatMode.Once,
-            RepeatCount = (int)Math.Max(1, Math.Round(TimesBox.Value ?? 3)),
-            Speed = SelectedSpeed,
-            Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
-            Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
-            Enabled = _wasEnabled,
-            SoundEnabled = SoundSwitch.IsChecked == true,
-            SoundName = _soundName,
-            FloatingButton = FloatingEditor.ToModel(),
-        };
-        Result.NormalizeGroups();
+        Result = BuildMacro();
         DialogResult = true;
     }
 
     private void OnCancelClick(object sender, RoutedEventArgs e) => DialogResult = false;
+
+    // ================= Code view =================
+
+    private string? HotkeyConflict(HotkeyBinding binding) => HotkeyConflicts.Find(binding, _settings, _macros, _editingId);
+
+    private List<CodeProblem> CheckCode(string text)
+    {
+        MacroJson.Parse(text, _itemId, HotkeyConflict, out var problems);
+        return problems;
+    }
+
+    /// <summary>The Code view's macro, or null while the editor has problems or has not checked the text yet.</summary>
+    private MacroDefinition? ReadCode()
+    {
+        if (!CodeView.IsUpToDate || CodeView.Problems.Count > 0)
+            return null;
+        return MacroJson.Parse(CodeView.Text, _itemId, HotkeyConflict, out _);
+    }
+
+    private async void OnViewChecked(object sender, RoutedEventArgs e)
+    {
+        if (!_ready || _switchingView)
+            return;
+        if (sender == CodeViewButton && !_codeView)
+            await ShowCodeView();
+        else if (sender == ListViewButton && _codeView)
+            ShowListView();
+    }
+
+    private async Task ShowCodeView()
+    {
+        _engine.CancelCapture();
+        UpdateHotkeyLabel();
+        string text = MacroJson.Serialize(BuildMacro());
+
+        _codeView = true;
+        ListBody.Visibility = Visibility.Collapsed;
+        CodeView.Visibility = Visibility.Visible;
+        FormatButton.Visibility = Visibility.Visible;
+        Validate();
+
+        if (await CodeView.ShowAsync(text) is string error)
+        {
+            SetView(code: false);
+            ErrorText.Text = error;
+            ErrorText.Visibility = Visibility.Visible;
+            return;
+        }
+        CodeView.FocusEditor();
+    }
+
+    private void ShowListView()
+    {
+        if (ReadCode() is not MacroDefinition fromCode)
+        {
+            // Problems: stay in the Code view (List view is disabled meanwhile, see Validate).
+            SetChecked(CodeViewButton);
+            Validate();
+            return;
+        }
+        LoadMacro(fromCode);
+        SetView(code: false);
+    }
+
+    private void SetView(bool code)
+    {
+        _codeView = code;
+        SetChecked(code ? CodeViewButton : ListViewButton);
+        ListBody.Visibility = code ? Visibility.Collapsed : Visibility.Visible;
+        CodeView.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
+        FormatButton.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
+        Validate();
+    }
+
+    private void SetChecked(RadioButton button)
+    {
+        _switchingView = true;
+        button.IsChecked = true;
+        _switchingView = false;
+    }
+
+    private void OnFormatClick(object sender, RoutedEventArgs e) => CodeView.Format();
 }

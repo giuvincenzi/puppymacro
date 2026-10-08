@@ -12,3 +12,6 @@
 *.png binary
 *.ico binary
 *.wav binary
+
+# Third-party files kept exactly as published (Monaco editor, minified)
+PuppyMacro/Assets/Monaco/** -text linguist-vendored
