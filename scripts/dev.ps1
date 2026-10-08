@@ -5,7 +5,7 @@ param([switch]$Keep)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $project = Join-Path $root 'PuppyMacro/PuppyMacro.csproj'
-$exe = Join-Path $root 'PuppyMacro/bin/Debug/net10.0-windows/win-x64/PuppyMacro.exe'
+$exe = Join-Path $root 'PuppyMacro/bin/Debug/net10.0-windows10.0.18362.0/win-x64/PuppyMacro.exe'
 
 # Only one PuppyMacro can run at a time (installed or dev).
 Get-Process -Name PuppyMacro -ErrorAction SilentlyContinue | ForEach-Object {

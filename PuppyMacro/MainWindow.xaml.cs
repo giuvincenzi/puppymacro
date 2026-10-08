@@ -14,10 +14,14 @@ using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
-using UiMessageBox = Wpf.Ui.Controls.MessageBox;
-using UiMessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
-using UiSymbolIcon = Wpf.Ui.Controls.SymbolIcon;
-using UiSymbolRegular = Wpf.Ui.Controls.SymbolRegular;
+using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
+using ContentDialogButton = iNKORE.UI.WPF.Modern.Controls.ContentDialogButton;
+using ContentDialogResult = iNKORE.UI.WPF.Modern.Controls.ContentDialogResult;
+using FontIcon = iNKORE.UI.WPF.Modern.Controls.FontIcon;
+using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
+using NumberBoxValueChangedEventArgs = iNKORE.UI.WPF.Modern.Controls.NumberBoxValueChangedEventArgs;
+using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
+using SettingsExpander = iNKORE.UI.WPF.Modern.Controls.SettingsExpander;
 
 namespace PuppyMacro;
 
@@ -31,7 +35,7 @@ public partial class MainWindow
     private readonly MacroLibrary _macros;
     private readonly ObservableCollection<MacroItemViewModel> _macroItems;
     private readonly ListCollectionView _macroView;
-    private readonly GameModeWindow _gameWindow;
+    private readonly OverlayPanelWindow _overlayPanelWindow;
     private readonly List<FloatingButtonWindow> _buttonWindows = new();
     private readonly DispatcherTimer _saveOpacityTimer;
     private readonly DispatcherTimer _saveVolumeTimer;
@@ -39,7 +43,7 @@ public partial class MainWindow
     private Point _dragStart;
     private IListItem? _dragCandidate;
     private readonly bool _initializing;
-    private bool _gameModeActive;
+    private bool _overlayModeActive;
     private readonly ObservableCollection<RemapItemViewModel> _remapItems;
     private readonly ListCollectionView _remapView;
     private readonly TrayIcon _tray;
@@ -59,15 +63,18 @@ public partial class MainWindow
         _macros = macros;
 
         Title = App.DisplayTitle;
-        AppTitleBar.Title = App.DisplayTitle;
+        AppTitleText.Text = App.DisplayTitle;
         AboutText.Text = App.DisplayTitle;
         DevBuildStrip.Visibility = App.IsDevBuild ? Visibility.Visible : Visibility.Collapsed;
 
         _sounds = new SoundService(Dispatcher) { Volume = settings.SoundVolume };
 
         _engine = new LoopEngine(EngineSnapshot.From(settings, macros), Dispatcher);
+        KeyCaptureField.SetEngine(this, _engine); // the Settings hotkey fields wait for keys through it
+        SetUpGlobalHotkeyFields();
         _engine.StateChanged += OnEngineStateChanged;
-        _engine.GameModeToggleRequested += ToggleGameMode;
+        _engine.OverlayModeToggleRequested += ToggleOverlayMode;
+        _engine.OverlayPanelDragged += OnOverlayPanelDragged;
         _engine.SoundRequested += (name, start) => _sounds.Play(name, start);
 
         _items = new ObservableCollection<LoopItemViewModel>(settings.Loops.Select(CreateItem));
@@ -78,13 +85,13 @@ public partial class MainWindow
         _macroView = new ListCollectionView(_macroItems) { Filter = FilterMacro };
         MacroList.ItemsSource = _macroView;
 
-        _gameWindow = new GameModeWindow(_items, _macroItems);
+        _overlayPanelWindow = new OverlayPanelWindow(_items, _macroItems);
 
         _remapItems = new ObservableCollection<RemapItemViewModel>(settings.Remaps.Select(CreateRemapItem));
         _remapView = new ListCollectionView(_remapItems) { Filter = FilterRemap };
         RemapList.ItemsSource = _remapView;
 
-        // Clickable game mode panel: the row positions are refreshed while game mode is on.
+        // Clickable overlay panel: the row positions are refreshed while overlay mode is on.
         _panelTargetsTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
         _panelTargetsTimer.Tick += (_, _) => PublishPanelTargets();
 
@@ -95,8 +102,8 @@ public partial class MainWindow
         // Save the opacity once the slider stops moving, not on every step.
         _saveOpacityTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
         _saveOpacityTimer.Tick += (_, _) => { _saveOpacityTimer.Stop(); Save(); };
-        OpacitySlider.Value = settings.GameModeOpacity;
-        ApplyOpacity(settings.GameModeOpacity);
+        OpacitySlider.Value = settings.OverlayPanelOpacity;
+        ApplyOpacity(settings.OverlayPanelOpacity);
 
         _saveVolumeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
         _saveVolumeTimer.Tick += (_, _) => { _saveVolumeTimer.Stop(); Save(); };
@@ -104,13 +111,15 @@ public partial class MainWindow
         VolumeValueText.Text = $"{settings.SoundVolume}%";
 
         HotkeysGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Hotkeys");
-        GameModeGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("GameModePanel");
+        OverlayGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Overlay");
         SoundGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Sound");
         UpdatePositionBoxes();
 
-        ClickInPanelSwitch.IsChecked = settings.ClickItemsInPanel;
-        CloseToTraySwitch.IsChecked = settings.CloseToTray;
-        StartWithWindowsSwitch.IsChecked = settings.StartWithWindows;
+        ClickInPanelSwitch.IsOn = settings.ClickItemsInPanel;
+        ShowPanelSwitch.IsOn = settings.ShowOverlayPanel;
+        SetPanelOptionsEnabled(settings.ShowOverlayPanel);
+        CloseToTraySwitch.IsOn = settings.CloseToTray;
+        StartWithWindowsSwitch.IsOn = settings.StartWithWindows;
         if (App.IsDevBuild)
         {
             // The Run entry belongs to the installed app.
@@ -118,7 +127,10 @@ public partial class MainWindow
             StartWithWindowsText.Text = "Not available in the development build";
         }
         InitializeUpdates();
+        Rail.PageChanged += OnPageChanged;
+        RefreshUpdateUi();
         BackupGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Backup");
+        AboutGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("About");
         DataFolderText.Text = $"Data saved in {AppPaths.DataFolder}";
         RemapFilterBox.SelectedIndex = 0;
         UpdateRemapState();
@@ -127,7 +139,7 @@ public partial class MainWindow
         ThemeComboBox.SelectedIndex = (int)settings.Theme;
         UpdateHotkeyLabels();
         UpdateLoopState();
-        RestorePosition();
+        RestorePlacement();
 
         Loaded += OnLoaded;
         Closing += OnClosing;
@@ -158,12 +170,14 @@ public partial class MainWindow
     /// <summary>Started with Windows: hotkeys work, the window stays in the system tray.</summary>
     internal void StartInTray() => EnsureEngineStarted();
 
-    private void RememberPosition()
+    private void RememberPlacement()
     {
         if (IsVisible && WindowState == WindowState.Normal)
         {
             _settings.WindowLeft = Left;
             _settings.WindowTop = Top;
+            _settings.WindowWidth = Math.Round(ActualWidth);
+            _settings.WindowHeight = Math.Round(ActualHeight);
         }
     }
 
@@ -171,7 +185,7 @@ public partial class MainWindow
     {
         if (_importing)
             return; // the imported settings.json must not be overwritten
-        RememberPosition();
+        RememberPlacement();
         if (!_exiting && _settings.CloseToTray)
         {
             e.Cancel = true;
@@ -189,7 +203,7 @@ public partial class MainWindow
     {
         _engine.Dispose();
         _tray.Dispose();
-        _gameWindow.Close();
+        _overlayPanelWindow.Close();
         Application.Current.Shutdown();
     }
 
@@ -197,18 +211,18 @@ public partial class MainWindow
     internal void ExitApp()
     {
         _exiting = true;
-        if (_gameModeActive)
-            ToggleGameMode();
+        if (_overlayModeActive)
+            ToggleOverlayMode();
         Close();
     }
 
     // ================= System tray =================
 
-    /// <summary>Shows the window from the tray or game mode (tray icon, or PuppyMacro started again).</summary>
+    /// <summary>Shows the window from the tray or overlay mode (tray icon, or PuppyMacro started again).</summary>
     internal void ShowFromTray()
     {
-        if (_gameModeActive)
-            ToggleGameMode(); // also shows the window
+        if (_overlayModeActive)
+            ToggleOverlayMode(); // also shows the window
         Show();
         if (WindowState == WindowState.Minimized)
             WindowState = WindowState.Normal;
@@ -239,8 +253,15 @@ public partial class MainWindow
         menu.IsOpen = true;
     }
 
-    private void RestorePosition()
+    private void RestorePlacement()
     {
+        // The size kept from the last session (WindowFit makes it smaller when the screen is).
+        if (_settings.WindowWidth is double width && _settings.WindowHeight is double height)
+        {
+            Width = Math.Max(MinWidth, width);
+            Height = Math.Max(MinHeight, height);
+        }
+
         if (_settings.WindowLeft is not double left || _settings.WindowTop is not double top)
             return;
 
@@ -260,19 +281,23 @@ public partial class MainWindow
 
     // ================= Navigation =================
 
-    private void OnNavChanged(object sender, RoutedEventArgs e)
+    private void OnPageChanged(string page)
     {
-        if (LoopsPage == null || SettingsPage == null)
-            return;
+        LoopsPage.Visibility = page == "Loops" ? Visibility.Visible : Visibility.Collapsed;
+        MacrosPage.Visibility = page == "Macros" ? Visibility.Visible : Visibility.Collapsed;
+        RemapsPage.Visibility = page == "Remap" ? Visibility.Visible : Visibility.Collapsed;
+        SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
+        if (page != "Settings")
+            _engine.CancelCapture(); // a Settings hotkey field that waits stops
+    }
 
-        if (MacrosPage == null || RemapsPage == null)
-            return;
-        LoopsPage.Visibility = LoopsNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        MacrosPage.Visibility = MacrosNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        RemapsPage.Visibility = RemapNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        SettingsPage.Visibility = SettingsNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        if (SettingsNav.IsChecked != true)
-            _engine?.CancelCapture();
+    /// <summary>The overlay panel's options are off while the panel is off.</summary>
+    private void SetPanelOptionsEnabled(bool enabled)
+    {
+        OpacityCard.IsEnabled = enabled;
+        PositionCard.IsEnabled = enabled;
+        ClickInPanelCard.IsEnabled = enabled;
+        ClickInPanelWarningCard.IsEnabled = enabled;
     }
 
     // ================= Loops list =================
@@ -323,12 +348,19 @@ public partial class MainWindow
         UpdateLoopState();
     }
 
+    /// <summary>
+    /// The card's switch. The list is rebuilt only when its filter depends on it (Enabled / Disabled): a rebuild
+    /// recreates every card, so the switch would jump in the middle of its animation and the list flicker.
+    /// Otherwise the card follows through its bindings (stopping a running loop refreshes the Running filter).
+    /// </summary>
     private void OnLoopEnabledChanged(LoopItemViewModel item)
     {
         if (!item.IsLoopEnabled)
             _engine.StopLoop(item.Definition.Id);
-        RefreshList();
-        _gameWindow.RefreshList();
+        if (_settings.Filter is LoopFilter.Enabled or LoopFilter.Disabled)
+            _view.Refresh();
+        UpdateLoopState();
+        _overlayPanelWindow.RefreshList();
         Save();
     }
 
@@ -343,7 +375,11 @@ public partial class MainWindow
         if (MacroFilterBox.SelectedIndex == (int)LoopFilter.Running)
             _macroView.Refresh();
         UpdateLoopState();
+        UpdatePanelState();
     }
+
+    /// <summary>The overlay panel's Stop all (red while something runs) and exit button.</summary>
+    private void UpdatePanelState() => _overlayPanelWindow.SetState(_engine.AnyRunning, PanelClickable);
 
     /// <summary>Count line, empty state, and the buttons that depend on running loops.</summary>
     private void UpdateLoopState()
@@ -374,6 +410,10 @@ public partial class MainWindow
         RecordMacroButton.IsEnabled = !anyRunning;
         NewMacroButton.ToolTip = RecordMacroButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
         StopAllButton.IsEnabled = anyRunning;
+        foreach (var loop in _items)
+            loop.CanEdit = !anyRunning;
+        foreach (var macro in _macroItems)
+            macro.CanEdit = !anyRunning;
         UpdateMacroState();
     }
 
@@ -389,8 +429,15 @@ public partial class MainWindow
         _settings.Loops.Add(editor.Result);
         _items.Add(CreateItem(editor.Result));
         RefreshList();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
         Save();
+    }
+
+    /// <summary>The card's Edit (not while loops or macros run).</summary>
+    private void OnEditLoopClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is LoopItemViewModel item && !_engine.AnyRunning)
+            EditLoop(item);
     }
 
     private void OnMoreClick(object sender, RoutedEventArgs e)
@@ -398,30 +445,21 @@ public partial class MainWindow
         if (sender is not FrameworkElement button || button.Tag is not LoopItemViewModel item)
             return;
 
-        var edit = new MenuItem
-        {
-            Header = "Edit",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Edit24 },
-            IsEnabled = !_engine.AnyRunning,
-            ToolTip = _engine.AnyRunning ? "Stop running loops to edit a loop" : null,
-        };
-        ToolTipService.SetShowOnDisabled(edit, true);
-        edit.Click += (_, _) => EditLoop(item);
-        var delete = new MenuItem { Header = "Delete", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Delete24 } };
+        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteLoop(item);
 
         int index = _items.IndexOf(item);
         var moveUp = new MenuItem
         {
             Header = "Move up",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowUp24 },
+            Icon = new FontIcon { Icon = SegoeFluentIcons.Up },
             IsEnabled = index > 0,
         };
         moveUp.Click += (_, _) => MoveItem(item, index - 1);
         var moveDown = new MenuItem
         {
             Header = "Move down",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowDown24 },
+            Icon = new FontIcon { Icon = SegoeFluentIcons.Down },
             IsEnabled = index < _items.Count - 1,
         };
         moveDown.Click += (_, _) => MoveItem(item, index + 1);
@@ -431,7 +469,6 @@ public partial class MainWindow
             PlacementTarget = button,
             Placement = PlacementMode.Bottom,
         };
-        menu.Items.Add(edit);
         menu.Items.Add(moveUp);
         menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
@@ -452,38 +489,38 @@ public partial class MainWindow
         item.Definition.CopyFrom(editor.Result);
         item.Refresh();
         RefreshList();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
         Save();
     }
 
     private async void DeleteLoop(LoopItemViewModel item)
     {
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Delete loop",
             Content = $"Delete \"{item.Name}\"? This cannot be undone.",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        UiMessageBoxResult result;
+        ContentDialogResult result;
         _engine.HotkeysSuspended = true;
         try
         {
-            result = await confirm.ShowDialogAsync();
+            result = await confirm.ShowAsync(this);
         }
         finally
         {
             _engine.HotkeysSuspended = false;
         }
-        if (result != UiMessageBoxResult.Primary)
+        if (result != ContentDialogResult.Primary)
             return;
 
         _engine.StopLoop(item.Definition.Id);
         _settings.Loops.Remove(item.Definition);
         _items.Remove(item);
         RefreshList();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
         Save();
     }
 
@@ -553,12 +590,15 @@ public partial class MainWindow
         }
     }
 
+    /// <summary>The card's switch: the list is rebuilt only when its filter depends on it (see OnLoopEnabledChanged).</summary>
     private void OnMacroEnabledChanged(MacroItemViewModel item)
     {
         if (!item.IsLoopEnabled)
             _engine.StopMacro(item.Definition.Id);
-        RefreshMacros();
-        _gameWindow.RefreshList();
+        if ((LoopFilter)Math.Max(0, MacroFilterBox.SelectedIndex) is LoopFilter.Enabled or LoopFilter.Disabled)
+            _macroView.Refresh();
+        UpdateMacroState();
+        _overlayPanelWindow.RefreshList();
         SaveMacro(item.Definition);
     }
 
@@ -595,7 +635,14 @@ public partial class MainWindow
         SaveMacro(editor.Result);
         SaveMacroOrder();
         RefreshMacros();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
+    }
+
+    /// <summary>The card's Edit (not while loops or macros run).</summary>
+    private void OnEditMacroClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is MacroItemViewModel item && !_engine.AnyRunning)
+            EditMacro(item);
     }
 
     private void OnMacroMoreClick(object sender, RoutedEventArgs e)
@@ -603,26 +650,15 @@ public partial class MainWindow
         if (sender is not FrameworkElement button || button.Tag is not MacroItemViewModel item)
             return;
 
-        var edit = new MenuItem
-        {
-            Header = "Edit",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Edit24 },
-            IsEnabled = !_engine.AnyRunning,
-            ToolTip = _engine.AnyRunning ? "Stop running loops and macros to edit" : null,
-        };
-        ToolTipService.SetShowOnDisabled(edit, true);
-        edit.Click += (_, _) => EditMacro(item);
-
         int index = _macroItems.IndexOf(item);
-        var moveUp = new MenuItem { Header = "Move up", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowUp24 }, IsEnabled = index > 0 };
+        var moveUp = new MenuItem { Header = "Move up", Icon = new FontIcon { Icon = SegoeFluentIcons.Up }, IsEnabled = index > 0 };
         moveUp.Click += (_, _) => MoveMacro(item, index - 1);
-        var moveDown = new MenuItem { Header = "Move down", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowDown24 }, IsEnabled = index < _macroItems.Count - 1 };
+        var moveDown = new MenuItem { Header = "Move down", Icon = new FontIcon { Icon = SegoeFluentIcons.Down }, IsEnabled = index < _macroItems.Count - 1 };
         moveDown.Click += (_, _) => MoveMacro(item, index + 1);
-        var delete = new MenuItem { Header = "Delete", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Delete24 } };
+        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteMacro(item);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
-        menu.Items.Add(edit);
         menu.Items.Add(moveUp);
         menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
@@ -642,30 +678,30 @@ public partial class MainWindow
         item.Refresh();
         SaveMacro(item.Definition);
         RefreshMacros();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
     }
 
     private async void DeleteMacro(MacroItemViewModel item)
     {
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Delete macro",
             Content = $"Delete \"{item.Name}\"? This cannot be undone.",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        UiMessageBoxResult result;
+        ContentDialogResult result;
         _engine.HotkeysSuspended = true;
         try
         {
-            result = await confirm.ShowDialogAsync();
+            result = await confirm.ShowAsync(this);
         }
         finally
         {
             _engine.HotkeysSuspended = false;
         }
-        if (result != UiMessageBoxResult.Primary)
+        if (result != ContentDialogResult.Primary)
             return;
 
         _engine.StopMacro(item.Definition.Id);
@@ -673,7 +709,7 @@ public partial class MainWindow
         _macroItems.Remove(item);
         SaveMacroOrder();
         RefreshMacros();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
     }
 
     private void MoveMacro(MacroItemViewModel item, int newIndex)
@@ -687,7 +723,7 @@ public partial class MainWindow
         _macros.Macros.AddRange(_macroItems.Select(m => m.Definition));
         SaveMacroOrder();
         _macroView.Refresh();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
     }
 
     private void OnMacroStartStopClick(object sender, RoutedEventArgs e)
@@ -701,6 +737,7 @@ public partial class MainWindow
 
     private void SaveMacro(MacroDefinition macro)
     {
+        UpdateSettingsSummaries(); // the floating button count may have changed
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_macros.TrySave(macro, out string? error))
             ShowSettingsError($"Could not save the macro \"{macro.Name}\": {error}");
@@ -712,25 +749,48 @@ public partial class MainWindow
         Save();
     }
 
-    // ================= Clickable game mode panel =================
+    // ================= Clickable overlay panel =================
 
     private void OnClickInPanelChanged(object sender, RoutedEventArgs e)
     {
         if (_initializing)
             return;
-        _settings.ClickItemsInPanel = ClickInPanelSwitch.IsChecked == true;
+        _settings.ClickItemsInPanel = ClickInPanelSwitch.IsOn;
         UpdatePanelClicks();
         UpdateSettingsSummaries();
         Save();
     }
 
+    private void OnShowPanelChanged(object sender, RoutedEventArgs e)
+    {
+        bool show = ShowPanelSwitch.IsOn;
+        SetPanelOptionsEnabled(show);
+        if (_initializing)
+            return;
+        _settings.ShowOverlayPanel = show;
+        if (_overlayModeActive)
+        {
+            if (show)
+                ShowOverlayPanel();
+            else
+                _overlayPanelWindow.Hide();
+            UpdatePanelClicks();
+        }
+        UpdateSettingsSummaries();
+        Save();
+    }
+
+    /// <summary>The overlay panel's rows are clickable: it is shown and the setting is on.</summary>
+    private bool PanelClickable => _settings.ShowOverlayPanel && _settings.ClickItemsInPanel;
+
     /// <summary>
-    /// Clicks on the panel and on the floating buttons are handled by the input hook, so the game
-    /// never loses focus. Floating buttons are always clickable; the panel only when the setting is on.
+    /// Clicks on the panel and on the floating buttons are handled by the input hook, so the fullscreen app
+    /// never loses focus. Floating buttons are always clickable; the panel only when it is shown and the setting is on.
     /// </summary>
     private void UpdatePanelClicks()
     {
-        if (_gameModeActive && (_settings.ClickItemsInPanel || _buttonWindows.Count > 0))
+        UpdatePanelState();
+        if (_overlayModeActive && (PanelClickable || _buttonWindows.Count > 0))
         {
             // Rows are measured once the panel is on screen, then kept up to date.
             Dispatcher.InvokeAsync(PublishPanelTargets, DispatcherPriority.Loaded);
@@ -745,9 +805,9 @@ public partial class MainWindow
 
     private void PublishPanelTargets()
     {
-        if (!_gameModeActive)
+        if (!_overlayModeActive)
             return;
-        var targets = _settings.ClickItemsInPanel ? _gameWindow.GetClickTargets() : new List<PanelTarget>();
+        var targets = PanelClickable ? _overlayPanelWindow.GetClickTargets() : new List<PanelTarget>();
         foreach (var window in _buttonWindows)
         {
             if (window.GetClickTarget() is PanelTarget target)
@@ -769,7 +829,7 @@ public partial class MainWindow
         _items.Move(oldIndex, newIndex);
         _settings.Loops = _items.Select(i => i.Definition).ToList();
         _view.Refresh();
-        _gameWindow.RefreshList();
+        _overlayPanelWindow.RefreshList();
         Save();
     }
 
@@ -905,11 +965,19 @@ public partial class MainWindow
     }
 
     /// <summary>Shows a dialog with every hotkey ignored until it closes.</summary>
+    /// <summary>
+    /// Shows an editor (or the placement overlay) with the hotkeys off. While it is open this window is only
+    /// hidden, so it takes no room on the screen, and shown again as it was when the editor closes. It hides
+    /// once the editor is on screen, so the editor still opens centered on it.
+    /// </summary>
     private bool? ShowDialogWithoutHotkeys(Window dialog)
     {
         // Restores the previous state: the placement overlay can open from an editor.
         bool wasSuspended = _engine.HotkeysSuspended;
         _engine.HotkeysSuspended = true;
+        bool wasVisible = IsVisible;
+        if (wasVisible)
+            dialog.ContentRendered += (_, _) => Hide();
         try
         {
             return dialog.ShowDialog();
@@ -917,6 +985,11 @@ public partial class MainWindow
         finally
         {
             _engine.HotkeysSuspended = wasSuspended;
+            if (wasVisible)
+            {
+                Show();
+                Activate();
+            }
         }
     }
 
@@ -933,7 +1006,7 @@ public partial class MainWindow
 
     private void OnStopAllClick(object sender, RoutedEventArgs e) => _engine.StopAll();
 
-    private void OnGameModeClick(object sender, RoutedEventArgs e) => ToggleGameMode();
+    private void OnOverlayModeClick(object sender, RoutedEventArgs e) => ToggleOverlayMode();
 
     // ================= Settings =================
 
@@ -942,21 +1015,21 @@ public partial class MainWindow
         if (_initializing || ThemeComboBox.SelectedIndex < 0)
             return;
         _settings.Theme = (AppTheme)ThemeComboBox.SelectedIndex;
-        App.ApplyTheme(_settings.Theme, this);
+        App.ApplyTheme(_settings.Theme);
         Save();
     }
 
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (OpacityValueText == null || _gameWindow == null)
+        if (OpacityValueText == null || _overlayPanelWindow == null)
             return; // still loading
 
         int percent = (int)Math.Round(e.NewValue);
         ApplyOpacity(percent);
-        if (_initializing || percent == _settings.GameModeOpacity)
+        if (_initializing || percent == _settings.OverlayPanelOpacity)
             return;
 
-        _settings.GameModeOpacity = percent;
+        _settings.OverlayPanelOpacity = percent;
         UpdateSettingsSummaries();
         _saveOpacityTimer.Stop();
         _saveOpacityTimer.Start();
@@ -967,18 +1040,16 @@ public partial class MainWindow
         OpacityValueText.Text = $"{percent}%";
         byte alpha = (byte)Math.Round(percent * 255 / 100.0);
         OpacityPreviewPanel.Background = new SolidColorBrush(Color.FromArgb(alpha, 0x20, 0x20, 0x20));
-        _gameWindow.SetBackgroundOpacity(percent);
+        _overlayPanelWindow.SetBackgroundOpacity(percent);
     }
 
-    private void OnGroupToggled(object sender, RoutedEventArgs e)
+    private void OnGroupToggled(object? sender, EventArgs e)
     {
-        if (_initializing || sender is not FrameworkElement group || group.Tag is not string key)
+        if (_initializing || sender is not SettingsExpander { Tag: string key } group)
             return;
-        if (e.OriginalSource != sender)
-            return; // ignore expanders nested inside
         var open = _settings.ExpandedSettingsGroups;
         open.Remove(key);
-        if (group is Expander { IsExpanded: true })
+        if (group.IsExpanded)
             open.Add(key);
         Save();
     }
@@ -1004,31 +1075,31 @@ public partial class MainWindow
     private void OnVolumeReleased(object sender, MouseButtonEventArgs e) =>
         _sounds.Play(SoundService.Names[0], start: true);
 
-    // ---- Game mode position ----
+    // ---- Overlay mode position ----
 
     /// <summary>Default: top-left of the main screen's work area, with a small margin.</summary>
-    private static Point DefaultGamePosition() =>
+    private static Point DefaultPanelPosition() =>
         new(SystemParameters.WorkArea.Left + 20, SystemParameters.WorkArea.Top + 20);
 
     /// <summary>Saved position, or the default if none or if it is no longer on any screen.</summary>
-    private Point GamePosition()
+    private Point PanelPosition()
     {
-        if (_settings.GameModeX is not double x || _settings.GameModeY is not double y)
-            return DefaultGamePosition();
+        if (_settings.OverlayPanelX is not double x || _settings.OverlayPanelY is not double y)
+            return DefaultPanelPosition();
 
         bool onScreen =
             x >= SystemParameters.VirtualScreenLeft - 40 &&
             y >= SystemParameters.VirtualScreenTop - 20 &&
             x <= SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - 40 &&
             y <= SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - 40;
-        return onScreen ? new Point(x, y) : DefaultGamePosition();
+        return onScreen ? new Point(x, y) : DefaultPanelPosition();
     }
 
     private bool _updatingPositionBoxes;
 
     private void UpdatePositionBoxes()
     {
-        Point p = GamePosition();
+        Point p = PanelPosition();
         _updatingPositionBoxes = true;
         PositionXBox.Value = Math.Round(p.X);
         PositionYBox.Value = Math.Round(p.Y);
@@ -1036,65 +1107,77 @@ public partial class MainWindow
         UpdateSettingsSummaries();
     }
 
-    private void OnPositionBoxChanged(object sender, RoutedEventArgs e)
+    private void OnPositionBoxChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
     {
         if (_initializing || _updatingPositionBoxes)
             return;
-        if (PositionXBox.Value is double x && PositionYBox.Value is double y)
+        double x = PositionXBox.Value, y = PositionYBox.Value;
+        if (!double.IsNaN(x) && !double.IsNaN(y))
         {
-            _settings.GameModeX = x;
-            _settings.GameModeY = y;
+            _settings.OverlayPanelX = x;
+            _settings.OverlayPanelY = y;
             UpdateSettingsSummaries();
             Save();
         }
     }
 
-    private void OnPositionOnScreenClick(object sender, RoutedEventArgs e) => OpenPlacement(null, null);
+    private void OnPositionOnScreenClick(object sender, RoutedEventArgs e) => OpenPlacement(null);
 
     /// <summary>
-    /// The editors' Position… button: places the panel and every floating button. The edited item
-    /// is shown as in the editor (its button is left out when off); its new position is returned to
-    /// the editor, which saves it with the item. Null when cancelled.
+    /// The editors' Position… button: places the whole overlay. The edited item is shown as in the
+    /// editor (its button is left out when off); its new position is returned to the editor, which
+    /// saves it with the item. Null when cancelled.
     /// </summary>
-    private Point? PlaceFromEditor(EditedFloatingButton edited)
-    {
-        PlacementButton? editing = null;
-        if (edited.Button.Enabled)
-        {
-            var saved = edited.Button.X is double x && edited.Button.Y is double y ? new Point(x, y) : (Point?)null;
-            editing = new PlacementButton(edited.Id, edited.Name,
-                string.IsNullOrEmpty(edited.Button.Label) ? FloatingButton.DefaultLabel(edited.Name) : edited.Button.Label,
-                edited.HotkeyText, edited.Button.Size, ButtonPosition(saved, edited.Button.Size, FloatingButtonItems().Count(i => i.Id != edited.Id)));
-        }
-        return OpenPlacement(edited.Id, editing);
-    }
+    private Point? PlaceFromEditor(EditedFloatingButton edited) => OpenPlacement(edited);
 
-    private Point? OpenPlacement(Guid? editingId, PlacementButton? editing)
+    /// <summary>
+    /// Opens the placement overlay with the whole overlay as overlay mode shows it: the overlay
+    /// panel (when shown) and every floating button, plus the one being edited.
+    /// </summary>
+    private Point? OpenPlacement(EditedFloatingButton? edited)
     {
+        var others = FloatingButtonItems().Where(i => i.Id != edited?.Id).ToList();
+        var sources = others.Select(i => (SavedPosition(i.FloatingButton), i.FloatingButton.Size)).ToList();
+        bool editingShown = edited is { Button.Enabled: true };
+        if (editingShown)
+            sources.Add((SavedPosition(edited!.Button), edited.Button.Size));
+        List<Point> positions = ButtonPositions(sources);
+
         var buttons = new List<PlacementButton>();
-        foreach (IListItem item in FloatingButtonItems())
+        for (int index = 0; index < others.Count; index++)
         {
-            if (item.Id == editingId)
-                continue;
+            IListItem item = others[index];
             buttons.Add(new PlacementButton(item.Id, item.Name, FloatingButtonWindow.LabelOf(item),
-                item.HasHotkey ? item.HotkeyText : "", item.FloatingButton.Size, ButtonPosition(item.FloatingButton, buttons.Count)));
+                item.HasHotkey ? item.HotkeyText : "", item.FloatingButton.Size, item.FloatingButton.EffectiveOpacity, positions[index]));
         }
-        if (editing != null)
-            buttons.Add(editing);
+        if (editingShown)
+        {
+            FloatingButton button = edited!.Button;
+            buttons.Add(new PlacementButton(edited.Id, edited.Name,
+                string.IsNullOrEmpty(button.Label) ? FloatingButton.DefaultLabel(edited.Name) : button.Label,
+                edited.HotkeyText, button.Size, button.EffectiveOpacity, positions[^1]));
+        }
+        if (!_settings.ShowOverlayPanel && buttons.Count == 0)
+        {
+            ShowSettingsError("Nothing to position: the overlay panel is off and there are no floating buttons.");
+            return null;
+        }
 
-        var placement = new PlacementWindow(_items, _macroItems, GamePosition(), _settings.GameModeOpacity,
-            KeyNames.Format(_settings.GameModeHotkey), KeyNames.Format(_settings.StopAllHotkey), buttons, editing?.Id);
+        var placement = new PlacementWindow(_items, _macroItems, _settings.ShowOverlayPanel, PanelPosition(), _settings.OverlayPanelOpacity,
+            KeyNames.Format(_settings.OverlayModeHotkey), KeyNames.Format(_settings.StopAllHotkey), buttons, edited?.Id);
         if (ShowDialogWithoutHotkeys(placement) != true)
             return null;
 
-        _settings.GameModeX = Math.Round(placement.Result.X);
-        _settings.GameModeY = Math.Round(placement.Result.Y);
-        UpdatePositionBoxes();
-
-        Point? editingPosition = null;
-        foreach (IListItem item in FloatingButtonItems())
+        if (_settings.ShowOverlayPanel)
         {
-            if (item.Id == editingId || !placement.ButtonResults.TryGetValue(item.Id, out Point p))
+            _settings.OverlayPanelX = Math.Round(placement.Result.X);
+            _settings.OverlayPanelY = Math.Round(placement.Result.Y);
+            UpdatePositionBoxes();
+        }
+
+        foreach (IListItem item in others)
+        {
+            if (!placement.ButtonResults.TryGetValue(item.Id, out Point p))
                 continue;
             item.FloatingButton.X = Math.Round(p.X);
             item.FloatingButton.Y = Math.Round(p.Y);
@@ -1102,48 +1185,62 @@ public partial class MainWindow
                 SaveMacro(macro.Definition);
         }
         Save();
-        if (editing != null && placement.ButtonResults.TryGetValue(editing.Id, out Point edited))
-            editingPosition = new Point(Math.Round(edited.X), Math.Round(edited.Y));
-        return editingPosition;
+        return edited != null && placement.ButtonResults.TryGetValue(edited.Id, out Point moved)
+            ? new Point(Math.Round(moved.X), Math.Round(moved.Y))
+            : null;
     }
 
     // ---- Floating buttons ----
 
-    /// <summary>Loops then macros that show a floating button in game mode, in list order.</summary>
+    /// <summary>Loops then macros that show a floating button in overlay mode, in list order.</summary>
     private IEnumerable<IListItem> FloatingButtonItems() =>
         _items.Cast<IListItem>().Concat(_macroItems).Where(FloatingButtons.HasButton);
 
-    private static Point ButtonPosition(FloatingButton button, int index) =>
-        ButtonPosition(button.X is double x && button.Y is double y ? new Point(x, y) : null, button.Size, index);
+    private static Point? SavedPosition(FloatingButton button) =>
+        button.X is double x && button.Y is double y ? new Point(x, y) : null;
+
+    private static bool IsOnScreen(Point p, double diameter) =>
+        p.X >= SystemParameters.VirtualScreenLeft &&
+        p.Y >= SystemParameters.VirtualScreenTop &&
+        p.X <= SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - diameter &&
+        p.Y <= SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - diameter;
 
     /// <summary>
-    /// Saved position when it is still on a screen; otherwise a column along the right edge of the
-    /// main screen's work area, one slot per button.
+    /// Positions of the given buttons: the saved one when it is still on a screen; the others
+    /// (new or off screen) in the middle of the main screen's work area, side by side, so a new
+    /// button is easy to find.
     /// </summary>
-    private static Point ButtonPosition(Point? saved, FloatingButtonSize size, int index)
+    private static List<Point> ButtonPositions(IEnumerable<(Point? Saved, FloatingButtonSize Size)> buttons)
     {
-        double diameter = FloatingButton.DiameterOf(size);
-        if (saved is Point p &&
-            p.X >= SystemParameters.VirtualScreenLeft &&
-            p.Y >= SystemParameters.VirtualScreenTop &&
-            p.X <= SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - diameter &&
-            p.Y <= SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - diameter)
-            return p;
-
         const double slot = 72; // the largest button plus a gap
         Rect work = SystemParameters.WorkArea;
-        int perColumn = Math.Max(1, (int)((work.Height - 40) / slot));
-        return new Point(
-            work.Right - 20 - slot * (index / perColumn + 1) + (slot - diameter),
-            work.Top + 20 + slot * (index % perColumn));
+        int perRow = Math.Max(1, (int)((work.Width / 2 - 20) / slot));
+        int unplaced = 0;
+        var positions = new List<Point>();
+        foreach (var (saved, size) in buttons)
+        {
+            double diameter = FloatingButton.DiameterOf(size);
+            if (saved is Point p && IsOnScreen(p, diameter))
+            {
+                positions.Add(p);
+                continue;
+            }
+            int index = unplaced++;
+            positions.Add(new Point(
+                work.Left + work.Width / 2 - diameter / 2 + slot * (index % perRow),
+                work.Top + work.Height / 2 - diameter / 2 + slot * (index / perRow)));
+        }
+        return positions;
     }
 
     private void ShowFloatingButtons()
     {
-        int index = 0;
-        foreach (IListItem item in FloatingButtonItems())
+        var items = FloatingButtonItems().ToList();
+        var positions = ButtonPositions(items.Select(i => (SavedPosition(i.FloatingButton), i.FloatingButton.Size)));
+        for (int index = 0; index < items.Count; index++)
         {
-            var window = new FloatingButtonWindow(item, ButtonPosition(item.FloatingButton, index++), _settings.GameModeOpacity);
+            IListItem item = items[index];
+            var window = new FloatingButtonWindow(item, positions[index], item.FloatingButton.EffectiveOpacity);
             _buttonWindows.Add(window);
             window.Show();
         }
@@ -1158,8 +1255,8 @@ public partial class MainWindow
 
     private void OnResetPositionClick(object sender, RoutedEventArgs e)
     {
-        _settings.GameModeX = null;
-        _settings.GameModeY = null;
+        _settings.OverlayPanelX = null;
+        _settings.OverlayPanelY = null;
         UpdatePositionBoxes();
         Save();
     }
@@ -1168,103 +1265,145 @@ public partial class MainWindow
     {
         if (HotkeysSummary == null)
             return;
-        HotkeysSummary.Text = $"Stop all {KeyNames.Format(_settings.StopAllHotkey)}, Game mode {KeyNames.Format(_settings.GameModeHotkey)}, Record {KeyNames.Format(_settings.RecordHotkey)}";
-        Point p = GamePosition();
-        GameModeSummary.Text = $"Opacity {_settings.GameModeOpacity}%, position X {Math.Round(p.X)}, Y {Math.Round(p.Y)}, click to start {(_settings.ClickItemsInPanel ? "on" : "off")}";
+        HotkeysSummary.Text = $"Stop all {KeyNames.Format(_settings.StopAllHotkey)}, Overlay mode {KeyNames.Format(_settings.OverlayModeHotkey)}, Record {KeyNames.Format(_settings.RecordHotkey)}";
+        int buttons = FloatingButtonItems().Count();
+        string buttonsText = buttons switch { 0 => "no floating buttons", 1 => "1 floating button", _ => $"{buttons} floating buttons" };
+        if (_settings.ShowOverlayPanel)
+        {
+            Point p = PanelPosition();
+            OverlaySummary.Text = $"Panel: opacity {_settings.OverlayPanelOpacity}%, position X {Math.Round(p.X)}, Y {Math.Round(p.Y)}, click to start {(_settings.ClickItemsInPanel ? "on" : "off")}; {buttonsText}";
+        }
+        else
+        {
+            OverlaySummary.Text = $"Panel off; {buttonsText}";
+        }
+        FloatingButtonsText.Text = (buttons switch
+        {
+            0 => "None yet.",
+            1 => "1 loop or macro has a floating button.",
+            _ => $"{buttons} loops and macros have a floating button.",
+        }) + " Turn one on with Floating button in the loop or macro editor, where you also set its label, size and opacity.";
         SoundSummary.Text = $"Volume {_settings.SoundVolume}%";
     }
 
-    private void OnChangeStopAllHotkeyClick(object sender, RoutedEventArgs e) =>
-        CaptureGlobalHotkey(StopAllChangeButton, "StopAll");
-
-    private void OnChangeGameModeHotkeyClick(object sender, RoutedEventArgs e) =>
-        CaptureGlobalHotkey(GameModeChangeButton, "GameMode");
-
-    private void OnChangeRecordHotkeyClick(object sender, RoutedEventArgs e) =>
-        CaptureGlobalHotkey(RecordChangeButton, "Record");
-
-    private void CaptureGlobalHotkey(Wpf.Ui.Controls.Button button, string which)
+    /// <summary>The three global hotkey fields: each checks a pressed key against the rules and the other hotkeys.</summary>
+    private void SetUpGlobalHotkeyFields()
     {
-        HideSettingsError();
-        StopAllChangeButton.Content = "Change";
-        GameModeChangeButton.Content = "Change";
-        RecordChangeButton.Content = "Change";
-        button.Content = "Press a key…";
+        foreach (var (field, which) in new[] { (StopAllHotkeyField, "StopAll"), (OverlayModeHotkeyField, "OverlayMode"), (RecordHotkeyField, "Record") })
+            field.Validate = binding => HotkeyRules.Problem(binding, hold: false)
+                ?? HotkeyConflicts.Find(binding, _settings, _macros, ignoreGlobal: which);
+    }
 
-        _engine.BeginCapture(
-            binding =>
-            {
-                button.Content = "Change";
-                string? error = KeyNames.IsPrimaryMouse(binding.Vk)
-                    ? "Left and right click cannot be used as a hotkey."
-                    : HotkeyConflicts.Find(binding, _settings, _macros, ignoreGlobal: which);
-                if (error != null)
-                {
-                    ShowSettingsError(error);
-                    return;
-                }
+    private void OnGlobalHotkeyStarted(object? sender, EventArgs e) => HideSettingsError();
 
-                switch (which)
-                {
-                    case "StopAll": _settings.StopAllHotkey = binding; break;
-                    case "GameMode": _settings.GameModeHotkey = binding; break;
-                    default: _settings.RecordHotkey = binding; break;
-                }
-                UpdateHotkeyLabels();
-                Save();
-            },
-            () => button.Content = "Change",
-            allowPrimaryMouse: false);
+    private void OnGlobalHotkeyChanged(object? sender, EventArgs e)
+    {
+        if ((sender as KeyCaptureField)?.Value?.Clone() is not { } binding)
+            return;
+        if (sender == StopAllHotkeyField)
+            _settings.StopAllHotkey = binding;
+        else if (sender == OverlayModeHotkeyField)
+            _settings.OverlayModeHotkey = binding;
+        else
+            _settings.RecordHotkey = binding;
+        UpdateHotkeyLabels();
+        Save();
     }
 
     private void UpdateHotkeyLabels()
     {
         string stopAll = KeyNames.Format(_settings.StopAllHotkey);
-        string gameMode = KeyNames.Format(_settings.GameModeHotkey);
-        StopAllHotkeyCaps.ItemsSource = KeyNames.Parts(_settings.StopAllHotkey);
-        GameModeHotkeyCaps.ItemsSource = KeyNames.Parts(_settings.GameModeHotkey);
-        RecordHotkeyCaps.ItemsSource = KeyNames.Parts(_settings.RecordHotkey);
+        string overlayMode = KeyNames.Format(_settings.OverlayModeHotkey);
+        StopAllHotkeyField.Value = _settings.StopAllHotkey?.Clone();
+        OverlayModeHotkeyField.Value = _settings.OverlayModeHotkey?.Clone();
+        RecordHotkeyField.Value = _settings.RecordHotkey?.Clone();
         StopAllButtonHotkeyText.Text = stopAll;
-        GameModeButtonHotkeyText.Text = gameMode;
-        _gameWindow.SetHotkeyLabels(gameMode, stopAll);
+        OverlayModeButtonHotkeyText.Text = overlayMode;
+        _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll);
         UpdateSettingsSummaries();
     }
 
     private void ShowSettingsError(string message)
     {
-        SettingsErrorText.Text = message;
-        SettingsErrorText.Visibility = Visibility.Visible;
+        SettingsError.Message = message;
+        SettingsError.IsOpen = true;
     }
 
-    private void HideSettingsError() => SettingsErrorText.Visibility = Visibility.Collapsed;
+    private void HideSettingsError() => SettingsError.IsOpen = false;
 
-    // ================= Game mode =================
+    // ================= Overlay mode =================
 
-    private void ToggleGameMode()
+    private Point _panelDragStart;
+
+    /// <summary>
+    /// The overlay panel's move handle (the input hook reports how far the mouse is from where it was pressed,
+    /// in physical pixels): the panel follows, and where it is released becomes its saved position.
+    /// </summary>
+    private void OnOverlayPanelDragged(PanelDragPhase phase, int dx, int dy)
     {
-        if (!_gameModeActive)
+        if (phase == PanelDragPhase.Started)
+        {
+            _panelDragStart = new Point(_overlayPanelWindow.Left, _overlayPanelWindow.Top);
+            return;
+        }
+        DpiScale dpi = VisualTreeHelper.GetDpi(_overlayPanelWindow);
+        _overlayPanelWindow.Left = _panelDragStart.X + dx / dpi.DpiScaleX;
+        _overlayPanelWindow.Top = _panelDragStart.Y + dy / dpi.DpiScaleY;
+        if (phase != PanelDragPhase.Ended)
+            return;
+        _settings.OverlayPanelX = Math.Round(_overlayPanelWindow.Left);
+        _settings.OverlayPanelY = Math.Round(_overlayPanelWindow.Top);
+        UpdatePositionBoxes();
+        Save();
+        PublishPanelTargets(); // the clickable rectangles moved with the panel
+    }
+
+    private void ShowOverlayPanel()
+    {
+        Point position = PanelPosition();
+        _overlayPanelWindow.Left = position.X;
+        _overlayPanelWindow.Top = position.Y;
+        _overlayPanelWindow.Show();
+    }
+
+    /// <summary>How the main window was when overlay mode started, so leaving it gives that back.</summary>
+    private enum WindowBeforeOverlay { Open, Minimized, InTray }
+
+    private WindowBeforeOverlay _windowBeforeOverlay;
+
+    private void ToggleOverlayMode()
+    {
+        if (!_overlayModeActive)
         {
             _engine.CancelCapture();
-            Point position = GamePosition();
-            _gameWindow.Left = position.X;
-            _gameWindow.Top = position.Y;
+            _windowBeforeOverlay = !IsVisible ? WindowBeforeOverlay.InTray
+                : WindowState == WindowState.Minimized ? WindowBeforeOverlay.Minimized
+                : WindowBeforeOverlay.Open;
             Hide();
-            _gameWindow.Show();
+            if (_settings.ShowOverlayPanel)
+                ShowOverlayPanel();
             ShowFloatingButtons();
-            _gameModeActive = true;
+            _overlayModeActive = true;
             UpdatePanelClicks();
         }
         else
         {
-            _gameWindow.Hide();
+            _overlayPanelWindow.Hide();
             CloseFloatingButtons();
-            _gameModeActive = false;
+            _overlayModeActive = false;
             UpdatePanelClicks();
-            // Bring the window to the front: it is not topmost, so it would
-            // otherwise reappear behind the game.
-            Show();
-            Activate();
-            _gameModeActive = false;
+            // The window goes back to how it was: still in the tray, minimized, or open. Open, it
+            // comes to the front: it is not topmost, so it would otherwise stay behind the fullscreen app.
+            switch (_windowBeforeOverlay)
+            {
+                case WindowBeforeOverlay.Open:
+                    Show();
+                    Activate();
+                    break;
+                case WindowBeforeOverlay.Minimized:
+                    Show(); // still minimized, on the taskbar
+                    break;
+            }
         }
     }
 
@@ -1272,6 +1411,7 @@ public partial class MainWindow
 
     private void Save()
     {
+        UpdateSettingsSummaries(); // the floating button count may have changed
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_store.TrySave(_settings, out string? error))
             ShowSettingsError($"Could not save settings.json: {error}");
@@ -1282,9 +1422,11 @@ public partial class MainWindow
     private RemapItemViewModel CreateRemapItem(RemapDefinition definition)
     {
         var item = new RemapItemViewModel(definition);
+        // The card's switch: the list is rebuilt only when its filter depends on it (see OnLoopEnabledChanged).
         item.EnabledChanged += _ =>
         {
-            _remapView.Refresh();
+            if (RemapFilterBox.SelectedIndex is 1 or 2) // Enabled, Disabled
+                _remapView.Refresh();
             UpdateRemapState();
             Save();
         };
@@ -1357,20 +1499,24 @@ public partial class MainWindow
         Save();
     }
 
+    /// <summary>The card's Edit.</summary>
+    private void OnEditRemapClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is RemapItemViewModel item)
+            EditRemap(item);
+    }
+
     private void OnRemapMoreClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement button || button.Tag is not RemapItemViewModel item)
             return;
 
-        var edit = new MenuItem { Header = "Edit", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Edit24 } };
-        edit.Click += (_, _) => EditRemap(item);
-        var duplicate = new MenuItem { Header = "Duplicate", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Copy24 } };
+        var duplicate = new MenuItem { Header = "Duplicate", Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
         duplicate.Click += (_, _) => DuplicateRemap(item);
-        var delete = new MenuItem { Header = "Delete", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Delete24 } };
+        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteRemap(item);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
-        menu.Items.Add(edit);
         menu.Items.Add(duplicate);
         menu.Items.Add(new Separator());
         menu.Items.Add(delete);
@@ -1403,25 +1549,25 @@ public partial class MainWindow
 
     private async void DeleteRemap(RemapItemViewModel item)
     {
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Delete remap",
             Content = $"Delete the remap {item.SourceText} → {item.TargetText}?",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        UiMessageBoxResult result;
+        ContentDialogResult result;
         _engine.HotkeysSuspended = true;
         try
         {
-            result = await confirm.ShowDialogAsync();
+            result = await confirm.ShowAsync(this);
         }
         finally
         {
             _engine.HotkeysSuspended = false;
         }
-        if (result != UiMessageBoxResult.Primary)
+        if (result != ContentDialogResult.Primary)
             return;
         _settings.Remaps.Remove(item.Definition);
         _remapItems.Remove(item);
@@ -1435,7 +1581,7 @@ public partial class MainWindow
     {
         if (_initializing)
             return;
-        _settings.CloseToTray = CloseToTraySwitch.IsChecked == true;
+        _settings.CloseToTray = CloseToTraySwitch.IsOn;
         Save();
     }
 
@@ -1443,7 +1589,7 @@ public partial class MainWindow
     {
         if (_initializing)
             return;
-        _settings.StartWithWindows = StartWithWindowsSwitch.IsChecked == true;
+        _settings.StartWithWindows = StartWithWindowsSwitch.IsOn;
         StartupService.Apply(_settings.StartWithWindows);
         Save();
     }
@@ -1481,16 +1627,16 @@ public partial class MainWindow
         if (dialog.ShowDialog(this) != true)
             return;
 
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Import",
             Content = "Replace all your loops, macros, remaps and settings with the ones in this file? " +
                       "Your current data is saved first as a backup in the data folder. PuppyMacro restarts after the import.",
             PrimaryButtonText = "Import and restart",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        if (await confirm.ShowDialogAsync() != UiMessageBoxResult.Primary)
+        if (await confirm.ShowAsync(this) != ContentDialogResult.Primary)
             return;
 
         try

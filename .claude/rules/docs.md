@@ -29,7 +29,9 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
 ## README
 
 `README.md` holds only: the links (website, download, user guide), a short description of
-the app, the download, "Development: see `.claude/rules/`" and the license. Everything for
+the app, the download, "Development: see `.claude/rules/`" and the license with the list of
+third-party components the app ships (NuGet packages in `PuppyMacro/PuppyMacro.csproj` and their
+dependencies, files in `PuppyMacro/Assets/`), with the attribution their licenses ask for. Everything for
 developers goes in `.claude/rules/`; how to use the app goes in the user guide.
 
 ## Every user-visible change updates the documentation
@@ -57,8 +59,9 @@ before capturing (`testing.md`).
 - Use the exact UI texts from the XAML (button, setting and window names).
 - Screenshots: from the development build with the sample data (`make dev`), capturing only
   PuppyMacro's window. Never show personal data, user names or other windows.
-  `make screenshots` retakes the editor screenshots (`loop-editor.png`, `macro-editor.png`)
-  this way (`scripts/screenshots.ps1`). It drives the UI: ask the contributor before running
-  it, like `make e2e`.
+  `make screenshots` retakes this way the guide's editor screenshots (`site/guide/img/`:
+  `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`) and the home
+  page's `site/assets/loops.png` (`scripts/screenshots.ps1`). It drives the UI: ask the
+  contributor before running it, like `make e2e`.
 - The download link is `https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe`:
   keep the Setup file name stable.

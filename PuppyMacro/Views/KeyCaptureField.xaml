@@ -1,0 +1,52 @@
+<UserControl
+    x:Class="PuppyMacro.Views.KeyCaptureField"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern">
+
+    <!-- The one field that asks the user for a key or a hotkey, on one line in three states:
+         nothing set: "Set hotkey"; waiting: a turning ring and "Press … (Esc cancels)";
+         set: the keys in the accent color (AccentKeyCapItem, App.xaml) in one standard control: a SplitButton
+         (click: change; its menu: Change, Clear) where the key can be removed, otherwise a Button (click: change). -->
+    <Grid>
+        <!-- Always the same height, whichever state it shows (Set, waiting, the keys), so nothing around it moves:
+             an invisible standard button holding an accent key (the tallest state), 0 wide, sets the height -->
+        <Button Width="0" Visibility="Hidden" Focusable="False" IsTabStop="False">
+            <ItemsControl ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" ItemsSource="A" />
+        </Button>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="SetButton" VerticalAlignment="Center" Click="OnSetClick" />
+
+            <StackPanel x:Name="WaitPanel" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                <ui:ProgressRing x:Name="WaitRing" Width="16" Height="16" Margin="0,0,8,0" IsActive="False" />
+                <TextBlock x:Name="PromptText" VerticalAlignment="Center" />
+            </StackPanel>
+
+            <Grid x:Name="ValuePanel" VerticalAlignment="Center" Visibility="Collapsed">
+                <ui:SplitButton x:Name="ValueSplit" Click="OnValueSplitClick">
+                    <ItemsControl x:Name="SplitCaps" Focusable="False"
+                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+                    <ui:SplitButton.Flyout>
+                        <ui:MenuFlyout Placement="Bottom">
+                            <MenuItem x:Name="ChangeItem" Click="OnSetClick">
+                                <MenuItem.Icon>
+                                    <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Edit_16_Regular}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="ClearItem" Click="OnClearClick">
+                                <MenuItem.Icon>
+                                    <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Dismiss_16_Regular}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ui:MenuFlyout>
+                    </ui:SplitButton.Flyout>
+                </ui:SplitButton>
+                <Button x:Name="ValueButton" Click="OnSetClick">
+                    <ItemsControl x:Name="ButtonCaps" Focusable="False"
+                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

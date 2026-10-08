@@ -25,6 +25,9 @@ internal static class ModifierTracker
     public static bool Shift => IsDown(KeyNames.VK_LSHIFT) || IsDown(KeyNames.VK_RSHIFT);
     public static bool Win => IsDown(KeyNames.VK_LWIN) || IsDown(KeyNames.VK_RWIN);
 
+    /// <summary>Ctrl, Alt, Shift or Win is held.</summary>
+    public static bool Any => Volatile.Read(ref _mask) != 0;
+
     /// <summary>Called by the hook for every real modifier event.</summary>
     public static void Update(int vk, bool isDown)
     {

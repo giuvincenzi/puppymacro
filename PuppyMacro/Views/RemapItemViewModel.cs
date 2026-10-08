@@ -20,8 +20,10 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     public RemapDefinition Definition { get; }
 
     public string SourceText => KeyNames.Get(Definition.SourceVk);
-    public List<string> TargetParts => KeyNames.Parts(Definition.Target);
     public string TargetText => KeyNames.Format(Definition.Target);
+    /// <summary>The title's keys, in the accent color: the source key, then the key or combination it sends.</summary>
+    public List<string> SourceParts => new() { SourceText };
+    public List<string> TargetParts => KeyNames.Parts(Definition.Target);
     public bool IsAllApps => Definition.AppExe == null;
     public bool IsSpecificApp => Definition.AppExe != null;
     public string ScopeText => Definition.AppExe ?? "All apps";
@@ -38,9 +40,13 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
                 return;
             Definition.Enabled = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(Status));
             EnabledChanged?.Invoke(this);
         }
     }
+
+    /// <summary>Shown next to the remap, as the loops' and macros' status.</summary>
+    public string Status => Definition.Enabled ? "Enabled" : "Disabled";
 
     public void Refresh() => OnPropertyChanged(string.Empty);
 

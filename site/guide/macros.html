@@ -1,8 +1,8 @@
-<p>A macro plays back a list of actions. Create one with <strong>Record macro</strong> or <strong>New macro</strong> on the Macros page.</p>
+<p>A macro plays back a list of actions. Create one with <strong>New macro</strong> or <strong>Record macro</strong> on the Macros page.</p>
 <h3>Record</h3>
 <ol>
-  <li>Select <strong>Record macro</strong>. Choose whether to <strong>Record mouse movement</strong>.</li>
-  <li>Select <strong>Start recording</strong> or press the Record hotkey (<kbd>F8</kbd> by default). PuppyMacro hides; after a 3-second countdown, switch to the window to record. Clicks during the countdown are not recorded.</li>
+  <li>Select <strong>Record macro</strong>. PuppyMacro hides and <strong>Ready to record</strong> appears. Choose whether to <strong>Record mouse movement</strong>.</li>
+  <li>Select <strong>Start recording</strong>: a 3, 2, 1 countdown appears in the middle of the screen while you switch to the window to record. Clicks during the countdown are not recorded; <strong>Cancel</strong> in the recording bar cancels the recording. Or switch to that window and press the Record hotkey (<kbd>F8</kbd> by default) to start right away.</li>
   <li>Do what you want to repeat, then press the Record hotkey again or select <strong>Stop</strong>. The macro opens in the editor.</li>
 </ol>
 <h3>Edit</h3>
@@ -11,28 +11,50 @@
   <figcaption>Every action has its own delay before it starts. Groups and names keep long macros readable.</figcaption>
 </figure>
 <ul>
-  <li><strong>Add action</strong> adds a step; <strong>Record actions</strong> records more steps and inserts them into the macro.</li>
-  <li>Actions: Press key, Key down, Key up, Click (single or double), Mouse button down, Mouse button up, Move to (instantly or smoothly, with <strong>Pick on screen</strong>), Scroll, Paste text, and recorded mouse paths.</li>
-  <li>Press key and Click can repeat a number of times, with a pause between.</li>
-  <li><strong>Test action</strong> (▶ on an action) plays that action once, and <strong>Test</strong> does the same in the action's window, also before you save it. PuppyMacro hides, the window that was behind it gets the focus, the action plays there (right away, without its delay, at ×1) and PuppyMacro comes back.</li>
-  <li>Every action can have a <strong>Name (optional)</strong>, set in its edit window. The list shows it in bold, before the description of the action.</li>
-  <li>New actions go after the selected action (in its group), after the selected group, or at the end.</li>
   <li>The list of actions is on the left and takes the whole height of the window; Repeat, Speed, Activation, Hotkey, Floating button and Sound are on the right. The window can be resized and PuppyMacro keeps the size for the next time.</li>
+  <li>Each action is one row: its icon, its name or description and its details, and on the right its delay, the wait before it starts. A group is a row with an arrow that opens or closes it.</li>
+  <li>The bar above the list: <strong>Add action</strong> adds a step (choose its type in the menu); <strong>Record</strong> records more steps and inserts them into the macro. The other commands work on the selected actions: <strong>Test</strong>, <strong>Edit</strong>, <strong>Copy</strong>, <strong>Paste</strong>, <strong>Duplicate</strong>, <strong>Group</strong>, <strong>Delete</strong>, and in <strong>⋯</strong> <strong>Rename group</strong>, <strong>Ungroup</strong> and <strong>Shortcuts</strong>. Right-click a row for the same commands.</li>
+  <li>The button at the right end of the bar switches the list between normal and compact rows; its arrow has <strong>Normal</strong> and <strong>Compact</strong>.</li>
+  <li>Actions: Press key, Key down, Key up, Click (single or double), Mouse button down, Mouse button up, Move to (instantly or smoothly, with <strong>Pick on screen</strong>), Scroll, Paste text, and recorded mouse paths (Move path).</li>
+  <li>Press key and Click can repeat a number of times, with a pause between.</li>
+  <li><strong>Edit</strong>, or a double-click on the action, opens its window. A recorded Move path has no window: Edit asks only for its delay.</li>
+  <li><strong>Test</strong> plays the selected action once, and <strong>Test</strong> in the action's window does the same, also before you save it. PuppyMacro hides, the window that was behind it gets the focus, the action plays there (right away, without its delay, at ×1) and PuppyMacro comes back.</li>
+  <li>Every action can have a <strong>Name (optional)</strong>, set in its window. The list shows it in bold, before the description of the action.</li>
+  <li>New actions go after the selected action (in its group), after the selected group, or at the end. The text under the bar says what is selected and where new actions go.</li>
   <li><strong>Repeat</strong>: Once, Loop or N times. <strong>Speed</strong>: from ×0.25 to ×4.</li>
-  <li><strong>Activation</strong>, <strong>Hotkey</strong>, <strong>Floating button</strong> and <strong>Sound</strong> work as for loops. Without a hotkey, start the macro with <strong>Play</strong>.</li>
+  <li><strong>Activation</strong>, <strong>Hotkey</strong>, <strong>Floating button</strong> and <strong>Sound</strong> work as for <a href="loops.html">loops</a>. Without a hotkey, start the macro with <strong>Play</strong> (▶) on its card or from the overlay panel.</li>
 </ul>
 <h3>Select, move and copy actions</h3>
 <ul>
-  <li>Click an action to select it. <kbd>Ctrl</kbd>+click and <kbd>Shift</kbd>+click select more, <kbd>Ctrl</kbd>+<kbd>A</kbd> selects them all. Selecting a group's header selects the whole group.</li>
-  <li>Hover the blue <strong>i</strong> next to the text of the bar above the list to see these shortcuts.</li>
-  <li>The bar above the list works on the selection: <strong>Group</strong> (<kbd>Ctrl</kbd>+<kbd>G</kbd>), <strong>Duplicate</strong> (<kbd>Ctrl</kbd>+<kbd>D</kbd>), <strong>Copy</strong> (<kbd>Ctrl</kbd>+<kbd>C</kbd>) and <strong>Delete</strong> (<kbd>Delete</kbd>). After a copy, <strong>Paste</strong> (<kbd>Ctrl</kbd>+<kbd>V</kbd>) inserts the actions where new actions go, also in another macro, until PuppyMacro closes.</li>
-  <li>Drag the selected actions to move them. The blue line shows where they go: indented, they go into that group; full width, they go outside groups. Dropping on the top half of a group's header puts them before the group, on the bottom half into the group, at its start (at its end when the group is collapsed). Below the last action, they go to the end of the macro.</li>
-  <li><kbd>Alt</kbd>+<kbd>Up</kbd> / <kbd>Alt</kbd>+<kbd>Down</kbd> move the selection one step. At the edge of a group, the actions leave it or enter it; a collapsed group is skipped.</li>
+  <li>Click an action to select it. <kbd>Ctrl</kbd>+click and <kbd>Shift</kbd>+click select more, <kbd>Ctrl</kbd>+<kbd>A</kbd> selects them all. Selecting a group's row selects the whole group.</li>
+  <li><strong>Shortcuts</strong>, in <strong>⋯</strong>, lists these shortcuts.</li>
+  <li>On the selection: <strong>Group</strong> (<kbd>Ctrl</kbd>+<kbd>G</kbd>), <strong>Duplicate</strong> (<kbd>Ctrl</kbd>+<kbd>D</kbd>), <strong>Copy</strong> (<kbd>Ctrl</kbd>+<kbd>C</kbd>) and <strong>Delete</strong> (<kbd>Delete</kbd>). After a copy, <strong>Paste</strong> (<kbd>Ctrl</kbd>+<kbd>V</kbd>) inserts the actions where new actions go, also in another macro, until PuppyMacro closes.</li>
+  <li>Drag the selected actions to move them. A line in the accent color shows where they go. Dropped on an action, they go before or after it, in its group if it has one. Dropped on the top half of a group's row they go before the group, on the bottom half into the group, at its start (at its end when the group is closed). Below the last row, they go to the end of the macro.</li>
+  <li><kbd>Alt</kbd>+<kbd>Up</kbd> / <kbd>Alt</kbd>+<kbd>Down</kbd> move the selection one step. At the edge of a group, the actions leave it or enter it; a closed group is skipped.</li>
 </ul>
 <h3>Groups</h3>
 <ul>
-  <li>Select actions and choose <strong>Group</strong>, then give the group a name. Actions from different places are put together where the first one was.</li>
-  <li>The group's header shows its name, its actions (for example #4–8), how many they are and how long they take. The arrow collapses or expands the group.</li>
-  <li>On the header: <strong>Rename group</strong>, <strong>Duplicate group</strong>, <strong>Ungroup</strong> (the actions stay where they are) and <strong>Remove group</strong> (removes the group and its actions). Drag the header to move the whole group.</li>
+  <li>Select actions and choose <strong>Group</strong>, then give the group a name. Actions from different places are put together where the first one was. <strong>Group</strong> is off when only a group is selected.</li>
+  <li>The group's row shows its name, its actions (for example #4–8), how many they are and how long they take. The arrow, or a double-click on the row, opens or closes the group.</li>
+  <li>With a group selected: <strong>Rename group</strong> (or <strong>Edit</strong>) changes its name, <strong>Ungroup</strong> removes the group and keeps its actions where they are, <strong>Duplicate</strong>, <strong>Copy</strong> and <strong>Delete</strong> work on the group and all its actions. Drag the group's row to move the whole group.</li>
   <li>A group cannot go into another group. Groups only organize the list: the macro plays its actions in order, grouped or not.</li>
+</ul>
+<h3>The Macros page</h3>
+<p>Each macro is a card like a loop's (see <a href="loops.html">Loops &gt; The Loops page</a>): its state, how many actions it has, how long it takes and how it repeats, how it starts, then <strong>Play</strong> / <strong>Stop</strong>, <strong>Edit</strong>, the switch and <strong>More options</strong> (<strong>Move up</strong>, <strong>Move down</strong>, <strong>Delete</strong>). Drag macros to reorder them; search and filter as on the Loops page.</p>
+<h3>Code view</h3>
+<figure class="shot">
+  <img src="img/macro-editor-code.png" alt="The Edit macro window in Code view, with the macro's JSON and the Problems panel" loading="lazy">
+  <figcaption>The same macro as its file: every setting, every action, every group.</figcaption>
+</figure>
+<p><strong>Code view</strong>, at the top of the editor, shows the macro exactly as PuppyMacro saves it: the JSON of its file, with name, actions, groups, repeat, speed, activation, hotkey, floating button and sound. <strong>Form view</strong> goes back to the list and the fields.</p>
+<p>The windows of one action, of a loop and of a remap have the same <strong>Form view</strong> and <strong>Code view</strong>, for that item only: the action as it is in the macro's file, the loop or the remap as in <code>settings.json</code>.</p>
+<ul>
+  <li>It is a code editor like the one of VS Code: colors, line numbers, find (<kbd>Ctrl</kbd>+<kbd>F</kbd>), undo and redo, several cursors.</li>
+  <li><kbd>Ctrl</kbd>+<kbd>Space</kbd> suggests what can go where, with a description: the properties of an action, the action types, the sounds, the speeds.</li>
+  <li><strong>Format</strong> (or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>) lays the code out again.</li>
+  <li>Mistakes are underlined in red as you type, and listed in <strong>Problems</strong> below the code with their line and column: broken JSON, unknown properties, values that are not allowed, numbers out of range, a group whose actions are not next to each other, a hotkey that is already used. Click a problem (or select it with the arrow keys and press <kbd>Enter</kbd>) to go to its line; in the code, <kbd>F8</kbd> and <kbd>Shift</kbd>+<kbd>F8</kbd> go to the next and previous problem.</li>
+  <li>While there are problems, <strong>Save</strong> (and <strong>Test</strong> for an action) and <strong>Form view</strong> are off. In the Code view, <strong>Cancel</strong> becomes <strong>Discard changes</strong>: it drops the changes made in the code and goes back to Form view as it was. In Form view, <strong>Cancel</strong> closes the window without saving.</li>
+  <li>Everything can be changed except the <strong>Id</strong> of a macro, a loop or a remap. If you delete it, <kbd>Ctrl</kbd>+<kbd>Space</kbd> on its value suggests it again.</li>
+  <li>In an action's code, <strong>GroupId</strong> can move the action into the group of the action before or after it, or out of its group (null), as long as every group's actions stay next to each other. <kbd>Ctrl</kbd>+<kbd>Space</kbd> lists the groups it can be in, by name.</li>
+  <li>Keys and mouse buttons are virtual-key codes (65 is A, 112 is F1; 1 is the left button). The scroll wheel in a hotkey is 256 up, 257 down, 258 left, 259 right.</li>
 </ul>

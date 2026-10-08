@@ -18,6 +18,19 @@ internal static class AppPaths
 
     public static string MacrosFolder => Path.Combine(DataFolder, "macros");
 
+    /// <summary>
+    /// The Code view's WebView2 data (cache, not user data): %LocalAppData%\PuppyMacro\WebView2, next
+    /// to Velopack's "current" folder, so it survives updates and goes away on uninstall. The
+    /// development build uses %LocalAppData%\PuppyMacro Dev\WebView2.
+    /// </summary>
+    public static string WebViewFolder { get; } = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        App.IsDevBuild ? "PuppyMacro Dev" : "PuppyMacro",
+        "WebView2");
+
+    /// <summary>The Code view's page and Monaco, copied next to the exe (Assets\CodeEditor, Assets\Monaco).</summary>
+    public static string WebAssetsFolder => Path.Combine(AppContext.BaseDirectory, "Assets");
+
     /// <summary>The PuppyMacro.exe to start (also when launched through dotnet.exe).</summary>
     public static string ExecutablePath
     {

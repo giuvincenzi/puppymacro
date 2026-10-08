@@ -1,0 +1,135 @@
+<UserControl
+    x:Class="PuppyMacro.Views.MacroShortcutsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf">
+
+    <!-- The macro editor's shortcuts, shown by Shortcuts in a ContentDialog: keys on the left, what they do on the right -->
+    <UserControl.Resources>
+        <Style x:Key="Section" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
+            <Setter Property="Margin" Value="0,12,0,4" />
+        </Style>
+        <Style x:Key="Keys" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Margin" Value="0,4,24,4" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="What" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,4" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="Plus" TargetType="TextBlock">
+            <Setter Property="Margin" Value="4,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+    </UserControl.Resources>
+
+    <ikw:SimpleStackPanel MaxWidth="440" Grid.IsSharedSizeScope="True">
+        <TextBlock Style="{StaticResource Section}" Margin="0,0,0,4" Text="Select" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Keys" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="+" />
+                <TextBlock VerticalAlignment="Center" Text="click" />
+            </StackPanel>
+            <TextBlock Grid.Column="1" Style="{StaticResource What}" Text="Add an action to the selection, or remove it" />
+            <StackPanel Grid.Row="1" Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Shift" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="+" />
+                <TextBlock VerticalAlignment="Center" Text="click" />
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource What}" Text="Select all the actions up to this one" />
+        </Grid>
+
+        <TextBlock Style="{StaticResource Section}" Text="Move" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Keys" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Style="{StaticResource Keys}">
+                <TextBlock VerticalAlignment="Center" Text="Drag" />
+            </StackPanel>
+            <TextBlock Grid.Column="1" Style="{StaticResource What}" Text="Move the selected actions, also into or out of a group" />
+            <StackPanel Grid.Row="1" Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="+" />
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="↑" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="/" />
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="↓" /></Border>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource What}" Text="Move the selected actions up or down" />
+        </Grid>
+
+        <TextBlock Style="{StaticResource Section}" Text="Edit" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Keys" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Style="{StaticResource Keys}">
+                <TextBlock VerticalAlignment="Center" Text="Double-click" />
+            </StackPanel>
+            <TextBlock Grid.Column="1" Style="{StaticResource What}" Text="Edit an action; open or close a group" />
+            <StackPanel Grid.Row="1" Style="{StaticResource Keys}">
+                <TextBlock VerticalAlignment="Center" Text="Right-click" />
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource What}" Text="The commands for the selected actions" />
+            <StackPanel Grid.Row="2" Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="+" />
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="G" /></Border>
+            </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource What}" Text="Put the selected actions in a group" />
+            <StackPanel Grid.Row="3" Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="+" />
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="D" /></Border>
+            </StackPanel>
+            <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource What}" Text="Duplicate the selected actions" />
+            <StackPanel Grid.Row="4" Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="+" />
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="C" /></Border>
+            </StackPanel>
+            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource What}" Text="Copy the selected actions, also to paste them in another macro" />
+            <StackPanel Grid.Row="5" Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <TextBlock Style="{StaticResource Plus}" Text="+" />
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="V" /></Border>
+            </StackPanel>
+            <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource What}" Text="Paste them where new actions go" />
+            <StackPanel Grid.Row="6" Style="{StaticResource Keys}">
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Delete" /></Border>
+            </StackPanel>
+            <TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource What}" Text="Delete the selected actions" />
+        </Grid>
+
+        <TextBlock Margin="0,16,0,0" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="New actions go after the selected action or group, or at the end. Test plays the selected action once in the window behind PuppyMacro." />
+    </ikw:SimpleStackPanel>
+</UserControl>

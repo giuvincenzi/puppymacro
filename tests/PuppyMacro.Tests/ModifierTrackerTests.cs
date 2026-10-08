@@ -4,7 +4,9 @@ using Xunit;
 
 namespace PuppyMacro.Tests;
 
-// ModifierTracker is static: every test starts and ends from "nothing held".
+// ModifierTracker is static: every test starts and ends from "nothing held", and the classes that
+// use it share a collection so they never run at the same time.
+[Collection(nameof(ModifierTracker))]
 public class ModifierTrackerTests : IDisposable
 {
     private const int LCtrl = 0xA2, RCtrl = 0xA3, LAlt = 0xA4, RShift = 0xA1, LWin = 0x5B, KeyA = 0x41;

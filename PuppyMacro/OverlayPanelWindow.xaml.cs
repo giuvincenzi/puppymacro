@@ -7,12 +7,12 @@ using PuppyMacro.Views;
 namespace PuppyMacro;
 
 /// <summary>
-/// Borderless, always-on-top, click-through window that shows the game mode panel.
-/// It never takes focus away from the game.
+/// Borderless, always-on-top, click-through window that shows the overlay panel.
+/// It never takes focus away from the fullscreen app.
 /// </summary>
-public partial class GameModeWindow
+public partial class OverlayPanelWindow
 {
-    internal GameModeWindow(IList loops, IList macros)
+    internal OverlayPanelWindow(IList loops, IList macros)
     {
         InitializeComponent();
         PanelView.Bind(loops, macros);
@@ -22,6 +22,8 @@ public partial class GameModeWindow
     public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey) => PanelView.SetHotkeyLabels(exitHotkey, stopAllHotkey);
 
     public void SetBackgroundOpacity(int percent) => PanelView.SetBackgroundOpacity(percent);
+
+    public void SetState(bool anyRunning, bool clickable) => PanelView.SetState(anyRunning, clickable);
 
     public void RefreshList() => PanelView.RefreshList();
 

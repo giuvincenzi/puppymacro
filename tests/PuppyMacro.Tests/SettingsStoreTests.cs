@@ -28,9 +28,10 @@ public class SettingsStoreTests : IDisposable
 
         Assert.Null(warning);
         Assert.True(File.Exists(SettingsPath));
-        Assert.Equal(AppSettings.DefaultStopAllVk, settings.StopAllHotkey!.Vk);
-        Assert.Equal(AppSettings.DefaultGameModeVk, settings.GameModeHotkey!.Vk);
+        Assert.True(settings.StopAllHotkey!.SameAs(new HotkeyBinding { Vk = 0x53, Alt = true, Shift = true }));      // Alt+Shift+S
+        Assert.True(settings.OverlayModeHotkey!.SameAs(new HotkeyBinding { Vk = 0x57, Alt = true, Shift = true }));  // Alt+Shift+W
         Assert.Equal(AppSettings.DefaultRecordVk, settings.RecordHotkey!.Vk);
+        Assert.True(settings.ShowOverlayPanel);
         Assert.Single(settings.Loops);
     }
 
@@ -42,7 +43,7 @@ public class SettingsStoreTests : IDisposable
         settings.Theme = AppTheme.Light;
         settings.SoundVolume = 35;
         settings.CheckForUpdates = false;
-        settings.Remaps.Add(new RemapDefinition { SourceVk = 0x14, Target = HotkeyBinding.FromKey(0x1B), AppExe = "game.exe" });
+        settings.Remaps.Add(new RemapDefinition { SourceVk = 0x14, Target = HotkeyBinding.FromKey(0x1B), AppExe = "app.exe" });
 
         Assert.True(store.TrySave(settings, out _));
         AppSettings loaded = store.Load(out string? warning);
@@ -54,7 +55,7 @@ public class SettingsStoreTests : IDisposable
         RemapDefinition remap = Assert.Single(loaded.Remaps);
         Assert.Equal(0x14, remap.SourceVk);
         Assert.Equal(0x1B, remap.Target!.Vk);
-        Assert.Equal("game.exe", remap.AppExe);
+        Assert.Equal("app.exe", remap.AppExe);
     }
 
     [Fact]
@@ -69,8 +70,9 @@ public class SettingsStoreTests : IDisposable
             """, out _);
 
         Assert.Equal(121, settings.StopAllHotkey!.Vk);
-        Assert.Equal(122, settings.GameModeHotkey!.Vk);
+        Assert.Equal(122, settings.OverlayModeHotkey!.Vk);
         Assert.Null(settings.StopAllHotkeyVk);
+        Assert.Null(settings.LegacyOverlayModeHotkeyVk);
         LoopDefinition loop = Assert.Single(settings.Loops);
         LoopAction action = Assert.Single(loop.Actions);
         Assert.Equal(ActionType.Key, action.Type);
@@ -83,7 +85,7 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
-    public void Files_before_schema_3_turn_on_clicking_in_the_game_mode_panel()
+    public void Files_before_schema_3_turn_on_clicking_in_the_overlay_panel()
     {
         AppSettings settings = LoadJson("""{ "SchemaVersion": 2, "ClickItemsInPanel": false }""", out _);
 
@@ -92,7 +94,7 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
-    public void Newer_files_keep_clicking_in_the_game_mode_panel_off()
+    public void Newer_files_keep_clicking_in_the_overlay_panel_off()
     {
         AppSettings settings = LoadJson($$"""{ "SchemaVersion": {{AppSettings.CurrentSchemaVersion}}, "ClickItemsInPanel": false }""", out _);
 
@@ -122,6 +124,20 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void The_main_window_size_is_kept_and_invalid_sizes_are_dropped()
+    {
+        AppSettings kept = LoadJson("""{ "WindowWidth": 1600, "WindowHeight": 1000 }""", out _);
+        AppSettings dropped = LoadJson("""{ "WindowWidth": -1, "WindowHeight": 1000 }""", out _);
+        AppSettings half = LoadJson("""{ "WindowWidth": 1600 }""", out _);
+
+        Assert.Equal(1600, kept.WindowWidth);
+        Assert.Equal(1000, kept.WindowHeight);
+        Assert.Null(dropped.WindowWidth);
+        Assert.Null(dropped.WindowHeight);
+        Assert.Null(half.WindowWidth);
+    }
+
+    [Fact]
     public void Files_before_schema_5_drop_the_width_of_the_one_column_macro_editor()
     {
         AppSettings settings = LoadJson("""{ "SchemaVersion": 4, "MacroEditorWidth": 720, "MacroEditorHeight": 1000 }""", out _);
@@ -136,13 +152,13 @@ public class SettingsStoreTests : IDisposable
     {
         AppSettings settings = LoadJson("""
             {
-              "GameModeOpacity": 5,
+              "OverlayPanelOpacity": 5,
               "SoundVolume": 150,
               "Loops": [ { "Name": "Fast", "Actions": [ { "KeyVk": 65, "IntervalValue": 1, "IntervalUnit": "Milliseconds" } ] } ]
             }
             """, out _);
 
-        Assert.Equal(AppSettings.MinGameModeOpacity, settings.GameModeOpacity);
+        Assert.Equal(AppSettings.MinOpacity, settings.OverlayPanelOpacity);
         Assert.Equal(100, settings.SoundVolume);
         Assert.Equal(LoopAction.MinIntervalMs, settings.Loops[0].Actions[0].IntervalMs);
     }
@@ -184,7 +200,72 @@ public class SettingsStoreTests : IDisposable
         Assert.NotNull(warning);
         Assert.Contains("settings.invalid.json", warning);
         Assert.Equal("{ not json", File.ReadAllText(_folder.File("settings.invalid.json")));
-        Assert.Equal(AppSettings.DefaultStopAllVk, settings.StopAllHotkey!.Vk);
+        Assert.Equal(0x53, settings.StopAllHotkey!.Vk);
         Assert.Single(settings.Loops);
+    }
+
+    [Fact]
+    public void Files_before_schema_6_move_the_old_settings_names_to_the_overlay()
+    {
+        AppSettings settings = LoadJson("""
+            {
+              "SchemaVersion": 5,
+              "StopAllHotkey": { "Vk": 121 },
+              "GameModeHotkey": { "Vk": 122, "Ctrl": true },
+              "GameModeOpacity": 60,
+              "GameModeX": 300,
+              "GameModeY": 40,
+              "ExpandedSettingsGroups": [ "Hotkeys", "GameModePanel" ],
+              "Loops": [
+                { "Name": "With button", "FloatingButton": { "Enabled": true, "Label": "WB" } },
+                { "Name": "Without button" }
+              ]
+            }
+            """, out _);
+
+        // Existing users keep their hotkeys: F10 and Ctrl+F11, not the new defaults.
+        Assert.True(settings.StopAllHotkey!.SameAs(HotkeyBinding.FromKey(121)));
+        Assert.True(settings.OverlayModeHotkey!.SameAs(new HotkeyBinding { Vk = 122, Ctrl = true }));
+        Assert.Equal(60, settings.OverlayPanelOpacity);
+        Assert.Equal(300, settings.OverlayPanelX);
+        Assert.Equal(40, settings.OverlayPanelY);
+        Assert.True(settings.ShowOverlayPanel);
+        Assert.Equal(new[] { "Hotkeys", "Overlay" }, settings.ExpandedSettingsGroups);
+        // Floating buttons keep the opacity they had: the panel's.
+        Assert.All(settings.Loops, loop => Assert.Equal(60, loop.FloatingButton.Opacity));
+        Assert.Equal(5, settings.LoadedSchemaVersion);
+        Assert.Equal(AppSettings.CurrentSchemaVersion, settings.SchemaVersion);
+
+        string saved = File.ReadAllText(SettingsPath);
+        Assert.DoesNotContain("GameMode", saved);
+        Assert.Contains("\"OverlayModeHotkey\"", saved);
+    }
+
+    [Fact]
+    public void Current_files_keep_floating_buttons_without_opacity_at_the_default()
+    {
+        AppSettings settings = LoadJson($$"""
+            {
+              "SchemaVersion": {{AppSettings.CurrentSchemaVersion}},
+              "OverlayPanelOpacity": 40,
+              "ShowOverlayPanel": false,
+              "Loops": [ { "Name": "New", "FloatingButton": { "Enabled": true } } ]
+            }
+            """, out _);
+
+        Assert.False(settings.ShowOverlayPanel);
+        Assert.Null(settings.Loops[0].FloatingButton.Opacity);
+        Assert.Equal(FloatingButton.DefaultOpacity, settings.Loops[0].FloatingButton.EffectiveOpacity);
+    }
+
+    [Fact]
+    public void Floating_button_opacity_is_clamped()
+    {
+        AppSettings settings = LoadJson("""
+            { "Loops": [ { "Name": "A", "FloatingButton": { "Opacity": 3 } }, { "Name": "B", "FloatingButton": { "Opacity": 300 } } ] }
+            """, out _);
+
+        Assert.Equal(AppSettings.MinOpacity, settings.Loops[0].FloatingButton.Opacity);
+        Assert.Equal(AppSettings.MaxOpacity, settings.Loops[1].FloatingButton.Opacity);
     }
 }

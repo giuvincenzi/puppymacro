@@ -5,7 +5,7 @@
     FontFamily="Segoe UI Variable Text, Segoe UI"
     Foreground="White">
 
-    <!-- Fixed dark look, like the game mode panel. The margin leaves room for the running halo. -->
+    <!-- Fixed dark look, like the overlay panel. The margin leaves room for the running halo. -->
     <Grid Margin="4">
         <Ellipse x:Name="Halo" Margin="-4,-4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
                  Fill="#386CCB5F" Visibility="Collapsed" />

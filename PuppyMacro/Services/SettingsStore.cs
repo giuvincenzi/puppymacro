@@ -7,7 +7,7 @@ using PuppyMacro.Models;
 
 namespace PuppyMacro.Services;
 
-/// <summary>Reads and writes settings.json next to the exe.</summary>
+/// <summary>Reads and writes settings.json (the path given, AppPaths.SettingsFile in the data folder).</summary>
 internal sealed class SettingsStore
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -75,14 +75,30 @@ internal sealed class SettingsStore
     private static void Sanitize(AppSettings settings)
     {
         settings.Loops ??= new();
+        settings.LoadedSchemaVersion = settings.SchemaVersion;
+
+        // Schema 6: "game mode" became "overlay mode"; the settings were saved under their old names.
+        if (settings.LegacyOverlayModeHotkey is { IsSet: true } && settings.OverlayModeHotkey is not { IsSet: true })
+            settings.OverlayModeHotkey = settings.LegacyOverlayModeHotkey;
+        if (settings.LegacyOverlayPanelOpacity is int legacyOpacity)
+            settings.OverlayPanelOpacity = legacyOpacity;
+        if (settings.LegacyOverlayPanelX is double legacyX && settings.LegacyOverlayPanelY is double legacyY)
+        {
+            settings.OverlayPanelX = legacyX;
+            settings.OverlayPanelY = legacyY;
+        }
+        settings.LegacyOverlayModeHotkey = null;
+        settings.LegacyOverlayPanelOpacity = null;
+        settings.LegacyOverlayPanelX = null;
+        settings.LegacyOverlayPanelY = null;
 
         // v1.0 stored global hotkeys as plain key codes.
         if (settings.StopAllHotkey == null || !settings.StopAllHotkey.IsSet)
-            settings.StopAllHotkey = HotkeyBinding.FromKey(settings.StopAllHotkeyVk is > 0 and int stopVk
-                ? stopVk : AppSettings.DefaultStopAllVk);
-        if (settings.GameModeHotkey == null || !settings.GameModeHotkey.IsSet)
-            settings.GameModeHotkey = HotkeyBinding.FromKey(settings.GameModeHotkeyVk is > 0 and int gameVk
-                ? gameVk : AppSettings.DefaultGameModeVk);
+            settings.StopAllHotkey = settings.StopAllHotkeyVk is > 0 and int stopVk
+                ? HotkeyBinding.FromKey(stopVk) : AppSettings.DefaultStopAllHotkey();
+        if (settings.OverlayModeHotkey == null || !settings.OverlayModeHotkey.IsSet)
+            settings.OverlayModeHotkey = settings.LegacyOverlayModeHotkeyVk is > 0 and int legacyVk
+                ? HotkeyBinding.FromKey(legacyVk) : AppSettings.DefaultOverlayModeHotkey();
         if (settings.RecordHotkey == null || !settings.RecordHotkey.IsSet)
             settings.RecordHotkey = HotkeyBinding.FromKey(AppSettings.DefaultRecordVk);
         settings.MacroOrder ??= new();
@@ -90,8 +106,10 @@ internal sealed class SettingsStore
             settings.MacroEditorWidth = null;
         if (settings.MacroEditorHeight is not (> 0 and < 100_000))
             settings.MacroEditorHeight = null;
+        if (settings.WindowWidth is not (> 0 and < 100_000) || settings.WindowHeight is not (> 0 and < 100_000))
+            settings.WindowWidth = settings.WindowHeight = null;
         settings.StopAllHotkeyVk = null;
-        settings.GameModeHotkeyVk = null;
+        settings.LegacyOverlayModeHotkeyVk = null;
 
         foreach (var loop in settings.Loops)
         {
@@ -131,16 +149,24 @@ internal sealed class SettingsStore
             }
         }
 
-        settings.GameModeOpacity = Math.Clamp(settings.GameModeOpacity,
-            AppSettings.MinGameModeOpacity, AppSettings.MaxGameModeOpacity);
+        settings.OverlayPanelOpacity = Math.Clamp(settings.OverlayPanelOpacity,
+            AppSettings.MinOpacity, AppSettings.MaxOpacity);
 
-        // v1.5: clicking items in the game mode panel is on by default; turn it on once for older files.
+        // v1.5: clicking items in the overlay panel is on by default; turn it on once for older files.
         if (settings.SchemaVersion < 3)
             settings.ClickItemsInPanel = true;
 
         // Schema 5: the macro editor has two columns and opens wider; a width kept for the one-column editor is dropped.
         if (settings.SchemaVersion < 5)
             settings.MacroEditorWidth = null;
+
+        // Schema 6: each floating button has its own opacity; existing ones keep the panel's,
+        // which they used before. Macro files are filled by MacroLibrary.FillButtonOpacity.
+        if (settings.SchemaVersion < 6)
+        {
+            foreach (var loop in settings.Loops)
+                loop.FloatingButton.Opacity ??= settings.OverlayPanelOpacity;
+        }
 
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
         settings.Remaps ??= new();
@@ -154,6 +180,8 @@ internal sealed class SettingsStore
                 remap.AppExe = null;
         }
         settings.ExpandedSettingsGroups ??= new();
+        if (settings.ExpandedSettingsGroups.Remove("GameModePanel"))
+            settings.ExpandedSettingsGroups.Add("Overlay");
         foreach (var loop in settings.Loops)
         {
             if (!SoundService.Names.Contains(loop.SoundName))

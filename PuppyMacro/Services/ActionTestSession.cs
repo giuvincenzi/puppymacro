@@ -42,6 +42,8 @@ internal static class ActionTestSession
 
         foreach (var (window, _, _) in moved)
             window.Left = SystemParameters.VirtualScreenLeft - window.ActualWidth - 200;
+        // The main window is hidden too (it already is while an editor is open: then it stays hidden).
+        bool mainWasVisible = main?.IsVisible == true;
         main?.Hide();
         ActivateWindowBehind();
 
@@ -51,7 +53,8 @@ internal static class ActionTestSession
             timer.Stop();
             engine.TestMacroAction(action, () =>
             {
-                main?.Show();
+                if (mainWasVisible)
+                    main?.Show();
                 foreach (var (window, left, top) in moved)
                 {
                     window.Left = left;

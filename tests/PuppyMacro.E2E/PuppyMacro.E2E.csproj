@@ -3,18 +3,25 @@
   <!-- End-to-end tests: start the development build and drive its UI with FlaUI. make e2e -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.18362.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <IsPackable>false</IsPackable>
     <RootNamespace>PuppyMacro.E2E</RootNamespace>
-    <!-- Screen.WorkingArea: the screen without the taskbar -->
+    <!-- Screen.WorkingArea and the target window (TargetWindow) -->
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="xunit.v3.mtp-v2" Version="4.0.1" />
     <PackageReference Include="FlaUI.UIA3" Version="5.0.0" />
+  </ItemGroup>
+
+  <!-- The app's models, to write the data a test starts from (AppSession with a seed) -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\PuppyMacro\PuppyMacro.csproj" />
   </ItemGroup>
 
 </Project>

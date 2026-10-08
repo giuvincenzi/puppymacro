@@ -18,8 +18,8 @@
   - `make test`: unit tests; `make e2e`: end-to-end tests (see `testing.md`).
   - `make docs`, `make docs-serve`: website preview in `site-preview/`, served locally by
     `docs-serve` (see `docs.md`).
-  - `make screenshots`: `make dev`, then retakes the guide's editor screenshots (drives the
-    UI, see `docs.md`).
+  - `make screenshots`: `make dev`, then retakes the guide's editor screenshots and the home
+    page's screenshot (drives the UI, see `docs.md`).
   - `make release-pr`, `make release`: see Releases below.
   - `make clean`.
 - From WSL the Makefile calls Windows PowerShell (`powershell.exe`), so builds use the Windows
@@ -33,12 +33,13 @@
 - **Prod** (`make build`, `make release`): built in Release and packaged with Velopack.
   `PuppyMacro-win-Setup.exe` installs PuppyMacro for the current user in
   `%LocalAppData%\PuppyMacro` (no administrator rights), with Start menu and desktop shortcuts
-  and an entry in Settings > Apps > Installed apps, and installs the .NET 10 Desktop Runtime if
-  missing. The installed app updates itself from GitHub Releases (`updates.md`).
+  and an entry in Settings > Apps > Installed apps, and installs the .NET 10 Desktop Runtime and
+  the Microsoft Edge WebView2 Runtime if missing. The installed app updates itself from GitHub Releases (`updates.md`).
 - Debug builds (`App.IsDevBuild`, `#if DEBUG`) show the orange "Development build" strip and
   "DEV" in the title and tray tooltip, use their own data folder `%AppData%\PuppyMacro Dev`
-  (`AppPaths`), fill it with disabled samples when empty (`Services/DevSampleData.cs`, Debug
-  only), never touch the Start with Windows Run entry and skip the pre-1.6 data migration.
+  (`AppPaths`; WebView2 data in `%LocalAppData%\PuppyMacro Dev`) and fill it with disabled
+  samples when empty (`Services/DevSampleData.cs`, Debug only), enable the Code view's DevTools,
+  never touch the Start with Windows Run entry and skip the pre-1.6 data migration.
   Release builds never do any of this. Keep the samples working when models change.
 - Smart App Control (Windows 11) blocks unsigned files it has no reputation for, with no "Run
   anyway". Every build is a new file, so `make dev` builds can be blocked ("Part of this app

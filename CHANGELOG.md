@@ -2,6 +2,68 @@
 
 ## Unreleased
 
+### Added
+- **Code view**, next to **Form view**, in the macro, action, loop and remap editors: the item's
+  JSON, as it is saved, in a code editor like VS Code's, with Ctrl+Space suggestions and
+  descriptions, **Format**, errors underlined as you type and listed in a **Problems** panel
+  (click one to go to its line). Save and Form view stay off while there are problems;
+  **Discard changes** drops the code's changes and goes back to Form view. Ids cannot be changed
+  (Ctrl+Space suggests them again); an action's GroupId can move it to a group next to it. The
+  installer adds the Microsoft Edge WebView2 Runtime when Windows does not have it.
+- Overlay: **Show the overlay panel** (Settings > Overlay) can be turned off, so overlay mode
+  shows only the floating buttons.
+- Every floating button has its own **Opacity**, in the loop and macro editors. Existing buttons
+  keep the opacity of the panel they had before.
+- Hotkeys: with Ctrl, Alt, Shift or Win held, left and right click, the scroll wheel (up, down,
+  left, right) and Esc can be hotkeys too. A scroll wheel hotkey counts each notch as one press
+  and works with Toggle only.
+- Overlay panel: **Stop all** at the bottom (with its hotkey, red while something runs), and at
+  the top right an exit button and a move button: press and drag it to move the panel, and the
+  new position is saved. Like the rows, they work with **Click items in the panel to start or
+  stop them** on, and the app behind keeps the focus.
+- Macro editor: right-click a row for the commands, double-click an action to edit it or a group
+  to open or close it, **Shortcuts** (in ⋯) lists the shortcuts, and the list can show
+  **Compact** rows.
+- Settings > **About**: the version, with links to the **User guide** and **GitHub**.
+- Recording: the 3, 2, 1 countdown also shows big in the middle of the screen.
+
+### Changed
+- New look with the standard Windows 11 controls: cards and groups as in Windows Settings, On /
+  Off switches, confirmations in dialogs. Settings is in sections (General, Hotkeys and overlay,
+  Data and updates, About). The update bar's **Later** is now its close button.
+- Main window: a side rail as in Microsoft Store, with Loops, Macros and Remap at the top and
+  **Settings** at the bottom (with a dot when an update is available). The window opens bigger
+  and keeps its size. **Stop all** at the bottom is red while something runs and off otherwise.
+- While a loop, macro or remap editor or **Position on screen** is open, the main window hides
+  and comes back when it closes; the editors have their own taskbar button.
+- Loops, Macros and Remap: each card shows its state (Running, Idle, Disabled; Enabled or
+  Disabled for remaps) and how it starts ("Toggle with F6"); a remap's title is its keys. On the
+  right: ▶ / ■ (not on remaps and Hold items), **Edit** (off while loops or macros run), the
+  switch and **More options**, which no longer has Edit. **New macro** is now the main button.
+- One field for every key and hotkey: **Set hotkey** / **Set key**, then the keys in the accent
+  color: click them to change them; where the key can be removed, their arrow has **Change** and
+  **Clear**. It replaces the Change, Clear and Choose key buttons.
+- Loop and remap editors: two columns. Each key or text of a loop is a group with a summary, its
+  key and Remove in the header, its Mode (Repeat / Hold down) and Every inside; **Add key** waits
+  for the key right away.
+- Macro editor: one command bar (**Add action**, **Record**, **Test**, **Edit**, **Copy**,
+  **Paste**, **Duplicate**, **Group**, **Delete**; **Rename group** and **Ungroup** in ⋯) that
+  works on the selected rows, instead of the buttons on every row and group. Each action is one
+  row with its delay on the right; the delay is changed in the action's window (for a recorded
+  Move path, Edit asks only for its delay).
+- "Game mode" is now **Overlay mode**, and its panel the **overlay panel**: Settings >
+  **Overlay** groups the panel and the floating buttons, and **Position on screen** always shows
+  the whole overlay, also from a button's **Position…**.
+- A new floating button appears in the middle of the main screen until it is placed.
+- Leaving overlay mode puts the main window back as it was: open, minimized or in the system tray
+  (before, it always opened).
+- New installs: **Stop all** is Alt+Shift+S and **Overlay mode** is Alt+Shift+W. Existing
+  settings keep their hotkeys.
+
+### Fixed
+- A loop row set to **Hold down** stopped holding its key or mouse button after you pressed and
+  released that same key or button yourself, while the loop still showed as running.
+
 ## 1.9.0
 
 ### Added

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using PuppyMacro.Models;
 
 namespace PuppyMacro.Services;
@@ -11,11 +10,8 @@ namespace PuppyMacro.Services;
 /// <summary>All macros, in display order. Each macro is saved as macros\{id}.json next to the exe.</summary>
 internal sealed class MacroLibrary
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true,
-        Converters = { new JsonStringEnumConverter() },
-    };
+    // The same format as the macro editor's Code view.
+    private static JsonSerializerOptions JsonOptions => MacroJson.Options;
 
     private readonly string _folder;
 
@@ -53,6 +49,24 @@ internal sealed class MacroLibrary
             .OrderBy(m => order.IndexOf(m.Id) is int i && i >= 0 ? i : int.MaxValue)
             .ThenBy(m => m.Name, StringComparer.CurrentCultureIgnoreCase)
             .ToList();
+    }
+
+    /// <summary>
+    /// Settings schema 6: floating buttons saved before it have no opacity and used the overlay
+    /// panel's; they keep it. Called once, when settings.json was older. Returns false if a file
+    /// could not be saved.
+    /// </summary>
+    public bool FillButtonOpacity(int panelOpacity)
+    {
+        bool allSaved = true;
+        foreach (var macro in Macros)
+        {
+            if (macro.FloatingButton.Opacity != null)
+                continue;
+            macro.FloatingButton.Opacity = panelOpacity;
+            allSaved &= TrySave(macro, out _);
+        }
+        return allSaved;
     }
 
     public bool TrySave(MacroDefinition macro, out string? error)

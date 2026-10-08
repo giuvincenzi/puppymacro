@@ -46,7 +46,7 @@ $pack = @(
     '--packDir', 'publish',
     '--mainExe', 'PuppyMacro.exe',
     '--icon', 'PuppyMacro/Assets/PuppyMacro.ico',
-    '--framework', 'net10.0-x64-desktop',
+    '--framework', 'net10.0-x64-desktop,webview2',   # WebView2: the macro editor's Code view
     '--noPortable',   # a portable copy would not update itself
     '--outputDir', 'dist'
 )

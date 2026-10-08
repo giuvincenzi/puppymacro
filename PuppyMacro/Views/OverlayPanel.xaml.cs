@@ -10,13 +10,13 @@ using System.Windows.Media;
 
 namespace PuppyMacro.Views;
 
-/// <summary>Content of the game mode panel. Used by the game mode window and by the placement overlay.</summary>
-public partial class GameModePanel
+/// <summary>Content of the overlay panel. Used by the overlay mode window and by the placement overlay.</summary>
+public partial class OverlayPanel
 {
     private ListCollectionView? _loops;
     private ListCollectionView? _macros;
 
-    public GameModePanel()
+    public OverlayPanel()
     {
         InitializeComponent();
         TitleText.Text = App.DisplayTitle;
@@ -42,8 +42,40 @@ public partial class GameModePanel
 
     public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey)
     {
-        ExitHotkeyText.Text = exitHotkey;
         StopAllHotkeyText.Text = stopAllHotkey;
+        ExitButton.ToolTip = $"Exit overlay mode ({exitHotkey})";
+    }
+
+    private static readonly Brush StopRed = Frozen(0xFF, 0x99, 0xA4);
+    private static readonly Brush StopRedBorder = Frozen(0xFF, 0x6B, 0x78);
+    private static readonly Brush StopRedFill = Frozen(0x1F, 0xFF, 0x6B, 0x78);
+    private static readonly Brush Neutral = Frozen(0xC5, 0xC5, 0xC5);
+    private static readonly Brush NeutralSquare = Frozen(0x9E, 0x9E, 0x9E);
+    private static readonly Brush NeutralBorder = Frozen(0x1F, 0xFF, 0xFF, 0xFF);
+    private static readonly Brush NeutralFill = Frozen(0x0F, 0xFF, 0xFF, 0xFF);
+
+    private static Brush Frozen(byte r, byte g, byte b) => Frozen(0xFF, r, g, b);
+
+    private static Brush Frozen(byte a, byte r, byte g, byte b)
+    {
+        var brush = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+        brush.Freeze();
+        return brush;
+    }
+
+    /// <summary>
+    /// Stop all is red while something runs and the panel can be clicked; the exit and move buttons are dimmed
+    /// when the panel cannot be clicked (Click items in the panel to start or stop them is off).
+    /// </summary>
+    public void SetState(bool anyRunning, bool clickable)
+    {
+        bool red = anyRunning && clickable;
+        StopAllButton.BorderBrush = red ? StopRedBorder : NeutralBorder;
+        StopAllButton.Background = red ? StopRedFill : NeutralFill;
+        StopAllLabel.Foreground = red ? StopRed : Neutral;
+        StopAllSquare.Fill = red ? StopRed : NeutralSquare;
+        ExitButton.Opacity = clickable ? 1 : 0.5;
+        MoveButton.Opacity = clickable ? 1 : 0.5;
     }
 
     /// <summary>Sets the panel background opacity (percent). Text is not affected.</summary>
@@ -61,7 +93,7 @@ public partial class GameModePanel
         UpdateEmptyState();
     }
 
-    /// <summary>Screen rectangles (physical pixels) of the clickable rows: enabled, not Hold.</summary>
+    /// <summary>Screen rectangles (physical pixels) of the clickable rows (enabled, not Hold), the exit and move buttons and Stop all.</summary>
     internal List<PanelTarget> GetClickTargets()
     {
         var targets = new List<PanelTarget>();
@@ -69,7 +101,19 @@ public partial class GameModePanel
             return targets;
         AddTargets(LoopList, targets);
         AddTargets(MacroList, targets);
+        AddTarget(ExitButton, PanelTarget.ExitOverlayId, targets);
+        AddTarget(MoveButton, PanelTarget.MoveOverlayId, targets);
+        AddTarget(StopAllButton, PanelTarget.StopAllId, targets);
         return targets;
+    }
+
+    private static void AddTarget(FrameworkElement element, Guid id, List<PanelTarget> targets)
+    {
+        if (!element.IsVisible)
+            return;
+        Point topLeft = element.PointToScreen(new Point(0, 0));
+        Point bottomRight = element.PointToScreen(new Point(element.ActualWidth, element.ActualHeight));
+        targets.Add(new PanelTarget((int)topLeft.X, (int)topLeft.Y, (int)bottomRight.X, (int)bottomRight.Y, id));
     }
 
     private static void AddTargets(ItemsControl list, List<PanelTarget> targets)

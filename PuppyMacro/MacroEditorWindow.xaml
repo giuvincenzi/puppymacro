@@ -1,8 +1,10 @@
-<ui:FluentWindow
+<Window
     x:Class="PuppyMacro.MacroEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="Edit macro"
     Width="1180"
@@ -10,212 +12,13 @@
     MinWidth="900"
     MinHeight="520"
     ResizeMode="CanResize"
-    ShowInTaskbar="False"
-    ExtendsContentIntoTitleBar="True"
-    WindowBackdropType="Mica"
-    WindowCornerPreference="Round"
+    ShowInTaskbar="True"
     WindowStartupLocation="CenterOwner"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica"
+    ui:TitleBar.MinimizeButtonAvailability="Collapsed"
+    ui:TitleBar.MaximizeButtonAvailability="Collapsed">
 
-    <Window.Resources>
-        <Style x:Key="SoundTile" TargetType="RadioButton">
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="Back" Height="44" Padding="10,0" CornerRadius="6" BorderThickness="1"
-                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Grid Width="22" Height="22">
-                                    <Ellipse x:Name="Circle" Fill="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                                    <Path x:Name="Play" Data="M0,0 L6,4 L0,8 Z" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Fill="{DynamicResource TextFillColorSecondaryBrush}" />
-                                </Grid>
-                                <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Back" Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                <Setter TargetName="Play" Property="Fill" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Drop indicators: indented when the dragged actions go into a group. -->
-        <Style x:Key="DropLineBefore" TargetType="Border">
-            <Setter Property="Height" Value="3" />
-            <Setter Property="Margin" Value="0,0,0,3" />
-            <Setter Property="CornerRadius" Value="2" />
-            <Setter Property="Background" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-            <Setter Property="Visibility" Value="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding DropIndented}" Value="True">
-                    <Setter Property="Margin" Value="28,0,0,3" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="DropLineAfter" TargetType="Border" BasedOn="{StaticResource DropLineBefore}">
-            <Setter Property="Margin" Value="0,3,0,0" />
-            <Setter Property="Visibility" Value="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding DropIndented}" Value="True">
-                    <Setter Property="Margin" Value="28,3,0,0" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <DataTemplate DataType="{x:Type views:MacroGroupViewModel}">
-            <StackPanel>
-                <Border Style="{StaticResource DropLineBefore}" />
-                <Border Height="40" CornerRadius="6" BorderThickness="1" Cursor="SizeAll" Tag="{Binding}"
-                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                        PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseLeftButtonUp="OnRowMouseUp" PreviewMouseMove="OnRowMouseMove">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Button Grid.Column="0" Appearance="Transparent" Padding="6" Margin="2,0,0,0" Cursor="Arrow" Tag="{Binding}"
-                                   ToolTip="{Binding ToggleText}" AutomationProperties.Name="{Binding ToggleText}" Click="OnToggleGroupClick">
-                            <ui:SymbolIcon FontSize="14">
-                                <ui:SymbolIcon.Style>
-                                    <Style TargetType="ui:SymbolIcon">
-                                        <Setter Property="Symbol" Value="ChevronDown24" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsCollapsed}" Value="True">
-                                                <Setter Property="Symbol" Value="ChevronRight24" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ui:SymbolIcon.Style>
-                            </ui:SymbolIcon>
-                        </ui:Button>
-                        <ui:SymbolIcon Grid.Column="1" Margin="6,0,10,0" Symbol="GroupList24" FontSize="16" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                        <TextBlock Grid.Column="2" FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding Name}"
-                                   TextTrimming="CharacterEllipsis" MaxWidth="260" />
-                        <TextBlock Grid.Column="3" Margin="10,0,0,0" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info}" />
-                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Rename24}" ToolTip="Rename group" AutomationProperties.Name="Rename group"
-                                       Tag="{Binding}" Click="OnRenameGroupClick" />
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate group" AutomationProperties.Name="Duplicate group"
-                                       Tag="{Binding}" Click="OnDuplicateGroupClick" />
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon GroupDismiss24}" ToolTip="Ungroup (keep the actions)" AutomationProperties.Name="Ungroup"
-                                       Tag="{Binding}" Click="OnUngroupClick" />
-                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove the group and its actions" AutomationProperties.Name="Remove group"
-                                       Tag="{Binding}" Click="OnRemoveGroupClick" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-                <Border Style="{StaticResource DropLineAfter}" />
-            </StackPanel>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type views:MacroActionRowViewModel}">
-            <StackPanel>
-                <Border Style="{StaticResource DropLineBefore}" />
-                <Grid Cursor="SizeAll" Tag="{Binding}"
-                      PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseLeftButtonUp="OnRowMouseUp" PreviewMouseMove="OnRowMouseMove">
-                    <Grid.Style>
-                        <Style TargetType="Grid">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsInGroup}" Value="True">
-                                    <Setter Property="Margin" Value="22,0,0,0" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="26" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                               Text="{Binding Number}" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow"
-                                ToolTip="Delay before this action">
-                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="+" VerticalAlignment="Center" />
-                        <ui:NumberBox Width="96" Margin="2,0,0,0" Minimum="0" Maximum="86400000" MaxDecimalPlaces="0"
-                                      SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False" FontSize="12"
-                                      Value="{Binding Delay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBlock Margin="4,0,10,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Border Grid.Column="2" Width="30" Height="30" Margin="0,0,10,0" CornerRadius="6" VerticalAlignment="Center"
-                            Background="{DynamicResource SubtleFillColorSecondaryBrush}">
-                        <Grid>
-                            <ui:SymbolIcon Symbol="Keyboard24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                           Visibility="{Binding IsKeyIcon, Converter={StaticResource BoolToVisibility}}" />
-                            <ui:SymbolIcon Symbol="CursorClick24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                           Visibility="{Binding IsMouseIcon, Converter={StaticResource BoolToVisibility}}" />
-                            <ui:SymbolIcon Symbol="ArrowMove24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                           Visibility="{Binding IsMoveIcon, Converter={StaticResource BoolToVisibility}}" />
-                            <ui:SymbolIcon Symbol="ArrowSortDown24" FontSize="16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                           Visibility="{Binding IsScrollIcon, Converter={StaticResource BoolToVisibility}}" />
-                            <TextBlock Text="Aa" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                       Visibility="{Binding IsTextIcon, Converter={StaticResource BoolToVisibility}}" />
-                        </Grid>
-                    </Border>
-                    <TextBlock Grid.Column="3" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
-                        <Run Text="{Binding Title, Mode=OneWay}">
-                            <Run.Style>
-                                <Style TargetType="Run">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsNamed}" Value="True">
-                                            <Setter Property="FontWeight" Value="SemiBold" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Run.Style>
-                        </Run>
-                        <Run Text="  " />
-                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
-                    </TextBlock>
-                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Play24}" ToolTip="Test action: PuppyMacro hides and plays it once in the window behind it"
-                                   AutomationProperties.Name="Test action" Tag="{Binding}" Click="OnTestActionClick">
-                            <ui:Button.Style>
-                                <!-- Accent color, except on a selected row (accent background): there like the other buttons. -->
-                                <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
-                                    <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                            <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ui:Button.Style>
-                        </ui:Button>
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" AutomationProperties.Name="Edit action"
-                                   Tag="{Binding}" Click="OnEditActionClick" Visibility="{Binding IsEditable, Converter={StaticResource BoolToVisibility}}" />
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" AutomationProperties.Name="Duplicate action"
-                                   Tag="{Binding}" Click="OnDuplicateActionClick" />
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove action" AutomationProperties.Name="Remove action"
-                                   Tag="{Binding}" Click="OnRemoveActionClick" />
-                    </StackPanel>
-                </Grid>
-                <Border Style="{StaticResource DropLineAfter}" />
-            </StackPanel>
-        </DataTemplate>
-    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -224,9 +27,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar x:Name="EditorTitleBar" Grid.Row="0" Title="Edit macro" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
+        <!-- Form view: the actions as rows. Code view: the macro file's JSON in a code editor. -->
+        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="0" Margin="24,0,24,8" />
 
-        <Grid Grid.Row="1">
+        <views:CodeView x:Name="CodeView" Grid.Row="1" Margin="24,0,24,12" Visibility="Collapsed" />
+
+        <Grid x:Name="ListBody" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="440" />
                 <ColumnDefinition Width="400" />
@@ -239,169 +45,338 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Margin="0,0,0,6" Text="Name" />
-                <ui:TextBox x:Name="NameBox" Grid.Row="1" PlaceholderText="e.g. Craft and salvage" TextChanged="OnNameChanged" />
+                <TextBox x:Name="NameBox" Grid.Row="0" TextChanged="OnNameChanged"
+                         ui:ControlHelper.Header="Name"
+                         ui:ControlHelper.PlaceholderText="e.g. Craft and salvage" />
 
-                <TextBlock Grid.Row="2" Margin="0,18,0,8" Text="Actions" />
-                <Grid Grid.Row="3" Margin="0,0,0,8">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:Button x:Name="AddActionButton" Content="Add action" Icon="{ui:SymbolIcon Add24}" Click="OnAddActionClick" />
-                        <ui:Button Margin="8,0,0,0" Click="OnRecordClick">
-                            <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="9" Height="9" Fill="#C42B1C" VerticalAlignment="Center" />
-                                <TextBlock Margin="8,0,0,0" Text="Record actions" />
-                            </StackPanel>
-                        </ui:Button>
-                    </StackPanel>
-                    <TextBlock x:Name="InsertHint" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="12"
-                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                </Grid>
+                <TextBlock Grid.Row="1" Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Actions" />
 
-                <!-- Selection bar: always there, so the list does not move when the selection changes. -->
-                <Grid Grid.Row="4" Height="44" Margin="0,0,0,6">
+                <!-- The commands, on the left in one command bar (standard AppBarButtons, label under the icon): adding
+                     and recording in its content, a separator, what works on the selected rows, more in ⋯ (dynamic
+                     overflow off, so no command moves into ⋯ while it fits). On the right the list's density (it acts on
+                     the view, not on the actions). The same commands on right-click (OnListContextMenuOpening). The
+                     buttons are centered in the bar (their style puts them at the top, and the bar is taller than them
+                     because of ⋯). -->
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border x:Name="SelectionBarBack" Grid.ColumnSpan="2" CornerRadius="6" Opacity="0.15" Visibility="Collapsed"
-                            Background="{DynamicResource AccentFillColorDefaultBrush}" />
-                    <Border Grid.ColumnSpan="2" CornerRadius="6" BorderThickness="1" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" />
-                    <!-- Left-aligned: the info icon follows the text, which is trimmed when space runs out. -->
-                    <DockPanel Grid.Column="0" Margin="14,0,8,0" HorizontalAlignment="Left" LastChildFill="True">
-                        <!-- The shortcuts, in a tooltip -->
-                        <Border x:Name="ShortcutsInfo" DockPanel.Dock="Right" Width="18" Height="18" Margin="8,0,0,0" CornerRadius="9" VerticalAlignment="Center"
-                                Background="{DynamicResource AccentFillColorDefaultBrush}" AutomationProperties.Name="Shortcuts"
-                                ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="60000">
-                            <Border.ToolTip>
-                                <ToolTip MaxWidth="360">
-                                    <TextBlock TextWrapping="Wrap"
-                                               Text="Ctrl+click or Shift+click to select more actions. Drag them (or Alt+Up / Alt+Down) to move them, into or out of a group. Ctrl+G groups them, Ctrl+D duplicates them, Ctrl+C / Ctrl+V copy and paste them. New actions go after the selected one, or at the end. ▶ tests an action: PuppyMacro hides and plays it once in the window behind it." />
-                                </ToolTip>
-                            </Border.ToolTip>
-                            <TextBlock Text="i" FontSize="12" FontWeight="Bold" FontStyle="Italic" FontFamily="Georgia"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
-                        </Border>
-                        <TextBlock x:Name="SelectionText" VerticalAlignment="Center" FontSize="13" TextTrimming="CharacterEllipsis" />
-                    </DockPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,6,0" VerticalAlignment="Center">
-                        <ui:Button x:Name="GroupButton" Appearance="Transparent" Icon="{ui:SymbolIcon GroupList24}" Content="Group"
-                                   ToolTip="Put the selected actions in a group (Ctrl+G)" Click="OnGroupSelectedClick" />
-                        <ui:Button x:Name="DuplicateButton" Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" Content="Duplicate"
-                                   ToolTip="Duplicate the selected actions (Ctrl+D)" Click="OnDuplicateSelectedClick" />
-                        <ui:Button x:Name="CopyButton" Appearance="Transparent" Icon="{ui:SymbolIcon Clipboard24}" Content="Copy"
-                                   ToolTip="Copy the selected actions, also to paste them in another macro (Ctrl+C)" Click="OnCopySelectedClick" />
-                        <ui:Button x:Name="PasteButton" Appearance="Transparent" Icon="{ui:SymbolIcon ClipboardPaste24}" Content="Paste"
-                                   ToolTip="Paste the copied actions where new actions go (Ctrl+V)" Click="OnPasteClick" />
-                        <ui:Button x:Name="DeleteButton" Appearance="Transparent" Icon="{ui:SymbolIcon Delete24}" Content="Delete"
-                                   ToolTip="Delete the selected actions (Delete)" Click="OnDeleteSelectedClick" />
-                    </StackPanel>
+                    <ui:CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Bottom"
+                                   VerticalContentAlignment="Center" IsDynamicOverflowEnabled="False">
+                        <!-- Opening ⋯ does not light up the whole bar (approved, ui.md): its open background and border
+                             transparent -->
+                        <ui:CommandBar.Resources>
+                            <SolidColorBrush x:Key="CommandBarBackgroundOpen" Color="Transparent" />
+                            <SolidColorBrush x:Key="CommandBarBorderBrushOpen" Color="Transparent" />
+                        </ui:CommandBar.Resources>
+                        <ui:CommandBar.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <!-- The main command in the accent color (approved, ui.md: an AppBarButton has no accent style) -->
+                                <ui:AppBarButton x:Name="AddActionButton" VerticalAlignment="Center" Label="Add action" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                 Click="OnAddActionClick">
+                                    <ui:AppBarButton.Icon>
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                                    </ui:AppBarButton.Icon>
+                                </ui:AppBarButton>
+                                <!-- A red record dot (approved, ui.md: the theme's critical color, as the InfoBadge's) -->
+                                <ui:AppBarButton Label="Record" VerticalAlignment="Center" AutomationProperties.Name="Record actions" ToolTip="Record actions" Click="OnRecordClick">
+                                    <ui:AppBarButton.Icon>
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Record}" Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
+                                    </ui:AppBarButton.Icon>
+                                </ui:AppBarButton>
+                            </StackPanel>
+                        </ui:CommandBar.Content>
+                        <ui:AppBarSeparator />
+                        <ui:AppBarButton VerticalAlignment="Center" x:Name="TestActionButton" Label="Test" AutomationProperties.Name="Test action"
+                                         ToolTip="PuppyMacro hides and plays the selected action once in the window behind it" Click="OnTestActionClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Play}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton VerticalAlignment="Center" x:Name="EditActionButton" Label="Edit" AutomationProperties.Name="Edit action" Click="OnEditActionClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Edit}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton VerticalAlignment="Center" x:Name="CopyButton" Label="Copy"
+                                         ToolTip="Copy the selected actions, also to paste them in another macro (Ctrl+C)" Click="OnCopySelectedClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Copy}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton VerticalAlignment="Center" x:Name="PasteButton" Label="Paste" ToolTip="Paste the copied actions where new actions go (Ctrl+V)" Click="OnPasteClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Paste}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton VerticalAlignment="Center" x:Name="DuplicateButton" Label="Duplicate"
+                                         ToolTip="Duplicate the selected actions (Ctrl+D)" Click="OnDuplicateSelectedClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Copy}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton VerticalAlignment="Center" x:Name="GroupButton" Label="Group"
+                                         ToolTip="Put the selected actions in a group (Ctrl+G)" Click="OnGroupSelectedClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.GroupList}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton VerticalAlignment="Center" x:Name="DeleteButton" Label="Delete"
+                                         ToolTip="Delete the selected actions (Delete)" Click="OnDeleteSelectedClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:CommandBar.SecondaryCommands>
+                            <ui:AppBarButton x:Name="RenameGroupButton" Label="Rename group" Click="OnRenameGroupClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Rename}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarButton x:Name="UngroupButton" Label="Ungroup"
+                                             ToolTip="Ungroup (keep the actions)" Click="OnUngroupClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.RemoveFrom}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarSeparator />
+                            <ui:AppBarButton Label="Shortcuts" Click="OnShortcutsClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardShortcut}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                        </ui:CommandBar.SecondaryCommands>
+                    </ui:CommandBar>
+                    <!-- The list's density: click to switch normal / compact, the arrow to choose; normal by
+                         default, compact as the library's Gallery does it (DensityStyles/Compact.xaml) -->
+                    <ui:ToggleSplitButton x:Name="DensityButton" Grid.Column="1" VerticalAlignment="Center"
+                                          AutomationProperties.Name="Compact list" ToolTip="Compact list: smaller rows"
+                                          IsCheckedChanged="OnDensityChanged">
+                        <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.RowTriple_20_Regular}" />
+                        <ui:ToggleSplitButton.Flyout>
+                            <ui:MenuFlyout Placement="Bottom">
+                                <MenuItem x:Name="NormalDensityItem" Header="Normal" IsCheckable="True" IsChecked="True" Click="OnNormalDensityClick" />
+                                <MenuItem x:Name="CompactDensityItem" Header="Compact" IsCheckable="True" Click="OnCompactDensityClick" />
+                            </ui:MenuFlyout>
+                        </ui:ToggleSplitButton.Flyout>
+                    </ui:ToggleSplitButton>
                 </Grid>
 
-                <ListBox x:Name="ActionList" Grid.Row="5" MinHeight="120" SelectionMode="Extended" AllowDrop="True"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         SelectionChanged="OnSelectionChanged" PreviewKeyDown="OnListKeyDown"
-                         PreviewDragOver="OnListPreviewDragOver" DragOver="OnListDragOver" DragLeave="OnListDragLeave" Drop="OnListDrop">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Padding" Value="6,4" />
+                <!-- What is selected, and where new actions go -->
+                <TextBlock x:Name="SelectionText" Grid.Row="3" Margin="0,0,0,4" Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+
+                <!-- The actions: a standard list (normal or the library's compact density), one line per action with its
+                     delay on the right; a group is a row that opens and closes. A thin divider under each row
+                     (asked by the user). -->
+                <ListView x:Name="ActionList" Grid.Row="4" MinHeight="120" SelectionMode="Extended" AllowDrop="True"
+                          HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          SelectionChanged="OnSelectionChanged" PreviewKeyDown="OnListKeyDown" MouseDoubleClick="OnListDoubleClick"
+                          ContextMenuOpening="OnListContextMenuOpening" PreviewDragOver="OnListPreviewDragOver" DragOver="OnListDragOver" DragLeave="OnListDragLeave" Drop="OnListDrop">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="Tag" Value="{Binding}" />
                             <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnRowMouseDown" />
+                            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnRowMouseUp" />
+                            <EventSetter Event="PreviewMouseMove" Handler="OnRowMouseMove" />
+                            <Style.Triggers>
+                                <!-- Drag to move: a line where the dragged actions go -->
+                                <DataTrigger Binding="{Binding DropBefore}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                    <Setter Property="BorderThickness" Value="0,2,0,0" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding DropAfter}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,2" />
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
-                <TextBlock x:Name="EmptyActionsText" Grid.Row="6" Margin="0,6,0,0" FontSize="12" Visibility="Collapsed"
+                    </ListView.ItemContainerStyle>
+                    <ListView.Resources>
+                        <ResourceDictionary>
+                            <!-- Hover and selection fill the whole row, square, so they reach the lines between the rows
+                                 (approved, ui.md): the library's 4 px inset and rounded corners set to 0 for this list -->
+                            <Thickness x:Key="ListViewItemCompactSelectedBorderThemeThickness">0</Thickness>
+                            <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
+                            <!-- A group: open / close, its name and what it holds -->
+                            <DataTemplate DataType="{x:Type views:MacroGroupViewModel}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Open / close: just the arrow (no background, border or hover), in the actions' icon column -->
+                                    <Button Margin="0,0,12,0" Padding="0" VerticalAlignment="Center" Tag="{Binding}" Click="OnToggleGroupClick"
+                                            ToolTip="{Binding ToggleText}" AutomationProperties.Name="{Binding ToggleText}">
+                                        <Button.Resources>
+                                            <SolidColorBrush x:Key="ButtonBackground" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="Transparent" />
+                                        </Button.Resources>
+                                        <!-- Two fixed icons: in 0.10.2 a FontIcon whose Icon changes after load can clear it.
+                                             As wide as an action's icon (16), so the group name lines up with the actions. -->
+                                        <Grid Width="16">
+                                            <ui:FontIcon FontSize="12" Icon="{x:Static ui:SegoeFluentIcons.ChevronDown}"
+                                                         Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibility}}" />
+                                            <ui:FontIcon FontSize="12" Icon="{x:Static ui:SegoeFluentIcons.ChevronRight}"
+                                                         Visibility="{Binding IsCollapsed, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
+                                    </Button>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                        <Run FontWeight="SemiBold" Text="{Binding Name, Mode=OneWay}" />
+                                        <Run Text="  " />
+                                        <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="-12,0,-12,0" BorderThickness="0,1,0,0"
+                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
+                                </Grid>
+                            </DataTemplate>
+                            <!-- An action: its icon, its name or description and its details, its delay -->
+                            <DataTemplate DataType="{x:Type views:MacroActionRowViewModel}">
+                                <Grid>
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Style.Triggers>
+                                                <!-- The actions of a group are indented under it -->
+                                                <DataTrigger Binding="{Binding IsInGroup}" Value="True">
+                                                    <Setter Property="Margin" Value="24,0,0,0" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}"
+                                                     Visibility="{Binding IsKeyIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}"
+                                                     Visibility="{Binding IsMouseIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Move}"
+                                                     Visibility="{Binding IsMoveIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.ScrollUpDown}"
+                                                     Visibility="{Binding IsScrollIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
+                                                     Visibility="{Binding IsTextIcon, Converter={StaticResource BoolToVisibility}}" />
+                                    </Grid>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                        <Run Text="{Binding Title, Mode=OneWay}">
+                                            <Run.Style>
+                                                <!-- A named action shows its name in bold -->
+                                                <Style TargetType="Run">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsNamed}" Value="True">
+                                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Run.Style>
+                                        </Run>
+                                        <Run Text="  " />
+                                        <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" ToolTip="Delay before this action"
+                                               Text="{Binding DelayText}" />
+                                    <Border Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="0,1,0,0"
+                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <!-- Out of the item's 12 px padding, and of the group indent -->
+                                                <Setter Property="Margin" Value="-12,0,-12,0" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsInGroup}" Value="True">
+                                                        <Setter Property="Margin" Value="-36,0,-12,0" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ResourceDictionary>
+                    </ListView.Resources>
+                </ListView>
+                <TextBlock x:Name="EmptyActionsText" Grid.Row="5" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}" Visibility="Collapsed"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="No actions yet. Record actions or add them one by one." />
-                <TextBlock x:Name="TotalText" Grid.Row="7" Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <TextBlock x:Name="TotalText" Grid.Row="6" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
             </Grid>
 
             <!-- Right column: how the macro plays and starts -->
-            <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="24,8,24,12">
-                        <TextBlock Margin="0,0,0,6" Text="Repeat" />
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <ikw:SimpleStackPanel Margin="0,8,24,12" Spacing="4">
+                    <ui:SettingsCard Header="Repeat" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
                         <WrapPanel>
-                            <RadioButton x:Name="OnceRadio" MinWidth="0" Margin="0,0,12,0" Content="Once" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <RadioButton x:Name="LoopRadio" MinWidth="0" Margin="0,0,12,0" Content="Loop" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <RadioButton x:Name="TimesRadio" MinWidth="0" Content="N times" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <ui:NumberBox x:Name="TimesBox" Width="80" Margin="8,0,0,0" Minimum="1" Maximum="100000" MaxDecimalPlaces="0"
-                                          SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False" />
+                            <RadioButton x:Name="OnceRadio" Content="Once" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <RadioButton x:Name="LoopRadio" Content="Loop" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <RadioButton x:Name="TimesRadio" Content="N times" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <ui:NumberBox x:Name="TimesBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="100000" AutomationProperties.Name="Times" />
                         </WrapPanel>
+                    </ui:SettingsCard>
 
-                        <TextBlock x:Name="SpeedLabel" Margin="0,18,0,6" Text="Speed" />
+                    <ui:SettingsCard x:Name="SpeedCard" Header="Speed" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
                         <Slider x:Name="SpeedSlider" Minimum="0" Maximum="4" TickFrequency="1" IsSnapToTickEnabled="True"
                                 AutomationProperties.Name="Speed" ValueChanged="OnSpeedChanged" />
-                        <Grid>
-                            <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×0.25" />
-                            <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×1" HorizontalAlignment="Center" />
-                            <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×4" HorizontalAlignment="Right" />
-                        </Grid>
+                    </ui:SettingsCard>
 
-                        <!-- Activation -->
-                        <TextBlock Margin="0,18,0,6" Text="Activation" />
+                    <ui:SettingsCard Header="Activation" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
+                        <ui:SettingsCard.Description>
+                            <TextBlock x:Name="ActivationHint" />
+                        </ui:SettingsCard.Description>
                         <StackPanel Orientation="Horizontal">
                             <RadioButton x:Name="ToggleRadio" Content="Toggle" GroupName="Activation" Checked="OnActivationChanged" />
-                            <RadioButton x:Name="HoldRadio" Margin="16,0,0,0" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
+                            <RadioButton x:Name="HoldRadio" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
                         </StackPanel>
-                        <TextBlock x:Name="ActivationHint" Margin="0,4,0,0" FontSize="12" TextWrapping="Wrap"
-                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    </ui:SettingsCard>
 
-                        <!-- Hotkey -->
-                        <TextBlock Margin="0,18,0,6" Text="Hotkey" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ItemsControl x:Name="HotkeyCaps" VerticalAlignment="Center">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Margin="0,0,4,0" Padding="8,2" Style="{StaticResource KeyCap}">
-                                            <TextBlock FontSize="13" Text="{Binding}" />
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock x:Name="HotkeyCaptureText" FontSize="13" VerticalAlignment="Center" Visibility="Collapsed"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the hotkey (Esc cancels)" />
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <ui:Button MinWidth="80" Content="Change" Click="OnChangeHotkeyClick" />
-                                <ui:Button x:Name="ClearHotkeyButton" Margin="8,0,0,0" MinWidth="70" Content="Clear" Click="OnClearHotkeyClick" />
-                            </StackPanel>
-                        </Grid>
-                        <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                   Text="Optional. Without a hotkey, start it with Play or from the game mode panel. Hold needs a hotkey." />
-
-                        <!-- Floating button -->
-                        <views:FloatingButtonEditor x:Name="FloatingEditor" Margin="0,18,0,0" />
-
-                        <!-- Sound -->
-                        <Grid Margin="0,18,0,0">
-                            <StackPanel>
-                                <TextBlock Text="Sound" />
-                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Plays when the macro starts and stops" />
-                            </StackPanel>
-                            <ui:ToggleSwitch x:Name="SoundSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                             OffContent="Off" OnContent="On" Checked="OnSoundSwitchChanged" Unchecked="OnSoundSwitchChanged" />
-                        </Grid>
-                        <StackPanel x:Name="SoundPanel" Margin="0,10,0,0" Visibility="Collapsed">
-                            <UniformGrid x:Name="SoundGrid" Columns="3" />
+                    <ui:SettingsCard Header="Hotkey" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                        <StackPanel>
+                            <views:KeyCaptureField x:Name="HotkeyField" IsHotkey="True" ValueChanged="OnHotkeyFieldChanged" />
+                            <!-- The help, under all the options -->
+                            <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="Optional. With Ctrl, Alt, Shift or Win held, left and right click, the scroll wheel and Esc work too. Without a hotkey, start it with Play or from the overlay panel. Hold needs a hotkey." />
                         </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
+                    </ui:SettingsCard>
+
+                    <views:FloatingButtonEditor x:Name="FloatingEditor" />
+
+                    <views:SwitchSettingsExpander x:Name="SoundExpander" CanExpand="{Binding IsOn, ElementName=SoundSwitch}" Header="Sound" Description="Plays when the macro starts and stops">
+                        <ui:ToggleSwitch x:Name="SoundSwitch" Toggled="OnSoundSwitchChanged" />
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard x:Name="SoundCard" ContentAlignment="Vertical" HorizontalContentAlignment="Left"
+                                             Description="Click a sound to pick it and hear the start and stop versions.">
+                                <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"
+                                                 SelectionChanged="OnSoundSelectionChanged" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </views:SwitchSettingsExpander>
+                </ikw:SimpleStackPanel>
+            </ScrollViewer>
         </Grid>
 
+        <!-- Buttons -->
         <Border Grid.Row="2" Padding="24,16" BorderThickness="0,1,0,0"
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
@@ -412,11 +387,13 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="160" />
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="ErrorText" Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap"
+                <TextBlock x:Name="ErrorText" Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center" TextWrapping="Wrap"
+                           Style="{StaticResource CaptionTextBlockStyle}"
                            Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
-                <ui:Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
+                        Content="Save" Click="OnSaveClick" />
+                <Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
     </Grid>
-</ui:FluentWindow>
+</Window>

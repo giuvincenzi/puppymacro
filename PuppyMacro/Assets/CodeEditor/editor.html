@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- The editors' Code view: Monaco (Assets/Monaco) and a Problems panel like VS Code's, in a WebView2, offline. See Views/CodeView. -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; worker-src 'self' blob:; img-src 'self' data:">
+<title>Code view</title>
+<link rel="stylesheet" href="../Monaco/vs/editor/editor.main.css">
+<style>
+  /* VS Code's colors for the Problems panel, dark (vs-dark) and light (vs) */
+  body.vs-dark {
+    --background: #1e1e1e; --border: #2b2b2b; --text: #cccccc; --muted: #9d9d9d; --title: #e7e7e7;
+    --hover: #2a2d2e; --selected: #04395e; --selected-text: #ffffff; --focus: #007fd4;
+    --error: #f14c4c; --badge: #616161; --badge-text: #ffffff;
+  }
+  body.vs {
+    --background: #ffffff; --border: #e5e5e5; --text: #3b3b3b; --muted: #6f6f6f; --title: #424242;
+    --hover: #f2f2f2; --selected: #0060c0; --selected-text: #ffffff; --focus: #0090f1;
+    --error: #e51400; --badge: #c4c4c4; --badge-text: #333333;
+  }
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+  body {
+    display: flex; flex-direction: column; background: var(--background); color: var(--text);
+    font: 13px "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  }
+  #editor { flex: 1; min-height: 0; }
+
+  #problems { height: 150px; flex: none; display: flex; flex-direction: column; border-top: 1px solid var(--border); }
+  #problems header { display: flex; align-items: center; gap: 8px; height: 35px; padding: 0 12px; flex: none; }
+  #problems h2 {
+    margin: 0; padding: 6px 0 5px; font-size: 11px; font-weight: 400; letter-spacing: 0.04em;
+    color: var(--title); border-bottom: 1px solid var(--title);
+  }
+  #count {
+    min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 9px;
+    background: var(--badge); color: var(--badge-text); font-size: 11px; line-height: 18px; text-align: center;
+  }
+  #count[hidden], #empty[hidden] { display: none; }
+  #empty { padding: 4px 22px; color: var(--muted); }
+  #list { flex: 1; min-height: 0; overflow-y: auto; margin: 0; padding: 0; list-style: none; outline: none; }
+  #list li { display: flex; align-items: center; gap: 6px; height: 22px; padding: 0 12px 0 16px; cursor: pointer; white-space: nowrap; }
+  #list li:hover { background: var(--hover); }
+  #list li.selected { background: var(--selected); color: var(--selected-text); }
+  #list:focus li.selected { outline: 1px solid var(--focus); outline-offset: -1px; }
+  #list .codicon { color: var(--error); font-size: 16px; }
+  #list .message { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+  #list .position { color: var(--muted); }
+  #list li.selected .position { color: inherit; }
+</style>
+</head>
+<body class="vs-dark">
+<div id="editor"></div>
+<section id="problems" aria-label="Problems">
+  <header>
+    <h2>PROBLEMS</h2>
+    <span id="count" hidden></span>
+  </header>
+  <div id="empty">Checking…</div>
+  <ul id="list" role="listbox" aria-label="Problems" tabindex="0"></ul>
+</section>
+<script src="../Monaco/vs/loader.js"></script>
+<script src="editor.js"></script>
+</body>
+</html>

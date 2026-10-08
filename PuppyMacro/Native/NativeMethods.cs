@@ -162,8 +162,6 @@ internal static class NativeMethods
     [DllImport("user32.dll")]
     public static extern uint MapVirtualKey(uint uCode, uint uMapType);
 
-    [DllImport("user32.dll")]
-    public static extern short GetAsyncKeyState(int vKey);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern int GetKeyNameText(int lParam, char[] lpString, int cchSize);

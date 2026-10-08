@@ -5,8 +5,8 @@
 **[User guide](https://giuvincenzi.github.io/puppymacro/guide/latest/)**
 
 PuppyMacro automates keyboard and mouse input on Windows 10 and 11: loops that repeat keys and
-texts, recorded macros you can edit, key and mouse button remaps, and an in-game panel to start
-and stop them without leaving your game. Free and open source.
+texts, recorded macros you can edit (also as code), key and mouse button remaps, and an overlay to
+start and stop them without leaving your game or fullscreen app. Free and open source.
 
 ## Download
 
@@ -22,5 +22,11 @@ See [.claude/rules/](.claude/rules/).
 
 ## License
 
-[MIT](LICENSE). Third-party components: [WPF-UI](https://github.com/lepoco/wpfui) (MIT),
-[Velopack](https://github.com/velopack/velopack) (MIT).
+[MIT](LICENSE). Third-party components:
+
+- [iNKORE.UI.WPF.Modern](https://github.com/iNKORE-NET/UI.WPF.Modern) by iNKORE Studios and all
+  iNKORE.UI.WPF.Modern contributors ([license](https://github.com/iNKORE-NET/UI.WPF.Modern/blob/main/LICENSE.md))
+- [iNKORE.UI.WPF](https://github.com/iNKORE-NET/UI.WPF) (LGPL-2.1-or-later)
+- [Velopack](https://github.com/velopack/velopack) (MIT)
+- [Microsoft.Web.WebView2](https://aka.ms/webview) (Microsoft, BSD-style license in the package)
+- [Monaco Editor](https://github.com/microsoft/monaco-editor) (MIT)

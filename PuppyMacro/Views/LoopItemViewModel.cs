@@ -9,7 +9,7 @@ using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
 
-/// <summary>Bindable wrapper around a <see cref="LoopDefinition"/>, shared by the main window and game mode.</summary>
+/// <summary>Bindable wrapper around a <see cref="LoopDefinition"/>, shared by the main window and overlay mode.</summary>
 public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
 {
     private bool _isRunning;
@@ -28,13 +28,27 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
 
     public string Name => Definition.Name;
     public string ModeText => Definition.Mode.ToString();
-    public List<string> HotkeyParts => KeyNames.Parts(Definition.Hotkey);
     public string HotkeyText => KeyNames.Format(Definition.Hotkey);
     public bool HasHotkey => Definition.Hotkey is { IsSet: true };
 
-    /// <summary>"Toggle with" before the key caps, or "Toggle, no hotkey".</summary>
-    public string ActivationText => HasHotkey ? $"{ModeText} with" : $"{ModeText}, no hotkey";
-    public bool IsToggleMode => Definition.Mode == ActivationMode.Toggle;
+    /// <summary>The card's second line before the hotkey's keys: "Toggle with", or "Toggle, no hotkey".</summary>
+    public string ActivationLead => HasHotkey ? $"{ModeText} with" : $"{ModeText}, no hotkey";
+
+    /// <summary>The hotkey's keys on the card, in the accent color (none without a hotkey).</summary>
+    public List<string> HotkeyParts => HasHotkey ? KeyNames.Parts(Definition.Hotkey) : new List<string>();
+
+    /// <summary>Edit can be used: no loop or macro runs (the main window sets it).</summary>
+    public bool CanEdit
+    {
+        get => _canEdit;
+        set
+        {
+            if (_canEdit == value)
+                return;
+            _canEdit = value;
+            OnPropertyChanged();
+        }
+    }
     public bool IsHoldMode => Definition.Mode == ActivationMode.Hold;
     public FloatingButton FloatingButton => Definition.FloatingButton;
 
@@ -69,6 +83,7 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
             Definition.Enabled = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(Status));
+            OnPropertyChanged(nameof(CanStartStop));
             EnabledChanged?.Invoke(this);
         }
     }
@@ -84,11 +99,13 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsNotRunning));
             OnPropertyChanged(nameof(Status));
-            OnPropertyChanged(nameof(StartStopText));
+            OnPropertyChanged(nameof(CanStartStop));
         }
     }
 
     public bool IsNotRunning => !_isRunning;
+
+    private bool _canEdit = true;
 
     // ---- Drag and drop reordering (main window) ----
     private bool _dropBefore;
@@ -116,7 +133,9 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
         set { if (_isDragging != value) { _isDragging = value; OnPropertyChanged(); } }
     }
     public string Status => IsRunning ? "Running" : (Definition.Enabled ? "Idle" : "Disabled");
-    public string StartStopText => IsRunning ? "Stop" : "Start";
+
+    /// <summary>Start works only when enabled; a running one can always be stopped.</summary>
+    public bool CanStartStop => Definition.Enabled || IsRunning;
 
     /// <summary>Call after the definition was edited.</summary>
     public void Refresh() => OnPropertyChanged(string.Empty);

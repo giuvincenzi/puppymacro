@@ -13,7 +13,7 @@ namespace PuppyMacro.Services;
 internal sealed class EngineSnapshot
 {
     public HotkeyBinding? StopAll { get; init; }
-    public HotkeyBinding? GameMode { get; init; }
+    public HotkeyBinding? OverlayMode { get; init; }
     public HotkeyBinding? Record { get; init; }
     public LoopDefinition[] Loops { get; init; } = Array.Empty<LoopDefinition>();
     public MacroDefinition[] Macros { get; init; } = Array.Empty<MacroDefinition>();
@@ -22,7 +22,7 @@ internal sealed class EngineSnapshot
     public static EngineSnapshot From(AppSettings settings, MacroLibrary macros) => new()
     {
         StopAll = settings.StopAllHotkey?.Clone(),
-        GameMode = settings.GameModeHotkey?.Clone(),
+        OverlayMode = settings.OverlayModeHotkey?.Clone(),
         Record = settings.RecordHotkey?.Clone(),
         Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
         Macros = macros.Macros.Select(m => m.Clone()).ToArray(),
@@ -30,8 +30,25 @@ internal sealed class EngineSnapshot
     };
 }
 
-/// <summary>A clickable row of the game mode panel, in physical screen pixels.</summary>
-internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bottom, Guid Id);
+/// <summary>
+/// A clickable part of the overlay (a panel row, a floating button, the panel's Stop all or exit
+/// button), in physical screen pixels. <see cref="Id"/> is the loop's or macro's, or
+/// <see cref="StopAllId"/>, <see cref="ExitOverlayId"/> or <see cref="MoveOverlayId"/>.
+/// </summary>
+internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bottom, Guid Id)
+{
+    /// <summary>The overlay panel's Stop all button.</summary>
+    public static readonly Guid StopAllId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d01");
+
+    /// <summary>The overlay panel's exit button: leaves overlay mode.</summary>
+    public static readonly Guid ExitOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d02");
+
+    /// <summary>The overlay panel's move handle: pressed and dragged, it moves the panel.</summary>
+    public static readonly Guid MoveOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d03");
+}
+
+/// <summary>A drag of the overlay panel's move handle: pressed, moving, released.</summary>
+internal enum PanelDragPhase { Started, Moved, Ended }
 
 /// <summary>
 /// Routes global input to loops, macros, remaps and global hotkeys, records macros, and owns
@@ -63,6 +80,11 @@ internal sealed class LoopEngine : IDisposable
     private Action<HotkeyBinding>? _captureDone;
     private Action? _captureCancelled;
     private bool _captureAllowsPrimaryMouse;
+    private bool _captureHotkey;
+
+    // ---- Wheel hotkeys: one notch (WHEEL_DELTA) is one press; smaller steps (touchpads) add up ----
+    private int _wheelVk;
+    private int _wheelAccumulated;
 
     // ---- Recording ----
     private Action? _recordArmedStart;
@@ -73,9 +95,15 @@ internal sealed class LoopEngine : IDisposable
     private List<RawEvent> _recorded = new();
     private Action<List<RawEvent>>? _recordStopped;
 
-    // ---- Clickable game mode panel ----
+    // ---- Clickable overlay panel ----
     private IReadOnlyList<PanelTarget>? _panelTargets;
     private bool _swallowLeftUp;
+
+    // ---- Dragging the overlay panel by its move handle ----
+    private bool _panelDragging;
+    private int _panelDragX, _panelDragY;   // where the handle was pressed (physical pixels)
+    private int _panelDragDx, _panelDragDy; // how far the mouse is from there
+    private bool _panelDragPosted;          // a Moved is already on its way to the UI thread
 
     // ---- Foreground app names (for app-specific remaps) ----
     private readonly Dictionary<uint, string> _processNames = new();
@@ -92,8 +120,15 @@ internal sealed class LoopEngine : IDisposable
     /// <summary>Raised (asynchronously, on the UI thread) when any loop or macro starts or stops.</summary>
     public event Action? StateChanged;
 
-    /// <summary>Raised (asynchronously, on the UI thread) when the game mode hotkey is pressed.</summary>
-    public event Action? GameModeToggleRequested;
+    /// <summary>Raised (asynchronously, on the UI thread) when the overlay mode hotkey is pressed.</summary>
+    public event Action? OverlayModeToggleRequested;
+
+    /// <summary>
+    /// Raised (asynchronously, on the UI thread) while the overlay panel's move handle is dragged: the phase and
+    /// how far the mouse is from where it was pressed, in physical pixels. Moves are coalesced: the UI gets the
+    /// latest offset, never a queue of them.
+    /// </summary>
+    internal event Action<PanelDragPhase, int, int>? OverlayPanelDragged;
 
     /// <summary>Raised (asynchronously, on the UI thread) to play a sound: name, start (true) or stop (false).</summary>
     public event Action<string, bool>? SoundRequested;
@@ -130,6 +165,7 @@ internal sealed class LoopEngine : IDisposable
         _input = new InputThread(hook =>
         {
             hook.Handler = OnKey;
+            hook.Wheel = OnWheel;
         }, OnDesktopSwitch);
         _input.Start();
     }
@@ -249,6 +285,16 @@ internal sealed class LoopEngine : IDisposable
 
     private void ToggleById(Guid id)
     {
+        if (id == PanelTarget.StopAllId)
+        {
+            StopAll();
+            return;
+        }
+        if (id == PanelTarget.ExitOverlayId)
+        {
+            _dispatcher.InvokeAsync(() => OverlayModeToggleRequested?.Invoke());
+            return;
+        }
         var snap = _snapshot;
         var loop = snap.Loops.FirstOrDefault(l => l.Id == id);
         if (loop != null)
@@ -372,12 +418,14 @@ internal sealed class LoopEngine : IDisposable
 
     // ================= Clickable panel =================
 
-    /// <summary>Clickable rows of the visible game mode panel, or null when clicks are off.</summary>
+    /// <summary>Clickable rows of the visible overlay panel, or null when clicks are off.</summary>
     public void SetPanelTargets(IReadOnlyList<PanelTarget>? targets)
     {
         lock (_sync)
         {
             _panelTargets = targets;
+            if (targets == null)
+                _panelDragging = false; // overlay mode ended: no release will come
             UpdateMouseDetail();
         }
     }
@@ -391,7 +439,7 @@ internal sealed class LoopEngine : IDisposable
     }
 
     // Runs on the input thread. Returns true to block the event.
-    private bool OnMouseDetail(InputHook.MouseKind kind, int vk, int x, int y, int wheelDelta)
+    internal bool OnMouseDetail(InputHook.MouseKind kind, int vk, int x, int y, int wheelDelta)
     {
         lock (_sync)
         {
@@ -416,6 +464,25 @@ internal sealed class LoopEngine : IDisposable
                 return false;
             }
 
+            if (_panelDragging)
+            {
+                // Moves are never blocked (that would hold the cursor still): they move the panel.
+                if (kind == InputHook.MouseKind.Move)
+                {
+                    _panelDragDx = x - _panelDragX;
+                    _panelDragDy = y - _panelDragY;
+                    PostPanelDrag();
+                    return false;
+                }
+                if (kind == InputHook.MouseKind.ButtonUp && vk == KeyNames.VK_LBUTTON)
+                {
+                    _panelDragging = false;
+                    int dx = x - _panelDragX, dy = y - _panelDragY;
+                    _dispatcher.InvokeAsync(() => OverlayPanelDragged?.Invoke(PanelDragPhase.Ended, dx, dy));
+                    return true;
+                }
+            }
+
             if (_panelTargets != null && vk == KeyNames.VK_LBUTTON)
             {
                 if (kind == InputHook.MouseKind.ButtonUp && _swallowLeftUp)
@@ -429,6 +496,16 @@ internal sealed class LoopEngine : IDisposable
                     {
                         if (x >= target.Left && x < target.Right && y >= target.Top && y < target.Bottom)
                         {
+                            if (target.Id == PanelTarget.MoveOverlayId)
+                            {
+                                // The press and its release never reach the app: it keeps the focus.
+                                _panelDragging = true;
+                                _panelDragX = x;
+                                _panelDragY = y;
+                                _panelDragDx = _panelDragDy = 0;
+                                _dispatcher.InvokeAsync(() => OverlayPanelDragged?.Invoke(PanelDragPhase.Started, 0, 0));
+                                return true;
+                            }
                             _swallowLeftUp = true;
                             ToggleById(target.Id);
                             return true;
@@ -440,14 +517,39 @@ internal sealed class LoopEngine : IDisposable
         }
     }
 
+    // Called with the lock held, on the input thread: one Moved on its way at a time, with the latest offset.
+    private void PostPanelDrag()
+    {
+        if (_panelDragPosted)
+            return;
+        _panelDragPosted = true;
+        _dispatcher.InvokeAsync(() =>
+        {
+            int dx, dy;
+            bool dragging;
+            lock (_sync)
+            {
+                dx = _panelDragDx;
+                dy = _panelDragDy;
+                dragging = _panelDragging;
+                _panelDragPosted = false;
+            }
+            if (dragging)
+                OverlayPanelDragged?.Invoke(PanelDragPhase.Moved, dx, dy);
+        });
+    }
+
     // ================= Key capture =================
 
     /// <summary>
     /// Captures the next key or mouse button, with the Ctrl/Alt/Shift/Win physically held at that
     /// moment. Esc cancels. When <paramref name="allowPrimaryMouse"/> is false, left and right
     /// click pass through so the user can still click the UI.
+    /// With <paramref name="hotkey"/>, while a modifier is held, left and right click, the scroll
+    /// wheel and Esc are captured too (see <see cref="HotkeyRules"/>); alone they still pass
+    /// through, scroll and cancel.
     /// </summary>
-    public void BeginCapture(Action<HotkeyBinding> done, Action cancelled, bool allowPrimaryMouse)
+    public void BeginCapture(Action<HotkeyBinding> done, Action cancelled, bool allowPrimaryMouse, bool hotkey = false)
     {
         CancelCapture();
         lock (_sync)
@@ -455,6 +557,7 @@ internal sealed class LoopEngine : IDisposable
             _captureDone = done;
             _captureCancelled = cancelled;
             _captureAllowsPrimaryMouse = allowPrimaryMouse;
+            _captureHotkey = hotkey;
         }
     }
 
@@ -484,8 +587,8 @@ internal sealed class LoopEngine : IDisposable
 
     // ================= Key routing (input thread) =================
 
-    // Returns true to block the event.
-    private bool OnKey(int vk, bool isDown, bool physicalModifierEvent)
+    // Returns true to block the event. Internal for the unit tests.
+    internal bool OnKey(int vk, bool isDown, bool physicalModifierEvent)
     {
         lock (_sync)
         {
@@ -554,6 +657,11 @@ internal sealed class LoopEngine : IDisposable
                     }
                     return Block();
                 }
+
+                // Released while a running loop holds it (pressed before the loop started): the
+                // release would let go of the loop's key.
+                if (IsHeldByLoop(vk))
+                    return Block();
                 return false;
             }
 
@@ -571,43 +679,18 @@ internal sealed class LoopEngine : IDisposable
 
             var pressed = CurrentBinding(vk);
 
-            if (!_hotkeysSuspended)
+            if (!_hotkeysSuspended && RunHotkey(snap, pressed, canHold: true, run: true))
             {
-                if (Matches(snap.GameMode, pressed))
-                {
-                    _heldHotkeys.Add(vk);
-                    _dispatcher.InvokeAsync(() => GameModeToggleRequested?.Invoke());
-                    return Block();
-                }
+                _heldHotkeys.Add(vk);
+                return Block();
+            }
 
-                if (Matches(snap.StopAll, pressed))
-                {
-                    _heldHotkeys.Add(vk);
-                    StopAll();
-                    return Block();
-                }
-
-                var loopTarget = snap.Loops.FirstOrDefault(l => l.Enabled && Matches(l.Hotkey, pressed));
-                if (loopTarget != null)
-                {
-                    _heldHotkeys.Add(vk);
-                    if (loopTarget.Mode == ActivationMode.Toggle)
-                        ToggleLoop(loopTarget);
-                    else
-                        StartLoop(loopTarget);
-                    return Block();
-                }
-
-                var macroTarget = snap.Macros.FirstOrDefault(m => m.Enabled && Matches(m.Hotkey, pressed));
-                if (macroTarget != null)
-                {
-                    _heldHotkeys.Add(vk);
-                    if (macroTarget.Mode == ActivationMode.Toggle)
-                        ToggleMacro(macroTarget);
-                    else
-                        StartMacro(macroTarget);
-                    return Block();
-                }
+            // A running loop holds this key down (Hold down row): the physical press changes
+            // nothing, and its release would let go of the loop's key. Swallow both.
+            if (IsHeldByLoop(vk))
+            {
+                _swallowUp.Add(vk);
+                return Block();
             }
 
             // Remaps: an app-specific remap wins over an "all apps" one.
@@ -620,6 +703,125 @@ internal sealed class LoopEngine : IDisposable
             }
 
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Finds the global, loop or macro hotkey that matches <paramref name="pressed"/> and, with
+    /// <paramref name="run"/>, runs it. Without <paramref name="canHold"/> (the wheel, which has
+    /// no release) Hold loops and macros are skipped. Called with the lock held.
+    /// </summary>
+    private bool RunHotkey(EngineSnapshot snap, HotkeyBinding pressed, bool canHold, bool run)
+    {
+        if (Matches(snap.OverlayMode, pressed))
+        {
+            if (run)
+                _dispatcher.InvokeAsync(() => OverlayModeToggleRequested?.Invoke());
+            return true;
+        }
+
+        if (Matches(snap.StopAll, pressed))
+        {
+            if (run)
+                StopAll();
+            return true;
+        }
+
+        var loopTarget = snap.Loops.FirstOrDefault(l =>
+            l.Enabled && Matches(l.Hotkey, pressed) && (canHold || l.Mode == ActivationMode.Toggle));
+        if (loopTarget != null)
+        {
+            if (!run)
+                return true;
+            if (loopTarget.Mode == ActivationMode.Toggle)
+                ToggleLoop(loopTarget);
+            else
+                StartLoop(loopTarget);
+            return true;
+        }
+
+        var macroTarget = snap.Macros.FirstOrDefault(m =>
+            m.Enabled && Matches(m.Hotkey, pressed) && (canHold || m.Mode == ActivationMode.Toggle));
+        if (macroTarget != null)
+        {
+            if (!run)
+                return true;
+            if (macroTarget.Mode == ActivationMode.Toggle)
+                ToggleMacro(macroTarget);
+            else
+                StartMacro(macroTarget);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>A running loop holds this key or button down (Hold down row). Called with the lock held.</summary>
+    private bool IsHeldByLoop(int vk)
+    {
+        foreach (var runners in _running.Values)
+        {
+            foreach (var runner in runners)
+            {
+                if (runner.HeldVk == vk && !runner.StopRequested)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    // Runs on the input thread. Returns true to block the event.
+    internal bool OnWheel(bool horizontal, int delta)
+    {
+        if (delta == 0)
+            return false;
+        lock (_sync)
+        {
+            int vk = KeyNames.WheelVk(horizontal, delta);
+            bool modifier = ModifierTracker.Any;
+
+            // Capturing a hotkey: Ctrl/Alt/Shift/Win + wheel is captured; the wheel alone scrolls.
+            if (_captureDone != null)
+            {
+                if (!_captureHotkey || !modifier)
+                    return false;
+                var done = _captureDone;
+                var binding = CurrentBinding(vk);
+                _captureDone = null;
+                _captureCancelled = null;
+                _dispatcher.InvokeAsync(() => done(binding));
+                return Block();
+            }
+
+            // Wheel hotkeys always have a modifier (HotkeyRules); recording keeps every wheel event.
+            if (_recording || _hotkeysSuspended || !modifier)
+            {
+                _wheelVk = 0;
+                return false;
+            }
+
+            var snap = _snapshot;
+            var pressed = CurrentBinding(vk);
+            if (!RunHotkey(snap, pressed, canHold: false, run: false))
+            {
+                _wheelVk = 0;
+                return false;
+            }
+
+            // One notch (WHEEL_DELTA) is one press. Touchpads and free-spinning wheels send
+            // smaller steps: they add up, in the same direction, to whole notches.
+            if (vk != _wheelVk)
+            {
+                _wheelVk = vk;
+                _wheelAccumulated = 0;
+            }
+            _wheelAccumulated += Math.Abs(delta);
+            while (_wheelAccumulated >= KeyNames.WheelDelta)
+            {
+                _wheelAccumulated -= KeyNames.WheelDelta;
+                RunHotkey(snap, pressed, canHold: false, run: true);
+            }
+            // Blocked even below a notch: the app must not scroll or zoom with the hotkey's modifiers.
+            return Block();
         }
     }
 
@@ -702,12 +904,13 @@ internal sealed class LoopEngine : IDisposable
         if (!isDown)
             return _swallowUp.Remove(vk);
 
-        if (!_captureAllowsPrimaryMouse && KeyNames.IsPrimaryMouse(vk))
+        bool withModifier = _captureHotkey && ModifierTracker.Any;
+        if (!_captureAllowsPrimaryMouse && !withModifier && KeyNames.IsPrimaryMouse(vk))
             return false;
 
         _swallowUp.Add(vk);
 
-        if (vk == KeyNames.VK_ESCAPE)
+        if (vk == KeyNames.VK_ESCAPE && !withModifier)
         {
             var cancelled = _captureCancelled;
             _captureDone = null;

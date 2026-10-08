@@ -78,6 +78,9 @@ internal sealed class ActionRunner
 
     public bool StopRequested => _stopRequested;
 
+    /// <summary>The key or mouse button this runner holds down while it runs (a Hold down row), or 0.</summary>
+    public int HeldVk => _action.Type == ActionType.Key && _action.HoldDown ? _action.KeyVk : 0;
+
     public void Start()
     {
         var thread = new Thread(Run)
