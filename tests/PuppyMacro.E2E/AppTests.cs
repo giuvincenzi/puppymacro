@@ -40,7 +40,7 @@ public class AppTests
         Assert.True(app.Has(app.MainWindow, "Not available in the development build"));
 
         // About opens like the other groups. Its buttons open the browser: never clicked.
-        app.FindById(app.MainWindow, "AboutGroup").Patterns.ExpandCollapse.Pattern.Expand();
+        app.Expand("AboutGroup");
         Assert.True(app.FindById(app.MainWindow, "UserGuideButton").IsEnabled);
         Assert.True(app.FindById(app.MainWindow, "GitHubButton").IsEnabled);
     }
@@ -64,14 +64,28 @@ public class AppTests
         Assert.True(app.Has(app.MainWindow, "E2E F24 loop"));
         Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("E2E F24 loop"), AppSession.Timeout).Success);
 
-        // The new loop is the last one: its button is the last "Start" in the list.
-        AutomationElement[] startButtons = app.MainWindow.FindAllDescendants(cf => cf.ByName("Start"));
-        Button startStop = startButtons[^1].AsButton();
-        startStop.Click();
+        // The card's Play: running, it becomes Stop; Stop all stops it.
+        Button startStop = app.CardButton("E2E F24 loop", "Play").AsButton();
+        startStop.Invoke();
         Assert.True(Retry.WhileFalse(() => startStop.Name == "Stop", AppSession.Timeout).Success);
 
-        app.FindById(app.MainWindow, "StopAllButton").AsButton().Click();
-        Assert.True(Retry.WhileFalse(() => startStop.Name == "Start", AppSession.Timeout).Success);
+        app.FindById(app.MainWindow, "StopAllButton").AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => startStop.Name == "Play", AppSession.Timeout).Success);
+    }
+
+    [Fact]
+    public void The_main_window_hides_while_an_editor_is_open()
+    {
+        using var app = new AppSession();
+
+        app.Find(app.MainWindow, "Add loop").AsButton().Invoke();
+        Window editor = app.Dialog("Add loop");
+        Assert.True(Retry.WhileFalse(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the main window is still shown with an editor open");
+
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the main window did not come back");
     }
 
     [Fact]
@@ -97,7 +111,7 @@ public class AppTests
     [Fact]
     public void Windows_fit_on_a_small_screen()
     {
-        // On GitHub the screen is 1024x768: the main window (1420 x 900) and the macro editor
+        // On GitHub the screen is 1024x768: the main window (800 x 900) and the macro editor
         // (1180 x 820) do not fit unless they are made smaller.
         using var app = new AppSession();
         System.Drawing.Rectangle workArea = System.Windows.Forms.Screen.PrimaryScreen!.WorkingArea;
@@ -105,7 +119,7 @@ public class AppTests
         AssertInside(workArea, app.MainWindow);
 
         app.GoTo("Macros");
-        app.ItemMenu("Sample: type and confirm", "Edit");
+        app.EditItem("Sample: type and confirm");
         Window editor = app.Dialog("Edit macro");
         AssertInside(workArea, editor);
         AssertInside(workArea, app.FindById(editor, "SaveButton"));
@@ -116,12 +130,13 @@ public class AppTests
     {
         using var app = new AppSession();
         app.GoTo("Macros");
-        app.ItemMenu("Sample: click and scroll", "Edit");
+        app.EditItem("Sample: click and scroll");
         Window editor = app.Dialog("Edit macro");
         Assert.True(editor.Patterns.Transform.Pattern.CanResize.Value, "the macro editor cannot be resized");
         ListBox list = app.FindById(editor, "ActionList").AsListBox();
 
-        // Name the click.
+        // Name the click: the commands act on the selected actions.
+        list.Items[0].Select();
         app.Find(editor, "Edit action").AsButton().Invoke();
         Window action = ChildDialog(editor, "Edit click");
         app.FindById(action, "ActionNameBox").AsTextBox().Text = "E2E click";
@@ -137,8 +152,9 @@ public class AppTests
         app.FindById(group, "OkButton").AsButton().Invoke();
         Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("Group E2E group")), AppSession.Timeout).Success);
 
-        // Duplicate the group from its header.
-        app.Find(editor, "Duplicate group").AsButton().Invoke();
+        // Duplicate the group: select its row, then Duplicate.
+        list.Items.First(i => i.Name.StartsWith("Group E2E group")).Select();
+        app.FindById(editor, "DuplicateButton").AsButton().Invoke();
         AutomationElement total = app.FindById(editor, "TotalText");
         Assert.True(Retry.WhileFalse(() => total.Name.StartsWith("4 actions in 2 groups"), AppSession.Timeout).Success, total.Name);
 
@@ -156,7 +172,7 @@ public class AppTests
     {
         using var app = new AppSession();
         app.GoTo("Macros");
-        app.ItemMenu("Sample: click and scroll", "Edit");
+        app.EditItem("Sample: click and scroll");
         Window editor = app.Dialog("Edit macro");
         System.Drawing.Rectangle editorPlace = editor.BoundingRectangle;
 
@@ -167,7 +183,7 @@ public class AppTests
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "menu item \"Press key\" not found").Result!
             .AsMenuItem().Invoke(); // UI Automation: a mouse click can miss the menu while its popup opens
         Window action = ChildDialog(editor, "Add press key");
-        app.FindById(action, "KeyButton").AsButton().Invoke();
+        app.Find(action, "Set key").AsButton().Invoke();
         app.Find(action, "Press a key (Esc cancels)");
         Keyboard.Press(VirtualKeyShort.F24);
         Keyboard.Release(VirtualKeyShort.F24);
@@ -187,14 +203,15 @@ public class AppTests
         ListBox list = app.FindById(editor, "ActionList").AsListBox();
         Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("3. Press F24")), AppSession.Timeout).Success);
 
-        // Test from the row: the editor moves out of the way, then comes back.
-        editor.FindAllDescendants(cf => cf.ByName("Test action")).Last().AsButton().Invoke();
+        // Test from the list: select the action, then Test; the editor moves out of the way, then comes back.
+        list.Items.First(i => i.Name.StartsWith("3. Press F24")).Select();
+        app.Find(editor, "Test action").AsButton().Invoke();
         AssertMovesAwayAndBack(app, editor, editorPlace);
     }
 
     /// <summary>
-    /// The window goes off screen while a test plays (the main window is hidden), then returns to
-    /// <paramref name="place"/> with the main window shown again.
+    /// The window goes off screen while a test plays, then returns to <paramref name="place"/>. The main
+    /// window stays hidden: it is, while an editor is open.
     /// </summary>
     private static void AssertMovesAwayAndBack(AppSession app, Window window, System.Drawing.Rectangle place, bool alreadyAway = false)
     {
@@ -203,8 +220,8 @@ public class AppTests
             Assert.True(Retry.WhileFalse(() => window.BoundingRectangle.Right <= System.Windows.Forms.SystemInformation.VirtualScreen.Left,
                 AppSession.Timeout, TimeSpan.FromMilliseconds(20)).Success, $"\"{window.Title}\" did not move out of the way");
         }
-        Assert.True(Retry.WhileFalse(() => window.BoundingRectangle == place && app.MainWindow.IsAvailable && !app.MainWindow.IsOffscreen,
-            AppSession.Timeout).Success, $"\"{window.Title}\" is at {window.BoundingRectangle}, not back at {place}");
+        Assert.True(Retry.WhileFalse(() => window.BoundingRectangle == place, AppSession.Timeout).Success,
+            $"\"{window.Title}\" is at {window.BoundingRectangle}, not back at {place}");
     }
 
     /// <summary>A dialog opened by another dialog.</summary>
@@ -226,9 +243,10 @@ public class AppTests
     private static void SetOverlayModeHotkeyToF24(AppSession app)
     {
         app.GoTo("Settings");
-        app.FindById(app.MainWindow, "HotkeysGroup").Patterns.ExpandCollapse.Pattern.Expand();
-        app.FindById(app.MainWindow, "OverlayModeChangeButton").AsButton().Invoke();
-        app.Find(app.MainWindow, "Press a key…");
+        app.Expand("HotkeysGroup");
+        // The Overlay mode card's key field: its keys are a button that changes them.
+        app.Find(app.FindById(app.MainWindow, "OverlayModeHotkeyField"), "Change hotkey").AsButton().Invoke();
+        app.Find(app.MainWindow, "Press the hotkey (Esc cancels)");
         PressF24();
         Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Replace(" ", "").Replace("\r", "").Replace("\n", "")
             .Contains("\"OverlayModeHotkey\":{\"Vk\":135,"), AppSession.Timeout).Success, "the Overlay mode hotkey is not F24");
@@ -298,7 +316,7 @@ public class AppTests
         app.FindById(editor, "SaveButton").AsButton().Click();
 
         SetOverlayModeHotkeyToF24(app);
-        app.FindById(app.MainWindow, "OverlayGroup").Patterns.ExpandCollapse.Pattern.Expand();
+        app.Expand("OverlayGroup");
         app.FindById(app.MainWindow, "ShowPanelSwitch").AsToggleButton().Toggle();
         Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"ShowOverlayPanel\": false"),
             AppSession.Timeout).Success);
@@ -331,7 +349,7 @@ public class AppTests
     {
         using var app = new AppSession();
         app.GoTo("Macros");
-        app.ItemMenu("Sample: type and confirm", "Edit");
+        app.EditItem("Sample: type and confirm");
         Window editor = app.Dialog("Edit macro");
         Assert.False(app.Has(editor, "Format"), "Format shows in the List view");
 
@@ -414,7 +432,7 @@ public class AppTests
 
         // A sample remap: its code has no problems and goes back to the form.
         app.GoTo("Remap");
-        app.ItemMenu("Sample: Caps Lock to Esc", "Edit");
+        app.EditItem("Sample: Caps Lock to Esc");
         Window remap = app.Dialog("Edit remap");
         OpenCodeView(app, remap);
         Assert.True(app.FindById(remap, "SaveButton").IsEnabled);
@@ -428,9 +446,10 @@ public class AppTests
     {
         using var app = new AppSession();
         app.GoTo("Macros");
-        app.ItemMenu("Sample: click and scroll", "Edit");
+        app.EditItem("Sample: click and scroll");
         Window editor = app.Dialog("Edit macro");
 
+        app.FindById(editor, "ActionList").AsListBox().Items[0].Select();
         app.Find(editor, "Edit action").AsButton().Invoke();
         Window action = ChildDialog(editor, "Edit click");
         OpenCodeView(app, action);

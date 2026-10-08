@@ -40,7 +40,6 @@ public partial class RemapEditorWindow
 
         string title = existing == null ? "Add remap" : "Edit remap";
         Title = title;
-        EditorTitleBar.Title = title;
 
         AppBox.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
             new TextChangedEventHandler((_, _) => Validate()));
@@ -57,6 +56,7 @@ public partial class RemapEditorWindow
         };
         _ready = true;
         Validate();
+        KeyCaptureField.SetEngine(this, _engine); // the key fields wait for keys through it
         Closed += (_, _) => _engine.CancelCapture();
     }
 
@@ -102,44 +102,21 @@ public partial class RemapEditorWindow
 
     private void UpdateLabels()
     {
-        SourceCaptureText.Visibility = Visibility.Collapsed;
-        TargetCaptureText.Visibility = Visibility.Collapsed;
-        SourceCaps.Visibility = Visibility.Visible;
-        TargetCaps.Visibility = Visibility.Visible;
-        SourceCaps.ItemsSource = new[] { _sourceVk == 0 ? "Not set" : KeyNames.Get(_sourceVk) };
-        TargetCaps.ItemsSource = _target is { IsSet: true } ? KeyNames.Parts(_target) : new System.Collections.Generic.List<string> { "Not set" };
+        SourceField.Value = _sourceVk == 0 ? null : HotkeyBinding.FromKey(_sourceVk);
+        TargetField.Value = _target?.Clone();
     }
 
-    private void OnChangeSourceClick(object sender, RoutedEventArgs e)
+    /// <summary>The source is a single key or button (the field keeps no modifiers).</summary>
+    private void OnSourceFieldChanged(object? sender, EventArgs e)
     {
-        _engine.CancelCapture();
-        SourceCaps.Visibility = Visibility.Collapsed;
-        SourceCaptureText.Visibility = Visibility.Visible;
-        _engine.BeginCapture(
-            binding =>
-            {
-                _sourceVk = binding.Vk; // the source is a single key or button
-                UpdateLabels();
-                Validate();
-            },
-            UpdateLabels,
-            allowPrimaryMouse: true);
+        _sourceVk = SourceField.Value?.Vk ?? 0;
+        Validate();
     }
 
-    private void OnChangeTargetClick(object sender, RoutedEventArgs e)
+    private void OnTargetFieldChanged(object? sender, EventArgs e)
     {
-        _engine.CancelCapture();
-        TargetCaps.Visibility = Visibility.Collapsed;
-        TargetCaptureText.Visibility = Visibility.Visible;
-        _engine.BeginCapture(
-            binding =>
-            {
-                _target = binding;
-                UpdateLabels();
-                Validate();
-            },
-            UpdateLabels,
-            allowPrimaryMouse: true);
+        _target = TargetField.Value?.Clone();
+        Validate();
     }
 
     private void OnScopeChanged(object sender, RoutedEventArgs e)

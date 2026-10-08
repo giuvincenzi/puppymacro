@@ -11,9 +11,6 @@ internal static class FloatingButtons
     /// </summary>
     public static bool HasButton(IListItem item) =>
         item.IsItemEnabled && !item.IsHoldMode && item.FloatingButton.Enabled;
-
-    /// <summary>A floating button is possible only for Toggle.</summary>
-    public static bool IsAvailable(ActivationMode mode) => mode == ActivationMode.Toggle;
 }
 
 /// <summary>An editor's floating button, not saved yet, for the placement overlay.</summary>

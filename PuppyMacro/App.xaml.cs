@@ -8,8 +8,8 @@ using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
 using PuppyMacro.Services;
+using iNKORE.UI.WPF.Modern;
 using Velopack;
-using Wpf.Ui.Appearance;
 
 namespace PuppyMacro;
 
@@ -22,7 +22,6 @@ public partial class App : Application
     private const string ShowWindowEventName = "PuppyMacro.ShowWindow";
     private EventWaitHandle? _showWindowRequest;
     private RegisteredWaitHandle? _showWindowWait;
-    private static bool _watchingSystemTheme;
 
     /// <summary>"PuppyMacro v1.1.0", from the version in PuppyMacro.csproj.</summary>
     /// <summary>Debug build (make dev): marked as DEV in the window and the tray.</summary>
@@ -62,7 +61,6 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-        Views.CardExpanderHover.Register();
         bool startInTray = e.Args.Contains(StartupService.TrayArgument);
         bool restarting = e.Args.Contains(RestartArgument);
 
@@ -126,7 +124,7 @@ public partial class App : Application
 
         var window = new MainWindow(store, settings, macros);
         MainWindow = window;
-        ApplyTheme(settings.Theme, window);
+        ApplyTheme(settings.Theme);
         if (startInTray)
             window.StartInTray();
         else
@@ -165,32 +163,37 @@ public partial class App : Application
         Current.Shutdown();
     }
 
-    /// <summary>Applies System, Light or Dark. System also follows later Windows theme changes.</summary>
-    public static void ApplyTheme(AppTheme mode, Window mainWindow)
-    {
-        if (mode == AppTheme.System)
+    /// <summary>Applies System, Light or Dark. System (no theme set) also follows later Windows theme changes.</summary>
+    public static void ApplyTheme(AppTheme mode) =>
+        ThemeManager.Current.ApplicationTheme = mode switch
         {
-            if (!_watchingSystemTheme)
-            {
-                SystemThemeWatcher.Watch(mainWindow);
-                _watchingSystemTheme = true;
-            }
-            ApplicationThemeManager.ApplySystemTheme();
-            return;
-        }
+            AppTheme.Light => ApplicationTheme.Light,
+            AppTheme.Dark => ApplicationTheme.Dark,
+            _ => null,
+        };
 
-        if (_watchingSystemTheme && mainWindow.IsLoaded)
-        {
-            SystemThemeWatcher.UnWatch(mainWindow);
-            _watchingSystemTheme = false;
-        }
-        ApplicationThemeManager.Apply(mode == AppTheme.Light ? ApplicationTheme.Light : ApplicationTheme.Dark);
-    }
+    /// <summary>The theme in use, also when it follows Windows.</summary>
+    public static bool IsDarkTheme => ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark;
+
+    private static bool _showingError;
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        MessageBox.Show($"Unexpected error:\n\n{e.Exception.Message}", "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Error);
         e.Handled = true;
+        Console.Error.WriteLine(e.Exception);
+        // The message box keeps the dispatcher running: an error thrown again while drawing (layout)
+        // would open a box inside the box until the stack overflows. One box at a time.
+        if (_showingError)
+            return;
+        _showingError = true;
+        try
+        {
+            MessageBox.Show($"Unexpected error:\n\n{e.Exception.Message}", "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            _showingError = false;
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)

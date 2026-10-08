@@ -92,6 +92,29 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void Dragging_the_overlay_panel_move_handle_moves_it_and_the_press_never_reaches_the_app()
+    {
+        var events = new System.Collections.Generic.List<(PanelDragPhase Phase, int Dx, int Dy)>();
+        _engine.OverlayPanelDragged += (phase, dx, dy) => events.Add((phase, dx, dy));
+        _engine.SetPanelTargets(new[] { new PanelTarget(100, 100, 126, 126, PanelTarget.MoveOverlayId) });
+
+        // Pressed on the handle: blocked, the app keeps the focus.
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 110, 110, 0));
+        // Moves are never blocked (the cursor must move); several in a row reach the UI as the latest offset.
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.Move, 0, 130, 120, 0));
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.Move, 0, 150, 125, 0));
+        RunDispatcher();
+        // Released: blocked too, with the final offset.
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_LBUTTON, 160, 130, 0));
+        RunDispatcher();
+
+        Assert.Equal(new[] { (PanelDragPhase.Started, 0, 0), (PanelDragPhase.Moved, 40, 15), (PanelDragPhase.Ended, 50, 20) }, events);
+
+        // After the drag a click elsewhere passes again.
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 50, 50, 0));
+    }
+
+    [Fact]
     public void A_wheel_hotkey_toggles_once_per_notch_and_smaller_steps_add_up()
     {
         LoopDefinition loop = TapLoop(new HotkeyBinding { Vk = KeyNames.VK_WHEEL_DOWN, Ctrl = true });

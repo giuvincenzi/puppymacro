@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
+using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
 
 namespace PuppyMacro;
 
@@ -26,6 +27,8 @@ public partial class MacroActionWindow
         InitializeComponent();
         WindowFit.Apply(this);
         _engine = engine;
+        KeyCaptureField.SetEngine(this, engine); // the key field waits for keys through it
+        KeyField.Validate = KeyProblem;
         _isNew = isNew;
         _action = action.Clone();
         LoadAction(_action);
@@ -51,7 +54,6 @@ public partial class MacroActionWindow
 
         string title = (_isNew ? "Add " : "Edit ") + TypeName(_action.Type).ToLowerInvariant();
         Title = title;
-        ActionTitleBar.Title = title;
 
         ActionNameBox.Text = _action.Name;
 
@@ -71,7 +73,7 @@ public partial class MacroActionWindow
         RepeatBox.Value = Math.Max(1, _action.Repeat);
         RepeatPauseBox.Value = _action.RepeatPauseMs;
 
-        KeyButton.Content = _keyVk == 0 ? "Choose key" : KeyNames.Get(_keyVk);
+        KeyField.Value = _keyVk == 0 ? null : HotkeyBinding.FromKey(_keyVk);
         KeyHoldBox.Value = _action.HoldMs;
         ClickHoldBox.Value = _action.HoldMs;
         SelectButton(_action.Vk == 0 ? KeyNames.VK_LBUTTON : _action.Vk);
@@ -121,24 +123,14 @@ public partial class MacroActionWindow
         ButtonBox.SelectedIndex = 0;
     }
 
-    private void OnChooseKeyClick(object sender, RoutedEventArgs e)
+    /// <summary>A key action takes a key: mouse buttons have their own actions.</summary>
+    private static string? KeyProblem(HotkeyBinding binding) =>
+        KeyNames.IsMouse(binding.Vk) ? "Use a Click or Mouse button action for mouse buttons." : null;
+
+    private void OnKeyFieldChanged(object? sender, EventArgs e)
     {
-        KeyButton.Content = "Press a key (Esc cancels)";
-        _engine.BeginCapture(
-            binding =>
-            {
-                if (KeyNames.IsMouse(binding.Vk))
-                {
-                    KeyButton.Content = _keyVk == 0 ? "Choose key" : KeyNames.Get(_keyVk);
-                    ShowError("Use a Click or Mouse button action for mouse buttons.");
-                    return;
-                }
-                _keyVk = binding.Vk;
-                KeyButton.Content = KeyNames.Get(_keyVk);
-                Validate();
-            },
-            () => KeyButton.Content = _keyVk == 0 ? "Choose key" : KeyNames.Get(_keyVk),
-            allowPrimaryMouse: false);
+        _keyVk = KeyField.Value?.Vk ?? 0;
+        Validate();
     }
 
     private void OnPickClick(object sender, RoutedEventArgs e)
@@ -253,18 +245,18 @@ public partial class MacroActionWindow
         if (t is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp)
         {
             a.Vk = _keyVk;
-            a.HoldMs = KeyHoldBox.Value ?? 30;
+            a.HoldMs = Number(KeyHoldBox, 30);
         }
         if (t is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp)
         {
             a.Vk = ButtonBox.SelectedItem is ComboBoxItem { Tag: string tag } ? int.Parse(tag) : KeyNames.VK_LBUTTON;
             a.ClickCount = DoubleClickRadio.IsChecked == true ? 2 : 1;
-            a.HoldMs = ClickHoldBox.Value ?? 30;
+            a.HoldMs = Number(ClickHoldBox, 30);
         }
         if (t is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo)
         {
-            a.X = (int)Math.Round(XBox.Value ?? 0);
-            a.Y = (int)Math.Round(YBox.Value ?? 0);
+            a.X = (int)Number(XBox, 0);
+            a.Y = (int)Number(YBox, 0);
         }
         if (t == MacroActionType.MoveTo)
         {
@@ -274,7 +266,7 @@ public partial class MacroActionWindow
         if (t == MacroActionType.Scroll)
         {
             a.ScrollDirection = (ScrollDirection)Math.Max(0, DirectionBox.SelectedIndex);
-            a.ScrollSteps = (int)Math.Max(1, Math.Round(StepsBox.Value ?? 1));
+            a.ScrollSteps = (int)Math.Max(1, Number(StepsBox, 1));
         }
         if (t == MacroActionType.PasteText)
         {
@@ -284,12 +276,15 @@ public partial class MacroActionWindow
         }
         if (t is MacroActionType.PressKey or MacroActionType.Click)
         {
-            a.Repeat = (int)Math.Max(1, Math.Round(RepeatBox.Value ?? 1));
-            a.RepeatPauseMs = Math.Max(0, Math.Round(RepeatPauseBox.Value ?? 50));
+            a.Repeat = (int)Math.Max(1, Number(RepeatBox, 1));
+            a.RepeatPauseMs = Math.Max(0, Number(RepeatPauseBox, 50));
         }
-        a.DelayMs = Math.Max(0, Math.Round(DelayBox.Value ?? 0));
+        a.DelayMs = Math.Max(0, Number(DelayBox, 0));
         return a;
     }
+
+    /// <summary>The whole number in <paramref name="box"/>, or <paramref name="empty"/> when it is empty.</summary>
+    private static double Number(NumberBox box, double empty) => double.IsNaN(box.Value) ? empty : Math.Round(box.Value);
 
     /// <summary>Form view: closes without saving. Code view: Discard changes (see <see cref="CodeViewSwitch{T}"/>).</summary>
     private void OnCancelClick(object sender, RoutedEventArgs e)

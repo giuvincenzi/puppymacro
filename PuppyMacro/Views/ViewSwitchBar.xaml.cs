@@ -1,6 +1,6 @@
 using System;
 using System.Windows;
-using System.Windows.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 
 namespace PuppyMacro.Views;
 
@@ -23,7 +23,7 @@ public partial class ViewSwitchBar
     public void Show(bool code)
     {
         _setting = true;
-        (code ? CodeViewButton : FormViewButton).IsChecked = true;
+        Views.SelectedItem = code ? CodeViewButton : FormViewButton;
         _setting = false;
         FormatButton.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -35,10 +35,10 @@ public partial class ViewSwitchBar
         set => FormViewButton.IsEnabled = value;
     }
 
-    private void OnChecked(object sender, RoutedEventArgs e)
+    private void OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
-        if (!_setting)
-            ViewRequested?.Invoke(sender == CodeViewButton);
+        if (!_setting && args.SelectedItem != null)
+            ViewRequested?.Invoke(args.SelectedItem == CodeViewButton);
     }
 
     private void OnFormatClick(object sender, RoutedEventArgs e) => FormatRequested?.Invoke();

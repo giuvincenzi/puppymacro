@@ -1,36 +1,25 @@
-<ui:FluentWindow
+<Window
     x:Class="PuppyMacro.RemapEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:views="clr-namespace:PuppyMacro.Views"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica"
+    ui:TitleBar.MinimizeButtonAvailability="Collapsed"
+    ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="Add remap"
     Width="900"
     Height="560"
     MinWidth="760"
     MinHeight="440"
     ResizeMode="CanResize"
-    ShowInTaskbar="False"
-    ExtendsContentIntoTitleBar="True"
-    WindowBackdropType="Mica"
-    WindowCornerPreference="Round"
+    ShowInTaskbar="True"
     WindowStartupLocation="CenterOwner"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
-    <Window.Resources>
-        <DataTemplate x:Key="Cap">
-            <Border Margin="0,0,4,0" Padding="8,2" Style="{StaticResource KeyCap}">
-                <TextBlock FontSize="13" Text="{Binding}" />
-            </Border>
-        </DataTemplate>
-        <ItemsPanelTemplate x:Key="Row">
-            <StackPanel Orientation="Horizontal" />
-        </ItemsPanelTemplate>
-    </Window.Resources>
-
     <DockPanel LastChildFill="True">
-        <ui:TitleBar x:Name="EditorTitleBar" DockPanel.Dock="Top" Title="Add remap" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
-
         <!-- Form view: the remap's fields. Code view: the remap's JSON, as in settings.json. -->
         <views:ViewSwitchBar x:Name="ViewBar" DockPanel.Dock="Top" Margin="24,4,24,8" />
 
@@ -43,12 +32,14 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="160" />
                 </Grid.ColumnDefinitions>
-                <ui:Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
+                        Content="Save" Click="OnSaveClick" />
+                <Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
 
-        <TextBlock x:Name="ErrorText" DockPanel.Dock="Bottom" Margin="24,0,24,12" FontSize="12" TextWrapping="Wrap"
+        <TextBlock x:Name="ErrorText" DockPanel.Dock="Bottom" Margin="24,0,24,12" TextWrapping="Wrap"
+                   Style="{StaticResource CaptionTextBlockStyle}"
                    Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
 
         <Grid>
@@ -59,57 +50,56 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="400" />
                 </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Margin="24,4,24,12">
-                <!-- Source -->
-                <TextBlock Margin="0,0,0,6" Text="When I press" />
-                <Grid>
-                    <ItemsControl x:Name="SourceCaps" VerticalAlignment="Center" ItemTemplate="{StaticResource Cap}" ItemsPanel="{StaticResource Row}" />
-                    <TextBlock x:Name="SourceCaptureText" VerticalAlignment="Center" Visibility="Collapsed"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press a key or mouse button (Esc cancels)" />
-                    <ui:Button HorizontalAlignment="Right" MinWidth="80" Content="Change" Click="OnChangeSourceClick" />
-                </Grid>
-                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="A key or mouse button." />
 
-                <!-- Target -->
-                <TextBlock Margin="0,18,0,6" Text="Send instead" />
-                <Grid>
-                    <ItemsControl x:Name="TargetCaps" VerticalAlignment="Center" ItemTemplate="{StaticResource Cap}" ItemsPanel="{StaticResource Row}" />
-                    <TextBlock x:Name="TargetCaptureText" VerticalAlignment="Center" Visibility="Collapsed"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the key or combination (Esc cancels)" />
-                    <ui:Button HorizontalAlignment="Right" MinWidth="80" Content="Change" Click="OnChangeTargetClick" />
-                </Grid>
-                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                           Text="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first." />
-            </StackPanel>
+                <ikw:SimpleStackPanel Grid.Column="0" Margin="24,4,24,12" Spacing="4">
+                    <!-- Source -->
+                    <ui:SettingsCard Header="When I press" Description="A key or mouse button."
+                                     ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                        <views:KeyCaptureField x:Name="SourceField" KeyOnly="True" AllowPrimaryMouse="True" CanClear="False"
+                                               ItemName="key" Prompt="Press a key or mouse button (Esc cancels)"
+                                               ValueChanged="OnSourceFieldChanged" />
+                    </ui:SettingsCard>
 
-            <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
-            <StackPanel Margin="24,4,24,12">
-                <!-- Scope -->
-                <TextBlock Margin="0,0,0,6" Text="Works in" />
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton x:Name="AllAppsRadio" Content="All apps" GroupName="Scope" Checked="OnScopeChanged" />
-                    <RadioButton x:Name="OneAppRadio" Margin="16,0,0,0" Content="A specific app" GroupName="Scope" Checked="OnScopeChanged" />
-                </StackPanel>
-                <StackPanel x:Name="AppPanel" Margin="0,10,0,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ComboBox x:Name="AppBox" IsEditable="True" IsTextSearchEnabled="True" DropDownOpened="OnAppDropDownOpened"
-                                  ToolTip="The app's .exe name, e.g. Diablo IV.exe" />
-                        <ui:Button Grid.Column="1" Margin="8,0,0,0" Content="Browse…" Click="OnBrowseClick" />
-                    </Grid>
-                    <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                               Text="Pick a running app or browse for its .exe. The remap works only while that app is in front." />
-                </StackPanel>
+                    <!-- Target -->
+                    <ui:SettingsCard Header="Send instead" Description="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first."
+                                     ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                        <views:KeyCaptureField x:Name="TargetField" AllowPrimaryMouse="True" CanClear="False"
+                                               ItemName="key" Prompt="Press the key or combination (Esc cancels)"
+                                               ValueChanged="OnTargetFieldChanged" />
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
 
-                <!-- Note -->
-                <TextBlock Margin="0,18,0,6" Text="Note (optional)" />
-                <ui:TextBox x:Name="NoteBox" PlaceholderText="e.g. Refresh with side button" />
-            </StackPanel>
-            </Border>
+                <ikw:SimpleStackPanel Grid.Column="1" Margin="0,4,24,12" Spacing="4">
+                    <!-- Scope -->
+                    <ui:SettingsCard Header="Works in" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton x:Name="AllAppsRadio" Content="All apps" GroupName="Scope" Checked="OnScopeChanged" />
+                                <RadioButton x:Name="OneAppRadio" Content="A specific app" GroupName="Scope" Checked="OnScopeChanged" />
+                            </StackPanel>
+                            <StackPanel x:Name="AppPanel" Margin="0,8,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="AppBox" HorizontalAlignment="Stretch" IsEditable="True" IsTextSearchEnabled="True"
+                                              DropDownOpened="OnAppDropDownOpened" ToolTip="The app's .exe name, e.g. Diablo IV.exe" />
+                                    <Button Grid.Column="1" Margin="8,0,0,0" Content="Browse…" Click="OnBrowseClick" />
+                                </Grid>
+                                <TextBlock Margin="0,4,0,0" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="Pick a running app or browse for its .exe. The remap works only while that app is in front." />
+                            </StackPanel>
+                        </StackPanel>
+                    </ui:SettingsCard>
+
+                    <!-- Note -->
+                    <ui:SettingsCard Header="Note (optional)" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                        <TextBox x:Name="NoteBox" ui:ControlHelper.PlaceholderText="e.g. Refresh with side button" />
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
             </Grid>
         </Grid>
     </DockPanel>
-</ui:FluentWindow>
+</Window>

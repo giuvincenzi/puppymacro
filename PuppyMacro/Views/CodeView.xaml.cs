@@ -8,7 +8,6 @@ using System.Windows;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using PuppyMacro.Services;
-using Wpf.Ui.Appearance;
 
 namespace PuppyMacro.Views;
 
@@ -119,7 +118,7 @@ public partial class CodeView
         }
     }
 
-    private static bool IsDark => ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
+    private static bool IsDark => App.IsDarkTheme;
 
     private void Post(JsonObject message)
     {

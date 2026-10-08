@@ -15,6 +15,13 @@
      If no, wait for an OK on the text description.
   3. Wait for the user to choose and approve. Only then create the worktree and implement
      (`git-workflow.md`).
+- **Say it first when a request cannot be done as asked.** If something cannot be done exactly as
+  the user asked, or only in a different way (another control, another structure, a workaround),
+  explain it and propose the options before changing anything; never implement the different way
+  on your own.
+- **Standard components only.** The UI uses the controls of iNKORE.UI.WPF.Modern as they are,
+  laid out like Windows Settings: no custom templates, styles, colors, sizes or cursors. A custom
+  part needs the user's approval for that case (`ui.md`).
 - **Fix bugs at the root cause.** No workarounds or "patch" fixes. Explain the cause first.
 - **Do not guess.** If something is uncertain (an API, a Windows behavior, a library
   version), check the source or documentation before relying on it, and say what was

@@ -60,7 +60,7 @@ public sealed class AppSession : IDisposable
                 dir = dir.Parent;
             if (dir == null)
                 throw new InvalidOperationException("PuppyMacro.sln not found above " + AppContext.BaseDirectory);
-            string exe = Path.Combine(dir.FullName, "PuppyMacro", "bin", "Debug", "net10.0-windows", "win-x64", "PuppyMacro.exe");
+            string exe = Path.Combine(dir.FullName, "PuppyMacro", "bin", "Debug", "net10.0-windows10.0.18362.0", "win-x64", "PuppyMacro.exe");
             if (!File.Exists(exe))
                 throw new InvalidOperationException("Build the development build first (make e2e does it): " + exe);
             return exe;
@@ -100,33 +100,44 @@ public sealed class AppSession : IDisposable
     public bool Has(AutomationElement root, string name) =>
         Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name)), TimeSpan.FromSeconds(3)).Result != null;
 
+    /// <summary>Selects a page in the side rail (its ListView items support SelectionItem).</summary>
     public void GoTo(string page)
     {
-        Find(MainWindow, page).AsRadioButton().IsChecked = true;
+        Find(MainWindow, page).Patterns.SelectionItem.Pattern.Select();
     }
 
-    /// <summary>Opens the "…" menu of the list item showing <paramref name="itemText"/> and selects <paramref name="menuItem"/>.</summary>
-    public void ItemMenu(string itemText, string menuItem)
+    /// <summary>
+    /// Opens a Settings group (SettingsExpander, found by x:Name). It has no ExpandCollapse pattern: its
+    /// header is a toggle button with the AutomationId "ExpanderToggleButton".
+    /// </summary>
+    public void Expand(string groupId)
+    {
+        var header = FindById(FindById(MainWindow, groupId), "ExpanderToggleButton").AsToggleButton();
+        if (header.ToggleState != FlaUI.Core.Definitions.ToggleState.On)
+            header.Toggle();
+    }
+
+    /// <summary>The button named <paramref name="buttonName"/> on the list card showing <paramref name="itemText"/>.</summary>
+    public AutomationElement CardButton(string itemText, string buttonName)
     {
         AutomationElement text = Find(MainWindow, itemText);
         double y = text.BoundingRectangle.Y;
-        // The "…" button is the right-most unnamed button on the item's row.
-        AutomationElement more = MainWindow
-            .FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))
-            .Where(b => string.IsNullOrEmpty(b.Name) && string.IsNullOrEmpty(b.AutomationId)
-                        && Math.Abs(b.BoundingRectangle.Y + b.BoundingRectangle.Height / 2 - y) < 40)
-            .OrderBy(b => b.BoundingRectangle.X)
-            .Last();
-        more.Click();
-        Retry.WhileNull(() => Automation.GetDesktop().FindFirstDescendant(cf =>
-                cf.ByControlType(FlaUI.Core.Definitions.ControlType.MenuItem).And(cf.ByName(menuItem))),
-            Timeout, throwOnTimeout: true, timeoutMessage: $"menu item \"{menuItem}\" not found").Result!.Click();
+        // The card's buttons are on the same row as its text.
+        return MainWindow
+            .FindAllDescendants(cf => cf.ByName(buttonName).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button)))
+            .First(b => Math.Abs(b.BoundingRectangle.Y + b.BoundingRectangle.Height / 2 - y) < 40);
     }
 
-    /// <summary>A window of PuppyMacro with this title (dialogs are children of the main window).</summary>
+    /// <summary>Opens the editor of the list item showing <paramref name="itemText"/> with its card's Edit button.</summary>
+    public void EditItem(string itemText) => CardButton(itemText, "Edit").AsButton().Invoke();
+
+    /// <summary>
+    /// A window of PuppyMacro with this title. While an editor is open the main window is hidden, so the
+    /// editors are looked for among this PuppyMacro's top-level windows, not as children of the main window.
+    /// </summary>
     public Window Dialog(string title) =>
-        Retry.WhileNull(() => MainWindow.ModalWindows.FirstOrDefault(w => w.Title == title), Timeout, throwOnTimeout: true,
-            timeoutMessage: $"window \"{title}\" not found").Result!;
+        Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId)))?.AsWindow(),
+            Timeout, throwOnTimeout: true, timeoutMessage: $"window \"{title}\" not found").Result!;
 
     /// <summary>A top-level window of this PuppyMacro (overlay panel, floating buttons), or null after a timeout.</summary>
     public AutomationElement? TopWindow(string title) =>

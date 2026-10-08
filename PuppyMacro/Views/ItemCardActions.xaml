@@ -1,0 +1,37 @@
+<UserControl
+    x:Class="PuppyMacro.Views.ItemCardActions"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
+    x:Name="Root">
+
+    <!-- Play / Stop, Edit and More options: filled Fluent System Icons, lit only under the mouse (SubtleButtons.xaml) -->
+    <UserControl.Resources>
+        <ResourceDictionary Source="SubtleButtons.xaml" />
+    </UserControl.Resources>
+
+    <!-- The right side of every card in the Loops, Macros and Remap lists: Play / Stop (its place left empty in Hold mode),
+         Edit, the Enabled switch and More options. The buttons carry the card's item in their Tag. -->
+    <StackPanel Orientation="Horizontal">
+        <Grid x:Name="PlayPart" VerticalAlignment="Center">
+            <Button x:Name="PlayButton" Tag="{Binding}" Click="OnPlayClick" ToolTipService.ShowOnDisabled="True">
+                <!-- Two fixed icons: in 0.10.2 a FontIcon whose Icon changes after load can clear it (ui.md) -->
+                <Grid>
+                    <ui:FontIcon x:Name="PlayIcon" Icon="{x:Static fsi:FluentSystemIcons.Play_16_Filled}" />
+                    <ui:FontIcon x:Name="StopIcon" Icon="{x:Static fsi:FluentSystemIcons.Stop_16_Filled}" Visibility="Collapsed" />
+                </Grid>
+            </Button>
+        </Grid>
+        <Button x:Name="EditButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="Edit"
+                AutomationProperties.Name="Edit" ToolTipService.ShowOnDisabled="True" Click="OnEditClick">
+            <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Edit_16_Filled}" />
+        </Button>
+        <ui:ToggleSwitch x:Name="EnabledSwitch" Margin="16,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="Enabled"
+                         IsOn="{Binding IsOn, ElementName=Root, Mode=TwoWay}" />
+        <Button x:Name="MoreButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="More options"
+                AutomationProperties.Name="More options" Click="OnMoreClick">
+            <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.MoreHorizontal_16_Filled}" />
+        </Button>
+    </StackPanel>
+</UserControl>

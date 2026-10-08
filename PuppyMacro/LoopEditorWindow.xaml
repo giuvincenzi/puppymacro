@@ -1,296 +1,185 @@
-<ui:FluentWindow
+<Window
     x:Class="PuppyMacro.LoopEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:local="clr-namespace:PuppyMacro"
     xmlns:views="clr-namespace:PuppyMacro.Views"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica"
+    ui:TitleBar.MinimizeButtonAvailability="Collapsed"
+    ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="Add loop"
     Width="1120"
     Height="780"
     MinWidth="900"
     MinHeight="520"
     ResizeMode="CanResize"
-    ShowInTaskbar="False"
-    ExtendsContentIntoTitleBar="True"
-    WindowBackdropType="Mica"
-    WindowCornerPreference="Round"
+    ShowInTaskbar="True"
     WindowStartupLocation="CenterOwner"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Window.Resources>
-        <!-- Small up/down arrows next to the interval field -->
-        <Style x:Key="SpinButton" TargetType="RepeatButton">
-            <Setter Property="Width" Value="22" />
-            <Setter Property="Height" Value="15" />
-            <Setter Property="Delay" Value="400" />
-            <Setter Property="Interval" Value="60" />
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RepeatButton">
-                        <Border x:Name="Back" CornerRadius="3" Background="Transparent">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <!-- Sound tile: play circle + name, selected = accent outline -->
-        <Style x:Key="SoundTile" TargetType="RadioButton">
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="Back" Height="44" Padding="10,0" CornerRadius="6" BorderThickness="1"
-                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Grid Width="22" Height="22">
-                                    <Ellipse x:Name="Circle" Fill="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                                    <Path x:Name="Play" Data="M0,0 L6,4 L0,8 Z" Margin="2,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Fill="{DynamicResource TextFillColorSecondaryBrush}" />
-                                </Grid>
-                                <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Back" Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                <Setter TargetName="Play" Property="Fill" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="Back" Property="BorderThickness" Value="2" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <!-- The spin buttons step 10 ms, or 1 s / min / h -->
+        <local:IntervalStepConverter x:Key="IntervalStep" />
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar x:Name="EditorTitleBar" Grid.Row="0" Title="Add loop" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
-
         <!-- Form view: the loop's fields. Code view: the loop's JSON, as in settings.json. -->
-        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="1" Margin="24,4,24,4" />
+        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="0" Margin="24,4,24,4" />
 
-        <views:CodeView x:Name="CodeView" Grid.Row="2" Margin="24,4,24,12" Visibility="Collapsed" />
+        <views:CodeView x:Name="CodeView" Grid.Row="1" Margin="24,4,24,12" Visibility="Collapsed" />
 
         <!-- Form view: what the loop does on the left, how it starts on the right -->
-        <Grid x:Name="FormBody" Grid.Row="2">
+        <Grid x:Name="FormBody" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="440" />
                 <ColumnDefinition Width="420" />
             </Grid.ColumnDefinitions>
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="24,8,24,12">
-                        <!-- Name -->
-                        <TextBlock Margin="0,0,0,6" Text="Name" />
-                        <ui:TextBox x:Name="NameBox" PlaceholderText="e.g. Left click spam" TextChanged="OnNameChanged" />
+                <ikw:SimpleStackPanel Margin="24,8,24,12" Spacing="4">
+                    <TextBox x:Name="NameBox" ui:ControlHelper.Header="Name" ui:ControlHelper.PlaceholderText="e.g. Left click spam"
+                             TextChanged="OnNameChanged" />
 
-                        <!-- Keys and texts -->
-                        <TextBlock Margin="0,18,0,2" Text="Keys and texts" />
-                        <TextBlock Margin="0,0,0,8" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                   Text="Each one repeats on its own timer; a key can also stay held down while the loop runs. Texts are pasted all at once." TextWrapping="Wrap" />
+                    <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Keys and texts" />
+                    <TextBlock Margin="0,0,0,4" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Text="Each one repeats on its own timer; a key can also stay held down while the loop runs. Texts are pasted all at once." />
 
-                        <ItemsControl x:Name="ActionsList">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type views:ActionEditorViewModel}">
-                                    <Border Margin="0,0,0,4" Padding="10,8" Style="{StaticResource CardBorder}">
-                                        <StackPanel>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
+                    <ItemsControl x:Name="ActionsList">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ikw:SimpleStackPanel Spacing="4" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type views:ActionEditorViewModel}">
+                                <!-- One group per key or text: "Key" or "Text" and a summary; a key row has its key field in the
+                                     header, next to Remove; open, the other settings one per line. A key row just added
+                                     opens and its key field waits for the key. -->
+                                <ui:SettingsExpander IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                                    <ui:SettingsExpander.HeaderIcon>
+                                        <Grid>
+                                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}"
+                                                         Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}" />
+                                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
+                                                         Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
+                                    </ui:SettingsExpander.HeaderIcon>
+                                    <ui:SettingsExpander.Header>
+                                        <Grid>
+                                            <TextBlock Text="Key" Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}" />
+                                            <TextBlock Text="Text" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
+                                    </ui:SettingsExpander.Header>
+                                    <ui:SettingsExpander.Description>
+                                        <TextBlock Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
+                                    </ui:SettingsExpander.Description>
 
-                                                <Border Grid.Column="0" Width="28" Height="28" Margin="0,0,10,0" CornerRadius="4"
-                                                        VerticalAlignment="Center" Background="{DynamicResource SubtleFillColorSecondaryBrush}">
-                                                    <Grid>
-                                                        <ui:SymbolIcon Symbol="Keyboard24" FontSize="16"
-                                                                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                                       Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}" />
-                                                        <TextBlock Text="Aa" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                                   Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
-                                                    </Grid>
-                                                </Border>
+                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                        <views:KeyCaptureField VerticalAlignment="Center" Value="{Binding Key}" StartOnLoad="{Binding CaptureOnLoad}"
+                                                               KeyOnly="True" AllowPrimaryMouse="True" CanClear="True" ItemName="key"
+                                                               Prompt="Press a key or mouse button (Esc cancels)"
+                                                               Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}" />
+                                        <Button VerticalAlignment="Center" ToolTip="Remove" Tag="{Binding}" Click="OnRemoveActionClick"
+                                                AutomationProperties.Name="Remove">
+                                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                                        </Button>
+                                    </ikw:SimpleStackPanel>
 
-                                                <Grid Grid.Column="1" VerticalAlignment="Center">
-                                                    <StackPanel Orientation="Horizontal"
-                                                                Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}">
-                                                        <ui:Button MinWidth="80" Content="{Binding KeyLabel}"
-                                                                   ToolTip="Click, then press the key or mouse button"
-                                                                   Tag="{Binding}" Click="OnCaptureKeyClick" />
-                                                        <RadioButton Margin="10,0,0,0" MinWidth="0" Content="Repeat" GroupName="{Binding RowGroup}"
-                                                                     IsChecked="{Binding IsRepeat, Mode=TwoWay}" VerticalAlignment="Center" />
-                                                        <RadioButton Margin="8,0,0,0" MinWidth="0" Content="Hold down" GroupName="{Binding RowGroup}"
-                                                                     IsChecked="{Binding HoldDown, Mode=TwoWay}" VerticalAlignment="Center" />
-                                                    </StackPanel>
-                                                    <TextBlock Text="Text" VerticalAlignment="Center"
-                                                               Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
-                                                </Grid>
-
-                                                <ui:Button Grid.Column="2" Margin="4,0,0,0" Style="{StaticResource SubtleButton}" Icon="{ui:SymbolIcon Dismiss24}"
-                                                           ToolTip="Remove" Tag="{Binding}" Click="OnRemoveActionClick" />
-                                            </Grid>
-
-                                            <!-- Second line: the interval, or the hold note for a held key -->
-                                            <Grid Margin="38,6,0,0">
-                                                <StackPanel Orientation="Horizontal"
-                                                            Visibility="{Binding ShowInterval, Converter={StaticResource BoolToVisibility}}">
-                                                    <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" FontSize="12"
-                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="every" />
-                                                    <Grid VerticalAlignment="Center">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto" />
-                                                            <ColumnDefinition Width="Auto" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <ui:NumberBox Width="128" VerticalAlignment="Center"
-                                                                      Minimum="0" Maximum="86400000" MaxDecimalPlaces="2"
-                                                                      SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False"
-                                                                      HorizontalContentAlignment="Right"
-                                                                      Value="{Binding IntervalValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                        <StackPanel Grid.Column="1" Margin="2,0,0,0" VerticalAlignment="Center">
-                                                            <RepeatButton Style="{StaticResource SpinButton}" ToolTip="Increase"
-                                                                          Tag="{Binding}" Click="OnStepUpClick">
-                                                                <ui:SymbolIcon Symbol="ChevronUp12" FontSize="10" />
-                                                            </RepeatButton>
-                                                            <RepeatButton Style="{StaticResource SpinButton}" ToolTip="Decrease"
-                                                                          Tag="{Binding}" Click="OnStepDownClick">
-                                                                <ui:SymbolIcon Symbol="ChevronDown12" FontSize="10" />
-                                                            </RepeatButton>
-                                                        </StackPanel>
-                                                    </Grid>
-                                                    <ComboBox Margin="6,0,0,0" MinWidth="72" VerticalAlignment="Center"
-                                                              SelectedIndex="{Binding UnitIndex, Mode=TwoWay}">
-                                                        <ComboBoxItem Content="ms" />
-                                                        <ComboBoxItem Content="s" />
-                                                        <ComboBoxItem Content="min" />
-                                                        <ComboBoxItem Content="h" />
-                                                    </ComboBox>
-                                                </StackPanel>
-                                                <TextBlock VerticalAlignment="Center" FontSize="12"
-                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Held down while the loop runs"
-                                                           Visibility="{Binding IsHoldKey, Converter={StaticResource BoolToVisibility}}" />
-                                            </Grid>
-
-                                            <StackPanel Margin="38,8,0,0" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
-                                                <ui:TextBox MinHeight="64" MaxHeight="140" AcceptsReturn="True" TextWrapping="Wrap"
-                                                            VerticalScrollBarVisibility="Auto" PlaceholderText="Text to paste"
-                                                            Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                <WrapPanel Margin="0,6,0,0">
+                                    <ui:SettingsExpander.Items>
+                                        <ui:SettingsCard Header="Mode" Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}">
+                                            <ComboBox SelectedIndex="{Binding ModeIndex, Mode=TwoWay}" AutomationProperties.Name="Repeat or hold down">
+                                                <ComboBoxItem Content="Repeat" />
+                                                <ComboBoxItem Content="Hold down" />
+                                            </ComboBox>
+                                        </ui:SettingsCard>
+                                        <ui:SettingsCard Header="Text" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch"
+                                                         Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                                            <StackPanel>
+                                                <TextBox MinHeight="64" MaxHeight="140" AcceptsReturn="True" TextWrapping="Wrap"
+                                                         VerticalScrollBarVisibility="Auto" ui:ControlHelper.PlaceholderText="Text to paste"
+                                                         Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <WrapPanel Margin="0,4,0,0">
                                                     <CheckBox Margin="0,0,16,0" Content="Press Enter before pasting" IsChecked="{Binding EnterBefore, Mode=TwoWay}" />
                                                     <CheckBox Content="Press Enter after pasting" IsChecked="{Binding EnterAfter, Mode=TwoWay}" />
                                                 </WrapPanel>
                                             </StackPanel>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                                        </ui:SettingsCard>
+                                        <ui:SettingsCard Header="Every" Visibility="{Binding ShowInterval, Converter={StaticResource BoolToVisibility}}">
+                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
+                                                              SpinButtonPlacementMode="Inline"
+                                                              SmallChange="{Binding UnitIndex, Converter={StaticResource IntervalStep}}"
+                                                              Value="{Binding IntervalValue, Mode=TwoWay}" AutomationProperties.Name="Interval" />
+                                                <ComboBox SelectedIndex="{Binding UnitIndex, Mode=TwoWay}" AutomationProperties.Name="Unit">
+                                                    <ComboBoxItem Content="ms" />
+                                                    <ComboBoxItem Content="s" />
+                                                    <ComboBoxItem Content="min" />
+                                                    <ComboBoxItem Content="h" />
+                                                </ComboBox>
+                                            </ikw:SimpleStackPanel>
+                                        </ui:SettingsCard>
+                                    </ui:SettingsExpander.Items>
+                                </ui:SettingsExpander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-                        <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
-                            <ui:Button Content="Add key" Icon="{ui:SymbolIcon Add24}" Click="OnAddKeyClick" />
-                            <ui:Button Margin="8,0,0,0" Content="Add text" Icon="{ui:SymbolIcon Add24}" Click="OnAddTextClick" />
-                        </StackPanel>
-                </StackPanel>
+                    <ikw:SimpleStackPanel Margin="0,4,0,0" Orientation="Horizontal" Spacing="8">
+                        <Button Content="Add key" Click="OnAddKeyClick" />
+                        <Button Content="Add text" Click="OnAddTextClick" />
+                    </ikw:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
             </ScrollViewer>
-            <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="24,8,24,12">
-                            <!-- Activation -->
-                            <TextBlock Margin="0,0,0,6" Text="Activation" />
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton x:Name="ToggleRadio" Content="Toggle" GroupName="Activation" Checked="OnActivationChanged" />
-                                <RadioButton x:Name="HoldRadio" Margin="16,0,0,0" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
-                            </StackPanel>
-                            <TextBlock x:Name="ActivationHint" Margin="0,4,0,0" FontSize="12"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
 
-                            <!-- Hotkey -->
-                            <TextBlock Margin="0,18,0,6" Text="Hotkey" />
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <ItemsControl x:Name="HotkeyCaps" VerticalAlignment="Center">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Margin="0,0,4,0" Padding="8,2" Style="{StaticResource KeyCap}">
-                                                <TextBlock FontSize="13" Text="{Binding}" />
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <TextBlock x:Name="HotkeyCaptureText" FontSize="13" VerticalAlignment="Center" Visibility="Collapsed"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the hotkey (Esc cancels)" />
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <ui:Button x:Name="HotkeyChangeButton" MinWidth="80" Content="Change" Click="OnChangeHotkeyClick" />
-                                    <ui:Button x:Name="ClearHotkeyButton" Margin="8,0,0,0" MinWidth="70" Content="Clear" Click="OnClearHotkeyClick" />
-                                </StackPanel>
-                            </Grid>
-                            <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                       Text="Optional. Press any key or mouse button, like F2 or A; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too. Without a hotkey, start it with Start or from the overlay panel. Hold needs a hotkey." />
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <ikw:SimpleStackPanel Margin="0,8,24,12" Spacing="4">
+                    <ui:SettingsCard Header="Activation" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
+                        <ui:SettingsCard.Description>
+                            <TextBlock x:Name="ActivationHint" />
+                        </ui:SettingsCard.Description>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="ToggleRadio" Content="Toggle" GroupName="Activation" Checked="OnActivationChanged" />
+                            <RadioButton x:Name="HoldRadio" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
+                        </StackPanel>
+                    </ui:SettingsCard>
 
-                            <!-- Floating button -->
-                            <views:FloatingButtonEditor x:Name="FloatingEditor" Margin="0,18,0,0" />
+                    <ui:SettingsCard Header="Hotkey" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                        <StackPanel>
+                            <views:KeyCaptureField x:Name="HotkeyField" IsHotkey="True" ValueChanged="OnHotkeyFieldChanged" />
+                            <!-- The help, under all the options -->
+                            <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="Optional. Press any key or mouse button, like F2 or A; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too. Without a hotkey, start it with Play or from the overlay panel. Hold needs a hotkey." />
+                        </StackPanel>
+                    </ui:SettingsCard>
 
-                            <!-- Sound, in a card like the floating button's -->
-                            <Border Margin="0,18,0,0" Padding="14,12" CornerRadius="6" BorderThickness="1"
-                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
-                            <StackPanel>
-                            <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="Sound" />
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                               Text="Plays when the loop starts and stops" />
-                                </StackPanel>
-                                <ui:ToggleSwitch x:Name="SoundSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                 OffContent="Off" OnContent="On"
-                                                 Checked="OnSoundSwitchChanged" Unchecked="OnSoundSwitchChanged" />
-                            </Grid>
-                            <StackPanel x:Name="SoundPanel" Margin="0,10,0,0" Visibility="Collapsed">
-                                <UniformGrid x:Name="SoundGrid" Columns="3" />
-                                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                           Text="Click a sound to pick it and hear the start and stop versions." />
-                            </StackPanel>
-                            </StackPanel>
-                            </Border>
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
+                    <views:FloatingButtonEditor x:Name="FloatingEditor" />
+
+                    <views:SwitchSettingsExpander x:Name="SoundExpander" CanExpand="{Binding IsOn, ElementName=SoundSwitch}" Header="Sound" Description="Plays when the loop starts and stops">
+                        <ui:ToggleSwitch x:Name="SoundSwitch" Toggled="OnSoundSwitchChanged" />
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard x:Name="SoundCard" ContentAlignment="Vertical" HorizontalContentAlignment="Left"
+                                             Description="Click a sound to pick it and hear the start and stop versions.">
+                                <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"
+                                                 SelectionChanged="OnSoundSelectionChanged" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </views:SwitchSettingsExpander>
+                </ikw:SimpleStackPanel>
+            </ScrollViewer>
         </Grid>
 
         <!-- Buttons -->
-        <Border Grid.Row="3" Padding="24,16" BorderThickness="0,1,0,0"
+        <Border Grid.Row="2" Padding="24,16" BorderThickness="0,1,0,0"
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
             <Grid>
@@ -300,11 +189,13 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="160" />
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="ErrorText" Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap"
+                <TextBlock x:Name="ErrorText" Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center" TextWrapping="Wrap"
+                           Style="{StaticResource CaptionTextBlockStyle}"
                            Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
-                <ui:Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
+                        Content="Save" Click="OnSaveClick" />
+                <Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
     </Grid>
-</ui:FluentWindow>
+</Window>

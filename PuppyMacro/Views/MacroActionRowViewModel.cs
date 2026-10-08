@@ -2,6 +2,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
+using FontIconData = iNKORE.UI.WPF.Modern.Common.IconKeys.FontIconData;
+using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
 
 namespace PuppyMacro.Views;
 
@@ -72,9 +74,12 @@ public sealed class MacroGroupViewModel : MacroEditorItem
                 return;
             Group.Collapsed = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(IsExpanded));
             OnPropertyChanged(nameof(ToggleText));
         }
     }
+
+    public bool IsExpanded => !IsCollapsed;
 
     public string ToggleText => IsCollapsed ? "Expand group" : "Collapse group";
 
@@ -111,25 +116,40 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
         set { if (_isInGroup != value) { _isInGroup = value; OnPropertyChanged(); } }
     }
 
-    /// <summary>Delay before the action, in ms (edited inline).</summary>
+    /// <summary>Delay before the action, in ms.</summary>
     public double? Delay
     {
         get => Action.DelayMs;
         set
         {
-            double v = System.Math.Clamp(value ?? 0, 0, 86_400_000);
+            // An emptied number box gives NaN: no delay.
+            double v = value is double d && !double.IsNaN(d) ? System.Math.Clamp(d, 0, 86_400_000) : 0;
             if (Action.DelayMs == v)
                 return;
             Action.DelayMs = v;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(DelayText));
         }
     }
+
+    /// <summary>The delay shown on the row, e.g. "50 ms".</summary>
+    public string DelayText => $"{Action.DelayMs:0.##} ms";
 
     public bool IsKeyIcon => Action.Type is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp;
     public bool IsMouseIcon => Action.Type is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp;
     public bool IsMoveIcon => Action.Type is MacroActionType.MoveTo or MacroActionType.MovePath;
     public bool IsScrollIcon => Action.Type == MacroActionType.Scroll;
     public bool IsTextIcon => Action.Type == MacroActionType.PasteText;
+
+    /// <summary>The icon of a type of action, the same as its row's (used by the Add action menu).</summary>
+    public static FontIconData IconOf(MacroActionType type) => type switch
+    {
+        MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp => SegoeFluentIcons.KeyboardClassic,
+        MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp => SegoeFluentIcons.Mouse,
+        MacroActionType.MoveTo or MacroActionType.MovePath => SegoeFluentIcons.Move,
+        MacroActionType.Scroll => SegoeFluentIcons.ScrollUpDown,
+        _ => SegoeFluentIcons.Font,
+    };
 
     /// <summary>Recorded paths cannot be edited by hand (only their delay).</summary>
     public bool IsEditable => Action.Type != MacroActionType.MovePath;

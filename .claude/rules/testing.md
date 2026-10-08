@@ -7,15 +7,18 @@
   `internal` types are visible through `InternalsVisibleTo`.
 - `make test` runs `dotnet test` in **Release**: the code users get, and a running dev build
   (which locks `bin/Debug`) does not block it.
-- They run on GitHub on every push and pull request (`.github/workflows/test.yml`), and the
-  Release workflow stops when they fail.
+- They run on GitHub on every pull request and every push to `main`
+  (`.github/workflows/test.yml`), and the Release workflow stops when they fail.
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
-  `HotkeyConflicts`, `HotkeyRules`, `ModifierTracker`, `KeyNames`, `HotkeyBinding`, loop intervals,
-  `FloatingButton` (labels, sanitizing, opacity, old files), the Code views' checks and
-  schemas (`MacroJson`, `LoopJson`, `RemapJson`, `CodeSchema`, the groups an action can be in), and `LoopEngine`'s input decisions (keys held by a Hold
-  down loop, wheel hotkeys, hotkey capture), driven through `OnKey` / `OnWheel` without hooks.
+  `HotkeyConflicts`, `HotkeyRules`, `ModifierTracker`, `KeyNames`, `HotkeyBinding`, what the key
+  field shows (`KeyCaptureField.DisplayParts`), loop intervals, `FloatingButton` (labels,
+  sanitizing, opacity, old files), the Code views' checks and schemas (`MacroJson`, `LoopJson`,
+  `RemapJson`, `CodeSchema`, the groups an action can be in), `LoopEngine`'s input decisions (keys
+  held by a Hold down loop, wheel hotkeys, hotkey capture, the overlay panel's Stop all and Move),
+  driven through `OnKey` / `OnWheel` / `OnMouseDetail` without hooks, and the XAML files
+  (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`).
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
   and put the test class in `[Collection(nameof(ModifierTracker))]` so they never run at the
   same time. A unit test that starts a loop makes it press F24 only.
@@ -38,12 +41,16 @@
   use the PC meanwhile, and their input can make the tests fail. Unit tests (`make test`) run
   in the background and can be run any time.
 - Find controls by their UI text (`Find`) or by `x:Name` (`FindById`). Wait with `Retry` and
-  check `.Success`, never fixed sleeps.
+  check `.Success`, never fixed sleeps. Other `AppSession` helpers: `GoTo` (a side rail page),
+  `Expand` (a Settings `SettingsExpander` by `x:Name`, through its `ExpanderToggleButton`: it has
+  no ExpandCollapse pattern), `CardButton` / `EditItem` (a list card's buttons), `Dialog` (an
+  editor or dialog: while an editor is open the main window is hidden, so it is searched among
+  PuppyMacro's top-level windows) and `TopWindow` (overlay panel, floating buttons).
 - A test that sends input must be harmless: use F24 (no keyboard has it), never clicks or
   keys that could reach another app.
 - A test cannot press a hotkey with Ctrl, Alt, Shift or Win: PuppyMacro reads modifiers only from
   real key presses (`input.md`), and the key would reach the app in front. Set the hotkey to F24
-  first (for example `SetOverlayModeHotkeyToF24`), as the default ones have modifiers.
+  first (for example `SetOverlayModeHotkeyToF24` in `AppTests`), as the default ones have modifiers.
 - `AppSession` takes the main window again until it shows its content: an element taken right
   after the window appears can keep showing no children.
 

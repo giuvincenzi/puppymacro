@@ -1,20 +1,22 @@
 <p>Select <strong>Enable overlay mode</strong> or press the Overlay mode hotkey (<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd> on a new install). The main window hides and the <strong>overlay</strong> stays on top of the app you are using, for example a game in windowed fullscreen. The overlay is made of the <strong>overlay panel</strong>, with the enabled loops and macros, and the <strong>floating buttons</strong>.</p>
 <div class="overlay-panel" role="img" aria-label="The overlay panel with one running loop">
-  <div class="title"><img src="../../assets/logo.png" alt="">PuppyMacro</div>
+  <div class="title"><img src="../../assets/logo.png" alt="">PuppyMacro<span class="spacer"></span><span class="panel-button" title="Drag to move the panel">✥</span><span class="panel-button" title="Exit overlay mode">⇥</span></div>
   <div class="row running"><span class="dot"></span><span class="name">Auto attack</span><span class="key">F6</span><span class="status">Running</span></div>
   <div class="row"><span class="dot"></span><span class="name">Hold run</span><span class="key">F7</span><span class="status">Idle</span></div>
-  <div class="hints"><span><kbd>Alt + Shift + S</kbd>Stop all</span><span><kbd>Alt + Shift + W</kbd>Exit overlay mode</span></div>
+  <div class="row stop-all"><span class="square"></span><span>Stop all</span><span class="key">Alt + Shift + S</span></div>
 </div>
 <ul>
   <li>Press the Overlay mode hotkey again to leave overlay mode. The main window goes back to how it was before: open, minimized, or in the system tray. Selecting the tray icon, or starting PuppyMacro again, leaves overlay mode and opens the window.</li>
-  <li>The overlay never takes focus from the app below it. With <strong>Click items in the panel to start or stop them</strong> (Settings &gt; Overlay, on by default), you can click loops and macros in the overlay panel to start or stop them. Hold items stay hotkey only.</li>
+  <li>The overlay never takes focus from the app below it. With <strong>Click items in the panel to start or stop them</strong> (Settings &gt; Overlay, on by default), the overlay panel is clickable: click a loop or macro to start or stop it (Hold items stay hotkey only), <strong>Stop all</strong> at the bottom to stop everything, and the exit button at the top right to leave overlay mode.</li>
   <li>The overlay is visible only on windowed fullscreen or borderless windows, not on apps in exclusive fullscreen.</li>
 </ul>
 
 <h3>Overlay panel</h3>
 <ul>
   <li><strong>Show the overlay panel</strong> in Settings &gt; Overlay is on by default. Turn it off to have only the floating buttons in overlay mode; the panel's other settings are off meanwhile. Without the panel, leave overlay mode with the Overlay mode hotkey.</li>
-  <li><strong>Opacity</strong> sets the panel's background; the text stays fully visible. <strong>Position</strong> is where the panel appears, measured from the top-left corner of the main screen; <strong>Reset</strong> puts it back there.</li>
+  <li>It lists the enabled loops, then the macros, each with its hotkey and its state (a running one is green). <strong>Stop all</strong>, at the bottom, shows its hotkey. When the panel can be clicked, Stop all turns red while something runs; when it cannot, the move and exit buttons are dimmed.</li>
+  <li><strong>Opacity</strong> sets the panel's background; the text stays fully visible. <strong>Position</strong> is where the panel appears, measured from the top-left corner of the main screen (<strong>X</strong>, <strong>Y</strong>); <strong>Reset</strong> puts it back there.</li>
+  <li>To move the panel during overlay mode, press the move button (four arrows, next to the exit button) and drag. The panel follows the mouse and its new position is saved, as with <strong>Position</strong>. Like the other buttons of the panel, it works only with <strong>Click items in the panel to start or stop them</strong> on, and the app behind keeps the focus.</li>
 </ul>
 
 <h3>Floating buttons</h3>
@@ -25,7 +27,7 @@
   <span class="floating-button small">TC</span>
 </div>
 <ul>
-  <li>Turn it on in the loop or macro editor with <strong>Floating button</strong>. <strong>Label</strong> sets the one or two characters in the button (proposed from the name), <strong>Size</strong> is <strong>S</strong>, <strong>M</strong> or <strong>L</strong>, and <strong>Opacity</strong> sets the button's background, from 20% to 100%. Each button has its own opacity. The hotkey, if any, is shown on the edge of the button.</li>
+  <li>Turn it on in the loop or macro editor with <strong>Floating button</strong>. <strong>Label</strong> sets the one or two characters in the button (proposed from the name), <strong>Size</strong> is <strong>Small</strong>, <strong>Medium</strong> or <strong>Large</strong>, and <strong>Opacity</strong> sets the button's background, from 20% to 100%. Each button has its own opacity. The hotkey, if any, is shown on the edge of the button.</li>
   <li>A running loop or macro has a green ring, like its row in the panel.</li>
   <li>A loop or macro with a floating button is not listed in the panel, so it is never shown twice. Turn the button off to get its row back.</li>
   <li>A new button appears in the middle of the main screen until you place it.</li>

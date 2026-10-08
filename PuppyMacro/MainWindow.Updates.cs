@@ -6,11 +6,11 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using PuppyMacro.Services;
 using Velopack;
-using ControlAppearance = Wpf.Ui.Controls.ControlAppearance;
+using InfoBar = iNKORE.UI.WPF.Modern.Controls.InfoBar;
 
 namespace PuppyMacro;
 
-// Updates: the bar at the top, the dot on Settings and the Updates card share one state.
+// Updates: the bar at the top, the badge on Settings and the Updates card share one state.
 public partial class MainWindow
 {
     private static readonly TimeSpan UpdateCheckInterval = TimeSpan.FromHours(12);
@@ -29,7 +29,7 @@ public partial class MainWindow
 
     private void InitializeUpdates()
     {
-        CheckForUpdatesSwitch.IsChecked = _settings.CheckForUpdates;
+        CheckForUpdatesSwitch.IsOn = _settings.CheckForUpdates;
         CheckForUpdatesSwitch.IsEnabled = _updates.IsInstalled;
         _updateTimer.Tick += async (_, _) => await CheckForUpdatesAsync();
         RefreshUpdateUi();
@@ -109,8 +109,8 @@ public partial class MainWindow
     {
         if (!_updates.IsInstalled)
         {
-            UpdateBar.Visibility = Visibility.Collapsed;
-            SettingsUpdateDot.Visibility = Visibility.Collapsed;
+            UpdateBar.IsOpen = false;
+            ShowSettingsBadge(false);
             UpdateStatusText.Text = "Updates are available when PuppyMacro is installed with Setup.";
             UpdateWhatsNew.Visibility = Visibility.Collapsed;
             UpdateCardProgress.Visibility = Visibility.Collapsed;
@@ -121,14 +121,8 @@ public partial class MainWindow
         string? version = AvailableVersion;
         bool downloading = _downloadCancel != null;
 
-        SettingsUpdateDot.Visibility = version != null ? Visibility.Visible : Visibility.Collapsed;
-        UpdateBar.Visibility = version != null && (downloading || version != _dismissedUpdateVersion)
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        UpdateCard.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty,
-            version != null ? "AccentTextFillColorPrimaryBrush" : "CardStrokeColorDefaultBrush");
-        UpdateCardIcon.SetResourceReference(ForegroundProperty,
-            version != null ? "AccentTextFillColorPrimaryBrush" : "TextFillColorPrimaryBrush");
+        ShowSettingsBadge(version != null);
+        UpdateBar.IsOpen = version != null && (downloading || version != _dismissedUpdateVersion);
         UpdateStatusText.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty,
             _updateError != null && !downloading ? "SystemFillColorCriticalBrush" : "TextFillColorSecondaryBrush");
 
@@ -164,12 +158,13 @@ public partial class MainWindow
             action = "Check now";
         }
 
-        var appearance = primary ? ControlAppearance.Primary : ControlAppearance.Secondary;
+        // The accent button for Update, the standard one otherwise.
+        Style? buttonStyle = primary ? (Style)FindResource("AccentButtonStyle") : null;
 
         UpdateStatusText.Text = status;
         UpdateCardButton.Visibility = Visibility.Visible;
         UpdateCardButton.Content = action;
-        UpdateCardButton.Appearance = appearance;
+        UpdateCardButton.Style = buttonStyle;
         UpdateCardButton.IsEnabled = !_checkingForUpdates;
         UpdateCardProgress.Visibility = downloading ? Visibility.Visible : Visibility.Collapsed;
         UpdateCardProgress.Value = _downloadPercent;
@@ -177,15 +172,15 @@ public partial class MainWindow
         if (version != null)
             UpdateWhatsNewLink.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
 
-        UpdateBarTitle.Text = $"PuppyMacro {version} is available";
-        UpdateBarText.Text = downloading
+        UpdateBar.Title = $"PuppyMacro {version} is available";
+        UpdateBar.Message = downloading
             ? $"Downloading… {_downloadPercent}%"
             : _updateError ?? "Loops and macros stop, then PuppyMacro restarts with the new version.";
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;
-        UpdateBarButton.Appearance = appearance;
-        UpdateLaterButton.Visibility = downloading ? Visibility.Collapsed : Visibility.Visible;
+        UpdateBarButton.Style = buttonStyle;
+        UpdateBar.IsClosable = !downloading; // Later
     }
 
     private async void OnUpdateActionClick(object sender, RoutedEventArgs e)
@@ -198,11 +193,21 @@ public partial class MainWindow
             await CheckForUpdatesAsync();
     }
 
-    /// <summary>Hides the bar until PuppyMacro restarts or a newer version comes out; the dot stays.</summary>
-    private void OnUpdateLaterClick(object sender, RoutedEventArgs e)
+    /// <summary>The bar's close button (Later): hides the bar until PuppyMacro restarts or a newer version comes out; the badge stays.</summary>
+    private void OnUpdateLaterClick(InfoBar sender, object args)
     {
         _dismissedUpdateVersion = AvailableVersion;
         RefreshUpdateUi();
+    }
+
+    /// <summary>The dot on Settings in the side rail while an update is available. It stays until the update is installed.</summary>
+    private void ShowSettingsBadge(bool show) => Rail.ShowUpdateDot(show);
+
+    /// <summary>About's User guide and GitHub cards: opens the card's Tag in the browser.</summary>
+    private void OnOpenLinkClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is string url)
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     }
 
     private void OnWhatsNewNavigate(object sender, RequestNavigateEventArgs e)
@@ -215,7 +220,7 @@ public partial class MainWindow
     {
         if (_initializing)
             return;
-        _settings.CheckForUpdates = CheckForUpdatesSwitch.IsChecked == true;
+        _settings.CheckForUpdates = CheckForUpdatesSwitch.IsOn;
         Save();
         if (_settings.CheckForUpdates)
         {

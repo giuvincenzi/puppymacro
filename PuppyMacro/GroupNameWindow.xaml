@@ -1,29 +1,23 @@
-<ui:FluentWindow
+<Window
     x:Class="PuppyMacro.GroupNameWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="Group actions"
     Width="400"
     SizeToContent="Height"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
-    ExtendsContentIntoTitleBar="True"
-    WindowBackdropType="Mica"
-    WindowCornerPreference="Round"
     WindowStartupLocation="CenterOwner"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica">
 
     <StackPanel>
-        <ui:TitleBar x:Name="GroupTitleBar" Title="Group actions" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
-
-        <StackPanel Margin="24,4,24,20">
-            <TextBlock Margin="0,0,0,6" Text="Group name" />
-            <ui:TextBox x:Name="GroupNameBox" PlaceholderText="e.g. Open crafting bench" MaxLength="100"
-                        TextChanged="OnNameChanged" />
-            <TextBlock x:Name="InfoText" Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-        </StackPanel>
+        <Border Padding="24,4,24,20">
+            <TextBox x:Name="GroupNameBox" MaxLength="100" TextChanged="OnNameChanged"
+                     ui:ControlHelper.Header="Group name"
+                     ui:ControlHelper.PlaceholderText="e.g. Open crafting bench" />
+        </Border>
 
         <Border Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
@@ -33,10 +27,10 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ui:Button x:Name="OkButton" Grid.Column="0" HorizontalAlignment="Stretch" Appearance="Primary" Content="Group"
-                           IsDefault="True" Click="OnOkClick" />
-                <ui:Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" IsCancel="True" Click="OnCancelClick" />
+                <Button x:Name="OkButton" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
+                        Content="Group" IsDefault="True" Click="OnOkClick" />
+                <Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" IsCancel="True" Click="OnCancelClick" />
             </Grid>
         </Border>
     </StackPanel>
-</ui:FluentWindow>
+</Window>

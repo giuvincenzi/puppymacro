@@ -35,15 +35,13 @@ Start-Sleep -Seconds 2
 function OpenEditor($itemText, $title) {
   $text = WaitFor { ByName $main $itemText } $itemText
   $y = $text.Current.BoundingRectangle.Y
-  $buttons = $main.FindAll($TS::Descendants, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)))
-  $more = $buttons | Where-Object {
-    $_.Current.Name -eq '' -and $_.Current.AutomationId -eq '' -and
+  # The card's Edit button is on the same row (the main window hides while the editor is open).
+  $buttons = $main.FindAll($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
+      (New-Object $PC($A::NameProperty, 'Edit')),
+      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)))))
+  $edit = $buttons | Where-Object {
     [Math]::Abs($_.Current.BoundingRectangle.Y + $_.Current.BoundingRectangle.Height / 2 - $y) -lt 40 } |
-    Sort-Object { $_.Current.BoundingRectangle.X } | Select-Object -Last 1
-  $more.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  $edit = WaitFor { $A::RootElement.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
-      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::MenuItem)),
-      (New-Object $PC($A::NameProperty, 'Edit'))))) } 'Edit menu item'
+    Select-Object -First 1
   $edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
   WaitFor { $A::RootElement.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
       (New-Object $PC($A::NameProperty, $title)),
@@ -62,9 +60,14 @@ function Capture($window, $file) {
   Start-Sleep -Milliseconds 1200
   $r = Bounds $h
   SaveRegion $h $r.L $r.T $r.R $r.B $file
-  $cancel = ByName $window 'Cancel'
-  $cancel.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  Start-Sleep -Milliseconds 800
+  # Cancel closes the editor; in the Code view the same button is "Discard changes" and goes back to
+  # the Form view first, so it is pressed again while the editor is still open.
+  for ($i = 0; $i -lt 2; $i++) {
+    $cancel = $window.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'CancelButton')))
+    if (-not $cancel) { break }
+    try { $cancel.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch { break }
+    Start-Sleep -Milliseconds 800
+  }
 }
 
 function SaveRegion($h, [int]$left, [int]$top, [int]$right, [int]$bottom, $file) {
@@ -118,7 +121,8 @@ Capture $editor (Join-Path $OutDir 'remap-editor.png')
 $loops = ByName $main 'Loops'
 $loops.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
 
-# Home page: the Loops page at 620 x 750 (100% scale), below the title bar and the development
+# Home page: the Loops page at 800 x 750 (100% scale: the main window's width, so the cards keep one
+# line), below the title bar and the development
 # strip (the home page draws its own window bar). The main window gets its size back afterwards.
 $h = [IntPtr]$main.Current.NativeWindowHandle
 $scale = [W]::GetDpiForWindow($h) / 96.0
@@ -128,11 +132,11 @@ $restoreWidth = $size.Width; $restoreHeight = $size.Height
 $strip = WaitFor { ByName $main 'Development build' } 'Development build strip'
 [W]::SetForegroundWindow($h) | Out-Null
 # Resize to the wanted visible size, then correct by what is measured (invisible borders, rounding).
-$wantWidth = [Math]::Round(620 * $scale)
+$wantWidth = [Math]::Round(800 * $scale)
 $wantHeight = [Math]::Round(750 * $scale)
 for ($pass = 0; $pass -lt 3; $pass++) {
   $r = Bounds $h
-  $top = [Math]::Round($strip.Current.BoundingRectangle.Bottom + 13 * $scale)   # strip padding 3 + margin 10
+  $top = [Math]::Round($strip.Current.BoundingRectangle.Bottom + 3 * $scale)   # the strip's bottom padding
   $dw = $wantWidth - ($r.R - $r.L); $dh = $wantHeight - ($r.B - $top)
   if ($dw -eq 0 -and $dh -eq 0) { break }
   $now = $main.Current.BoundingRectangle
@@ -141,6 +145,6 @@ for ($pass = 0; $pass -lt 3; $pass++) {
 }
 Start-Sleep -Milliseconds 800
 $r = Bounds $h
-$top = [Math]::Round($strip.Current.BoundingRectangle.Bottom + 13 * $scale)
+$top = [Math]::Round($strip.Current.BoundingRectangle.Bottom + 3 * $scale)
 SaveRegion $h $r.L $top $r.R $r.B (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/assets/loops.png')
 $transform.Resize($restoreWidth, $restoreHeight)

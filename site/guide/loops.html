@@ -3,17 +3,26 @@
   <img src="img/loop-editor.png" alt="The Edit loop window" loading="lazy">
   <figcaption>A loop that presses the left mouse button every second, started and stopped with F6.</figcaption>
 </figure>
+<p>The editor has what the loop does on the left (name, keys and texts) and how it starts on the right (Activation, Hotkey, Floating button, Sound).</p>
 <ul>
-  <li><strong>Keys and texts</strong>: each row repeats on its own timer, from 10 ms to 24 h.
+  <li><strong>Keys and texts</strong>: each row repeats on its own timer, from 10 ms to 24 h. A row shows <strong>Key</strong> or <strong>Text</strong> and a summary, for example “Repeat, every 1 s”; open it for its settings. The trash button on the row removes it.
     <ul>
-      <li><strong>Add key</strong>, then press any key or mouse button (to change it later, select the key's button). Choose <strong>Repeat</strong> every N ms, s, min or h, or <strong>Hold down</strong> to keep it held while the loop runs. While it is held, pressing and releasing that key or button yourself does not release it.</li>
-      <li><strong>Add text</strong>: the text is pasted all at once, optionally with <strong>Press Enter before pasting</strong> and <strong>Press Enter after pasting</strong>. Your clipboard is restored afterwards.</li>
+      <li><strong>Add key</strong> adds a row that waits for the key: press any key or mouse button (<kbd>Esc</kbd> cancels). The key then appears on the row: click it to choose another one, or use its arrow for <strong>Change</strong> and <strong>Clear</strong>. <strong>Mode</strong>: <strong>Repeat</strong> presses it <strong>Every</strong> N ms, s, min or h; <strong>Hold down</strong> keeps it held while the loop runs. While it is held, pressing and releasing that key or button yourself does not release it.</li>
+      <li><strong>Add text</strong>: the text is pasted all at once, <strong>Every</strong> N ms, s, min or h, optionally with <strong>Press Enter before pasting</strong> and <strong>Press Enter after pasting</strong>. Your clipboard is restored afterwards.</li>
     </ul>
   </li>
   <li><strong>Activation</strong>: <strong>Toggle</strong> (press the hotkey to start, press it again to stop) or <strong>Hold</strong> (runs only while the hotkey is held down).</li>
-  <li><strong>Hotkey</strong>: optional. Select <strong>Change</strong> and press a key or mouse button; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too (see <a href="hotkeys.html">Hotkeys</a>). Without a hotkey, start the loop with <strong>Start</strong> or from the overlay panel. Hold needs a hotkey.</li>
+  <li><strong>Hotkey</strong>: optional. Select <strong>Set hotkey</strong> and press a key or mouse button; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too (see <a href="hotkeys.html">Hotkeys</a>). The hotkey is then shown in the accent color: click it to change it, or use its arrow for <strong>Change</strong> and <strong>Clear</strong>. Without a hotkey, start the loop with <strong>Play</strong> (▶) on its card or from the overlay panel. Hold needs a hotkey.</li>
   <li><strong>Floating button</strong>: a round button in overlay mode that starts and stops the loop, placed anywhere on the screen, with its own label, size and opacity (see <a href="overlay-mode.html">Overlay mode</a>).</li>
-  <li><strong>Sound</strong>: plays when the loop starts and stops.</li>
+  <li><strong>Sound</strong>: turn it on to play a sound when the loop starts and stops, and click a sound to pick it and hear it. The volume of every sound is in <strong>Settings &gt; Sound</strong>.</li>
   <li><strong>Code view</strong>, at the top of the window, shows the loop as JSON, as it is saved, in a code editor with suggestions and checks; see <a href="macros.html">Macros &gt; Code view</a>.</li>
 </ul>
-<p>On the Loops page, the switch on each loop enables or disables it, and the <strong>…</strong> menu has <strong>Edit</strong>, <strong>Move up</strong>, <strong>Move down</strong> and <strong>Delete</strong>. You can also drag loops to reorder them. Search and <strong>Filter by</strong> (All, Enabled, Disabled, Running) help with long lists.</p>
+<h3>The Loops page</h3>
+<p>Each loop is a card with its name, its state (<strong>Running</strong> in green, <strong>Idle</strong> in blue, <strong>Disabled</strong> in yellow), what it does and how it starts, for example “Toggle with F6” or “Toggle, no hotkey”. On the right of the card:</p>
+<ul>
+  <li><strong>Play</strong> (▶) starts the loop and <strong>Stop</strong> (■) stops it. A Hold loop has no Play: it runs only while its hotkey is held down.</li>
+  <li><strong>Edit</strong> (the pencil) opens the editor. It is off while loops or macros are running.</li>
+  <li>The switch enables or disables the loop. A disabled loop does not react to its hotkey and is greyed out.</li>
+  <li><strong>More options</strong> (<strong>⋯</strong>): <strong>Move up</strong>, <strong>Move down</strong> and <strong>Delete</strong>, which asks first.</li>
+</ul>
+<p>You can also drag loops to reorder them. The search box and the filter (<strong>All loops</strong>, <strong>Enabled</strong>, <strong>Disabled</strong>, <strong>Running</strong>) help with long lists.</p>

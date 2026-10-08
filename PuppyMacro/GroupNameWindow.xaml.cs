@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using iNKORE.UI.WPF.Modern.Controls.Helpers;
 using PuppyMacro.Views;
 
 namespace PuppyMacro;
@@ -12,9 +13,8 @@ public partial class GroupNameWindow
         InitializeComponent();
         WindowFit.Apply(this);
         Title = title;
-        GroupTitleBar.Title = title;
         OkButton.Content = okText;
-        InfoText.Text = info;
+        ControlHelper.SetDescription(GroupNameBox, info);
         GroupNameBox.Text = name;
         Loaded += (_, _) =>
         {

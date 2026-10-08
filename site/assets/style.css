@@ -225,6 +225,14 @@ kbd {
   border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; color: #c5c5c5;
 }
 .overlay-panel .hints span, .game-panel .hints span { display: flex; align-items: center; gap: 8px; }
+/* The panel's move and exit buttons and its Stop all row (guides after 1.9.0). */
+.overlay-panel .title .spacer { flex: 1; }
+.overlay-panel .panel-button {
+  display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+  border-radius: 5px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); font-weight: 400;
+}
+.overlay-panel .stop-all { justify-content: center; gap: 8px; font-size: 12px; color: #ff99a4; }
+.overlay-panel .stop-all .square { width: 9px; height: 9px; border-radius: 2px; background: #ff99a4; }
 .floating-buttons {
   display: flex; align-items: center; gap: 22px; width: fit-content; padding: 18px 22px;
   border-radius: 8px; background: #2e4157;

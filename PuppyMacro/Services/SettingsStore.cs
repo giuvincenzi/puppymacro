@@ -7,7 +7,7 @@ using PuppyMacro.Models;
 
 namespace PuppyMacro.Services;
 
-/// <summary>Reads and writes settings.json next to the exe.</summary>
+/// <summary>Reads and writes settings.json (the path given, AppPaths.SettingsFile in the data folder).</summary>
 internal sealed class SettingsStore
 {
     private static readonly JsonSerializerOptions JsonOptions = new()

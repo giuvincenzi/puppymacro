@@ -36,3 +36,9 @@ paths:
   key-up handling (swallowed ups, remap ups, Hold release, keys held by a loop) → auto-repeat →
   global hotkeys, loop and macro hotkeys (`RunHotkey`, skipped while `HotkeysSuspended`) →
   keys held by a loop → remaps.
+- Mouse details (`InputHook.MouseDetail` -> `LoopEngine.OnMouseDetail`, set only while recording or
+  while overlay mode publishes click targets): recording (records, never blocks; clicks on
+  PuppyMacro's own windows are not recorded) → a drag of the overlay panel's Move handle (moves pass,
+  the left release is blocked) → left press on a `PanelTarget` (skipped while `HotkeysSuspended`):
+  the Move handle starts the drag, any other target is toggled; the press and its release are
+  blocked, so the app in front never gets them (`architecture.md`).

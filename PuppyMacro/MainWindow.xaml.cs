@@ -14,10 +14,14 @@ using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
-using UiMessageBox = Wpf.Ui.Controls.MessageBox;
-using UiMessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
-using UiSymbolIcon = Wpf.Ui.Controls.SymbolIcon;
-using UiSymbolRegular = Wpf.Ui.Controls.SymbolRegular;
+using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
+using ContentDialogButton = iNKORE.UI.WPF.Modern.Controls.ContentDialogButton;
+using ContentDialogResult = iNKORE.UI.WPF.Modern.Controls.ContentDialogResult;
+using FontIcon = iNKORE.UI.WPF.Modern.Controls.FontIcon;
+using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
+using NumberBoxValueChangedEventArgs = iNKORE.UI.WPF.Modern.Controls.NumberBoxValueChangedEventArgs;
+using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
+using SettingsExpander = iNKORE.UI.WPF.Modern.Controls.SettingsExpander;
 
 namespace PuppyMacro;
 
@@ -59,15 +63,18 @@ public partial class MainWindow
         _macros = macros;
 
         Title = App.DisplayTitle;
-        AppTitleBar.Title = App.DisplayTitle;
+        AppTitleText.Text = App.DisplayTitle;
         AboutText.Text = App.DisplayTitle;
         DevBuildStrip.Visibility = App.IsDevBuild ? Visibility.Visible : Visibility.Collapsed;
 
         _sounds = new SoundService(Dispatcher) { Volume = settings.SoundVolume };
 
         _engine = new LoopEngine(EngineSnapshot.From(settings, macros), Dispatcher);
+        KeyCaptureField.SetEngine(this, _engine); // the Settings hotkey fields wait for keys through it
+        SetUpGlobalHotkeyFields();
         _engine.StateChanged += OnEngineStateChanged;
         _engine.OverlayModeToggleRequested += ToggleOverlayMode;
+        _engine.OverlayPanelDragged += OnOverlayPanelDragged;
         _engine.SoundRequested += (name, start) => _sounds.Play(name, start);
 
         _items = new ObservableCollection<LoopItemViewModel>(settings.Loops.Select(CreateItem));
@@ -108,11 +115,11 @@ public partial class MainWindow
         SoundGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Sound");
         UpdatePositionBoxes();
 
-        ClickInPanelSwitch.IsChecked = settings.ClickItemsInPanel;
-        ShowPanelSwitch.IsChecked = settings.ShowOverlayPanel;
-        PanelOptions.IsEnabled = settings.ShowOverlayPanel;
-        CloseToTraySwitch.IsChecked = settings.CloseToTray;
-        StartWithWindowsSwitch.IsChecked = settings.StartWithWindows;
+        ClickInPanelSwitch.IsOn = settings.ClickItemsInPanel;
+        ShowPanelSwitch.IsOn = settings.ShowOverlayPanel;
+        SetPanelOptionsEnabled(settings.ShowOverlayPanel);
+        CloseToTraySwitch.IsOn = settings.CloseToTray;
+        StartWithWindowsSwitch.IsOn = settings.StartWithWindows;
         if (App.IsDevBuild)
         {
             // The Run entry belongs to the installed app.
@@ -120,6 +127,8 @@ public partial class MainWindow
             StartWithWindowsText.Text = "Not available in the development build";
         }
         InitializeUpdates();
+        Rail.PageChanged += OnPageChanged;
+        RefreshUpdateUi();
         BackupGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Backup");
         AboutGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("About");
         DataFolderText.Text = $"Data saved in {AppPaths.DataFolder}";
@@ -272,19 +281,23 @@ public partial class MainWindow
 
     // ================= Navigation =================
 
-    private void OnNavChanged(object sender, RoutedEventArgs e)
+    private void OnPageChanged(string page)
     {
-        if (LoopsPage == null || SettingsPage == null)
-            return;
+        LoopsPage.Visibility = page == "Loops" ? Visibility.Visible : Visibility.Collapsed;
+        MacrosPage.Visibility = page == "Macros" ? Visibility.Visible : Visibility.Collapsed;
+        RemapsPage.Visibility = page == "Remap" ? Visibility.Visible : Visibility.Collapsed;
+        SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
+        if (page != "Settings")
+            _engine.CancelCapture(); // a Settings hotkey field that waits stops
+    }
 
-        if (MacrosPage == null || RemapsPage == null)
-            return;
-        LoopsPage.Visibility = LoopsNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        MacrosPage.Visibility = MacrosNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        RemapsPage.Visibility = RemapNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        SettingsPage.Visibility = SettingsNav.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        if (SettingsNav.IsChecked != true)
-            _engine?.CancelCapture();
+    /// <summary>The overlay panel's options are off while the panel is off.</summary>
+    private void SetPanelOptionsEnabled(bool enabled)
+    {
+        OpacityCard.IsEnabled = enabled;
+        PositionCard.IsEnabled = enabled;
+        ClickInPanelCard.IsEnabled = enabled;
+        ClickInPanelWarningCard.IsEnabled = enabled;
     }
 
     // ================= Loops list =================
@@ -335,11 +348,18 @@ public partial class MainWindow
         UpdateLoopState();
     }
 
+    /// <summary>
+    /// The card's switch. The list is rebuilt only when its filter depends on it (Enabled / Disabled): a rebuild
+    /// recreates every card, so the switch would jump in the middle of its animation and the list flicker.
+    /// Otherwise the card follows through its bindings (stopping a running loop refreshes the Running filter).
+    /// </summary>
     private void OnLoopEnabledChanged(LoopItemViewModel item)
     {
         if (!item.IsLoopEnabled)
             _engine.StopLoop(item.Definition.Id);
-        RefreshList();
+        if (_settings.Filter is LoopFilter.Enabled or LoopFilter.Disabled)
+            _view.Refresh();
+        UpdateLoopState();
         _overlayPanelWindow.RefreshList();
         Save();
     }
@@ -390,6 +410,10 @@ public partial class MainWindow
         RecordMacroButton.IsEnabled = !anyRunning;
         NewMacroButton.ToolTip = RecordMacroButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
         StopAllButton.IsEnabled = anyRunning;
+        foreach (var loop in _items)
+            loop.CanEdit = !anyRunning;
+        foreach (var macro in _macroItems)
+            macro.CanEdit = !anyRunning;
         UpdateMacroState();
     }
 
@@ -409,35 +433,33 @@ public partial class MainWindow
         Save();
     }
 
+    /// <summary>The card's Edit (not while loops or macros run).</summary>
+    private void OnEditLoopClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is LoopItemViewModel item && !_engine.AnyRunning)
+            EditLoop(item);
+    }
+
     private void OnMoreClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement button || button.Tag is not LoopItemViewModel item)
             return;
 
-        var edit = new MenuItem
-        {
-            Header = "Edit",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Edit24 },
-            IsEnabled = !_engine.AnyRunning,
-            ToolTip = _engine.AnyRunning ? "Stop running loops to edit a loop" : null,
-        };
-        ToolTipService.SetShowOnDisabled(edit, true);
-        edit.Click += (_, _) => EditLoop(item);
-        var delete = new MenuItem { Header = "Delete", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Delete24 } };
+        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteLoop(item);
 
         int index = _items.IndexOf(item);
         var moveUp = new MenuItem
         {
             Header = "Move up",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowUp24 },
+            Icon = new FontIcon { Icon = SegoeFluentIcons.Up },
             IsEnabled = index > 0,
         };
         moveUp.Click += (_, _) => MoveItem(item, index - 1);
         var moveDown = new MenuItem
         {
             Header = "Move down",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowDown24 },
+            Icon = new FontIcon { Icon = SegoeFluentIcons.Down },
             IsEnabled = index < _items.Count - 1,
         };
         moveDown.Click += (_, _) => MoveItem(item, index + 1);
@@ -447,7 +469,6 @@ public partial class MainWindow
             PlacementTarget = button,
             Placement = PlacementMode.Bottom,
         };
-        menu.Items.Add(edit);
         menu.Items.Add(moveUp);
         menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
@@ -474,25 +495,25 @@ public partial class MainWindow
 
     private async void DeleteLoop(LoopItemViewModel item)
     {
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Delete loop",
             Content = $"Delete \"{item.Name}\"? This cannot be undone.",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        UiMessageBoxResult result;
+        ContentDialogResult result;
         _engine.HotkeysSuspended = true;
         try
         {
-            result = await confirm.ShowDialogAsync();
+            result = await confirm.ShowAsync(this);
         }
         finally
         {
             _engine.HotkeysSuspended = false;
         }
-        if (result != UiMessageBoxResult.Primary)
+        if (result != ContentDialogResult.Primary)
             return;
 
         _engine.StopLoop(item.Definition.Id);
@@ -569,11 +590,14 @@ public partial class MainWindow
         }
     }
 
+    /// <summary>The card's switch: the list is rebuilt only when its filter depends on it (see OnLoopEnabledChanged).</summary>
     private void OnMacroEnabledChanged(MacroItemViewModel item)
     {
         if (!item.IsLoopEnabled)
             _engine.StopMacro(item.Definition.Id);
-        RefreshMacros();
+        if ((LoopFilter)Math.Max(0, MacroFilterBox.SelectedIndex) is LoopFilter.Enabled or LoopFilter.Disabled)
+            _macroView.Refresh();
+        UpdateMacroState();
         _overlayPanelWindow.RefreshList();
         SaveMacro(item.Definition);
     }
@@ -614,31 +638,27 @@ public partial class MainWindow
         _overlayPanelWindow.RefreshList();
     }
 
+    /// <summary>The card's Edit (not while loops or macros run).</summary>
+    private void OnEditMacroClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is MacroItemViewModel item && !_engine.AnyRunning)
+            EditMacro(item);
+    }
+
     private void OnMacroMoreClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement button || button.Tag is not MacroItemViewModel item)
             return;
 
-        var edit = new MenuItem
-        {
-            Header = "Edit",
-            Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Edit24 },
-            IsEnabled = !_engine.AnyRunning,
-            ToolTip = _engine.AnyRunning ? "Stop running loops and macros to edit" : null,
-        };
-        ToolTipService.SetShowOnDisabled(edit, true);
-        edit.Click += (_, _) => EditMacro(item);
-
         int index = _macroItems.IndexOf(item);
-        var moveUp = new MenuItem { Header = "Move up", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowUp24 }, IsEnabled = index > 0 };
+        var moveUp = new MenuItem { Header = "Move up", Icon = new FontIcon { Icon = SegoeFluentIcons.Up }, IsEnabled = index > 0 };
         moveUp.Click += (_, _) => MoveMacro(item, index - 1);
-        var moveDown = new MenuItem { Header = "Move down", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.ArrowDown24 }, IsEnabled = index < _macroItems.Count - 1 };
+        var moveDown = new MenuItem { Header = "Move down", Icon = new FontIcon { Icon = SegoeFluentIcons.Down }, IsEnabled = index < _macroItems.Count - 1 };
         moveDown.Click += (_, _) => MoveMacro(item, index + 1);
-        var delete = new MenuItem { Header = "Delete", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Delete24 } };
+        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteMacro(item);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
-        menu.Items.Add(edit);
         menu.Items.Add(moveUp);
         menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
@@ -663,25 +683,25 @@ public partial class MainWindow
 
     private async void DeleteMacro(MacroItemViewModel item)
     {
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Delete macro",
             Content = $"Delete \"{item.Name}\"? This cannot be undone.",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        UiMessageBoxResult result;
+        ContentDialogResult result;
         _engine.HotkeysSuspended = true;
         try
         {
-            result = await confirm.ShowDialogAsync();
+            result = await confirm.ShowAsync(this);
         }
         finally
         {
             _engine.HotkeysSuspended = false;
         }
-        if (result != UiMessageBoxResult.Primary)
+        if (result != ContentDialogResult.Primary)
             return;
 
         _engine.StopMacro(item.Definition.Id);
@@ -735,7 +755,7 @@ public partial class MainWindow
     {
         if (_initializing)
             return;
-        _settings.ClickItemsInPanel = ClickInPanelSwitch.IsChecked == true;
+        _settings.ClickItemsInPanel = ClickInPanelSwitch.IsOn;
         UpdatePanelClicks();
         UpdateSettingsSummaries();
         Save();
@@ -743,8 +763,8 @@ public partial class MainWindow
 
     private void OnShowPanelChanged(object sender, RoutedEventArgs e)
     {
-        bool show = ShowPanelSwitch.IsChecked == true;
-        PanelOptions.IsEnabled = show;
+        bool show = ShowPanelSwitch.IsOn;
+        SetPanelOptionsEnabled(show);
         if (_initializing)
             return;
         _settings.ShowOverlayPanel = show;
@@ -945,11 +965,19 @@ public partial class MainWindow
     }
 
     /// <summary>Shows a dialog with every hotkey ignored until it closes.</summary>
+    /// <summary>
+    /// Shows an editor (or the placement overlay) with the hotkeys off. While it is open this window is only
+    /// hidden, so it takes no room on the screen, and shown again as it was when the editor closes. It hides
+    /// once the editor is on screen, so the editor still opens centered on it.
+    /// </summary>
     private bool? ShowDialogWithoutHotkeys(Window dialog)
     {
         // Restores the previous state: the placement overlay can open from an editor.
         bool wasSuspended = _engine.HotkeysSuspended;
         _engine.HotkeysSuspended = true;
+        bool wasVisible = IsVisible;
+        if (wasVisible)
+            dialog.ContentRendered += (_, _) => Hide();
         try
         {
             return dialog.ShowDialog();
@@ -957,6 +985,11 @@ public partial class MainWindow
         finally
         {
             _engine.HotkeysSuspended = wasSuspended;
+            if (wasVisible)
+            {
+                Show();
+                Activate();
+            }
         }
     }
 
@@ -982,7 +1015,7 @@ public partial class MainWindow
         if (_initializing || ThemeComboBox.SelectedIndex < 0)
             return;
         _settings.Theme = (AppTheme)ThemeComboBox.SelectedIndex;
-        App.ApplyTheme(_settings.Theme, this);
+        App.ApplyTheme(_settings.Theme);
         Save();
     }
 
@@ -1010,15 +1043,13 @@ public partial class MainWindow
         _overlayPanelWindow.SetBackgroundOpacity(percent);
     }
 
-    private void OnGroupToggled(object sender, RoutedEventArgs e)
+    private void OnGroupToggled(object? sender, EventArgs e)
     {
-        if (_initializing || sender is not FrameworkElement group || group.Tag is not string key)
+        if (_initializing || sender is not SettingsExpander { Tag: string key } group)
             return;
-        if (e.OriginalSource != sender)
-            return; // ignore expanders nested inside
         var open = _settings.ExpandedSettingsGroups;
         open.Remove(key);
-        if (group is Expander { IsExpanded: true })
+        if (group.IsExpanded)
             open.Add(key);
         Save();
     }
@@ -1076,11 +1107,12 @@ public partial class MainWindow
         UpdateSettingsSummaries();
     }
 
-    private void OnPositionBoxChanged(object sender, RoutedEventArgs e)
+    private void OnPositionBoxChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
     {
         if (_initializing || _updatingPositionBoxes)
             return;
-        if (PositionXBox.Value is double x && PositionYBox.Value is double y)
+        double x = PositionXBox.Value, y = PositionYBox.Value;
+        if (!double.IsNaN(x) && !double.IsNaN(y))
         {
             _settings.OverlayPanelX = x;
             _settings.OverlayPanelY = y;
@@ -1254,55 +1286,37 @@ public partial class MainWindow
         SoundSummary.Text = $"Volume {_settings.SoundVolume}%";
     }
 
-    private void OnChangeStopAllHotkeyClick(object sender, RoutedEventArgs e) =>
-        CaptureGlobalHotkey(StopAllChangeButton, "StopAll");
-
-    private void OnChangeOverlayModeHotkeyClick(object sender, RoutedEventArgs e) =>
-        CaptureGlobalHotkey(OverlayModeChangeButton, "OverlayMode");
-
-    private void OnChangeRecordHotkeyClick(object sender, RoutedEventArgs e) =>
-        CaptureGlobalHotkey(RecordChangeButton, "Record");
-
-    private void CaptureGlobalHotkey(Wpf.Ui.Controls.Button button, string which)
+    /// <summary>The three global hotkey fields: each checks a pressed key against the rules and the other hotkeys.</summary>
+    private void SetUpGlobalHotkeyFields()
     {
-        HideSettingsError();
-        StopAllChangeButton.Content = "Change";
-        OverlayModeChangeButton.Content = "Change";
-        RecordChangeButton.Content = "Change";
-        button.Content = "Press a key…";
+        foreach (var (field, which) in new[] { (StopAllHotkeyField, "StopAll"), (OverlayModeHotkeyField, "OverlayMode"), (RecordHotkeyField, "Record") })
+            field.Validate = binding => HotkeyRules.Problem(binding, hold: false)
+                ?? HotkeyConflicts.Find(binding, _settings, _macros, ignoreGlobal: which);
+    }
 
-        _engine.BeginCapture(
-            binding =>
-            {
-                button.Content = "Change";
-                string? error = HotkeyRules.Problem(binding, hold: false)
-                    ?? HotkeyConflicts.Find(binding, _settings, _macros, ignoreGlobal: which);
-                if (error != null)
-                {
-                    ShowSettingsError(error);
-                    return;
-                }
+    private void OnGlobalHotkeyStarted(object? sender, EventArgs e) => HideSettingsError();
 
-                switch (which)
-                {
-                    case "StopAll": _settings.StopAllHotkey = binding; break;
-                    case "OverlayMode": _settings.OverlayModeHotkey = binding; break;
-                    default: _settings.RecordHotkey = binding; break;
-                }
-                UpdateHotkeyLabels();
-                Save();
-            },
-            () => button.Content = "Change",
-            allowPrimaryMouse: false, hotkey: true);
+    private void OnGlobalHotkeyChanged(object? sender, EventArgs e)
+    {
+        if ((sender as KeyCaptureField)?.Value?.Clone() is not { } binding)
+            return;
+        if (sender == StopAllHotkeyField)
+            _settings.StopAllHotkey = binding;
+        else if (sender == OverlayModeHotkeyField)
+            _settings.OverlayModeHotkey = binding;
+        else
+            _settings.RecordHotkey = binding;
+        UpdateHotkeyLabels();
+        Save();
     }
 
     private void UpdateHotkeyLabels()
     {
         string stopAll = KeyNames.Format(_settings.StopAllHotkey);
         string overlayMode = KeyNames.Format(_settings.OverlayModeHotkey);
-        StopAllHotkeyCaps.ItemsSource = KeyNames.Parts(_settings.StopAllHotkey);
-        OverlayModeHotkeyCaps.ItemsSource = KeyNames.Parts(_settings.OverlayModeHotkey);
-        RecordHotkeyCaps.ItemsSource = KeyNames.Parts(_settings.RecordHotkey);
+        StopAllHotkeyField.Value = _settings.StopAllHotkey?.Clone();
+        OverlayModeHotkeyField.Value = _settings.OverlayModeHotkey?.Clone();
+        RecordHotkeyField.Value = _settings.RecordHotkey?.Clone();
         StopAllButtonHotkeyText.Text = stopAll;
         OverlayModeButtonHotkeyText.Text = overlayMode;
         _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll);
@@ -1311,13 +1325,38 @@ public partial class MainWindow
 
     private void ShowSettingsError(string message)
     {
-        SettingsErrorText.Text = message;
-        SettingsErrorText.Visibility = Visibility.Visible;
+        SettingsError.Message = message;
+        SettingsError.IsOpen = true;
     }
 
-    private void HideSettingsError() => SettingsErrorText.Visibility = Visibility.Collapsed;
+    private void HideSettingsError() => SettingsError.IsOpen = false;
 
     // ================= Overlay mode =================
+
+    private Point _panelDragStart;
+
+    /// <summary>
+    /// The overlay panel's move handle (the input hook reports how far the mouse is from where it was pressed,
+    /// in physical pixels): the panel follows, and where it is released becomes its saved position.
+    /// </summary>
+    private void OnOverlayPanelDragged(PanelDragPhase phase, int dx, int dy)
+    {
+        if (phase == PanelDragPhase.Started)
+        {
+            _panelDragStart = new Point(_overlayPanelWindow.Left, _overlayPanelWindow.Top);
+            return;
+        }
+        DpiScale dpi = VisualTreeHelper.GetDpi(_overlayPanelWindow);
+        _overlayPanelWindow.Left = _panelDragStart.X + dx / dpi.DpiScaleX;
+        _overlayPanelWindow.Top = _panelDragStart.Y + dy / dpi.DpiScaleY;
+        if (phase != PanelDragPhase.Ended)
+            return;
+        _settings.OverlayPanelX = Math.Round(_overlayPanelWindow.Left);
+        _settings.OverlayPanelY = Math.Round(_overlayPanelWindow.Top);
+        UpdatePositionBoxes();
+        Save();
+        PublishPanelTargets(); // the clickable rectangles moved with the panel
+    }
 
     private void ShowOverlayPanel()
     {
@@ -1383,9 +1422,11 @@ public partial class MainWindow
     private RemapItemViewModel CreateRemapItem(RemapDefinition definition)
     {
         var item = new RemapItemViewModel(definition);
+        // The card's switch: the list is rebuilt only when its filter depends on it (see OnLoopEnabledChanged).
         item.EnabledChanged += _ =>
         {
-            _remapView.Refresh();
+            if (RemapFilterBox.SelectedIndex is 1 or 2) // Enabled, Disabled
+                _remapView.Refresh();
             UpdateRemapState();
             Save();
         };
@@ -1458,20 +1499,24 @@ public partial class MainWindow
         Save();
     }
 
+    /// <summary>The card's Edit.</summary>
+    private void OnEditRemapClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is RemapItemViewModel item)
+            EditRemap(item);
+    }
+
     private void OnRemapMoreClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement button || button.Tag is not RemapItemViewModel item)
             return;
 
-        var edit = new MenuItem { Header = "Edit", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Edit24 } };
-        edit.Click += (_, _) => EditRemap(item);
-        var duplicate = new MenuItem { Header = "Duplicate", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Copy24 } };
+        var duplicate = new MenuItem { Header = "Duplicate", Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
         duplicate.Click += (_, _) => DuplicateRemap(item);
-        var delete = new MenuItem { Header = "Delete", Icon = new UiSymbolIcon { Symbol = UiSymbolRegular.Delete24 } };
+        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteRemap(item);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
-        menu.Items.Add(edit);
         menu.Items.Add(duplicate);
         menu.Items.Add(new Separator());
         menu.Items.Add(delete);
@@ -1504,25 +1549,25 @@ public partial class MainWindow
 
     private async void DeleteRemap(RemapItemViewModel item)
     {
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Delete remap",
             Content = $"Delete the remap {item.SourceText} → {item.TargetText}?",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        UiMessageBoxResult result;
+        ContentDialogResult result;
         _engine.HotkeysSuspended = true;
         try
         {
-            result = await confirm.ShowDialogAsync();
+            result = await confirm.ShowAsync(this);
         }
         finally
         {
             _engine.HotkeysSuspended = false;
         }
-        if (result != UiMessageBoxResult.Primary)
+        if (result != ContentDialogResult.Primary)
             return;
         _settings.Remaps.Remove(item.Definition);
         _remapItems.Remove(item);
@@ -1536,7 +1581,7 @@ public partial class MainWindow
     {
         if (_initializing)
             return;
-        _settings.CloseToTray = CloseToTraySwitch.IsChecked == true;
+        _settings.CloseToTray = CloseToTraySwitch.IsOn;
         Save();
     }
 
@@ -1544,7 +1589,7 @@ public partial class MainWindow
     {
         if (_initializing)
             return;
-        _settings.StartWithWindows = StartWithWindowsSwitch.IsChecked == true;
+        _settings.StartWithWindows = StartWithWindowsSwitch.IsOn;
         StartupService.Apply(_settings.StartWithWindows);
         Save();
     }
@@ -1582,16 +1627,16 @@ public partial class MainWindow
         if (dialog.ShowDialog(this) != true)
             return;
 
-        var confirm = new UiMessageBox
+        var confirm = new ContentDialog
         {
-            Owner = this,
             Title = "Import",
             Content = "Replace all your loops, macros, remaps and settings with the ones in this file? " +
                       "Your current data is saved first as a backup in the data folder. PuppyMacro restarts after the import.",
             PrimaryButtonText = "Import and restart",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
         };
-        if (await confirm.ShowDialogAsync() != UiMessageBoxResult.Primary)
+        if (await confirm.ShowAsync(this) != ContentDialogResult.Primary)
             return;
 
         try

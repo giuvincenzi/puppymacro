@@ -13,6 +13,16 @@ using PuppyMacro.Models;
 using PuppyMacro.Native;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
+using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
+using ToggleSplitButton = iNKORE.UI.WPF.Modern.Controls.ToggleSplitButton;
+using ToggleSplitButtonIsCheckedChangedEventArgs = iNKORE.UI.WPF.Modern.Controls.ToggleSplitButtonIsCheckedChangedEventArgs;
+using ContentDialogButton = iNKORE.UI.WPF.Modern.Controls.ContentDialogButton;
+using ContentDialogResult = iNKORE.UI.WPF.Modern.Controls.ContentDialogResult;
+using FontIcon = iNKORE.UI.WPF.Modern.Controls.FontIcon;
+using FontIconData = iNKORE.UI.WPF.Modern.Common.IconKeys.FontIconData;
+using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
+using NumberBoxSpinButtonPlacementMode = iNKORE.UI.WPF.Modern.Controls.NumberBoxSpinButtonPlacementMode;
+using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
 
 namespace PuppyMacro;
 
@@ -64,7 +74,6 @@ public partial class MacroEditorWindow
 
         string title = existing == null ? "New macro" : "Edit macro";
         Title = title;
-        EditorTitleBar.Title = title;
 
         if (recorded != null)
         {
@@ -75,14 +84,16 @@ public partial class MacroEditorWindow
             }
         }
         ActionList.ItemsSource = _items;
+        SoundChoices.ItemsSource = SoundService.Names;
+        SoundChoices.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
         LoadMacro(source);
-        BuildSoundTiles();
 
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
         _code = CreateCodeSwitch();
         _ready = true;
         Validate();
         Closing += (_, _) => RememberSize();
+        KeyCaptureField.SetEngine(this, _engine); // the hotkey field waits for keys through it
         Closed += (_, _) => _engine.CancelCapture();
         Loaded += (_, _) => Activate(); // e.g. right after a recording, with the main window just restored
     }
@@ -115,10 +126,10 @@ public partial class MacroEditorWindow
         ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
         HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
 
-        SoundSwitch.IsChecked = source.SoundEnabled;
-        SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
-        foreach (RadioButton tile in SoundGrid.Children.OfType<RadioButton>())
-            tile.IsChecked = (string)tile.Tag == _soundName;
+        SoundSwitch.IsOn = source.SoundEnabled;
+        SoundCard.IsEnabled = source.SoundEnabled;
+        SoundExpander.IsExpanded = source.SoundEnabled;
+        SoundChoices.SelectedIndex = SoundService.Names.ToList().IndexOf(_soundName);
 
         UpdateHotkeyLabel();
         FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
@@ -134,12 +145,12 @@ public partial class MacroEditorWindow
             Actions = _list.Actions.Select(a => a.Clone()).ToList(),
             Groups = _list.Groups.Select(g => g.Clone()).ToList(),
             Repeat = TimesRadio.IsChecked == true ? RepeatMode.Times : LoopRadio.IsChecked == true ? RepeatMode.Loop : RepeatMode.Once,
-            RepeatCount = (int)Math.Max(1, Math.Round(TimesBox.Value ?? 3)),
+            RepeatCount = (int)Math.Max(1, double.IsNaN(TimesBox.Value) ? 3 : Math.Round(TimesBox.Value)),
             Speed = SelectedSpeed,
-            Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
+            Mode = IsHold ? ActivationMode.Hold : ActivationMode.Toggle,
             Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
             Enabled = _enabled,
-            SoundEnabled = SoundSwitch.IsChecked == true,
+            SoundEnabled = SoundSwitch.IsOn,
             SoundName = _soundName,
             FloatingButton = FloatingEditor.ToModel(),
         };
@@ -243,7 +254,6 @@ public partial class MacroEditorWindow
 
         EmptyActionsText.Visibility = _list.Actions.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         UpdateTotals();
-        UpdateInsertHint();
         UpdateSelectionBar();
         Validate();
     }
@@ -308,11 +318,9 @@ public partial class MacroEditorWindow
         }
     }
 
-    private void UpdateInsertHint()
-    {
-        if (InsertHint == null)
-            return;
-        InsertHint.Text = SelectedItems.LastOrDefault() switch
+    /// <summary>Where new actions go, as the second half of the text under the command bar.</summary>
+    private string InsertHintText() =>
+        SelectedItems.LastOrDefault() switch
         {
             MacroGroupViewModel header => $"New actions go after the group \"{header.Name}\"",
             MacroActionRowViewModel row when _list.GroupOf(row.Action) is { } group =>
@@ -320,24 +328,36 @@ public partial class MacroEditorWindow
             MacroActionRowViewModel row => $"New actions go after #{row.Number}",
             _ => "New actions go at the end",
         };
-    }
 
     private void UpdateSelectionBar()
     {
+        if (SelectionText == null)
+            return;
         int count = _list.Expand(SelectedActions, SelectedGroups).Count;
         bool any = count > 0;
-        SelectionBarBack.Visibility = any ? Visibility.Visible : Visibility.Collapsed;
-        SelectionText.Text = any ? $"{Count(count)} selected" : "Select actions to group, duplicate, copy or delete them";
-        SelectionText.SetResourceReference(TextBlock.ForegroundProperty,
-            any ? "TextFillColorPrimaryBrush" : "TextFillColorTertiaryBrush");
-        foreach (var button in new[] { GroupButton, DuplicateButton, CopyButton, DeleteButton })
-            button.Visibility = any ? Visibility.Visible : Visibility.Collapsed;
-        PasteButton.Visibility = s_clipboard is { IsEmpty: false } ? Visibility.Visible : Visibility.Collapsed;
+        SelectionText.Text = (any ? $"{Count(count)} selected" : "Select actions to test, edit, group, duplicate, copy or delete them")
+                             + " · " + InsertHintText();
+        foreach (var button in new[] { DuplicateButton, CopyButton, DeleteButton })
+            button.IsEnabled = any;
+        // A group alone is already a group.
+        GroupButton.IsEnabled = any && SelectedGroup == null;
+        PasteButton.IsEnabled = s_clipboard is { IsEmpty: false };
+        TestActionButton.IsEnabled = SelectedRow != null;
+        EditActionButton.IsEnabled = SelectedRow != null || SelectedGroup != null;
+        RenameGroupButton.IsEnabled = SelectedGroup != null;
+        UngroupButton.IsEnabled = SelectedGroup != null;
     }
+
+    /// <summary>The selected action, when exactly one row and nothing else is selected.</summary>
+    private MacroActionRowViewModel? SelectedRow =>
+        SelectedItems is [MacroActionRowViewModel row] ? row : null;
+
+    /// <summary>The selected group, when exactly its header and nothing else is selected.</summary>
+    private MacroGroupViewModel? SelectedGroup =>
+        SelectedItems is [MacroGroupViewModel header] ? header : null;
 
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        UpdateInsertHint();
         UpdateSelectionBar();
     }
 
@@ -362,7 +382,11 @@ public partial class MacroEditorWindow
                      MacroActionType.MoveTo, MacroActionType.Scroll, MacroActionType.PasteText,
                  })
         {
-            var item = new MenuItem { Header = MacroActionWindow.TypeName(type) };
+            var item = new MenuItem
+            {
+                Header = MacroActionWindow.TypeName(type),
+                Icon = new FontIcon { Icon = MacroActionRowViewModel.IconOf(type) },
+            };
             item.Click += (_, _) => AddAction(type);
             menu.Items.Add(item);
         }
@@ -397,10 +421,22 @@ public partial class MacroEditorWindow
 
     private Dictionary<Guid, string> GroupNames() => _list.Groups.ToDictionary(g => g.Id, g => g.Name);
 
+    /// <summary>Edit: an action opens its window, a group its name (as Rename group).</summary>
     private void OnEditActionClick(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is not MacroActionRowViewModel row)
+        if (SelectedRow is { } row)
+            EditRow(row);
+        else if (SelectedGroup is { } header)
+            RenameGroup(header);
+    }
+
+    private void EditRow(MacroActionRowViewModel row)
+    {
+        if (!row.IsEditable)
+        {
+            EditDelay(row);
             return;
+        }
         int index = _list.Actions.IndexOf(row.Action);
         if (index < 0)
             return;
@@ -416,18 +452,127 @@ public partial class MacroEditorWindow
         Refresh();
     }
 
+    /// <summary>A recorded mouse path has no action window: Edit changes only its delay.</summary>
+    private async void EditDelay(MacroActionRowViewModel row)
+    {
+        var box = new NumberBox
+        {
+            Header = "Delay before this action (ms)",
+            Minimum = 0,
+            Maximum = 86_400_000,
+            Value = row.Action.DelayMs,
+            SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline,
+        };
+        var dialog = new ContentDialog
+        {
+            Title = row.Title,
+            Content = box,
+            PrimaryButtonText = "Save",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+        };
+        if (await dialog.ShowAsync(this) == ContentDialogResult.Primary)
+            row.Delay = box.Value;
+    }
+
+    /// <summary>Right-click on a row: the commands for the selection, in a context menu at the pointer.</summary>
+    private void OnListContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        e.Handled = true;
+        if (e.OriginalSource is not DependencyObject source
+            || ItemsControl.ContainerFromElement(ActionList, source) is not ListViewItem { DataContext: MacroEditorItem item })
+            return;
+        // As in File Explorer: a row outside the selection becomes the selection.
+        if (!ActionList.SelectedItems.Contains(item))
+        {
+            ActionList.SelectedItems.Clear();
+            ActionList.SelectedItem = item;
+        }
+        UpdateSelectionBar();
+        var menu = new ContextMenu { Placement = PlacementMode.MousePoint };
+        menu.Items.Add(MenuCommand("Test", SegoeFluentIcons.Play, TestActionButton.IsEnabled, OnTestActionClick, ""));
+        menu.Items.Add(MenuCommand("Edit", SegoeFluentIcons.Edit, EditActionButton.IsEnabled, OnEditActionClick, ""));
+        menu.Items.Add(MenuCommand("Duplicate", SegoeFluentIcons.Copy, DuplicateButton.IsEnabled, OnDuplicateSelectedClick, "Ctrl+D"));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(MenuCommand("Group", SegoeFluentIcons.GroupList, GroupButton.IsEnabled, OnGroupSelectedClick, "Ctrl+G"));
+        menu.Items.Add(MenuCommand("Ungroup", SegoeFluentIcons.RemoveFrom, UngroupButton.IsEnabled, OnUngroupClick, ""));
+        menu.Items.Add(MenuCommand("Rename group", SegoeFluentIcons.Rename, RenameGroupButton.IsEnabled, OnRenameGroupClick, ""));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(MenuCommand("Copy", SegoeFluentIcons.Copy, CopyButton.IsEnabled, OnCopySelectedClick, "Ctrl+C"));
+        menu.Items.Add(MenuCommand("Paste", SegoeFluentIcons.Paste, PasteButton.IsEnabled, OnPasteClick, "Ctrl+V"));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(MenuCommand("Delete", SegoeFluentIcons.Delete, DeleteButton.IsEnabled, OnDeleteSelectedClick, "Delete"));
+        menu.IsOpen = true;
+    }
+
+    private static MenuItem MenuCommand(string header, FontIconData icon, bool enabled, RoutedEventHandler click, string keys)
+    {
+        var item = new MenuItem { Header = header, Icon = new FontIcon { Icon = icon }, IsEnabled = enabled, InputGestureText = keys };
+        item.Click += click;
+        return item;
+    }
+
+    /// <summary>The density button: on, the library's compact density on the list, as its Gallery's "Compact sizing" does.</summary>
+    private void OnDensityChanged(ToggleSplitButton sender, ToggleSplitButtonIsCheckedChangedEventArgs args)
+    {
+        bool compact = sender.IsChecked;
+        var lists = ActionList.Resources.MergedDictionaries;
+        lists.Clear();
+        if (compact)
+            lists.Add(new ResourceDictionary { Source = new Uri("/iNKORE.UI.WPF.Modern;component/Themes/DensityStyles/Compact.xaml", UriKind.Relative) });
+        NormalDensityItem.IsChecked = !compact;
+        CompactDensityItem.IsChecked = compact;
+    }
+
+    private void OnNormalDensityClick(object sender, RoutedEventArgs e) => DensityButton.IsChecked = false;
+
+    private void OnCompactDensityClick(object sender, RoutedEventArgs e) => DensityButton.IsChecked = true;
+
+    private async void OnShortcutsClick(object sender, RoutedEventArgs e)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = "Shortcuts",
+            Content = new MacroShortcutsView(),
+            CloseButtonText = "Close",
+            DefaultButton = ContentDialogButton.Close,
+        };
+        await dialog.ShowAsync(this);
+    }
+
     private void OnTestActionClick(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel row)
+        if (SelectedRow is { } row)
             ActionTestSession.Run(_engine, row.Action, this);
+    }
+
+    /// <summary>Double-click: an action opens Edit, a group opens or closes.</summary>
+    private void OnListDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is not DependencyObject source || IsInsideInteractiveControl(source))
+            return;
+        // The click can land on text (a Run, not a Visual): ContainerFromElement walks up from it too.
+        switch (ItemsControl.ContainerFromElement(ActionList, source))
+        {
+            case ListViewItem { DataContext: MacroActionRowViewModel row }:
+                EditRow(row);
+                e.Handled = true;
+                break;
+            case ListViewItem { DataContext: MacroGroupViewModel header }:
+                header.IsCollapsed = !header.IsCollapsed;
+                Refresh();
+                e.Handled = true;
+                break;
+        }
     }
 
     private void OnRecordClick(object sender, RoutedEventArgs e)
     {
         // A modal dialog cannot be hidden safely, so it is moved off screen while recording.
-        // The main window behind it is hidden too.
+        // The main window is hidden too (it already is while an editor is open: then it stays hidden).
         double left = Left, top = Top;
         var main = Owner;
+        bool mainWasVisible = main?.IsVisible == true;
         RecordingSession.Run(_engine, _settings,
             hide: () =>
             {
@@ -436,7 +581,8 @@ public partial class MacroEditorWindow
             },
             restore: () =>
             {
-                main?.Show();
+                if (mainWasVisible)
+                    main?.Show();
                 Left = left;
                 Top = top;
                 Activate();
@@ -444,26 +590,7 @@ public partial class MacroEditorWindow
             done: InsertActions);
     }
 
-    // ---- Row and group buttons ----
-
-    private void OnDuplicateActionClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is not MacroActionRowViewModel row)
-            return;
-        var group = _list.GroupOf(row.Action);
-        var inserted = _list.Insert(_list.Copy(new[] { row.Action }, Array.Empty<MacroGroup>()),
-            _list.Actions.IndexOf(row.Action) + 1, group);
-        Refresh(ItemsFor(inserted, group));
-    }
-
-    private void OnRemoveActionClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel row)
-        {
-            _list.Remove(new[] { row.Action }, Array.Empty<MacroGroup>());
-            Refresh();
-        }
-    }
+    // ---- Groups ----
 
     private void OnToggleGroupClick(object sender, RoutedEventArgs e)
     {
@@ -475,41 +602,27 @@ public partial class MacroEditorWindow
 
     private void OnRenameGroupClick(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is not MacroGroupViewModel header)
-            return;
+        if (SelectedGroup is { } header)
+            RenameGroup(header);
+    }
+
+    private void RenameGroup(MacroGroupViewModel header)
+    {
         var dialog = new GroupNameWindow("Rename group", "Save", header.Name, header.Info) { Owner = this };
         if (dialog.ShowDialog() == true && dialog.Result != null)
         {
             header.Name = dialog.Result;
-            UpdateInsertHint();
+            UpdateSelectionBar();
         }
-    }
-
-    private void OnDuplicateGroupClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is not MacroGroupViewModel header)
-            return;
-        var inserted = _list.Insert(_list.Copy(Array.Empty<MacroAction>(), new[] { header.Group }),
-            _list.LastIndex(header.Group) + 1, null);
-        Refresh(ItemsFor(inserted));
     }
 
     private void OnUngroupClick(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is not MacroGroupViewModel header)
+        if (SelectedGroup is not { } header)
             return;
         var actions = _list.ActionsOf(header.Group);
         _list.Ungroup(header.Group);
         Refresh(actions.Select(RowFor));
-    }
-
-    private void OnRemoveGroupClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is MacroGroupViewModel header)
-        {
-            _list.Remove(Array.Empty<MacroAction>(), new[] { header.Group });
-            Refresh();
-        }
     }
 
     // ---- Selection bar and shortcuts ----
@@ -527,7 +640,8 @@ public partial class MacroEditorWindow
     private void GroupSelected()
     {
         int count = _list.Expand(SelectedActions, SelectedGroups).Count;
-        if (count == 0)
+        // A group alone is already a group.
+        if (count == 0 || SelectedGroup != null)
             return;
         var dialog = new GroupNameWindow("Group actions", "Group", $"Group {_list.Groups.Count + 1}", Count(count))
         {
@@ -616,7 +730,7 @@ public partial class MacroEditorWindow
         {
             if (source is TextBoxBase)
                 return true;
-            if (source is ListBoxItem)
+            if (source is ListViewItem)
                 return false;
             source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source);
         }
@@ -635,7 +749,7 @@ public partial class MacroEditorWindow
     {
         while (source != null)
         {
-            if (source is ButtonBase or TextBox or Wpf.Ui.Controls.NumberBox)
+            if (source is ButtonBase or TextBox or NumberBox)
                 return true;
             source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source);
         }
@@ -752,7 +866,7 @@ public partial class MacroEditorWindow
     {
         if (e.Data.GetData(typeof(DragPayload)) is not DragPayload payload || _items.Count == 0)
             return null;
-        if (ItemsControl.ContainerFromElement(ActionList, e.OriginalSource as DependencyObject) is ListBoxItem
+        if (ItemsControl.ContainerFromElement(ActionList, e.OriginalSource as DependencyObject) is ListViewItem
             {
                 DataContext: MacroEditorItem item,
             } container)
@@ -835,76 +949,62 @@ public partial class MacroEditorWindow
 
     private void UpdateSpeedLabel()
     {
-        if (SpeedLabel != null)
-            SpeedLabel.Text = $"Speed ×{SelectedSpeed}";
+        if (SpeedCard != null)
+            SpeedCard.Header = $"Speed ×{SelectedSpeed}";
     }
+
+    private bool IsHold => HoldRadio.IsChecked == true;
 
     private void OnActivationChanged(object sender, RoutedEventArgs e)
     {
-        FloatingEditor?.SetHoldMode(HoldRadio.IsChecked == true);
+        FloatingEditor?.SetHoldMode(IsHold);
         Validate();
         if (ActivationHint == null)
             return;
-        ActivationHint.Text = HoldRadio.IsChecked == true
+        ActivationHint.Text = IsHold
             ? "Plays only while the hotkey is held down."
             : "Press the hotkey to start, press it again to stop.";
     }
 
     // ================= Sound =================
 
-    private void BuildSoundTiles()
+    private void OnSoundSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var style = (Style)FindResource("SoundTile");
-        foreach (string name in SoundService.Names)
-        {
-            var tile = new RadioButton
-            {
-                Content = name,
-                Tag = name,
-                GroupName = "Sound",
-                Style = style,
-                Margin = new Thickness(0, 0, 6, 6),
-                IsChecked = name == _soundName,
-            };
-            tile.Click += (_, _) =>
-            {
-                _soundName = name;
-                _sounds.Preview(name);
-            };
-            SoundGrid.Children.Add(tile);
-        }
+        if (SoundChoices.SelectedItem is string name)
+            _soundName = name;
     }
 
+    /// <summary>A click on a sound picks it and plays it, also when it is already the chosen one.</summary>
+    private void OnSoundClick(object sender, RoutedEventArgs e)
+    {
+        if ((e.OriginalSource as RadioButton)?.Content is not string name)
+            return;
+        _soundName = name;
+        _sounds.Preview(name);
+    }
+
+    /// <summary>The sound can be chosen only while it is on: turning it on shows the choice.</summary>
     private void OnSoundSwitchChanged(object sender, RoutedEventArgs e)
     {
-        if (SoundPanel != null)
-            SoundPanel.Visibility = SoundSwitch.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        if (SoundCard == null)
+            return;
+        SoundCard.IsEnabled = SoundSwitch.IsOn;
+        SoundExpander.IsExpanded = SoundSwitch.IsOn;
     }
 
     // ================= Hotkey =================
 
-    private void OnChangeHotkeyClick(object sender, RoutedEventArgs e)
+    /// <summary>The hotkey field's Set or Clear (left/right click and the wheel only with a modifier).</summary>
+    private void OnHotkeyFieldChanged(object? sender, EventArgs e)
     {
-        _engine.CancelCapture();
-        HotkeyCaps.Visibility = Visibility.Collapsed;
-        HotkeyCaptureText.Visibility = Visibility.Visible;
-        _engine.BeginCapture(
-            binding =>
-            {
-                _hotkey = binding;
-                UpdateHotkeyLabel();
-                Validate();
-            },
-            UpdateHotkeyLabel,
-            allowPrimaryMouse: false, hotkey: true);
+        _hotkey = HotkeyField.Value?.Clone();
+        UpdateHotkeyLabel();
+        Validate();
     }
 
     private void UpdateHotkeyLabel()
     {
-        HotkeyCaptureText.Visibility = Visibility.Collapsed;
-        HotkeyCaps.Visibility = Visibility.Visible;
-        HotkeyCaps.ItemsSource = KeyNames.Parts(_hotkey);
-        ClearHotkeyButton.IsEnabled = _hotkey is { IsSet: true };
+        HotkeyField.Value = _hotkey?.Clone();
         FloatingEditor.SetHotkey(HotkeyText());
     }
 
@@ -919,14 +1019,6 @@ public partial class MacroEditorWindow
         var edited = new EditedFloatingButton(_itemId, NameBox.Text.Trim(), HotkeyText(), FloatingEditor.ToModel());
         if (_placeButton?.Invoke(edited) is Point position)
             FloatingEditor.SetPosition(position);
-    }
-
-    private void OnClearHotkeyClick(object sender, RoutedEventArgs e)
-    {
-        _engine.CancelCapture();
-        _hotkey = null;
-        UpdateHotkeyLabel();
-        Validate();
     }
 
     // ================= Validation and save =================
@@ -944,8 +1036,8 @@ public partial class MacroEditorWindow
         if (_list.Actions.Count == 0)
             return "Add or record at least one action.";
         if (_hotkey == null || !_hotkey.IsSet)
-            return HoldRadio.IsChecked == true ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
-        if (HotkeyRules.Problem(_hotkey, hold: HoldRadio.IsChecked == true) is string problem)
+            return IsHold ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
+        if (HotkeyRules.Problem(_hotkey, hold: IsHold) is string problem)
             return problem;
         return HotkeyConflicts.Find(_hotkey, _settings, _macros, _editingId);
     }

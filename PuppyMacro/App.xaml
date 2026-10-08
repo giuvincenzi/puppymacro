@@ -2,16 +2,39 @@
     x:Class="PuppyMacro.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemesDictionary Theme="Dark" />
-                <ui:ControlsDictionary />
+                <ui:ThemeResources>
+                    <!-- The Idle status dot (approved, ui.md): Windows' default blue for each theme, as the
+                         library's Gallery adds its own theme colors -->
+                    <ui:ThemeResources.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
+                            <SolidColorBrush x:Key="IdleDotBrush" Color="#005FB8" />
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
+                            <SolidColorBrush x:Key="IdleDotBrush" Color="#60CDFF" />
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
+                            <SolidColorBrush x:Key="IdleDotBrush" Color="{DynamicResource SystemColorHighlightColor}" />
+                        </ResourceDictionary>
+                    </ui:ThemeResources.ThemeDictionaries>
+                </ui:ThemeResources>
+                <ui:XamlControlsResources />
+                <!-- The InfoBadge styles by name (status dots), as the library's Gallery loads them -->
+                <ResourceDictionary Source="/iNKORE.UI.WPF.Modern.Controls;component/Controls/Windows/InfoBadge/InfoBadge.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+            <!-- iNKORE 0.10.2 bug: SettingsCard styles a NumberBox inside it with MinWidth="{StaticResource
+                 SettingsCardContentMinWidth}", which its theme style cannot find: the layout throws. Every
+                 NumberBox in a SettingsCard sets MinWidth from this key itself (a local value wins over that
+                 style). Same key and value as the library's theme. -->
+            <sys:Double x:Key="SettingsCardContentMinWidth">120</sys:Double>
 
             <!-- Small key label, e.g. [F9] -->
             <Style x:Key="KeyCap" TargetType="Border">
@@ -23,68 +46,22 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
 
-            <!-- Icon button like the ⋯ of Windows Settings: no border, a light fill on mouse over.
-                 WPF-UI's Transparent appearance keeps the standard button's border on mouse over. -->
-            <Style x:Key="SubtleButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
-                <Setter Property="Appearance" Value="Transparent" />
-                <Setter Property="BorderBrush" Value="Transparent" />
-                <Setter Property="MouseOverBackground" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                <Setter Property="MouseOverBorderBrush" Value="Transparent" />
-                <Setter Property="PressedBackground" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
-                <Setter Property="PressedBorderBrush" Value="Transparent" />
+            <!-- Idle (enabled, not running) in the lists: the informational dot in blue instead of its grey -->
+            <Style x:Key="IdleDotInfoBadgeStyle" TargetType="ui:InfoBadge" BasedOn="{StaticResource InformationalDotInfoBadgeStyle}">
+                <Setter Property="Background" Value="{DynamicResource IdleDotBrush}" />
             </Style>
 
-            <!-- The ⋯ "More options" button of a list card, standard padding. Its content is the "More" glyph
-                 of the Windows icon font: <ui:FontIcon Glyph="&#xE712;" Style="{StaticResource MoreGlyph}" />. -->
-            <Style x:Key="MoreButton" TargetType="ui:Button" BasedOn="{StaticResource SubtleButton}">
-                <Setter Property="ToolTip" Value="More options" />
-            </Style>
-            <Style x:Key="MoreGlyph" TargetType="ui:FontIcon">
-                <Setter Property="FontSize" Value="16" />
-                <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />
-            </Style>
-
-            <!-- Side rail item (Loops / Settings) -->
-            <Style x:Key="RailButton" TargetType="RadioButton">
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="RadioButton">
-                            <Grid Width="56" Height="54">
-                                <Border x:Name="Back" CornerRadius="6" Background="Transparent" />
-                                <Border x:Name="Mark" Width="3" Height="18" CornerRadius="2"
-                                        HorizontalAlignment="Left" VerticalAlignment="Center"
-                                        Background="{DynamicResource AccentTextFillColorPrimaryBrush}" Visibility="Collapsed" />
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="Back" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                                    <Setter TargetName="Mark" Property="Visibility" Value="Visible" />
-                                </Trigger>
-                                <Trigger Property="IsKeyboardFocused" Value="True">
-                                    <Setter TargetName="Back" Property="BorderBrush" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                                    <Setter TargetName="Back" Property="BorderThickness" Value="2" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-
-            <!-- Settings and loop card -->
-            <Style x:Key="CardBorder" TargetType="Border">
-                <Setter Property="Padding" Value="14,12" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
-            </Style>
+            <!-- A hotkey or key the user chose, in the accent color (approved, ui.md): the key field and the list
+                 cards. An ItemsControl with ItemTemplate="{StaticResource AccentKeyCapItem}" and
+                 ItemsPanel="{StaticResource KeyCapRow}" over the key names (KeyNames.Parts). -->
+            <DataTemplate x:Key="AccentKeyCapItem">
+                <Border Margin="0,0,4,0" Style="{StaticResource KeyCap}" Background="{DynamicResource AccentFillColorDefaultBrush}">
+                    <TextBlock Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}" Text="{Binding}" />
+                </Border>
+            </DataTemplate>
+            <ItemsPanelTemplate x:Key="KeyCapRow">
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

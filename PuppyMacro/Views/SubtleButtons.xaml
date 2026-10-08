@@ -1,0 +1,17 @@
+<!--
+    Icon buttons that light up only under the mouse, as the AppBarButtons in a command bar (approved, ui.md):
+    merge this into the Resources of the element that holds them. It redefines the Button background and
+    border resources with the AppBarButton's subtle fills and no border. Used by the list cards' buttons
+    (ItemCardActions).
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="ButtonBackground" Color="{DynamicResource SubtleFillColorTransparent}" />
+    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{DynamicResource SubtleFillColorSecondary}" />
+    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{DynamicResource SubtleFillColorTertiary}" />
+    <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="{DynamicResource SubtleFillColorTransparent}" />
+    <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="Transparent" />
+    <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="Transparent" />
+    <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="Transparent" />
+</ResourceDictionary>

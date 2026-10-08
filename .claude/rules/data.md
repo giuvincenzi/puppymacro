@@ -8,7 +8,9 @@ paths:
 
 - Data folder: `%AppData%\PuppyMacro` (`AppPaths`; `PuppyMacro Dev` for Debug builds):
   `settings.json` (settings, loops, remaps), `macros\{id}.json` (one file per macro),
-  `backup-before-import-*.puppymacro` (copies made before an Import).
+  `backup-before-import-*.puppymacro` (copies made before an Import). The Code view's WebView2
+  data (`AppPaths.WebViewFolder`) is a cache, not user data: `%LocalAppData%\PuppyMacro\WebView2`,
+  next to Velopack's install, so an uninstall removes it.
 - A macro file has its actions in playback order; an action may have a `Name` and a
   `GroupId` pointing to one of the macro's `Groups` (name, collapsed). Groups are not nested
   and a group's actions are consecutive: `MacroDefinition.NormalizeGroups` enforces it when a
@@ -17,7 +19,7 @@ paths:
 - The data files' format is `CodeJson.Options` (`MacroLibrary` uses it; settings.json has the same
   options). The Code views show that exact text for a macro, an action, a loop or a remap and read
   it back strictly (`CodeJson.StrictOptions` and the checks in `MacroJson`, `LoopJson`,
-  `RemapJson`): keep their checks and limits equal to the editor windows' and `CodeSchema`'s
+  `RemapJson`): keep their checks and limits equal to the editor windows', and `CodeSchema`'s
   descriptions up to date when the models change.
 - Versions before 1.6 kept the data next to the exe; `AppPaths.MigrateFromExeFolder` copies it
   to the data folder on first start (Release builds only).

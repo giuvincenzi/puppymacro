@@ -64,7 +64,7 @@ public partial class OverlayPanel
     }
 
     /// <summary>
-    /// Stop all is red while something runs and the panel can be clicked; the exit button is dimmed
+    /// Stop all is red while something runs and the panel can be clicked; the exit and move buttons are dimmed
     /// when the panel cannot be clicked (Click items in the panel to start or stop them is off).
     /// </summary>
     public void SetState(bool anyRunning, bool clickable)
@@ -75,6 +75,7 @@ public partial class OverlayPanel
         StopAllLabel.Foreground = red ? StopRed : Neutral;
         StopAllSquare.Fill = red ? StopRed : NeutralSquare;
         ExitButton.Opacity = clickable ? 1 : 0.5;
+        MoveButton.Opacity = clickable ? 1 : 0.5;
     }
 
     /// <summary>Sets the panel background opacity (percent). Text is not affected.</summary>
@@ -92,7 +93,7 @@ public partial class OverlayPanel
         UpdateEmptyState();
     }
 
-    /// <summary>Screen rectangles (physical pixels) of the clickable rows (enabled, not Hold), the exit button and Stop all.</summary>
+    /// <summary>Screen rectangles (physical pixels) of the clickable rows (enabled, not Hold), the exit and move buttons and Stop all.</summary>
     internal List<PanelTarget> GetClickTargets()
     {
         var targets = new List<PanelTarget>();
@@ -101,6 +102,7 @@ public partial class OverlayPanel
         AddTargets(LoopList, targets);
         AddTargets(MacroList, targets);
         AddTarget(ExitButton, PanelTarget.ExitOverlayId, targets);
+        AddTarget(MoveButton, PanelTarget.MoveOverlayId, targets);
         AddTarget(StopAllButton, PanelTarget.StopAllId, targets);
         return targets;
     }

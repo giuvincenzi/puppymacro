@@ -7,9 +7,13 @@ paths:
 
 ## Stack
 
-- .NET 10 (`net10.0-windows`, `win-x64`, framework-dependent), WPF, **WPF-UI 4.1.0**
-  (`FluentWindow`, `TitleBar`, `CardExpander`, `NumberBox`, `ToggleSwitch`, `SymbolIcon`...).
-- **Velopack 1.2.161** (installer and updates) and **Microsoft.Web.WebView2** (the macro editor's
+- .NET 10 (`net10.0-windows10.0.18362.0`, `win-x64`, framework-dependent), WPF,
+  **iNKORE.UI.WPF.Modern 0.10.2.1** (with its dependency iNKORE.UI.WPF): the WinUI controls and
+  the Windows Community Toolkit's `SettingsCard` / `SettingsExpander` for WPF (`ListView`,
+  `CommandBar`, `ToggleSwitch`, `NumberBox`, `InfoBar`, `ContentDialog`, `FontIcon` with
+  `SegoeFluentIcons` and `FluentSystemIcons`...).
+  How to use them: `ui.md`. Its license asks for the attribution in `README.md`.
+- **Velopack 1.2.161** (installer and updates) and **Microsoft.Web.WebView2** (the editors'
   Code view). No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
 - **Monaco editor 0.52.2** (MIT, the editor of VS Code), only the files JSON needs, in
   `Assets/Monaco` with its license; `Assets/CodeEditor` is the page around it. To update it, copy
@@ -29,17 +33,20 @@ site/                           website and user guide sources (docs.md)
 tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end tests (testing.md)
 PuppyMacro/
   App.xaml(.cs)                 Main (Velopack), single instance, data migration, theme, tray start
-  MainWindow.xaml(.cs)          side rail: Loops, Macros, Remap, Settings; overlay mode; tray
+  MainWindow.xaml(.cs)          side rail (Views/SideRail): Loops, Macros, Remap, Settings; overlay mode; tray
   MainWindow.Updates.cs         update bar, Settings dot and Updates card
-  LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow
+  LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow, GroupNameWindow
   OverlayPanelWindow, FloatingButtonWindow, PlacementWindow, PickPointWindow, RecordPromptWindow,
-  RecordingBarWindow
+  RecordingBarWindow, CountdownWindow
   Models/                       AppSettings (settings.json), loops, macros, remaps
   Services/                     input thread and hooks, LoopEngine, runners, InputSender,
-                                recording, sounds, storage, tray, startup, updates
-  Views/                        view models, overlay panel, macro Code view, WindowFit
+                                recording, sounds, storage, Code view checks, tray, startup, updates
+  Views/                        view models, SideRail, ItemCardActions (+ SubtleButtons.xaml),
+                                KeyCaptureField, SwitchSettingsExpander, overlay panel, floating
+                                buttons, Code view (CodeView, ViewSwitchBar, CodeViewSwitch),
+                                MacroShortcutsView, WindowFit
   Native/                       Win32 interop
-  Assets/                       icon, built-in sounds, Code view page (CodeEditor) and Monaco
+  Assets/                       app icon, built-in sounds, Code view page (CodeEditor) and Monaco
   Properties/PublishProfiles/   Folder.pubxml (used by scripts/build.ps1)
 ```
 
@@ -64,15 +71,31 @@ Rules:
 - Clicks on the overlay panel and on the floating buttons are matched against rectangles
   (`PanelTarget`, physical pixels) published by the UI every 300 ms while overlay mode is on.
   Floating buttons are always clickable; panel rows only with `ShowOverlayPanel` and
-  `ClickItemsInPanel`.
+  `ClickItemsInPanel` (so are the panel's Exit, Stop all and Move buttons).
+- The panel's Move handle (`PanelTarget.MoveOverlayId`): the hook blocks its press and release (the
+  app keeps the focus) and never the moves (that would hold the cursor still); it reports the offset
+  from the press through `LoopEngine.OverlayPanelDragged` (moves coalesced, one on its way at a
+  time), and `MainWindow` moves the panel and saves `OverlayPanelX/Y` on release.
 
 ## Features map
 
 - Loops: `Models/AppSettings.cs` (`LoopDefinition`, `LoopAction`), `Services/ActionRunner.cs`,
   `LoopEditorWindow`.
+- The list cards (Loops, Macros, Remap in `MainWindow`): one view model per item
+  (`LoopItemViewModel`, `MacroItemViewModel`, `RemapItemViewModel`) and the shared right side
+  `Views/ItemCardActions` (Play / Stop, Edit, switch, More options; the buttons carry the item in
+  their `Tag`). `CanEdit` on loops and macros is set by `MainWindow` with the running state.
+- Editors (loop, macro, remap) and the placement overlay open through
+  `MainWindow.ShowDialogWithoutHotkeys`: hotkeys off, and the main window is hidden once the editor is
+  on screen (so it opens centered on it) and shown again when it closes. The editors therefore have
+  their own taskbar button (`ShowInTaskbar="True"`). Recording and Test action hide the main window
+  themselves and show it again only if it was visible before.
 - Macros: `Models/MacroModels.cs`, `Services/MacroBuilder.cs` (raw events → actions, path
   simplification), `MacroRunner.cs`, `MacroLibrary.cs` (one JSON per macro),
-  `RecordingSession.cs`, `MacroEditorWindow`, `MacroActionWindow`, `GroupNameWindow`.
+  `MacroEditorWindow`, `MacroActionWindow`, `GroupNameWindow`, `Views/MacroShortcutsView` (the
+  editor's Shortcuts dialog). Recording: `RecordingSession.cs` runs the flow (`RecordPromptWindow`,
+  then a 3-second countdown in `RecordingBarWindow` and big in `CountdownWindow`, then the bar with
+  Stop).
   The editor's operations (group, ungroup, copy / paste, duplicate, drag, Alt+Up / Alt+Down)
   live in `Services/MacroEditList.cs`, without UI, with unit tests; the window only maps the
   list to rows and group headers. Test action: `Services/ActionTestSession.cs` (moves the
@@ -82,7 +105,8 @@ Rules:
   switch and Format), `Views/CodeView` (WebView2 with `Assets/CodeEditor` and Monaco, served from
   disk at `https://puppymacro.editor/`, data in `AppPaths.WebViewFolder`; the Problems panel is
   HTML in the same page, like VS Code's: Monaco has none of its own) and `Views/CodeViewSwitch`
-  (switching, Discard changes, Save and Form view only without problems, small windows grow).
+  (switching in the same window at the same size, Discard changes, Save and Form view only
+  without problems).
   `Services/CodeJson.cs` reads the code strictly and finds lines and columns; the checks of each
   item are in `MacroJson` (macro, one action and the groups it can be in), `LoopJson` and
   `RemapJson` (in `LoopJson.cs`), equal to the windows' checks; unit tested.
@@ -91,6 +115,11 @@ Rules:
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.
 - Hotkeys: `HotkeyBinding`, `Services/HotkeyRules.cs` (which keys need a modifier),
   `HotkeyConflicts`, `KeyNames` (names, wheel codes), `LoopEngine.OnKey` / `OnWheel` (input.md).
+  `Views/KeyCaptureField` is the one field that asks the user for a key or hotkey (editors' Hotkey
+  cards, loop key rows, remap source and target, the macro action's key, the Settings hotkeys; `ui.md`): it
+  calls `LoopEngine.BeginCapture` itself (the window gives the engine once with
+  `KeyCaptureField.SetEngine(this, _engine)`, inherited by every field inside) and keeps a key only
+  when its `Validate` (set by the window) accepts it (otherwise `Rejected` with the reason).
 - Overlay mode: the overlay is the overlay panel (`Views/OverlayPanel`, `OverlayPanelWindow`,
   click-through, no-activate, shown when `ShowOverlayPanel`) and the floating buttons.
   `PlacementWindow` (Position on screen, Position…) always shows the whole overlay as overlay

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
@@ -50,14 +52,15 @@ public partial class LoopEditorWindow
 
         string title = existing == null ? "Add loop" : "Edit loop";
         Title = title;
-        EditorTitleBar.Title = title;
 
         _soundName = source.SoundName;
-        BuildSoundTiles();
+        SoundChoices.ItemsSource = SoundService.Names;
+        SoundChoices.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
         _actions.CollectionChanged += OnActionsChanged;
         ActionsList.ItemsSource = _actions;
         LoadLoop(source);
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
+        KeyCaptureField.SetEngine(this, _engine); // every key field in the window waits for keys through it
 
         _code = new CodeViewSwitch<LoopDefinition>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForLoop(_itemId), FormLoop, LoopJson.Serialize,
@@ -82,10 +85,10 @@ public partial class LoopEditorWindow
         _enabled = source.Enabled;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
-        SoundSwitch.IsChecked = source.SoundEnabled;
-        SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
-        foreach (RadioButton tile in SoundGrid.Children.OfType<RadioButton>())
-            tile.IsChecked = (string)tile.Tag == _soundName;
+        SoundSwitch.IsOn = source.SoundEnabled;
+        SoundCard.IsEnabled = source.SoundEnabled;
+        SoundExpander.IsExpanded = source.SoundEnabled;
+        SoundChoices.SelectedIndex = SoundService.Names.ToList().IndexOf(_soundName);
 
         NameBox.Text = source.Name;
         foreach (var row in _actions)
@@ -111,7 +114,7 @@ public partial class LoopEditorWindow
         Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
         Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
         Enabled = _enabled,
-        SoundEnabled = SoundSwitch.IsChecked == true,
+        SoundEnabled = SoundSwitch.IsOn,
         SoundName = _soundName,
         FloatingButton = FloatingEditor.ToModel(),
     };
@@ -132,14 +135,17 @@ public partial class LoopEditorWindow
 
     private void OnAddKeyClick(object sender, RoutedEventArgs e)
     {
-        var row = new ActionEditorViewModel(new LoopAction
+        // The new row opens and its key field waits for the key.
+        AddRow(new ActionEditorViewModel(new LoopAction
         {
             Type = ActionType.Key,
             IntervalValue = NewKeyIntervalMs,
             IntervalUnit = IntervalUnit.Milliseconds,
+        })
+        {
+            IsExpanded = true,
+            CaptureOnLoad = true,
         });
-        AddRow(row);
-        StartKeyCapture(row);
     }
 
     private void OnAddTextClick(object sender, RoutedEventArgs e)
@@ -156,68 +162,22 @@ public partial class LoopEditorWindow
     {
         if ((sender as FrameworkElement)?.Tag is not ActionEditorViewModel row)
             return;
-        if (row.IsCapturing)
-            _engine.CancelCapture();
-        row.PropertyChanged -= OnRowChanged;
+        row.PropertyChanged -= OnRowChanged; // its key field stops waiting when it goes away
         _actions.Remove(row);
-    }
-
-    private void OnStepUpClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is ActionEditorViewModel row)
-            row.Step(+1);
-    }
-
-    private void OnStepDownClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is ActionEditorViewModel row)
-            row.Step(-1);
-    }
-
-    private void OnCaptureKeyClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is ActionEditorViewModel row)
-            StartKeyCapture(row);
-    }
-
-    private void StartKeyCapture(ActionEditorViewModel row)
-    {
-        EndAllCaptures();
-        row.IsCapturing = true;
-        _engine.BeginCapture(
-            binding =>
-            {
-                row.IsCapturing = false;
-                row.KeyVk = binding.Vk; // modifiers held while choosing are ignored here
-            },
-            () => row.IsCapturing = false,
-            allowPrimaryMouse: true); // left and right click can be repeated
     }
 
     // ================= Sound =================
 
-    private void BuildSoundTiles()
+    private void OnSoundSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var style = (Style)FindResource("SoundTile");
-        foreach (string name in SoundService.Names)
-        {
-            var tile = new RadioButton
-            {
-                Content = name,
-                Tag = name,
-                GroupName = "Sound",
-                Style = style,
-                Margin = new Thickness(0, 0, 6, 6),
-                IsChecked = name == _soundName,
-            };
-            tile.Click += OnSoundTileClick;
-            SoundGrid.Children.Add(tile);
-        }
+        if (SoundChoices.SelectedItem is string name)
+            _soundName = name;
     }
 
-    private void OnSoundTileClick(object sender, RoutedEventArgs e)
+    /// <summary>A click on a sound picks it and plays it, also when it is already the chosen one.</summary>
+    private void OnSoundClick(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is not string name)
+        if ((e.OriginalSource as RadioButton)?.Content is not string name)
             return;
         _soundName = name;
         _sounds.Preview(name);
@@ -225,35 +185,25 @@ public partial class LoopEditorWindow
 
     private void OnSoundSwitchChanged(object sender, RoutedEventArgs e)
     {
-        if (SoundPanel != null)
-            SoundPanel.Visibility = SoundSwitch.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        if (SoundCard == null)
+            return;
+        SoundCard.IsEnabled = SoundSwitch.IsOn;
+        SoundExpander.IsExpanded = SoundSwitch.IsOn;
     }
 
     // ================= Hotkey =================
 
-    private void OnChangeHotkeyClick(object sender, RoutedEventArgs e)
+    /// <summary>The hotkey field's Set or Clear (left/right click and the wheel only with a modifier).</summary>
+    private void OnHotkeyFieldChanged(object? sender, EventArgs e)
     {
-        EndAllCaptures();
-        HotkeyCaps.Visibility = Visibility.Collapsed;
-        HotkeyCaptureText.Visibility = Visibility.Visible;
-
-        _engine.BeginCapture(
-            binding =>
-            {
-                _hotkey = binding;
-                UpdateHotkeyLabel();
-                Validate();
-            },
-            UpdateHotkeyLabel,
-            allowPrimaryMouse: false, hotkey: true); // left/right click and the wheel only with a modifier
+        _hotkey = HotkeyField.Value?.Clone();
+        UpdateHotkeyLabel();
+        Validate();
     }
 
     private void UpdateHotkeyLabel()
     {
-        HotkeyCaptureText.Visibility = Visibility.Collapsed;
-        HotkeyCaps.Visibility = Visibility.Visible;
-        HotkeyCaps.ItemsSource = KeyNames.Parts(_hotkey);
-        ClearHotkeyButton.IsEnabled = _hotkey is { IsSet: true };
+        HotkeyField.Value = _hotkey?.Clone();
         FloatingEditor.SetHotkey(HotkeyText());
     }
 
@@ -263,18 +213,10 @@ public partial class LoopEditorWindow
 
     private void OnFloatingPositionRequested()
     {
-        EndAllCaptures();
+        _engine.CancelCapture();
         var edited = new EditedFloatingButton(_itemId, NameBox.Text.Trim(), HotkeyText(), FloatingEditor.ToModel());
         if (_placeButton?.Invoke(edited) is Point position)
             FloatingEditor.SetPosition(position);
-    }
-
-    private void EndAllCaptures()
-    {
-        _engine.CancelCapture();
-        foreach (var row in _actions)
-            row.IsCapturing = false;
-        UpdateHotkeyLabel();
     }
 
     // ================= Validation =================
@@ -282,14 +224,6 @@ public partial class LoopEditorWindow
     private void OnNameChanged(object sender, TextChangedEventArgs e)
     {
         FloatingEditor?.SetName(NameBox.Text);
-        Validate();
-    }
-
-    private void OnClearHotkeyClick(object sender, RoutedEventArgs e)
-    {
-        _engine.CancelCapture();
-        _hotkey = null;
-        UpdateHotkeyLabel();
         Validate();
     }
 
@@ -312,7 +246,8 @@ public partial class LoopEditorWindow
             return "Choose the key for every key row.";
         if (_actions.Any(a => a.IsText && string.IsNullOrEmpty(a.Text)))
             return "Enter the text for every text row.";
-        if (_actions.Any(a => a.ShowInterval && (a.IntervalMs < LoopAction.MinIntervalMs || a.IntervalMs > LoopAction.MaxIntervalMs)))
+        // Written so that an empty interval (NaN) fails too.
+        if (_actions.Any(a => a.ShowInterval && !(a.IntervalMs >= LoopAction.MinIntervalMs && a.IntervalMs <= LoopAction.MaxIntervalMs)))
             return "Every interval must be between 10 ms and 24 h.";
 
         if (_hotkey == null || !_hotkey.IsSet)
@@ -371,4 +306,14 @@ public partial class LoopEditorWindow
         else
             DialogResult = false;
     }
+}
+
+/// <summary>The interval's spin buttons: 10 ms steps, or 1 s / min / h (UnitIndex 0 is ms).</summary>
+public sealed class IntervalStepConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+        value is int unitIndex && unitIndex == 0 ? 10.0 : 1.0;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
 }
