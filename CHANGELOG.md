@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Added
+- Macro editor: select more actions with Ctrl+click or Shift+click, then group, duplicate,
+  copy (also to paste into another macro) or delete them together, from the new bar above the
+  list or with Ctrl+G, Ctrl+D, Ctrl+C / Ctrl+V and Delete. Dragging and Alt+Up / Alt+Down move
+  the whole selection.
+- Macro groups: named groups of actions that can be collapsed, renamed, duplicated, ungrouped
+  or removed. Actions can be dragged into, out of and between groups. Playback is unchanged.
+- Every macro action can have a name (Name (optional) in its edit window), shown in bold in
+  the list.
+
+### Changed
+- The macro editor can be resized: the list of actions grows with the window, and the size is
+  kept for the next time.
+
 ## 1.7.2
 
 ### Fixed

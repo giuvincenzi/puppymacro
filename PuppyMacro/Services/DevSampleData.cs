@@ -68,6 +68,7 @@ internal static class DevSampleData
         });
 
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
+        var typeHi = new MacroGroup { Name = "Type hi" };
         MacroDefinition[] samples =
         {
             new()
@@ -76,10 +77,11 @@ internal static class DevSampleData
                 Enabled = false,
                 Actions =
                 {
-                    new MacroAction { Type = MacroActionType.PressKey, Vk = KeyH },
-                    new MacroAction { Type = MacroActionType.PressKey, Vk = KeyI, DelayMs = 50 },
-                    new MacroAction { Type = MacroActionType.PressKey, Vk = Enter, DelayMs = 100 },
+                    new MacroAction { Type = MacroActionType.PressKey, Vk = KeyH, GroupId = typeHi.Id },
+                    new MacroAction { Type = MacroActionType.PressKey, Vk = KeyI, DelayMs = 50, GroupId = typeHi.Id },
+                    new MacroAction { Type = MacroActionType.PressKey, Vk = Enter, DelayMs = 100, Name = "Send" },
                 },
+                Groups = { typeHi },
             },
             new()
             {

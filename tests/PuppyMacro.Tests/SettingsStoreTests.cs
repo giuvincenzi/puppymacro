@@ -108,6 +108,20 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void The_macro_editor_size_is_kept_and_invalid_sizes_are_dropped()
+    {
+        AppSettings kept = LoadJson("""{ "MacroEditorWidth": 800, "MacroEditorHeight": 1000 }""", out _);
+        AppSettings dropped = LoadJson("""{ "MacroEditorWidth": -5, "MacroEditorHeight": 0 }""", out _);
+        AppSettings missing = LoadJson("""{ "SchemaVersion": 4 }""", out _);
+
+        Assert.Equal(800, kept.MacroEditorWidth);
+        Assert.Equal(1000, kept.MacroEditorHeight);
+        Assert.Null(dropped.MacroEditorWidth);
+        Assert.Null(dropped.MacroEditorHeight);
+        Assert.Null(missing.MacroEditorWidth);
+    }
+
+    [Fact]
     public void Out_of_range_values_are_clamped()
     {
         AppSettings settings = LoadJson("""

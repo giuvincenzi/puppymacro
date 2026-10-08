@@ -86,6 +86,10 @@ internal sealed class SettingsStore
         if (settings.RecordHotkey == null || !settings.RecordHotkey.IsSet)
             settings.RecordHotkey = HotkeyBinding.FromKey(AppSettings.DefaultRecordVk);
         settings.MacroOrder ??= new();
+        if (settings.MacroEditorWidth is not (> 0 and < 100_000))
+            settings.MacroEditorWidth = null;
+        if (settings.MacroEditorHeight is not (> 0 and < 100_000))
+            settings.MacroEditorHeight = null;
         settings.StopAllHotkeyVk = null;
         settings.GameModeHotkeyVk = null;
 

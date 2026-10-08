@@ -27,6 +27,8 @@ public partial class MacroActionWindow
         Title = title;
         ActionTitleBar.Title = title;
 
+        ActionNameBox.Text = _action.Name;
+
         var t = _action.Type;
         bool isKey = t is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp;
         bool isButton = t is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp;
@@ -188,6 +190,7 @@ public partial class MacroActionWindow
 
         var a = _action;
         var t = a.Type;
+        a.Name = ActionNameBox.Text.Trim();
         if (t is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp)
         {
             a.Vk = _keyVk;

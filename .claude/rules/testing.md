@@ -10,7 +10,8 @@
 - They run on GitHub on every push and pull request (`.github/workflows/test.yml`), and the
   Release workflow stops when they fail.
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
-  (`MacroBuilder`), `MacroLibrary`, `HotkeyConflicts`, `ModifierTracker`, `KeyNames`,
+  (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
+  (`MacroEditList`), `HotkeyConflicts`, `ModifierTracker`, `KeyNames`,
   `HotkeyBinding`, loop intervals.
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test.
 

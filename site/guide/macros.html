@@ -7,14 +7,30 @@
 </ol>
 <h3>Edit</h3>
 <figure class="shot">
-  <img src="img/macro-editor.png" alt="The Edit macro window with three actions" loading="lazy">
-  <figcaption>Every action has its own delay before it starts.</figcaption>
+  <img src="img/macro-editor.png" alt="The Edit macro window with a group of two actions and a named action" loading="lazy">
+  <figcaption>Every action has its own delay before it starts. Groups and names keep long macros readable.</figcaption>
 </figure>
 <ul>
   <li><strong>Add action</strong> adds a step; <strong>Record actions</strong> records more steps and inserts them into the macro.</li>
   <li>Actions: Press key, Key down, Key up, Click (single or double), Mouse button down, Mouse button up, Move to (instantly or smoothly, with <strong>Pick on screen</strong>), Scroll, Paste text, and recorded mouse paths.</li>
   <li>Press key and Click can repeat a number of times, with a pause between.</li>
-  <li>Select an action to edit it, drag it (or <kbd>Alt</kbd>+<kbd>Up</kbd> / <kbd>Alt</kbd>+<kbd>Down</kbd>) to move it, and press <kbd>Ctrl</kbd>+<kbd>D</kbd> to duplicate it. New actions go after the selected one, or at the end.</li>
+  <li>Every action can have a <strong>Name (optional)</strong>, set in its edit window. The list shows it in bold, before the description of the action.</li>
+  <li>New actions go after the selected action (in its group), after the selected group, or at the end.</li>
+  <li>The window can be resized: the list of actions gets taller with it. PuppyMacro keeps the size for the next time.</li>
   <li><strong>Repeat</strong>: Once, Loop or N times. <strong>Speed</strong>: from ×0.25 to ×4.</li>
   <li><strong>Activation</strong>, <strong>Hotkey</strong> and <strong>Sound</strong> work as for loops. Without a hotkey, start the macro with <strong>Play</strong>.</li>
+</ul>
+<h3>Select, move and copy actions</h3>
+<ul>
+  <li>Click an action to select it. <kbd>Ctrl</kbd>+click and <kbd>Shift</kbd>+click select more, <kbd>Ctrl</kbd>+<kbd>A</kbd> selects them all. Selecting a group's header selects the whole group.</li>
+  <li>The bar above the list works on the selection: <strong>Group</strong> (<kbd>Ctrl</kbd>+<kbd>G</kbd>), <strong>Duplicate</strong> (<kbd>Ctrl</kbd>+<kbd>D</kbd>), <strong>Copy</strong> (<kbd>Ctrl</kbd>+<kbd>C</kbd>) and <strong>Delete</strong> (<kbd>Delete</kbd>). After a copy, <strong>Paste</strong> (<kbd>Ctrl</kbd>+<kbd>V</kbd>) inserts the actions where new actions go, also in another macro, until PuppyMacro closes.</li>
+  <li>Drag the selected actions to move them. The blue line shows where they go: indented, they go into that group; full width, they go outside groups. Dropping on the top half of a group's header puts them before the group, on the bottom half into the group, at its start (at its end when the group is collapsed). Below the last action, they go to the end of the macro.</li>
+  <li><kbd>Alt</kbd>+<kbd>Up</kbd> / <kbd>Alt</kbd>+<kbd>Down</kbd> move the selection one step. At the edge of a group, the actions leave it or enter it; a collapsed group is skipped.</li>
+</ul>
+<h3>Groups</h3>
+<ul>
+  <li>Select actions and choose <strong>Group</strong>, then give the group a name. Actions from different places are put together where the first one was.</li>
+  <li>The group's header shows its name, its actions (for example #4–8), how many they are and how long they take. The arrow collapses or expands the group.</li>
+  <li>On the header: <strong>Rename group</strong>, <strong>Duplicate group</strong>, <strong>Ungroup</strong> (the actions stay where they are) and <strong>Remove group</strong> (removes the group and its actions). Drag the header to move the whole group.</li>
+  <li>A group cannot go into another group. Groups only organize the list: the macro plays its actions in order, grouped or not.</li>
 </ul>
