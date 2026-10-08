@@ -20,7 +20,7 @@
         <Border x:Name="Instructions" Padding="16,10" CornerRadius="8" BorderThickness="1"
                 Background="#F2202020" BorderBrush="#1FFFFFFF">
             <StackPanel Orientation="Horizontal">
-                <TextBlock FontSize="13" Text="Drag the panel where you want it" VerticalAlignment="Center" />
+                <TextBlock x:Name="InstructionsText" FontSize="13" Text="Drag the panel where you want it" VerticalAlignment="Center" />
                 <Border Margin="16,0,6,0" Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737">
                     <TextBlock FontSize="12" Text="Enter" />
                 </Border>
@@ -32,24 +32,22 @@
                 <Border Margin="14,0,6,0" Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737">
                     <TextBlock FontSize="12" Text="Arrows" />
                 </Border>
-                <TextBlock FontSize="13" Foreground="#C5C5C5" Text="Nudge (Shift ×10)" VerticalAlignment="Center" />
+                <TextBlock x:Name="NudgeText" FontSize="13" Foreground="#C5C5C5" Text="Nudge (Shift ×10)" VerticalAlignment="Center" />
             </StackPanel>
         </Border>
 
         <!-- The ghost panel: same content as game mode, dashed pink outline -->
-        <Grid x:Name="Ghost" Cursor="SizeAll" Background="Transparent"
-              MouseLeftButtonDown="OnGhostMouseDown" MouseMove="OnGhostMouseMove" MouseLeftButtonUp="OnGhostMouseUp">
-            <Border Margin="-2,-28,0,0" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Top"
-                    CornerRadius="6,6,6,0" Background="#FF5FA2">
-                <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#2A0016" Text="Press Enter to place here" />
-            </Border>
+        <Grid x:Name="Ghost" Cursor="SizeAll" Background="Transparent">
             <views:GameModePanel x:Name="GhostPanel" />
-            <Rectangle Margin="-2" RadiusX="9" RadiusY="9" Stroke="#FF5FA2" StrokeThickness="2"
+            <Rectangle x:Name="GhostOutline" Margin="-2" RadiusX="9" RadiusY="9" Stroke="#FF5FA2" StrokeThickness="2"
                        StrokeDashArray="4 3" IsHitTestVisible="False" />
-            <Border Margin="0,0,-2,-26" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                    CornerRadius="0,0,6,6" Background="#E6FF5FA2">
-                <TextBlock x:Name="CoordinatesText" FontSize="11" FontWeight="SemiBold" Foreground="#2A0016" />
-            </Border>
         </Grid>
+
+        <!-- Floating buttons are added here in code, above the panel -->
+
+        <!-- Name and position of the selected element, above it -->
+        <Border x:Name="SelectionTag" Padding="8,3" CornerRadius="6,6,6,0" Background="#FF5FA2" IsHitTestVisible="False">
+            <TextBlock x:Name="SelectionText" FontSize="12" FontWeight="SemiBold" Foreground="#2A0016" />
+        </Border>
     </Canvas>
 </Window>

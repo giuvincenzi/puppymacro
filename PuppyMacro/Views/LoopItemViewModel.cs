@@ -36,6 +36,7 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
     public string ActivationText => HasHotkey ? $"{ModeText} with" : $"{ModeText}, no hotkey";
     public bool IsToggleMode => Definition.Mode == ActivationMode.Toggle;
     public bool IsHoldMode => Definition.Mode == ActivationMode.Hold;
+    public FloatingButton FloatingButton => Definition.FloatingButton;
 
     public bool ShowKeyIcon => Definition.Actions.Count == 1 && Definition.Actions[0].Type == ActionType.Key;
     public bool ShowTextIcon => Definition.Actions.Count == 1 && Definition.Actions[0].Type == ActionType.Text;

@@ -23,12 +23,15 @@ public partial class LoopEditorWindow
     private string _soundName;
     private readonly AppSettings _settings;
     private readonly Guid _editingId;
+    private readonly Guid _itemId;
+    private readonly Func<EditedFloatingButton, Point?>? _placeButton;
     private readonly bool _wasEnabled;
     private readonly ObservableCollection<ActionEditorViewModel> _actions = new();
     private HotkeyBinding? _hotkey;
     private bool _ready;
 
-    internal LoopEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds, LoopDefinition? existing)
+    internal LoopEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds, LoopDefinition? existing,
+        Func<EditedFloatingButton, Point?>? placeButton = null)
     {
         InitializeComponent();
         WindowFit.Apply(this);
@@ -43,6 +46,8 @@ public partial class LoopEditorWindow
         SoundSwitch.IsChecked = source.SoundEnabled;
         SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
         _editingId = existing?.Id ?? Guid.Empty;
+        _itemId = existing?.Id ?? Guid.NewGuid();
+        _placeButton = placeButton;
         _wasEnabled = source.Enabled;
         _hotkey = source.Hotkey?.Clone();
 
@@ -60,6 +65,8 @@ public partial class LoopEditorWindow
         HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
 
         UpdateHotkeyLabel();
+        FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
+        FloatingEditor.PositionRequested += OnFloatingPositionRequested;
         _ready = true;
         Validate();
 
@@ -204,6 +211,19 @@ public partial class LoopEditorWindow
         HotkeyCaps.Visibility = Visibility.Visible;
         HotkeyCaps.ItemsSource = KeyNames.Parts(_hotkey);
         ClearHotkeyButton.IsEnabled = _hotkey is { IsSet: true };
+        FloatingEditor.SetHotkey(HotkeyText());
+    }
+
+    private string HotkeyText() => _hotkey is { IsSet: true } ? KeyNames.Format(_hotkey) : "";
+
+    // ================= Floating button =================
+
+    private void OnFloatingPositionRequested()
+    {
+        EndAllCaptures();
+        var edited = new EditedFloatingButton(_itemId, NameBox.Text.Trim(), HotkeyText(), FloatingEditor.ToModel());
+        if (_placeButton?.Invoke(edited) is Point position)
+            FloatingEditor.SetPosition(position);
     }
 
     private void EndAllCaptures()
@@ -216,7 +236,11 @@ public partial class LoopEditorWindow
 
     // ================= Validation =================
 
-    private void OnNameChanged(object sender, TextChangedEventArgs e) => Validate();
+    private void OnNameChanged(object sender, TextChangedEventArgs e)
+    {
+        FloatingEditor?.SetName(NameBox.Text);
+        Validate();
+    }
 
     private void OnClearHotkeyClick(object sender, RoutedEventArgs e)
     {
@@ -228,6 +252,7 @@ public partial class LoopEditorWindow
 
     private void OnActivationChanged(object sender, RoutedEventArgs e)
     {
+        FloatingEditor?.SetHoldMode(HoldRadio.IsChecked == true);
         Validate();
         ActivationHint.Text = HoldRadio.IsChecked == true
             ? "Runs only while the hotkey is held down."
@@ -283,7 +308,7 @@ public partial class LoopEditorWindow
 
         Result = new LoopDefinition
         {
-            Id = _editingId == Guid.Empty ? Guid.NewGuid() : _editingId,
+            Id = _itemId,
             Name = NameBox.Text.Trim(),
             Actions = _actions.Select(a => a.ToAction()).ToList(),
             Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
@@ -291,6 +316,7 @@ public partial class LoopEditorWindow
             Enabled = _wasEnabled,
             SoundEnabled = SoundSwitch.IsChecked == true,
             SoundName = _soundName,
+            FloatingButton = FloatingEditor.ToModel(),
         };
         DialogResult = true;
     }

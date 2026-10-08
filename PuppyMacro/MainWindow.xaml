@@ -667,7 +667,7 @@
 
                             <TextBlock Text="Position" />
                             <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                       Text="Where the panel appears, measured from the top-left corner of the main screen." />
+                                       Text="Where the panel appears, measured from the top-left corner of the main screen. Position on screen also moves the floating buttons." />
                             <WrapPanel Margin="0,10,0,0">
                                 <StackPanel Margin="0,0,10,0">
                                     <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="X" />
@@ -693,7 +693,7 @@
                                 <StackPanel Margin="0,0,90,0">
                                     <TextBlock Text="Click items in the panel to start or stop them" TextWrapping="Wrap" />
                                     <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                               Text="Loops and macros in the in-game panel become clickable. Hold items stay hotkey only." />
+                                               Text="Loops and macros in the in-game panel become clickable. Hold items stay hotkey only. Floating buttons are always clickable." />
                                 </StackPanel>
                                 <ui:ToggleSwitch x:Name="ClickInPanelSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                  OffContent="Off" OnContent="On"

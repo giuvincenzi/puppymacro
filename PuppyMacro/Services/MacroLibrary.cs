@@ -102,6 +102,8 @@ internal sealed class MacroLibrary
         macro.Groups ??= new();
         foreach (var group in macro.Groups)
             group.Name = string.IsNullOrWhiteSpace(group.Name) ? "Group" : group.Name.Trim();
+        macro.FloatingButton ??= new();
+        macro.FloatingButton.Sanitize();
         foreach (var action in macro.Actions)
         {
             action.Path ??= new();

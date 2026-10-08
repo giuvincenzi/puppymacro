@@ -121,6 +121,11 @@ public sealed class AppSession : IDisposable
         Retry.WhileNull(() => MainWindow.ModalWindows.FirstOrDefault(w => w.Title == title), Timeout, throwOnTimeout: true,
             timeoutMessage: $"window \"{title}\" not found").Result!;
 
+    /// <summary>A top-level window of this PuppyMacro (game mode panel, floating buttons), or null after a timeout.</summary>
+    public AutomationElement? TopWindow(string title) =>
+        Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId))),
+            Timeout).Result;
+
     public void Dispose()
     {
         Automation.Dispose();

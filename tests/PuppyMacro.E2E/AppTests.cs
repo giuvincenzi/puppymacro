@@ -154,6 +154,43 @@ public class AppTests
     }
 
     [Fact]
+    public void A_floating_button_is_saved_and_shown_in_game_mode_instead_of_its_panel_row()
+    {
+        using var app = new AppSession();
+
+        // A loop that presses F24 (harmless), with its floating button on. The button is never clicked.
+        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        Window editor = app.Dialog("Add loop");
+        app.FindById(editor, "NameBox").AsTextBox().Text = "E2E F24 loop";
+        app.Find(editor, "Add key").AsButton().Click();
+        app.Find(editor, "Press a key or mouse button (Esc cancels)");
+        Keyboard.Press(VirtualKeyShort.F24);
+        Keyboard.Release(VirtualKeyShort.F24);
+        app.Find(editor, "F24");
+        app.FindById(editor, "FloatingSwitch").AsToggleButton().Toggle(); // UI Automation: no click, works off screen
+        Assert.Equal("EF", app.FindById(editor, "LabelBox").AsTextBox().Text);
+        app.FindById(editor, "SaveButton").AsButton().Click();
+
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"Label\": \"EF\""), AppSession.Timeout).Success);
+
+        app.FindById(app.MainWindow, "GameModeButton").AsButton().Click();
+        AutomationElement? button = app.TopWindow("PuppyMacro floating button: E2E F24 loop");
+        Assert.NotNull(button);
+        Assert.True(app.Has(button!, "EF"));
+
+        // The samples are disabled and the new loop is on its button: the panel lists nothing.
+        AutomationElement? panel = app.TopWindow("PuppyMacro game mode");
+        Assert.NotNull(panel);
+        Assert.True(app.Has(panel!, "Everything is on floating buttons."));
+        Assert.False(app.Has(panel!, "E2E F24 loop"));
+
+        Keyboard.Press(VirtualKeyShort.F11);
+        Keyboard.Release(VirtualKeyShort.F11);
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
+        Assert.True(Retry.WhileFalse(() => button!.IsOffscreen || !button.IsAvailable, AppSession.Timeout).Success);
+    }
+
+    [Fact]
     public void Game_mode_hides_the_window_and_F11_brings_it_back()
     {
         using var app = new AppSession();

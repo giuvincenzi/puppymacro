@@ -101,6 +101,91 @@ public sealed class LoopAction
     public LoopAction Clone() => (LoopAction)MemberwiseClone();
 }
 
+public enum FloatingButtonSize
+{
+    Small,
+    Medium,
+    Large,
+}
+
+/// <summary>Round button shown in game mode that starts and stops one loop or macro.</summary>
+public sealed class FloatingButton
+{
+    public const int MaxLabelLength = 2;
+
+    public bool Enabled { get; set; }
+
+    /// <summary>One or two characters shown in the button.</summary>
+    public string Label { get; set; } = "";
+
+    public FloatingButtonSize Size { get; set; } = FloatingButtonSize.Medium;
+
+    /// <summary>Top-left of the button (WPF units, like the game mode panel). Null = default.</summary>
+    public double? X { get; set; }
+    public double? Y { get; set; }
+
+    /// <summary>Diameter in WPF units.</summary>
+    [JsonIgnore]
+    public double Diameter => DiameterOf(Size);
+
+    public static double DiameterOf(FloatingButtonSize size) => size switch
+    {
+        FloatingButtonSize.Small => 36,
+        FloatingButtonSize.Large => 60,
+        _ => 48,
+    };
+
+    /// <summary>
+    /// Label proposed for a name: the first letters of its first two words ("Click every
+    /// second" → "CE"), or the first two letters of a single word ("Mining" → "MI").
+    /// </summary>
+    public static string DefaultLabel(string name)
+    {
+        var words = new List<string>();
+        var current = new System.Text.StringBuilder();
+        foreach (char c in name ?? "")
+        {
+            if (char.IsLetterOrDigit(c))
+            {
+                current.Append(c);
+            }
+            else if (current.Length > 0)
+            {
+                words.Add(current.ToString());
+                current.Clear();
+            }
+        }
+        if (current.Length > 0)
+            words.Add(current.ToString());
+
+        string label = words.Count switch
+        {
+            0 => "",
+            1 => words[0].Length > MaxLabelLength ? words[0][..MaxLabelLength] : words[0],
+            _ => $"{words[0][0]}{words[1][0]}",
+        };
+        return label.ToUpperInvariant();
+    }
+
+    /// <summary>Trims the label to <see cref="MaxLabelLength"/> characters and drops invalid values.</summary>
+    public void Sanitize()
+    {
+        Label = (Label ?? "").Trim();
+        if (Label.Length > MaxLabelLength)
+            Label = Label[..MaxLabelLength];
+        if (!Enum.IsDefined(Size))
+            Size = FloatingButtonSize.Medium;
+        if (X is double x && (double.IsNaN(x) || double.IsInfinity(x)))
+            X = null;
+        if (Y is double y && (double.IsNaN(y) || double.IsInfinity(y)))
+            Y = null;
+        if (X == null || Y == null)
+            X = Y = null;
+    }
+
+    public FloatingButton Clone() => (FloatingButton)MemberwiseClone();
+}
+
 /// <summary>One user-defined loop.</summary>
 public sealed class LoopDefinition
 {
@@ -117,6 +202,8 @@ public sealed class LoopDefinition
     /// <summary>One of <c>SoundService.Names</c>; kept even while sounds are off.</summary>
     public string SoundName { get; set; } = "Chime";
 
+    public FloatingButton FloatingButton { get; set; } = new();
+
     // ---- v1.0 fields, read once and converted by SettingsStore ----
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? KeyVk { get; set; }
@@ -132,6 +219,7 @@ public sealed class LoopDefinition
         var copy = (LoopDefinition)MemberwiseClone();
         copy.Actions = Actions.ConvertAll(a => a.Clone());
         copy.Hotkey = Hotkey?.Clone();
+        copy.FloatingButton = FloatingButton.Clone();
         return copy;
     }
 
@@ -144,6 +232,7 @@ public sealed class LoopDefinition
         Enabled = other.Enabled;
         SoundEnabled = other.SoundEnabled;
         SoundName = other.SoundName;
+        FloatingButton = other.FloatingButton.Clone();
     }
 }
 

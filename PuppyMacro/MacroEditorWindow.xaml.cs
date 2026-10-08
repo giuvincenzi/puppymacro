@@ -26,6 +26,8 @@ public partial class MacroEditorWindow
     private readonly MacroLibrary _macros;
     private readonly SoundService _sounds;
     private readonly Guid _editingId;
+    private readonly Guid _itemId;
+    private readonly Func<EditedFloatingButton, Point?>? _placeButton;
     private readonly bool _wasEnabled;
     private readonly MacroEditList _list;
     private readonly ObservableCollection<MacroEditorItem> _items = new();
@@ -40,7 +42,7 @@ public partial class MacroEditorWindow
     private ScrollViewer? _listScroll;
 
     internal MacroEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds,
-        MacroDefinition? existing, IEnumerable<MacroAction>? recorded = null)
+        MacroDefinition? existing, Func<EditedFloatingButton, Point?>? placeButton = null, IEnumerable<MacroAction>? recorded = null)
     {
         InitializeComponent();
         if (settings.MacroEditorWidth is double width)
@@ -55,6 +57,8 @@ public partial class MacroEditorWindow
 
         var source = existing?.Clone() ?? new MacroDefinition();
         _editingId = existing?.Id ?? Guid.Empty;
+        _itemId = existing?.Id ?? Guid.NewGuid();
+        _placeButton = placeButton;
         _wasEnabled = source.Enabled;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
@@ -95,6 +99,8 @@ public partial class MacroEditorWindow
         SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
 
         UpdateHotkeyLabel();
+        FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
+        FloatingEditor.PositionRequested += OnFloatingPositionRequested;
         _ready = true;
         Validate();
         Closing += (_, _) => RememberSize();
@@ -795,6 +801,7 @@ public partial class MacroEditorWindow
 
     private void OnActivationChanged(object sender, RoutedEventArgs e)
     {
+        FloatingEditor?.SetHoldMode(HoldRadio.IsChecked == true);
         Validate();
         if (ActivationHint == null)
             return;
@@ -858,6 +865,20 @@ public partial class MacroEditorWindow
         HotkeyCaps.Visibility = Visibility.Visible;
         HotkeyCaps.ItemsSource = KeyNames.Parts(_hotkey);
         ClearHotkeyButton.IsEnabled = _hotkey is { IsSet: true };
+        FloatingEditor.SetHotkey(HotkeyText());
+    }
+
+    private string HotkeyText() => _hotkey is { IsSet: true } ? KeyNames.Format(_hotkey) : "";
+
+    // ================= Floating button =================
+
+    private void OnFloatingPositionRequested()
+    {
+        _engine.CancelCapture();
+        UpdateHotkeyLabel();
+        var edited = new EditedFloatingButton(_itemId, NameBox.Text.Trim(), HotkeyText(), FloatingEditor.ToModel());
+        if (_placeButton?.Invoke(edited) is Point position)
+            FloatingEditor.SetPosition(position);
     }
 
     private void OnClearHotkeyClick(object sender, RoutedEventArgs e)
@@ -870,7 +891,11 @@ public partial class MacroEditorWindow
 
     // ================= Validation and save =================
 
-    private void OnNameChanged(object sender, TextChangedEventArgs e) => Validate();
+    private void OnNameChanged(object sender, TextChangedEventArgs e)
+    {
+        FloatingEditor?.SetName(NameBox.Text);
+        Validate();
+    }
 
     private string? GetValidationError()
     {
@@ -906,7 +931,7 @@ public partial class MacroEditorWindow
 
         Result = new MacroDefinition
         {
-            Id = _editingId == Guid.Empty ? Guid.NewGuid() : _editingId,
+            Id = _itemId,
             Name = NameBox.Text.Trim(),
             Actions = _list.Actions.Select(a => a.Clone()).ToList(),
             Groups = _list.Groups.Select(g => g.Clone()).ToList(),
@@ -918,6 +943,7 @@ public partial class MacroEditorWindow
             Enabled = _wasEnabled,
             SoundEnabled = SoundSwitch.IsChecked == true,
             SoundName = _soundName,
+            FloatingButton = FloatingEditor.ToModel(),
         };
         Result.NormalizeGroups();
         DialogResult = true;
