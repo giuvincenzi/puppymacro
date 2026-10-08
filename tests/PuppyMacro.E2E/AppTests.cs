@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
 using FlaUI.Core.Tools;
@@ -100,6 +101,51 @@ public class AppTests
         AssertInside(workArea, editor);
         AssertInside(workArea, app.FindById(editor, "SaveButton"));
     }
+
+    [Fact]
+    public void Macro_actions_can_be_named_grouped_and_the_group_duplicated()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.ItemMenu("Sample: click and scroll", "Edit");
+        Window editor = app.Dialog("Edit macro");
+        Assert.True(editor.Patterns.Transform.Pattern.CanResize.Value, "the macro editor cannot be resized");
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+
+        // Name the click.
+        app.Find(editor, "Edit action").AsButton().Invoke();
+        Window action = ChildDialog(editor, "Edit click");
+        app.FindById(action, "ActionNameBox").AsTextBox().Text = "E2E click";
+        app.FindById(action, "SaveButton").AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("1. E2E click")), AppSession.Timeout).Success);
+
+        // Select both actions and group them.
+        list.Items[0].Select();
+        list.Items[1].AddToSelection();
+        app.FindById(editor, "GroupButton").AsButton().Invoke();
+        Window group = ChildDialog(editor, "Group actions");
+        app.FindById(group, "GroupNameBox").AsTextBox().Text = "E2E group";
+        app.FindById(group, "OkButton").AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("Group E2E group")), AppSession.Timeout).Success);
+
+        // Duplicate the group from its header.
+        app.Find(editor, "Duplicate group").AsButton().Invoke();
+        AutomationElement total = app.FindById(editor, "TotalText");
+        Assert.True(Retry.WhileFalse(() => total.Name.StartsWith("4 actions in 2 groups"), AppSession.Timeout).Success, total.Name);
+
+        app.FindById(editor, "SaveButton").AsButton().Invoke();
+        string macros = Path.Combine(AppSession.DataFolder, "macros");
+        Assert.True(Retry.WhileFalse(() => Directory.GetFiles(macros, "*.json").Any(f =>
+        {
+            string json = File.ReadAllText(f);
+            return json.Split("\"E2E group\"").Length == 3 && json.Contains("\"E2E click\"");
+        }), AppSession.Timeout).Success, "the macro file does not have the two groups and the action name");
+    }
+
+    /// <summary>A dialog opened by another dialog.</summary>
+    private static Window ChildDialog(Window owner, string title) =>
+        Retry.WhileNull(() => owner.ModalWindows.FirstOrDefault(w => w.Title == title), AppSession.Timeout, throwOnTimeout: true,
+            timeoutMessage: $"window \"{title}\" not found").Result!;
 
     private static void AssertInside(System.Drawing.Rectangle workArea, AutomationElement element)
     {

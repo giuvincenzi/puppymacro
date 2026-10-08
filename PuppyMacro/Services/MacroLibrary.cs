@@ -99,13 +99,18 @@ internal sealed class MacroLibrary
         macro.RepeatCount = Math.Clamp(macro.RepeatCount, 1, 100000);
         if (!SoundService.Names.Contains(macro.SoundName))
             macro.SoundName = SoundService.Names[0];
+        macro.Groups ??= new();
+        foreach (var group in macro.Groups)
+            group.Name = string.IsNullOrWhiteSpace(group.Name) ? "Group" : group.Name.Trim();
         foreach (var action in macro.Actions)
         {
             action.Path ??= new();
             action.Text ??= "";
+            action.Name = action.Name?.Trim() ?? "";
             action.DelayMs = Math.Clamp(action.DelayMs, 0, 86_400_000);
             action.Repeat = Math.Clamp(action.Repeat, 1, 100000);
             action.RepeatPauseMs = Math.Clamp(action.RepeatPauseMs, 0, 86_400_000);
         }
+        macro.NormalizeGroups();
     }
 }

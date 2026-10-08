@@ -49,6 +49,12 @@ public sealed class MacroAction
     public MacroActionType Type { get; set; }
     public double DelayMs { get; set; }
 
+    /// <summary>Optional name shown in the editor instead of the generated description.</summary>
+    public string Name { get; set; } = "";
+
+    /// <summary>The <see cref="MacroGroup"/> the action belongs to, or null.</summary>
+    public Guid? GroupId { get; set; }
+
     /// <summary>Key for PressKey / KeyDown / KeyUp; mouse button (virtual-key code) for Click / MouseDown / MouseUp.</summary>
     public int Vk { get; set; }
 
@@ -114,6 +120,21 @@ public sealed class MacroAction
     };
 }
 
+/// <summary>
+/// A named block of consecutive actions in the editor. Playback ignores groups: the actions
+/// run in their order, grouped or not.
+/// </summary>
+public sealed class MacroGroup
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Name { get; set; } = "";
+
+    /// <summary>The editor shows only the group's header.</summary>
+    public bool Collapsed { get; set; }
+
+    public MacroGroup Clone() => (MacroGroup)MemberwiseClone();
+}
+
 /// <summary>A recorded or hand-made sequence of actions.</summary>
 public sealed class MacroDefinition
 {
@@ -122,6 +143,10 @@ public sealed class MacroDefinition
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = "";
     public List<MacroAction> Actions { get; set; } = new();
+
+    /// <summary>Groups of <see cref="Actions"/>, in the order they appear (see <see cref="NormalizeGroups"/>).</summary>
+    public List<MacroGroup> Groups { get; set; } = new();
+
     public RepeatMode Repeat { get; set; } = RepeatMode.Once;
     public int RepeatCount { get; set; } = 3;
     public double Speed { get; set; } = 1;
@@ -147,6 +172,7 @@ public sealed class MacroDefinition
     {
         var copy = (MacroDefinition)MemberwiseClone();
         copy.Actions = Actions.ConvertAll(a => a.Clone());
+        copy.Groups = Groups.ConvertAll(g => g.Clone());
         copy.Hotkey = Hotkey?.Clone();
         return copy;
     }
@@ -155,6 +181,7 @@ public sealed class MacroDefinition
     {
         Name = other.Name;
         Actions = other.Actions.ConvertAll(a => a.Clone());
+        Groups = other.Groups.ConvertAll(g => g.Clone());
         Repeat = other.Repeat;
         RepeatCount = other.RepeatCount;
         Speed = other.Speed;
@@ -164,4 +191,38 @@ public sealed class MacroDefinition
         SoundEnabled = other.SoundEnabled;
         SoundName = other.SoundName;
     }
+
+    /// <summary>
+    /// Keeps <see cref="Groups"/> consistent with <see cref="Actions"/>: an action whose group does
+    /// not exist leaves it, a group's actions are consecutive (an action separated from the
+    /// first run of its group leaves it), groups without actions are removed, and the groups are
+    /// listed in the order they appear.
+    /// </summary>
+    public static void NormalizeGroups(List<MacroAction> actions, List<MacroGroup> groups)
+    {
+        var known = new Dictionary<Guid, MacroGroup>();
+        foreach (var group in groups)
+            known.TryAdd(group.Id, group);
+
+        var ordered = new List<MacroGroup>();
+        var seen = new HashSet<Guid>();
+        Guid? previous = null;
+        foreach (var action in actions)
+        {
+            if (action.GroupId is Guid id)
+            {
+                if (!known.TryGetValue(id, out var group))
+                    action.GroupId = null;
+                else if (id != previous && !seen.Add(id))
+                    action.GroupId = null;
+                else if (id != previous)
+                    ordered.Add(group);
+            }
+            previous = action.GroupId;
+        }
+        groups.Clear();
+        groups.AddRange(ordered);
+    }
+
+    public void NormalizeGroups() => NormalizeGroups(Actions, Groups);
 }

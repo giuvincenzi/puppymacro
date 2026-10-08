@@ -585,7 +585,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return;
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, null, recorded) { Owner = this };
-        if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
+        if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
 
         _macros.Macros.Add(editor.Result);
@@ -633,7 +633,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return;
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition) { Owner = this };
-        if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
+        if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
 
         item.Definition.CopyFrom(editor.Result);
@@ -882,6 +882,14 @@ public partial class MainWindow
             item.DropBefore = false;
             item.DropAfter = false;
         }
+    }
+
+    /// <summary>Shows the macro editor, then saves the settings: the editor keeps its size there.</summary>
+    private bool? ShowMacroEditor(MacroEditorWindow editor)
+    {
+        bool? result = ShowDialogWithoutHotkeys(editor);
+        Save();
+        return result;
     }
 
     /// <summary>Shows a dialog with every hotkey ignored until it closes.</summary>

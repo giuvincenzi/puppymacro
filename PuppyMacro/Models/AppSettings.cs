@@ -196,6 +196,10 @@ public sealed class AppSettings
     public double? GameModeX { get; set; }
     public double? GameModeY { get; set; }
 
+    /// <summary>Size of the macro editor (WPF units), kept between openings. Null = default size.</summary>
+    public double? MacroEditorWidth { get; set; }
+    public double? MacroEditorHeight { get; set; }
+
     /// <summary>Volume of loop sounds, in percent.</summary>
     public int SoundVolume { get; set; } = 70;
 

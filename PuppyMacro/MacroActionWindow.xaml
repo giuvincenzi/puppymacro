@@ -18,6 +18,14 @@
         <ui:TitleBar x:Name="ActionTitleBar" Title="Action" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
 
         <StackPanel Margin="24,4,24,12">
+            <!-- Name -->
+            <StackPanel Margin="0,0,0,16">
+                <TextBlock Margin="0,0,0,6" Text="Name (optional)" />
+                <ui:TextBox x:Name="ActionNameBox" PlaceholderText="e.g. Open inventory" MaxLength="100" />
+                <TextBlock Margin="0,4,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Text="Shown in the list in bold, before the description of the action." />
+            </StackPanel>
+
             <!-- Key -->
             <StackPanel x:Name="KeyGroup" Margin="0,0,0,16">
                 <TextBlock Margin="0,0,0,6" Text="Key" />

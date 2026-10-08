@@ -5,10 +5,11 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="Edit macro"
-    Width="680"
-    SizeToContent="Height"
-    MaxHeight="940"
-    ResizeMode="NoResize"
+    Width="720"
+    Height="900"
+    MinWidth="680"
+    MinHeight="520"
+    ResizeMode="CanResize"
     ShowInTaskbar="False"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="Mica"
@@ -50,13 +51,96 @@
             </Setter>
         </Style>
 
-        <DataTemplate x:Key="ActionRow" DataType="{x:Type views:MacroActionRowViewModel}">
+        <!-- Drop indicators: indented when the dragged actions go into a group. -->
+        <Style x:Key="DropLineBefore" TargetType="Border">
+            <Setter Property="Height" Value="3" />
+            <Setter Property="Margin" Value="0,0,0,3" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Background" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+            <Setter Property="Visibility" Value="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DropIndented}" Value="True">
+                    <Setter Property="Margin" Value="28,0,0,3" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="DropLineAfter" TargetType="Border" BasedOn="{StaticResource DropLineBefore}">
+            <Setter Property="Margin" Value="0,3,0,0" />
+            <Setter Property="Visibility" Value="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DropIndented}" Value="True">
+                    <Setter Property="Margin" Value="28,3,0,0" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate DataType="{x:Type views:MacroGroupViewModel}">
             <StackPanel>
-                <Border Height="3" Margin="0,0,0,3" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                        Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
-                <Grid Background="Transparent" Cursor="SizeAll" AllowDrop="True" Tag="{Binding}"
-                      PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseMove="OnRowMouseMove"
-                      DragOver="OnRowDragOver" DragLeave="OnRowDragLeave" Drop="OnRowDrop">
+                <Border Style="{StaticResource DropLineBefore}" />
+                <Border Height="40" CornerRadius="6" BorderThickness="1" Cursor="SizeAll" Tag="{Binding}"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseLeftButtonUp="OnRowMouseUp" PreviewMouseMove="OnRowMouseMove">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:Button Grid.Column="0" Appearance="Transparent" Padding="6" Margin="2,0,0,0" Cursor="Arrow" Tag="{Binding}"
+                                   ToolTip="{Binding ToggleText}" AutomationProperties.Name="{Binding ToggleText}" Click="OnToggleGroupClick">
+                            <ui:SymbolIcon FontSize="14">
+                                <ui:SymbolIcon.Style>
+                                    <Style TargetType="ui:SymbolIcon">
+                                        <Setter Property="Symbol" Value="ChevronDown24" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCollapsed}" Value="True">
+                                                <Setter Property="Symbol" Value="ChevronRight24" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:SymbolIcon.Style>
+                            </ui:SymbolIcon>
+                        </ui:Button>
+                        <ui:SymbolIcon Grid.Column="1" Margin="6,0,10,0" Symbol="GroupList24" FontSize="16" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                        <TextBlock Grid.Column="2" FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding Name}"
+                                   TextTrimming="CharacterEllipsis" MaxWidth="260" />
+                        <TextBlock Grid.Column="3" Margin="10,0,0,0" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info}" />
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
+                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Rename24}" ToolTip="Rename group" AutomationProperties.Name="Rename group"
+                                       Tag="{Binding}" Click="OnRenameGroupClick" />
+                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate group" AutomationProperties.Name="Duplicate group"
+                                       Tag="{Binding}" Click="OnDuplicateGroupClick" />
+                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon GroupDismiss24}" ToolTip="Ungroup (keep the actions)" AutomationProperties.Name="Ungroup"
+                                       Tag="{Binding}" Click="OnUngroupClick" />
+                            <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove the group and its actions" AutomationProperties.Name="Remove group"
+                                       Tag="{Binding}" Click="OnRemoveGroupClick" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource DropLineAfter}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type views:MacroActionRowViewModel}">
+            <StackPanel>
+                <Border Style="{StaticResource DropLineBefore}" />
+                <Grid Cursor="SizeAll" Tag="{Binding}"
+                      PreviewMouseLeftButtonDown="OnRowMouseDown" PreviewMouseLeftButtonUp="OnRowMouseUp" PreviewMouseMove="OnRowMouseMove">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsInGroup}" Value="True">
+                                    <Setter Property="Margin" Value="22,0,0,0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="26" />
                         <ColumnDefinition Width="Auto" />
@@ -91,21 +175,30 @@
                         </Grid>
                     </Border>
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
-                        <Run Text="{Binding Title, Mode=OneWay}" />
+                        <Run Text="{Binding Title, Mode=OneWay}">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsNamed}" Value="True">
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
                         <Run Text="  " />
                         <Run FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
                     </TextBlock>
                     <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" Tag="{Binding}"
-                                   Click="OnEditActionClick" Visibility="{Binding IsEditable, Converter={StaticResource BoolToVisibility}}" />
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" Tag="{Binding}"
-                                   Click="OnDuplicateActionClick" />
-                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove action" Tag="{Binding}"
-                                   Click="OnRemoveActionClick" />
+                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" AutomationProperties.Name="Edit action"
+                                   Tag="{Binding}" Click="OnEditActionClick" Visibility="{Binding IsEditable, Converter={StaticResource BoolToVisibility}}" />
+                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" AutomationProperties.Name="Duplicate action"
+                                   Tag="{Binding}" Click="OnDuplicateActionClick" />
+                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Remove action" AutomationProperties.Name="Remove action"
+                                   Tag="{Binding}" Click="OnRemoveActionClick" />
                     </StackPanel>
                 </Grid>
-                <Border Height="3" Margin="0,3,0,0" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                        Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
+                <Border Style="{StaticResource DropLineAfter}" />
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
@@ -119,8 +212,8 @@
 
         <ui:TitleBar x:Name="EditorTitleBar" Grid.Row="0" Title="Edit macro" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="24,8,24,12">
+        <ScrollViewer x:Name="PageScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" SizeChanged="OnPageSizeChanged">
+            <StackPanel x:Name="ContentPanel" Margin="24,8,24,12" SizeChanged="OnPageSizeChanged">
                 <TextBlock Margin="0,0,0,6" Text="Name" />
                 <ui:TextBox x:Name="NameBox" PlaceholderText="e.g. Craft and salvage" TextChanged="OnNameChanged" />
 
@@ -140,21 +233,42 @@
                                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                 </Grid>
 
-                <ListBox x:Name="ActionList" MaxHeight="380" SelectionMode="Single"
-                         ItemTemplate="{StaticResource ActionRow}"
+                <!-- Selection bar: always there, so the list does not move when the selection changes. -->
+                <Grid Height="44" Margin="0,0,0,6">
+                    <Border x:Name="SelectionBarBack" CornerRadius="6" Opacity="0.15" Visibility="Collapsed"
+                            Background="{DynamicResource AccentFillColorDefaultBrush}" />
+                    <Border CornerRadius="6" BorderThickness="1" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" />
+                    <TextBlock x:Name="SelectionText" Margin="14,0,0,0" VerticalAlignment="Center" FontSize="13" TextTrimming="CharacterEllipsis" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,6,0" VerticalAlignment="Center">
+                        <ui:Button x:Name="GroupButton" Appearance="Transparent" Icon="{ui:SymbolIcon GroupList24}" Content="Group"
+                                   ToolTip="Put the selected actions in a group (Ctrl+G)" Click="OnGroupSelectedClick" />
+                        <ui:Button x:Name="DuplicateButton" Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" Content="Duplicate"
+                                   ToolTip="Duplicate the selected actions (Ctrl+D)" Click="OnDuplicateSelectedClick" />
+                        <ui:Button x:Name="CopyButton" Appearance="Transparent" Icon="{ui:SymbolIcon Clipboard24}" Content="Copy"
+                                   ToolTip="Copy the selected actions, also to paste them in another macro (Ctrl+C)" Click="OnCopySelectedClick" />
+                        <ui:Button x:Name="PasteButton" Appearance="Transparent" Icon="{ui:SymbolIcon ClipboardPaste24}" Content="Paste"
+                                   ToolTip="Paste the copied actions where new actions go (Ctrl+V)" Click="OnPasteClick" />
+                        <ui:Button x:Name="DeleteButton" Appearance="Transparent" Icon="{ui:SymbolIcon Delete24}" Content="Delete"
+                                   ToolTip="Delete the selected actions (Delete)" Click="OnDeleteSelectedClick" />
+                    </StackPanel>
+                </Grid>
+
+                <ListBox x:Name="ActionList" MinHeight="200" SelectionMode="Extended" AllowDrop="True"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         SelectionChanged="OnSelectionChanged" PreviewKeyDown="OnListKeyDown">
+                         SelectionChanged="OnSelectionChanged" PreviewKeyDown="OnListKeyDown"
+                         PreviewDragOver="OnListPreviewDragOver" DragOver="OnListDragOver" DragLeave="OnListDragLeave" Drop="OnListDrop">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                             <Setter Property="Padding" Value="6,4" />
+                            <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
                 <TextBlock x:Name="EmptyActionsText" Margin="0,6,0,0" FontSize="12" Visibility="Collapsed"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="No actions yet. Record actions or add them one by one." />
                 <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap"
-                           Text="Click an action to select it, drag it (or Alt+Up / Alt+Down) to move it, Ctrl+D to duplicate it. New actions go after the selected one, or at the end." />
+                           Text="Ctrl+click or Shift+click to select more actions. Drag them (or Alt+Up / Alt+Down) to move them, into or out of a group. Ctrl+G groups them, Ctrl+D duplicates them, Ctrl+C / Ctrl+V copy and paste them. New actions go after the selected one, or at the end." />
                 <TextBlock x:Name="TotalText" Margin="0,4,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 
                 <!-- Playback -->

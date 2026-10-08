@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,23 +18,35 @@ namespace PuppyMacro;
 /// <summary>Creates or edits a macro. On Save, <see cref="Result"/> holds the edited copy.</summary>
 public partial class MacroEditorWindow
 {
+    /// <summary>Copied actions, kept while PuppyMacro runs so they can be pasted in another macro.</summary>
+    private static ActionBlock? s_clipboard;
+
     private readonly LoopEngine _engine;
     private readonly AppSettings _settings;
     private readonly MacroLibrary _macros;
     private readonly SoundService _sounds;
     private readonly Guid _editingId;
     private readonly bool _wasEnabled;
-    private readonly ObservableCollection<MacroActionRowViewModel> _rows = new();
+    private readonly MacroEditList _list;
+    private readonly ObservableCollection<MacroEditorItem> _items = new();
+    private readonly Dictionary<MacroAction, MacroActionRowViewModel> _rowOf = new();
+    private readonly Dictionary<Guid, MacroGroupViewModel> _headerOf = new();
     private HotkeyBinding? _hotkey;
     private string _soundName;
     private bool _ready;
     private Point _dragStart;
-    private MacroActionRowViewModel? _dragCandidate;
+    private MacroEditorItem? _dragCandidate;
+    private MacroEditorItem? _selectOnlyOnRelease;
+    private ScrollViewer? _listScroll;
 
     internal MacroEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds,
         MacroDefinition? existing, IEnumerable<MacroAction>? recorded = null)
     {
         InitializeComponent();
+        if (settings.MacroEditorWidth is double width)
+            Width = Math.Max(MinWidth, width);
+        if (settings.MacroEditorHeight is double height)
+            Height = Math.Max(MinHeight, height);
         WindowFit.Apply(this);
         _engine = engine;
         _settings = settings;
@@ -51,16 +64,19 @@ public partial class MacroEditorWindow
         EditorTitleBar.Title = title;
 
         NameBox.Text = source.Name;
-        foreach (var action in source.Actions)
-            _rows.Add(new MacroActionRowViewModel(action));
+        var actions = source.Actions.ToList();
         if (recorded != null)
         {
             foreach (var action in recorded)
-                _rows.Add(new MacroActionRowViewModel(action));
+            {
+                action.GroupId = null;
+                actions.Add(action);
+            }
         }
-        ActionList.ItemsSource = _rows;
-        _rows.CollectionChanged += (_, _) => { Renumber(); Validate(); };
-        Renumber();
+        _list = new MacroEditList(actions, source.Groups);
+        ActionList.ItemsSource = _items;
+        ActionList.Height = 300; // fitted to the window once it is laid out
+        Refresh();
 
         OnceRadio.IsChecked = source.Repeat == RepeatMode.Once;
         LoopRadio.IsChecked = source.Repeat == RepeatMode.Loop;
@@ -79,55 +95,233 @@ public partial class MacroEditorWindow
         SoundPanel.Visibility = source.SoundEnabled ? Visibility.Visible : Visibility.Collapsed;
 
         UpdateHotkeyLabel();
-        UpdateInsertHint();
         _ready = true;
         Validate();
+        Closing += (_, _) => RememberSize();
         Closed += (_, _) => _engine.CancelCapture();
         Loaded += (_, _) => Activate(); // e.g. right after a recording, with the main window just restored
     }
 
     public MacroDefinition? Result { get; private set; }
 
-    // ================= Rows =================
+    // ================= Window size =================
 
-    private void Renumber()
+    /// <summary>The size is saved with the settings when the editor closes (MainWindow saves them).</summary>
+    private void RememberSize()
     {
-        for (int i = 0; i < _rows.Count; i++)
-            _rows[i].Number = i + 1;
-        EmptyActionsText.Visibility = _rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-        double total = _rows.Sum(r => r.Action.DelayMs + r.Action.DurationMs);
-        TotalText.Text = $"{_rows.Count} {(_rows.Count == 1 ? "action" : "actions")}, {MacroItemViewModel.FormatDuration(total)} at ×1";
-        UpdateInsertHint();
+        if (WindowState != WindowState.Normal)
+            return;
+        _settings.MacroEditorWidth = Math.Round(ActualWidth);
+        _settings.MacroEditorHeight = Math.Round(ActualHeight);
     }
 
-    /// <summary>Index where new actions go: after the selected row, or at the end.</summary>
-    private int InsertIndex => ActionList.SelectedIndex >= 0 ? ActionList.SelectedIndex + 1 : _rows.Count;
+    /// <summary>
+    /// The action list takes the height the rest of the page leaves free, so a taller window
+    /// shows more actions. Below its minimum height the whole page scrolls.
+    /// </summary>
+    private void OnPageSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (PageScroll.ViewportHeight <= 0)
+            return;
+        double others = ContentPanel.ActualHeight - ActionList.ActualHeight
+                        + ContentPanel.Margin.Top + ContentPanel.Margin.Bottom;
+        double height = Math.Max(ActionList.MinHeight, PageScroll.ViewportHeight - others);
+        if (Math.Abs(ActionList.Height - height) > 1)
+            ActionList.Height = height;
+    }
+
+    // ================= List =================
+
+    private MacroActionRowViewModel RowFor(MacroAction action)
+    {
+        if (!_rowOf.TryGetValue(action, out var row))
+        {
+            row = new MacroActionRowViewModel(action);
+            row.PropertyChanged += OnRowPropertyChanged;
+            _rowOf[action] = row;
+        }
+        return row;
+    }
+
+    private MacroGroupViewModel HeaderFor(MacroGroup group)
+    {
+        if (!_headerOf.TryGetValue(group.Id, out var header) || !ReferenceEquals(header.Group, group))
+        {
+            header = new MacroGroupViewModel(group);
+            _headerOf[group.Id] = header;
+        }
+        return header;
+    }
+
+    private void OnRowPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MacroActionRowViewModel.Delay))
+            UpdateTotals();
+    }
+
+    /// <summary>
+    /// Shows the list again after a change: group headers, then their rows (unless the group is
+    /// collapsed), numbers and totals. Items that stay keep their place, so the list does not
+    /// jump. <paramref name="select"/> replaces the selection.
+    /// </summary>
+    private void Refresh(IEnumerable<MacroEditorItem>? select = null)
+    {
+        var wanted = new List<MacroEditorItem>();
+        MacroGroup? current = null;
+        for (int i = 0; i < _list.Actions.Count; i++)
+        {
+            var action = _list.Actions[i];
+            var row = RowFor(action);
+            row.Number = i + 1;
+            var group = _list.GroupOf(action);
+            if (group != null && group != current)
+                wanted.Add(HeaderFor(group));
+            current = group;
+            row.IsInGroup = group != null;
+            if (group is not { Collapsed: true })
+                wanted.Add(row);
+        }
+
+        for (int i = 0; i < wanted.Count; i++)
+        {
+            if (i < _items.Count && ReferenceEquals(_items[i], wanted[i]))
+                continue;
+            int at = _items.IndexOf(wanted[i]);
+            if (at > i)
+                _items.Move(at, i);
+            else
+                _items.Insert(i, wanted[i]);
+        }
+        while (_items.Count > wanted.Count)
+            _items.RemoveAt(_items.Count - 1);
+
+        foreach (var gone in _rowOf.Keys.Except(_list.Actions).ToList())
+        {
+            _rowOf[gone].PropertyChanged -= OnRowPropertyChanged;
+            _rowOf.Remove(gone);
+        }
+        foreach (Guid gone in _headerOf.Keys.Except(_list.Groups.Select(g => g.Id)).ToList())
+            _headerOf.Remove(gone);
+
+        if (select != null)
+        {
+            var items = select.Where(_items.Contains).Distinct().ToList();
+            ActionList.SelectedItems.Clear();
+            foreach (var item in items)
+                ActionList.SelectedItems.Add(item);
+            if (items.Count > 0)
+                ActionList.ScrollIntoView(items[^1]);
+        }
+
+        EmptyActionsText.Visibility = _list.Actions.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        UpdateTotals();
+        UpdateInsertHint();
+        UpdateSelectionBar();
+        Validate();
+    }
+
+    private void UpdateTotals()
+    {
+        foreach (var group in _list.Groups)
+        {
+            int first = _list.FirstIndex(group) + 1, last = _list.LastIndex(group) + 1;
+            var actions = _list.ActionsOf(group);
+            string range = first == last ? $"#{first}" : $"#{first}–{last}";
+            HeaderFor(group).Info = $"{range} · {Count(actions.Count)} · {MacroItemViewModel.FormatDuration(actions.Sum(Duration))}";
+        }
+        double total = _list.Actions.Sum(Duration);
+        string groups = _list.Groups.Count switch
+        {
+            0 => "",
+            1 => " in 1 group",
+            int n => $" in {n} groups",
+        };
+        TotalText.Text = $"{Count(_list.Actions.Count)}{groups}, {MacroItemViewModel.FormatDuration(total)} at ×1";
+    }
+
+    private static double Duration(MacroAction action) => action.DelayMs + action.DurationMs;
+
+    private static string Count(int actions) => $"{actions} {(actions == 1 ? "action" : "actions")}";
+
+    /// <summary>The list items for these actions: their rows, or their group's header when it is collapsed.</summary>
+    private IEnumerable<MacroEditorItem> ItemsFor(IEnumerable<MacroAction> actions, MacroGroup? into = null)
+    {
+        foreach (var action in actions)
+        {
+            var group = _list.GroupOf(action);
+            // A group made by the operation (a duplicated or pasted group) is selected as a whole.
+            if (group != null && (group.Collapsed || group != into && _list.ActionsOf(group).All(actions.Contains)))
+                yield return HeaderFor(group);
+            else
+                yield return RowFor(action);
+        }
+    }
+
+    // ---- Selection ----
+
+    private List<MacroEditorItem> SelectedItems =>
+        ActionList.SelectedItems.OfType<MacroEditorItem>().OrderBy(_items.IndexOf).ToList();
+
+    private List<MacroAction> SelectedActions => SelectedItems.OfType<MacroActionRowViewModel>().Select(r => r.Action).ToList();
+
+    private List<MacroGroup> SelectedGroups => SelectedItems.OfType<MacroGroupViewModel>().Select(h => h.Group).ToList();
+
+    /// <summary>Where new actions go: after the last selected row (in its group) or group, or at the end.</summary>
+    private (int Index, MacroGroup? Into) InsertPoint()
+    {
+        switch (SelectedItems.LastOrDefault())
+        {
+            case MacroGroupViewModel header:
+                return (_list.LastIndex(header.Group) + 1, null);
+            case MacroActionRowViewModel row:
+                return (_list.Actions.IndexOf(row.Action) + 1, _list.GroupOf(row.Action));
+            default:
+                return (_list.Actions.Count, null);
+        }
+    }
 
     private void UpdateInsertHint()
     {
         if (InsertHint == null)
             return;
-        InsertHint.Text = ActionList.SelectedIndex >= 0
-            ? $"New actions go after #{ActionList.SelectedIndex + 1}"
-            : "New actions go at the end";
+        InsertHint.Text = SelectedItems.LastOrDefault() switch
+        {
+            MacroGroupViewModel header => $"New actions go after the group \"{header.Name}\"",
+            MacroActionRowViewModel row when _list.GroupOf(row.Action) is { } group =>
+                $"New actions go after #{row.Number}, in \"{group.Name}\"",
+            MacroActionRowViewModel row => $"New actions go after #{row.Number}",
+            _ => "New actions go at the end",
+        };
     }
 
-    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateInsertHint();
-
-    private void InsertRows(IEnumerable<MacroAction> actions)
+    private void UpdateSelectionBar()
     {
-        int index = InsertIndex;
-        MacroActionRowViewModel? last = null;
-        foreach (var action in actions)
-        {
-            last = new MacroActionRowViewModel(action);
-            _rows.Insert(index++, last);
-        }
-        if (last != null)
-        {
-            ActionList.SelectedItem = last;
-            ActionList.ScrollIntoView(last);
-        }
+        int count = _list.Expand(SelectedActions, SelectedGroups).Count;
+        bool any = count > 0;
+        SelectionBarBack.Visibility = any ? Visibility.Visible : Visibility.Collapsed;
+        SelectionText.Text = any ? $"{Count(count)} selected" : "Select actions to group, duplicate, copy or delete them";
+        SelectionText.SetResourceReference(TextBlock.ForegroundProperty,
+            any ? "TextFillColorPrimaryBrush" : "TextFillColorTertiaryBrush");
+        foreach (var button in new[] { GroupButton, DuplicateButton, CopyButton, DeleteButton })
+            button.Visibility = any ? Visibility.Visible : Visibility.Collapsed;
+        PasteButton.Visibility = s_clipboard is { IsEmpty: false } ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        UpdateInsertHint();
+        UpdateSelectionBar();
+    }
+
+    // ---- Adding and editing ----
+
+    private void InsertActions(IEnumerable<MacroAction> actions)
+    {
+        var block = new ActionBlock();
+        block.Actions.AddRange(actions);
+        var (index, into) = InsertPoint();
+        var inserted = _list.Insert(block, index, into);
+        Refresh(ItemsFor(inserted, into));
     }
 
     private void OnAddActionClick(object sender, RoutedEventArgs e)
@@ -153,7 +347,7 @@ public partial class MacroEditorWindow
         var action = new MacroAction
         {
             Type = type,
-            DelayMs = _rows.Count == 0 ? 0 : 50,
+            DelayMs = _list.Actions.Count == 0 ? 0 : 50,
             Vk = type is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp ? KeyNames.VK_LBUTTON : 0,
             X = cursor.X,
             Y = cursor.Y,
@@ -161,7 +355,7 @@ public partial class MacroEditorWindow
         };
         var dialog = new MacroActionWindow(_engine, action, isNew: true) { Owner = this };
         if (dialog.ShowDialog() == true && dialog.Result != null)
-            InsertRows(new[] { dialog.Result });
+            InsertActions(new[] { dialog.Result });
     }
 
     private void OnEditActionClick(object sender, RoutedEventArgs e)
@@ -169,35 +363,17 @@ public partial class MacroEditorWindow
         if ((sender as FrameworkElement)?.Tag is not MacroActionRowViewModel row)
             return;
         var dialog = new MacroActionWindow(_engine, row.Action, isNew: false) { Owner = this };
-        if (dialog.ShowDialog() == true && dialog.Result != null)
-        {
-            row.Replace(dialog.Result);
-            Renumber();
-        }
-    }
-
-    private void OnDuplicateActionClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel row)
-            Duplicate(row);
-    }
-
-    /// <summary>Inserts a copy of the row right after it and selects the copy.</summary>
-    private void Duplicate(MacroActionRowViewModel row)
-    {
-        int index = _rows.IndexOf(row);
+        if (dialog.ShowDialog() != true || dialog.Result is not { } edited)
+            return;
+        int index = _list.Actions.IndexOf(row.Action);
         if (index < 0)
             return;
-        var copy = new MacroActionRowViewModel(row.Action.Clone());
-        _rows.Insert(index + 1, copy);
-        ActionList.SelectedItem = copy;
-        ActionList.ScrollIntoView(copy);
-    }
-
-    private void OnRemoveActionClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel row)
-            _rows.Remove(row);
+        edited.GroupId = row.Action.GroupId;
+        _list.Actions[index] = edited;
+        _rowOf.Remove(row.Action);
+        _rowOf[edited] = row;
+        row.Replace(edited);
+        Refresh();
     }
 
     private void OnRecordClick(object sender, RoutedEventArgs e)
@@ -219,46 +395,195 @@ public partial class MacroEditorWindow
                 Top = top;
                 Activate();
             },
-            done: actions => InsertRows(actions));
+            done: InsertActions);
     }
 
-    // ---- Reordering ----
+    // ---- Row and group buttons ----
 
-    private void MoveRow(MacroActionRowViewModel row, int newIndex)
+    private void OnDuplicateActionClick(object sender, RoutedEventArgs e)
     {
-        int oldIndex = _rows.IndexOf(row);
-        newIndex = Math.Clamp(newIndex, 0, _rows.Count - 1);
-        if (oldIndex < 0 || oldIndex == newIndex)
+        if ((sender as FrameworkElement)?.Tag is not MacroActionRowViewModel row)
             return;
-        _rows.Move(oldIndex, newIndex);
-        ActionList.SelectedItem = row;
-        ActionList.ScrollIntoView(row);
+        var group = _list.GroupOf(row.Action);
+        var inserted = _list.Insert(_list.Copy(new[] { row.Action }, Array.Empty<MacroGroup>()),
+            _list.Actions.IndexOf(row.Action) + 1, group);
+        Refresh(ItemsFor(inserted, group));
+    }
+
+    private void OnRemoveActionClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel row)
+        {
+            _list.Remove(new[] { row.Action }, Array.Empty<MacroGroup>());
+            Refresh();
+        }
+    }
+
+    private void OnToggleGroupClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is not MacroGroupViewModel header)
+            return;
+        header.IsCollapsed = !header.IsCollapsed;
+        Refresh();
+    }
+
+    private void OnRenameGroupClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is not MacroGroupViewModel header)
+            return;
+        var dialog = new GroupNameWindow("Rename group", "Save", header.Name, header.Info) { Owner = this };
+        if (dialog.ShowDialog() == true && dialog.Result != null)
+        {
+            header.Name = dialog.Result;
+            UpdateInsertHint();
+        }
+    }
+
+    private void OnDuplicateGroupClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is not MacroGroupViewModel header)
+            return;
+        var inserted = _list.Insert(_list.Copy(Array.Empty<MacroAction>(), new[] { header.Group }),
+            _list.LastIndex(header.Group) + 1, null);
+        Refresh(ItemsFor(inserted));
+    }
+
+    private void OnUngroupClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is not MacroGroupViewModel header)
+            return;
+        var actions = _list.ActionsOf(header.Group);
+        _list.Ungroup(header.Group);
+        Refresh(actions.Select(RowFor));
+    }
+
+    private void OnRemoveGroupClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is MacroGroupViewModel header)
+        {
+            _list.Remove(Array.Empty<MacroAction>(), new[] { header.Group });
+            Refresh();
+        }
+    }
+
+    // ---- Selection bar and shortcuts ----
+
+    private void OnGroupSelectedClick(object sender, RoutedEventArgs e) => GroupSelected();
+
+    private void OnDuplicateSelectedClick(object sender, RoutedEventArgs e) => DuplicateSelected();
+
+    private void OnCopySelectedClick(object sender, RoutedEventArgs e) => CopySelected();
+
+    private void OnPasteClick(object sender, RoutedEventArgs e) => Paste();
+
+    private void OnDeleteSelectedClick(object sender, RoutedEventArgs e) => DeleteSelected();
+
+    private void GroupSelected()
+    {
+        int count = _list.Expand(SelectedActions, SelectedGroups).Count;
+        if (count == 0)
+            return;
+        var dialog = new GroupNameWindow("Group actions", "Group", $"Group {_list.Groups.Count + 1}", Count(count))
+        {
+            Owner = this,
+        };
+        if (dialog.ShowDialog() != true || dialog.Result == null)
+            return;
+        var group = _list.Group(SelectedActions, SelectedGroups, dialog.Result);
+        if (group != null)
+            Refresh(new[] { HeaderFor(group) });
+    }
+
+    private void DuplicateSelected()
+    {
+        var block = _list.Copy(SelectedActions, SelectedGroups);
+        if (block.IsEmpty)
+            return;
+        var (index, into) = InsertPoint();
+        var inserted = _list.Insert(block, index, into);
+        Refresh(ItemsFor(inserted, into));
+    }
+
+    private void CopySelected()
+    {
+        var block = _list.Copy(SelectedActions, SelectedGroups);
+        if (block.IsEmpty)
+            return;
+        s_clipboard = block;
+        UpdateSelectionBar();
+    }
+
+    private void Paste()
+    {
+        if (s_clipboard is not { IsEmpty: false } block)
+            return;
+        var (index, into) = InsertPoint();
+        var inserted = _list.Insert(block, index, into);
+        Refresh(ItemsFor(inserted, into));
+    }
+
+    private void DeleteSelected()
+    {
+        var actions = SelectedActions;
+        var groups = SelectedGroups;
+        if (actions.Count == 0 && groups.Count == 0)
+            return;
+        _list.Remove(actions, groups);
+        Refresh(Array.Empty<MacroEditorItem>());
+    }
+
+    private void MoveSelected(bool up)
+    {
+        var selected = SelectedItems;
+        bool moved = up ? _list.MoveUp(SelectedActions, SelectedGroups) : _list.MoveDown(SelectedActions, SelectedGroups);
+        if (moved)
+            Refresh(selected);
     }
 
     private void OnListKeyDown(object sender, KeyEventArgs e)
     {
+        if (e.OriginalSource is DependencyObject source && IsInsideTextInput(source))
+            return; // typing a delay: Delete, Ctrl+C and Ctrl+V edit the text
         // Alt+Up / Alt+Down arrive as system keys.
         Key key = e.Key == Key.System ? e.SystemKey : e.Key;
-        if (key == Key.D && (Keyboard.Modifiers & ModifierKeys.Control) != 0
-            && ActionList.SelectedItem is MacroActionRowViewModel selected)
+        ModifierKeys modifiers = Keyboard.Modifiers;
+        Action? command = (modifiers, key) switch
         {
-            Duplicate(selected);
-            e.Handled = true;
+            (ModifierKeys.Control, Key.D) => DuplicateSelected,
+            (ModifierKeys.Control, Key.G) => GroupSelected,
+            (ModifierKeys.Control, Key.C) => CopySelected,
+            (ModifierKeys.Control, Key.V) => Paste,
+            (ModifierKeys.None, Key.Delete) => DeleteSelected,
+            (ModifierKeys.Alt, Key.Up) => () => MoveSelected(up: true),
+            (ModifierKeys.Alt, Key.Down) => () => MoveSelected(up: false),
+            _ => null,
+        };
+        if (command == null)
             return;
-        }
-        if ((Keyboard.Modifiers & ModifierKeys.Alt) == 0 || ActionList.SelectedItem is not MacroActionRowViewModel row)
-            return;
-        if (key == Key.Up)
-        {
-            MoveRow(row, _rows.IndexOf(row) - 1);
-            e.Handled = true;
-        }
-        else if (key == Key.Down)
-        {
-            MoveRow(row, _rows.IndexOf(row) + 1);
-            e.Handled = true;
-        }
+        command();
+        e.Handled = true;
     }
+
+    private static bool IsInsideTextInput(DependencyObject? source)
+    {
+        while (source != null)
+        {
+            if (source is TextBoxBase)
+                return true;
+            if (source is ListBoxItem)
+                return false;
+            source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source);
+        }
+        return false;
+    }
+
+    // ---- Drag and drop ----
+
+    /// <summary>What is being dragged: actions selected one by one and whole groups.</summary>
+    private sealed record DragPayload(List<MacroAction> Actions, List<MacroGroup> Groups);
+
+    /// <summary>Where a drop puts the dragged actions, and where its indicator is drawn.</summary>
+    private sealed record DropTarget(int Index, MacroGroup? Into, MacroEditorItem Line, bool Before);
 
     private static bool IsInsideInteractiveControl(DependencyObject? source)
     {
@@ -274,13 +599,32 @@ public partial class MacroEditorWindow
     private void OnRowMouseDown(object sender, MouseButtonEventArgs e)
     {
         _dragCandidate = null;
+        _selectOnlyOnRelease = null;
         if (IsInsideInteractiveControl(e.OriginalSource as DependencyObject))
             return;
-        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel row)
+        if ((sender as FrameworkElement)?.Tag is not MacroEditorItem item)
+            return;
+        _dragCandidate = item;
+        _dragStart = e.GetPosition(this);
+        // A plain click on a selected item would select only that item: wait for the release,
+        // so a multiple selection can be dragged.
+        if (Keyboard.Modifiers == ModifierKeys.None && ActionList.SelectedItems.Count > 1 && ActionList.SelectedItems.Contains(item))
         {
-            _dragCandidate = row;
-            _dragStart = e.GetPosition(this);
+            _selectOnlyOnRelease = item;
+            ActionList.Focus();
+            e.Handled = true;
         }
+    }
+
+    private void OnRowMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        if (_selectOnlyOnRelease != null && ReferenceEquals((sender as FrameworkElement)?.Tag, _selectOnlyOnRelease))
+        {
+            ActionList.SelectedItems.Clear();
+            ActionList.SelectedItem = _selectOnlyOnRelease;
+        }
+        _selectOnlyOnRelease = null;
+        _dragCandidate = null;
     }
 
     private void OnRowMouseMove(object sender, MouseEventArgs e)
@@ -292,11 +636,18 @@ public partial class MacroEditorWindow
             && Math.Abs(now.Y - _dragStart.Y) < SystemParameters.MinimumVerticalDragDistance)
             return;
 
-        var row = _dragCandidate;
+        var item = _dragCandidate;
         _dragCandidate = null;
+        _selectOnlyOnRelease = null;
+        if (!ActionList.SelectedItems.Contains(item))
+        {
+            ActionList.SelectedItems.Clear();
+            ActionList.SelectedItem = item;
+        }
+        var payload = new DragPayload(SelectedActions, SelectedGroups);
         try
         {
-            DragDrop.DoDragDrop((DependencyObject)sender, new DataObject(typeof(MacroActionRowViewModel), row), DragDropEffects.Move);
+            DragDrop.DoDragDrop((DependencyObject)sender, new DataObject(typeof(DragPayload), payload), DragDropEffects.Move);
         }
         finally
         {
@@ -304,61 +655,124 @@ public partial class MacroEditorWindow
         }
     }
 
-    private void OnRowDragOver(object sender, DragEventArgs e)
+    /// <summary>
+    /// The drop target over an item. On a row: before or after it, in the row's group. On a group
+    /// header: the top half is before the group, the bottom half is into it (at its start, or at
+    /// its end when it is collapsed). Null where the dragged items cannot go.
+    /// </summary>
+    private DropTarget? TargetAt(MacroEditorItem item, bool upperHalf, DragPayload payload)
     {
-        e.Handled = true;
-        if (e.Data.GetData(typeof(MacroActionRowViewModel)) is not MacroActionRowViewModel dragged
-            || sender is not FrameworkElement element || element.Tag is not MacroActionRowViewModel target
-            || ReferenceEquals(dragged, target))
+        var moved = _list.Expand(payload.Actions, payload.Groups);
+        DropTarget? target;
+        switch (item)
         {
-            e.Effects = DragDropEffects.None;
-            ClearDropIndicators();
-            return;
+            case MacroActionRowViewModel row:
+                if (moved.Contains(row.Action))
+                    return null;
+                int index = _list.Actions.IndexOf(row.Action);
+                target = new DropTarget(upperHalf ? index : index + 1, _list.GroupOf(row.Action), row, upperHalf);
+                break;
+            case MacroGroupViewModel header:
+                if (payload.Groups.Contains(header.Group))
+                    return null;
+                var group = header.Group;
+                target = upperHalf
+                    ? new DropTarget(_list.FirstIndex(group), null, header, Before: true)
+                    : new DropTarget(group.Collapsed ? _list.LastIndex(group) + 1 : _list.FirstIndex(group), group, header, Before: false);
+                break;
+            default:
+                return null;
         }
-        e.Effects = DragDropEffects.Move;
-        bool before = e.GetPosition(element).Y < element.ActualHeight / 2;
-        foreach (var r in _rows)
+        // Groups are never nested.
+        return target.Into != null && payload.Groups.Count > 0 ? null : target;
+    }
+
+    private void ShowDropIndicator(DropTarget? target)
+    {
+        foreach (var item in _items)
         {
-            r.DropBefore = ReferenceEquals(r, target) && before;
-            r.DropAfter = ReferenceEquals(r, target) && !before;
+            bool here = target != null && ReferenceEquals(item, target.Line);
+            item.DropBefore = here && target!.Before;
+            item.DropAfter = here && !target!.Before;
+            item.DropIndented = here && target!.Into != null;
         }
     }
 
-    private void OnRowDragLeave(object sender, DragEventArgs e)
+    /// <summary>
+    /// The drop target under the mouse: the item it is over (the space between rows belongs to
+    /// the item around it), or the end of the macro below the last item.
+    /// </summary>
+    private DropTarget? TargetFor(DragEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel target)
-        {
-            target.DropBefore = false;
-            target.DropAfter = false;
-        }
+        if (e.Data.GetData(typeof(DragPayload)) is not DragPayload payload || _items.Count == 0)
+            return null;
+        if (ItemsControl.ContainerFromElement(ActionList, e.OriginalSource as DependencyObject) is ListBoxItem
+            {
+                DataContext: MacroEditorItem item,
+            } container)
+            return TargetAt(item, e.GetPosition(container).Y < container.ActualHeight / 2, payload);
+        return new DropTarget(_list.Actions.Count, null, _items[^1], Before: false);
     }
 
-    private void OnRowDrop(object sender, DragEventArgs e)
+    private void OnListDragOver(object sender, DragEventArgs e)
     {
         e.Handled = true;
-        if (e.Data.GetData(typeof(MacroActionRowViewModel)) is not MacroActionRowViewModel dragged
-            || sender is not FrameworkElement element || element.Tag is not MacroActionRowViewModel target
-            || ReferenceEquals(dragged, target))
-        {
+        var target = TargetFor(e);
+        e.Effects = target == null ? DragDropEffects.None : DragDropEffects.Move;
+        ShowDropIndicator(target);
+    }
+
+    private void OnListDragLeave(object sender, DragEventArgs e)
+    {
+        // Also raised when the mouse moves from one item to another: clear only outside the list.
+        Point at = e.GetPosition(ActionList);
+        if (at.X < 0 || at.Y < 0 || at.X >= ActionList.ActualWidth || at.Y >= ActionList.ActualHeight)
             ClearDropIndicators();
-            return;
-        }
-        bool before = e.GetPosition(element).Y < element.ActualHeight / 2;
+    }
+
+    private void OnListDrop(object sender, DragEventArgs e)
+    {
+        e.Handled = true;
+        var target = TargetFor(e);
         ClearDropIndicators();
-        int from = _rows.IndexOf(dragged);
-        int to = _rows.IndexOf(target) + (before ? 0 : 1);
-        if (from < to)
-            to--;
-        MoveRow(dragged, to);
+        if (target != null && e.Data.GetData(typeof(DragPayload)) is DragPayload payload)
+            MoveTo(payload, target.Index, target.Into);
     }
 
-    private void ClearDropIndicators()
+
+    /// <summary>Scrolls the list while dragging near its top or bottom edge.</summary>
+    private void OnListPreviewDragOver(object sender, DragEventArgs e)
     {
-        foreach (var r in _rows)
+        _listScroll ??= FindChild<ScrollViewer>(ActionList);
+        if (_listScroll == null)
+            return;
+        double y = e.GetPosition(ActionList).Y;
+        if (y < 30)
+            _listScroll.LineUp();
+        else if (y > ActionList.ActualHeight - 30)
+            _listScroll.LineDown();
+    }
+
+    private void MoveTo(DragPayload payload, int index, MacroGroup? into)
+    {
+        var selected = SelectedItems;
+        if (_list.Move(payload.Actions, payload.Groups, index, into))
+            Refresh(selected);
+    }
+
+    private void ClearDropIndicators() => ShowDropIndicator(null);
+
+    private static T? FindChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
         {
-            r.DropBefore = false;
-            r.DropAfter = false;
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T found)
+                return found;
+            if (FindChild<T>(child) is { } nested)
+                return nested;
         }
+        return null;
     }
 
     // ================= Playback options =================
@@ -462,7 +876,7 @@ public partial class MacroEditorWindow
     {
         if (string.IsNullOrWhiteSpace(NameBox.Text))
             return "Enter a name.";
-        if (_rows.Count == 0)
+        if (_list.Actions.Count == 0)
             return "Add or record at least one action.";
         if (_hotkey == null || !_hotkey.IsSet)
             return HoldRadio.IsChecked == true ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
@@ -494,7 +908,8 @@ public partial class MacroEditorWindow
         {
             Id = _editingId == Guid.Empty ? Guid.NewGuid() : _editingId,
             Name = NameBox.Text.Trim(),
-            Actions = _rows.Select(r => r.Action.Clone()).ToList(),
+            Actions = _list.Actions.Select(a => a.Clone()).ToList(),
+            Groups = _list.Groups.Select(g => g.Clone()).ToList(),
             Repeat = TimesRadio.IsChecked == true ? RepeatMode.Times : LoopRadio.IsChecked == true ? RepeatMode.Loop : RepeatMode.Once,
             RepeatCount = (int)Math.Max(1, Math.Round(TimesBox.Value ?? 3)),
             Speed = SelectedSpeed,
@@ -504,6 +919,7 @@ public partial class MacroEditorWindow
             SoundEnabled = SoundSwitch.IsChecked == true,
             SoundName = _soundName,
         };
+        Result.NormalizeGroups();
         DialogResult = true;
     }
 

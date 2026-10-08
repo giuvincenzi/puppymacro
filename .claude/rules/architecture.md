@@ -63,7 +63,10 @@ Rules:
   `LoopEditorWindow`.
 - Macros: `Models/MacroModels.cs`, `Services/MacroBuilder.cs` (raw events → actions, path
   simplification), `MacroRunner.cs`, `MacroLibrary.cs` (one JSON per macro),
-  `RecordingSession.cs`, `MacroEditorWindow`, `MacroActionWindow`.
+  `RecordingSession.cs`, `MacroEditorWindow`, `MacroActionWindow`, `GroupNameWindow`.
+  The editor's operations (group, ungroup, copy / paste, duplicate, drag, Alt+Up / Alt+Down)
+  live in `Services/MacroEditList.cs`, without UI, with unit tests; the window only maps the
+  list to rows and group headers.
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.
 - Game mode: `Views/GameModePanel`, `GameModeWindow` (click-through, no-activate),
   `PlacementWindow`.

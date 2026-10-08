@@ -9,6 +9,11 @@ paths:
 - Data folder: `%AppData%\PuppyMacro` (`AppPaths`; `PuppyMacro Dev` for Debug builds):
   `settings.json` (settings, loops, remaps), `macros\{id}.json` (one file per macro),
   `backup-before-import-*.puppymacro` (copies made before an Import).
+- A macro file has its actions in playback order; an action may have a `Name` and a
+  `GroupId` pointing to one of the macro's `Groups` (name, collapsed). Groups are not nested
+  and a group's actions are consecutive: `MacroDefinition.NormalizeGroups` enforces it when a
+  macro is loaded (`MacroLibrary.Sanitize`) and saved by the editor. Playback ignores groups.
+  Files without these fields load with no names and no groups.
 - Versions before 1.6 kept the data next to the exe; `AppPaths.MigrateFromExeFolder` copies it
   to the data folder on first start (Release builds only).
 - `SettingsStore.Sanitize` validates and **migrates** old files. When the settings format
