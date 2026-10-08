@@ -25,10 +25,13 @@ public class RecordingTests
         Point click = TargetWindow.PointAt(0.3, 0.7);
 
         StartRecording(app, target, recordMoves: true);
-        target.MoveMouse(TargetWindow.PointAt(0.6, 0.5));
-        // Recorded as a 1.5 s delay before F15: on playback, time for the target window to come back
-        // to the front after Play.
+        // F17, then 1.5 s: on playback, time for the target window to come back to the front after Play
+        // before the macro moves the mouse (a move during that click would move the click elsewhere).
+        // A recording's first action has no delay, so F17 comes first (sent at once, it may reach
+        // PuppyMacro, where it does nothing).
+        target.Tap(Vk.F17);
         TargetWindow.Quiet(1.5);
+        target.MoveMouse(TargetWindow.PointAt(0.6, 0.5));
         target.Tap(Vk.F15);
         target.Click(click);
         target.RequireForeground();
