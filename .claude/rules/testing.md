@@ -27,7 +27,9 @@
 
 - `tests/PuppyMacro.E2E`: xUnit v3 + FlaUI (UIA3). `AppSession` closes any running PuppyMacro,
   deletes `%AppData%\PuppyMacro Dev` and starts the development build
-  (`PuppyMacro/bin/Debug/...`), so every test starts from the sample data.
+  (`PuppyMacro/bin/Debug/...`), so every test starts from the sample data. `new AppSession(seed => ...)`
+  starts it from the data the test writes instead (`Seed`: the app's models, referenced by the
+  project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18).
 - They run on GitHub (`.github/workflows/e2e.yml`) on every pull request (a required check for
   merging into `main`), on every push to `main` and before every release (the Release workflow
   stops when they fail). The runner's screen is 1024x768: do not click controls that may be off
@@ -35,6 +37,10 @@
   instead (`Window.Close()`, `Invoke`).
 - `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one
   PuppyMacro at a time).
+- Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages,
+  editors), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
+  `Overlay`. `make e2e CATEGORY=Macros` runs only one category: use it while working on that
+  feature; before pushing, and on GitHub, all of them run.
 - They take over the desktop: windows open and close, the mouse moves, keys are pressed.
   **Never run `make e2e` (or anything else that drives the UI, like screenshot captures that
   bring PuppyMacro to the front) on a contributor's PC without asking first**: they cannot
@@ -46,8 +52,26 @@
   no ExpandCollapse pattern), `CardButton` / `EditItem` (a list card's buttons), `Dialog` (an
   editor or dialog: while an editor is open the main window is hidden, so it is searched among
   PuppyMacro's top-level windows) and `TopWindow` (overlay panel, floating buttons).
-- A test that sends input must be harmless: use F24 (no keyboard has it), never clicks or
-  keys that could reach another app.
+- A test that sends input must be harmless: input goes only to a window of the test itself.
+  The UI tests use F24 (no keyboard has it). The playback tests (`Macros`, `Loops`, `Remaps`,
+  `Recording`, `Overlay`) really run loops, macros and remaps against `TargetWindow`: a topmost
+  window of the test process at a fixed place inside the 1024x768 screen, which logs every key,
+  button, wheel and move it receives with the time, and has a text box for pasted text. Its
+  `Tap` / `Press` / `Click` check first that it is in front (`RequireForeground`), and every point
+  a macro clicks or moves to is inside it (`TargetWindow.PointAt`, physical pixels). Hotkeys and
+  sent keys are F13 to F24 (`Vk`); other keys (Ctrl+A, Enter, pasted text) only inside it. The
+  overlay panel and floating buttons are placed over it, so a click PuppyMacro does not take lands
+  on it. Times are checked with wide margins (`Playback.About`: 60% to 160% plus 250 ms), as the
+  GitHub machines are slow; `TargetWindow.Quiet` waits a fixed time only to check that nothing
+  more happens (a stopped loop presses nothing).
+- In the playback tests, a UI Automation Invoke on the main window (a card's Play, Stop all) brings
+  PuppyMacro to the front, as a user's click does. `Playback.PressCard` / `InvokeInMainWindow` bring
+  the target window back right after; an item started that way waits about a second before its
+  first input (what it sends before goes to PuppyMacro). Hotkeys do not change the window in front.
+- FlaUI's `Mouse.MoveTo` sets the cursor position, which the low-level mouse hook never sees: moves
+  that PuppyMacro must notice (recording) use `TargetWindow.MoveMouse` (SendInput). A floating
+  button is clicked on its label: its window also holds the hotkey badge, so the window's middle
+  is not the circle's. The recording bar's buttons have no name: find its one shown button.
 - A test cannot press a hotkey with Ctrl, Alt, Shift or Win: PuppyMacro reads modifiers only from
   real key presses (`input.md`), and the key would reach the app in front. Set the hotkey to F24
   first (for example `SetOverlayModeHotkeyToF24` in `AppTests`), as the default ones have modifiers.

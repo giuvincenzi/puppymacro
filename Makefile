@@ -4,7 +4,8 @@
 #   make dev        build the current code and start it with fresh sample data (development build)
 #   make dev-keep   same, keeping the development build's data from the last run
 #   make test       run the unit tests
-#   make e2e        run the end-to-end tests on the development build (do not use the PC meanwhile)
+#   make e2e        run the end-to-end tests on the development build (do not use the PC meanwhile);
+#                   make e2e CATEGORY=Macros runs one category (UI, Macros, Loops, Remaps, Recording, Overlay)
 #   make build      create the distribution in dist/ (Setup.exe + update packages), no upload
 #   make docs       build the website in site-preview/ with the guide of the current code
 #   make docs-serve same, then serve it at http://localhost:8080/ (Ctrl+C to stop)
@@ -34,7 +35,7 @@ test:
 	$(call RUN_SCRIPT,test)
 
 e2e:
-	$(call RUN_SCRIPT,e2e)
+	$(call RUN_SCRIPT,e2e) $(if $(CATEGORY),-Category $(CATEGORY))
 
 build:
 	$(call RUN_SCRIPT,build)

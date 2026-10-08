@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Tools;
 using FlaUI.UIA3;
+using PuppyMacro.Models;
 using Xunit;
 
 // One PuppyMacro at a time: the tests share the app and its data folder.
@@ -23,7 +27,11 @@ public sealed class AppSession : IDisposable
 
     private readonly Application _app;
 
-    public AppSession()
+    /// <param name="seed">
+    /// Fills the data the app starts from instead of the samples: <see cref="Seed"/> starts with no
+    /// loops, macros or remaps and with F keys as global hotkeys.
+    /// </param>
+    public AppSession(Action<Seed>? seed = null)
     {
         foreach (Process running in Process.GetProcessesByName("PuppyMacro"))
         {
@@ -32,6 +40,12 @@ public sealed class AppSession : IDisposable
         }
         if (Directory.Exists(DataFolder))
             Directory.Delete(DataFolder, recursive: true);
+        if (seed != null)
+        {
+            var data = new Seed();
+            seed(data);
+            data.Write();
+        }
 
         _app = Application.Launch(ExePath);
         Automation = new UIA3Automation();
@@ -49,6 +63,13 @@ public sealed class AppSession : IDisposable
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PuppyMacro Dev");
 
     public static string SettingsFile => Path.Combine(DataFolder, "settings.json");
+
+    public static string MacrosFolder => Path.Combine(DataFolder, "macros");
+
+    /// <summary>The macros in the data folder, as the app saved them.</summary>
+    public static List<MacroDefinition> SavedMacros() => Directory.Exists(MacrosFolder)
+        ? Directory.GetFiles(MacrosFolder, "*.json").Select(f => JsonSerializer.Deserialize<MacroDefinition>(File.ReadAllText(f), Seed.JsonOptions)!).ToList()
+        : new List<MacroDefinition>();
 
     /// <summary>The dev build next to this repository's tests folder.</summary>
     public static string ExePath
@@ -92,6 +113,11 @@ public sealed class AppSession : IDisposable
             return "Window state not readable: " + ex.Message;
         }
     }
+
+    /// <summary>A button by its name (a text with the same words is skipped).</summary>
+    public Button FindButton(AutomationElement root, string name) =>
+        Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))),
+            Timeout, throwOnTimeout: true, timeoutMessage: $"button \"{name}\" not found").Result!.AsButton();
 
     public AutomationElement FindById(AutomationElement root, string automationId) =>
         Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByAutomationId(automationId)), Timeout, throwOnTimeout: true,
@@ -150,5 +176,40 @@ public sealed class AppSession : IDisposable
         if (!_app.HasExited)
             _app.Kill();
         _app.Dispose();
+    }
+}
+
+/// <summary>
+/// The data a test starts from, written to the dev data folder before the app starts (the samples
+/// are added only to an empty folder). Global hotkeys are F keys, as tests cannot press modifiers:
+/// Stop all F19, Overlay mode F24, Record F18.
+/// </summary>
+public sealed class Seed
+{
+    /// <summary>The data files' format (CodeJson.Options in the app).</summary>
+    public static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented = true,
+        Converters = { new JsonStringEnumConverter() },
+    };
+
+    public AppSettings Settings { get; } = new()
+    {
+        StopAllHotkey = HotkeyBinding.FromKey(Vk.F19),
+        OverlayModeHotkey = HotkeyBinding.FromKey(Vk.F24),
+        RecordHotkey = HotkeyBinding.FromKey(Vk.F18),
+        TrayNoticeShown = true,
+        CheckForUpdates = false,
+    };
+
+    public List<MacroDefinition> Macros { get; } = new();
+
+    internal void Write()
+    {
+        Directory.CreateDirectory(AppSession.MacrosFolder);
+        Settings.MacroOrder = Macros.Select(m => m.Id).ToList();
+        File.WriteAllText(AppSession.SettingsFile, JsonSerializer.Serialize(Settings, JsonOptions));
+        foreach (MacroDefinition macro in Macros)
+            File.WriteAllText(Path.Combine(AppSession.MacrosFolder, macro.Id + ".json"), JsonSerializer.Serialize(macro, JsonOptions));
     }
 }

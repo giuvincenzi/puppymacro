@@ -10,6 +10,8 @@ using Xunit;
 
 namespace PuppyMacro.E2E;
 
+/// <summary>The windows, pages and editors. make e2e CATEGORY=UI</summary>
+[Trait("Category", "UI")]
 public class AppTests
 {
     [Fact]
