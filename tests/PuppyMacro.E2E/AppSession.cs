@@ -35,7 +35,14 @@ public sealed class AppSession : IDisposable
 
         _app = Application.Launch(ExePath);
         Automation = new UIA3Automation();
-        MainWindow = Retry.WhileNull(() => _app.GetMainWindow(Automation), Timeout, throwOnTimeout: true).Result!;
+        // The window exists before its content, and an element taken that early can keep showing
+        // no content: take it again until it shows the side rail.
+        MainWindow = Retry.WhileNull(() =>
+            {
+                Window? window = _app.GetMainWindow(Automation, TimeSpan.FromSeconds(1));
+                return window?.FindFirstDescendant(cf => cf.ByName("Loops")) != null ? window : null;
+            }, TimeSpan.FromSeconds(30), throwOnTimeout: true, ignoreException: true,
+            timeoutMessage: "the main window did not show its content").Result!;
     }
 
     public static string DataFolder =>

@@ -41,6 +41,11 @@
   check `.Success`, never fixed sleeps.
 - A test that sends input must be harmless: use F24 (no keyboard has it), never clicks or
   keys that could reach another app.
+- A test cannot press a hotkey with Ctrl, Alt, Shift or Win: PuppyMacro reads modifiers only from
+  real key presses (`input.md`), and the key would reach the app in front. Set the hotkey to F24
+  first (for example `SetOverlayModeHotkeyToF24`), as the default ones have modifiers.
+- `AppSession` takes the main window again until it shows its content: an element taken right
+  after the window appears can keep showing no children.
 
 ## When to add and run tests
 

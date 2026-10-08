@@ -211,17 +211,25 @@ public class AppTests
     }
 
     /// <summary>
-    /// The default Overlay mode hotkey of a new install, Alt+Shift+W. PuppyMacro's hook takes W,
-    /// so nothing reaches another app (Alt and Shift alone do nothing).
+    /// Sets the Overlay mode hotkey to F24 (no keyboard has it) in Settings > Hotkeys. The default,
+    /// Alt+Shift+W, cannot be pressed by a test: PuppyMacro reads Ctrl, Alt, Shift and Win only from
+    /// real key presses, never from simulated ones.
     /// </summary>
-    private static void PressOverlayModeHotkey()
+    private static void SetOverlayModeHotkeyToF24(AppSession app)
     {
-        Keyboard.Press(VirtualKeyShort.ALT);
-        Keyboard.Press(VirtualKeyShort.SHIFT);
-        Keyboard.Press(VirtualKeyShort.KEY_W);
-        Keyboard.Release(VirtualKeyShort.KEY_W);
-        Keyboard.Release(VirtualKeyShort.SHIFT);
-        Keyboard.Release(VirtualKeyShort.ALT);
+        app.GoTo("Settings");
+        app.FindById(app.MainWindow, "HotkeysGroup").Patterns.ExpandCollapse.Pattern.Expand();
+        app.FindById(app.MainWindow, "OverlayModeChangeButton").AsButton().Invoke();
+        app.Find(app.MainWindow, "Press a key…");
+        PressF24();
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Replace(" ", "").Replace("\r", "").Replace("\n", "")
+            .Contains("\"OverlayModeHotkey\":{\"Vk\":135,"), AppSession.Timeout).Success, "the Overlay mode hotkey is not F24");
+    }
+
+    private static void PressF24()
+    {
+        Keyboard.Press(VirtualKeyShort.F24);
+        Keyboard.Release(VirtualKeyShort.F24);
     }
 
     /// <summary>A loop that presses F24 (harmless), with its floating button on. Returns its editor still open.</summary>
@@ -256,6 +264,7 @@ public class AppTests
             return json.Contains("\"Label\": \"EF\"") && json.Contains("\"Opacity\": 60");
         }, AppSession.Timeout).Success);
 
+        SetOverlayModeHotkeyToF24(app);
         app.FindById(app.MainWindow, "OverlayModeButton").AsButton().Click();
         AutomationElement? button = app.TopWindow("PuppyMacro floating button: E2E F24 loop");
         Assert.NotNull(button);
@@ -267,7 +276,7 @@ public class AppTests
         Assert.True(app.Has(panel!, "Everything is on floating buttons."));
         Assert.False(app.Has(panel!, "E2E F24 loop"));
 
-        PressOverlayModeHotkey();
+        PressF24(); // the Overlay mode hotkey
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
         Assert.True(Retry.WhileFalse(() => button!.IsOffscreen || !button.IsAvailable, AppSession.Timeout).Success);
     }
@@ -279,7 +288,7 @@ public class AppTests
         Window editor = AddF24LoopWithButton(app);
         app.FindById(editor, "SaveButton").AsButton().Click();
 
-        app.GoTo("Settings");
+        SetOverlayModeHotkeyToF24(app);
         app.FindById(app.MainWindow, "OverlayGroup").Patterns.ExpandCollapse.Pattern.Expand();
         app.FindById(app.MainWindow, "ShowPanelSwitch").AsToggleButton().Toggle();
         Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"ShowOverlayPanel\": false"),
@@ -291,7 +300,7 @@ public class AppTests
         AutomationElement? panel = app.TopWindow("PuppyMacro overlay panel");
         Assert.True(panel == null || panel.IsOffscreen, "the overlay panel is shown although it is off");
 
-        PressOverlayModeHotkey();
+        PressF24(); // the Overlay mode hotkey
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
     }
 
@@ -299,11 +308,12 @@ public class AppTests
     public void Overlay_mode_hides_the_window_and_its_hotkey_brings_it_back()
     {
         using var app = new AppSession();
+        SetOverlayModeHotkeyToF24(app);
 
         app.FindById(app.MainWindow, "OverlayModeButton").AsButton().Click();
         Assert.True(Retry.WhileFalse(() => app.MainWindow.IsOffscreen || !app.MainWindow.IsAvailable, AppSession.Timeout).Success);
 
-        PressOverlayModeHotkey();
+        PressF24(); // the Overlay mode hotkey
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
     }
 
