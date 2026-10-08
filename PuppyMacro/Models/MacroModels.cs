@@ -179,6 +179,26 @@ public sealed class MacroDefinition
         return copy;
     }
 
+    /// <summary>
+    /// The macro the editor's Test plays: a copy of <paramref name="action"/> alone, right away
+    /// (no delay before it), once, at ×1, without sound.
+    /// </summary>
+    public static MacroDefinition ForTest(MacroAction action)
+    {
+        var copy = action.Clone();
+        copy.DelayMs = 0;
+        copy.GroupId = null;
+        return new MacroDefinition
+        {
+            Name = "Test",
+            Actions = { copy },
+            Repeat = RepeatMode.Once,
+            Speed = 1,
+            Enabled = false,
+            SoundEnabled = false,
+        };
+    }
+
     public void CopyFrom(MacroDefinition other)
     {
         Name = other.Name;

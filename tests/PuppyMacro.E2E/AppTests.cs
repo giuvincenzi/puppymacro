@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -89,7 +90,7 @@ public class AppTests
     public void Windows_fit_on_a_small_screen()
     {
         // On GitHub the screen is 1024x768: the main window (820 high) and the macro editor
-        // (about 790) do not fit unless they are made shorter.
+        // (1180 x 820) do not fit unless they are made smaller.
         using var app = new AppSession();
         System.Drawing.Rectangle workArea = System.Windows.Forms.Screen.PrimaryScreen!.WorkingArea;
 
@@ -140,6 +141,61 @@ public class AppTests
             string json = File.ReadAllText(f);
             return json.Split("\"E2E group\"").Length == 3 && json.Contains("\"E2E click\"");
         }), AppSession.Timeout).Success, "the macro file does not have the two groups and the action name");
+    }
+
+    [Fact]
+    public void An_action_is_tested_from_its_window_and_from_its_row()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.ItemMenu("Sample: click and scroll", "Edit");
+        Window editor = app.Dialog("Edit macro");
+        System.Drawing.Rectangle editorPlace = editor.BoundingRectangle;
+
+        // A Press key action with F24 (harmless), held 1.5 s so the test lasts long enough to be seen.
+        app.FindById(editor, "AddActionButton").AsButton().Invoke();
+        Retry.WhileNull(() => app.Automation.GetDesktop().FindFirstDescendant(cf =>
+                cf.ByControlType(FlaUI.Core.Definitions.ControlType.MenuItem).And(cf.ByName("Press key"))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "menu item \"Press key\" not found").Result!.Click();
+        Window action = ChildDialog(editor, "Add press key");
+        app.FindById(action, "KeyButton").AsButton().Invoke();
+        app.Find(action, "Press a key (Esc cancels)");
+        Keyboard.Press(VirtualKeyShort.F24);
+        Keyboard.Release(VirtualKeyShort.F24);
+        app.Find(action, "F24");
+        AutomationElement hold = app.FindById(action, "KeyHoldBox");
+        hold.Focus();
+        Keyboard.TypeSimultaneously(VirtualKeyShort.CONTROL, VirtualKeyShort.KEY_A);
+        Keyboard.Type("1500");
+
+        // Test from the action window, before saving: PuppyMacro moves out of the way, then comes back.
+        System.Drawing.Rectangle actionPlace = action.BoundingRectangle;
+        app.FindById(action, "TestButton").AsButton().Invoke();
+        AssertMovesAwayAndBack(app, action, actionPlace);
+        AssertMovesAwayAndBack(app, editor, editorPlace, alreadyAway: true);
+
+        app.FindById(action, "SaveButton").AsButton().Invoke();
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("3. Press F24")), AppSession.Timeout).Success);
+
+        // Test from the row: the editor moves out of the way, then comes back.
+        editor.FindAllDescendants(cf => cf.ByName("Test action")).Last().AsButton().Invoke();
+        AssertMovesAwayAndBack(app, editor, editorPlace);
+    }
+
+    /// <summary>
+    /// The window goes off screen while a test plays (the main window is hidden), then returns to
+    /// <paramref name="place"/> with the main window shown again.
+    /// </summary>
+    private static void AssertMovesAwayAndBack(AppSession app, Window window, System.Drawing.Rectangle place, bool alreadyAway = false)
+    {
+        if (!alreadyAway)
+        {
+            Assert.True(Retry.WhileFalse(() => window.BoundingRectangle.Right <= System.Windows.Forms.SystemInformation.VirtualScreen.Left,
+                AppSession.Timeout, TimeSpan.FromMilliseconds(20)).Success, $"\"{window.Title}\" did not move out of the way");
+        }
+        Assert.True(Retry.WhileFalse(() => window.BoundingRectangle == place && app.MainWindow.IsAvailable && !app.MainWindow.IsOffscreen,
+            AppSession.Timeout).Success, $"\"{window.Title}\" is at {window.BoundingRectangle}, not back at {place}");
     }
 
     /// <summary>A dialog opened by another dialog.</summary>

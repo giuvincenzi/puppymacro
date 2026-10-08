@@ -171,6 +171,7 @@ public partial class MacroActionWindow
         else
             ShowError(error);
         SaveButton.IsEnabled = error == null;
+        TestButton.IsEnabled = error == null;
     }
 
     private void ShowError(string message)
@@ -181,14 +182,31 @@ public partial class MacroActionWindow
 
     private void OnSaveClick(object sender, RoutedEventArgs e)
     {
-        SaveButton.Focus(); // commit the number field being edited
+        if (BuildAction(SaveButton) is { } action)
+        {
+            Result = action;
+            DialogResult = true;
+        }
+    }
+
+    /// <summary>Plays the action as it is now in the window, also before it is saved.</summary>
+    private void OnTestClick(object sender, RoutedEventArgs e)
+    {
+        if (BuildAction(TestButton) is { } action)
+            ActionTestSession.Run(_engine, action, this);
+    }
+
+    /// <summary>The action with the values in the window, or null (and the error shown) when they are not valid.</summary>
+    private MacroAction? BuildAction(UIElement clicked)
+    {
+        clicked.Focus(); // commit the number field being edited
         if (GetValidationError() != null)
         {
             Validate();
-            return;
+            return null;
         }
 
-        var a = _action;
+        var a = _action.Clone();
         var t = a.Type;
         a.Name = ActionNameBox.Text.Trim();
         if (t is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp)
@@ -229,9 +247,7 @@ public partial class MacroActionWindow
             a.RepeatPauseMs = Math.Max(0, Math.Round(RepeatPauseBox.Value ?? 50));
         }
         a.DelayMs = Math.Max(0, Math.Round(DelayBox.Value ?? 0));
-
-        Result = a;
-        DialogResult = true;
+        return a;
     }
 
     private void OnCancelClick(object sender, RoutedEventArgs e) => DialogResult = false;

@@ -5,9 +5,9 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="Edit macro"
-    Width="720"
-    Height="900"
-    MinWidth="680"
+    Width="1180"
+    Height="820"
+    MinWidth="900"
     MinHeight="520"
     ResizeMode="CanResize"
     ShowInTaskbar="False"
@@ -190,6 +190,9 @@
                         <Run FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
                     </TextBlock>
                     <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Arrow">
+                        <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Play24}" ToolTip="Test action: PuppyMacro hides and plays it once in the window behind it"
+                                   AutomationProperties.Name="Test action" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                   Tag="{Binding}" Click="OnTestActionClick" />
                         <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Edit24}" ToolTip="Edit action" AutomationProperties.Name="Edit action"
                                    Tag="{Binding}" Click="OnEditActionClick" Visibility="{Binding IsEditable, Converter={StaticResource BoolToVisibility}}" />
                         <ui:Button Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate action (Ctrl+D)" AutomationProperties.Name="Duplicate action"
@@ -212,14 +215,29 @@
 
         <ui:TitleBar x:Name="EditorTitleBar" Grid.Row="0" Title="Edit macro" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
 
-        <ScrollViewer x:Name="PageScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" SizeChanged="OnPageSizeChanged">
-            <StackPanel x:Name="ContentPanel" Margin="24,8,24,12" SizeChanged="OnPageSizeChanged">
-                <TextBlock Margin="0,0,0,6" Text="Name" />
-                <ui:TextBox x:Name="NameBox" PlaceholderText="e.g. Craft and salvage" TextChanged="OnNameChanged" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="440" />
+                <ColumnDefinition Width="400" />
+            </Grid.ColumnDefinitions>
 
-                <!-- Actions -->
-                <TextBlock Margin="0,18,0,8" Text="Actions" />
-                <Grid Margin="0,0,0,8">
+            <!-- Left column: name and the action list, which takes all the height -->
+            <Grid Grid.Column="0" Margin="24,8,24,12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Margin="0,0,0,6" Text="Name" />
+                <ui:TextBox x:Name="NameBox" Grid.Row="1" PlaceholderText="e.g. Craft and salvage" TextChanged="OnNameChanged" />
+
+                <TextBlock Grid.Row="2" Margin="0,18,0,8" Text="Actions" />
+                <Grid Grid.Row="3" Margin="0,0,0,8">
                     <StackPanel Orientation="Horizontal">
                         <ui:Button x:Name="AddActionButton" Content="Add action" Icon="{ui:SymbolIcon Add24}" Click="OnAddActionClick" />
                         <ui:Button Margin="8,0,0,0" Click="OnRecordClick">
@@ -234,12 +252,33 @@
                 </Grid>
 
                 <!-- Selection bar: always there, so the list does not move when the selection changes. -->
-                <Grid Height="44" Margin="0,0,0,6">
-                    <Border x:Name="SelectionBarBack" CornerRadius="6" Opacity="0.15" Visibility="Collapsed"
+                <Grid Grid.Row="4" Height="44" Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="SelectionBarBack" Grid.ColumnSpan="2" CornerRadius="6" Opacity="0.15" Visibility="Collapsed"
                             Background="{DynamicResource AccentFillColorDefaultBrush}" />
-                    <Border CornerRadius="6" BorderThickness="1" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" />
-                    <TextBlock x:Name="SelectionText" Margin="14,0,0,0" VerticalAlignment="Center" FontSize="13" TextTrimming="CharacterEllipsis" />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,6,0" VerticalAlignment="Center">
+                    <Border Grid.ColumnSpan="2" CornerRadius="6" BorderThickness="1" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" />
+                    <!-- Left-aligned: the info icon follows the text, which is trimmed when space runs out. -->
+                    <DockPanel Grid.Column="0" Margin="14,0,8,0" HorizontalAlignment="Left" LastChildFill="True">
+                        <!-- The shortcuts, in a tooltip -->
+                        <Border x:Name="ShortcutsInfo" DockPanel.Dock="Right" Width="18" Height="18" Margin="8,0,0,0" CornerRadius="9" VerticalAlignment="Center"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}" AutomationProperties.Name="Shortcuts"
+                                ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="60000">
+                            <Border.ToolTip>
+                                <ToolTip MaxWidth="360">
+                                    <TextBlock TextWrapping="Wrap"
+                                               Text="Ctrl+click or Shift+click to select more actions. Drag them (or Alt+Up / Alt+Down) to move them, into or out of a group. Ctrl+G groups them, Ctrl+D duplicates them, Ctrl+C / Ctrl+V copy and paste them. New actions go after the selected one, or at the end. ▶ tests an action: PuppyMacro hides and plays it once in the window behind it." />
+                                </ToolTip>
+                            </Border.ToolTip>
+                            <TextBlock Text="i" FontSize="12" FontWeight="Bold" FontStyle="Italic" FontFamily="Georgia"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+                        </Border>
+                        <TextBlock x:Name="SelectionText" VerticalAlignment="Center" FontSize="13" TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,6,0" VerticalAlignment="Center">
                         <ui:Button x:Name="GroupButton" Appearance="Transparent" Icon="{ui:SymbolIcon GroupList24}" Content="Group"
                                    ToolTip="Put the selected actions in a group (Ctrl+G)" Click="OnGroupSelectedClick" />
                         <ui:Button x:Name="DuplicateButton" Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}" Content="Duplicate"
@@ -253,7 +292,7 @@
                     </StackPanel>
                 </Grid>
 
-                <ListBox x:Name="ActionList" MinHeight="200" SelectionMode="Extended" AllowDrop="True"
+                <ListBox x:Name="ActionList" Grid.Row="5" MinHeight="120" SelectionMode="Extended" AllowDrop="True"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          SelectionChanged="OnSelectionChanged" PreviewKeyDown="OnListKeyDown"
                          PreviewDragOver="OnListPreviewDragOver" DragOver="OnListDragOver" DragLeave="OnListDragLeave" Drop="OnListDrop">
@@ -265,31 +304,25 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
-                <TextBlock x:Name="EmptyActionsText" Margin="0,6,0,0" FontSize="12" Visibility="Collapsed"
+                <TextBlock x:Name="EmptyActionsText" Grid.Row="6" Margin="0,6,0,0" FontSize="12" Visibility="Collapsed"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="No actions yet. Record actions or add them one by one." />
-                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap"
-                           Text="Ctrl+click or Shift+click to select more actions. Drag them (or Alt+Up / Alt+Down) to move them, into or out of a group. Ctrl+G groups them, Ctrl+D duplicates them, Ctrl+C / Ctrl+V copy and paste them. New actions go after the selected one, or at the end." />
-                <TextBlock x:Name="TotalText" Margin="0,4,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <TextBlock x:Name="TotalText" Grid.Row="7" Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </Grid>
 
-                <!-- Playback -->
-                <Grid Margin="0,18,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="24" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
+            <!-- Right column: how the macro plays and starts -->
+            <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24,8,24,12">
                         <TextBlock Margin="0,0,0,6" Text="Repeat" />
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton x:Name="OnceRadio" Content="Once" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <RadioButton x:Name="LoopRadio" Margin="12,0,0,0" Content="Loop" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <RadioButton x:Name="TimesRadio" Margin="12,0,0,0" Content="N times" GroupName="Repeat" Checked="OnRepeatChanged" />
+                        <WrapPanel>
+                            <RadioButton x:Name="OnceRadio" MinWidth="0" Margin="0,0,12,0" Content="Once" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <RadioButton x:Name="LoopRadio" MinWidth="0" Margin="0,0,12,0" Content="Loop" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            <RadioButton x:Name="TimesRadio" MinWidth="0" Content="N times" GroupName="Repeat" Checked="OnRepeatChanged" />
                             <ui:NumberBox x:Name="TimesBox" Width="80" Margin="8,0,0,0" Minimum="1" Maximum="100000" MaxDecimalPlaces="0"
                                           SpinButtonPlacementMode="Hidden" ClearButtonEnabled="False" />
-                        </StackPanel>
-                    </StackPanel>
-                    <StackPanel Grid.Column="2">
-                        <TextBlock x:Name="SpeedLabel" Margin="0,0,0,6" Text="Speed" />
+                        </WrapPanel>
+
+                        <TextBlock x:Name="SpeedLabel" Margin="0,18,0,6" Text="Speed" />
                         <Slider x:Name="SpeedSlider" Minimum="0" Maximum="4" TickFrequency="1" IsSnapToTickEnabled="True"
                                 AutomationProperties.Name="Speed" ValueChanged="OnSpeedChanged" />
                         <Grid>
@@ -297,69 +330,66 @@
                             <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×1" HorizontalAlignment="Center" />
                             <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="×4" HorizontalAlignment="Right" />
                         </Grid>
+
+                        <!-- Activation -->
+                        <TextBlock Margin="0,18,0,6" Text="Activation" />
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="ToggleRadio" Content="Toggle" GroupName="Activation" Checked="OnActivationChanged" />
+                            <RadioButton x:Name="HoldRadio" Margin="16,0,0,0" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
+                        </StackPanel>
+                        <TextBlock x:Name="ActivationHint" Margin="0,4,0,0" FontSize="12" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+                        <!-- Hotkey -->
+                        <TextBlock Margin="0,18,0,6" Text="Hotkey" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ItemsControl x:Name="HotkeyCaps" VerticalAlignment="Center">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,4,0" Padding="8,2" Style="{StaticResource KeyCap}">
+                                            <TextBlock FontSize="13" Text="{Binding}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock x:Name="HotkeyCaptureText" FontSize="13" VerticalAlignment="Center" Visibility="Collapsed"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the hotkey (Esc cancels)" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <ui:Button MinWidth="80" Content="Change" Click="OnChangeHotkeyClick" />
+                                <ui:Button x:Name="ClearHotkeyButton" Margin="8,0,0,0" MinWidth="70" Content="Clear" Click="OnClearHotkeyClick" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                   Text="Optional. Without a hotkey, start it with Play or from the game mode panel. Hold needs a hotkey." />
+
+                        <!-- Floating button -->
+                        <views:FloatingButtonEditor x:Name="FloatingEditor" Margin="0,18,0,0" />
+
+                        <!-- Sound -->
+                        <Grid Margin="0,18,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Sound" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Plays when the macro starts and stops" />
+                            </StackPanel>
+                            <ui:ToggleSwitch x:Name="SoundSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                             OffContent="Off" OnContent="On" Checked="OnSoundSwitchChanged" Unchecked="OnSoundSwitchChanged" />
+                        </Grid>
+                        <StackPanel x:Name="SoundPanel" Margin="0,10,0,0" Visibility="Collapsed">
+                            <UniformGrid x:Name="SoundGrid" Columns="3" />
+                        </StackPanel>
                     </StackPanel>
-                </Grid>
-
-                <!-- Activation -->
-                <TextBlock Margin="0,18,0,6" Text="Activation" />
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton x:Name="ToggleRadio" Content="Toggle" GroupName="Activation" Checked="OnActivationChanged" />
-                    <RadioButton x:Name="HoldRadio" Margin="16,0,0,0" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
-                </StackPanel>
-                <TextBlock x:Name="ActivationHint" Margin="0,4,0,0" FontSize="12" TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                <!-- Hotkey -->
-                <TextBlock Margin="0,18,0,6" Text="Hotkey" />
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <ItemsControl x:Name="HotkeyCaps" VerticalAlignment="Center">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Margin="0,0,4,0" Padding="8,2" Style="{StaticResource KeyCap}">
-                                    <TextBlock FontSize="13" Text="{Binding}" />
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <TextBlock x:Name="HotkeyCaptureText" FontSize="13" VerticalAlignment="Center" Visibility="Collapsed"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Press the hotkey (Esc cancels)" />
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <ui:Button MinWidth="80" Content="Change" Click="OnChangeHotkeyClick" />
-                        <ui:Button x:Name="ClearHotkeyButton" Margin="8,0,0,0" MinWidth="70" Content="Clear" Click="OnClearHotkeyClick" />
-                    </StackPanel>
-                </Grid>
-                <TextBlock Margin="0,6,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                           Text="Optional. Without a hotkey, start it with Play or from the game mode panel. Hold needs a hotkey." />
-
-                <!-- Floating button -->
-                <views:FloatingButtonEditor x:Name="FloatingEditor" Margin="0,18,0,0" />
-
-                <!-- Sound -->
-                <Grid Margin="0,18,0,0">
-                    <StackPanel>
-                        <TextBlock Text="Sound" />
-                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Plays when the macro starts and stops" />
-                    </StackPanel>
-                    <ui:ToggleSwitch x:Name="SoundSwitch" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                     OffContent="Off" OnContent="On" Checked="OnSoundSwitchChanged" Unchecked="OnSoundSwitchChanged" />
-                </Grid>
-                <StackPanel x:Name="SoundPanel" Margin="0,10,0,0" Visibility="Collapsed">
-                    <UniformGrid x:Name="SoundGrid" Columns="3" />
-                </StackPanel>
-
-                <TextBlock x:Name="ErrorText" Margin="0,12,0,0" FontSize="12" TextWrapping="Wrap"
-                           Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
-            </StackPanel>
-        </ScrollViewer>
+                </ScrollViewer>
+            </Border>
+        </Grid>
 
         <Border Grid.Row="2" Padding="24,16" BorderThickness="0,1,0,0"
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
@@ -367,11 +397,14 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="160" />
                     <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="160" />
                 </Grid.ColumnDefinitions>
-                <ui:Button x:Name="SaveButton" Grid.Column="0" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <TextBlock x:Name="ErrorText" Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
+                <ui:Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
+                <ui:Button Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
     </Grid>

@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+- Macro editor: **Test action** (▶ on every action, and **Test** in the action's window, also
+  before saving) plays one action once: PuppyMacro hides, the window behind it gets the focus
+  and the action plays there, then PuppyMacro comes back.
+
+### Changed
+- The macro editor has two columns: the list of actions takes the whole height on the left,
+  Repeat, Speed, Activation, Hotkey, Floating button and Sound are on the right. It opens wider;
+  a size kept by an older version is reset once.
+- The selection and shortcut tips of the macro editor are in a tooltip, on the blue "i" next to
+  the selection bar's text.
+
 ## 1.8.0
 
 ### Added

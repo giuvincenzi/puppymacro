@@ -138,6 +138,10 @@ internal sealed class SettingsStore
         if (settings.SchemaVersion < 3)
             settings.ClickItemsInPanel = true;
 
+        // Schema 5: the macro editor has two columns and opens wider; a width kept for the one-column editor is dropped.
+        if (settings.SchemaVersion < 5)
+            settings.MacroEditorWidth = null;
+
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
         settings.Remaps ??= new();
         settings.Remaps.RemoveAll(r => r.SourceVk == 0 || r.Target is not { IsSet: true });

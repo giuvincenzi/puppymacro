@@ -68,7 +68,9 @@ Rules:
   `RecordingSession.cs`, `MacroEditorWindow`, `MacroActionWindow`, `GroupNameWindow`.
   The editor's operations (group, ungroup, copy / paste, duplicate, drag, Alt+Up / Alt+Down)
   live in `Services/MacroEditList.cs`, without UI, with unit tests; the window only maps the
-  list to rows and group headers.
+  list to rows and group headers. Test action: `Services/ActionTestSession.cs` (moves the
+  editor off screen, hides the main window, focuses the window behind, waits 200 ms) plays
+  `MacroDefinition.ForTest` through `LoopEngine.TestMacroAction`.
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.
 - Game mode: `Views/GameModePanel`, `GameModeWindow` (click-through, no-activate),
   `PlacementWindow` (panel and floating buttons).

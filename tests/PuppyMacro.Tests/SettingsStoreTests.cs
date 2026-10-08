@@ -122,6 +122,16 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Files_before_schema_5_drop_the_width_of_the_one_column_macro_editor()
+    {
+        AppSettings settings = LoadJson("""{ "SchemaVersion": 4, "MacroEditorWidth": 720, "MacroEditorHeight": 1000 }""", out _);
+
+        Assert.Null(settings.MacroEditorWidth);
+        Assert.Equal(1000, settings.MacroEditorHeight);
+        Assert.Equal(AppSettings.CurrentSchemaVersion, settings.SchemaVersion);
+    }
+
+    [Fact]
     public void Out_of_range_values_are_clamped()
     {
         AppSettings settings = LoadJson("""
