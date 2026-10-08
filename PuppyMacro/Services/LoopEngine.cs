@@ -205,6 +205,18 @@ internal sealed class LoopEngine : IDisposable
         }
     }
 
+    /// <summary>
+    /// Plays <paramref name="action"/> once for the editor's Test (<see cref="MacroDefinition.ForTest"/>).
+    /// It is not a running macro: no sound, no state change. <paramref name="finished"/> runs on
+    /// the UI thread when it ends.
+    /// </summary>
+    public void TestMacroAction(MacroAction action, Action finished)
+    {
+        var runner = new MacroRunner(MacroDefinition.ForTest(action), _paster);
+        runner.Exited += _ => _dispatcher.InvokeAsync(finished);
+        runner.Start();
+    }
+
     public void StopMacro(Guid macroId) => StopMacro(macroId, playSound: true);
 
     private void StopMacro(Guid macroId, bool playSound)

@@ -79,7 +79,6 @@ public partial class MacroEditorWindow
         }
         _list = new MacroEditList(actions, source.Groups);
         ActionList.ItemsSource = _items;
-        ActionList.Height = 300; // fitted to the window once it is laid out
         Refresh();
 
         OnceRadio.IsChecked = source.Repeat == RepeatMode.Once;
@@ -119,21 +118,6 @@ public partial class MacroEditorWindow
             return;
         _settings.MacroEditorWidth = Math.Round(ActualWidth);
         _settings.MacroEditorHeight = Math.Round(ActualHeight);
-    }
-
-    /// <summary>
-    /// The action list takes the height the rest of the page leaves free, so a taller window
-    /// shows more actions. Below its minimum height the whole page scrolls.
-    /// </summary>
-    private void OnPageSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (PageScroll.ViewportHeight <= 0)
-            return;
-        double others = ContentPanel.ActualHeight - ActionList.ActualHeight
-                        + ContentPanel.Margin.Top + ContentPanel.Margin.Bottom;
-        double height = Math.Max(ActionList.MinHeight, PageScroll.ViewportHeight - others);
-        if (Math.Abs(ActionList.Height - height) > 1)
-            ActionList.Height = height;
     }
 
     // ================= List =================
@@ -380,6 +364,12 @@ public partial class MacroEditorWindow
         _rowOf[edited] = row;
         row.Replace(edited);
         Refresh();
+    }
+
+    private void OnTestActionClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is MacroActionRowViewModel row)
+            ActionTestSession.Run(_engine, row.Action, this);
     }
 
     private void OnRecordClick(object sender, RoutedEventArgs e)

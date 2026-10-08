@@ -163,12 +163,16 @@
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="110" />
                     <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="110" />
                 </Grid.ColumnDefinitions>
-                <ui:Button x:Name="SaveButton" Grid.Column="0" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
-                <ui:Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                <ui:Button x:Name="TestButton" Grid.Column="0" Content="Test" Icon="{ui:SymbolIcon Play24}" Click="OnTestClick"
+                           ToolTip="Hides PuppyMacro and plays this action once, in the window behind it" />
+                <ui:Button x:Name="SaveButton" Grid.Column="2" HorizontalAlignment="Stretch" Appearance="Primary" Content="Save" Click="OnSaveClick" />
+                <ui:Button Grid.Column="4" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
             </Grid>
         </Border>
     </StackPanel>

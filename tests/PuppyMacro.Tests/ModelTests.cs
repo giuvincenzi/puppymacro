@@ -45,3 +45,35 @@ public class LoopActionTests
         Assert.Equal(24 * 60 * 60 * 1000, LoopAction.MaxIntervalMs);
     }
 }
+
+public class MacroTestTests
+{
+    [Fact]
+    public void ForTest_plays_a_copy_of_the_action_alone_right_away_once_at_normal_speed()
+    {
+        var action = new MacroAction
+        {
+            Type = MacroActionType.PressKey,
+            Vk = 0x87, // F24
+            DelayMs = 500,
+            Repeat = 3,
+            RepeatPauseMs = 20,
+            GroupId = System.Guid.NewGuid(),
+        };
+
+        MacroDefinition test = MacroDefinition.ForTest(action);
+
+        MacroAction played = Assert.Single(test.Actions);
+        Assert.NotSame(action, played);
+        Assert.Equal(0, played.DelayMs);
+        Assert.Null(played.GroupId);
+        Assert.Equal(0x87, played.Vk);
+        Assert.Equal(3, played.Repeat); // the action's own repeats are part of what is tested
+        Assert.Equal(20, played.RepeatPauseMs);
+        Assert.Equal(RepeatMode.Once, test.Repeat);
+        Assert.Equal(1, test.Speed);
+        Assert.False(test.SoundEnabled);
+        Assert.Empty(test.Groups);
+        Assert.Equal(500, action.DelayMs); // the edited action is not changed
+    }
+}

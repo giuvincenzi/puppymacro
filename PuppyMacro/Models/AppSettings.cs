@@ -239,7 +239,7 @@ public sealed class LoopDefinition
 /// <summary>Everything persisted in settings.json.</summary>
 public sealed class AppSettings
 {
-    public const int CurrentSchemaVersion = 4;
+    public const int CurrentSchemaVersion = 5;
     public const int DefaultStopAllVk = 0x79;   // F10
     public const int DefaultGameModeVk = 0x7A;  // F11
     public const int DefaultRecordVk = 0x77;    // F8
