@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.8.0
+
 ### Added
 - **Floating buttons**: a loop or macro can have its own round button in game mode, placed
   anywhere on the screen, that starts and stops it with a click without the game losing focus.
