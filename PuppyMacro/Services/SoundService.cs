@@ -15,7 +15,16 @@ namespace PuppyMacro.Services;
 /// </summary>
 internal sealed class SoundService
 {
-    public static readonly IReadOnlyList<string> Names = new[] { "Chime", "Blip", "Pop", "Bell", "Arcade", "Soft" };
+    // The first one is the default. New sounds go at the end, so the order users know stays the same.
+    public static readonly IReadOnlyList<string> Names = new[]
+    {
+        "Chime", "Blip", "Pop", "Bell", "Arcade", "Soft",
+        "Marimba", "Pluck", "Harp", "Kalimba", "Xylophone", "Glock", "Organ", "Flute", "Synth", "Pad", "Brass", "Bass",
+        "Click", "Tick", "Knock", "Switch", "Tom", "Conga", "Cowbell", "Triangle", "Gong",
+        "Coin", "Jump", "Laser", "Zap", "Powerup", "Retro", "Fanfare", "Twinkle", "Sparkle",
+        "Bubble", "Drop", "Whoosh", "Whistle", "Chirp", "Cricket",
+        "Doorbell", "Phone", "Alarm", "Modem", "Radar", "Sonar", "Echo", "Robot", "Siren", "Hum", "Ripple", "Wobble", "Warp", "Ufo",
+    };
 
     private sealed class Clip
     {

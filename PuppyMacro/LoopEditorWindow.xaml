@@ -169,8 +169,11 @@
                         <ui:SettingsExpander.Items>
                             <ui:SettingsCard x:Name="SoundCard" ContentAlignment="Vertical" HorizontalContentAlignment="Left"
                                              Description="Click a sound to pick it and hear the start and stop versions.">
-                                <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"
-                                                 SelectionChanged="OnSoundSelectionChanged" />
+                                <!-- Scrolls on its own so the long list does not make the editor scroll (approved, ui.md). -->
+                                <ScrollViewer x:Name="SoundScroll" MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                    <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"
+                                                     SelectionChanged="OnSoundSelectionChanged" />
+                                </ScrollViewer>
                             </ui:SettingsCard>
                         </ui:SettingsExpander.Items>
                     </views:SwitchSettingsExpander>
