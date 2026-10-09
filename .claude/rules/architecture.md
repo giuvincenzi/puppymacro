@@ -44,7 +44,7 @@ PuppyMacro/
   Views/                        view models, SideRail, ItemCardActions (+ SubtleButtons.xaml),
                                 KeyCaptureField, SwitchSettingsExpander, overlay panel, floating
                                 buttons, Code view (CodeView, ViewSwitchBar, CodeViewSwitch),
-                                MacroShortcutsView, WindowFit
+                                MacroShortcutsView, SoundChoicesScroll, WindowFit
   Native/                       Win32 interop
   Assets/                       app icon, built-in sounds, Code view page (CodeEditor) and Monaco
   Properties/PublishProfiles/   Folder.pubxml (used by scripts/build.ps1)

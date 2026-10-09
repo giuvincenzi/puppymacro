@@ -87,6 +87,7 @@ public partial class MacroEditorWindow
         SoundChoices.ItemsSource = SoundService.Names;
         SoundChoices.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
         LoadMacro(source);
+        SoundChoicesScroll.Attach(SoundScroll, () => _soundName);
 
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
         _code = CreateCodeSwitch();

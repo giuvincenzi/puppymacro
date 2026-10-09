@@ -56,6 +56,7 @@ public partial class LoopEditorWindow
         _soundName = source.SoundName;
         SoundChoices.ItemsSource = SoundService.Names;
         SoundChoices.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
+        SoundChoicesScroll.Attach(SoundScroll, () => _soundName);
         _actions.CollectionChanged += OnActionsChanged;
         ActionsList.ItemsSource = _actions;
         LoadLoop(source);

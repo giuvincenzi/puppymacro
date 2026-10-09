@@ -118,6 +118,10 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `ListViewItemCompactSelectedBorderThemeThickness` and `ListViewItemCornerRadius` set to 0. A
     group's open / close arrow is a `Button` with no background, border or hover, in the actions'
     icon column (16 wide), so the group name lines up with the actions.
+  - Sound in the loop and macro editors: the `RadioButtons` with the sounds sit in a standard
+    `ScrollViewer` with `MaxHeight="200"`, so the long list scrolls on its own instead of making the
+    whole editor scroll. `Views/SoundChoicesScroll` scrolls it to the chosen sound each time it is
+    shown.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set
   hotkey" / "Set key" button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
