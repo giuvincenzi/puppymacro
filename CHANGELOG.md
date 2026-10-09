@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.11.0
+
 ### Added
 - 50 new start and stop sounds for loops and macros (56 in all): instruments, percussion, game,
   water and air, and signal sounds. In the editors the sound list scrolls on its own and opens on
