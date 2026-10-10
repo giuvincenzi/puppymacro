@@ -11,16 +11,19 @@ internal static class LoopJson
     public static string Serialize(LoopDefinition loop) => CodeJson.Serialize(loop);
 
     /// <summary>Checks a loop's text with the loop editor's rules and reads it. Null when there are problems.</summary>
-    /// <param name="conflict">The hotkey conflict message for a binding, or null (see <see cref="HotkeyConflicts"/>).</param>
-    public static LoopDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?> conflict, out List<CodeProblem> problems)
+    /// <param name="conflict">The hotkey conflict message for a binding and the app it works in (null: all apps), or null (see <see cref="HotkeyConflicts"/>).</param>
+    public static LoopDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?, string?> conflict, out List<CodeProblem> problems)
     {
         LoopDefinition? loop = CodeJson.Read<LoopDefinition>(text, (l, check) => Check(l, id, conflict, check), out problems);
         if (loop != null)
+        {
             loop.Name = loop.Name.Trim();
+            loop.AppExe = AppScope.Normalize(loop.AppExe);
+        }
         return loop;
     }
 
-    private static void Check(LoopDefinition l, Guid id, Func<HotkeyBinding, string?> conflict, CodeJson.Checker check)
+    private static void Check(LoopDefinition l, Guid id, Func<HotkeyBinding, string?, string?> conflict, CodeJson.Checker check)
     {
         check.SameId(l.Id, id);
         if (string.IsNullOrWhiteSpace(l.Name))
@@ -51,7 +54,8 @@ internal static class LoopJson
                 check.Add($"{path}.IntervalValue", "The interval must be between 10 ms and 24 h.");
         }
 
-        check.Hotkey(l.Hotkey, l.Mode, conflict);
+        check.AppExe(l.AppExe);
+        check.Hotkey(l.Hotkey, l.Mode, binding => conflict(binding, AppScope.Normalize(l.AppExe)));
         if (l.Hotkey is { IsSet: true } hotkey && !hotkey.HasModifiers
             && l.Actions.Any(a => a.Type == ActionType.Key && a.KeyVk == hotkey.Vk))
             check.Add("Hotkey", "The hotkey cannot be one of the keys this loop presses.");
@@ -73,7 +77,7 @@ internal static class RemapJson
         if (remap != null)
         {
             remap.Note = remap.Note.Trim();
-            remap.AppExe = remap.AppExe?.Trim();
+            remap.AppExe = AppScope.Normalize(remap.AppExe);
         }
         return remap;
     }
@@ -92,17 +96,11 @@ internal static class RemapJson
         else if (!target.HasModifiers && target.Vk == r.SourceVk)
             check.Add("Target", "The key to send must be different from the key pressed.");
 
-        if (r.AppExe != null)
-        {
-            if (string.IsNullOrWhiteSpace(r.AppExe))
-                check.Add("AppExe", "Write the app's file name, like \"notepad.exe\", or null for all apps.");
-            else if (!r.AppExe.Trim().EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                check.Add("AppExe", "Write the app's file name, ending in \".exe\".");
-        }
+        check.AppExe(r.AppExe);
         if (KeyNames.IsPrimaryMouse(r.SourceVk) && r.AppExe == null)
             check.Add("AppExe", "Left and right click can be remapped only for a specific app, so they keep working everywhere else.");
 
-        if (sourceValid && clash(r.SourceVk, r.AppExe?.Trim()) is string message)
+        if (sourceValid && clash(r.SourceVk, AppScope.Normalize(r.AppExe)) is string message)
             check.Add("SourceVk", message);
     }
 }

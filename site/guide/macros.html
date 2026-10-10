@@ -11,7 +11,7 @@
   <figcaption>Every action has its own delay before it starts. Groups and names keep long macros readable.</figcaption>
 </figure>
 <ul>
-  <li>The list of actions is on the left and takes the whole height of the window; Repeat, Speed, Activation, Hotkey, Floating button and Sound are on the right. The window can be resized and PuppyMacro keeps the size for the next time.</li>
+  <li>The list of actions is on the left and takes the whole height of the window; Repeat, Speed, Activation, Hotkey, Specific app, Floating button and Sound are on the right. The window can be resized and PuppyMacro keeps the size for the next time.</li>
   <li>Each action is one row: its icon, its name or description and its details, and on the right its delay, the wait before it starts. A group is a row with an arrow that opens or closes it.</li>
   <li>The bar above the list: <strong>Add action</strong> adds a step (choose its type in the menu); <strong>Record</strong> records more steps and inserts them into the macro. The other commands work on the selected actions: <strong>Test</strong>, <strong>Edit</strong>, <strong>Copy</strong>, <strong>Paste</strong>, <strong>Duplicate</strong>, <strong>Group</strong>, <strong>Delete</strong>, and in <strong>⋯</strong> <strong>Rename group</strong>, <strong>Ungroup</strong> and <strong>Shortcuts</strong>. Right-click a row for the same commands.</li>
   <li>The button at the right end of the bar switches the list between normal and compact rows; its arrow has <strong>Normal</strong> and <strong>Compact</strong>.</li>
@@ -22,7 +22,7 @@
   <li>Every action can have a <strong>Name (optional)</strong>, set in its window. The list shows it in bold, before the description of the action.</li>
   <li>New actions go after the selected action (in its group), after the selected group, or at the end. The text under the bar says what is selected and where new actions go.</li>
   <li><strong>Repeat</strong>: Once, Loop or N times. <strong>Speed</strong>: from ×0.25 to ×4.</li>
-  <li><strong>Activation</strong>, <strong>Hotkey</strong>, <strong>Floating button</strong> and <strong>Sound</strong> work as for <a href="loops.html">loops</a>. Without a hotkey, start the macro with <strong>Play</strong> (▶) on its card or from the overlay panel.</li>
+  <li><strong>Activation</strong>, <strong>Hotkey</strong>, <strong>Specific app</strong>, <strong>Floating button</strong> and <strong>Sound</strong> work as for <a href="loops.html">loops</a>. Without a hotkey, start the macro with <strong>Play</strong> (▶) on its card or from the overlay panel.</li>
 </ul>
 <h3>Select, move and copy actions</h3>
 <ul>
@@ -40,13 +40,13 @@
   <li>A group cannot go into another group. Groups only organize the list: the macro plays its actions in order, grouped or not.</li>
 </ul>
 <h3>The Macros page</h3>
-<p>Each macro is a card like a loop's (see <a href="loops.html">Loops &gt; The Loops page</a>): its state, how many actions it has, how long it takes and how it repeats, how it starts, then <strong>Play</strong> / <strong>Stop</strong>, <strong>Edit</strong>, the switch and <strong>More options</strong> (<strong>Move up</strong>, <strong>Move down</strong>, <strong>Delete</strong>). Drag macros to reorder them; search and filter as on the Loops page.</p>
+<p>Each macro is a card like a loop's (see <a href="loops.html">Loops &gt; The Loops page</a>): its state, its app when it has a <strong>Specific app</strong>, how many actions it has, how long it takes and how it repeats, how it starts, then <strong>Play</strong> / <strong>Stop</strong>, <strong>Edit</strong>, the switch and <strong>More options</strong> (<strong>Move up</strong>, <strong>Move down</strong>, <strong>Delete</strong>). Drag macros to reorder them; search and filter as on the Loops page.</p>
 <h3>Code view</h3>
 <figure class="shot">
   <img src="img/macro-editor-code.png" alt="The Edit macro window in Code view, with the macro's JSON and the Problems panel" loading="lazy">
   <figcaption>The same macro as its file: every setting, every action, every group.</figcaption>
 </figure>
-<p><strong>Code view</strong>, at the top of the editor, shows the macro exactly as PuppyMacro saves it: the JSON of its file, with name, actions, groups, repeat, speed, activation, hotkey, floating button and sound. <strong>Form view</strong> goes back to the list and the fields.</p>
+<p><strong>Code view</strong>, at the top of the editor, shows the macro exactly as PuppyMacro saves it: the JSON of its file, with name, actions, groups, repeat, speed, activation, hotkey, floating button, sound and app (<strong>AppExe</strong>, null for all apps). <strong>Form view</strong> goes back to the list and the fields.</p>
 <p>The windows of one action, of a loop and of a remap have the same <strong>Form view</strong> and <strong>Code view</strong>, for that item only: the action as it is in the macro's file, the loop or the remap as in <code>settings.json</code>.</p>
 <ul>
   <li>It is a code editor like the one of VS Code: colors, line numbers, find (<kbd>Ctrl</kbd>+<kbd>F</kbd>), undo and redo, several cursors.</li>

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,8 +39,6 @@ public partial class RemapEditorWindow
         string title = existing == null ? "Add remap" : "Edit remap";
         Title = title;
 
-        AppBox.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
-            new TextChangedEventHandler((_, _) => Validate()));
         LoadRemap(source);
 
         _code = new CodeViewSwitch<RemapDefinition>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
@@ -68,10 +64,7 @@ public partial class RemapEditorWindow
         _enabled = source.Enabled;
         _sourceVk = source.SourceVk;
         _target = source.Target?.Clone();
-        AllAppsRadio.IsChecked = source.AppExe == null;
-        OneAppRadio.IsChecked = source.AppExe != null;
-        AppBox.Text = source.AppExe ?? "";
-        AppPanel.Visibility = source.AppExe != null ? Visibility.Visible : Visibility.Collapsed;
+        AppScopeCard.Load(source.AppExe);
         NoteBox.Text = source.Note;
         UpdateLabels();
         Validate();
@@ -83,7 +76,7 @@ public partial class RemapEditorWindow
         Id = _itemId,
         SourceVk = _sourceVk,
         Target = _target?.Clone(),
-        AppExe = SelectedApp,
+        AppExe = AppScopeCard.AppExe,
         Note = (NoteBox.Text ?? "").Trim(),
         Enabled = _enabled,
     };
@@ -91,7 +84,7 @@ public partial class RemapEditorWindow
     /// <summary>Why <paramref name="sourceVk"/> cannot be remapped for <paramref name="app"/> (null: all apps): a hotkey or another remap.</summary>
     private string? SourceClash(int sourceVk, string? app)
     {
-        string? conflict = HotkeyConflicts.Find(HotkeyBinding.FromKey(sourceVk), _settings, _macros);
+        string? conflict = HotkeyConflicts.FindForRemap(sourceVk, app, _settings, _macros);
         if (conflict != null)
             return conflict + " Hotkeys take priority over remaps.";
 
@@ -119,52 +112,7 @@ public partial class RemapEditorWindow
         Validate();
     }
 
-    private void OnScopeChanged(object sender, RoutedEventArgs e)
-    {
-        if (AppPanel == null)
-            return;
-        AppPanel.Visibility = OneAppRadio.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        Validate();
-    }
-
-    /// <summary>Lists the .exe names of the apps that have a window open.</summary>
-    private void OnAppDropDownOpened(object? sender, EventArgs e)
-    {
-        string current = AppBox.Text;
-        var names = Process.GetProcesses()
-            .Where(p => { try { return p.MainWindowHandle != IntPtr.Zero; } catch { return false; } })
-            .Select(p => p.ProcessName + ".exe")
-            .Where(n => !n.Equals("PuppyMacro.exe", StringComparison.OrdinalIgnoreCase))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-        AppBox.ItemsSource = names;
-        AppBox.Text = current;
-    }
-
-    private void OnBrowseClick(object sender, RoutedEventArgs e)
-    {
-        var dialog = new Microsoft.Win32.OpenFileDialog
-        {
-            Title = "Choose the app",
-            Filter = "Programs (*.exe)|*.exe",
-        };
-        if (dialog.ShowDialog(this) == true)
-            AppBox.Text = Path.GetFileName(dialog.FileName);
-    }
-
-    private string? SelectedApp
-    {
-        get
-        {
-            if (OneAppRadio.IsChecked != true)
-                return null;
-            string name = (AppBox.Text ?? "").Trim();
-            if (name.Length == 0)
-                return "";
-            return name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? name : name + ".exe";
-        }
-    }
+    private void OnAppScopeChanged(object? sender, EventArgs e) => Validate();
 
     private string? GetValidationError()
     {
@@ -175,9 +123,9 @@ public partial class RemapEditorWindow
         if (!_target.HasModifiers && _target.Vk == _sourceVk)
             return "The key to send must be different from the key pressed.";
 
-        string? app = SelectedApp;
-        if (app == "")
-            return "Choose the app, or select All apps.";
+        if (AppScopeCard.ValidationError is string appError)
+            return appError;
+        string? app = AppScopeCard.AppExe;
         if (KeyNames.IsPrimaryMouse(_sourceVk) && app == null)
             return "Left and right click can be remapped only for a specific app, so they keep working everywhere else.";
 

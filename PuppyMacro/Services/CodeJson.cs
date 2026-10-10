@@ -142,6 +142,17 @@ internal static class CodeJson
                 Add("Hotkey", message);
         }
 
+        /// <summary>The checks of the Specific app card: null (all apps) or an .exe file name.</summary>
+        public void AppExe(string? appExe)
+        {
+            if (appExe == null)
+                return;
+            if (string.IsNullOrWhiteSpace(appExe))
+                Add("AppExe", "Write the app's file name, like \"notepad.exe\", or null for all apps.");
+            else if (!appExe.Trim().EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                Add("AppExe", "Write the app's file name, ending in \".exe\".");
+        }
+
         /// <summary>The checks of the Floating button card.</summary>
         public void FloatingButton(FloatingButton b, ActivationMode mode)
         {

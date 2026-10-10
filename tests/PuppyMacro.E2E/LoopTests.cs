@@ -149,4 +149,31 @@ public class LoopTests
         Assert.Empty(target.Downs(Vk.F14));
         Assert.Empty(target.Downs(Vk.F19));
     }
+
+    [Fact]
+    public void A_loop_for_an_app_runs_only_there_and_wins_over_the_same_hotkey_for_all_apps()
+    {
+        string thisApp = System.IO.Path.GetFileName(System.Environment.ProcessPath)!; // the target window's process
+        LoopDefinition elsewhere = Loop("E2E other app", Vk.F13, Every(Vk.F15, 300));
+        elsewhere.AppExe = "notepad.exe";
+        LoopDefinition here = Loop("E2E this app", Vk.F14, Every(Vk.F16, 300));
+        here.AppExe = thisApp;
+        LoopDefinition everywhere = Loop("E2E all apps", Vk.F14, Every(Vk.F17, 300));
+        using var app = new AppSession(seed => seed.Settings.Loops.AddRange(new[] { elsewhere, here, everywhere }));
+        using var target = new TargetWindow();
+
+        // The hotkey of a loop for another app reaches the window, and that loop never starts.
+        target.Tap(Vk.F13);
+        target.WaitFor(t => t.Ups(Vk.F13).Count == 1, 5, "F13 (a loop's hotkey in notepad.exe only) did not reach the window");
+        TargetWindow.Quiet(1);
+        Assert.Empty(target.Downs(Vk.F15));
+
+        // F14 is the hotkey of a loop for this app and of one for all apps: this app's one starts.
+        target.Tap(Vk.F14);
+        target.WaitFor(t => t.Downs(Vk.F16).Count >= 3, 5, $"the loop for {thisApp} did not start");
+        target.Tap(Vk.F14);
+        AssertStopped(target, Vk.F16, $"the loop for {thisApp}");
+        Assert.Empty(target.Downs(Vk.F17));
+        Assert.Empty(target.Downs(Vk.F14));
+    }
 }

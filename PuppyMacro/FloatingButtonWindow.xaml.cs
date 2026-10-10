@@ -48,6 +48,9 @@ public partial class FloatingButtonWindow
             : item.FloatingButton.Label;
 
     /// <summary>The circle's rectangle in physical screen pixels, or null when not on screen.</summary>
+    /// <summary>The loop or macro it starts and stops.</summary>
+    internal IListItem Item => _item;
+
     internal PanelTarget? GetClickTarget()
     {
         FrameworkElement circle = ButtonView.ClickArea;

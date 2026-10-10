@@ -30,13 +30,14 @@ internal static class MacroJson
     public static string Serialize(MacroAction action) => CodeJson.Serialize(action);
 
     /// <summary>Checks a whole macro's text and reads it. Null when there are problems.</summary>
-    /// <param name="conflict">The hotkey conflict message for a binding, or null (see <see cref="HotkeyConflicts"/>).</param>
-    public static MacroDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?> conflict, out List<CodeProblem> problems)
+    /// <param name="conflict">The hotkey conflict message for a binding and the app it works in (null: all apps), or null (see <see cref="HotkeyConflicts"/>).</param>
+    public static MacroDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?, string?> conflict, out List<CodeProblem> problems)
     {
         MacroDefinition? macro = CodeJson.Read<MacroDefinition>(text, (m, check) => CheckMacro(m, id, conflict, check), out problems);
         if (macro == null)
             return null;
         macro.Name = macro.Name.Trim();
+        macro.AppExe = AppScope.Normalize(macro.AppExe);
         foreach (var group in macro.Groups)
             group.Name = group.Name.Trim();
         return macro;
@@ -110,7 +111,7 @@ internal static class MacroJson
 
     private static void Add(CodeJson.Checker check, string path, string message) => check.Add(path, message);
 
-    private static void CheckMacro(MacroDefinition m, Guid id, Func<HotkeyBinding, string?> conflict, CodeJson.Checker check)
+    private static void CheckMacro(MacroDefinition m, Guid id, Func<HotkeyBinding, string?, string?> conflict, CodeJson.Checker check)
     {
         check.SameId(m.Id, id);
         if (string.IsNullOrWhiteSpace(m.Name))
@@ -121,7 +122,8 @@ internal static class MacroJson
         if (!MacroDefinition.SpeedSteps.Contains(m.Speed))
             check.Add("Speed", "Must be 0.25, 0.5, 1, 2 or 4.");
         check.KnownSound(m.SoundName);
-        check.Hotkey(m.Hotkey, m.Mode, conflict);
+        check.AppExe(m.AppExe);
+        check.Hotkey(m.Hotkey, m.Mode, binding => conflict(binding, AppScope.Normalize(m.AppExe)));
         check.FloatingButton(m.FloatingButton, m.Mode);
         CheckGroups(m, check);
         for (int i = 0; i < m.Actions.Count; i++)

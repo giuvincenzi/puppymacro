@@ -55,7 +55,7 @@ PuppyMacro/
 | Thread | What runs there |
 |---|---|
 | UI (WPF dispatcher) | Windows, view models, `SoundService`, clipboard (`ClipboardPaster`) |
-| `InputThread` | `WH_KEYBOARD_LL` / `WH_MOUSE_LL` hooks + message loop, desktop-switch WinEvent hook |
+| `InputThread` | `WH_KEYBOARD_LL` / `WH_MOUSE_LL` hooks + message loop, desktop-switch and foreground WinEvent hooks |
 | `Injector` | Input sent on behalf of the hook (remap targets, menu mask key), in order |
 | One per running loop row (`ActionRunner`) / per running macro (`MacroRunner`) | Timing with `PreciseTimer` (high-resolution waitable timer) and `SendInput` |
 
@@ -113,6 +113,17 @@ Rules:
   `Services/CodeSchema.cs` gives Monaco the JSON Schema of each item (suggestions, inline errors).
   Monaco's problems come first; the app's checks decide Save.
 - Remap: `RemapDefinition`, `LoopEngine.FindRemap`, `RemapEditorWindow`.
+- Specific app (`AppExe` on loops, macros and remaps; `Models/AppScope`: null = all apps, names
+  compared without case): the card `Views/AppScopeEditor`, the same in the three editors (list of
+  running apps, Pick, Browse…). Pick opens `PickPointWindow(pickApp: true)`: the editor moves off
+  screen, the window under the cursor (`Services/AppWindows.At`, PuppyMacro's own windows skipped) is
+  outlined with its .exe name. The app in front comes from the `EVENT_SYSTEM_FOREGROUND` WinEvent hook
+  (`LoopEngine.OnForegroundWindow`): PuppyMacro's own windows never count, the last other app stays
+  (`LoopEngine.ForegroundApp`). When it changes, the loops and macros running for another app stop (one
+  stop sound) and `ForegroundAppChanged` tells the UI: the overlay panel (`OverlayPanel.SetApp`) and the
+  floating buttons show only the items for all apps and for that app. `PlacementWindow` shows them all.
+  Remaps read the window in front at each key press (`FindRemap`), so a remap for an app never applies
+  inside PuppyMacro's windows.
 - Hotkeys: `HotkeyBinding`, `Services/HotkeyRules.cs` (which keys need a modifier),
   `HotkeyConflicts`, `KeyNames` (names, wheel codes), `LoopEngine.OnKey` / `OnWheel` (input.md).
   `Views/KeyCaptureField` is the one field that asks the user for a key or hotkey (editors' Hotkey

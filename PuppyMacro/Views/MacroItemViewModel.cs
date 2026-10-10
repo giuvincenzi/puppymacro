@@ -51,6 +51,8 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     }
     public bool IsHoldMode => Definition.Mode == ActivationMode.Hold;
     public FloatingButton FloatingButton => Definition.FloatingButton;
+    public string? AppExe => Definition.AppExe;
+    public bool HasApp => Definition.AppExe != null;
     public bool IsItemEnabled => Definition.Enabled;
 
     public string Summary

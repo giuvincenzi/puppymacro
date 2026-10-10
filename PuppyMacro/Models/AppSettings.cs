@@ -218,6 +218,9 @@ public sealed class LoopDefinition
 
     public FloatingButton FloatingButton { get; set; } = new();
 
+    /// <summary>Executable name (e.g. "Diablo IV.exe") it works in; null = all apps (<see cref="AppScope"/>).</summary>
+    public string? AppExe { get; set; }
+
     // ---- v1.0 fields, read once and converted by SettingsStore ----
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? KeyVk { get; set; }
@@ -247,6 +250,7 @@ public sealed class LoopDefinition
         SoundEnabled = other.SoundEnabled;
         SoundName = other.SoundName;
         FloatingButton = other.FloatingButton.Clone();
+        AppExe = other.AppExe;
     }
 }
 
@@ -385,7 +389,7 @@ public sealed class RemapDefinition
     /// <summary>Key, mouse button or combination sent instead.</summary>
     public HotkeyBinding? Target { get; set; }
 
-    /// <summary>Executable name (e.g. "Diablo IV.exe"); null = all apps.</summary>
+    /// <summary>Executable name (e.g. "Diablo IV.exe"); null = all apps (<see cref="AppScope"/>).</summary>
     public string? AppExe { get; set; }
 
     public string Note { get; set; } = "";
@@ -406,4 +410,21 @@ public sealed class RemapDefinition
         Note = other.Note;
         Enabled = other.Enabled;
     }
+}
+
+/// <summary>
+/// The app a loop, macro or remap works in (<c>AppExe</c>): an executable file name like "Diablo IV.exe",
+/// compared without case; null = all apps.
+/// </summary>
+public static class AppScope
+{
+    /// <summary>The saved form: trimmed, null when empty.</summary>
+    public static string? Normalize(string? appExe) =>
+        string.IsNullOrWhiteSpace(appExe) ? null : appExe.Trim();
+
+    /// <summary>True when an item for <paramref name="appExe"/> works while <paramref name="foregroundExe"/> is in front.</summary>
+    public static bool Allows(string? appExe, string? foregroundExe) =>
+        appExe == null || Same(appExe, foregroundExe);
+
+    public static bool Same(string? a, string? b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 }
