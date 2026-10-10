@@ -19,6 +19,8 @@ ifeq ($(OS),Windows_NT)
 POWERSHELL := powershell
 else
 POWERSHELL := powershell.exe
+# WSL hands only the variables listed in WSLENV to Windows programs: the code signing ones (make build).
+export WSLENV := CERTUM_EMAIL:CERTUM_OTP:CERTUM_TOKEN$(if $(WSLENV),:$(WSLENV))
 endif
 
 RUN_SCRIPT = $(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/$(1).ps1

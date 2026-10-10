@@ -10,6 +10,8 @@
   app in front wins over one for all apps.
 - **Pick** in Specific app: click a window of the app to choose it; the window under the mouse is
   outlined with the app's name.
+- Setup and PuppyMacro are code-signed (Certum Open Source certificate), so Windows shows who
+  published them.
 
 ### Changed
 - The remap editor's **Works in** card is now **Specific app**, the same card as in the loop and macro

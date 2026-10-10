@@ -93,10 +93,10 @@
     <div class="wrap">
       <div class="panel">
         <h2>Code signing policy</h2>
-        <p>Free code signing provided by <a href="https://signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a>.
-          Our application to the SignPath Foundation is being reviewed: until it is approved, releases are not signed and Windows may warn before running Setup.</p>
+        <p>Releases are signed with a <a href="https://www.certum.eu">Certum</a> Open Source code signing certificate issued to Giuseppe Vincenzi.
+          A new certificate needs time to build a reputation with Windows: until then Windows may still warn before running Setup.</p>
         <ul>
-          <li>Releases are built by GitHub Actions from the source code in the <a href="https://github.com/giuvincenzi/puppymacro">public repository</a>.</li>
+          <li>Releases are built and signed by GitHub Actions from the source code in the <a href="https://github.com/giuvincenzi/puppymacro">public repository</a>: Setup, PuppyMacro and its own files carry the signature, with a timestamp.</li>
           <li>Committers and reviewers: Giuseppe Vincenzi</li>
           <li>Approvers: Giuseppe Vincenzi</li>
           <li>Uninstall from Windows Settings > Apps > Installed apps.</li>
