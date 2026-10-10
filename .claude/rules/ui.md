@@ -70,8 +70,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     keep working; the card's own disabled state would block them).
   - `Views/SwitchSettingsExpander`: a `SettingsExpander` with a switch in its header whose options
     open only while the switch is on (`CanExpand`): otherwise no arrow and the header does not open
-    it. Use it for every group whose switch unlocks its options (today: floating button, Sound and Specific app in
-    the loop and macro editors). It still lights up on mouse over when it cannot open (that is in
+    it. Use it for every group whose switch unlocks its options (today: Show in overlay, floating button, Sound
+    and Specific app in the loop and macro editors). It still lights up on mouse over when it cannot open (that is in
     the library's template).
   - The main window's side rail, `Views/SideRail`, as in Microsoft Store (iNKORE and WinUI have no
     such control; the Store templates its NavigationView): always closed, 72 px wide, two standard
@@ -118,6 +118,13 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `ListViewItemCompactSelectedBorderThemeThickness` and `ListViewItemCornerRadius` set to 0. A
     group's open / close arrow is a `Button` with no background, border or hover, in the actions'
     icon column (16 wide), so the group name lines up with the actions.
+  - Disabled loops and macros in the overlay (its own fixed dark look, no yellow so they do not stand out):
+    a panel row with a dashed outline (`#47FFFFFF`, a `Rectangle` behind the row, as a `Border` cannot be
+    dashed) instead of its fill and border, a hollow `#9E9E9E` dot, the name and hotkey in `#8A8A8A` and
+    the state "Disabled" in the usual `#C5C5C5`; a floating button with a dashed ring (`#66FFFFFF`, an
+    `Ellipse` over the circle) instead of its border, the label and badge in `#8A8A8A` and its background
+    at 65% of its opacity. Under Stop all, while the panel can be clicked, the hint "Click: start / stop ·
+    Right-click: enable / disable".
   - Specific app (`Views/AppScopeEditor`, in the loop, macro and remap editors): a
     `SwitchSettingsExpander` whose card holds the editable `ComboBox` of running apps, **Pick** (the
     `Eyedropper` icon) and **Browse…**. Pick's overlay (`PickPointWindow` with `pickApp`) outlines the

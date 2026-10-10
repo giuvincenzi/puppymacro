@@ -12,7 +12,8 @@ using PuppyMacro.Views;
 namespace PuppyMacro;
 
 /// <summary>A floating button shown in the placement overlay.</summary>
-internal sealed record PlacementButton(Guid Id, string Name, string Label, string HotkeyText, FloatingButtonSize Size, int Opacity, Point Position);
+internal sealed record PlacementButton(Guid Id, string Name, string Label, string HotkeyText, FloatingButtonSize Size, int Opacity, Point Position,
+    bool Enabled = true);
 
 /// <summary>
 /// Full-screen overlay to choose where the overlay panel and the floating buttons appear.
@@ -83,6 +84,7 @@ public partial class PlacementWindow
             var view = new FloatingButtonView();
             view.Show(button.Label, button.HotkeyText, button.Size);
             view.SetBackgroundOpacity(button.Opacity);
+            view.IsItemEnabled = button.Enabled;
             double diameter = FloatingButton.DiameterOf(button.Size);
             var outline = new Ellipse
             {

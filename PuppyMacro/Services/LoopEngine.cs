@@ -33,9 +33,15 @@ internal sealed class EngineSnapshot
 /// A clickable part of the overlay (a panel row, a floating button, the panel's Stop all or exit
 /// button), in physical screen pixels. <see cref="Id"/> is the loop's or macro's, or
 /// <see cref="StopAllId"/>, <see cref="ExitOverlayId"/> or <see cref="MoveOverlayId"/>.
+/// On a loop or macro a left click starts or stops it when <see cref="Startable"/> (enabled, not Hold) and a
+/// right click enables or disables it; with <see cref="PassThrough"/> the click also reaches the app behind.
 /// </summary>
-internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bottom, Guid Id)
+internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bottom, Guid Id,
+    bool Startable = true, bool PassThrough = false)
 {
+    /// <summary>A loop or macro (not one of the panel's own buttons).</summary>
+    public bool IsItem => Id != StopAllId && Id != ExitOverlayId && Id != MoveOverlayId;
+
     /// <summary>The overlay panel's Stop all button.</summary>
     public static readonly Guid StopAllId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d01");
 
@@ -97,6 +103,7 @@ internal sealed class LoopEngine : IDisposable
     // ---- Clickable overlay panel ----
     private IReadOnlyList<PanelTarget>? _panelTargets;
     private bool _swallowLeftUp;
+    private bool _swallowRightUp;
 
     // ---- Dragging the overlay panel by its move handle ----
     private bool _panelDragging;
@@ -124,6 +131,12 @@ internal sealed class LoopEngine : IDisposable
 
     /// <summary>Raised (asynchronously, on the UI thread) when the overlay mode hotkey is pressed.</summary>
     public event Action? OverlayModeToggleRequested;
+
+    /// <summary>
+    /// Raised (asynchronously, on the UI thread) on a right click on a loop or macro in the overlay: the UI
+    /// enables or disables it (its id).
+    /// </summary>
+    public event Action<Guid>? OverlayEnableToggleRequested;
 
     /// <summary>
     /// Raised (asynchronously, on the UI thread) while the overlay panel's move handle is dragged: the phase and
@@ -498,38 +511,65 @@ internal sealed class LoopEngine : IDisposable
                 }
             }
 
-            if (_panelTargets != null && vk == KeyNames.VK_LBUTTON)
+            if (_panelTargets != null && vk is KeyNames.VK_LBUTTON or KeyNames.VK_RBUTTON)
             {
-                if (kind == InputHook.MouseKind.ButtonUp && _swallowLeftUp)
+                bool left = vk == KeyNames.VK_LBUTTON;
+                if (kind == InputHook.MouseKind.ButtonUp && (left ? _swallowLeftUp : _swallowRightUp))
                 {
-                    _swallowLeftUp = false;
+                    if (left)
+                        _swallowLeftUp = false;
+                    else
+                        _swallowRightUp = false;
                     return true;
                 }
-                if (kind == InputHook.MouseKind.ButtonDown && !_hotkeysSuspended)
+                if (kind == InputHook.MouseKind.ButtonDown && !_hotkeysSuspended && TargetAt(x, y) is PanelTarget target)
                 {
-                    foreach (var target in _panelTargets)
+                    if (left && target.Id == PanelTarget.MoveOverlayId)
                     {
-                        if (x >= target.Left && x < target.Right && y >= target.Top && y < target.Bottom)
-                        {
-                            if (target.Id == PanelTarget.MoveOverlayId)
-                            {
-                                // The press and its release never reach the app: it keeps the focus.
-                                _panelDragging = true;
-                                _panelDragX = x;
-                                _panelDragY = y;
-                                _panelDragDx = _panelDragDy = 0;
-                                _dispatcher.InvokeAsync(() => OverlayPanelDragged?.Invoke(PanelDragPhase.Started, 0, 0));
-                                return true;
-                            }
-                            _swallowLeftUp = true;
-                            ToggleById(target.Id);
-                            return true;
-                        }
+                        // The press and its release never reach the app: it keeps the focus.
+                        _panelDragging = true;
+                        _panelDragX = x;
+                        _panelDragY = y;
+                        _panelDragDx = _panelDragDy = 0;
+                        _dispatcher.InvokeAsync(() => OverlayPanelDragged?.Invoke(PanelDragPhase.Started, 0, 0));
+                        return true;
                     }
+                    if (left)
+                    {
+                        // A disabled or Hold item does nothing on a left click.
+                        if (target.Startable)
+                            ToggleById(target.Id);
+                    }
+                    else
+                    {
+                        // A right click on the panel's own buttons reaches the app as usual.
+                        if (!target.IsItem)
+                            return false;
+                        Guid id = target.Id;
+                        _dispatcher.InvokeAsync(() => OverlayEnableToggleRequested?.Invoke(id));
+                    }
+                    if (target.PassThrough)
+                        return false;
+                    if (left)
+                        _swallowLeftUp = true;
+                    else
+                        _swallowRightUp = true;
+                    return true;
                 }
             }
             return false;
         }
+    }
+
+    // Called with the lock held, on the input thread.
+    private PanelTarget? TargetAt(int x, int y)
+    {
+        foreach (var target in _panelTargets!)
+        {
+            if (x >= target.Left && x < target.Right && y >= target.Top && y < target.Bottom)
+                return target;
+        }
+        return null;
     }
 
     // Called with the lock held, on the input thread: one Moved on its way at a time, with the latest offset.

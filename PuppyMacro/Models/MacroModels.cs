@@ -160,6 +160,15 @@ public sealed class MacroDefinition
     /// <summary>Executable name (e.g. "Diablo IV.exe") it works in; null = all apps (<see cref="AppScope"/>).</summary>
     public string? AppExe { get; set; }
 
+    /// <summary>Shown in overlay mode: its row in the overlay panel or its floating button.</summary>
+    public bool ShowInOverlay { get; set; } = true;
+
+    /// <summary>Left out of the overlay while it is disabled (otherwise shown as disabled).</summary>
+    public bool HideInOverlayWhenDisabled { get; set; }
+
+    /// <summary>A click on it in the overlay also reaches the window under it.</summary>
+    public bool OverlayClickPassesThrough { get; set; }
+
     [System.Text.Json.Serialization.JsonIgnore]
     public double TotalMs
     {
@@ -217,6 +226,9 @@ public sealed class MacroDefinition
         SoundName = other.SoundName;
         FloatingButton = other.FloatingButton.Clone();
         AppExe = other.AppExe;
+        ShowInOverlay = other.ShowInOverlay;
+        HideInOverlayWhenDisabled = other.HideInOverlayWhenDisabled;
+        OverlayClickPassesThrough = other.OverlayClickPassesThrough;
     }
 
     /// <summary>

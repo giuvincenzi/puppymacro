@@ -24,6 +24,7 @@ public partial class FloatingButtonWindow
         ButtonView.Show(LabelOf(item), item.HasHotkey ? item.HotkeyText : "", item.FloatingButton.Size);
         ButtonView.SetBackgroundOpacity(opacity);
         ButtonView.IsRunning = item.IsRunning;
+        ButtonView.IsItemEnabled = item.IsItemEnabled;
 
         // The position is the circle's top-left; the window starts at the halo.
         Left = position.X - FloatingButtonView.Inset;
@@ -58,13 +59,16 @@ public partial class FloatingButtonWindow
             return null;
         Point topLeft = circle.PointToScreen(new Point(0, 0));
         Point bottomRight = circle.PointToScreen(new Point(circle.ActualWidth, circle.ActualHeight));
-        return new PanelTarget((int)topLeft.X, (int)topLeft.Y, (int)bottomRight.X, (int)bottomRight.Y, _item.Id);
+        return new PanelTarget((int)topLeft.X, (int)topLeft.Y, (int)bottomRight.X, (int)bottomRight.Y, _item.Id,
+            Startable: _item.IsItemEnabled, PassThrough: _item.OverlayClickPassesThrough);
     }
 
     private void OnItemChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(IListItem.IsRunning) or "" or null)
             ButtonView.IsRunning = _item.IsRunning;
+        if (e.PropertyName is nameof(IListItem.IsItemEnabled) or "" or null)
+            ButtonView.IsItemEnabled = _item.IsItemEnabled;
     }
 
     private void OnSourceInitialized(object? sender, EventArgs e)

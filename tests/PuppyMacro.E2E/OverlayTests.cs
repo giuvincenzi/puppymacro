@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Input;
 using FlaUI.Core.Tools;
 using PuppyMacro.Models;
 using Xunit;
@@ -20,14 +21,16 @@ public class OverlayTests
     private const string PanelLoop = "E2E panel loop";
     private const string ButtonMacro = "E2E button macro";
 
-    private static void SeedOverlay(Seed seed, bool clickItemsInPanel)
+    private static void SeedOverlay(Seed seed, bool clickItemsInPanel, bool clicksPassThrough = false)
     {
         // Positions in device-independent pixels, as the app saves them: inside the target window
         // at 100% to 200% display scale.
         seed.Settings.OverlayPanelX = 80;
         seed.Settings.OverlayPanelY = 80;
         seed.Settings.ClickItemsInPanel = clickItemsInPanel;
-        seed.Settings.Loops.Add(Loop(PanelLoop, null, Every(Vk.F17, 300)));
+        LoopDefinition panelLoop = Loop(PanelLoop, null, Every(Vk.F17, 300));
+        panelLoop.OverlayClickPassesThrough = clicksPassThrough;
+        seed.Settings.Loops.Add(panelLoop);
         MacroDefinition panelMacro = Macro(PanelMacro, null, Press(Vk.F15, delayMs: 300));
         panelMacro.Repeat = RepeatMode.Loop;
         MacroDefinition buttonMacro = Macro(ButtonMacro, null, Press(Vk.F16));
@@ -104,6 +107,110 @@ public class OverlayTests
 
         target.Click(ButtonCenter(app, button));
         target.WaitFor(t => t.Ups(Vk.F16).Count == 1, 5, "clicking the floating button did not play its macro");
+
+        target.Tap(Vk.F24);
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the main window did not come back");
+    }
+
+    [Fact]
+    public void A_right_click_disables_and_enables_a_panel_row_and_a_floating_button_and_disabled_they_do_nothing()
+    {
+        using var app = new AppSession(seed => SeedOverlay(seed, clickItemsInPanel: true));
+        using var target = new TargetWindow();
+        (AutomationElement panel, AutomationElement button) = EnterOverlayMode(app, target);
+
+        // Panel row: disabled, it shows so and a click does nothing.
+        Point row = CenterOf(app, panel, PanelLoop);
+        target.Click(row, MouseButton.Right);
+        Assert.True(app.Has(panel, "Disabled"), "the right click did not disable the loop");
+        TargetWindow.Quiet(1); // the click targets are published every 300 ms
+        target.Click(row);
+        TargetWindow.Quiet(1);
+        Assert.Empty(target.Downs(Vk.F17));
+
+        // Enabled again, a click starts it.
+        target.Click(row, MouseButton.Right);
+        Assert.True(Retry.WhileTrue(() => app.Has(panel, "Disabled"), AppSession.Timeout).Success, "the right click did not enable the loop");
+        TargetWindow.Quiet(1);
+        target.Click(row);
+        target.WaitFor(t => t.Downs(Vk.F17).Count >= 2, 5, "clicking the enabled row did not start the loop");
+        target.Click(CenterOf(app, panel, "Stop all"));
+        AssertStopped(target, Vk.F17, "the loop after the panel's Stop all");
+
+        // Floating button: the same.
+        Point circle = ButtonCenter(app, button);
+        target.Click(circle, MouseButton.Right);
+        TargetWindow.Quiet(1);
+        target.Click(circle);
+        TargetWindow.Quiet(1);
+        Assert.Empty(target.Downs(Vk.F16));
+        target.Click(circle, MouseButton.Right);
+        TargetWindow.Quiet(1);
+        target.Click(circle);
+        target.WaitFor(t => t.Ups(Vk.F16).Count == 1, 5, "clicking the enabled floating button did not play its macro");
+
+        // PuppyMacro took every click.
+        Assert.Empty(target.Downs(Vk.LButton));
+        Assert.Empty(target.Downs(Vk.RButton));
+        target.RequireForeground();
+
+        target.Tap(Vk.F24);
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the main window did not come back");
+    }
+
+    [Fact]
+    public void With_clicks_passing_through_a_panel_row_acts_and_the_window_gets_the_click_too()
+    {
+        using var app = new AppSession(seed => SeedOverlay(seed, clickItemsInPanel: true, clicksPassThrough: true));
+        using var target = new TargetWindow();
+        (AutomationElement panel, _) = EnterOverlayMode(app, target);
+
+        Point row = CenterOf(app, panel, PanelLoop);
+        target.Click(row);
+        target.WaitFor(t => t.Downs(Vk.F17).Count >= 2, 5, "clicking the row did not start the loop");
+        target.WaitFor(t => t.Ups(Vk.LButton).Count == 1, 5, "the click on the row did not reach the window");
+        Near(row, target.Downs(Vk.LButton)[0].Position, "click through the panel");
+        target.Click(CenterOf(app, panel, "Stop all"));
+        AssertStopped(target, Vk.F17, "the loop after the panel's Stop all");
+
+        target.Click(row, MouseButton.Right);
+        Assert.True(app.Has(panel, "Disabled"), "the right click did not disable the loop");
+        target.WaitFor(t => t.Ups(Vk.RButton).Count == 1, 5, "the right click on the row did not reach the window");
+
+        target.Tap(Vk.F24);
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the main window did not come back");
+    }
+
+    [Fact]
+    public void The_overlay_shows_disabled_items_unless_they_are_hidden_while_disabled_or_not_shown_in_the_overlay()
+    {
+        using var app = new AppSession(seed =>
+        {
+            SeedOverlay(seed, clickItemsInPanel: true);
+            LoopDefinition disabled = Loop("E2E disabled loop", null, Every(Vk.F17, 300));
+            disabled.Enabled = false;
+            LoopDefinition hiddenWhileDisabled = Loop("E2E loop hidden while disabled", null, Every(Vk.F17, 300));
+            hiddenWhileDisabled.Enabled = false;
+            hiddenWhileDisabled.HideInOverlayWhenDisabled = true;
+            LoopDefinition notShown = Loop("E2E loop not in the overlay", null, Every(Vk.F17, 300));
+            notShown.ShowInOverlay = false;
+            seed.Settings.Loops.AddRange(new[] { disabled, hiddenWhileDisabled, notShown });
+            MacroDefinition buttonNotShown = Macro("E2E button not in the overlay", null, Press(Vk.F16));
+            buttonNotShown.ShowInOverlay = false;
+            buttonNotShown.FloatingButton = new FloatingButton { Enabled = true, X = 500, Y = 100 };
+            seed.Macros.Add(buttonNotShown);
+        });
+        using var target = new TargetWindow();
+        (AutomationElement panel, _) = EnterOverlayMode(app, target);
+
+        Assert.True(app.Has(panel, "E2E disabled loop"));
+        Assert.True(app.Has(panel, "Disabled"));
+        Assert.False(app.Has(panel, "E2E loop hidden while disabled"));
+        Assert.False(app.Has(panel, "E2E loop not in the overlay"));
+        Assert.Null(app.TopWindow("PuppyMacro floating button: E2E button not in the overlay"));
 
         target.Tap(Vk.F24);
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,

@@ -13,6 +13,9 @@
                 Background="#D9202020" BorderBrush="#2EFFFFFF" BorderThickness="1">
             <TextBlock x:Name="LabelText" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Border>
+        <!-- Disabled: a dashed ring instead of the circle's border (a Border cannot be dashed) -->
+        <Ellipse x:Name="DisabledRing" HorizontalAlignment="Left" VerticalAlignment="Top"
+                 Stroke="#66FFFFFF" StrokeThickness="1.5" StrokeDashArray="3 2.5" Visibility="Collapsed" />
         <!-- Hotkey, as a key cap on the bottom-right edge of the circle -->
         <Border x:Name="Badge" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="4,0" CornerRadius="4"
                 BorderThickness="1,1,1,2" BorderBrush="#4C4C4C" Background="#373737">

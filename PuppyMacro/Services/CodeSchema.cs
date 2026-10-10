@@ -30,6 +30,9 @@ internal static class CodeSchema
         ["MacroDefinition.SoundName"] = "One of the built-in sounds.",
         ["MacroDefinition.FloatingButton"] = "Round button shown in overlay mode (Toggle only).",
         ["MacroDefinition.AppExe"] = "File name of the app it works in, like \"notepad.exe\"; null for all apps. It stops when another app comes in front.",
+        ["MacroDefinition.ShowInOverlay"] = "Shown in overlay mode: its row in the overlay panel, or its floating button.",
+        ["MacroDefinition.HideInOverlayWhenDisabled"] = "Left out of the overlay while it is disabled. Off: shown as disabled.",
+        ["MacroDefinition.OverlayClickPassesThrough"] = "A click on it in the overlay also clicks the window under it.",
 
         ["MacroAction.Type"] = "What the step does.",
         ["MacroAction.DelayMs"] = "Wait before the step, in ms, from the end of the previous step.",
@@ -78,6 +81,9 @@ internal static class CodeSchema
         ["LoopDefinition.SoundName"] = "One of the built-in sounds.",
         ["LoopDefinition.FloatingButton"] = "Round button shown in overlay mode (Toggle only).",
         ["LoopDefinition.AppExe"] = "File name of the app it works in, like \"notepad.exe\"; null for all apps. It stops when another app comes in front.",
+        ["LoopDefinition.ShowInOverlay"] = "Shown in overlay mode: its row in the overlay panel, or its floating button.",
+        ["LoopDefinition.HideInOverlayWhenDisabled"] = "Left out of the overlay while it is disabled. Off: shown as disabled.",
+        ["LoopDefinition.OverlayClickPassesThrough"] = "A click on it in the overlay also clicks the window under it.",
 
         ["LoopAction.Type"] = "Key: press a key or mouse button. Text: paste a text.",
         ["LoopAction.KeyVk"] = "Key rows: virtual-key code of the key or mouse button (65 = A, 112 = F1, 1 = left button).",

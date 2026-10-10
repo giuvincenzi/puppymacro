@@ -27,11 +27,11 @@ public partial class OverlayPanel
         TitleText.Text = App.DisplayTitle;
     }
 
-    /// <summary>Shows the enabled loops and macros, in the same order as their lists.</summary>
+    /// <summary>Shows the loops and macros shown in the overlay, in the same order as their lists.</summary>
     public void Bind(IList loops, IList macros)
     {
-        _loops = new ListCollectionView(loops) { Filter = IsEnabledItem };
-        _macros = new ListCollectionView(macros) { Filter = IsEnabledItem };
+        _loops = new ListCollectionView(loops) { Filter = IsPanelRow };
+        _macros = new ListCollectionView(macros) { Filter = IsPanelRow };
         LoopList.ItemsSource = _loops;
         MacroList.ItemsSource = _macros;
         if (loops is INotifyCollectionChanged l)
@@ -55,9 +55,9 @@ public partial class OverlayPanel
     /// <summary>Works while the app in front is in front (always without <see cref="SetApp"/>).</summary>
     private bool WorksHere(IListItem item) => !_followApp || AppScope.Allows(item.AppExe, _app);
 
-    /// <summary>Enabled items for the app in front, except those shown as floating buttons.</summary>
-    private bool IsEnabledItem(object item) =>
-        item is IListItem { IsItemEnabled: true } listItem && !FloatingButtons.HasButton(listItem) && WorksHere(listItem);
+    /// <summary>Items shown in the overlay for the app in front (disabled ones too), except those on floating buttons.</summary>
+    private bool IsPanelRow(object item) =>
+        item is IListItem listItem && OverlayItems.IsShown(listItem) && !FloatingButtons.HasButton(listItem) && WorksHere(listItem);
 
     public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey)
     {
@@ -84,7 +84,8 @@ public partial class OverlayPanel
 
     /// <summary>
     /// Stop all is red while something runs and the panel can be clicked; the exit and move buttons are dimmed
-    /// when the panel cannot be clicked (Click items in the panel to start or stop them is off).
+    /// and the clicks hint is hidden when the panel cannot be clicked (Click items in the panel to start or stop
+    /// them is off).
     /// </summary>
     public void SetState(bool anyRunning, bool clickable)
     {
@@ -95,6 +96,7 @@ public partial class OverlayPanel
         StopAllSquare.Fill = red ? StopRed : NeutralSquare;
         ExitButton.Opacity = clickable ? 1 : 0.5;
         MoveButton.Opacity = clickable ? 1 : 0.5;
+        ClickHint.Visibility = clickable ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>Sets the panel background opacity (percent). Text is not affected.</summary>
@@ -112,7 +114,10 @@ public partial class OverlayPanel
         UpdateEmptyState();
     }
 
-    /// <summary>Screen rectangles (physical pixels) of the clickable rows (enabled, not Hold), the exit and move buttons and Stop all.</summary>
+    /// <summary>
+    /// Screen rectangles (physical pixels) of the rows (a left click starts only enabled, not Hold ones; a right
+    /// click enables or disables any), the exit and move buttons and Stop all.
+    /// </summary>
     internal List<PanelTarget> GetClickTargets()
     {
         var targets = new List<PanelTarget>();
@@ -139,13 +144,14 @@ public partial class OverlayPanel
     {
         foreach (var item in list.Items)
         {
-            if (item is not IListItem { IsItemEnabled: true, IsHoldMode: false } listItem)
+            if (item is not IListItem listItem)
                 continue;
             if (list.ItemContainerGenerator.ContainerFromItem(item) is not FrameworkElement row || !row.IsVisible)
                 continue;
             Point topLeft = row.PointToScreen(new Point(0, 0));
             Point bottomRight = row.PointToScreen(new Point(row.ActualWidth, row.ActualHeight));
-            targets.Add(new PanelTarget((int)topLeft.X, (int)topLeft.Y, (int)bottomRight.X, (int)bottomRight.Y, listItem.Id));
+            targets.Add(new PanelTarget((int)topLeft.X, (int)topLeft.Y, (int)bottomRight.X, (int)bottomRight.Y, listItem.Id,
+                Startable: listItem.IsItemEnabled && !listItem.IsHoldMode, PassThrough: listItem.OverlayClickPassesThrough));
         }
     }
 
@@ -156,10 +162,10 @@ public partial class OverlayPanel
         int loops = _loops?.Count ?? 0;
         int macros = _macros?.Count ?? 0;
         bool anyButton = HasAny(i => FloatingButtons.HasButton(i) && WorksHere(i));
-        bool forOtherApps = HasAny(i => i.IsItemEnabled && !WorksHere(i));
+        bool forOtherApps = HasAny(i => OverlayItems.IsShown(i) && !WorksHere(i));
         EmptyText.Text = anyButton ? "Everything is on floating buttons."
             : forOtherApps ? "Nothing for this app."
-            : "No enabled loops.";
+            : "Nothing to show.";
         EmptyText.Visibility = loops + macros == 0 ? Visibility.Visible : Visibility.Collapsed;
         MacrosHeader.Visibility = macros > 0 && loops > 0 ? Visibility.Visible : Visibility.Collapsed;
     }

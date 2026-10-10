@@ -1,0 +1,23 @@
+<UserControl
+    x:Class="PuppyMacro.Views.OverlayOptionsEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:views="clr-namespace:PuppyMacro.Views">
+
+    <!-- Show in overlay expander, shared by the loop and macro editors -->
+    <views:SwitchSettingsExpander x:Name="OverlayExpander" Header="Show in overlay"
+                                  CanExpand="{Binding IsOn, ElementName=ShowSwitch}"
+                                  Description="Its row in the overlay panel, or its floating button">
+        <ui:ToggleSwitch x:Name="ShowSwitch" Toggled="OnShowSwitchChanged" AutomationProperties.Name="Show in overlay" />
+
+        <ui:SettingsExpander.Items>
+            <ui:SettingsCard Header="Hide when disabled" Description="Not shown in the overlay while it is disabled">
+                <ui:ToggleSwitch x:Name="HideWhenDisabledSwitch" AutomationProperties.Name="Hide when disabled" />
+            </ui:SettingsCard>
+            <ui:SettingsCard Header="Clicks also reach the app behind" Description="A click on it in the overlay also clicks the window under it">
+                <ui:ToggleSwitch x:Name="PassThroughSwitch" AutomationProperties.Name="Clicks also reach the app behind" />
+            </ui:SettingsCard>
+        </ui:SettingsExpander.Items>
+    </views:SwitchSettingsExpander>
+</UserControl>

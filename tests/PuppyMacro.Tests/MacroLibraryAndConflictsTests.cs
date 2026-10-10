@@ -32,6 +32,28 @@ public class MacroLibraryTests : IDisposable
     }
 
     [Fact]
+    public void Macros_from_older_files_are_shown_in_the_overlay_and_the_overlay_options_are_kept()
+    {
+        Guid id = Guid.NewGuid();
+        File.WriteAllText(_folder.File($"{id}.json"), $$"""{ "Id": "{{id}}", "Name": "Old macro" }""");
+        var library = new MacroLibrary(_folder.Path);
+        var saved = new MacroDefinition { Name = "New", ShowInOverlay = false, HideInOverlayWhenDisabled = true, OverlayClickPassesThrough = true };
+        Assert.True(library.TrySave(saved, out _));
+
+        library.Load(new[] { id, saved.Id }, out string? warning);
+
+        Assert.Null(warning);
+        MacroDefinition old = library.Find(id)!;
+        Assert.True(old.ShowInOverlay);
+        Assert.False(old.HideInOverlayWhenDisabled);
+        Assert.False(old.OverlayClickPassesThrough);
+        MacroDefinition loaded = library.Find(saved.Id)!;
+        Assert.False(loaded.ShowInOverlay);
+        Assert.True(loaded.HideInOverlayWhenDisabled);
+        Assert.True(loaded.OverlayClickPassesThrough);
+    }
+
+    [Fact]
     public void An_unreadable_macro_file_is_skipped_with_a_warning()
     {
         var library = new MacroLibrary(_folder.Path);

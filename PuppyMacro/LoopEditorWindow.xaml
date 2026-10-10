@@ -164,6 +164,8 @@
 
                     <views:AppScopeEditor x:Name="AppScopeCard" StopsWhenAppChanges="True" Changed="OnAppScopeChanged" />
 
+                    <views:OverlayOptionsEditor x:Name="OverlayOptions" />
+
                     <views:FloatingButtonEditor x:Name="FloatingEditor" />
 
                     <views:SwitchSettingsExpander x:Name="SoundExpander" CanExpand="{Binding IsOn, ElementName=SoundSwitch}" Header="Sound" Description="Plays when the loop starts and stops">

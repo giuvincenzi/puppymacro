@@ -160,6 +160,75 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void A_right_click_on_an_overlay_item_asks_to_enable_or_disable_it_and_never_reaches_the_app()
+    {
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+        var requested = new System.Collections.Generic.List<Guid>();
+        _engine.OverlayEnableToggleRequested += requested.Add;
+        _engine.SetPanelTargets(new[] { new PanelTarget(100, 100, 200, 130, loop.Id) });
+
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_RBUTTON, 150, 115, 0));
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_RBUTTON, 150, 115, 0));
+        RunDispatcher();
+
+        Assert.Equal(new[] { loop.Id }, requested);
+        Assert.False(_engine.IsRunning(loop.Id)); // a right click never starts it
+        // Elsewhere a right click passes.
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_RBUTTON, 50, 50, 0));
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_RBUTTON, 50, 50, 0));
+    }
+
+    [Fact]
+    public void A_right_click_on_the_overlay_panel_buttons_reaches_the_app()
+    {
+        var requested = new System.Collections.Generic.List<Guid>();
+        _engine.OverlayEnableToggleRequested += requested.Add;
+        _engine.SetPanelTargets(new[] { new PanelTarget(100, 100, 200, 130, PanelTarget.StopAllId) });
+
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_RBUTTON, 150, 115, 0));
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_RBUTTON, 150, 115, 0));
+        RunDispatcher();
+
+        Assert.Empty(requested);
+    }
+
+    [Fact]
+    public void A_left_click_on_a_disabled_overlay_item_does_nothing_and_never_reaches_the_app()
+    {
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));
+        loop.Enabled = false;
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+        _engine.SetPanelTargets(new[] { new PanelTarget(100, 100, 200, 130, loop.Id, Startable: false) });
+
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 150, 115, 0));
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_LBUTTON, 150, 115, 0));
+
+        Assert.False(_engine.IsRunning(loop.Id));
+    }
+
+    [Fact]
+    public void With_clicks_passing_through_an_overlay_item_acts_and_the_app_gets_the_click_too()
+    {
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+        var requested = new System.Collections.Generic.List<Guid>();
+        _engine.OverlayEnableToggleRequested += requested.Add;
+        _engine.SetPanelTargets(new[] { new PanelTarget(100, 100, 200, 130, loop.Id, PassThrough: true) });
+
+        // Left: starts it, and neither the press nor the release is blocked.
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 150, 115, 0));
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_LBUTTON, 150, 115, 0));
+        Assert.True(_engine.IsRunning(loop.Id));
+
+        // Right: asks to enable or disable it, not blocked either.
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_RBUTTON, 150, 115, 0));
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_RBUTTON, 150, 115, 0));
+        RunDispatcher();
+        Assert.Equal(new[] { loop.Id }, requested);
+    }
+
+    [Fact]
     public void Dragging_the_overlay_panel_move_handle_moves_it_and_the_press_never_reaches_the_app()
     {
         var events = new System.Collections.Generic.List<(PanelDragPhase Phase, int Dx, int Dy)>();
