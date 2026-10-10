@@ -158,13 +158,9 @@ public partial class MainWindow
             action = "Check now";
         }
 
-        // The accent button for Update, the standard one otherwise.
-        Style? buttonStyle = primary ? (Style)FindResource("AccentButtonStyle") : null;
-
         UpdateStatusText.Text = status;
         UpdateCardButton.Visibility = Visibility.Visible;
         UpdateCardButton.Content = action;
-        UpdateCardButton.Style = buttonStyle;
         UpdateCardButton.IsEnabled = !_checkingForUpdates;
         UpdateCardProgress.Visibility = downloading ? Visibility.Visible : Visibility.Collapsed;
         UpdateCardProgress.Value = _downloadPercent;
@@ -179,8 +175,19 @@ public partial class MainWindow
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;
-        UpdateBarButton.Style = buttonStyle;
+        SetUpdateButtonStyle(UpdateCardButton, primary);
+        SetUpdateButtonStyle(UpdateBarButton, primary);
         UpdateBar.IsClosable = !downloading; // Later
+    }
+
+    /// <summary>The accent button for Update, the standard one otherwise. Clearing the Style (not setting it to null)
+    /// lets the implicit iNKORE style apply again: a null Style falls back to WPF's own theme.</summary>
+    private void SetUpdateButtonStyle(System.Windows.Controls.Button button, bool primary)
+    {
+        if (primary)
+            button.Style = (Style)FindResource("AccentButtonStyle");
+        else
+            button.ClearValue(StyleProperty);
     }
 
     private async void OnUpdateActionClick(object sender, RoutedEventArgs e)
