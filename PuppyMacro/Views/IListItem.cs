@@ -14,6 +14,12 @@ public interface IListItem
     bool IsItemEnabled { get; }
     bool IsHoldMode { get; }
     Models.FloatingButton FloatingButton { get; }
+
+    /// <summary>The app it works in (.exe name); null for all apps.</summary>
+    string? AppExe { get; }
+
+    /// <summary>It works only in one app: the cards show <see cref="AppExe"/>.</summary>
+    bool HasApp { get; }
     bool DropBefore { get; set; }
     bool DropAfter { get; set; }
     bool IsDragging { get; set; }

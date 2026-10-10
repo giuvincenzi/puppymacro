@@ -136,6 +136,7 @@ internal sealed class SettingsStore
             loop.HotkeyVk = null;
             loop.FloatingButton ??= new();
             loop.FloatingButton.Sanitize();
+            loop.AppExe = AppScope.Normalize(loop.AppExe);
 
             foreach (var action in loop.Actions)
             {
@@ -176,8 +177,7 @@ internal sealed class SettingsStore
             if (remap.Id == Guid.Empty)
                 remap.Id = Guid.NewGuid();
             remap.Note ??= "";
-            if (string.IsNullOrWhiteSpace(remap.AppExe))
-                remap.AppExe = null;
+            remap.AppExe = AppScope.Normalize(remap.AppExe);
         }
         settings.ExpandedSettingsGroups ??= new();
         if (settings.ExpandedSettingsGroups.Remove("GameModePanel"))

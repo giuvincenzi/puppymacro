@@ -68,7 +68,8 @@ internal static class NativeMethods
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr GetModuleHandle(string? lpModuleName);
 
-    // ---------------- WinEvent hook (desktop switch) ----------------
+    // ---------------- WinEvent hooks (desktop switch, window in front) ----------------
+    public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
     public const uint EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
     public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
 
@@ -213,6 +214,16 @@ internal static class NativeMethods
 
     [DllImport("dwmapi.dll")]
     public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+
+    /// <summary>A window's bounds as drawn, without the invisible resize borders (physical pixels).</summary>
+    public const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
     // ---------------- Monitors (work area: the screen without the taskbar) ----------------
     public const uint MONITOR_DEFAULTTONEAREST = 2;

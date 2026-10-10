@@ -71,28 +71,7 @@
 
                 <ikw:SimpleStackPanel Grid.Column="1" Margin="0,4,24,12" Spacing="4">
                     <!-- Scope -->
-                    <ui:SettingsCard Header="Works in" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton x:Name="AllAppsRadio" Content="All apps" GroupName="Scope" Checked="OnScopeChanged" />
-                                <RadioButton x:Name="OneAppRadio" Content="A specific app" GroupName="Scope" Checked="OnScopeChanged" />
-                            </StackPanel>
-                            <StackPanel x:Name="AppPanel" Margin="0,8,0,0">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <ComboBox x:Name="AppBox" HorizontalAlignment="Stretch" IsEditable="True" IsTextSearchEnabled="True"
-                                              DropDownOpened="OnAppDropDownOpened" ToolTip="The app's .exe name, e.g. Diablo IV.exe" />
-                                    <Button Grid.Column="1" Margin="8,0,0,0" Content="Browse…" Click="OnBrowseClick" />
-                                </Grid>
-                                <TextBlock Margin="0,4,0,0" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                           Text="Pick a running app or browse for its .exe. The remap works only while that app is in front." />
-                            </StackPanel>
-                        </StackPanel>
-                    </ui:SettingsCard>
+                    <views:AppScopeEditor x:Name="AppScopeCard" Changed="OnAppScopeChanged" />
 
                     <!-- Note -->
                     <ui:SettingsCard Header="Note (optional)" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">

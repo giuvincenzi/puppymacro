@@ -1,0 +1,40 @@
+<UserControl
+    x:Class="PuppyMacro.Views.AppScopeEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:views="clr-namespace:PuppyMacro.Views">
+
+    <!-- Specific app expander, shared by the loop, macro and remap editors -->
+    <views:SwitchSettingsExpander x:Name="AppExpander" Header="Specific app" Description="Works in all apps"
+                                  CanExpand="{Binding IsOn, ElementName=AppSwitch}">
+        <ui:ToggleSwitch x:Name="AppSwitch" Toggled="OnSwitchToggled" />
+
+        <ui:SettingsExpander.Items>
+            <ui:SettingsCard ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="AppBox" HorizontalAlignment="Stretch" IsEditable="True" IsTextSearchEnabled="True"
+                                  AutomationProperties.Name="App" DropDownOpened="OnAppDropDownOpened"
+                                  ToolTip="The app's .exe name, e.g. Diablo IV.exe" />
+                        <Button x:Name="PickButton" Grid.Column="1" Margin="8,0,0,0" Click="OnPickClick"
+                                AutomationProperties.Name="Pick" ToolTip="Click a window of the app">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Eyedropper}" />
+                                <TextBlock Margin="8,0,0,0" Text="Pick" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="2" Margin="8,0,0,0" Content="Browse…" Click="OnBrowseClick" />
+                    </Grid>
+                    <TextBlock x:Name="HelpText" Margin="0,4,0,0" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </ui:SettingsCard>
+        </ui:SettingsExpander.Items>
+    </views:SwitchSettingsExpander>
+</UserControl>

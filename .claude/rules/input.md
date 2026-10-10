@@ -36,6 +36,12 @@ paths:
   key-up handling (swallowed ups, remap ups, Hold release, keys held by a loop) → auto-repeat →
   global hotkeys, loop and macro hotkeys (`RunHotkey`, skipped while `HotkeysSuspended`) →
   keys held by a loop → remaps.
+- Loops and macros with a Specific app (`AppExe`): `RunHotkey` first looks among the items for the app
+  in front (`LoopEngine.ForegroundApp`, loops before macros), then among those for all apps; an item for
+  another app is skipped, so its key passes to the app. Global hotkeys work in every app.
+  `HotkeyConflicts`: two items can share a hotkey only when their apps differ (one may be all apps);
+  a global hotkey clashes with every item; a remap's source clashes with the hotkeys of the items that
+  work where the remap works (`FindForRemap`).
 - Mouse details (`InputHook.MouseDetail` -> `LoopEngine.OnMouseDetail`, set only while recording or
   while overlay mode publishes click targets): recording (records, never blocks; clicks on
   PuppyMacro's own windows are not recorded) → a drag of the overlay panel's Move handle (moves pass,

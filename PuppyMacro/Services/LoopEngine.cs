@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows.Threading;
 using PuppyMacro.Models;
@@ -105,8 +104,11 @@ internal sealed class LoopEngine : IDisposable
     private int _panelDragDx, _panelDragDy; // how far the mouse is from there
     private bool _panelDragPosted;          // a Moved is already on its way to the UI thread
 
-    // ---- Foreground app names (for app-specific remaps) ----
+    // ---- Process .exe names, cached per process (app-specific remaps, loops and macros) ----
     private readonly Dictionary<uint, string> _processNames = new();
+
+    // ---- The last app in front other than PuppyMacro (app-specific loops, macros and the overlay) ----
+    private string? _foregroundApp;
 
     private volatile bool _hotkeysSuspended;
 
@@ -135,6 +137,18 @@ internal sealed class LoopEngine : IDisposable
 
     /// <summary>Raised (on the UI thread) while recording, with the number of raw events so far.</summary>
     public event Action<int>? RecordingProgress;
+
+    /// <summary>
+    /// Raised (asynchronously, on the UI thread) when another app comes in front, with its .exe name ("" when it
+    /// cannot be read). PuppyMacro's own windows never count: the last other app stays.
+    /// </summary>
+    public event Action<string>? ForegroundAppChanged;
+
+    /// <summary>The .exe name of the last app in front other than PuppyMacro; null until one is known.</summary>
+    public string? ForegroundApp
+    {
+        get { lock (_sync) return _foregroundApp; }
+    }
 
     /// <summary>While true (a dialog is open), hotkeys pass through. Capture, recording and remaps still work.</summary>
     public bool HotkeysSuspended
@@ -166,8 +180,9 @@ internal sealed class LoopEngine : IDisposable
         {
             hook.Handler = OnKey;
             hook.Wheel = OnWheel;
-        }, OnDesktopSwitch);
+        }, OnDesktopSwitch, OnForegroundWindow);
         _input.Start();
+        OnForegroundWindow(NativeMethods.GetForegroundWindow());
     }
 
     /// <summary>Called by the UI after any change to hotkeys, loops, macros or remaps.</summary>
@@ -727,30 +742,36 @@ internal sealed class LoopEngine : IDisposable
             return true;
         }
 
-        var loopTarget = snap.Loops.FirstOrDefault(l =>
-            l.Enabled && Matches(l.Hotkey, pressed) && (canHold || l.Mode == ActivationMode.Toggle));
-        if (loopTarget != null)
+        // A loop or macro for the app in front wins over one for all apps; one for another app lets the key pass.
+        foreach (bool forAllApps in new[] { false, true })
         {
-            if (!run)
-                return true;
-            if (loopTarget.Mode == ActivationMode.Toggle)
-                ToggleLoop(loopTarget);
-            else
-                StartLoop(loopTarget);
-            return true;
-        }
+            bool Usable(string? appExe) => forAllApps ? appExe == null : appExe != null && AppScope.Same(appExe, _foregroundApp);
 
-        var macroTarget = snap.Macros.FirstOrDefault(m =>
-            m.Enabled && Matches(m.Hotkey, pressed) && (canHold || m.Mode == ActivationMode.Toggle));
-        if (macroTarget != null)
-        {
-            if (!run)
+            var loopTarget = snap.Loops.FirstOrDefault(l => l.Enabled && Usable(l.AppExe)
+                && Matches(l.Hotkey, pressed) && (canHold || l.Mode == ActivationMode.Toggle));
+            if (loopTarget != null)
+            {
+                if (!run)
+                    return true;
+                if (loopTarget.Mode == ActivationMode.Toggle)
+                    ToggleLoop(loopTarget);
+                else
+                    StartLoop(loopTarget);
                 return true;
-            if (macroTarget.Mode == ActivationMode.Toggle)
-                ToggleMacro(macroTarget);
-            else
-                StartMacro(macroTarget);
-            return true;
+            }
+
+            var macroTarget = snap.Macros.FirstOrDefault(m => m.Enabled && Usable(m.AppExe)
+                && Matches(m.Hotkey, pressed) && (canHold || m.Mode == ActivationMode.Toggle));
+            if (macroTarget != null)
+            {
+                if (!run)
+                    return true;
+                if (macroTarget.Mode == ActivationMode.Toggle)
+                    ToggleMacro(macroTarget);
+                else
+                    StartMacro(macroTarget);
+                return true;
+            }
         }
         return false;
     }
@@ -865,25 +886,16 @@ internal sealed class LoopEngine : IDisposable
         if (window == IntPtr.Zero)
             return null;
         NativeMethods.GetWindowThreadProcessId(window, out uint pid);
+        return ExeName(pid);
+    }
+
+    /// <summary>File name of a process, e.g. "Diablo IV.exe"; "" when it cannot be read (cached per process).</summary>
+    private string ExeName(uint pid)
+    {
         if (_processNames.TryGetValue(pid, out var cached))
             return cached;
 
-        string name = "";
-        IntPtr process = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
-        if (process != IntPtr.Zero)
-        {
-            try
-            {
-                var buffer = new char[1024];
-                uint size = (uint)buffer.Length;
-                if (NativeMethods.QueryFullProcessImageName(process, 0, buffer, ref size))
-                    name = Path.GetFileName(new string(buffer, 0, (int)size));
-            }
-            finally
-            {
-                NativeMethods.CloseHandle(process);
-            }
-        }
+        string name = AppWindows.ExeName(pid);
         if (_processNames.Count > 256)
             _processNames.Clear();
         _processNames[pid] = name;
@@ -950,6 +962,47 @@ internal sealed class LoopEngine : IDisposable
             _swallowUp.Clear();
             _swallowLeftUp = false;
             ModifierTracker.Reset();
+        }
+    }
+
+    // Input thread (and the UI thread once at start): a window came in front.
+    private void OnForegroundWindow(IntPtr window)
+    {
+        if (window == IntPtr.Zero)
+            return;
+        NativeMethods.GetWindowThreadProcessId(window, out uint pid);
+        if (pid == 0 || pid == (uint)Environment.ProcessId)
+            return; // PuppyMacro's own windows: the app before them stays the app in front
+        lock (_sync)
+            OnForegroundApp(ExeName(pid));
+    }
+
+    /// <summary>
+    /// <paramref name="appExe"/> came in front: loops and macros running for another app stop (one stop sound), and
+    /// the UI is told. Internal for the unit tests.
+    /// </summary>
+    internal void OnForegroundApp(string appExe)
+    {
+        lock (_sync)
+        {
+            if (_foregroundApp != null && AppScope.Same(_foregroundApp, appExe))
+                return;
+            _foregroundApp = appExe;
+
+            var snap = _snapshot;
+            bool ForOtherApp(string? itemApp) => itemApp != null && !AppScope.Same(itemApp, appExe);
+            var loops = snap.Loops.Where(l => ForOtherApp(l.AppExe) && _running.ContainsKey(l.Id)).ToList();
+            var macros = snap.Macros.Where(m => ForOtherApp(m.AppExe) && _runningMacros.ContainsKey(m.Id)).ToList();
+            string? sound = loops.FirstOrDefault(l => l.SoundEnabled)?.SoundName
+                ?? macros.FirstOrDefault(m => m.SoundEnabled)?.SoundName;
+            if (sound != null)
+                RequestSound(true, sound, start: false);
+            foreach (var loop in loops)
+                StopLoop(loop.Id, playSound: false);
+            foreach (var macro in macros)
+                StopMacro(macro.Id, playSound: false);
+
+            _dispatcher.InvokeAsync(() => ForegroundAppChanged?.Invoke(appExe));
         }
     }
 

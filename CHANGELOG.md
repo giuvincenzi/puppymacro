@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+### Added
+- **Specific app** for loops and macros, as for remaps: a loop or macro can work in one app only. Its
+  hotkey works only while that app is in front (in other apps the key reaches the app), it stops when
+  another app comes in front, and in overlay mode the panel and the floating buttons show only what
+  works in the app in front. Loops and macros for different apps can share a hotkey; the one for the
+  app in front wins over one for all apps.
+- **Pick** in Specific app: click a window of the app to choose it; the window under the mouse is
+  outlined with the app's name.
+
+### Changed
+- The remap editor's **Works in** card is now **Specific app**, the same card as in the loop and macro
+  editors.
+
 ### Fixed
 - The buttons of the Updates card in Settings and of the update bar (Check now, Try again, Cancel)
   have the Windows 11 look again instead of the old Windows one.

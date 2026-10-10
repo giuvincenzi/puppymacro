@@ -109,4 +109,35 @@ public class OverlayTests
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
             "the main window did not come back");
     }
+
+    [Fact]
+    public void The_overlay_shows_only_the_items_for_all_apps_and_for_the_app_in_front()
+    {
+        string thisApp = System.IO.Path.GetFileName(Environment.ProcessPath)!; // the target window's process
+        using var app = new AppSession(seed =>
+        {
+            SeedOverlay(seed, clickItemsInPanel: true);
+            LoopDefinition here = Loop("E2E loop for this app", null, Every(Vk.F17, 300));
+            here.AppExe = thisApp;
+            LoopDefinition elsewhere = Loop("E2E loop for notepad", null, Every(Vk.F17, 300));
+            elsewhere.AppExe = "notepad.exe";
+            seed.Settings.Loops.AddRange(new[] { here, elsewhere });
+            MacroDefinition elsewhereButton = Macro("E2E button for notepad", null, Press(Vk.F16));
+            elsewhereButton.AppExe = "notepad.exe";
+            elsewhereButton.FloatingButton = new FloatingButton { Enabled = true, X = 500, Y = 100 };
+            seed.Macros.Add(elsewhereButton);
+        });
+        using var target = new TargetWindow();
+        (AutomationElement panel, _) = EnterOverlayMode(app, target);
+
+        Assert.True(app.Has(panel, PanelLoop));                  // all apps
+        Assert.True(app.Has(panel, "E2E loop for this app"));
+        Assert.False(app.Has(panel, "E2E loop for notepad"));
+        AutomationElement? hidden = app.TopWindow("PuppyMacro floating button: E2E button for notepad");
+        Assert.True(hidden == null || hidden.IsOffscreen, "the floating button for notepad.exe is shown");
+
+        target.Tap(Vk.F24);
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the main window did not come back");
+    }
 }

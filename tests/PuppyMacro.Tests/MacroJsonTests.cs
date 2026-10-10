@@ -32,9 +32,9 @@ public class MacroJsonTests : IDisposable
 
     public void Dispose() => _folder.Dispose();
 
-    private static string? NoConflict(HotkeyBinding binding) => null;
+    private static string? NoConflict(HotkeyBinding binding, string? appExe) => null;
 
-    private MacroDefinition? Parse(string text, out List<CodeProblem> problems, Func<HotkeyBinding, string?>? conflict = null) =>
+    private MacroDefinition? Parse(string text, out List<CodeProblem> problems, Func<HotkeyBinding, string?, string?>? conflict = null) =>
         MacroJson.Parse(text, _macro.Id, conflict ?? NoConflict, out problems);
 
     /// <summary>1-based line of the first line containing <paramref name="fragment"/>.</summary>
@@ -151,7 +151,7 @@ public class MacroJsonTests : IDisposable
         _macro.Hotkey = new HotkeyBinding { Vk = KeyNames.VK_LBUTTON, Ctrl = true };
         Assert.NotNull(Parse(MacroJson.Serialize(_macro), out problems));
 
-        Assert.Null(Parse(MacroJson.Serialize(_macro), out problems, _ => "Ctrl + LButton is already used by Stop all."));
+        Assert.Null(Parse(MacroJson.Serialize(_macro), out problems, (_, _) => "Ctrl + LButton is already used by Stop all."));
         Assert.Contains(problems, p => p.Message == "Hotkey: Ctrl + LButton is already used by Stop all.");
     }
 

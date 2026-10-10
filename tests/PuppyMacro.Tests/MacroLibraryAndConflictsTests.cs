@@ -61,8 +61,8 @@ public class HotkeyConflictsTests : IDisposable
 
     public void Dispose() => _folder.Dispose();
 
-    private string? Find(HotkeyBinding binding, Guid? ignoreId = null, string? ignoreGlobal = null) =>
-        HotkeyConflicts.Find(binding, _settings, _macros, ignoreId, ignoreGlobal);
+    private string? Find(HotkeyBinding binding, Guid? ignoreId = null, string? ignoreGlobal = null, string? appExe = null) =>
+        HotkeyConflicts.Find(binding, _settings, _macros, ignoreId, ignoreGlobal, appExe);
 
     [Fact]
     public void Global_hotkeys_conflict_unless_that_one_is_being_changed()
@@ -83,6 +83,36 @@ public class HotkeyConflictsTests : IDisposable
         Assert.Null(Find(HotkeyBinding.FromKey(0x78), ignoreId: loop.Id));
         Assert.Equal("Ctrl + F6 is already used by the macro \"Craft\".", Find(new HotkeyBinding { Vk = 0x75, Ctrl = true }));
         Assert.Null(Find(new HotkeyBinding { Vk = 0x75, Ctrl = true }, ignoreId: _macro.Id));
+    }
+
+    [Fact]
+    public void Loops_and_macros_share_a_hotkey_only_in_different_apps()
+    {
+        LoopDefinition all = _settings.Loops[0]; // F9, all apps
+        var game = new LoopDefinition { Name = "Game", Hotkey = HotkeyBinding.FromKey(0x79), AppExe = "Game.exe" }; // F10
+        _settings.Loops.Add(game);
+
+        // One for an app and one for all apps: allowed, both ways.
+        Assert.Null(Find(HotkeyBinding.FromKey(0x78), appExe: "game.exe"));
+        Assert.Null(Find(HotkeyBinding.FromKey(0x79)));
+        // Two for different apps: allowed. Two for the same app (any case): a conflict that names the app.
+        Assert.Null(Find(HotkeyBinding.FromKey(0x79), appExe: "other.exe"));
+        Assert.Equal("F10 is already used by the loop \"Game\" in Game.exe.", Find(HotkeyBinding.FromKey(0x79), appExe: "GAME.EXE"));
+        // Two for all apps: a conflict, as before.
+        Assert.Equal($"F9 is already used by the loop \"{all.Name}\".", Find(HotkeyBinding.FromKey(0x78)));
+        // Global hotkeys work everywhere: they clash with a loop for any app.
+        Assert.Equal("F10 is already used by the loop \"Game\" in Game.exe.", Find(HotkeyBinding.FromKey(0x79), ignoreGlobal: "StopAll"));
+    }
+
+    [Fact]
+    public void A_remap_source_clashes_with_the_hotkeys_of_the_apps_it_works_in()
+    {
+        _settings.Loops.Add(new LoopDefinition { Name = "Game", Hotkey = HotkeyBinding.FromKey(0x79), AppExe = "Game.exe" }); // F10
+
+        Assert.NotNull(HotkeyConflicts.FindForRemap(0x79, null, _settings, _macros));          // all apps includes Game.exe
+        Assert.NotNull(HotkeyConflicts.FindForRemap(0x79, "game.exe", _settings, _macros));
+        Assert.Null(HotkeyConflicts.FindForRemap(0x79, "other.exe", _settings, _macros));
+        Assert.NotNull(HotkeyConflicts.FindForRemap(0x78, "other.exe", _settings, _macros));    // F9 is for all apps
     }
 
     [Fact]

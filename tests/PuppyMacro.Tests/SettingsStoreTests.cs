@@ -85,6 +85,24 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Loops_without_an_app_work_in_all_apps_and_an_empty_app_means_all_apps()
+    {
+        AppSettings settings = LoadJson("""
+            {
+              "Loops": [
+                { "Name": "Old loop", "Actions": [ { "Type": "Key", "KeyVk": 1 } ] },
+                { "Name": "Empty app", "Actions": [ { "Type": "Key", "KeyVk": 1 } ], "AppExe": " " },
+                { "Name": "Game", "Actions": [ { "Type": "Key", "KeyVk": 1 } ], "AppExe": " Game.exe " }
+              ]
+            }
+            """, out _);
+
+        Assert.Null(settings.Loops[0].AppExe);
+        Assert.Null(settings.Loops[1].AppExe);
+        Assert.Equal("Game.exe", settings.Loops[2].AppExe);
+    }
+
+    [Fact]
     public void Files_before_schema_3_turn_on_clicking_in_the_overlay_panel()
     {
         AppSettings settings = LoadJson("""{ "SchemaVersion": 2, "ClickItemsInPanel": false }""", out _);

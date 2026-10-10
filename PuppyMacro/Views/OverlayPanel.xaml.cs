@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using PuppyMacro.Models;
 
 namespace PuppyMacro.Views;
 
@@ -15,6 +16,10 @@ public partial class OverlayPanel
 {
     private ListCollectionView? _loops;
     private ListCollectionView? _macros;
+
+    // Overlay mode shows only the items for all apps and for the app in front; the placement overlay shows them all.
+    private bool _followApp;
+    private string? _app;
 
     public OverlayPanel()
     {
@@ -36,9 +41,23 @@ public partial class OverlayPanel
         UpdateEmptyState();
     }
 
-    /// <summary>Enabled items, except those shown as floating buttons.</summary>
-    private static bool IsEnabledItem(object item) =>
-        item is IListItem { IsItemEnabled: true } listItem && !FloatingButtons.HasButton(listItem);
+    /// <summary>
+    /// From now on the panel shows only the items for all apps and for <paramref name="appExe"/> (the app in
+    /// front; null while unknown: all apps only).
+    /// </summary>
+    public void SetApp(string? appExe)
+    {
+        _followApp = true;
+        _app = appExe;
+        RefreshList();
+    }
+
+    /// <summary>Works while the app in front is in front (always without <see cref="SetApp"/>).</summary>
+    private bool WorksHere(IListItem item) => !_followApp || AppScope.Allows(item.AppExe, _app);
+
+    /// <summary>Enabled items for the app in front, except those shown as floating buttons.</summary>
+    private bool IsEnabledItem(object item) =>
+        item is IListItem { IsItemEnabled: true } listItem && !FloatingButtons.HasButton(listItem) && WorksHere(listItem);
 
     public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey)
     {
@@ -136,20 +155,27 @@ public partial class OverlayPanel
     {
         int loops = _loops?.Count ?? 0;
         int macros = _macros?.Count ?? 0;
-        bool anyButton = HasAnyButton(_loops) || HasAnyButton(_macros);
-        EmptyText.Text = anyButton ? "Everything is on floating buttons." : "No enabled loops.";
+        bool anyButton = HasAny(i => FloatingButtons.HasButton(i) && WorksHere(i));
+        bool forOtherApps = HasAny(i => i.IsItemEnabled && !WorksHere(i));
+        EmptyText.Text = anyButton ? "Everything is on floating buttons."
+            : forOtherApps ? "Nothing for this app."
+            : "No enabled loops.";
         EmptyText.Visibility = loops + macros == 0 ? Visibility.Visible : Visibility.Collapsed;
         MacrosHeader.Visibility = macros > 0 && loops > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private static bool HasAnyButton(ListCollectionView? view)
+    /// <summary>Any loop or macro (both lists) that matches.</summary>
+    private bool HasAny(Func<IListItem, bool> match)
     {
-        if (view?.SourceCollection is not IEnumerable items)
-            return false;
-        foreach (object item in items)
+        foreach (ListCollectionView? view in new[] { _loops, _macros })
         {
-            if (item is IListItem listItem && FloatingButtons.HasButton(listItem))
-                return true;
+            if (view?.SourceCollection is not IEnumerable items)
+                continue;
+            foreach (object item in items)
+            {
+                if (item is IListItem listItem && match(listItem))
+                    return true;
+            }
         }
         return false;
     }
