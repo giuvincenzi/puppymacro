@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+- The buttons of the Updates card in Settings and of the update bar (Check now, Try again, Cancel)
+  have the Windows 11 look again instead of the old Windows one.
+
 ## 1.11.0
 
 ### Added
