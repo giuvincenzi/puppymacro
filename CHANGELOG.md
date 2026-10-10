@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.12.0
+
 ### Added
 - **Specific app** for loops and macros, as for remaps: a loop or macro can work in one app only. Its
   hotkey works only while that app is in front (in other apps the key reaches the app), it stops when

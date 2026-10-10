@@ -8,7 +8,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>PuppyMacro</AssemblyName>
     <RootNamespace>PuppyMacro</RootNamespace>
-    <Version>1.11.0</Version>
+    <Version>1.12.0</Version>
     <Product>PuppyMacro</Product>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\PuppyMacro.ico</ApplicationIcon>
