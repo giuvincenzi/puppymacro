@@ -360,6 +360,8 @@
                         </StackPanel>
                     </ui:SettingsCard>
 
+                    <views:AppScopeEditor x:Name="AppScopeCard" StopsWhenAppChanges="True" Changed="OnAppScopeChanged" />
+
                     <views:FloatingButtonEditor x:Name="FloatingEditor" />
 
                     <views:SwitchSettingsExpander x:Name="SoundExpander" CanExpand="{Binding IsOn, ElementName=SoundSwitch}" Header="Sound" Description="Plays when the macro starts and stops">

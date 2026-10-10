@@ -34,6 +34,9 @@ paths:
   `AppSettings.LoadedSchemaVersion` < 6); afterwards null means 85%. New installs get Stop all
   Alt+Shift+S and Overlay mode Alt+Shift+W (`AppSettings.CreateDefault`); existing files keep
   theirs.
+- `AppExe` (Specific app) on loops, macros and remaps: an .exe file name or null (all apps). Files
+  without it work in all apps; an empty value is saved as null (`AppScope.Normalize`, in
+  `SettingsStore`, `MacroLibrary.Sanitize` and the Code views).
 - Export / Import: `.puppymacro` zip (`BackupService`); Import keeps a backup and restarts
   the app (`--restart`).
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`). Keep

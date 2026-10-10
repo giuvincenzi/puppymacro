@@ -157,6 +157,9 @@ public sealed class MacroDefinition
     public string SoundName { get; set; } = "Chime";
     public FloatingButton FloatingButton { get; set; } = new();
 
+    /// <summary>Executable name (e.g. "Diablo IV.exe") it works in; null = all apps (<see cref="AppScope"/>).</summary>
+    public string? AppExe { get; set; }
+
     [System.Text.Json.Serialization.JsonIgnore]
     public double TotalMs
     {
@@ -213,6 +216,7 @@ public sealed class MacroDefinition
         SoundEnabled = other.SoundEnabled;
         SoundName = other.SoundName;
         FloatingButton = other.FloatingButton.Clone();
+        AppExe = other.AppExe;
     }
 
     /// <summary>

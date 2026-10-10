@@ -27,6 +27,9 @@ public partial class OverlayPanelWindow
 
     public void RefreshList() => PanelView.RefreshList();
 
+    /// <summary>Shows only the items for all apps and for <paramref name="appExe"/>, the app in front.</summary>
+    public void SetApp(string? appExe) => PanelView.SetApp(appExe);
+
     /// <summary>Clickable rows of the panel, in physical screen pixels.</summary>
     internal System.Collections.Generic.List<Services.PanelTarget> GetClickTargets() => PanelView.GetClickTargets();
 

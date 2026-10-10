@@ -134,6 +134,7 @@ public partial class MacroEditorWindow
 
         UpdateHotkeyLabel();
         FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
+        AppScopeCard.Load(source.AppExe);
     }
 
     /// <summary>The macro as the List view's fields describe it.</summary>
@@ -154,6 +155,7 @@ public partial class MacroEditorWindow
             SoundEnabled = SoundSwitch.IsOn,
             SoundName = _soundName,
             FloatingButton = FloatingEditor.ToModel(),
+            AppExe = AppScopeCard.AppExe,
         };
         macro.NormalizeGroups();
         return macro;
@@ -1036,11 +1038,13 @@ public partial class MacroEditorWindow
             return "Enter a name.";
         if (_list.Actions.Count == 0)
             return "Add or record at least one action.";
+        if (AppScopeCard.ValidationError is string appError)
+            return appError;
         if (_hotkey == null || !_hotkey.IsSet)
             return IsHold ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
         if (HotkeyRules.Problem(_hotkey, hold: IsHold) is string problem)
             return problem;
-        return HotkeyConflicts.Find(_hotkey, _settings, _macros, _editingId);
+        return HotkeyConflict(_hotkey, SelectedApp);
     }
 
     private void Validate()
@@ -1088,7 +1092,13 @@ public partial class MacroEditorWindow
 
     // ================= Code view =================
 
-    private string? HotkeyConflict(HotkeyBinding binding) => HotkeyConflicts.Find(binding, _settings, _macros, _editingId);
+    /// <summary>The app chosen in Specific app; null for all apps (also while none is chosen yet).</summary>
+    private string? SelectedApp => AppScopeCard.AppExe is { Length: > 0 } app ? app : null;
+
+    private string? HotkeyConflict(HotkeyBinding binding, string? appExe) =>
+        HotkeyConflicts.Find(binding, _settings, _macros, _editingId, appExe: appExe);
+
+    private void OnAppScopeChanged(object? sender, EventArgs e) => Validate();
 
     private CodeViewSwitch<MacroDefinition> CreateCodeSwitch()
     {

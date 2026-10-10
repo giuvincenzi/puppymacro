@@ -29,6 +29,7 @@ internal static class CodeSchema
         ["MacroDefinition.SoundEnabled"] = "Plays SoundName when the macro starts and stops.",
         ["MacroDefinition.SoundName"] = "One of the built-in sounds.",
         ["MacroDefinition.FloatingButton"] = "Round button shown in overlay mode (Toggle only).",
+        ["MacroDefinition.AppExe"] = "File name of the app it works in, like \"notepad.exe\"; null for all apps. It stops when another app comes in front.",
 
         ["MacroAction.Type"] = "What the step does.",
         ["MacroAction.DelayMs"] = "Wait before the step, in ms, from the end of the previous step.",
@@ -76,6 +77,7 @@ internal static class CodeSchema
         ["LoopDefinition.SoundEnabled"] = "Plays SoundName when the loop starts and stops.",
         ["LoopDefinition.SoundName"] = "One of the built-in sounds.",
         ["LoopDefinition.FloatingButton"] = "Round button shown in overlay mode (Toggle only).",
+        ["LoopDefinition.AppExe"] = "File name of the app it works in, like \"notepad.exe\"; null for all apps. It stops when another app comes in front.",
 
         ["LoopAction.Type"] = "Key: press a key or mouse button. Text: paste a text.",
         ["LoopAction.KeyVk"] = "Key rows: virtual-key code of the key or mouse button (65 = A, 112 = F1, 1 = left button).",

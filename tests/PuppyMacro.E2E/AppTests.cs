@@ -459,4 +459,31 @@ public class AppTests
         DiscardCodeChanges(app, action);
         app.FindById(action, "CancelButton").AsButton().Invoke();
     }
+
+    [Fact]
+    public void Specific_app_is_saved_shown_on_the_card_and_needs_an_app()
+    {
+        using var app = new AppSession();
+        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        Window editor = app.Dialog("Add loop");
+        app.FindById(editor, "NameBox").AsTextBox().Text = "E2E app loop";
+        app.Find(editor, "Add key").AsButton().Click();
+        app.Find(editor, "Press a key or mouse button (Esc cancels)");
+        PressF24();
+        app.Find(editor, "F24");
+
+        // On without an app: it cannot be saved.
+        app.FindById(editor, "AppSwitch").AsToggleButton().Toggle();
+        app.Find(editor, "Choose the app it works in, or turn off Specific app.");
+        Assert.False(app.FindById(editor, "SaveButton").IsEnabled);
+
+        // The ".exe" is added.
+        app.FindById(editor, "AppBox").AsComboBox().EditableText = "e2e-app";
+        app.Find(editor, "Works only while e2e-app.exe is in front");
+        app.FindById(editor, "SaveButton").AsButton().Click();
+
+        Assert.True(app.Has(app.MainWindow, "e2e-app.exe")); // on the loop's card
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"AppExe\": \"e2e-app.exe\""),
+            AppSession.Timeout).Success);
+    }
 }

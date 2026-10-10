@@ -14,7 +14,7 @@
 <h3>Overlay panel</h3>
 <ul>
   <li><strong>Show the overlay panel</strong> in Settings &gt; Overlay is on by default. Turn it off to have only the floating buttons in overlay mode; the panel's other settings are off meanwhile. Without the panel, leave overlay mode with the Overlay mode hotkey.</li>
-  <li>It lists the enabled loops, then the macros, each with its hotkey and its state (a running one is green). <strong>Stop all</strong>, at the bottom, shows its hotkey. When the panel can be clicked, Stop all turns red while something runs; when it cannot, the move and exit buttons are dimmed.</li>
+  <li>It lists the enabled loops, then the macros, each with its hotkey and its state (a running one is green). A loop or macro with a <strong>Specific app</strong> is listed only while that app is in front; when nothing is left for the app in front, the panel says “Nothing for this app.” <strong>Stop all</strong>, at the bottom, shows its hotkey. When the panel can be clicked, Stop all turns red while something runs; when it cannot, the move and exit buttons are dimmed.</li>
   <li><strong>Opacity</strong> sets the panel's background; the text stays fully visible. <strong>Position</strong> is where the panel appears, measured from the top-left corner of the main screen (<strong>X</strong>, <strong>Y</strong>); <strong>Reset</strong> puts it back there.</li>
   <li>To move the panel during overlay mode, press the move button (four arrows, next to the exit button) and drag. The panel follows the mouse and its new position is saved, as with <strong>Position</strong>. Like the other buttons of the panel, it works only with <strong>Click items in the panel to start or stop them</strong> on, and the app behind keeps the focus.</li>
 </ul>
@@ -31,9 +31,10 @@
   <li>A running loop or macro has a green ring, like its row in the panel.</li>
   <li>A loop or macro with a floating button is not listed in the panel, so it is never shown twice. Turn the button off to get its row back.</li>
   <li>A new button appears in the middle of the main screen until you place it.</li>
+  <li>The button of a loop or macro with a <strong>Specific app</strong> is shown only while that app is in front.</li>
   <li>Floating buttons are always clickable, also when <strong>Click items in the panel to start or stop them</strong> is off.</li>
   <li>Hold loops and macros cannot have a floating button: a click can only start and stop.</li>
 </ul>
 
 <h3>Position on screen</h3>
-<p><strong>Position on screen</strong> in Settings &gt; Overlay and <strong>Position…</strong> in the loop or macro editor open the same view of the whole overlay, as overlay mode shows it: the overlay panel (when <strong>Show the overlay panel</strong> is on) and every floating button. Drag each one where you want it. The last one you clicked is selected and moves with the arrow keys (<kbd>Shift</kbd> moves ×10). Press <kbd>Enter</kbd> to save or <kbd>Esc</kbd> to cancel.</p>
+<p><strong>Position on screen</strong> in Settings &gt; Overlay and <strong>Position…</strong> in the loop or macro editor open the same view of the whole overlay, as overlay mode shows it: the overlay panel (when <strong>Show the overlay panel</strong> is on) and every floating button, also those for other apps. Drag each one where you want it. The last one you clicked is selected and moves with the arrow keys (<kbd>Shift</kbd> moves ×10). Press <kbd>Enter</kbd> to save or <kbd>Esc</kbd> to cancel.</p>

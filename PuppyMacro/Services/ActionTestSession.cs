@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using PuppyMacro.Models;
@@ -16,12 +15,6 @@ internal static class ActionTestSession
 {
     /// <summary>Time for the window behind PuppyMacro to take the focus before the action plays.</summary>
     private static readonly TimeSpan FocusDelay = TimeSpan.FromMilliseconds(200);
-
-    /// <summary>Window classes of the shell (taskbar, desktop): never the target of a test.</summary>
-    private static readonly HashSet<string> ShellClasses = new(StringComparer.Ordinal)
-    {
-        "Shell_TrayWnd", "Shell_SecondaryTrayWnd", "Progman", "WorkerW",
-    };
 
     /// <param name="from">
     /// The dialog the test starts from (the macro editor, or the action window over it). It and
@@ -72,28 +65,8 @@ internal static class ActionTestSession
     /// </summary>
     private static void ActivateWindowBehind()
     {
-        uint ownProcess = (uint)Environment.ProcessId;
-        var className = new StringBuilder(64);
-        for (IntPtr w = NativeMethods.GetTopWindow(IntPtr.Zero); w != IntPtr.Zero; w = NativeMethods.GetWindow(w, NativeMethods.GW_HWNDNEXT))
-        {
-            if (!NativeMethods.IsWindowVisible(w) || NativeMethods.IsIconic(w))
-                continue;
-            NativeMethods.GetWindowThreadProcessId(w, out uint process);
-            if (process == ownProcess)
-                continue;
-            long exStyle = NativeMethods.GetWindowLongPtr(w, NativeMethods.GWL_EXSTYLE).ToInt64();
-            if ((exStyle & (NativeMethods.WS_EX_TOOLWINDOW | NativeMethods.WS_EX_NOACTIVATE)) != 0)
-                continue;
-            // Cloaked: "visible" but not shown (suspended store apps, windows on other virtual desktops).
-            if (NativeMethods.DwmGetWindowAttribute(w, NativeMethods.DWMWA_CLOAKED, out int cloaked, sizeof(int)) == 0 && cloaked != 0)
-                continue;
-            className.Clear();
-            NativeMethods.GetClassName(w, className, className.Capacity);
-            if (ShellClasses.Contains(className.ToString()))
-                continue;
-
+        IntPtr w = AppWindows.TopAppWindow();
+        if (w != IntPtr.Zero)
             NativeMethods.SetForegroundWindow(w);
-            return;
-        }
     }
 }

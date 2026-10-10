@@ -51,6 +51,8 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
     }
     public bool IsHoldMode => Definition.Mode == ActivationMode.Hold;
     public FloatingButton FloatingButton => Definition.FloatingButton;
+    public string? AppExe => Definition.AppExe;
+    public bool HasApp => Definition.AppExe != null;
 
     public bool ShowKeyIcon => Definition.Actions.Count == 1 && Definition.Actions[0].Type == ActionType.Key;
     public bool ShowTextIcon => Definition.Actions.Count == 1 && Definition.Actions[0].Type == ActionType.Text;

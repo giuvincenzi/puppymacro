@@ -74,6 +74,74 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void A_hotkey_for_an_app_works_only_while_that_app_is_in_front()
+    {
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));
+        loop.AppExe = "Game.exe";
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+
+        // Another app in front: the key passes to it and nothing starts.
+        _engine.OnForegroundApp("other.exe");
+        Assert.False(_engine.OnKey(F23, isDown: true, physicalModifierEvent: true));
+        Assert.False(_engine.OnKey(F23, isDown: false, physicalModifierEvent: true));
+        Assert.False(_engine.IsRunning(loop.Id));
+
+        // The app in front (any case): the hotkey works.
+        _engine.OnForegroundApp("game.exe");
+        Assert.True(_engine.OnKey(F23, isDown: true, physicalModifierEvent: true));
+        Assert.True(_engine.OnKey(F23, isDown: false, physicalModifierEvent: true));
+        Assert.True(_engine.IsRunning(loop.Id));
+    }
+
+    [Fact]
+    public void The_hotkey_of_the_app_in_front_wins_over_the_same_hotkey_for_all_apps()
+    {
+        LoopDefinition forAll = TapLoop(HotkeyBinding.FromKey(F23));
+        var forGame = new MacroDefinition
+        {
+            Name = "Game",
+            Hotkey = HotkeyBinding.FromKey(F23),
+            AppExe = "Game.exe",
+            Repeat = RepeatMode.Loop,
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = F24, DelayMs = 10000 } },
+        };
+        _engine.Publish(new EngineSnapshot { Loops = new[] { forAll }, Macros = new[] { forGame } });
+
+        _engine.OnForegroundApp("Game.exe");
+        Assert.True(_engine.OnKey(F23, isDown: true, physicalModifierEvent: true));
+        Assert.True(_engine.OnKey(F23, isDown: false, physicalModifierEvent: true));
+        Assert.True(_engine.IsRunning(forGame.Id));
+        Assert.False(_engine.IsRunning(forAll.Id));
+
+        _engine.OnForegroundApp("other.exe"); // stops the game's macro
+        Assert.True(_engine.OnKey(F23, isDown: true, physicalModifierEvent: true));
+        Assert.True(_engine.OnKey(F23, isDown: false, physicalModifierEvent: true));
+        Assert.True(_engine.IsRunning(forAll.Id));
+        Assert.False(_engine.IsRunning(forGame.Id));
+    }
+
+    [Fact]
+    public void When_another_app_comes_in_front_only_the_items_for_the_app_that_left_stop()
+    {
+        LoopDefinition forAll = TapLoop(HotkeyBinding.FromKey(F23));
+        LoopDefinition forGame = TapLoop(HotkeyBinding.FromKey(F24));
+        forGame.AppExe = "Game.exe";
+        _engine.Publish(new EngineSnapshot { Loops = new[] { forAll, forGame } });
+        _engine.OnForegroundApp("Game.exe");
+        _engine.StartLoop(forAll);
+        _engine.StartLoop(forGame);
+
+        // The same app again (a window of its own, another case): nothing stops.
+        _engine.OnForegroundApp("GAME.EXE");
+        Assert.True(_engine.IsRunning(forGame.Id));
+
+        _engine.OnForegroundApp("other.exe");
+        Assert.False(_engine.IsRunning(forGame.Id));
+        Assert.True(_engine.IsRunning(forAll.Id));
+        Assert.Equal("other.exe", _engine.ForegroundApp);
+    }
+
+    [Fact]
     public void A_click_on_the_overlay_panel_Stop_all_stops_everything_and_never_reaches_the_app()
     {
         LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));

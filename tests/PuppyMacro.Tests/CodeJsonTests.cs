@@ -16,7 +16,7 @@ public class CodeJsonTests
 
     private static MacroAction Key(Guid? group) => new() { Type = MacroActionType.PressKey, Vk = 0x41, GroupId = group };
 
-    private static string? NoConflict(HotkeyBinding binding) => null;
+    private static string? NoConflict(HotkeyBinding binding, string? appExe) => null;
 
     // ---- One action and its group ----
 
@@ -120,6 +120,23 @@ public class CodeJsonTests
         JsonObject schema = JsonNode.Parse(CodeSchema.ForLoop(loop.Id))!.AsObject();
         Assert.False(schema["properties"]!.AsObject().ContainsKey("KeyVk"));
         Assert.Equal(loop.Id.ToString(), schema["properties"]!["Id"]!["default"]!.GetValue<string>());
+    }
+
+    [Fact]
+    public void A_loop_for_a_specific_app_names_its_exe_and_its_hotkey_is_checked_in_that_app()
+    {
+        LoopDefinition loop = Loop();
+        loop.AppExe = "notepad";
+        Assert.Null(LoopJson.Parse(LoopJson.Serialize(loop), loop.Id, NoConflict, out var problems));
+        Assert.Contains(problems, p => p.Message.StartsWith("AppExe:") && p.Message.Contains(".exe"));
+
+        loop.AppExe = " notepad.exe ";
+        loop.Hotkey = HotkeyBinding.FromKey(0x79);
+        string? checkedApp = "unset";
+        LoopDefinition? read = LoopJson.Parse(LoopJson.Serialize(loop), loop.Id, (_, app) => { checkedApp = app; return null; }, out problems);
+        Assert.Empty(problems);
+        Assert.Equal("notepad.exe", read!.AppExe);
+        Assert.Equal("notepad.exe", checkedApp);
     }
 
     // ---- Remap ----

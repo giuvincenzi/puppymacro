@@ -3,7 +3,7 @@
   <img src="img/loop-editor.png" alt="The Edit loop window" loading="lazy">
   <figcaption>A loop that presses the left mouse button every second, started and stopped with F6.</figcaption>
 </figure>
-<p>The editor has what the loop does on the left (name, keys and texts) and how it starts on the right (Activation, Hotkey, Floating button, Sound).</p>
+<p>The editor has what the loop does on the left (name, keys and texts) and how it starts on the right (Activation, Hotkey, Specific app, Floating button, Sound).</p>
 <ul>
   <li><strong>Keys and texts</strong>: each row repeats on its own timer, from 10 ms to 24 h. A row shows <strong>Key</strong> or <strong>Text</strong> and a summary, for example “Repeat, every 1 s”; open it for its settings. The trash button on the row removes it.
     <ul>
@@ -13,12 +13,21 @@
   </li>
   <li><strong>Activation</strong>: <strong>Toggle</strong> (press the hotkey to start, press it again to stop) or <strong>Hold</strong> (runs only while the hotkey is held down).</li>
   <li><strong>Hotkey</strong>: optional. Select <strong>Set hotkey</strong> and press a key or mouse button; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too (see <a href="hotkeys.html">Hotkeys</a>). The hotkey is then shown in the accent color: click it to change it, or use its arrow for <strong>Change</strong> and <strong>Clear</strong>. Without a hotkey, start the loop with <strong>Play</strong> (▶) on its card or from the overlay panel. Hold needs a hotkey.</li>
+  <li><strong>Specific app</strong>: off, the loop works in all apps. Turn it on to make it work in one app only, and choose the app: pick it in the list of running apps, select <strong>Pick</strong> and click a window of the app (the window under the mouse is outlined with the app's name; <kbd>Esc</kbd> cancels), or select <strong>Browse…</strong> and choose its .exe. Then:
+    <ul>
+      <li>Its hotkey works only while that app is in front. In other apps the key does nothing in PuppyMacro and reaches the app as usual.</li>
+      <li>When another app comes in front, the running loop stops. PuppyMacro's own windows (the main window, the overlay) do not count as another app.</li>
+      <li>Another loop or macro can use the same hotkey in another app, or in all apps: while the app is in front, the one for that app wins.</li>
+      <li>In overlay mode it is in the panel, or on its floating button, only while that app is in front (see <a href="overlay-mode.html">Overlay mode</a>).</li>
+      <li><strong>Play</strong> on its card starts it in any case.</li>
+    </ul>
+  </li>
   <li><strong>Floating button</strong>: a round button in overlay mode that starts and stops the loop, placed anywhere on the screen, with its own label, size and opacity (see <a href="overlay-mode.html">Overlay mode</a>).</li>
   <li><strong>Sound</strong>: turn it on to play a sound when the loop starts and stops, and click a sound to pick it and hear it. The volume of every sound is in <strong>Settings &gt; Sound</strong>.</li>
   <li><strong>Code view</strong>, at the top of the window, shows the loop as JSON, as it is saved, in a code editor with suggestions and checks; see <a href="macros.html">Macros &gt; Code view</a>.</li>
 </ul>
 <h3>The Loops page</h3>
-<p>Each loop is a card with its name, its state (<strong>Running</strong> in green, <strong>Idle</strong> in blue, <strong>Disabled</strong> in yellow), what it does and how it starts, for example “Toggle with F6” or “Toggle, no hotkey”. On the right of the card:</p>
+<p>Each loop is a card with its name, its state (<strong>Running</strong> in green, <strong>Idle</strong> in blue, <strong>Disabled</strong> in yellow), the app it works in when it has a <strong>Specific app</strong>, what it does and how it starts, for example “Toggle with F6” or “Toggle, no hotkey”. On the right of the card:</p>
 <ul>
   <li><strong>Play</strong> (▶) starts the loop and <strong>Stop</strong> (■) stops it. A Hold loop has no Play: it runs only while its hotkey is held down.</li>
   <li><strong>Edit</strong> (the pencil) opens the editor. It is off while loops or macros are running.</li>

@@ -70,7 +70,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     keep working; the card's own disabled state would block them).
   - `Views/SwitchSettingsExpander`: a `SettingsExpander` with a switch in its header whose options
     open only while the switch is on (`CanExpand`): otherwise no arrow and the header does not open
-    it. Use it for every group whose switch unlocks its options (today: floating button, Sound in
+    it. Use it for every group whose switch unlocks its options (today: floating button, Sound and Specific app in
     the loop and macro editors). It still lights up on mouse over when it cannot open (that is in
     the library's template).
   - The main window's side rail, `Views/SideRail`, as in Microsoft Store (iNKORE and WinUI have no
@@ -118,6 +118,12 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `ListViewItemCompactSelectedBorderThemeThickness` and `ListViewItemCornerRadius` set to 0. A
     group's open / close arrow is a `Button` with no background, border or hover, in the actions'
     icon column (16 wide), so the group name lines up with the actions.
+  - Specific app (`Views/AppScopeEditor`, in the loop, macro and remap editors): a
+    `SwitchSettingsExpander` whose card holds the editable `ComboBox` of running apps, **Pick** (the
+    `Eyedropper` icon) and **Browse…**. Pick's overlay (`PickPointWindow` with `pickApp`) outlines the
+    window under the cursor with a 2 px `#60CDFF` border and its .exe name on a `#60CDFF` label (fixed
+    dark look, like the other overlays). On the loop and macro cards the app follows the status: an
+    `AppIconDefault` icon and the .exe name in caption style, secondary color.
   - Sound in the loop and macro editors: the `RadioButtons` with the sounds sit in a standard
     `ScrollViewer` with `MaxHeight="200"`, so the long list scrolls on its own instead of making the
     whole editor scroll. `Views/SoundChoicesScroll` scrolls it to the chosen sound each time it is

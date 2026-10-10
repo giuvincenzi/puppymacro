@@ -76,6 +76,7 @@ public partial class MainWindow
         _engine.OverlayModeToggleRequested += ToggleOverlayMode;
         _engine.OverlayPanelDragged += OnOverlayPanelDragged;
         _engine.SoundRequested += (name, start) => _sounds.Play(name, start);
+        _engine.ForegroundAppChanged += OnForegroundAppChanged;
 
         _items = new ObservableCollection<LoopItemViewModel>(settings.Loops.Select(CreateItem));
         _view = new ListCollectionView(_items) { Filter = FilterLoop };
@@ -1233,6 +1234,7 @@ public partial class MainWindow
         return positions;
     }
 
+    /// <summary>One window per floating button; only those for all apps and for the app in front are shown.</summary>
     private void ShowFloatingButtons()
     {
         var items = FloatingButtonItems().ToList();
@@ -1242,8 +1244,28 @@ public partial class MainWindow
             IListItem item = items[index];
             var window = new FloatingButtonWindow(item, positions[index], item.FloatingButton.EffectiveOpacity);
             _buttonWindows.Add(window);
-            window.Show();
         }
+        ShowFloatingButtonsFor(_engine.ForegroundApp);
+    }
+
+    /// <summary>Shows the floating buttons for all apps and for <paramref name="appExe"/>; hidden ones cannot be clicked.</summary>
+    private void ShowFloatingButtonsFor(string? appExe)
+    {
+        foreach (var window in _buttonWindows)
+        {
+            if (AppScope.Allows(window.Item.AppExe, appExe))
+                window.Show();
+            else
+                window.Hide();
+        }
+    }
+
+    /// <summary>Another app came in front: the overlay shows its loops and macros and those for all apps.</summary>
+    private void OnForegroundAppChanged(string appExe)
+    {
+        _overlayPanelWindow.SetApp(appExe);
+        if (_overlayModeActive)
+            ShowFloatingButtonsFor(appExe);
     }
 
     private void CloseFloatingButtons()
@@ -1380,6 +1402,7 @@ public partial class MainWindow
                 : WindowState == WindowState.Minimized ? WindowBeforeOverlay.Minimized
                 : WindowBeforeOverlay.Open;
             Hide();
+            _overlayPanelWindow.SetApp(_engine.ForegroundApp);
             if (_settings.ShowOverlayPanel)
                 ShowOverlayPanel();
             ShowFloatingButtons();

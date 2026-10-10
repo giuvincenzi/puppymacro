@@ -16,17 +16,22 @@ internal sealed class InputThread : IDisposable
     private readonly ManualResetEventSlim _ready = new(false);
     private readonly Action<InputHook> _configure;
     private readonly Action _onDesktopSwitch;
+    private readonly Action<IntPtr> _onForeground;
     private Exception? _startError;
     private uint _threadId;
     private InputHook? _hook;
     private NativeMethods.WinEventProc? _desktopProc;
     private IntPtr _desktopHook;
+    private NativeMethods.WinEventProc? _foregroundProc;
+    private IntPtr _foregroundHook;
 
     /// <param name="configure">Sets the hook handlers; runs on the input thread before the hooks are installed.</param>
-    public InputThread(Action<InputHook> configure, Action onDesktopSwitch)
+    /// <param name="onForeground">Called on the input thread with the window that came in front.</param>
+    public InputThread(Action<InputHook> configure, Action onDesktopSwitch, Action<IntPtr> onForeground)
     {
         _configure = configure;
         _onDesktopSwitch = onDesktopSwitch;
+        _onForeground = onForeground;
         _thread = new Thread(Run) { IsBackground = true, Name = "PuppyMacro input", Priority = ThreadPriority.Highest };
     }
 
@@ -56,6 +61,12 @@ internal sealed class InputThread : IDisposable
             _desktopHook = NativeMethods.SetWinEventHook(
                 NativeMethods.EVENT_SYSTEM_DESKTOPSWITCH, NativeMethods.EVENT_SYSTEM_DESKTOPSWITCH,
                 IntPtr.Zero, _desktopProc, 0, 0, NativeMethods.WINEVENT_OUTOFCONTEXT);
+
+            // The app in front: app-specific loops and macros, and what the overlay shows.
+            _foregroundProc = (_, _, hwnd, _, _, _, _) => _onForeground(hwnd);
+            _foregroundHook = NativeMethods.SetWinEventHook(
+                NativeMethods.EVENT_SYSTEM_FOREGROUND, NativeMethods.EVENT_SYSTEM_FOREGROUND,
+                IntPtr.Zero, _foregroundProc, 0, 0, NativeMethods.WINEVENT_OUTOFCONTEXT);
         }
         catch (Exception ex)
         {
@@ -74,6 +85,8 @@ internal sealed class InputThread : IDisposable
         _hook.Dispose();
         if (_desktopHook != IntPtr.Zero)
             NativeMethods.UnhookWinEvent(_desktopHook);
+        if (_foregroundHook != IntPtr.Zero)
+            NativeMethods.UnhookWinEvent(_foregroundHook);
     }
 
     public void Dispose()

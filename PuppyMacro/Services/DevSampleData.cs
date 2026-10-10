@@ -49,6 +49,7 @@ internal static class DevSampleData
         {
             Name = "Sample: chat message",
             Actions = { new LoopAction { Type = ActionType.Text, Text = "Hello", EnterAfter = true, IntervalValue = 30, IntervalUnit = IntervalUnit.Seconds } },
+            AppExe = "notepad.exe",
             Enabled = false,
         });
 

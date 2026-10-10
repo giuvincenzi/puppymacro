@@ -103,6 +103,7 @@ public partial class LoopEditorWindow
 
         UpdateHotkeyLabel();
         FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
+        AppScopeCard.Load(source.AppExe);
         Validate();
     }
 
@@ -118,9 +119,16 @@ public partial class LoopEditorWindow
         SoundEnabled = SoundSwitch.IsOn,
         SoundName = _soundName,
         FloatingButton = FloatingEditor.ToModel(),
+        AppExe = AppScopeCard.AppExe,
     };
 
-    private string? HotkeyConflict(HotkeyBinding binding) => HotkeyConflicts.Find(binding, _settings, _macros, _editingId);
+    /// <summary>The app chosen in Specific app; null for all apps (also while none is chosen yet).</summary>
+    private string? SelectedApp => AppScopeCard.AppExe is { Length: > 0 } app ? app : null;
+
+    private string? HotkeyConflict(HotkeyBinding binding, string? appExe) =>
+        HotkeyConflicts.Find(binding, _settings, _macros, _editingId, appExe: appExe);
+
+    private void OnAppScopeChanged(object? sender, EventArgs e) => Validate();
 
     // ================= Rows =================
 
@@ -250,6 +258,8 @@ public partial class LoopEditorWindow
         // Written so that an empty interval (NaN) fails too.
         if (_actions.Any(a => a.ShowInterval && !(a.IntervalMs >= LoopAction.MinIntervalMs && a.IntervalMs <= LoopAction.MaxIntervalMs)))
             return "Every interval must be between 10 ms and 24 h.";
+        if (AppScopeCard.ValidationError is string appError)
+            return appError;
 
         if (_hotkey == null || !_hotkey.IsSet)
             return HoldRadio.IsChecked == true ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
@@ -258,7 +268,7 @@ public partial class LoopEditorWindow
         if (!_hotkey.HasModifiers && _actions.Any(a => a.IsKey && a.KeyVk == _hotkey.Vk))
             return "The hotkey cannot be one of the keys this loop presses.";
 
-        return HotkeyConflicts.Find(_hotkey, _settings, _macros, _editingId);
+        return HotkeyConflict(_hotkey, SelectedApp);
     }
 
     private void Validate()

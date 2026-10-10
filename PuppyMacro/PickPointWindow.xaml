@@ -14,13 +14,22 @@
     FontFamily="Segoe UI Variable Text, Segoe UI"
     Foreground="White"
     MouseLeftButtonDown="OnClick"
+    MouseMove="OnMouseMove"
     PreviewKeyDown="OnKeyDown">
 
     <Canvas>
+        <!-- Pick an app: the window under the cursor, outlined, with its .exe name (approved, fixed dark look) -->
+        <Border x:Name="Highlight" BorderThickness="2" CornerRadius="8" BorderBrush="#60CDFF"
+                IsHitTestVisible="False" Visibility="Collapsed" />
+        <Border x:Name="AppLabel" Padding="8,2" CornerRadius="4" Background="#60CDFF"
+                IsHitTestVisible="False" Visibility="Collapsed">
+            <TextBlock x:Name="AppLabelText" FontSize="12" Foreground="Black" />
+        </Border>
+
         <Border x:Name="Instructions" Padding="16,10" CornerRadius="8" BorderThickness="1"
                 Background="#F2202020" BorderBrush="#1FFFFFFF" Cursor="Arrow">
             <StackPanel Orientation="Horizontal">
-                <TextBlock FontSize="13" Text="Click the point the cursor should go to" VerticalAlignment="Center" />
+                <TextBlock x:Name="InstructionsText" FontSize="13" Text="Click the point the cursor should go to" VerticalAlignment="Center" />
                 <Border Margin="16,0,6,0" Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737">
                     <TextBlock FontSize="12" Text="Esc" />
                 </Border>
