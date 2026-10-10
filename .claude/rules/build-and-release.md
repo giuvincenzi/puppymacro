@@ -47,6 +47,41 @@
   Security > App & browser control > Smart App Control settings). On Windows 11 updated to
   April 2026 or later it can be turned back on without reinstalling Windows.
 
+## Code signing
+
+- Releases are signed with a **Certum Open Source Code Signing** certificate (SimplySign cloud, no
+  hardware token) issued to Giuseppe Vincenzi as a private person, valid at most 459 days: renew it
+  on Certum before it expires. The site's "Code signing policy" (`site/index.html`) says so.
+- **The Open Source certificate is for non-commercial open source only**: Certum revokes it if it
+  signs software distributed commercially. Never ship ads, paid features or paid versions signed
+  with it; that needs a commercial certificate first. Voluntary donations that unlock nothing are fine.
+- `scripts/build.ps1` signs through Velopack (`vpk pack --signTemplate`) with
+  [ssign](https://github.com/Le-Syl21/ssign), a client of Certum's SimplySign cloud API, when
+  `CERTUM_EMAIL` and `CERTUM_OTP` (or `CERTUM_TOKEN`) are set. Velopack skips files already signed
+  and trusted (Microsoft's) and signs the rest: PuppyMacro's exe and dlls, `Update.exe` and Setup,
+  with a timestamp from `time.certum.pl`. Then the script checks every exe and dll of the full
+  package and Setup with `Get-AuthenticodeSignature` and fails on any invalid signature, on our
+  files without a timestamp, or when `PuppyMacro.exe` or Setup are not signed by the publisher.
+  It deletes ssign's session file afterwards. Without the variables it builds unsigned (a warning);
+  with `-RequireSigning` it fails instead.
+- ssign receives the signing secrets, so it is **pinned** (`$SsignVersion`, `$SsignSha256`) and
+  downloaded from its GitHub release only when the SHA-256 matches. Updating it: review the new
+  version's source (network calls, what it does with the seed), then change both values.
+- Secrets: the GitHub environment **`signing`** (repository Settings > Environments) holds
+  `CERTUM_EMAIL` (the SimplySign account) and `CERTUM_OTP` (the TOTP seed of SimplySign: the
+  `secret` of the `otpauth://` QR code shown when SimplySign is activated). The seed signs as the
+  certificate owner until the QR code is reissued: never put it anywhere else. To replace it,
+  reissue the QR code in SimplySign and update the secret.
+- The Release workflow's release job uses the `signing` environment and `-RequireSigning`: a
+  release is never published unsigned. `.github/workflows/signing.yml` builds and signs the same
+  way on pull requests that change `scripts/build.ps1`, `release.yml` or itself (and by hand), and
+  keeps the signed Setup as an artifact for 7 days.
+- Locally (`make build`): set `CERTUM_EMAIL` and `CERTUM_TOKEN` (a 6-digit code from the SimplySign
+  app) in the shell to try a signed build; the code is used once to log in. In WSL the Makefile
+  passes them to Windows PowerShell through `WSLENV`.
+- A new certificate starts with no reputation: SmartScreen can still warn on Setup until enough
+  people download signed releases.
+
 ## Releases
 
 Releases are deterministic: never edit the version number or move CHANGELOG entries by hand.
