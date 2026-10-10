@@ -595,13 +595,6 @@
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />
                                     </ui:SettingsCard.ActionIcon>
                                 </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="SupportButton" Header="Support PuppyMacro"
-                                                 Description="Donate any amount through GitHub Sponsors" IsClickEnabled="True"
-                                                 Tag="https://github.com/sponsors/giuvincenzi" Click="OnOpenLinkClick">
-                                    <ui:SettingsCard.ActionIcon>
-                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />
-                                    </ui:SettingsCard.ActionIcon>
-                                </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
                     </ikw:SimpleStackPanel>

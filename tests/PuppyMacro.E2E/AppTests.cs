@@ -45,7 +45,6 @@ public class AppTests
         app.Expand("AboutGroup");
         Assert.True(app.FindById(app.MainWindow, "UserGuideButton").IsEnabled);
         Assert.True(app.FindById(app.MainWindow, "GitHubButton").IsEnabled);
-        Assert.True(app.FindById(app.MainWindow, "SupportButton").IsEnabled);
     }
 
     [Fact]
