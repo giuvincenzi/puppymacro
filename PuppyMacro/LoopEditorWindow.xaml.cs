@@ -61,6 +61,9 @@ public partial class LoopEditorWindow
         ActionsList.ItemsSource = _actions;
         LoadLoop(source);
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
+        // A floating button shows only for an item shown in the overlay.
+        OverlayOptions.ShowChanged += () => FloatingEditor.IsEnabled = OverlayOptions.ShowInOverlay;
+        FloatingEditor.IsEnabled = OverlayOptions.ShowInOverlay;
         KeyCaptureField.SetEngine(this, _engine); // every key field in the window waits for keys through it
 
         _code = new CodeViewSwitch<LoopDefinition>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
@@ -104,6 +107,7 @@ public partial class LoopEditorWindow
         UpdateHotkeyLabel();
         FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
         AppScopeCard.Load(source.AppExe);
+        OverlayOptions.Load(source.ShowInOverlay, source.HideInOverlayWhenDisabled, source.OverlayClickPassesThrough);
         Validate();
     }
 
@@ -120,6 +124,9 @@ public partial class LoopEditorWindow
         SoundName = _soundName,
         FloatingButton = FloatingEditor.ToModel(),
         AppExe = AppScopeCard.AppExe,
+        ShowInOverlay = OverlayOptions.ShowInOverlay,
+        HideInOverlayWhenDisabled = OverlayOptions.HideWhenDisabled,
+        OverlayClickPassesThrough = OverlayOptions.ClickPassesThrough,
     };
 
     /// <summary>The app chosen in Specific app; null for all apps (also while none is chosen yet).</summary>

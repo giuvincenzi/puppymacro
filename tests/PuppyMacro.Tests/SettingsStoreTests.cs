@@ -103,6 +103,19 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Loops_from_older_files_are_shown_in_the_overlay_also_while_disabled_and_catch_its_clicks()
+    {
+        AppSettings settings = LoadJson("""
+            { "Loops": [ { "Name": "Old loop", "Actions": [ { "Type": "Key", "KeyVk": 1 } ], "Enabled": false } ] }
+            """, out _);
+
+        LoopDefinition loop = Assert.Single(settings.Loops);
+        Assert.True(loop.ShowInOverlay);
+        Assert.False(loop.HideInOverlayWhenDisabled);
+        Assert.False(loop.OverlayClickPassesThrough);
+    }
+
+    [Fact]
     public void Files_before_schema_3_turn_on_clicking_in_the_overlay_panel()
     {
         AppSettings settings = LoadJson("""{ "SchemaVersion": 2, "ClickItemsInPanel": false }""", out _);

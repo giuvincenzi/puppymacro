@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+- In overlay mode, **right-click** a row of the overlay panel or a floating button to enable or disable
+  that loop or macro. Disabling a running one stops it.
+- **Show in overlay** in the loop and macro editors (on by default): turn it off to keep a loop or macro
+  out of the overlay. Inside it, **Hide when disabled** leaves it out while it is disabled, and **Clicks
+  also reach the app behind** lets the app under the overlay get the clicks too.
+
+### Changed
+- The overlay shows disabled loops and macros too: a panel row with a dashed outline and the state
+  **Disabled**, a floating button with a dashed ring. A click on them does nothing.
+- The overlay panel shows what the clicks do under Stop all.
+
 ## 1.12.0
 
 ### Added

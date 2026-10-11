@@ -45,6 +45,9 @@ paths:
 - Mouse details (`InputHook.MouseDetail` -> `LoopEngine.OnMouseDetail`, set only while recording or
   while overlay mode publishes click targets): recording (records, never blocks; clicks on
   PuppyMacro's own windows are not recorded) → a drag of the overlay panel's Move handle (moves pass,
-  the left release is blocked) → left press on a `PanelTarget` (skipped while `HotkeysSuspended`):
-  the Move handle starts the drag, any other target is toggled; the press and its release are
-  blocked, so the app in front never gets them (`architecture.md`).
+  the left release is blocked) → left or right press on a `PanelTarget` (skipped while
+  `HotkeysSuspended`): left, the Move handle starts the drag, Stop all and Exit act, a loop or macro is
+  started or stopped only when `Startable` (a disabled or Hold one does nothing); right, a loop or macro
+  is enabled or disabled (`OverlayEnableToggleRequested`), on the panel's own buttons the click passes.
+  The press and its release are blocked, so the app in front never gets them, unless the target has
+  `PassThrough` (`architecture.md`).

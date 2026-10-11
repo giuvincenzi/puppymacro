@@ -13,6 +13,29 @@ public class FloatingButtonTests : IDisposable
     public void Dispose() => _folder.Dispose();
 
     [Theory]
+    // show, hide when disabled, enabled -> shown in the overlay
+    [InlineData(true, false, true, true)]
+    [InlineData(true, false, false, true)]   // disabled: shown as disabled
+    [InlineData(true, true, true, true)]
+    [InlineData(true, true, false, false)]   // hidden while disabled
+    [InlineData(false, false, true, false)]  // Show in overlay off
+    public void The_overlay_shows_an_item_by_its_options(bool show, bool hideWhenDisabled, bool enabled, bool shown)
+    {
+        var item = new PuppyMacro.Views.LoopItemViewModel(new LoopDefinition
+        {
+            Name = "Spam",
+            Enabled = enabled,
+            ShowInOverlay = show,
+            HideInOverlayWhenDisabled = hideWhenDisabled,
+            FloatingButton = { Enabled = true },
+        });
+
+        Assert.Equal(shown, PuppyMacro.Views.OverlayItems.IsShown(item));
+        // Its floating button follows (Toggle only).
+        Assert.Equal(shown, PuppyMacro.Views.FloatingButtons.HasButton(item));
+    }
+
+    [Theory]
     [InlineData("Click every second", "CE")]
     [InlineData("Sample: hold W", "SH")]
     [InlineData("Mining", "MI")]

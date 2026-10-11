@@ -15,6 +15,15 @@ public interface IListItem
     bool IsHoldMode { get; }
     Models.FloatingButton FloatingButton { get; }
 
+    /// <summary>Shown in overlay mode (see <see cref="OverlayItems"/>).</summary>
+    bool ShowInOverlay { get; }
+
+    /// <summary>Left out of the overlay while disabled.</summary>
+    bool HideInOverlayWhenDisabled { get; }
+
+    /// <summary>A click on it in the overlay also reaches the window under it.</summary>
+    bool OverlayClickPassesThrough { get; }
+
     /// <summary>The app it works in (.exe name); null for all apps.</summary>
     string? AppExe { get; }
 

@@ -233,6 +233,11 @@ kbd {
 }
 .overlay-panel .stop-all { justify-content: center; gap: 8px; font-size: 12px; color: #ff99a4; }
 .overlay-panel .stop-all .square { width: 9px; height: 9px; border-radius: 2px; background: #ff99a4; }
+/* A disabled row and the clicks hint under Stop all (guides after 1.12.0). */
+.overlay-panel .row.disabled { background: transparent; border: 1px dashed rgba(255, 255, 255, 0.28); }
+.overlay-panel .disabled .dot { background: transparent; border: 1.5px solid #9e9e9e; box-sizing: border-box; }
+.overlay-panel .disabled .name { color: #8a8a8a; }
+.overlay-panel .click-hint { margin-top: 8px; font-size: 11px; color: #9e9e9e; text-align: center; }
 .floating-buttons {
   display: flex; align-items: center; gap: 22px; width: fit-content; padding: 18px 22px;
   border-radius: 8px; background: #2e4157;
@@ -245,6 +250,7 @@ kbd {
 }
 .floating-button.small { width: 36px; height: 36px; font-size: 12px; }
 .floating-button.running { border: 2px solid #6ccb5f; box-shadow: 0 0 0 4px rgba(108, 203, 95, 0.22); color: #6ccb5f; }
+.floating-button.disabled { background: rgba(32, 32, 32, 0.55); border: 1.5px dashed rgba(255, 255, 255, 0.4); color: #8a8a8a; }
 .floating-button kbd {
   position: absolute; left: 28px; top: 34px; padding: 0 4px;
   font: 400 10px/14px 'Segoe UI', system-ui, sans-serif; color: #ffffff;

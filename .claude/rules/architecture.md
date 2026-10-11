@@ -71,7 +71,9 @@ Rules:
 - Clicks on the overlay panel and on the floating buttons are matched against rectangles
   (`PanelTarget`, physical pixels) published by the UI every 300 ms while overlay mode is on.
   Floating buttons are always clickable; panel rows only with `ShowOverlayPanel` and
-  `ClickItemsInPanel` (so are the panel's Exit, Stop all and Move buttons).
+  `ClickItemsInPanel` (so are the panel's Exit, Stop all and Move buttons). Each target of a loop or
+  macro says whether a left click starts it (`Startable`: enabled, not Hold) and whether the click also
+  reaches the app (`PassThrough`).
 - The panel's Move handle (`PanelTarget.MoveOverlayId`): the hook blocks its press and release (the
   app keeps the focus) and never the moves (that would hold the cursor still); it reports the offset
   from the press through `LoopEngine.OverlayPanelDragged` (moves coalesced, one on its way at a
@@ -134,10 +136,16 @@ Rules:
 - Overlay mode: the overlay is the overlay panel (`Views/OverlayPanel`, `OverlayPanelWindow`,
   click-through, no-activate, shown when `ShowOverlayPanel`) and the floating buttons.
   `PlacementWindow` (Position on screen, Position…) always shows the whole overlay as overlay
-  mode shows it.
+  mode shows it. Which loops and macros it shows: `Views/OverlayItems.IsShown` (`ShowInOverlay` on, and
+  enabled or `HideInOverlayWhenDisabled` off); disabled ones are shown as disabled and a left click on
+  them does nothing. A right click on a row or a floating button enables or disables the item
+  (`LoopEngine.OverlayEnableToggleRequested` → `MainWindow` flips its card's switch, so a running one
+  stops and it is saved). `OverlayClickPassesThrough`: the hook acts on the click and lets it reach the
+  app behind. The editors' card: `Views/OverlayOptionsEditor` (Show in overlay, Hide when disabled,
+  Clicks also reach the app behind; off, the Floating button card is off too).
 - Floating buttons: `FloatingButton` (in `AppSettings.cs`, on loops and macros),
-  `Views/FloatingButtons` (which items get one: enabled, Toggle, option on; those are left out
-  of the panel list), `FloatingButtonWindow` (one per button, click-through, no-activate),
+  `Views/FloatingButtons` (which items get one: shown in the overlay, Toggle, option on; those are left
+  out of the panel list), `FloatingButtonWindow` (one per button, click-through, no-activate),
   `Views/FloatingButtonView` (the round button), `Views/FloatingButtonEditor` (editor card:
   label, size, opacity, Position…). A button without a saved position is in the middle of the
   main screen (`MainWindow.ButtonPositions`).

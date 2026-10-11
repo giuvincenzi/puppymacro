@@ -51,6 +51,9 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     }
     public bool IsHoldMode => Definition.Mode == ActivationMode.Hold;
     public FloatingButton FloatingButton => Definition.FloatingButton;
+    public bool ShowInOverlay => Definition.ShowInOverlay;
+    public bool HideInOverlayWhenDisabled => Definition.HideInOverlayWhenDisabled;
+    public bool OverlayClickPassesThrough => Definition.OverlayClickPassesThrough;
     public string? AppExe => Definition.AppExe;
     public bool HasApp => Definition.AppExe != null;
     public bool IsItemEnabled => Definition.Enabled;

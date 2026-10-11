@@ -3,7 +3,7 @@
   <img src="img/loop-editor.png" alt="The Edit loop window" loading="lazy">
   <figcaption>A loop that presses the left mouse button every second, started and stopped with F6.</figcaption>
 </figure>
-<p>The editor has what the loop does on the left (name, keys and texts) and how it starts on the right (Activation, Hotkey, Specific app, Floating button, Sound).</p>
+<p>The editor has what the loop does on the left (name, keys and texts) and how it starts on the right (Activation, Hotkey, Specific app, Show in overlay, Floating button, Sound).</p>
 <ul>
   <li><strong>Keys and texts</strong>: each row repeats on its own timer, from 10 ms to 24 h. A row shows <strong>Key</strong> or <strong>Text</strong> and a summary, for example “Repeat, every 1 s”; open it for its settings. The trash button on the row removes it.
     <ul>
@@ -22,6 +22,7 @@
       <li><strong>Play</strong> on its card starts it in any case.</li>
     </ul>
   </li>
+  <li><strong>Show in overlay</strong>: on by default, the loop is in overlay mode, as a row of the panel or as its floating button. Inside, <strong>Hide when disabled</strong> leaves it out of the overlay while it is disabled, and <strong>Clicks also reach the app behind</strong> lets the app under it get the clicks too (see <a href="overlay-mode.html#show-in-overlay">Overlay mode</a>).</li>
   <li><strong>Floating button</strong>: a round button in overlay mode that starts and stops the loop, placed anywhere on the screen, with its own label, size and opacity (see <a href="overlay-mode.html">Overlay mode</a>).</li>
   <li><strong>Sound</strong>: turn it on to play a sound when the loop starts and stops, and click a sound to pick it and hear it. The volume of every sound is in <strong>Settings &gt; Sound</strong>.</li>
   <li><strong>Code view</strong>, at the top of the window, shows the loop as JSON, as it is saved, in a code editor with suggestions and checks; see <a href="macros.html">Macros &gt; Code view</a>.</li>

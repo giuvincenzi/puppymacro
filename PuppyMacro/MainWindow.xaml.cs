@@ -75,6 +75,7 @@ public partial class MainWindow
         _engine.StateChanged += OnEngineStateChanged;
         _engine.OverlayModeToggleRequested += ToggleOverlayMode;
         _engine.OverlayPanelDragged += OnOverlayPanelDragged;
+        _engine.OverlayEnableToggleRequested += OnOverlayEnableToggleRequested;
         _engine.SoundRequested += (name, start) => _sounds.Play(name, start);
         _engine.ForegroundAppChanged += OnForegroundAppChanged;
 
@@ -1149,7 +1150,8 @@ public partial class MainWindow
         {
             IListItem item = others[index];
             buttons.Add(new PlacementButton(item.Id, item.Name, FloatingButtonWindow.LabelOf(item),
-                item.HasHotkey ? item.HotkeyText : "", item.FloatingButton.Size, item.FloatingButton.EffectiveOpacity, positions[index]));
+                item.HasHotkey ? item.HotkeyText : "", item.FloatingButton.Size, item.FloatingButton.EffectiveOpacity, positions[index],
+                item.IsItemEnabled));
         }
         if (editingShown)
         {
@@ -1266,6 +1268,30 @@ public partial class MainWindow
         _overlayPanelWindow.SetApp(appExe);
         if (_overlayModeActive)
             ShowFloatingButtonsFor(appExe);
+    }
+
+    /// <summary>
+    /// A right click on a loop or macro in the overlay: enables or disables it, as its card's switch does (a running
+    /// one stops). One hidden while disabled leaves the overlay; enabled again it comes back.
+    /// </summary>
+    private void OnOverlayEnableToggleRequested(Guid id)
+    {
+        if (_items.FirstOrDefault(i => i.Id == id) is LoopItemViewModel loop)
+            loop.IsLoopEnabled = !loop.IsLoopEnabled;
+        else if (_macroItems.FirstOrDefault(m => m.Id == id) is MacroItemViewModel macro)
+            macro.IsLoopEnabled = !macro.IsLoopEnabled;
+        else
+            return;
+        if (!_overlayModeActive)
+            return;
+        // The floating buttons change only when one is hidden while disabled.
+        var shown = _buttonWindows.Select(w => w.ItemId).ToList();
+        if (!FloatingButtonItems().Select(i => i.Id).SequenceEqual(shown))
+        {
+            CloseFloatingButtons();
+            ShowFloatingButtons();
+        }
+        UpdatePanelClicks(); // a left click starts it right away once enabled
     }
 
     private void CloseFloatingButtons()

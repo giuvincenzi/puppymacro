@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Definitions;
 using FlaUI.Core.Input;
 using FlaUI.Core.Tools;
 using FlaUI.Core.WindowsAPI;
@@ -298,16 +299,35 @@ public class AppTests
         Assert.NotNull(button);
         Assert.True(app.Has(button!, "EF"));
 
-        // The samples are disabled and the new loop is on its button: the panel lists nothing.
+        // The new loop is on its button; the panel lists the samples, shown as disabled.
         AutomationElement? panel = app.TopWindow("PuppyMacro overlay panel");
         Assert.NotNull(panel);
-        Assert.True(app.Has(panel!, "Everything is on floating buttons."));
+        Assert.True(app.Has(panel!, "Sample: click every second"));
+        Assert.True(app.Has(panel!, "Disabled"));
         Assert.False(app.Has(panel!, "E2E F24 loop"));
         Assert.True(app.Has(panel!, "Stop all"));
 
         PressF24(); // the Overlay mode hotkey
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
         Assert.True(Retry.WhileFalse(() => button!.IsOffscreen || !button.IsAvailable, AppSession.Timeout).Success);
+    }
+
+    [Fact]
+    public void Show_in_overlay_is_on_by_default_and_off_it_turns_off_the_floating_button_and_is_saved()
+    {
+        using var app = new AppSession();
+        Window editor = AddF24LoopWithButton(app);
+        var show = app.FindById(editor, "ShowSwitch").AsToggleButton();
+        Assert.Equal(ToggleState.On, show.ToggleState);
+        Assert.True(app.FindById(editor, "FloatingSwitch").IsEnabled);
+
+        show.Toggle(); // UI Automation: no click, works off screen
+        Assert.True(Retry.WhileTrue(() => app.FindById(editor, "FloatingSwitch").IsEnabled, AppSession.Timeout).Success,
+            "the floating button can still be turned on");
+        app.FindById(editor, "SaveButton").AsButton().Click();
+
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"ShowInOverlay\": false"),
+            AppSession.Timeout).Success, "Show in overlay off was not saved");
     }
 
     [Fact]

@@ -90,6 +90,9 @@ public partial class MacroEditorWindow
         SoundChoicesScroll.Attach(SoundScroll, () => _soundName);
 
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
+        // A floating button shows only for an item shown in the overlay.
+        OverlayOptions.ShowChanged += () => FloatingEditor.IsEnabled = OverlayOptions.ShowInOverlay;
+        FloatingEditor.IsEnabled = OverlayOptions.ShowInOverlay;
         _code = CreateCodeSwitch();
         _ready = true;
         Validate();
@@ -135,6 +138,7 @@ public partial class MacroEditorWindow
         UpdateHotkeyLabel();
         FloatingEditor.Load(source.FloatingButton, source.Name, HotkeyText(), source.Mode == ActivationMode.Hold);
         AppScopeCard.Load(source.AppExe);
+        OverlayOptions.Load(source.ShowInOverlay, source.HideInOverlayWhenDisabled, source.OverlayClickPassesThrough);
     }
 
     /// <summary>The macro as the List view's fields describe it.</summary>
@@ -156,6 +160,9 @@ public partial class MacroEditorWindow
             SoundName = _soundName,
             FloatingButton = FloatingEditor.ToModel(),
             AppExe = AppScopeCard.AppExe,
+            ShowInOverlay = OverlayOptions.ShowInOverlay,
+            HideInOverlayWhenDisabled = OverlayOptions.HideWhenDisabled,
+            OverlayClickPassesThrough = OverlayOptions.ClickPassesThrough,
         };
         macro.NormalizeGroups();
         return macro;

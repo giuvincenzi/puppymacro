@@ -221,6 +221,15 @@ public sealed class LoopDefinition
     /// <summary>Executable name (e.g. "Diablo IV.exe") it works in; null = all apps (<see cref="AppScope"/>).</summary>
     public string? AppExe { get; set; }
 
+    /// <summary>Shown in overlay mode: its row in the overlay panel or its floating button.</summary>
+    public bool ShowInOverlay { get; set; } = true;
+
+    /// <summary>Left out of the overlay while it is disabled (otherwise shown as disabled).</summary>
+    public bool HideInOverlayWhenDisabled { get; set; }
+
+    /// <summary>A click on it in the overlay also reaches the window under it.</summary>
+    public bool OverlayClickPassesThrough { get; set; }
+
     // ---- v1.0 fields, read once and converted by SettingsStore ----
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? KeyVk { get; set; }
@@ -251,6 +260,9 @@ public sealed class LoopDefinition
         SoundName = other.SoundName;
         FloatingButton = other.FloatingButton.Clone();
         AppExe = other.AppExe;
+        ShowInOverlay = other.ShowInOverlay;
+        HideInOverlayWhenDisabled = other.HideInOverlayWhenDisabled;
+        OverlayClickPassesThrough = other.OverlayClickPassesThrough;
     }
 }
 
