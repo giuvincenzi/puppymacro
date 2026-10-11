@@ -63,7 +63,7 @@ public partial class MainWindow
         _macros = macros;
 
         Title = App.DisplayTitle;
-        AppTitleText.Text = App.DisplayTitle;
+        AppVersionRun.Text = App.VersionLabel;
         AboutText.Text = App.DisplayTitle;
         DevBuildStrip.Visibility = App.IsDevBuild ? Visibility.Visible : Visibility.Collapsed;
 

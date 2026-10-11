@@ -90,7 +90,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     where that layer starts; the Settings list keeps the library's 4 (no extra margin), as Library in Microsoft Store.
   - The main window's title bar: `TitleBar.ExtendViewIntoTitleBar` with `TitleBar.Height` 48, as Microsoft Store
     and the library's ButtonsOnTitlebar sample: the app icon at 24 px (12 px above and below), the title in caption
-    style, then on the right, before the window buttons (`TitleBar.SystemOverlayRightInset`), Enter overlay mode (a
+    style with the version in `TextFillColorSecondaryBrush`, then on the right, before the window buttons (`TitleBar.SystemOverlayRightInset`), Enter overlay mode (a
     standard button with the `MapLayers` icon) and Stop all, each with its hotkey in the tooltip and
     `WindowChrome.IsHitTestVisibleInChrome`. They show on every page.
   - The main window's Stop all, in that title bar: the `Stop` icon and its text, `AccentButtonStyle` with

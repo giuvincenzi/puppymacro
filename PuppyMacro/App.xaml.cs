@@ -35,6 +35,9 @@ public partial class App : Application
 
     public static string DisplayTitle { get; } = BuildDisplayTitle();
 
+    /// <summary>The title without the name ("v1.6.0", "v1.6.0 DEV"): the main window's title bar shows it in grey.</summary>
+    public static string VersionLabel => DisplayTitle["PuppyMacro".Length..].TrimStart();
+
     private static string BuildDisplayTitle()
     {
         Version? version = typeof(App).Assembly.GetName().Version;

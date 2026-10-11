@@ -44,8 +44,11 @@
                 <!-- 24 px: 12 px above and below it in the 48 px bar -->
                 <Image Width="24" Height="24" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"
                        Source="pack://application:,,,/Assets/PuppyMacro-256.png" />
-                <TextBlock x:Name="AppTitleText" Margin="12,0,0,0" VerticalAlignment="Center"
-                           Style="{StaticResource CaptionTextBlockStyle}" Text="PuppyMacro" />
+                <!-- The name, then the version (and DEV) in the secondary text color -->
+                <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
+                    <Run Text="PuppyMacro" />
+                    <Run x:Name="AppVersionRun" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </TextBlock>
             </StackPanel>
 
             <ikw:SimpleStackPanel Grid.Column="1" Margin="0,0,8,0" VerticalAlignment="Center" Orientation="Horizontal" Spacing="8">
