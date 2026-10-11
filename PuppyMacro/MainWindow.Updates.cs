@@ -132,7 +132,7 @@ public partial class MainWindow
         if (downloading)
         {
             status = $"Downloading version {version}… {_downloadPercent}%";
-            action = "Cancel";
+            action = ""; // no button while downloading
         }
         else if (_updateError != null)
         {
@@ -158,7 +158,7 @@ public partial class MainWindow
         }
 
         UpdateStatusText.Text = status;
-        UpdateCardButton.Visibility = Visibility.Visible;
+        UpdateCardButton.Visibility = downloading ? Visibility.Collapsed : Visibility.Visible;
         UpdateCardButton.Content = action;
         UpdateCardButton.IsEnabled = !_checkingForUpdates;
         UpdateCardProgress.Visibility = downloading ? Visibility.Visible : Visibility.Collapsed;
@@ -174,14 +174,15 @@ public partial class MainWindow
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;
+        UpdateBarButton.Visibility = UpdateCardButton.Visibility;
         UpdateBar.IsClosable = !downloading; // Later
     }
 
     private async void OnUpdateActionClick(object sender, RoutedEventArgs e)
     {
         if (_downloadCancel != null)
-            _downloadCancel.Cancel();
-        else if (_availableUpdate != null)
+            return; // downloading: no button is shown
+        if (_availableUpdate != null)
             await DownloadAndApplyUpdateAsync();
         else
             await CheckForUpdatesAsync();
