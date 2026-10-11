@@ -6,7 +6,7 @@
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
     xmlns:views="clr-namespace:PuppyMacro.Views"
-    Title="PuppyMacro"
+    Title="AI request"
     Width="480"
     SizeToContent="Height"
     ResizeMode="NoResize"

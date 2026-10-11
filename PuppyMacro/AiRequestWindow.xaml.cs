@@ -20,6 +20,7 @@ public partial class AiRequestWindow
     {
         InitializeComponent();
         WindowFit.Apply(this);
+        Title = $"AI request - {app}"; // its own name in the taskbar, not the main window's
         AskedByText.Text = $"Asked by {app}";
         HeadingText.Text = heading;
         OkButton.Content = ok;

@@ -57,6 +57,15 @@ public class AiTests
         return (text, result.IsError == true);
     }
 
+    /// <summary>
+    /// A window owned by the main window while that stays visible (AI activity): UI Automation lists it under the main
+    /// window, not among the top-level windows (where <see cref="AppSession.Dialog"/> looks).
+    /// </summary>
+    private static Window OwnedWindow(AppSession app, string title) =>
+        Retry.WhileNull(() => app.MainWindow.FindFirstDescendant(cf => cf.ByName(title).And(cf.ByControlType(ControlType.Window)))?.AsWindow()
+                ?? app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(app.ProcessId)))?.AsWindow(),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: $"window \"{title}\" not found").Result!;
+
     private static AppSettings SavedSettings() =>
         JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSession.SettingsFile), Seed.JsonOptions)!;
 
@@ -106,7 +115,7 @@ public class AiTests
 
         Task<(string Text, bool IsError)> call = Call(client, "propose_remap", F23ToF22);
         Window editor = app.Dialog("Add remap");
-        Assert.True(app.Has(editor, $"Proposed by {ClientName}."));
+        app.FindById(editor, "ProposalBar"); // open only for a proposal (its text is not a UI Automation name)
         Assert.True(app.Has(editor, "F23"));
         app.FindById(editor, "SaveButton").AsButton().Invoke();
         var (text, isError) = await call;
@@ -159,7 +168,7 @@ public class AiTests
         await using McpClient client = await Connect();
 
         Task<(string Text, bool IsError)> call = Call(client, "delete_item", new { id = remap.Id.ToString() });
-        Window confirm = app.Dialog("PuppyMacro");
+        Window confirm = app.Dialog("AI request");
         Assert.True(app.Has(confirm, "Delete this remap?"));
         Assert.True(app.Has(confirm, $"Asked by {ClientName}"));
         app.FindButton(confirm, "Delete").Invoke();
@@ -177,7 +186,7 @@ public class AiTests
         await using McpClient client = await Connect();
 
         Task<(string Text, bool IsError)> call = Call(client, "capture_hotkey", new { reason = "The key to remap" });
-        Window window = app.Dialog("PuppyMacro");
+        Window window = app.Dialog("AI request");
         Assert.True(app.Has(window, "The key to remap"));
         app.Find(window, "Press the key or combination (Esc cancels)");
         Keyboard.Press(VirtualKeyShort.F22);
@@ -220,7 +229,7 @@ public class AiTests
 
         app.GoTo("AI");
         app.FindById(app.MainWindow, "AiViewAllButton").AsButton().Invoke();
-        Window activity = app.Dialog("AI activity");
+        Window activity = OwnedWindow(app, "AI activity");
 
         Assert.True(app.Has(activity, "Read your loops, macros and remaps"));
         Assert.True(app.Has(activity, "Read the guide: Remap"));
