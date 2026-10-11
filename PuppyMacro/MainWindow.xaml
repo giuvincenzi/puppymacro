@@ -436,20 +436,20 @@
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
                             </ui:SettingsExpander.HeaderIcon>
                             <ui:SettingsExpander.Description>
-                                <TextBlock x:Name="HotkeysSummary" TextWrapping="Wrap" />
+                                <TextBlock TextWrapping="Wrap" Text="Hotkeys that work in every app" />
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Stop all" Description="Stops everything that is running: every loop and macro">
+                                <ui:SettingsCard Header="Stop all" Description="Stop every loop and macro">
                                     <views:KeyCaptureField x:Name="StopAllHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Overlay mode" Description="Switches between this window and the overlay">
+                                <ui:SettingsCard Header="Overlay mode" Description="Enable overlay mode">
                                     <views:KeyCaptureField x:Name="OverlayModeHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Record" Description="Starts and stops macro recording">
+                                <ui:SettingsCard Header="Record" Description="Start and stop a macro recording">
                                     <views:KeyCaptureField x:Name="RecordHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
@@ -466,11 +466,10 @@
                                 <TextBlock x:Name="OverlaySummary" TextWrapping="Wrap" />
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Show the overlay panel"
-                                                 Description="The list of loops and macros with their hotkeys. Off: overlay mode shows only the floating buttons, and you leave it with the Overlay mode hotkey.">
+                                <ui:SettingsCard Header="Show the overlay panel" Description="The list of your loops and macros">
                                     <ui:ToggleSwitch x:Name="ShowPanelSwitch" AutomationProperties.Name="Show the overlay panel" Toggled="OnShowPanelChanged" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="OpacityCard" Header="Opacity" Description="Background of the overlay panel. Text stays fully visible.">
+                                <ui:SettingsCard x:Name="OpacityCard" Header="Opacity">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock x:Name="OpacityValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
                                         <Slider x:Name="OpacitySlider" Width="200" VerticalAlignment="Center"
@@ -492,33 +491,19 @@
                                         </Border>
                                     </StackPanel>
                                 </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="PositionCard" Header="Position"
-                                                 Description="Where the overlay panel appears, measured from the top-left corner of the main screen.">
-                                    <StackPanel Orientation="Horizontal">
-                                        <ui:NumberBox x:Name="PositionXBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" ui:ControlHelper.Header="X"
-                                                      Minimum="-100000" Maximum="100000" ValueChanged="OnPositionBoxChanged" />
-                                        <ui:NumberBox x:Name="PositionYBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Margin="8,0,0,0" ui:ControlHelper.Header="Y"
-                                                      Minimum="-100000" Maximum="100000" ValueChanged="OnPositionBoxChanged" />
-                                        <Button Margin="8,0,0,0" VerticalAlignment="Bottom" Content="Reset" Click="OnResetPositionClick"
-                                                ToolTip="Back to the top-left corner of the main screen" />
-                                    </StackPanel>
-                                </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them"
-                                                 Description="Loops, macros, Stop all and the exit button in the overlay panel become clickable. Hold items stay hotkey only. Floating buttons are always clickable.">
-                                    <ui:ToggleSwitch x:Name="ClickInPanelSwitch" Toggled="OnClickInPanelChanged" />
-                                </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="ClickInPanelWarningCard" HorizontalContentAlignment="Stretch" ContentAlignment="Left">
-                                    <ui:InfoBar IsOpen="True" IsClosable="False" Severity="Warning"
-                                                Message="Some fullscreen apps may react to the click or briefly lose focus. If you notice problems, turn this off and use hotkeys only." />
-                                </ui:SettingsCard>
-                                <ui:SettingsCard Header="Floating buttons">
-                                    <ui:SettingsCard.Description>
-                                        <TextBlock x:Name="FloatingButtonsText" TextWrapping="Wrap" />
-                                    </ui:SettingsCard.Description>
-                                </ui:SettingsCard>
-                                <ui:SettingsCard Header="Position on screen"
-                                                 Description="Shows the whole overlay as it appears in overlay mode: drag the overlay panel and every floating button where you want them.">
+                                <ui:SettingsCard Header="Position on screen" Description="Drag the panel and the floating buttons">
                                     <views:PlaceButton IsAccent="True" MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
+                                </ui:SettingsCard>
+                                <!-- Its warning is part of it, under its description -->
+                                <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them">
+                                    <ui:SettingsCard.Description>
+                                        <StackPanel>
+                                            <TextBlock TextWrapping="Wrap" Text="Hold items still need their hotkey" />
+                                            <ui:InfoBar Margin="0,8,0,0" IsOpen="True" IsClosable="False" Severity="Warning"
+                                                        Message="Some fullscreen apps may react to the click. If so, turn this off." />
+                                        </StackPanel>
+                                    </ui:SettingsCard.Description>
+                                    <ui:ToggleSwitch x:Name="ClickInPanelSwitch" Toggled="OnClickInPanelChanged" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
@@ -621,7 +606,7 @@
                 </ui:ScrollViewerEx>
 
                 <!-- ================= Always visible: overlay mode and stop all ================= -->
-                <Grid Grid.Row="1" Margin="40,12,40,20">
+                <Grid x:Name="ActionBar" Grid.Row="1" Margin="40,12,40,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="8" />

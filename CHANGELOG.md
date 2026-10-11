@@ -31,6 +31,9 @@
 - The cards of loops name the click and the combination they send, for example "Left click every 1 s"
   instead of "LButton every 1 s".
 - The **Test** button of a macro action shows a play icon.
+- Settings: shorter texts; the overlay panel moves only with **Position on screen** (the X, Y and Reset
+  fields are gone), the floating buttons card is gone, and Enable overlay mode and Stop all are not shown
+  on the Settings page.
 - The loop, macro and remap editors open 240 px wider: 120 for their right column, whose lists (apps,
   sounds) have more room, and 120 for the actions; a macro editor width you kept grows as much.
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves

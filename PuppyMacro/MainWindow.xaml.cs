@@ -116,7 +116,7 @@ public partial class MainWindow
         HotkeysGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Hotkeys");
         OverlayGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Overlay");
         SoundGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Sound");
-        UpdatePositionBoxes();
+        UpdateSettingsSummaries();
 
         ClickInPanelSwitch.IsOn = settings.ClickItemsInPanel;
         ShowPanelSwitch.IsOn = settings.ShowOverlayPanel;
@@ -290,6 +290,8 @@ public partial class MainWindow
         MacrosPage.Visibility = page == "Macros" ? Visibility.Visible : Visibility.Collapsed;
         RemapsPage.Visibility = page == "Remap" ? Visibility.Visible : Visibility.Collapsed;
         SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
+        // Enable overlay mode and Stop all belong to the lists, not to Settings.
+        ActionBar.Visibility = page == "Settings" ? Visibility.Collapsed : Visibility.Visible;
         if (page != "Settings")
             _engine.CancelCapture(); // a Settings hotkey field that waits stops
     }
@@ -298,9 +300,7 @@ public partial class MainWindow
     private void SetPanelOptionsEnabled(bool enabled)
     {
         OpacityCard.IsEnabled = enabled;
-        PositionCard.IsEnabled = enabled;
         ClickInPanelCard.IsEnabled = enabled;
-        ClickInPanelWarningCard.IsEnabled = enabled;
     }
 
     // ================= Loops list =================
@@ -1098,31 +1098,6 @@ public partial class MainWindow
         return onScreen ? new Point(x, y) : DefaultPanelPosition();
     }
 
-    private bool _updatingPositionBoxes;
-
-    private void UpdatePositionBoxes()
-    {
-        Point p = PanelPosition();
-        _updatingPositionBoxes = true;
-        PositionXBox.Value = Math.Round(p.X);
-        PositionYBox.Value = Math.Round(p.Y);
-        _updatingPositionBoxes = false;
-        UpdateSettingsSummaries();
-    }
-
-    private void OnPositionBoxChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-    {
-        if (_initializing || _updatingPositionBoxes)
-            return;
-        double x = PositionXBox.Value, y = PositionYBox.Value;
-        if (!double.IsNaN(x) && !double.IsNaN(y))
-        {
-            _settings.OverlayPanelX = x;
-            _settings.OverlayPanelY = y;
-            UpdateSettingsSummaries();
-            Save();
-        }
-    }
 
     private void OnPositionOnScreenClick(object sender, RoutedEventArgs e) => OpenPlacement(null);
 
@@ -1176,7 +1151,7 @@ public partial class MainWindow
         {
             _settings.OverlayPanelX = Math.Round(placement.Result.X);
             _settings.OverlayPanelY = Math.Round(placement.Result.Y);
-            UpdatePositionBoxes();
+            UpdateSettingsSummaries();
         }
 
         foreach (IListItem item in others)
@@ -1302,36 +1277,11 @@ public partial class MainWindow
         _buttonWindows.Clear();
     }
 
-    private void OnResetPositionClick(object sender, RoutedEventArgs e)
-    {
-        _settings.OverlayPanelX = null;
-        _settings.OverlayPanelY = null;
-        UpdatePositionBoxes();
-        Save();
-    }
-
     private void UpdateSettingsSummaries()
     {
-        if (HotkeysSummary == null)
+        if (OverlaySummary == null)
             return;
-        HotkeysSummary.Text = $"Stop all {KeyNames.Format(_settings.StopAllHotkey)}, Overlay mode {KeyNames.Format(_settings.OverlayModeHotkey)}, Record {KeyNames.Format(_settings.RecordHotkey)}";
-        int buttons = FloatingButtonItems().Count();
-        string buttonsText = buttons switch { 0 => "no floating buttons", 1 => "1 floating button", _ => $"{buttons} floating buttons" };
-        if (_settings.ShowOverlayPanel)
-        {
-            Point p = PanelPosition();
-            OverlaySummary.Text = $"Panel: opacity {_settings.OverlayPanelOpacity}%, position X {Math.Round(p.X)}, Y {Math.Round(p.Y)}, click to start {(_settings.ClickItemsInPanel ? "on" : "off")}; {buttonsText}";
-        }
-        else
-        {
-            OverlaySummary.Text = $"Panel off; {buttonsText}";
-        }
-        FloatingButtonsText.Text = (buttons switch
-        {
-            0 => "None yet.",
-            1 => "1 loop or macro has a floating button.",
-            _ => $"{buttons} loops and macros have a floating button.",
-        }) + " Turn one on with Floating button in the loop or macro editor, where you also set its label, size and opacity.";
+        OverlaySummary.Text = $"Opacity {_settings.OverlayPanelOpacity}%";
         SoundSummary.Text = $"Volume {_settings.SoundVolume}%";
     }
 
@@ -1402,7 +1352,7 @@ public partial class MainWindow
             return;
         _settings.OverlayPanelX = Math.Round(_overlayPanelWindow.Left);
         _settings.OverlayPanelY = Math.Round(_overlayPanelWindow.Top);
-        UpdatePositionBoxes();
+        UpdateSettingsSummaries();
         Save();
         PublishPanelTargets(); // the clickable rectangles moved with the panel
     }
