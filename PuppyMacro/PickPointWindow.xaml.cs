@@ -101,7 +101,10 @@ public partial class PickPointWindow
     {
         if (Instructions.IsMouseOver)
             return;
-        NativeMethods.GetCursorPos(out var point);
+        // Where this click was (screen pixels), not where the pointer is now: with quick clicks the pointer is already
+        // at the next point when this one is handled.
+        Point screen = PointToScreen(e.GetPosition(this));
+        var point = new NativeMethods.POINT { X = (int)Math.Round(screen.X), Y = (int)Math.Round(screen.Y) };
         if (_pickApp)
         {
             UpdateHovered();
