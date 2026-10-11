@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.13.0
+
 ### Added
 - In overlay mode, **right-click** a row of the overlay panel or a floating button to enable or disable
   that loop or macro. Disabling a running one stops it.
