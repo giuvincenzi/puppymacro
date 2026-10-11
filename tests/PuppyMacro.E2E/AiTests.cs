@@ -66,6 +66,18 @@ public class AiTests
                 ?? app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(app.ProcessId)))?.AsWindow(),
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: $"window \"{title}\" not found").Result!;
 
+    /// <summary>The window of an AI request; when it does not come, the failure says what PuppyMacro showed instead (an error box).</summary>
+    private static Window RequestWindow(AppSession app)
+    {
+        Window? window = Retry.WhileNull(() => app.Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(app.ProcessId))
+            .FirstOrDefault(w => AppSession.HasTitle(w.Name, "AI request"))?.AsWindow(), AppSession.Timeout).Result;
+        if (window != null)
+            return window;
+        string shown = string.Join(" || ", app.Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(app.ProcessId))
+            .Select(w => $"{w.Name}: {string.Join(" | ", w.FindAllDescendants(cf => cf.ByControlType(ControlType.Text)).Select(t => t.Name).Take(8))}"));
+        throw new TimeoutException($"window \"AI request\" not found. PuppyMacro's windows: {shown}");
+    }
+
     private static AppSettings SavedSettings() =>
         JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSession.SettingsFile), Seed.JsonOptions)!;
 
@@ -168,7 +180,7 @@ public class AiTests
         await using McpClient client = await Connect();
 
         Task<(string Text, bool IsError)> call = Call(client, "delete_item", new { id = remap.Id.ToString() });
-        Window confirm = app.Dialog("AI request");
+        Window confirm = RequestWindow(app);
         Assert.True(app.Has(confirm, "Delete this remap?"));
         Assert.True(app.Has(confirm, $"Asked by {ClientName}"));
         app.FindButton(confirm, "Delete").Invoke();
@@ -186,7 +198,7 @@ public class AiTests
         await using McpClient client = await Connect();
 
         Task<(string Text, bool IsError)> call = Call(client, "capture_hotkey", new { reason = "The key to remap" });
-        Window window = app.Dialog("AI request");
+        Window window = RequestWindow(app);
         Assert.True(app.Has(window, "The key to remap"));
         app.Find(window, "Press the key or combination (Esc cancels)");
         Keyboard.Press(VirtualKeyShort.F22);
