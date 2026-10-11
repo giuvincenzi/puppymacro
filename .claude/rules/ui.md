@@ -98,8 +98,10 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   - The macro editor's commands (`AppBarButton`s, label under the icon; iNKORE's default is
     `DefaultLabelPosition="Right"`, so set `Bottom`): on the left one `CommandBar` with Add action and
     Record in its `Content`, an `AppBarSeparator`, the selection's commands (Test, Edit, Copy, Paste,
-    Duplicate, Group, Delete) and ⋯ (Rename group, Ungroup, Shortcuts; `IsDynamicOverflowEnabled="False"`,
-    otherwise it moves commands into ⋯ before the bar is full); alone on the right the density
+    Duplicate, Group, Delete) and ⋯ (Rename group, Ungroup; Expand all groups, Collapse all groups, each
+    on while a group is in the other state, not on the right-click menu, which acts on the clicked rows;
+    Shortcuts; `IsDynamicOverflowEnabled="False"`, otherwise it moves commands into ⋯ before the bar is
+    full); alone on the right the density
     `ToggleSplitButton` (it acts on the list, not on the actions): click to switch normal / compact,
     its menu Normal / Compact; compact merges the library's `DensityStyles/Compact.xaml` into the
     list, as its Gallery does; normal by default. Shortcuts opens a `ContentDialog` with
