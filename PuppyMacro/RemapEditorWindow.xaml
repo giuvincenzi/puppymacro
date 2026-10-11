@@ -22,6 +22,8 @@
     <DockPanel LastChildFill="True">
         <!-- Form view: the remap's fields. Code view: the remap's JSON, as in settings.json. -->
         <views:ViewSwitchBar x:Name="ViewBar" DockPanel.Dock="Top" Margin="24,4,24,8" />
+        <!-- A remap an AI app proposed (Views/AiProposal) -->
+        <ui:InfoBar x:Name="ProposalBar" DockPanel.Dock="Top" Margin="24,0,24,8" Severity="Informational" IsClosable="False" IsOpen="False" />
 
         <Border DockPanel.Dock="Bottom" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">

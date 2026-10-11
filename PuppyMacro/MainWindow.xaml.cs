@@ -140,6 +140,7 @@ public partial class MainWindow
         UpdateHotkeyLabels();
         UpdateLoopState();
         RestorePlacement();
+        InitializeAi();
 
         Loaded += OnLoaded;
         Closing += OnClosing;
@@ -201,6 +202,7 @@ public partial class MainWindow
 
     private void OnClosed(object? sender, EventArgs e)
     {
+        StopAi();
         _engine.Dispose();
         _tray.Dispose();
         _overlayPanelWindow.Close();
@@ -286,6 +288,8 @@ public partial class MainWindow
         LoopsPage.Visibility = page == "Loops" ? Visibility.Visible : Visibility.Collapsed;
         MacrosPage.Visibility = page == "Macros" ? Visibility.Visible : Visibility.Collapsed;
         RemapsPage.Visibility = page == "Remap" ? Visibility.Visible : Visibility.Collapsed;
+        AiPage.Visibility = page == "AI" ? Visibility.Visible : Visibility.Collapsed;
+        OnAiPageShown(page == "AI");
         SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
         if (page != "Settings")
             _engine.CancelCapture(); // a Settings hotkey field that waits stops
@@ -423,9 +427,14 @@ public partial class MainWindow
         var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, null, PlaceFromEditor) { Owner = this };
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
+        AddLoop(editor.Result);
+    }
 
-        _settings.Loops.Add(editor.Result);
-        _items.Add(CreateItem(editor.Result));
+    /// <summary>A loop saved by the editor as new.</summary>
+    private void AddLoop(LoopDefinition loop)
+    {
+        _settings.Loops.Add(loop);
+        _items.Add(CreateItem(loop));
         RefreshList();
         _overlayPanelWindow.RefreshList();
         Save();
@@ -482,9 +491,14 @@ public partial class MainWindow
         var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
+        ApplyLoopEdit(item, editor.Result);
+    }
 
+    /// <summary>A change of a loop saved by the editor.</summary>
+    private void ApplyLoopEdit(LoopItemViewModel item, LoopDefinition result)
+    {
         _engine.StopLoop(item.Definition.Id);
-        item.Definition.CopyFrom(editor.Result);
+        item.Definition.CopyFrom(result);
         item.Refresh();
         RefreshList();
         _overlayPanelWindow.RefreshList();
@@ -513,7 +527,12 @@ public partial class MainWindow
         }
         if (result != ContentDialogResult.Primary)
             return;
+        RemoveLoop(item);
+    }
 
+    /// <summary>Deletes a loop, after the user confirmed.</summary>
+    private void RemoveLoop(LoopItemViewModel item)
+    {
         _engine.StopLoop(item.Definition.Id);
         _settings.Loops.Remove(item.Definition);
         _items.Remove(item);
@@ -627,10 +646,15 @@ public partial class MainWindow
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, null, PlaceFromEditor, recorded) { Owner = this };
         if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
+        AddMacro(editor.Result);
+    }
 
-        _macros.Macros.Add(editor.Result);
-        _macroItems.Add(CreateMacroItem(editor.Result));
-        SaveMacro(editor.Result);
+    /// <summary>A macro saved by the editor as new.</summary>
+    private void AddMacro(MacroDefinition macro)
+    {
+        _macros.Macros.Add(macro);
+        _macroItems.Add(CreateMacroItem(macro));
+        SaveMacro(macro);
         SaveMacroOrder();
         RefreshMacros();
         _overlayPanelWindow.RefreshList();
@@ -671,8 +695,13 @@ public partial class MainWindow
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
         if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
+        ApplyMacroEdit(item, editor.Result);
+    }
 
-        item.Definition.CopyFrom(editor.Result);
+    /// <summary>A change of a macro saved by the editor.</summary>
+    private void ApplyMacroEdit(MacroItemViewModel item, MacroDefinition result)
+    {
+        item.Definition.CopyFrom(result);
         item.Refresh();
         SaveMacro(item.Definition);
         RefreshMacros();
@@ -701,7 +730,12 @@ public partial class MainWindow
         }
         if (result != ContentDialogResult.Primary)
             return;
+        RemoveMacro(item);
+    }
 
+    /// <summary>Deletes a macro, after the user confirmed.</summary>
+    private void RemoveMacro(MacroItemViewModel item)
+    {
         _engine.StopMacro(item.Definition.Id);
         _macros.Delete(item.Definition);
         _macroItems.Remove(item);
@@ -1454,8 +1488,14 @@ public partial class MainWindow
         var editor = new RemapEditorWindow(_engine, _settings, _macros, null) { Owner = this };
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
-        _settings.Remaps.Add(editor.Result);
-        _remapItems.Add(CreateRemapItem(editor.Result));
+        AddRemap(editor.Result);
+    }
+
+    /// <summary>A remap saved by the editor as new.</summary>
+    private void AddRemap(RemapDefinition remap)
+    {
+        _settings.Remaps.Add(remap);
+        _remapItems.Add(CreateRemapItem(remap));
         RefreshRemaps();
         Save();
     }
@@ -1489,7 +1529,13 @@ public partial class MainWindow
         var editor = new RemapEditorWindow(_engine, _settings, _macros, item.Definition) { Owner = this };
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
-        item.Definition.CopyFrom(editor.Result);
+        ApplyRemapEdit(item, editor.Result);
+    }
+
+    /// <summary>A change of a remap saved by the editor.</summary>
+    private void ApplyRemapEdit(RemapItemViewModel item, RemapDefinition result)
+    {
+        item.Definition.CopyFrom(result);
         item.Refresh();
         RefreshRemaps();
         Save();
@@ -1530,6 +1576,12 @@ public partial class MainWindow
         }
         if (result != ContentDialogResult.Primary)
             return;
+        RemoveRemap(item);
+    }
+
+    /// <summary>Deletes a remap, after the user confirmed.</summary>
+    private void RemoveRemap(RemapItemViewModel item)
+    {
         _settings.Remaps.Remove(item.Definition);
         _remapItems.Remove(item);
         RefreshRemaps();
@@ -1565,7 +1617,7 @@ public partial class MainWindow
             Filter = $"PuppyMacro backup (*{BackupService.Extension})|*{BackupService.Extension}",
             DefaultExt = BackupService.Extension,
         };
-        if (dialog.ShowDialog(this) != true)
+        if (ShowUserDialog(() => dialog.ShowDialog(this)) != true)
             return;
         try
         {
@@ -1585,7 +1637,7 @@ public partial class MainWindow
             Title = "Import PuppyMacro data",
             Filter = $"PuppyMacro backup (*{BackupService.Extension})|*{BackupService.Extension}",
         };
-        if (dialog.ShowDialog(this) != true)
+        if (ShowUserDialog(() => dialog.ShowDialog(this)) != true)
             return;
 
         var confirm = new ContentDialog
@@ -1597,7 +1649,17 @@ public partial class MainWindow
             CloseButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Close,
         };
-        if (await confirm.ShowAsync(this) != ContentDialogResult.Primary)
+        ContentDialogResult answer;
+        _userDialogs++;
+        try
+        {
+            answer = await confirm.ShowAsync(this);
+        }
+        finally
+        {
+            _userDialogs--;
+        }
+        if (answer != ContentDialogResult.Primary)
             return;
 
         try

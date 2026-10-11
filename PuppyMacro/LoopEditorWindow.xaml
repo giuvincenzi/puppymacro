@@ -33,7 +33,11 @@
         </Grid.RowDefinitions>
 
         <!-- Form view: the loop's fields. Code view: the loop's JSON, as in settings.json. -->
-        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="0" Margin="24,4,24,4" />
+        <StackPanel Grid.Row="0">
+            <views:ViewSwitchBar x:Name="ViewBar" Margin="24,4,24,4" />
+            <!-- A loop an AI app proposed (Views/AiProposal) -->
+            <ui:InfoBar x:Name="ProposalBar" Margin="24,0,24,8" Severity="Informational" IsClosable="False" IsOpen="False" />
+        </StackPanel>
 
         <views:CodeView x:Name="CodeView" Grid.Row="1" Margin="24,4,24,12" Visibility="Collapsed" />
 

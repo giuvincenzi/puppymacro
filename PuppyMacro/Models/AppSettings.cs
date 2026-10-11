@@ -513,6 +513,12 @@ public sealed class AppSettings
     /// <summary>The "still running in the system tray" notification was shown once.</summary>
     public bool TrayNoticeShown { get; set; }
 
+    /// <summary>
+    /// AI apps on this PC may use PuppyMacro through its MCP server (the AI page's Allow AI access). Off by default,
+    /// also in older files, which do not have it.
+    /// </summary>
+    public bool AllowAiAccess { get; set; }
+
     public List<RemapDefinition> Remaps { get; set; } = new();
     public LoopFilter Filter { get; set; } = LoopFilter.All;
 

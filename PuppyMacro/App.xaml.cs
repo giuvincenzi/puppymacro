@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Ai;
 using iNKORE.UI.WPF.Modern;
 using Velopack;
 
@@ -60,6 +61,14 @@ public partial class App : Application
     [STAThread]
     private static void Main()
     {
+        // Started by an AI app as its MCP server: only the bridge to the running PuppyMacro, no window, no update
+        // applied (that would restart PuppyMacro from here).
+        if (Environment.GetCommandLineArgs().Skip(1).Contains(AiBridge.Argument))
+        {
+            Environment.ExitCode = AiBridge.Run();
+            return;
+        }
+
         // Handles install, update and uninstall hooks (it exits the process for those),
         // and applies an update that was downloaded but not applied yet.
         VelopackApp.Build()

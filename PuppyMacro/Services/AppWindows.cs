@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using PuppyMacro.Native;
 
@@ -20,19 +22,29 @@ internal static class AppWindows
 
     private static readonly uint OwnProcess = (uint)Environment.ProcessId;
 
+    /// <summary>The .exe names of the apps that have a window open, PuppyMacro left out, sorted.</summary>
+    public static List<string> RunningApps() => Process.GetProcesses()
+        .Where(p => { try { return p.MainWindowHandle != IntPtr.Zero; } catch { return false; } })
+        .Select(p => p.ProcessName + ".exe")
+        .Where(n => !n.Equals("PuppyMacro.exe", StringComparison.OrdinalIgnoreCase))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
     /// <summary>File name of a process, e.g. "Diablo IV.exe"; "" when it cannot be read.</summary>
-    public static string ExeName(uint pid)
+    public static string ExeName(uint pid) => ExePath(pid) is string path ? Path.GetFileName(path) : "";
+
+    /// <summary>Full path of a process's exe; null when it cannot be read (gone, or another user's).</summary>
+    public static string? ExePath(uint pid)
     {
         IntPtr process = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
         if (process == IntPtr.Zero)
-            return "";
+            return null;
         try
         {
             var buffer = new char[1024];
             uint size = (uint)buffer.Length;
-            return NativeMethods.QueryFullProcessImageName(process, 0, buffer, ref size)
-                ? Path.GetFileName(new string(buffer, 0, (int)size))
-                : "";
+            return NativeMethods.QueryFullProcessImageName(process, 0, buffer, ref size) ? new string(buffer, 0, (int)size) : null;
         }
         finally
         {

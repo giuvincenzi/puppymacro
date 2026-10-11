@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Added
+- **AI apps** (MCP ready): a new **AI** page connects PuppyMacro to the AI apps on your PC, **Claude Desktop**,
+  **Visual Studio Code** (GitHub Copilot) and **Codex** with one click, any other MCP app with **Copy
+  configuration**. Ask in your own words: the AI reads your loops, macros, remaps and the user guide, and proposes new or
+  changed ones in PuppyMacro's editor, where you check and save them. Deleting, enabling, disabling and settings ask
+  you to confirm; the AI can ask you to click a point, pick an app or press a key. Starting and testing stay yours.
+  Off until you turn on **Allow AI access**.
+- **Recent activity** on the AI page and the **AI activity** window (**View all**): every AI request of the last
+  30 days, with filters.
+
 ## 1.14.0
 
 ### Added

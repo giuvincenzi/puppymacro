@@ -1,11 +1,11 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using PuppyMacro.Models;
+using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
 
@@ -101,14 +101,7 @@ public partial class AppScopeEditor
     private void OnAppDropDownOpened(object? sender, EventArgs e)
     {
         string current = AppBox.Text;
-        var names = Process.GetProcesses()
-            .Where(p => { try { return p.MainWindowHandle != IntPtr.Zero; } catch { return false; } })
-            .Select(p => p.ProcessName + ".exe")
-            .Where(n => !n.Equals("PuppyMacro.exe", StringComparison.OrdinalIgnoreCase))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-        AppBox.ItemsSource = names;
+        AppBox.ItemsSource = AppWindows.RunningApps();
         AppBox.Text = current;
     }
 

@@ -28,7 +28,11 @@
         </Grid.RowDefinitions>
 
         <!-- Form view: the actions as rows. Code view: the macro file's JSON in a code editor. -->
-        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="0" Margin="24,0,24,8" />
+        <StackPanel Grid.Row="0">
+            <views:ViewSwitchBar x:Name="ViewBar" Margin="24,0,24,8" />
+            <!-- A macro an AI app proposed (Views/AiProposal) -->
+            <ui:InfoBar x:Name="ProposalBar" Margin="24,0,24,8" Severity="Informational" IsClosable="False" IsOpen="False" />
+        </StackPanel>
 
         <views:CodeView x:Name="CodeView" Grid.Row="1" Margin="24,0,24,12" Visibility="Collapsed" />
 

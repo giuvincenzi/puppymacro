@@ -13,8 +13,10 @@ paths:
   `CommandBar`, `ToggleSwitch`, `NumberBox`, `InfoBar`, `ContentDialog`, `FontIcon` with
   `SegoeFluentIcons` and `FluentSystemIcons`...).
   How to use them: `ui.md`. Its license asks for the attribution in `README.md`.
-- **Velopack 1.2.161** (installer and updates) and **Microsoft.Web.WebView2** (the editors'
-  Code view). No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
+- **Velopack 1.2.161** (installer and updates), **Microsoft.Web.WebView2** (the editors'
+  Code view) and **ModelContextProtocol.Core 2.2.0** (the official MCP C# SDK, Apache-2.0, its core only: no
+  generic host; it brings Microsoft.Extensions.AI.Abstractions, Logging.Abstractions and
+  DependencyInjection.Abstractions). No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
 - **Monaco editor 0.52.2** (MIT, the editor of VS Code), only the files JSON needs, in
   `Assets/Monaco` with its license; `Assets/CodeEditor` is the page around it. To update it, copy
   the same files from the npm package's `min/vs` and keep the version here. The loader's `vs`
@@ -32,15 +34,18 @@ scripts/                        PowerShell scripts run by the Makefile
 site/                           website and user guide sources (docs.md)
 tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end tests (testing.md)
 PuppyMacro/
-  App.xaml(.cs)                 Main (Velopack), single instance, data migration, theme, tray start
-  MainWindow.xaml(.cs)          side rail (Views/SideRail): Loops, Macros, Remap, Settings; overlay mode; tray
+  App.xaml(.cs)                 Main (--mcp bridge, Velopack), single instance, data migration, theme, tray start
+  MainWindow.xaml(.cs)          side rail (Views/SideRail): Loops, Macros, Remap, AI, Settings; overlay mode; tray
   MainWindow.Updates.cs         update bar, Settings dot and Updates card
+  MainWindow.Ai.cs              AI page; the AI tools' host (IAiHost)
+  AiRequestWindow, AiActivityWindow   what an AI app asks the user (confirm, a key); AI activity (View all)
   LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow, GroupNameWindow
   OverlayPanelWindow, FloatingButtonWindow, PlacementWindow, PickPointWindow, RecordPromptWindow,
   RecordingBarWindow, CountdownWindow
   Models/                       AppSettings (settings.json), loops, macros, remaps
   Services/                     input thread and hooks, LoopEngine, runners, InputSender,
                                 recording, sounds, storage, Code view checks, tray, startup, updates
+  Services/Ai/                  MCP server for AI apps: pipe, bridge, tools, activity, apps' settings, help
   Views/                        view models, SideRail, ItemCardActions (+ SubtleButtons.xaml),
                                 KeyCaptureField, SwitchSettingsExpander, overlay panel, floating
                                 buttons, Code view (CodeView, ViewSwitchBar, CodeViewSwitch),
@@ -58,6 +63,7 @@ PuppyMacro/
 | `InputThread` | `WH_KEYBOARD_LL` / `WH_MOUSE_LL` hooks + message loop, desktop-switch and foreground WinEvent hooks |
 | `Injector` | Input sent on behalf of the hook (remap targets, menu mask key), in order |
 | One per running loop row (`ActionRunner`) / per running macro (`MacroRunner`) | Timing with `PreciseTimer` (high-resolution waitable timer) and `SendInput` |
+| Thread pool (`AiServer`) | The AI pipe's accept loop and one MCP session per connected AI app; the tools reach the UI only through `IAiHost.Ui` |
 
 Rules:
 - **Never block the input thread** and never touch WPF objects from it. The hook only
@@ -161,3 +167,30 @@ Rules:
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
+- AI apps (MCP, `Services/Ai/`): an AI app on the PC starts `PuppyMacro.exe --mcp` (`AiBridge`, run in `App.Main` before
+  Velopack and WPF: no window, no update applied). The bridge only copies stdin/stdout to the running PuppyMacro's named
+  pipe (`AiPipe`: one per Windows user and per build, the development build has its own; current user only; elevated, a
+  medium integrity label so a non-elevated AI app can open it) and starts PuppyMacro in the tray when it is not running.
+  It calls `AllowSetForegroundWindow` for PuppyMacro on every message; Windows may still refuse, so the windows of a
+  request also open topmost (`Views/AiProposal.BringToFront`). `AiServer` (in PuppyMacro) runs one MCP session per bridge
+  with the SDK's `StreamServerTransport` and exposes `AiTools`; it lists the connected apps by the name they give
+  (`FriendlyName`). `AiTools` holds every tool without the protocol (unit tested with a fake `IAiHost`): reads; proposals
+  (`propose_loop/macro/remap`) checked with the Code views' `LoopJson`/`MacroJson`/`RemapJson` and the Id PuppyMacro gives,
+  then the editor opens filled in (`proposal` parameter of the editors, `ShowProposal`: the "Proposed by" `InfoBar`) and the
+  user saves or cancels; confirmations (`delete_item`, `set_enabled`, `update_settings`) in `AiRequestWindow`; interactions
+  (`pick_point`, `pick_app` through `PickPointWindow`, `capture_hotkey` through `AiRequestWindow` with a `KeyCaptureField`);
+  `stop_all`; `get_help` reads the guide of this version, embedded from `site/guide` (`AiHelp`). AI apps cut long tool
+  calls (Claude Desktop about 1 to 4 minutes, Codex 60 to 300 s): a request that needs the user answers "waiting" with a
+  request_id (random, tied to the app that asked) after `AiTools.WaitStep` (40 s) and the AI calls `wait_for_user`; an
+  answer is given once (`Pending.Given`) and kept until taken. `MainWindow.ShowForAi` closes the window when nobody used
+  PuppyMacro for `AnswerTimeout` (5 minutes: any input in its windows, also a dialog the editor opened, starts it again).
+  One such request at a time; none while the user has a PuppyMacro editor or dialog open (`HotkeysSuspended`, or
+  `ShowUserDialog` for the dialogs that do not suspend hotkeys); proposals of loops and macros not while something runs.
+  The editors keep the Id a new proposal was checked with. The pipe's first instance is created with `FirstPipeInstance`
+  and the bridge talks only to a server whose exe is its own (`AppWindows.ExePath`), so a program that took the name
+  first never gets the AI apps' messages. Starting and testing loops and macros
+  are not tools on purpose (their input would go to the AI app's chat in front). Everything is refused while
+  `AppSettings.AllowAiAccess` is off. Every request goes to `AiActivityLog` (`ai-activity.json`, 30 days). The AI page
+  (`MainWindow.Ai.cs`): Allow AI access, the apps' tiles (`AiApps`: Claude Desktop's `claude_desktop_config.json`, also
+  the Microsoft Store copy under `Packages\Claude_*`; VS Code's `vscode:mcp/install` link and `mcp.json`; Codex's
+  `config.toml` with `tool_timeout_sec = 600`; Copy configuration), Recent activity and `AiActivityWindow`.

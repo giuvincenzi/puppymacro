@@ -55,3 +55,8 @@ paths:
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
   loop is enabled). Keep
   the samples working when models change.
+- AI apps: `AppSettings.AllowAiAccess` is off by default and in older files (a new field with the old behavior, no
+  migration). `ai-activity.json` in the data folder holds the AI requests of the last 30 days (`AiActivityLog`, at most
+  5000), not user data: a missing or unreadable file is an empty history; Export / Import leave it out.
+  PuppyMacro's entry in the AI apps' own settings is named `puppymacro` (`puppymacro-dev` for the development build, so
+  it never replaces the installed one's) and starts `AppPaths.ExecutablePath` (Velopack's `current` folder) with `--mcp`.

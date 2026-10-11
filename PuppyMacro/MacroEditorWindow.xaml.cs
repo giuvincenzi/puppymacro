@@ -53,7 +53,8 @@ public partial class MacroEditorWindow
     private ScrollViewer? _listScroll;
 
     internal MacroEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds,
-        MacroDefinition? existing, Func<EditedFloatingButton, Point?>? placeButton = null, IEnumerable<MacroAction>? recorded = null)
+        MacroDefinition? existing, Func<EditedFloatingButton, Point?>? placeButton = null, IEnumerable<MacroAction>? recorded = null,
+        MacroDefinition? proposal = null)
     {
         InitializeComponent();
         if (settings.MacroEditorWidth is double width)
@@ -66,9 +67,11 @@ public partial class MacroEditorWindow
         _macros = macros;
         _sounds = sounds;
 
-        var source = existing?.Clone() ?? new MacroDefinition();
+        // An AI app's proposal fills the fields: a new macro, or a change of existing.
+        var source = (proposal ?? existing)?.Clone() ?? new MacroDefinition();
         _editingId = existing?.Id ?? Guid.Empty;
-        _itemId = existing?.Id ?? Guid.NewGuid();
+        _itemId = existing?.Id ?? proposal?.Id ?? Guid.NewGuid(); // a new macro keeps the Id its proposal was checked with
+        source.Id = _itemId;
         _placeButton = placeButton;
 
         string title = existing == null ? "Add macro" : $"Edit macro - {existing.Name}";
@@ -102,6 +105,9 @@ public partial class MacroEditorWindow
     }
 
     public MacroDefinition? Result { get; private set; }
+
+    /// <summary>Opened with an AI app's proposal: says so at the top.</summary>
+    public void ShowProposal(string app) => AiProposal.ShowBar(ProposalBar, app);
 
     /// <summary>Shows <paramref name="source"/> in the List view's fields (at start, and when leaving the Code view).</summary>
     [MemberNotNull(nameof(_list), nameof(_soundName))]

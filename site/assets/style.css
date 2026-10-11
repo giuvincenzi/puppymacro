@@ -117,6 +117,12 @@ kbd {
 .card h3 { margin: 0; font-size: 18px; font-weight: 600; font-family: var(--body); }
 .card p { margin: 0; color: var(--muted); font-size: 15px; }
 .card svg { width: 24px; height: 24px; }
+/* A small label after a card's title ("MCP ready"), like the hero's badge */
+.card h3 .tag {
+  margin-left: 8px; vertical-align: 2px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--accent-text); border: 1px solid #2b4a5c; border-radius: 999px; padding: 2px 8px;
+}
 
 .steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 .steps li { display: flex; gap: 14px; }

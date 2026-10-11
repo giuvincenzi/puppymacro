@@ -22,7 +22,8 @@ public partial class RemapEditorWindow
     private HotkeyBinding? _target;
     private bool _ready;
 
-    internal RemapEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, RemapDefinition? existing)
+    internal RemapEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, RemapDefinition? existing,
+        RemapDefinition? proposal = null)
     {
         InitializeComponent();
         WindowFit.Apply(this);
@@ -30,9 +31,10 @@ public partial class RemapEditorWindow
         _settings = settings;
         _macros = macros;
 
-        var source = existing?.Clone() ?? new RemapDefinition();
+        // An AI app's proposal fills the fields: a new remap, or a change of existing.
+        var source = (proposal ?? existing)?.Clone() ?? new RemapDefinition();
         _editingId = existing?.Id ?? Guid.Empty;
-        _itemId = existing?.Id ?? Guid.NewGuid();
+        _itemId = existing?.Id ?? proposal?.Id ?? Guid.NewGuid(); // a new remap keeps the Id its proposal was checked with
         source.Id = _itemId;
 
         // "Edit remap - Caps Lock to Esc": its note, or its keys when it has none.
@@ -59,6 +61,9 @@ public partial class RemapEditorWindow
 
     public RemapDefinition? Result { get; private set; }
 
+    /// <summary>Opened with an AI app's proposal: says so at the top.</summary>
+    public void ShowProposal(string app) => AiProposal.ShowBar(ProposalBar, app);
+
     /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
     private void LoadRemap(RemapDefinition source)
     {
@@ -83,16 +88,8 @@ public partial class RemapEditorWindow
     };
 
     /// <summary>Why <paramref name="source"/> cannot be remapped for <paramref name="app"/> (null: all apps): a hotkey or another remap.</summary>
-    private string? SourceClash(HotkeyBinding source, string? app)
-    {
-        string? conflict = HotkeyConflicts.FindForRemap(source, app, _settings, _macros);
-        if (conflict != null)
-            return conflict + " Hotkeys take priority over remaps.";
-
-        var same = _settings.Remaps.FirstOrDefault(r => r.Id != _editingId && source.Overlaps(r.Source)
-            && string.Equals(r.AppExe, app, StringComparison.OrdinalIgnoreCase));
-        return same != null ? $"{KeyNames.Format(source)} is already remapped {(app == null ? "for all apps" : "for " + app)}." : null;
-    }
+    private string? SourceClash(HotkeyBinding source, string? app) =>
+        HotkeyConflicts.RemapClash(source, app, _settings, _macros, _editingId);
 
     private void UpdateLabels()
     {

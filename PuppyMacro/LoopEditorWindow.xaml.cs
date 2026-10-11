@@ -31,7 +31,7 @@ public partial class LoopEditorWindow
     private bool _ready;
 
     internal LoopEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds, LoopDefinition? existing,
-        Func<EditedFloatingButton, Point?>? placeButton = null)
+        Func<EditedFloatingButton, Point?>? placeButton = null, LoopDefinition? proposal = null)
     {
         InitializeComponent();
         WindowFit.Apply(this);
@@ -40,9 +40,10 @@ public partial class LoopEditorWindow
         _macros = macros;
         _sounds = sounds;
 
-        var source = existing?.Clone() ?? new LoopDefinition();
+        // An AI app's proposal fills the fields: a new loop, or a change of existing.
+        var source = (proposal ?? existing)?.Clone() ?? new LoopDefinition();
         _editingId = existing?.Id ?? Guid.Empty;
-        _itemId = existing?.Id ?? Guid.NewGuid();
+        _itemId = existing?.Id ?? proposal?.Id ?? Guid.NewGuid(); // a new loop keeps the Id its proposal was checked with
         source.Id = _itemId;
         _placeButton = placeButton;
 
@@ -78,6 +79,9 @@ public partial class LoopEditorWindow
     }
 
     public LoopDefinition? Result { get; private set; }
+
+    /// <summary>Opened with an AI app's proposal: says so at the top.</summary>
+    public void ShowProposal(string app) => AiProposal.ShowBar(ProposalBar, app);
 
     /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
     private void LoadLoop(LoopDefinition source)

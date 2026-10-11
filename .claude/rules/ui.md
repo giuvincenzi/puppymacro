@@ -145,6 +145,20 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     window under the cursor with a 2 px `#60CDFF` border and its .exe name on a `#60CDFF` label (fixed
     dark look, like the other overlays). On the loop and macro cards the app follows the status: an
     `AppIconDefault` icon and the .exe name in caption style, secondary color.
+  - The AI page (approved design: the Design canvas "PuppyMacro AI page", chosen layout): the side rail's **AI** item in the
+    bottom list above Settings (`BotSparkle_20_Regular` / `_Filled`: the library has no Sparkle alone); the title and a
+    description, then Access (Allow AI access, a `SettingsCard`); Apps as tiles, two per row (`UniformGrid`), each a
+    `Border` with the `SettingsCard`'s look (`CardBackgroundFillColorDefaultBrush`, `CardStrokeColorDefaultBrush`,
+    `ControlCornerRadius`, 16 padding): the app's own icon read from its installed exe at run time (`AiAppTile.ExeIcon`,
+    `SHGetFileInfo`; no logo is shipped, the user approved it) or the `AppIconDefault` icon, its name, its state with a
+    `SuccessDot` (connected) or `CautionDot` (added, waiting for a restart) `InfoBadge`, and its button (Connect accent,
+    Remove, Copy configuration) or a `HyperlinkButton` to get it; Recent activity, a card with the last 4 requests and
+    **View all** next to its title. `AiActivityWindow`: the filters as standard `ComboBox`es and `TextBox` with headers,
+    the `ListView` grouped by day, the selected request's details in a card below.
+  - The windows of an AI app's request (an editor with its proposal, `AiRequestWindow`, `PickPointWindow`) open topmost
+    until the user activates them (`Views/AiProposal.BringToFront`): the AI app is in front and Windows may not let
+    PuppyMacro take the focus. An editor opened with a proposal shows the standard `InfoBar` "Proposed by …" under its
+    Form / Code switch; `AiRequestWindow` shows "Asked by …" in caption style with the `BotSparkle` icon.
   - Sound in the loop and macro editors: the `RadioButtons` with the sounds sit in a standard
     `ScrollViewer` with `MaxHeight="200"`, so the long list scrolls on its own instead of making the
     whole editor scroll. `Views/SoundChoicesScroll` scrolls it to the chosen sound each time it is

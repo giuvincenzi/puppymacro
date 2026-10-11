@@ -17,7 +17,8 @@ public partial class PickPointWindow
     private IntPtr _hoveredWindow;
     private string _hoveredApp = "";
 
-    public PickPointWindow(bool pickApp = false)
+    /// <param name="askedBy">An AI app that asks for the point or app (pick_point, pick_app), shown with its <paramref name="reason"/>.</param>
+    public PickPointWindow(bool pickApp = false, string? askedBy = null, string? reason = null)
     {
         InitializeComponent();
         _pickApp = pickApp;
@@ -26,6 +27,8 @@ public partial class PickPointWindow
             Title = "Pick an app";
             InstructionsText.Text = "Click a window of the app";
         }
+        if (askedBy != null)
+            InstructionsText.Text = $"{askedBy}: {reason}";
         Left = SystemParameters.VirtualScreenLeft;
         Top = SystemParameters.VirtualScreenTop;
         Width = SystemParameters.VirtualScreenWidth;

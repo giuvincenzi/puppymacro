@@ -440,6 +440,106 @@
                     </ui:ScrollViewerEx>
                 </Grid>
 
+                <!-- ================= AI page: AI apps on this PC use PuppyMacro through its MCP server (MainWindow.Ai.cs) ================= -->
+                <ui:ScrollViewerEx x:Name="AiPage" Padding="40,12,40,0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <ikw:SimpleStackPanel Margin="0,0,0,16" Spacing="4">
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="AI" />
+                        <TextBlock Margin="0,4,0,0" MaxWidth="760" HorizontalAlignment="Left" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Text="Use PuppyMacro from an AI app on this PC, like Claude Desktop or Visual Studio Code. Ask in your own words: the AI prepares loops, macros and remaps, and you check and save them here." />
+
+                        <ui:InfoBar x:Name="AiMessage" Margin="0,12,0,0" IsOpen="False" />
+
+                        <!-- Access -->
+                        <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Access" />
+                        <ui:SettingsCard Header="Allow AI access"
+                                         Description="AI apps on this PC can read your loops, macros, remaps and settings and propose changes. Nothing is saved until you confirm it.">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Shield}" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <ui:ToggleSwitch x:Name="AiAccessSwitch" AutomationProperties.Name="Allow AI access" Toggled="OnAiAccessChanged" />
+                        </ui:SettingsCard>
+
+                        <!-- Apps: one tile each (approved design), the same card look as a SettingsCard -->
+                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Apps" />
+                        <ItemsControl x:Name="AiAppsList" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,4,4" Padding="16" MinHeight="128" CornerRadius="{DynamicResource ControlCornerRadius}" BorderThickness="1"
+                                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                            AutomationProperties.Name="{Binding Name}">
+                                        <ikw:SimpleStackPanel Spacing="10">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Grid Width="20" Height="20">
+                                                    <Image Source="{Binding Icon}" Visibility="{Binding IconVisibility}" />
+                                                    <ui:FontIcon FontSize="20" Icon="{x:Static ui:SegoeFluentIcons.AppIconDefault}" Visibility="{Binding GenericIconVisibility}" />
+                                                </Grid>
+                                                <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{Binding Name}" />
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <ui:InfoBadge Margin="0,0,6,0" VerticalAlignment="Center" Style="{StaticResource SuccessDotInfoBadgeStyle}"
+                                                              Visibility="{Binding ConnectedVisibility}" />
+                                                <ui:InfoBadge Margin="0,0,6,0" VerticalAlignment="Center" Style="{StaticResource CautionDotInfoBadgeStyle}"
+                                                              Visibility="{Binding WaitingVisibility}" />
+                                                <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
+                                            </StackPanel>
+                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                                <Button Content="{Binding ActionText}" Tag="{Binding}" Click="OnAiAppActionClick"
+                                                        Visibility="{Binding ActionVisibility}" IsEnabled="{Binding ActionEnabled}"
+                                                        Style="{Binding ActionStyle}" AutomationProperties.Name="{Binding ActionAutomationName}" />
+                                                <ui:HyperlinkButton Content="{Binding LinkText}" NavigateUri="{Binding LinkUri}"
+                                                                    Visibility="{Binding LinkVisibility}" />
+                                            </ikw:SimpleStackPanel>
+                                        </ikw:SimpleStackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Recent activity: the last requests; View all opens the AI activity window -->
+                        <Grid Margin="0,29,0,5">
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Recent activity" />
+                            <Button x:Name="AiViewAllButton" HorizontalAlignment="Right" Content="View all" Click="OnAiViewAllClick" />
+                        </Grid>
+                        <Border Padding="16,8" CornerRadius="{DynamicResource ControlCornerRadius}" BorderThickness="1"
+                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                            <Grid>
+                                <TextBlock x:Name="AiNoActivityText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="No requests yet. Connect an AI app above, then ask it to make a loop, a macro or a remap." TextWrapping="Wrap" />
+                                <ItemsControl x:Name="AiRecentList" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding TimeText}" />
+                                                <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding App}" />
+                                                <TextBlock Grid.Column="2" Margin="0,0,12,0" TextTrimming="CharacterEllipsis" Text="{Binding Request}"
+                                                           ToolTip="{Binding Request}" />
+                                                <TextBlock Grid.Column="3" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding ResultText}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+
+                        <ikw:SimpleStackPanel Margin="0,12,0,0" Orientation="Horizontal" Spacing="8">
+                            <ui:HyperlinkButton Content="How to use AI with PuppyMacro" NavigateUri="https://giuvincenzi.github.io/puppymacro/guide/latest/ai.html" />
+                        </ikw:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
+                </ui:ScrollViewerEx>
+
                 <!-- ================= Settings page: as the library's Gallery and Windows Settings ================= -->
                 <ui:ScrollViewerEx x:Name="SettingsPage" Padding="40,12,40,0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                     <ikw:SimpleStackPanel Margin="0,0,0,16" Spacing="4">

@@ -23,7 +23,11 @@
   hotkeys of items for a specific app and their stop when another app comes in front, through
   `OnForegroundApp`, hotkeys and remaps with modifier sides, remaps from a combination or of a modifier
   alone, AltGr's fake Ctrl, capture of a modifier alone),
-  driven through `OnKey` / `OnWheel` / `OnMouseDetail` without hooks, and the XAML files
+  driven through `OnKey` / `OnWheel` / `OnMouseDetail` without hooks, the AI tools (`AiToolsTests`, with
+  `FakeAiHost` as the user: access off, reads, proposals checked like the editors, changes made before Save, "waiting"
+  and `wait_for_user`, confirmations, settings, interactions, help; `AiTools.WaitStep` is short there), the AI apps'
+  settings files (`AiAppsTests`: Claude Desktop with its Microsoft Store copy, VS Code's link and `mcp.json`, Codex's
+  `config.toml`, never replacing a file with an error), `AiActivityLog` and `AllowAiAccess` in older files, and the XAML files
   (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`).
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
   and put the test class in `[Collection(nameof(ModifierTracker))]` so they never run at the
@@ -47,7 +51,10 @@
   PuppyMacro at a time).
 - Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages,
   editors), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
-  `Overlay`. `make e2e CATEGORY=Macros` runs only one category: use it while working on that
+  `Overlay`, `AI` (`AiTests`: the test is the AI app, it starts `PuppyMacro.exe --mcp` with the MCP SDK's
+  `StdioClientTransport` as "E2E test client", calls the tools and answers in PuppyMacro's windows; its remaps use F22
+  and F23, the key it presses is F22, the point it clicks is on the picker, which covers the screen).
+  `make e2e CATEGORY=Macros` runs only one category: use it while working on that
   feature; before pushing, and on GitHub, all of them run.
 - They take over the desktop: windows open and close, the mouse moves, keys are pressed.
   **Never run `make e2e` (or anything else that drives the UI, like screenshot captures that
