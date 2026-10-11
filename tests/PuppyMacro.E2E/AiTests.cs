@@ -337,7 +337,7 @@ public class AiTests
 
         Task<(string Text, bool IsError)> call = Call(client, "open_item", new { id, title = "Check the E2E remap", description = "The E2E test opens it." });
         Window editor = app.Dialog("Edit remap");
-        Assert.True(app.Has(editor, "Check the E2E remap"));
+        Assert.Equal("Check the E2E remap", app.FindById(editor, "NoticeBar").Name); // the InfoBar's texts have no UIA peer
         editor.Close();
         var (text, isError) = await call;
 

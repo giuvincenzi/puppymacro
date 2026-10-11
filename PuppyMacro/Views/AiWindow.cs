@@ -23,6 +23,8 @@ internal static class AiWindow
     {
         bar.Title = title;
         bar.Message = description.Length > 0 ? $"{description} (asked by {app})" : $"Asked by {app}.";
+        // The InfoBar does not expose its texts to UI Automation: its name carries the title for screen readers.
+        System.Windows.Automation.AutomationProperties.SetName(bar, title);
         bar.IsOpen = true;
     }
 }
