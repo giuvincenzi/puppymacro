@@ -71,7 +71,7 @@ Rules:
 - Clicks on the overlay panel and on the floating buttons are matched against rectangles
   (`PanelTarget`, physical pixels) published by the UI every 300 ms while overlay mode is on.
   Floating buttons are always clickable; panel rows only with `ShowOverlayPanel` and
-  `ClickItemsInPanel` (so are the panel's Exit, Stop all and Move buttons). Each target of a loop or
+  `ClickItemsInPanel` (so are the panel's Exit, Open, Move and Stop all buttons). Each target of a loop or
   macro says whether a left click starts it (`Startable`: enabled, not Hold) and whether the click also
   reaches the app (`PassThrough`).
 - The panel's Move handle (`PanelTarget.MoveOverlayId`): the hook blocks its press and release (the
@@ -136,7 +136,10 @@ Rules:
 - Overlay mode: the overlay is the overlay panel (`Views/OverlayPanel`, `OverlayPanelWindow`,
   click-through, no-activate, shown when `ShowOverlayPanel`) and the floating buttons.
   `PlacementWindow` (Position on screen, Position…) always shows the whole overlay as overlay
-  mode shows it. Which loops and macros it shows: `Views/OverlayItems.IsShown` (`ShowInOverlay` on, and
+  mode shows it. Leaving it with its hotkey or the panel's Exit keeps the main window in the tray; the
+  panel's Open (`PanelTarget.OpenMainOverlayId` → `LoopEngine.OverlayExitAndOpenRequested` →
+  `MainWindow.ShowFromTray`), the tray icon and starting PuppyMacro again leave it and open the window.
+  Which loops and macros it shows: `Views/OverlayItems.IsShown` (`ShowInOverlay` on, and
   enabled or `HideInOverlayWhenDisabled` off); disabled ones are shown as disabled and a left click on
   them does nothing. A right click on a row or a floating button enables or disables the item
   (`LoopEngine.OverlayEnableToggleRequested` → `MainWindow` flips its card's switch, so a running one

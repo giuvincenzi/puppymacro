@@ -170,6 +170,19 @@ public sealed class AppSession : IDisposable
         Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId))),
             Timeout).Result;
 
+    /// <summary>
+    /// After leaving overlay mode with its hotkey or the panel's exit button: waits until
+    /// <paramref name="overlayWindow"/> (the overlay panel or a floating button) is gone, then checks that the
+    /// main window stayed in the tray.
+    /// </summary>
+    public void AssertLeftOverlayModeInTray(AutomationElement overlayWindow)
+    {
+        Assert.True(Retry.WhileFalse(() => !overlayWindow.IsAvailable || overlayWindow.IsOffscreen, Timeout).Success,
+            "overlay mode did not end");
+        TargetWindow.Quiet(1);
+        Assert.True(!MainWindow.IsAvailable || MainWindow.IsOffscreen, "the main window came back");
+    }
+
     public void Dispose()
     {
         Automation.Dispose();

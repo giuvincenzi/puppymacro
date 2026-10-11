@@ -8,11 +8,16 @@
 - **Show in overlay** in the loop and macro editors (on by default): turn it off to keep a loop or macro
   out of the overlay. Inside it, **Hide when disabled** leaves it out while it is disabled, and **Clicks
   also reach the app behind** lets the app under the overlay get the clicks too.
+- The overlay panel has an **open** button next to the exit button: it leaves overlay mode and opens the
+  main window.
 
 ### Changed
 - The overlay shows disabled loops and macros too: a panel row with a dashed outline and the state
   **Disabled**, a floating button with a dashed ring. A click on them does nothing.
 - The overlay panel shows what the clicks do under Stop all.
+- Leaving overlay mode with its hotkey or the panel's exit button keeps the main window in the system
+  tray, instead of putting it back as it was before. The panel's buttons are now exit, open and move, in
+  this order.
 
 ## 1.12.0
 

@@ -30,9 +30,9 @@ internal sealed class EngineSnapshot
 }
 
 /// <summary>
-/// A clickable part of the overlay (a panel row, a floating button, the panel's Stop all or exit
-/// button), in physical screen pixels. <see cref="Id"/> is the loop's or macro's, or
-/// <see cref="StopAllId"/>, <see cref="ExitOverlayId"/> or <see cref="MoveOverlayId"/>.
+/// A clickable part of the overlay (a panel row, a floating button, the panel's Stop all, exit, open or
+/// move button), in physical screen pixels. <see cref="Id"/> is the loop's or macro's, or
+/// <see cref="StopAllId"/>, <see cref="ExitOverlayId"/>, <see cref="OpenMainOverlayId"/> or <see cref="MoveOverlayId"/>.
 /// On a loop or macro a left click starts or stops it when <see cref="Startable"/> (enabled, not Hold) and a
 /// right click enables or disables it; with <see cref="PassThrough"/> the click also reaches the app behind.
 /// </summary>
@@ -40,13 +40,16 @@ internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bo
     bool Startable = true, bool PassThrough = false)
 {
     /// <summary>A loop or macro (not one of the panel's own buttons).</summary>
-    public bool IsItem => Id != StopAllId && Id != ExitOverlayId && Id != MoveOverlayId;
+    public bool IsItem => Id != StopAllId && Id != ExitOverlayId && Id != OpenMainOverlayId && Id != MoveOverlayId;
 
     /// <summary>The overlay panel's Stop all button.</summary>
     public static readonly Guid StopAllId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d01");
 
-    /// <summary>The overlay panel's exit button: leaves overlay mode.</summary>
+    /// <summary>The overlay panel's exit button: leaves overlay mode, as the Overlay mode hotkey.</summary>
     public static readonly Guid ExitOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d02");
+
+    /// <summary>The overlay panel's open button: leaves overlay mode and opens the main window.</summary>
+    public static readonly Guid OpenMainOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d04");
 
     /// <summary>The overlay panel's move handle: pressed and dragged, it moves the panel.</summary>
     public static readonly Guid MoveOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d03");
@@ -129,8 +132,11 @@ internal sealed class LoopEngine : IDisposable
     /// <summary>Raised (asynchronously, on the UI thread) when any loop or macro starts or stops.</summary>
     public event Action? StateChanged;
 
-    /// <summary>Raised (asynchronously, on the UI thread) when the overlay mode hotkey is pressed.</summary>
+    /// <summary>Raised (asynchronously, on the UI thread) when the overlay mode hotkey or the overlay panel's exit button is pressed.</summary>
     public event Action? OverlayModeToggleRequested;
+
+    /// <summary>Raised (asynchronously, on the UI thread) when the overlay panel's open button is pressed.</summary>
+    public event Action? OverlayExitAndOpenRequested;
 
     /// <summary>
     /// Raised (asynchronously, on the UI thread) on a right click on a loop or macro in the overlay: the UI
@@ -321,6 +327,11 @@ internal sealed class LoopEngine : IDisposable
         if (id == PanelTarget.ExitOverlayId)
         {
             _dispatcher.InvokeAsync(() => OverlayModeToggleRequested?.Invoke());
+            return;
+        }
+        if (id == PanelTarget.OpenMainOverlayId)
+        {
+            _dispatcher.InvokeAsync(() => OverlayExitAndOpenRequested?.Invoke());
             return;
         }
         var snap = _snapshot;

@@ -10,7 +10,7 @@ using static PuppyMacro.E2E.Playback;
 namespace PuppyMacro.E2E;
 
 /// <summary>
-/// Clicks in overlay mode over the target window: panel rows, the panel's Stop all, floating buttons.
+/// Clicks in overlay mode over the target window: panel rows, the panel's Stop all, exit and open buttons, floating buttons.
 /// The panel and the button are placed over the target window, so a click that is not taken by
 /// PuppyMacro lands on it. make e2e CATEGORY=Overlay
 /// </summary>
@@ -61,6 +61,19 @@ public class OverlayTests
     private static Point CenterOf(AppSession app, AutomationElement root, string name) =>
         app.Find(root, name).BoundingRectangle.Center();
 
+    // The panel's title row: the title fills the space up to the exit, open and move buttons (26 wide, 6 apart).
+    // UI Automation does not show the buttons (borders), so they are found from the title's right edge, in
+    // device-independent pixels: the middle of the exit button is 13 to its right, the open button 45.
+    private const int ExitButtonFromTitle = 13;
+    private const int OpenButtonFromTitle = 45;
+
+    private static Point TitleButton(AppSession app, AutomationElement panel, int fromTitle)
+    {
+        Rectangle title = app.FindById(panel, "TitleText").BoundingRectangle;
+        double scale = Native.GetDpiForWindow(panel.Properties.NativeWindowHandle.Value) / 96.0;
+        return new Point(title.Right + (int)Math.Round(fromTitle * scale), title.Top + title.Height / 2);
+    }
+
     [Fact]
     public void Panel_rows_the_panel_Stop_all_and_floating_buttons_run_and_stop_items_and_the_app_keeps_the_focus()
     {
@@ -87,8 +100,29 @@ public class OverlayTests
         target.RequireForeground();
 
         target.Tap(Vk.F24);
+        app.AssertLeftOverlayModeInTray(panel);
+    }
+
+    [Fact]
+    public void The_panel_exit_button_leaves_the_main_window_in_the_tray_and_the_open_button_opens_it()
+    {
+        using var app = new AppSession(seed => SeedOverlay(seed, clickItemsInPanel: true));
+        using var target = new TargetWindow();
+        (AutomationElement panel, _) = EnterOverlayMode(app, target);
+
+        // Exit: as the Overlay mode hotkey, the main window stays in the tray although it was open before.
+        target.Click(TitleButton(app, panel, ExitButtonFromTitle));
+        app.AssertLeftOverlayModeInTray(panel);
+
+        (panel, _) = EnterOverlayMode(app, target);
+        target.Click(TitleButton(app, panel, OpenButtonFromTitle));
+        Assert.True(Retry.WhileFalse(() => !panel.IsAvailable || panel.IsOffscreen, AppSession.Timeout).Success,
+            "the open button did not end overlay mode");
         Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
-            "the main window did not come back");
+            "the open button did not open the main window");
+
+        // PuppyMacro took both clicks: none reached the window.
+        Assert.Empty(target.Downs(Vk.LButton));
     }
 
     [Fact]
@@ -109,8 +143,7 @@ public class OverlayTests
         target.WaitFor(t => t.Ups(Vk.F16).Count == 1, 5, "clicking the floating button did not play its macro");
 
         target.Tap(Vk.F24);
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
-            "the main window did not come back");
+        app.AssertLeftOverlayModeInTray(panel);
     }
 
     [Fact]
@@ -156,8 +189,7 @@ public class OverlayTests
         target.RequireForeground();
 
         target.Tap(Vk.F24);
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
-            "the main window did not come back");
+        app.AssertLeftOverlayModeInTray(panel);
     }
 
     [Fact]
@@ -180,8 +212,7 @@ public class OverlayTests
         target.WaitFor(t => t.Ups(Vk.RButton).Count == 1, 5, "the right click on the row did not reach the window");
 
         target.Tap(Vk.F24);
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
-            "the main window did not come back");
+        app.AssertLeftOverlayModeInTray(panel);
     }
 
     [Fact]
@@ -213,8 +244,7 @@ public class OverlayTests
         Assert.Null(app.TopWindow("PuppyMacro floating button: E2E button not in the overlay"));
 
         target.Tap(Vk.F24);
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
-            "the main window did not come back");
+        app.AssertLeftOverlayModeInTray(panel);
     }
 
     [Fact]
@@ -244,7 +274,6 @@ public class OverlayTests
         Assert.True(hidden == null || hidden.IsOffscreen, "the floating button for notepad.exe is shown");
 
         target.Tap(Vk.F24);
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
-            "the main window did not come back");
+        app.AssertLeftOverlayModeInTray(panel);
     }
 }

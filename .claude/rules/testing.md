@@ -17,7 +17,7 @@
   field shows (`KeyCaptureField.DisplayParts`), loop intervals, `FloatingButton` (labels,
   sanitizing, opacity, old files), the Code views' checks and schemas (`MacroJson`, `LoopJson`,
   `RemapJson`, `CodeSchema`, the groups an action can be in), `LoopEngine`'s input decisions (keys
-  held by a Hold down loop, wheel hotkeys, hotkey capture, the overlay panel's Stop all and Move, right
+  held by a Hold down loop, wheel hotkeys, hotkey capture, the overlay panel's Stop all, Exit, Open and Move, right
   clicks on the overlay's items, disabled items and clicks that pass through,
   hotkeys of items for a specific app and their stop when another app comes in front, through
   `OnForegroundApp`),

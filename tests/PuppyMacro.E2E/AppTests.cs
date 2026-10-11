@@ -308,8 +308,7 @@ public class AppTests
         Assert.True(app.Has(panel!, "Stop all"));
 
         PressF24(); // the Overlay mode hotkey
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
-        Assert.True(Retry.WhileFalse(() => button!.IsOffscreen || !button.IsAvailable, AppSession.Timeout).Success);
+        app.AssertLeftOverlayModeInTray(button!);
     }
 
     [Fact]
@@ -345,25 +344,28 @@ public class AppTests
         Assert.False(app.FindById(app.MainWindow, "OpacitySlider").IsEnabled); // the panel's options are off with it
 
         app.FindById(app.MainWindow, "OverlayModeButton").AsButton().Click();
-        Assert.NotNull(app.TopWindow("PuppyMacro floating button: E2E F24 loop"));
+        AutomationElement? button = app.TopWindow("PuppyMacro floating button: E2E F24 loop");
+        Assert.NotNull(button);
         AutomationElement? panel = app.TopWindow("PuppyMacro overlay panel");
         Assert.True(panel == null || panel.IsOffscreen, "the overlay panel is shown although it is off");
 
         PressF24(); // the Overlay mode hotkey
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
+        app.AssertLeftOverlayModeInTray(button!);
     }
 
     [Fact]
-    public void Overlay_mode_hides_the_window_and_its_hotkey_brings_it_back()
+    public void Overlay_mode_hides_the_window_and_its_hotkey_leaves_it_in_the_tray()
     {
         using var app = new AppSession();
         SetOverlayModeHotkeyToF24(app);
 
         app.FindById(app.MainWindow, "OverlayModeButton").AsButton().Click();
         Assert.True(Retry.WhileFalse(() => app.MainWindow.IsOffscreen || !app.MainWindow.IsAvailable, AppSession.Timeout).Success);
+        AutomationElement? panel = app.TopWindow("PuppyMacro overlay panel");
+        Assert.NotNull(panel);
 
         PressF24(); // the Overlay mode hotkey
-        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success);
+        app.AssertLeftOverlayModeInTray(panel!);
     }
 
     [Fact]
