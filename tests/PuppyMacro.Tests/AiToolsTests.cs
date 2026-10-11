@@ -365,7 +365,36 @@ public class AiToolsTests : IDisposable
         Assert.Contains("Theme: Dark → Light", lines);
         Assert.Contains($"Stop all hotkey: {KeyNames.Format(_settings.StopAllHotkey)} → F12", lines);
         Assert.Equal(AppTheme.Light, Assert.Single(_host.Applied).Theme);
-        Assert.Equal("settings", _log.Entries().First().ItemKind);
+        AiActivity entry = _log.Entries().First();
+        Assert.Equal("settings", entry.ItemKind);
+        // Restore puts back only these two: the user's later changes of other settings stay.
+        AiSettingsValues before = JsonSerializer.Deserialize<AiSettingsValues>(entry.Before!, CodeJson.Options)!;
+        Assert.Equal(AppTheme.Dark, before.Theme);
+        Assert.NotNull(before.StopAllHotkey);
+        Assert.Null(before.SoundVolume);
+        Assert.Null(before.OverlayModeHotkey);
+    }
+
+    [Fact]
+    public async Task A_change_of_an_item_deleted_meanwhile_is_not_saved()
+    {
+        var loop = new LoopDefinition { Name = "Spam", Actions = { new LoopAction { KeyVk = 0x87, IntervalValue = 100 } } };
+        _settings.Loops.Add(loop);
+        _settings.AiAskBeforeChanging = true;
+        _host.Hold = new TaskCompletionSource<bool>();
+
+        Task<AiToolResult> call = Call("save_loop", new
+        {
+            id = loop.Id.ToString(),
+            item = new { Name = "Spam 2", Actions = new[] { new { Type = "Key", KeyVk = 0x87, IntervalValue = 100 } } },
+        });
+        _settings.Loops.Clear(); // the user deletes it while the confirmation is open
+        _host.Hold.SetResult(true);
+        AiToolResult result = await call;
+
+        Assert.True(result.IsError);
+        Assert.Contains("deleted meanwhile", result.Text);
+        Assert.Empty(_host.Saved);
     }
 
     [Fact]

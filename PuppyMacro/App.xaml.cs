@@ -58,6 +58,9 @@ public partial class App : Application
 
     public const string RestartArgument = "--restart";
 
+    /// <summary>The mutex a running PuppyMacro holds (one at a time; the AI bridge checks it to know PuppyMacro is open).</summary>
+    public const string SingleInstanceName = "PuppyMacro.SingleInstance";
+
     [STAThread]
     private static void Main()
     {
@@ -86,7 +89,7 @@ public partial class App : Application
         bool startInTray = e.Args.Contains(StartupService.TrayArgument);
         bool restarting = e.Args.Contains(RestartArgument);
 
-        _singleInstance = new Mutex(initiallyOwned: true, "PuppyMacro.SingleInstance", out _ownsMutex);
+        _singleInstance = new Mutex(initiallyOwned: true, SingleInstanceName, out _ownsMutex);
         if (!_ownsMutex && restarting)
         {
             // After Import, the previous instance is still closing: wait for it.

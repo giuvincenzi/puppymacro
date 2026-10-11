@@ -80,6 +80,12 @@ public sealed class LoopEngineTests : IDisposable
         Assert.False(_engine.OnKey(Enter, true, false));
         _engine.OnKey(Enter, false, false);
         _engine.OnKey(0xA4, false, true);
+
+        // While PuppyMacro uses the keys itself (a dialog or an editor open), Enter and Esc are its own.
+        _engine.HotkeysSuspended = true;
+        Assert.False(_engine.OnKey(Enter, true, false));
+        _engine.OnKey(Enter, false, false);
+        _engine.HotkeysSuspended = false;
         _engine.StopReadyKeys();
         RunDispatcher();
         Assert.Equal(1, ready);

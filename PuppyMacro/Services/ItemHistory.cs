@@ -100,15 +100,20 @@ internal sealed class ItemHistory
         Write(id, versions);
     }
 
-    /// <summary>The versions of an item, newest first (empty when it has none).</summary>
+    /// <summary>
+    /// The versions of an item, newest first (empty when it has none). The order is the file's, the order they were saved
+    /// in, not their times: the clock can go back (daylight saving time ends, the user sets it).
+    /// </summary>
     public List<HistoryVersion> Versions(Guid id)
     {
         string path = PathOf(id);
         try
         {
-            return File.Exists(path)
-                ? (JsonSerializer.Deserialize<List<HistoryVersion>>(File.ReadAllText(path), FileOptions) ?? new()).OrderByDescending(v => v.Time).ToList()
-                : new List<HistoryVersion>();
+            if (!File.Exists(path))
+                return new List<HistoryVersion>();
+            List<HistoryVersion> versions = JsonSerializer.Deserialize<List<HistoryVersion>>(File.ReadAllText(path), FileOptions) ?? new();
+            versions.Reverse();
+            return versions;
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
@@ -179,7 +184,7 @@ internal sealed class ItemHistory
                     continue; // added or removed above
                 changes.Add($"Action {index + 1}{ActionLabel(afterActions![index])}: {Label(action.Groups[2].Value)} {old ?? "none"} → {now ?? "none"}");
             }
-            else if (!key.StartsWith("Actions[", StringComparison.Ordinal) && key != "Id")
+            else if (!key.StartsWith("Actions", StringComparison.Ordinal) && key != "Id") // actions: added or removed above
             {
                 changes.Add($"{Label(key)}: {old ?? "none"} → {now ?? "none"}");
             }

@@ -27,13 +27,23 @@ internal static class AiBridge
         {
             // PuppyMacro is closed: started in the tray, unless the user turned that off (Start PuppyMacro when an AI app
             // needs it). Then, or when it does not start, the AI app still gets an answer: why, and what the user can do.
-            ClosedSettings settings = ReadSettings();
-            if (!settings.StartWhenNeeded)
-                return AnswerWhileClosed(ClosedMessage(settings));
-            StartPuppyMacro();
-            pipe = Connect(StartTimeout);
-            if (pipe == null)
-                return AnswerWhileClosed("PuppyMacro did not start. Ask the user to open PuppyMacro, then try again.");
+            if (IsPuppyMacroRunning())
+            {
+                // Running, still starting or busy: it opens its pipe in a moment (or its AI page says why it can't).
+                pipe = Connect(StartTimeout);
+                if (pipe == null)
+                    return AnswerWhileClosed("PuppyMacro is open but AI apps can't connect to it now. Ask the user to look at PuppyMacro's AI page.");
+            }
+            else
+            {
+                ClosedSettings settings = ReadSettings();
+                if (!settings.StartWhenNeeded)
+                    return AnswerWhileClosed(ClosedMessage(settings));
+                StartPuppyMacro();
+                pipe = Connect(StartTimeout);
+                if (pipe == null)
+                    return AnswerWhileClosed("PuppyMacro did not start. Ask the user to open PuppyMacro, then try again.");
+            }
         }
 
         using (pipe)
@@ -61,6 +71,15 @@ internal static class AiBridge
             done.Cancel();
         }
         return 0;
+    }
+
+    /// <summary>PuppyMacro runs: it holds its single-instance mutex (bridges never take it), also while it starts.</summary>
+    private static bool IsPuppyMacroRunning()
+    {
+        if (!Mutex.TryOpenExisting(App.SingleInstanceName, out Mutex? mutex))
+            return false;
+        mutex.Dispose();
+        return true;
     }
 
     /// <summary>What the bridge reads of the settings while PuppyMacro is closed.</summary>

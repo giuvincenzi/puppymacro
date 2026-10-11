@@ -360,6 +360,11 @@ internal sealed class AiTools
 
         AiToolResult Apply()
         {
+            // Checked again on the UI thread: meanwhile the user may have deleted it or opened a PuppyMacro window.
+            if (BusyNow() is AiToolResult busy)
+                return busy;
+            if (before != null && Find(id) == null)
+                return AiToolResult.Error($"The {kind} was deleted meanwhile: nothing was saved.");
             bool wasRunning = _host.IsRunning(id);
             _host.Save(parsed, app);
             _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", json, id, kind, before);
@@ -418,6 +423,8 @@ internal sealed class AiTools
         string label = $"Deleted {what}";
         AiToolResult Apply()
         {
+            if (BusyNow() is AiToolResult busy)
+                return busy;
             if (Find(id) == null)
                 return AiToolResult.Error($"The {kind} is already gone.");
             _host.Delete(id, app);
@@ -455,6 +462,10 @@ internal sealed class AiTools
         string label = $"{(enabled ? "Enabled" : "Disabled")} {what}";
         AiToolResult Apply()
         {
+            if (BusyNow() is AiToolResult busy)
+                return busy;
+            if (Find(id) == null)
+                return AiToolResult.Error($"The {kind} was deleted meanwhile.");
             _host.SetEnabled(id, enabled, app);
             _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied, "", null, id, kind, before);
             return new AiToolResult($"{(enabled ? "Enabled" : "Disabled")} {what}.");
@@ -497,7 +508,8 @@ internal sealed class AiTools
                 _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Error, stillProblem);
                 return AiToolResult.Error(stillProblem);
             }
-            string before = JsonSerializer.Serialize(AiSettingsValues.From(_host.Settings), CodeJson.Options);
+            // Restore puts back only what this changes (the user's later changes of other settings stay).
+            string before = JsonSerializer.Serialize(Previous(wanted), CodeJson.Options);
             _host.ApplySettings(wanted);
             _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied,
                 string.Join("; ", changes.Select(c => $"{c.Label}: {c.From} → {c.To}")), null, null, "settings", before);
@@ -516,6 +528,42 @@ internal sealed class AiTools
             return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
+
+    /// <summary>On the UI thread: the current values of the settings <paramref name="wanted"/> sets, the others null (kept).</summary>
+    private AiSettingsValues Previous(AiSettingsValues wanted)
+    {
+        AiSettingsValues now = AiSettingsValues.From(_host.Settings);
+        return new AiSettingsValues
+        {
+            Theme = wanted.Theme != null ? now.Theme : null,
+            CloseToTray = wanted.CloseToTray != null ? now.CloseToTray : null,
+            StopAllHotkey = wanted.StopAllHotkey != null ? now.StopAllHotkey : null,
+            OverlayModeHotkey = wanted.OverlayModeHotkey != null ? now.OverlayModeHotkey : null,
+            RecordHotkey = wanted.RecordHotkey != null ? now.RecordHotkey : null,
+            ShowOverlayPanel = wanted.ShowOverlayPanel != null ? now.ShowOverlayPanel : null,
+            ClickItemsInPanel = wanted.ClickItemsInPanel != null ? now.ClickItemsInPanel : null,
+            OverlayPanelOpacity = wanted.OverlayPanelOpacity != null ? now.OverlayPanelOpacity : null,
+            SoundVolume = wanted.SoundVolume != null ? now.SoundVolume : null,
+        };
+    }
+
+    /// <summary>
+    /// Restores settings an AI app changed (<see cref="AiActivity.Before"/>): checked as a change would be (a global hotkey
+    /// may clash with what was made since). Null when done, otherwise why not. On the UI thread.
+    /// </summary>
+    public string? RestoreSettings(AiSettingsValues values)
+    {
+        (_, string? problem) = SettingChanges(values);
+        if (problem != null)
+            return "These settings can't be restored: " + problem;
+        _host.ApplySettings(values);
+        return null;
+    }
+
+    /// <summary>On the UI thread, while a request starts: the user opened a PuppyMacro window meanwhile.</summary>
+    private AiToolResult? BusyNow() => _host.UserIsEditing
+        ? AiToolResult.Error("The user has a PuppyMacro window open (an editor or a dialog). Ask them to close it, then try again.")
+        : null;
 
     /// <summary>On the UI thread: what would change, or why it can't.</summary>
     private (List<AiSettingChange> Changes, string? Problem) SettingChanges(AiSettingsValues wanted)
@@ -590,6 +638,8 @@ internal sealed class AiTools
                 Log(app, AiActivityKind.Interaction, label, ready, "");
                 return Answered(ready, "");
             }
+            if (BusyNow() is AiToolResult busy)
+                return busy;
             var (answer, picked) = await _host.PickPoints(app, message, points);
             string text = points == 1 && picked.Count == 1
                 ? JsonSerializer.Serialize(new { X = picked[0].X, Y = picked[0].Y })
@@ -613,6 +663,8 @@ internal sealed class AiTools
                 Log(app, AiActivityKind.Interaction, label, ready, "");
                 return Answered(ready, "");
             }
+            if (BusyNow() is AiToolResult busy)
+                return busy;
             var (answer, exe) = await _host.PickApp(app, message);
             Log(app, AiActivityKind.Interaction, label, answer, exe ?? "");
             return Answered(answer, JsonSerializer.Serialize(new { AppExe = exe }, AnswerOptions));

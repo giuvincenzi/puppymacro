@@ -360,8 +360,10 @@ public partial class MainWindow : IAiHost
         {
             if (entry.ItemKind == "settings")
             {
-                if (JsonSerializer.Deserialize<AiSettingsValues>(entry.Before, CodeJson.Options) is { } values)
-                    ((IAiHost)this).ApplySettings(values);
+                if (JsonSerializer.Deserialize<AiSettingsValues>(entry.Before, CodeJson.Options) is not { } values)
+                    return "These settings can't be restored.";
+                if (_aiTools.RestoreSettings(values) is string problem)
+                    return problem;
             }
             else
             {

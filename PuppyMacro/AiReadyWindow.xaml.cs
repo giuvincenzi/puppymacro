@@ -27,6 +27,8 @@ public partial class AiReadyWindow
             Left = work.Right - ActualWidth - 32;
             Top = work.Top + 32;
         };
+        // Closed from the taskbar or with Alt+F4: cancelled (the request does not wait, Enter is not taken any more).
+        Closed += (_, _) => Answer(AiAnswer.Cancelled);
         PreviewKeyDown += (_, e) =>
         {
             if (e.Key == Key.Escape)

@@ -66,7 +66,7 @@ internal sealed class CodeViewSwitch<T> where T : class
 
     public EditorView View { get; private set; } = EditorView.Form;
 
-    /// <summary>Called before the Code view opens (e.g. to stop a key capture).</summary>
+    /// <summary>Called before the Code view or the History opens (e.g. to stop a key capture).</summary>
     public event Action? Opening;
 
     private FrameworkElement? _history;
@@ -139,7 +139,10 @@ internal sealed class CodeViewSwitch<T> where T : class
             _load(item);
         }
         if (view == EditorView.History)
+        {
+            Opening?.Invoke(); // a key field waiting in the form stops, as for the Code view
             _historyOpening?.Invoke();
+        }
         SetView(view);
     }
 

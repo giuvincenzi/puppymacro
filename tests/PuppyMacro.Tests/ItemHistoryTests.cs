@@ -121,6 +121,30 @@ public class ItemHistoryTests : IDisposable
     }
 
     [Fact]
+    public void The_order_is_the_order_of_the_saves_also_when_the_clock_goes_back()
+    {
+        Guid id = Guid.NewGuid();
+        var clock = new Queue<DateTime>(new[] { new DateTime(2026, 10, 25, 2, 50, 0), new DateTime(2026, 10, 25, 2, 10, 0) });
+        var history = new ItemHistory(_folder.File("history"), () => clock.Dequeue()); // daylight saving time ended between
+        history.Record(id, LoopJson.Serialize(Loop(id, "First")), ItemHistory.You);
+        history.Record(id, LoopJson.Serialize(Loop(id, "Second")), ItemHistory.You);
+
+        List<HistoryVersion> versions = history.Versions(id);
+
+        Assert.Contains("\"Second\"", versions[0].Json);
+        Assert.Equal("Name: \"First\" → \"Second\"", versions[0].Summary);
+    }
+
+    [Fact]
+    public void A_macro_getting_its_first_actions_lists_only_the_actions_added()
+    {
+        var before = new MacroDefinition { Name = "M" };
+        var after = new MacroDefinition { Id = before.Id, Name = "M", Actions = { new MacroAction { Type = MacroActionType.Click, Vk = 1 } } };
+
+        Assert.Equal(new[] { "Added action 1 (Click)" }, ItemHistory.Changes(MacroJson.Serialize(before), MacroJson.Serialize(after)));
+    }
+
+    [Fact]
     public void An_unreadable_history_file_is_an_empty_history()
     {
         Guid id = Guid.NewGuid();

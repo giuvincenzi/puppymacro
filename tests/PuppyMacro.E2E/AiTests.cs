@@ -102,8 +102,8 @@ public class AiTests
         Assert.Equal(ToggleState.Off, app.FindById(app.MainWindow, "AiAccessSwitch").AsToggleButton().ToggleState);
         Assert.True(app.Has(app.MainWindow, $"Connected: {ClientName}"));
         Assert.True(app.Has(app.MainWindow, "Tried to connect while AI access was off"));
-        // The status bar names the connected app.
-        Assert.False(app.FindById(app.MainWindow, "AiStatusBar").IsOffscreen);
+        // The status bar names the connected app (its own text: the Apps row says "Connected: …").
+        Assert.True(app.Has(app.MainWindow, ClientName));
     }
 
     [Fact]
