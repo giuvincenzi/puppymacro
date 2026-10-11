@@ -63,9 +63,9 @@ public partial class MainWindow
         _macros = macros;
 
         Title = App.DisplayTitle;
-        DevBuildRun.Text = App.IsDevBuild ? "DEV" : "";
+        DevBuildRun.Text = App.ShowsDevMarks ? "DEV" : "";
         AboutText.Text = App.DisplayTitle;
-        DevBuildStrip.Visibility = App.IsDevBuild ? Visibility.Visible : Visibility.Collapsed;
+        DevBuildStrip.Visibility = App.ShowsDevMarks ? Visibility.Visible : Visibility.Collapsed;
 
         _sounds = new SoundService(Dispatcher) { Volume = settings.SoundVolume };
 

@@ -18,7 +18,7 @@
   - `make test`: unit tests; `make e2e`: end-to-end tests (see `testing.md`).
   - `make docs`, `make docs-serve`: website preview in `site-preview/`, served locally by
     `docs-serve` (see `docs.md`).
-  - `make screenshots`: `make dev`, then retakes the guide's editor screenshots and the home
+  - `make screenshots`: `make dev` started with `PUPPYMACRO_SCREENSHOTS=1` (no strip, no DEV), then retakes the guide's editor screenshots and the home
     page's screenshot (drives the UI, see `docs.md`), then closes PuppyMacro (the process, also
     after an error).
   - `make release-pr`, `make release`: see Releases below.
@@ -37,7 +37,7 @@
   and an entry in Settings > Apps > Installed apps, and installs the .NET 10 Desktop Runtime and
   the Microsoft Edge WebView2 Runtime if missing. The installed app updates itself from GitHub Releases (`updates.md`).
 - Debug builds (`App.IsDevBuild`, `#if DEBUG`) show the orange "Development build" strip and
-  "DEV" in the title and tray tooltip, use their own data folder `%AppData%\PuppyMacro Dev`
+  "DEV" in the title and tray tooltip (not when started with `PUPPYMACRO_SCREENSHOTS=1`), use their own data folder `%AppData%\PuppyMacro Dev`
   (`AppPaths`; WebView2 data in `%LocalAppData%\PuppyMacro Dev`) and fill it with disabled
   samples when empty (`Services/DevSampleData.cs`, Debug only), enable the Code view's DevTools,
   never touch the Start with Windows Run entry and skip the pre-1.6 data migration.

@@ -1,6 +1,7 @@
 # make screenshots: retakes the editor screenshots of the user guide (site/guide/img: loop-editor.png,
 # macro-editor.png, macro-editor-code.png, remap-editor.png) and the home page's (site/assets/loops.png) from the
-# running development build (start it first with make dev, so it shows the sample data).
+# running development build (make screenshots starts it with make dev's script and PUPPYMACRO_SCREENSHOTS=1, so it shows
+# the sample data and no development build marks).
 # It drives the UI with UI Automation: do not use the mouse or keyboard while it runs. At the end (also after an
 # error) it closes that PuppyMacro, so the PC is free again when it returns.
 # Each window is captured alone, at its visible edges, and saved at 100% scale.
@@ -130,32 +131,31 @@ Capture $editor (Join-Path $OutDir 'remap-editor.png')
 $loops = ByName $main 'Loops'
 $loops.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
 
-# Home page: the Loops page at 800 x 750 (100% scale: the main window's width, so the cards keep one
-# line), below the title bar and the development
-# strip (the home page draws its own window bar). The main window gets its size back afterwards.
+# Home page: the whole main window on the Loops page, title bar included, at 800 x 800 (100% scale: the main
+# window's width, so the cards keep one line). The main window gets its size back afterwards.
 $h = [IntPtr]$main.Current.NativeWindowHandle
 $scale = [W]::GetDpiForWindow($h) / 96.0
 $transform = $main.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern)
 $size = $main.Current.BoundingRectangle   # the whole window, invisible borders included
 $restoreWidth = $size.Width; $restoreHeight = $size.Height
-$strip = WaitFor { ByName $main 'Development build' } 'Development build strip'
 [W]::SetForegroundWindow($h) | Out-Null
 # Resize to the wanted visible size, then correct by what is measured (invisible borders, rounding).
 $wantWidth = [Math]::Round(800 * $scale)
-$wantHeight = [Math]::Round(750 * $scale)
+$wantHeight = [Math]::Round(800 * $scale)
 for ($pass = 0; $pass -lt 3; $pass++) {
   $r = Bounds $h
-  $top = [Math]::Round($strip.Current.BoundingRectangle.Bottom + 3 * $scale)   # the strip's bottom padding
-  $dw = $wantWidth - ($r.R - $r.L); $dh = $wantHeight - ($r.B - $top)
+  $dw = $wantWidth - ($r.R - $r.L); $dh = $wantHeight - ($r.B - $r.T)
   if ($dw -eq 0 -and $dh -eq 0) { break }
   $now = $main.Current.BoundingRectangle
   $transform.Resize($now.Width + $dw, $now.Height + $dh)
   Start-Sleep -Milliseconds 800
 }
+# Selecting Loops through UI Automation gave its side rail item the keyboard focus (a frame and its tooltip):
+# the window takes it back, with no frame.
+$main.SetFocus()
 Start-Sleep -Milliseconds 800
 $r = Bounds $h
-$top = [Math]::Round($strip.Current.BoundingRectangle.Bottom + 3 * $scale)
-SaveRegion $h $r.L $top $r.R $r.B (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/assets/loops.png')
+SaveRegion $h $r.L $r.T $r.R $r.B (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/assets/loops.png')
 $transform.Resize($restoreWidth, $restoreHeight)
 
 ClosePuppyMacro

@@ -52,5 +52,6 @@ paths:
   `SettingsStore`, `MacroLibrary.Sanitize` and the Code views).
 - Export / Import: `.puppymacro` zip (`BackupService`); Import keeps a backup and restarts
   the app (`--restart`).
-- Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`). Keep
+- Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
+  loop is enabled). Keep
   the samples working when models change.
