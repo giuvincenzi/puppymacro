@@ -41,7 +41,9 @@
 - Shorter, friendlier texts across the app; **New macro** is now **Add macro**.
 - Buttons that wait for a key or a mouse button, or pick something on the screen, show a target icon;
   buttons that place the overlay show a move icon.
-- **What's new** sits next to **Update** in Settings.
+- Updates: the bar says only "Version X.Y.Z available", with **Update and restart** on its right (also in
+  Settings, next to **What's new**); while it downloads there is no button. The dot on Settings sits next to
+  its icon, as in Microsoft Store.
 - The loop, macro and remap editors open 240 px wider: 120 for their right column, whose lists (apps,
   sounds) have more room, and 120 for the actions; a macro editor width you kept grows as much.
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves

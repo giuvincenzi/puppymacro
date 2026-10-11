@@ -83,7 +83,10 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     the `_20_Filled` icon in `AccentTextFillColorPrimaryBrush` instead, and the name fades out while
     the icon slides down 10 px to the middle (167 ms, curve `0,0,0,1`, WinUI's
     `ControlFastAnimationDuration` and `ControlFastOutSlowInKeySpline`). The update dot on Settings is an
-    `AttentionDot` `InfoBadge`. The pages sit on the content layer the NavigationView draws (as in
+    `AttentionDot` `InfoBadge` placed as Microsoft Store's on Downloads (measured, approved): 6 px, 7 px right of the
+    icon and 3 px above it, inside the icon's grid so it moves with it. The update bar is the library's `InfoBar`
+    with no margins of ours: its action button `HorizontalAlignment` Right (the InfoBar gives the action the rest of
+    the row), and while downloading the progress bar ends 46 px from the right, as far as it starts from the left. The pages sit on the content layer the NavigationView draws (as in
     Microsoft Store): a Border with `LayerFillColorDefaultBrush`, `CardStrokeColorDefaultBrush` on the
     top and left (`1,1,0,0`) and the top-left corner rounded (`8,0,0,0`). In the rail
     `ListViewItemCompactSelectedBorderThemeThickness` is `4,0,4,4`, so the first page's background starts

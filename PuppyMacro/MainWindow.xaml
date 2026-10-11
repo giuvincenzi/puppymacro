@@ -103,7 +103,9 @@
                     <Button x:Name="UpdateBarButton" HorizontalAlignment="Right" Click="OnUpdateActionClick" />
                 </ui:InfoBar.ActionButton>
                 <ui:InfoBar.Content>
-                    <ProgressBar x:Name="UpdateBarProgress" Margin="0,0,0,12" Maximum="100" Visibility="Collapsed" />
+                    <!-- 46 on the right: as far from the right edge as it starts from the left (the library's InfoBarContentRootPadding
+                         16 + InfoBarIconFontSize 16 + InfoBarIconMargin 14); while downloading no close button ends the row -->
+                    <ProgressBar x:Name="UpdateBarProgress" Margin="0,0,46,12" Maximum="100" Visibility="Collapsed" />
                 </ui:InfoBar.Content>
             </ui:InfoBar>
         </StackPanel>
