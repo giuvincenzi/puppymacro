@@ -170,6 +170,11 @@ internal sealed class SettingsStore
                 loop.FloatingButton.Opacity ??= settings.OverlayPanelOpacity;
         }
 
+        // Schema 7: the macro editor's right column is 120 wider; a width kept from before grows as much, so the
+        // list of actions keeps its width.
+        if (settings.SchemaVersion < 7 && settings.MacroEditorWidth is double macroWidth)
+            settings.MacroEditorWidth = macroWidth + 120;
+
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
         settings.Remaps ??= new();
         // Schema 7: a remap's source is a key or a combination (Source); the single key of older files

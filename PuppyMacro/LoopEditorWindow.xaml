@@ -11,9 +11,9 @@
     ui:TitleBar.MinimizeButtonAvailability="Collapsed"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="Add loop"
-    Width="1120"
+    Width="1240"
     Height="780"
-    MinWidth="900"
+    MinWidth="1020"
     MinHeight="520"
     ResizeMode="CanResize"
     ShowInTaskbar="True"
@@ -41,7 +41,7 @@
         <Grid x:Name="FormBody" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="440" />
-                <ColumnDefinition Width="420" />
+                <ColumnDefinition Width="540" />
             </Grid.ColumnDefinitions>
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="24,8,24,12" Spacing="4">

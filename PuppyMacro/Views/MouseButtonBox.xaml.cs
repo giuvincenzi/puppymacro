@@ -87,5 +87,6 @@ public partial class MouseButtonBox : UserControl
         WaitRing.IsActive = waiting;
         WaitPanel.Visibility = waiting ? Visibility.Visible : Visibility.Collapsed;
         DetectButton.Visibility = waiting ? Visibility.Collapsed : Visibility.Visible;
+        Box.Visibility = waiting ? Visibility.Collapsed : Visibility.Visible;
     }
 }

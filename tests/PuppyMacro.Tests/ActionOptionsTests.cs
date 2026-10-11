@@ -121,6 +121,16 @@ public sealed class ActionOptionsTests : IDisposable
     }
 
     [Fact]
+    public void A_macro_editor_width_kept_before_schema_7_grows_with_its_right_column_once()
+    {
+        AppSettings old = Load("""{ "SchemaVersion": 6, "MacroEditorWidth": 1200 }""");
+        Assert.Equal(1320, old.MacroEditorWidth);
+
+        AppSettings current = Load("""{ "SchemaVersion": 7, "MacroEditorWidth": 1300 }""");
+        Assert.Equal(1300, current.MacroEditorWidth);
+    }
+
+    [Fact]
     public void The_new_loop_options_are_saved_and_loaded()
     {
         string path = _folder.File("settings.json");

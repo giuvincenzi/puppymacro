@@ -31,6 +31,8 @@
 - The cards of loops name the click and the combination they send, for example "Left click every 1 s"
   instead of "LButton every 1 s".
 - The **Test** button of a macro action shows a play icon.
+- The loop, macro and remap editors are 120 px wider, all in their right column, so its lists (apps,
+  sounds) have more room; a macro editor width you kept grows as much.
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves
   Alt+J as it is.
 - Every key field has the arrow next to the keys, also in Settings and in the remap editor.

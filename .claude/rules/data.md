@@ -37,7 +37,8 @@ paths:
 - Schema 7: a remap's source is `Source` (a `HotkeyBinding`); the single key of older files, `SourceVk`, is
   read once and converted to a `Source` with no modifiers (`SettingsStore.Sanitize`); the remap Code view
   rejects `SourceVk`. Hotkeys have `CtrlSide`, `AltSide`, `ShiftSide`, `WinSide`, left out when `Any`
-  (either side), so older files mean either side, as before.
+  (either side), so older files mean either side, as before. The macro editor's right column is 120 px wider
+  since schema 7: a `MacroEditorWidth` from an older file grows by 120 once.
 - Loop actions (`LoopAction`) and macro actions (`MacroAction`) share `KeyModifierFields`: `Ctrl`, `Alt`,
   `Shift`, `Win` and their sides, flat next to the key, written only when set (a macro's Press key, a loop's
   Press key). A loop's Click is a `Key` row whose `KeyVk` is a mouse button (`LoopAction.IsClick`), not a
