@@ -220,7 +220,8 @@ public class AppTests
             ? command : null;
         if (Shown() is { } open)
             return open;
-        app.FindById(editor, "MoreButton").AsButton().Invoke();
+        // ⋯ is a ToggleButton bound to the bar's IsOverflowOpen (iNKORE's CommandBar template).
+        app.FindById(editor, "MoreButton").AsToggleButton().Toggle();
         return Retry.WhileNull(Shown, AppSession.Timeout, throwOnTimeout: true, timeoutMessage: $"\"{automationId}\" not shown in ⋯").Result!;
     }
 
