@@ -441,9 +441,8 @@ public partial class MainWindow : IAiHost
         else
             dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-        if (dialog is PickPointWindow)
-            dialog.Loaded += (_, _) => dialog.Activate(); // already topmost, and must stay so: it covers the screen
-        else
+        // The picker is topmost and must stay so (it covers the screen), and activates itself.
+        if (dialog is not PickPointWindow)
             AiProposal.BringToFront(dialog);
 
         bool timedOut = false;

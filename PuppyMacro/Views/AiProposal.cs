@@ -25,6 +25,7 @@ internal static class AiProposal
     {
         window.Topmost = true;
         window.Activated += (_, _) => window.Topmost = false;
-        window.Loaded += (_, _) => window.Activate();
+        // Not on Loaded: a window sized to its content is loaded before it is shown, and Activate would throw.
+        window.ContentRendered += (_, _) => window.Activate();
     }
 }
