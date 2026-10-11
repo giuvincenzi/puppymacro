@@ -11,7 +11,8 @@ Set-Location $root
 
 Get-Process -Name PuppyMacro -ErrorAction SilentlyContinue | ForEach-Object {
     Write-Host "Closing the running PuppyMacro ($($_.Path))"
-    Stop-Process -Id $_.Id -Force
+    # Also AI bridges (PuppyMacro.exe --mcp): they exit by themselves when PuppyMacro closes, maybe already gone here.
+    Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
     $_.WaitForExit()
 }
 

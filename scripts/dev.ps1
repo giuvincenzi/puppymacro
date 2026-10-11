@@ -12,7 +12,8 @@ $exe = Join-Path $root 'PuppyMacro/bin/Debug/net10.0-windows10.0.18362.0/win-x64
 # Only one PuppyMacro can run at a time (installed or dev).
 Get-Process -Name PuppyMacro -ErrorAction SilentlyContinue | ForEach-Object {
     Write-Host "Closing the running PuppyMacro ($($_.Path))"
-    Stop-Process -Id $_.Id -Force
+    # Also AI bridges (PuppyMacro.exe --mcp): they exit by themselves when PuppyMacro closes, maybe already gone here.
+    Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
     $_.WaitForExit()
 }
 
