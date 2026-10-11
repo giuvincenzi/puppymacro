@@ -8,7 +8,8 @@
 - `make test` runs `dotnet test` in **Release**: the code users get, and a running dev build
   (which locks `bin/Debug`) does not block it.
 - They run on GitHub on every pull request and every push to `main`
-  (`.github/workflows/test.yml`), and the Release workflow stops when they fail.
+  (`.github/workflows/test.yml`), and the Release workflow stops when they fail. The push of a
+  release commit ("Release X.Y.Z (#N)") skips them: the Release workflow runs them on it.
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
@@ -36,7 +37,9 @@
   project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18).
 - They run on GitHub (`.github/workflows/e2e.yml`) on every pull request (a required check for
   merging into `main`), on every push to `main` and before every release (the Release workflow
-  stops when they fail). The runner's screen is 1024x768: do not click controls that may be off
+  stops when they fail). The push of a release commit skips them, as the Release workflow runs
+  them on it: `e2e.yml` skips only when `github.workflow` is `E2E` (called by Release it is
+  `Release`, the caller's github context). The runner's screen is 1024x768: do not click controls that may be off
   screen there (for example the title bar of a tall window); use UI Automation patterns
   instead (`Window.Close()`, `Invoke`).
 - `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one

@@ -420,10 +420,13 @@ public class AppTests
     {
         app.FindById(window, "CodeViewButton").Patterns.SelectionItem.Pattern.Select();
         // A problem is a row (ARIA option) named "message Ln x, Col y": its text is not exposed on its own.
+        // The page redraws the Problems list while the code is checked: a row found a moment ago can be gone
+        // when its name is read (COMException), so an exception is one more try, not a failure.
         bool shown = problem == null
-            ? Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByName("No problems.")), TimeSpan.FromSeconds(30)).Success
+            ? Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByName("No problems.")), TimeSpan.FromSeconds(30),
+                ignoreException: true).Success
             : Retry.WhileFalse(() => window.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.ListItem))
-                .Any(row => row.Name.StartsWith(problem)), TimeSpan.FromSeconds(30)).Success;
+                .Any(row => row.Name.StartsWith(problem)), TimeSpan.FromSeconds(30), ignoreException: true).Success;
         Assert.True(shown, $"the Code view did not show \"{problem ?? "No problems."}\"");
     }
 
