@@ -61,11 +61,11 @@ public class OverlayTests
     private static Point CenterOf(AppSession app, AutomationElement root, string name) =>
         app.Find(root, name).BoundingRectangle.Center();
 
-    // The panel's title row: the title fills the space up to the exit, open and move buttons (26 wide, 6 apart).
+    // The panel's title row: the title fills the space up to the move, exit and open buttons (26 wide, 6 apart).
     // UI Automation does not show the buttons (borders), so they are found from the title's right edge, in
-    // device-independent pixels: the middle of the exit button is 13 to its right, the open button 45.
-    private const int ExitButtonFromTitle = 13;
-    private const int OpenButtonFromTitle = 45;
+    // device-independent pixels: the middle of the move button is 13 to its right, the exit button 45, the open button 77.
+    private const int ExitButtonFromTitle = 45;
+    private const int OpenButtonFromTitle = 77;
 
     private static Point TitleButton(AppSession app, AutomationElement panel, int fromTitle)
     {

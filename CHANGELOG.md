@@ -16,6 +16,7 @@
   Alt+J as it is.
 - Every key field has the arrow next to the keys, also in Settings and in the remap editor.
 - Modifier keys are named Left Ctrl, Right Alt and so on, instead of LCtrl, RAlt.
+- The overlay panel's buttons are in the order move, exit, open.
 
 ## 1.13.0
 
