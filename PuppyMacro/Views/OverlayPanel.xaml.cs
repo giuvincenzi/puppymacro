@@ -83,7 +83,7 @@ public partial class OverlayPanel
     }
 
     /// <summary>
-    /// Stop all is red while something runs and the panel can be clicked; the exit and move buttons are dimmed
+    /// Stop all is red while something runs and the panel can be clicked; the exit, open and move buttons are dimmed
     /// and the clicks hint is hidden when the panel cannot be clicked (Click items in the panel to start or stop
     /// them is off).
     /// </summary>
@@ -95,6 +95,7 @@ public partial class OverlayPanel
         StopAllLabel.Foreground = red ? StopRed : Neutral;
         StopAllSquare.Fill = red ? StopRed : NeutralSquare;
         ExitButton.Opacity = clickable ? 1 : 0.5;
+        OpenButton.Opacity = clickable ? 1 : 0.5;
         MoveButton.Opacity = clickable ? 1 : 0.5;
         ClickHint.Visibility = clickable ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -116,7 +117,7 @@ public partial class OverlayPanel
 
     /// <summary>
     /// Screen rectangles (physical pixels) of the rows (a left click starts only enabled, not Hold ones; a right
-    /// click enables or disables any), the exit and move buttons and Stop all.
+    /// click enables or disables any), the exit, open and move buttons and Stop all.
     /// </summary>
     internal List<PanelTarget> GetClickTargets()
     {
@@ -126,6 +127,7 @@ public partial class OverlayPanel
         AddTargets(LoopList, targets);
         AddTargets(MacroList, targets);
         AddTarget(ExitButton, PanelTarget.ExitOverlayId, targets);
+        AddTarget(OpenButton, PanelTarget.OpenMainOverlayId, targets);
         AddTarget(MoveButton, PanelTarget.MoveOverlayId, targets);
         AddTarget(StopAllButton, PanelTarget.StopAllId, targets);
         return targets;

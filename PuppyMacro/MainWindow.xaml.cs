@@ -74,6 +74,7 @@ public partial class MainWindow
         SetUpGlobalHotkeyFields();
         _engine.StateChanged += OnEngineStateChanged;
         _engine.OverlayModeToggleRequested += ToggleOverlayMode;
+        _engine.OverlayExitAndOpenRequested += ShowFromTray;
         _engine.OverlayPanelDragged += OnOverlayPanelDragged;
         _engine.OverlayEnableToggleRequested += OnOverlayEnableToggleRequested;
         _engine.SoundRequested += (name, start) => _sounds.Play(name, start);
@@ -220,7 +221,7 @@ public partial class MainWindow
 
     // ================= System tray =================
 
-    /// <summary>Shows the window from the tray or overlay mode (tray icon, or PuppyMacro started again).</summary>
+    /// <summary>Shows the window from the tray or overlay mode (tray icon, PuppyMacro started again, the overlay panel's open button).</summary>
     internal void ShowFromTray()
     {
         if (_overlayModeActive)
@@ -1414,19 +1415,15 @@ public partial class MainWindow
         _overlayPanelWindow.Show();
     }
 
-    /// <summary>How the main window was when overlay mode started, so leaving it gives that back.</summary>
-    private enum WindowBeforeOverlay { Open, Minimized, InTray }
-
-    private WindowBeforeOverlay _windowBeforeOverlay;
-
+    /// <summary>
+    /// Overlay mode on or off (the Overlay mode hotkey, the panel's exit button). Leaving it keeps the main
+    /// window in the tray: the panel's open button and the tray icon open it (<see cref="ShowFromTray"/>).
+    /// </summary>
     private void ToggleOverlayMode()
     {
         if (!_overlayModeActive)
         {
             _engine.CancelCapture();
-            _windowBeforeOverlay = !IsVisible ? WindowBeforeOverlay.InTray
-                : WindowState == WindowState.Minimized ? WindowBeforeOverlay.Minimized
-                : WindowBeforeOverlay.Open;
             Hide();
             _overlayPanelWindow.SetApp(_engine.ForegroundApp);
             if (_settings.ShowOverlayPanel)
@@ -1441,18 +1438,6 @@ public partial class MainWindow
             CloseFloatingButtons();
             _overlayModeActive = false;
             UpdatePanelClicks();
-            // The window goes back to how it was: still in the tray, minimized, or open. Open, it
-            // comes to the front: it is not topmost, so it would otherwise stay behind the fullscreen app.
-            switch (_windowBeforeOverlay)
-            {
-                case WindowBeforeOverlay.Open:
-                    Show();
-                    Activate();
-                    break;
-                case WindowBeforeOverlay.Minimized:
-                    Show(); // still minimized, on the taskbar
-                    break;
-            }
         }
     }
 

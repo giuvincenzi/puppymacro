@@ -180,6 +180,37 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void The_overlay_panel_exit_button_leaves_overlay_mode_and_the_open_button_also_opens_the_window()
+    {
+        int toggles = 0, opens = 0;
+        _engine.OverlayModeToggleRequested += () => toggles++;
+        _engine.OverlayExitAndOpenRequested += () => opens++;
+        _engine.SetPanelTargets(new[]
+        {
+            new PanelTarget(100, 100, 126, 126, PanelTarget.ExitOverlayId),
+            new PanelTarget(132, 100, 158, 126, PanelTarget.OpenMainOverlayId),
+        });
+
+        // Exit: as the Overlay mode hotkey. Blocked, down and up.
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 110, 110, 0));
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_LBUTTON, 110, 110, 0));
+        RunDispatcher();
+        Assert.Equal((1, 0), (toggles, opens));
+
+        // Open: its own request. Blocked too.
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_LBUTTON, 140, 110, 0));
+        Assert.True(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_LBUTTON, 140, 110, 0));
+        RunDispatcher();
+        Assert.Equal((1, 1), (toggles, opens));
+
+        // A right click on them reaches the app and does nothing.
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonDown, KeyNames.VK_RBUTTON, 140, 110, 0));
+        Assert.False(_engine.OnMouseDetail(InputHook.MouseKind.ButtonUp, KeyNames.VK_RBUTTON, 140, 110, 0));
+        RunDispatcher();
+        Assert.Equal((1, 1), (toggles, opens));
+    }
+
+    [Fact]
     public void A_right_click_on_the_overlay_panel_buttons_reaches_the_app()
     {
         var requested = new System.Collections.Generic.List<Guid>();
