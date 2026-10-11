@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.14.0
+
 ### Added
 - Loops and macros share the same **action boxes**: Press key, Click and Paste text in a loop, every action
   in a macro's action window. A loop's bar has one button per action (**Press key**, **Click**, **Paste
