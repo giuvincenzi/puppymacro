@@ -158,6 +158,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   mouse button always `Views/MouseButtonBox`: the list and, next to it, Detect (an icon button, the `Bullseye` icon)
   that waits for a mouse button through `LoopEngine.BeginCapture` (only the ring and "Press a mouse button (Esc cancels)"
   show meanwhile, the list hidden too, as the key field) and selects it; a key instead is rejected ("Use Press key for keys.").
+  Every button that places something on the screen or picks a point is `Views/PlaceButton` (the `Bullseye` icon before
+  its text): Pick on screen, a floating button's Position…, Settings' Position on screen (accent).
 - The loop editor's bar (approved): a `CommandBar` above the actions with one `AppBarButton` per action
   (Press key, Click, Paste text), label under the icon as the macro editor's bar, no overflow button.
 - The editors (loop, macro, remap) have an **Enabled** card with a `ToggleSwitch`, first on the right; the
