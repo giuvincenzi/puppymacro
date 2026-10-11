@@ -171,6 +171,60 @@ public class AppTests
     }
 
     [Fact]
+    public void Macro_groups_are_expanded_and_collapsed_all_at_once()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.EditItem("Sample: type and confirm");
+        Window editor = app.Dialog("Edit macro");
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+
+        // The open group "Type hi" (2 actions) and one more action: header and three rows.
+        Assert.True(Retry.WhileFalse(() => list.Items.Length == 4, AppSession.Timeout).Success, $"{list.Items.Length} rows");
+        list.Items[1].Select();
+
+        // Every group open: only Collapse all groups is on. The selected action's group closes, its header is selected.
+        AutomationElement collapse = MoreCommand(app, editor, "CollapseAllGroupsButton");
+        Assert.False(MoreCommand(app, editor, "ExpandAllGroupsButton").IsEnabled, "Expand all groups is on with every group open");
+        Assert.True(collapse.IsEnabled, "Collapse all groups is off with a group open");
+        collapse.AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => list.Items.Length == 2, AppSession.Timeout).Success, $"{list.Items.Length} rows");
+        Assert.StartsWith("Group Type hi", list.Items[0].Name);
+        Assert.True(list.Items[0].IsSelected, "the closed group's header is not selected");
+
+        // Every group closed: only Expand all groups is on. The action is selected again.
+        AutomationElement expand = MoreCommand(app, editor, "ExpandAllGroupsButton");
+        Assert.False(MoreCommand(app, editor, "CollapseAllGroupsButton").IsEnabled, "Collapse all groups is on with every group closed");
+        Assert.True(expand.IsEnabled, "Expand all groups is off with a group closed");
+        expand.AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => list.Items.Length == 4, AppSession.Timeout).Success, $"{list.Items.Length} rows");
+        Assert.True(list.Items[1].IsSelected, "the action is not selected after Expand all groups");
+
+        // No groups: both off.
+        list.Items[0].Select();
+        MoreCommand(app, editor, "UngroupButton").AsButton().Invoke();
+        AutomationElement total = app.FindById(editor, "TotalText");
+        Assert.True(Retry.WhileFalse(() => total.Name.StartsWith("3 actions,"), AppSession.Timeout).Success, total.Name);
+        Assert.False(MoreCommand(app, editor, "ExpandAllGroupsButton").IsEnabled, "Expand all groups is on without groups");
+        Assert.False(MoreCommand(app, editor, "CollapseAllGroupsButton").IsEnabled, "Collapse all groups is on without groups");
+    }
+
+    /// <summary>
+    /// A command in the editor's ⋯ menu, opening it first when it is closed. The menu is a popup: its own
+    /// top-level window, so the command is looked for among PuppyMacro's windows.
+    /// </summary>
+    private static AutomationElement MoreCommand(AppSession app, Window editor, string automationId)
+    {
+        AutomationElement? Shown() => app.Automation.GetDesktop()
+            .FindFirstDescendant(cf => cf.ByAutomationId(automationId).And(cf.ByProcessId(app.ProcessId))) is { IsOffscreen: false } command
+            ? command : null;
+        if (Shown() is { } open)
+            return open;
+        app.FindById(editor, "MoreButton").AsButton().Invoke();
+        return Retry.WhileNull(Shown, AppSession.Timeout, throwOnTimeout: true, timeoutMessage: $"\"{automationId}\" not shown in ⋯").Result!;
+    }
+
+    [Fact]
     public void An_action_is_tested_from_its_window_and_from_its_row()
     {
         using var app = new AppSession();

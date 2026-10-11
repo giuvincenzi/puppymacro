@@ -10,6 +10,7 @@
 - **Left and right modifiers**: hotkeys, remaps and Settings' hotkeys keep the side of Ctrl, Alt, Shift
   and Win you pressed, so Left Ctrl+F6 and Right Ctrl+F6 can do different things. The arrow next to the
   keys chooses Left, Right or Left or right for each one.
+- Macro editor: **Expand all groups** and **Collapse all groups** in **⋯** open or close every group at once.
 
 ### Changed
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves

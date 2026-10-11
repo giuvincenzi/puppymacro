@@ -356,6 +356,9 @@ public partial class MacroEditorWindow
         EditActionButton.IsEnabled = SelectedRow != null || SelectedGroup != null;
         RenameGroupButton.IsEnabled = SelectedGroup != null;
         UngroupButton.IsEnabled = SelectedGroup != null;
+        // Each one only while a group is in the other state.
+        ExpandAllGroupsButton.IsEnabled = _list.Groups.Any(g => g.Collapsed);
+        CollapseAllGroupsButton.IsEnabled = _list.Groups.Any(g => !g.Collapsed);
     }
 
     /// <summary>The selected action, when exactly one row and nothing else is selected.</summary>
@@ -608,6 +611,19 @@ public partial class MacroEditorWindow
             return;
         header.IsCollapsed = !header.IsCollapsed;
         Refresh();
+    }
+
+    private void OnExpandAllGroupsClick(object sender, RoutedEventArgs e) => SetAllGroupsCollapsed(false);
+
+    private void OnCollapseAllGroupsClick(object sender, RoutedEventArgs e) => SetAllGroupsCollapsed(true);
+
+    /// <summary>Opens or closes every group. The selected actions stay selected (in a closed group, its header).</summary>
+    private void SetAllGroupsCollapsed(bool collapsed)
+    {
+        var selected = _list.Expand(SelectedActions, SelectedGroups);
+        foreach (var group in _list.Groups)
+            HeaderFor(group).IsCollapsed = collapsed;
+        Refresh(ItemsFor(selected));
     }
 
     private void OnRenameGroupClick(object sender, RoutedEventArgs e)
