@@ -352,6 +352,35 @@ public class AiTests
     }
 
     [Fact]
+    public async Task A_macro_opened_by_an_AI_app_stays_open_until_the_user_cancels()
+    {
+        var macro = new MacroDefinition
+        {
+            Name = "E2E opened",
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = Vk.F22, DelayMs = 800 } },
+        };
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.AllowAiAccess = true;
+            seed.Macros.Add(macro);
+        });
+        await using McpClient client = await Connect();
+
+        Task<(string Text, bool IsError)> call = Call(client, "open_item", new { id = macro.Id.ToString(), title = "Check the delays", description = "The E2E test opens it." });
+        Window editor = app.Dialog("Edit macro");
+        Assert.Equal("Check the delays", app.FindById(editor, "NoticeBar").Name);
+        // While the editor is open the request waits for it (it once ended at once, leaving the editor without its dialog).
+        Assert.False(Retry.WhileFalse(() => call.IsCompleted, TimeSpan.FromSeconds(3)).Result, "open_item ended while its editor was open");
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+        var (text, isError) = await call;
+
+        Assert.False(isError, text);
+        Assert.Contains("without saving", text);
+        Assert.Null(Retry.WhileNull(() => app.Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(app.ProcessId))
+            .FirstOrDefault(w => w.Name == "PuppyMacro" && app.Has(w, "Unexpected error:")), TimeSpan.FromSeconds(2)).Result);
+    }
+
+    [Fact]
     public async Task An_item_opened_by_an_AI_app_shows_why_in_its_editor()
     {
         var remap = new RemapDefinition { Source = HotkeyBinding.FromKey(Vk.F23), Target = HotkeyBinding.FromKey(Vk.F22), Note = "E2E remap" };
