@@ -449,6 +449,8 @@
                                    Text="Use PuppyMacro from an AI app on this PC, like Claude Desktop or Visual Studio Code. Ask in your own words: the AI prepares loops, macros and remaps, and you check and save them here." />
 
                         <ui:InfoBar x:Name="AiMessage" Margin="0,12,0,0" IsOpen="False" />
+                        <!-- PuppyMacro's AI connection could not be opened (AiServer.ListenError) -->
+                        <ui:InfoBar x:Name="AiConnectionError" Margin="0,12,0,0" Severity="Warning" IsClosable="False" IsOpen="False" />
 
                         <!-- Access -->
                         <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Access" />

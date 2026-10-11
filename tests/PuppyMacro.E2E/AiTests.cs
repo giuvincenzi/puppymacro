@@ -25,17 +25,28 @@ public class AiTests
 {
     private const string ClientName = "E2E test client";
 
-    /// <summary>An AI app connected to the running development build through the bridge.</summary>
-    private static async Task<McpClient> Connect() =>
-        await McpClient.CreateAsync(
-            new StdioClientTransport(new StdioClientTransportOptions
-            {
-                Command = AppSession.ExePath,
-                Arguments = new[] { "--mcp" },
-                Name = "PuppyMacro",
-            }),
-            new McpClientOptions { ClientInfo = new Implementation { Name = ClientName, Version = "1.0" } },
-            cancellationToken: TestContext.Current.CancellationToken);
+    /// <summary>An AI app connected to the running development build through the bridge (what it wrote on stderr in the failure).</summary>
+    private static async Task<McpClient> Connect()
+    {
+        var errors = new System.Collections.Concurrent.ConcurrentQueue<string>();
+        try
+        {
+            return await McpClient.CreateAsync(
+                new StdioClientTransport(new StdioClientTransportOptions
+                {
+                    Command = AppSession.ExePath,
+                    Arguments = new[] { "--mcp" },
+                    Name = "PuppyMacro",
+                    StandardErrorLines = errors.Enqueue,
+                }),
+                new McpClientOptions { ClientInfo = new Implementation { Name = ClientName, Version = "1.0" } },
+                cancellationToken: TestContext.Current.CancellationToken);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            throw new InvalidOperationException($"The bridge did not connect. Its stderr: {string.Join(" | ", errors)}", ex);
+        }
+    }
 
     private static async Task<(string Text, bool IsError)> Call(McpClient client, string tool, object? args = null)
     {

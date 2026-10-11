@@ -51,6 +51,17 @@ internal sealed class AiServer : IDisposable
 
     public void Start() => _ = Task.Run(AcceptLoop);
 
+    /// <summary>Why AI apps can't connect right now (the pipe could not be made), or null. The AI page shows it.</summary>
+    public string? ListenError { get; private set; }
+
+    private void SetListenError(string? error)
+    {
+        if (error == ListenError)
+            return;
+        ListenError = error;
+        ClientsChanged?.Invoke();
+    }
+
     /// <summary>
     /// Waits for bridges, one pipe instance each, until <see cref="Dispose"/>. While another program holds the pipe's name
     /// (or creating it fails), tries again every few seconds: AI apps can't connect meanwhile.
@@ -71,9 +82,12 @@ internal sealed class AiServer : IDisposable
                 pipe?.Dispose();
                 return;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 pipe?.Dispose();
+                SetListenError(ex is IOException && first
+                    ? "Another program uses PuppyMacro's AI connection, so AI apps can't connect. Close it, or restart Windows."
+                    : $"AI apps can't connect: {ex.Message}");
                 try
                 {
                     await Task.Delay(TimeSpan.FromSeconds(5), _stop.Token).ConfigureAwait(false);
@@ -85,6 +99,7 @@ internal sealed class AiServer : IDisposable
                 continue;
             }
             first = false;
+            SetListenError(null);
             NamedPipeServerStream connected = pipe;
             _ = Task.Run(() => Serve(connected));
         }

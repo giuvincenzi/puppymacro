@@ -91,6 +91,8 @@ public partial class MainWindow : IAiHost
         List<AiClient> clients = _aiServer.Clients;
         string exe = AppPaths.ExecutablePath;
         bool access = _settings.AllowAiAccess;
+        AiConnectionError.Message = _aiServer.ListenError ?? "";
+        AiConnectionError.IsOpen = _aiServer.ListenError != null;
 
         AiClient? Live(string name) => clients.FirstOrDefault(c => c.Name == name);
         string Since(AiClient client) => $"Connected since {client.Since:HH:mm}";

@@ -22,14 +22,16 @@ internal static class AiPipe
     /// </summary>
     public static NamedPipeServerStream CreateServer(bool first)
     {
-        PipeSecurity security = Security(withMediumLabel: IsElevated());
+        if (!IsElevated())
+            return Create(Security(withMediumLabel: false), first);
         try
         {
-            return Create(security, first);
+            return Create(Security(withMediumLabel: true), first);
         }
-        catch (UnauthorizedAccessException) when (IsElevated())
+        catch (Exception)
         {
-            // The integrity label could not be set: only an elevated bridge can connect then.
+            // The integrity label could not be set (Windows may refuse it): without it only an elevated AI app can connect.
+            // A name already taken fails here again, as it should.
             return Create(Security(withMediumLabel: false), first);
         }
     }
