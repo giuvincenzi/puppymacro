@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Macro editor: **Expand all groups** and **Collapse all groups** in **⋯** open or close every group at once.
+
 ## 1.13.0
 
 ### Added

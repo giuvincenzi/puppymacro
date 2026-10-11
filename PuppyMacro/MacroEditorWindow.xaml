@@ -145,6 +145,18 @@
                                 </ui:AppBarButton.Icon>
                             </ui:AppBarButton>
                             <ui:AppBarSeparator />
+                            <!-- All the groups at once: not on the right-click menu, which acts on the clicked rows -->
+                            <ui:AppBarButton x:Name="ExpandAllGroupsButton" Label="Expand all groups" Click="OnExpandAllGroupsClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.ArrowMaximizeVertical_20_Regular}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarButton x:Name="CollapseAllGroupsButton" Label="Collapse all groups" Click="OnCollapseAllGroupsClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.ArrowMinimizeVertical_20_Regular}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarSeparator />
                             <ui:AppBarButton Label="Shortcuts" Click="OnShortcutsClick">
                                 <ui:AppBarButton.Icon>
                                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardShortcut}" />
