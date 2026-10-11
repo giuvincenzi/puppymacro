@@ -11,7 +11,7 @@
     ui:TitleBar.MinimizeButtonAvailability="Collapsed"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="Add loop"
-    Width="1240"
+    Width="1360"
     Height="780"
     MinWidth="1020"
     MinHeight="520"

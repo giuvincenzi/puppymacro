@@ -170,10 +170,10 @@ internal sealed class SettingsStore
                 loop.FloatingButton.Opacity ??= settings.OverlayPanelOpacity;
         }
 
-        // Schema 7: the macro editor's right column is 120 wider; a width kept from before grows as much, so the
-        // list of actions keeps its width.
+        // Schema 7: the macro editor opens 240 wider, 120 for its right column and 120 for the list of actions; a
+        // width kept from before grows as much.
         if (settings.SchemaVersion < 7 && settings.MacroEditorWidth is double macroWidth)
-            settings.MacroEditorWidth = macroWidth + 120;
+            settings.MacroEditorWidth = macroWidth + 240;
 
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
         settings.Remaps ??= new();

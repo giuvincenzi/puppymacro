@@ -6,7 +6,7 @@
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf">
 
     <!-- Every button that places something on the screen or picks a point (Pick on screen, a floating button's
-         Position…, Settings' Position on screen): the target icon, then its text -->
+         Position, Settings' Position on screen): the target icon, then its text -->
     <Button x:Name="TheButton" Click="OnClick">
         <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
             <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />

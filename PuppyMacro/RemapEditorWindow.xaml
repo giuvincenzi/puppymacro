@@ -10,7 +10,7 @@
     ui:TitleBar.MinimizeButtonAvailability="Collapsed"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="Add remap"
-    Width="1020"
+    Width="1140"
     Height="560"
     MinWidth="880"
     MinHeight="440"

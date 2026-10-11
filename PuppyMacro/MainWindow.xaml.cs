@@ -1127,7 +1127,7 @@ public partial class MainWindow
     private void OnPositionOnScreenClick(object sender, RoutedEventArgs e) => OpenPlacement(null);
 
     /// <summary>
-    /// The editors' Position… button: places the whole overlay. The edited item is shown as in the
+    /// The editors' Position button: places the whole overlay. The edited item is shown as in the
     /// editor (its button is left out when off); its new position is returned to the editor, which
     /// saves it with the item. Null when cancelled.
     /// </summary>

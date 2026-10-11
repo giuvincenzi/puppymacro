@@ -30,12 +30,9 @@
                 </ComboBox>
             </ui:SettingsCard>
 
-            <!-- Where it is; Position… shows the whole overlay to drag it -->
+            <!-- Position shows the whole overlay to drag it -->
             <ui:SettingsCard Header="Position on screen">
-                <ui:SettingsCard.Description>
-                    <TextBlock x:Name="PositionText" />
-                </ui:SettingsCard.Description>
-                <views:PlaceButton Text="Position…" Click="OnPositionClick" />
+                <views:PlaceButton Text="Position" Click="OnPositionClick" />
             </ui:SettingsCard>
 
             <ui:SettingsCard Header="Opacity" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">

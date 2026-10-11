@@ -7,7 +7,7 @@
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="Edit macro"
-    Width="1300"
+    Width="1420"
     Height="820"
     MinWidth="1020"
     MinHeight="520"

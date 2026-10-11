@@ -7,7 +7,7 @@ using PuppyMacro.Models;
 namespace PuppyMacro.Views;
 
 /// <summary>
-/// The "Floating button" expander of the loop and macro editors: on/off, label, size and Position….
+/// The "Floating button" expander of the loop and macro editors: on/off, label, size and Position.
 /// Works on a copy; <see cref="ToModel"/> returns the edited settings.
 /// </summary>
 public partial class FloatingButtonEditor
@@ -25,7 +25,7 @@ public partial class FloatingButtonEditor
         _loading = false;
     }
 
-    /// <summary>Raised by Position…; the host opens the placement overlay and calls <see cref="SetPosition"/>.</summary>
+    /// <summary>Raised by Position; the host opens the placement overlay and calls <see cref="SetPosition"/>.</summary>
     public event Action? PositionRequested;
 
     internal void Load(FloatingButton button, string name, string hotkeyText, bool holdMode)
@@ -146,8 +146,5 @@ public partial class FloatingButtonEditor
         Preview.Show(label, _hotkeyText, _button.Size);
         Preview.SetBackgroundOpacity(_button.EffectiveOpacity);
         OpacityValueText.Text = $"{_button.EffectiveOpacity}%";
-        PositionText.Text = _button.X is double x && _button.Y is double y
-            ? $"X {Math.Round(x)}, Y {Math.Round(y)}"
-            : "Middle of the main screen";
     }
 }
