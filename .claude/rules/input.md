@@ -26,6 +26,14 @@ paths:
   0x200) never change it. Do not use `GetAsyncKeyState` for this.
 - Everything PuppyMacro sends carries `InputSender.Signature` in `dwExtraInfo`; the hook
   ignores those events, so loops/macros/remaps never trigger hotkeys or recording.
+- A combination (a loop's or a macro's Press key with Ctrl, Alt, Shift or Win) is sent by
+  `InputSender.TapBinding`: under the same lock as `Tap`, held modifiers released first, its modifiers on
+  their side (`Any`: the left one), the key, then all released in reverse order, also when stopped. A
+  macro's modifiers already down from a Key down are left as they are. Without modifiers the old `Tap`
+  runs. Hold down holds a key or button alone, never a combination (an injected modifier held for the
+  whole loop would reach every key the user types).
+- A loop's Click with a fixed point moves there first (skipped when the point is on PuppyMacro, as macro
+  clicks); without one it clicks where the pointer is, skipped over PuppyMacro, as before.
 - Before a loop sends a key, physically held modifiers are released (so the target gets
   the plain key) and are **not** pressed again (re-pressing caused stuck keys).
 - When a blocked key is pressed with Alt or Win held, a mask key (VK 0xE8) is sent so no

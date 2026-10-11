@@ -73,6 +73,10 @@
 
                 <ikw:SimpleStackPanel Grid.Column="1" Margin="0,4,24,12" Spacing="4">
                     <!-- Scope -->
+                    <ui:SettingsCard Header="Enabled">
+                        <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="Enabled" />
+                    </ui:SettingsCard>
+
                     <views:AppScopeEditor x:Name="AppScopeCard" Changed="OnAppScopeChanged" />
 
                     <!-- Note -->

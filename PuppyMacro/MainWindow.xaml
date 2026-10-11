@@ -127,6 +127,8 @@
                                                     <Grid x:Name="TypeIcon">
                                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}"
                                                                      Visibility="{Binding ShowKeyIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}"
+                                                                     Visibility="{Binding ShowMouseIcon, Converter={StaticResource BoolToVisibility}}" />
                                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
                                                                      Visibility="{Binding ShowTextIcon, Converter={StaticResource BoolToVisibility}}" />
                                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.BulletedList}"

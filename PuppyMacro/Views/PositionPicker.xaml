@@ -1,0 +1,17 @@
+<UserControl
+    x:Class="PuppyMacro.Views.PositionPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf">
+
+    <!-- A point on the screen, everywhere one is chosen (Click, Mouse button down / up, Move to, a loop's Click):
+         X and Y with their headers above, and Pick on screen (click the point). Physical pixels. -->
+    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+        <ui:NumberBox x:Name="XBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Header="X"
+                      Minimum="-100000" Maximum="100000" ValueChanged="OnBoxChanged" />
+        <ui:NumberBox x:Name="YBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Header="Y"
+                      Minimum="-100000" Maximum="100000" ValueChanged="OnBoxChanged" />
+        <Button VerticalAlignment="Bottom" Content="Pick on screen" Click="OnPickClick" />
+    </ikw:SimpleStackPanel>
+</UserControl>

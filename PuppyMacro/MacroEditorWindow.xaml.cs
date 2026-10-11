@@ -39,7 +39,6 @@ public partial class MacroEditorWindow
     private readonly Guid _editingId;
     private readonly Guid _itemId;
     private readonly Func<EditedFloatingButton, Point?>? _placeButton;
-    private bool _enabled;
     private MacroEditList _list;
     private readonly ObservableCollection<MacroEditorItem> _items = new();
     private readonly Dictionary<MacroAction, MacroActionRowViewModel> _rowOf = new();
@@ -72,7 +71,7 @@ public partial class MacroEditorWindow
         _itemId = existing?.Id ?? Guid.NewGuid();
         _placeButton = placeButton;
 
-        string title = existing == null ? "New macro" : "Edit macro";
+        string title = existing == null ? "New macro" : $"Edit macro - {existing.Name}";
         Title = title;
 
         if (recorded != null)
@@ -108,7 +107,7 @@ public partial class MacroEditorWindow
     [MemberNotNull(nameof(_list), nameof(_soundName))]
     private void LoadMacro(MacroDefinition source)
     {
-        _enabled = source.Enabled;
+        EnabledSwitch.IsOn = source.Enabled;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
 
@@ -155,7 +154,7 @@ public partial class MacroEditorWindow
             Speed = SelectedSpeed,
             Mode = IsHold ? ActivationMode.Hold : ActivationMode.Toggle,
             Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
-            Enabled = _enabled,
+            Enabled = EnabledSwitch.IsOn,
             SoundEnabled = SoundSwitch.IsOn,
             SoundName = _soundName,
             FloatingButton = FloatingEditor.ToModel(),

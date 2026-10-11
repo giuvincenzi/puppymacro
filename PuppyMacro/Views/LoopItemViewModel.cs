@@ -57,7 +57,8 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
     public string? AppExe => Definition.AppExe;
     public bool HasApp => Definition.AppExe != null;
 
-    public bool ShowKeyIcon => Definition.Actions.Count == 1 && Definition.Actions[0].Type == ActionType.Key;
+    public bool ShowKeyIcon => Definition.Actions.Count == 1 && Definition.Actions[0].Type == ActionType.Key && !Definition.Actions[0].IsClick;
+    public bool ShowMouseIcon => Definition.Actions.Count == 1 && Definition.Actions[0].IsClick;
     public bool ShowTextIcon => Definition.Actions.Count == 1 && Definition.Actions[0].Type == ActionType.Text;
     public bool ShowListIcon => Definition.Actions.Count != 1;
 
@@ -160,12 +161,16 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
 
     private static string Describe(LoopAction action)
     {
+        // Press key: the key or combination ("Left Ctrl + C"); Click: the button ("Left click", "Left double click").
+        string what = action.IsClick
+            ? $"{MacroActionRowViewModel.ButtonName(action.KeyVk)} {(action.IsDoubleClick ? "double click" : "click")}"
+            : KeyNames.Format(action.Key);
         if (action.Type == ActionType.Key && action.HoldDown)
-            return $"{KeyNames.Get(action.KeyVk)} held down";
+            return $"{what} held down";
 
         string every = "every " + FormatInterval(action);
         if (action.Type == ActionType.Key)
-            return $"{KeyNames.Get(action.KeyVk)} {every}";
+            return $"{what}{(action.Times > 1 ? $" {action.Times} times" : "")} {every}";
 
         string text = action.Text.Replace("\r", " ").Replace("\n", " ").Trim();
         if (text.Length > 28)

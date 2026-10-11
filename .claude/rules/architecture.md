@@ -81,6 +81,12 @@ Rules:
 
 ## Features map
 
+- Actions shared by loops and macros: `Views/ActionBox` (one action's box, DataContext
+  `Views/ActionBoxViewModel`), the same in a loop editor row and in the macro's action window
+  (`MacroActionWindow`: Name and Delay cards, then the box, open). The view model holds every option
+  and says which rows show (`Show…`), in the order of `ActionBox.xaml`; it reads and writes both
+  models (`ToLoopAction`, `ToMacroAction`). Inside: `Views/KeyCaptureField`, `Views/MouseButtonBox`
+  (the mouse button list) and `Views/PositionPicker` (X, Y, Pick on screen: every point chosen).
 - Loops: `Models/AppSettings.cs` (`LoopDefinition`, `LoopAction`), `Services/ActionRunner.cs`,
   `LoopEditorWindow`.
 - The list cards (Loops, Macros, Remap in `MainWindow`): one view model per item
@@ -129,7 +135,7 @@ Rules:
 - Hotkeys: `HotkeyBinding`, `Services/HotkeyRules.cs` (which keys need a modifier),
   `HotkeyConflicts`, `KeyNames` (names, wheel codes), `LoopEngine.OnKey` / `OnWheel` (input.md).
   `Views/KeyCaptureField` is the one field that asks the user for a key or hotkey (editors' Hotkey
-  cards, loop key rows, remap source and target, the macro action's key, the Settings hotkeys; `ui.md`): it
+  cards, the key of Press key / Key down / Key up in `ActionBox`, remap source and target, the Settings hotkeys; `ui.md`): it
   calls `LoopEngine.BeginCapture` itself (the window gives the engine once with
   `KeyCaptureField.SetEngine(this, _engine)`, inherited by every field inside) and keeps a key only
   when its `Validate` (set by the window) accepts it (otherwise `Rejected` with the reason).

@@ -51,9 +51,10 @@ function OpenEditor($itemText, $title) {
     [Math]::Abs($_.Current.BoundingRectangle.Y + $_.Current.BoundingRectangle.Height / 2 - $y) -lt 40 } |
     Select-Object -First 1
   $edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  WaitFor { $A::RootElement.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
-      (New-Object $PC($A::NameProperty, $title)),
-      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window))))) } $title
+  # The editor's title is "Edit loop - <its name>".
+  WaitFor { $A::RootElement.FindAll($TS::Children, (New-Object $PC($A::ProcessIdProperty, $proc.Id))) |
+      Where-Object { $_.Current.Name -eq $title -or $_.Current.Name.StartsWith("$title - ") } |
+      Select-Object -First 1 } $title
 }
 
 function Bounds($h) {

@@ -122,4 +122,19 @@ public class MacroRunTests
         TargetWindow.Quiet(1);
         Assert.Empty(target.Downs(Vk.F16));
     }
+
+    [Fact]
+    public void A_press_key_with_a_combination_holds_its_modifier_around_the_key()
+    {
+        var press = new MacroAction { Type = MacroActionType.PressKey, Key = new HotkeyBinding { Vk = Vk.F16, Shift = true }, DelayMs = 300 };
+        MacroDefinition macro = Macro("E2E combination", Vk.F13, press);
+        using var app = new AppSession(seed => seed.Macros.Add(macro));
+        using var target = new TargetWindow();
+
+        target.Tap(Vk.F13);
+        target.WaitFor(t => t.Ups(Vk.Shift).Count == 1, 5, "the macro did not press Shift + F16");
+
+        Assert.True(target.Downs(Vk.Shift)[0].Ms <= target.Downs(Vk.F16)[0].Ms
+            && target.Ups(Vk.F16)[0].Ms <= target.Ups(Vk.Shift)[0].Ms, $"F16 is not inside Shift. Received: {target.Describe()}");
+    }
 }

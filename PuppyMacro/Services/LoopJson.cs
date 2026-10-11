@@ -29,7 +29,7 @@ internal static class LoopJson
         if (string.IsNullOrWhiteSpace(l.Name))
             check.Add("Name", "Enter a name.");
         if (l.Actions.Count == 0)
-            check.Add("Actions", "Add at least one key or text.");
+            check.Add("Actions", "Add at least one action.");
 
         // Fields of version 1.0, converted when settings.json is loaded.
         if (l.KeyVk != null)

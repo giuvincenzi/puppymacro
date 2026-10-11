@@ -1,0 +1,195 @@
+<UserControl
+    x:Class="PuppyMacro.Views.ActionBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:local="clr-namespace:PuppyMacro"
+    xmlns:views="clr-namespace:PuppyMacro.Views">
+
+    <!-- One action, the same box in a loop row and in the macro's action window (DataContext: ActionBoxViewModel).
+         The header has the action's main field (key, mouse button, direction or point). Opened, the rows in this order,
+         each shown where it belongs (ActionBoxViewModel.Show…): the loop's While the loop runs and Every, then the
+         action's own options. Position and Mode are twice: first in a macro, later in a loop. Key down and Key up
+         have no options: a plain card. -->
+    <UserControl.Resources>
+        <local:IntervalStepConverter x:Key="IntervalStep" />
+
+        <!-- The box's header fields -->
+        <DataTemplate x:Key="HeaderFields" DataType="{x:Type views:ActionBoxViewModel}">
+            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                <views:KeyCaptureField VerticalAlignment="Center" Value="{Binding Key}" StartOnLoad="{Binding CaptureOnLoad}"
+                                       KeyOnly="{Binding KeyFieldKeyOnly}" AllowModifierAlone="{Binding KeyFieldModifierAlone}"
+                                       CanClear="{Binding InLoop}" ItemName="key" Prompt="{Binding KeyPrompt}"
+                                       Loaded="OnKeyFieldLoaded"
+                                       Visibility="{Binding IsKeyKind, Converter={StaticResource BoolToVisibility}}" />
+                <views:MouseButtonBox VerticalAlignment="Center" Vk="{Binding MouseVk}"
+                                      Visibility="{Binding IsMouseKind, Converter={StaticResource BoolToVisibility}}" />
+                <ComboBox VerticalAlignment="Center" MinWidth="120" SelectedIndex="{Binding DirectionIndex, Mode=TwoWay}"
+                          AutomationProperties.Name="Direction"
+                          Visibility="{Binding IsScroll, Converter={StaticResource BoolToVisibility}}">
+                    <ComboBoxItem Content="Up" />
+                    <ComboBoxItem Content="Down" />
+                    <ComboBoxItem Content="Left" />
+                    <ComboBoxItem Content="Right" />
+                </ComboBox>
+                <views:PositionPicker VerticalAlignment="Center" X="{Binding X}" Y="{Binding Y}"
+                                      Visibility="{Binding IsMoveTo, Converter={StaticResource BoolToVisibility}}" />
+                <Button VerticalAlignment="Center" ToolTip="Remove" AutomationProperties.Name="Remove" Click="OnRemoveClick"
+                        Visibility="{Binding InLoop, Converter={StaticResource BoolToVisibility}}">
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                </Button>
+            </ikw:SimpleStackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <ui:SettingsExpander x:Name="Expander" Header="{Binding Title}" Description="{Binding Summary}"
+                             IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
+                             Visibility="{Binding HasOptions, Converter={StaticResource BoolToVisibility}}">
+            <!-- One icon per kind (a FontIcon's Icon must never change, ui.md) -->
+            <ui:SettingsExpander.HeaderIcon>
+                <Grid>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}"
+                                 Visibility="{Binding IsKeyKind, Converter={StaticResource BoolToVisibility}}" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}"
+                                 Visibility="{Binding IsMouseKind, Converter={StaticResource BoolToVisibility}}" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Move}"
+                                 Visibility="{Binding IsMoveTo, Converter={StaticResource BoolToVisibility}}" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.ScrollUpDown}"
+                                 Visibility="{Binding IsScroll, Converter={StaticResource BoolToVisibility}}" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
+                                 Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
+                </Grid>
+            </ui:SettingsExpander.HeaderIcon>
+
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource HeaderFields}" Focusable="False" />
+
+            <ui:SettingsExpander.Items>
+                <!-- Loop: kept held down, or repeated -->
+                <ui:SettingsCard Header="While the loop runs" Visibility="{Binding ShowRun, Converter={StaticResource BoolToVisibility}}">
+                    <ComboBox MinWidth="140" SelectedIndex="{Binding RunIndex, Mode=TwoWay}" AutomationProperties.Name="While the loop runs">
+                        <ComboBoxItem Content="Repeat" />
+                        <ComboBoxItem Content="Hold down" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!-- Loop: how often -->
+                <ui:SettingsCard Header="Every" Visibility="{Binding ShowEvery, Converter={StaticResource BoolToVisibility}}">
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
+                                      SpinButtonPlacementMode="Inline"
+                                      SmallChange="{Binding UnitIndex, Converter={StaticResource IntervalStep}}"
+                                      Value="{Binding IntervalValue, Mode=TwoWay}" AutomationProperties.Name="Interval" />
+                        <ComboBox SelectedIndex="{Binding UnitIndex, Mode=TwoWay}" AutomationProperties.Name="Unit">
+                            <ComboBoxItem Content="ms" />
+                            <ComboBoxItem Content="s" />
+                            <ComboBoxItem Content="min" />
+                            <ComboBoxItem Content="h" />
+                        </ComboBox>
+                    </ikw:SimpleStackPanel>
+                </ui:SettingsCard>
+
+                <!-- Macro: where the button is pressed, first -->
+                <ui:SettingsCard Header="Position" Visibility="{Binding ShowPositionFirst, Converter={StaticResource BoolToVisibility}}">
+                    <views:PositionPicker X="{Binding X}" Y="{Binding Y}" />
+                </ui:SettingsCard>
+
+                <!-- Macro: single or double click, before Hold for -->
+                <ui:SettingsCard Header="Mode" Visibility="{Binding ShowModeFirst, Converter={StaticResource BoolToVisibility}}">
+                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding ClickModeIndex, Mode=TwoWay}" AutomationProperties.Name="Mode">
+                        <RadioButton Content="Single" />
+                        <RadioButton Content="Double" />
+                    </ui:RadioButtons>
+                </ui:SettingsCard>
+
+                <ui:SettingsCard Header="Hold for" Description="{Binding HoldDescription}"
+                                 Visibility="{Binding ShowHoldFor, Converter={StaticResource BoolToVisibility}}">
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <ui:NumberBox x:Name="HoldBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="60000"
+                                      Value="{Binding HoldMs, Mode=TwoWay}" AutomationProperties.Name="Hold for" />
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
+                    </ikw:SimpleStackPanel>
+                </ui:SettingsCard>
+
+                <!-- Loop: single or double click, after Hold for -->
+                <ui:SettingsCard Header="Mode" Visibility="{Binding ShowModeAfterHold, Converter={StaticResource BoolToVisibility}}">
+                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding ClickModeIndex, Mode=TwoWay}" AutomationProperties.Name="Mode">
+                        <RadioButton Content="Single" />
+                        <RadioButton Content="Double" />
+                    </ui:RadioButtons>
+                </ui:SettingsCard>
+
+                <ui:SettingsCard Header="Times" Visibility="{Binding ShowTimes, Converter={StaticResource BoolToVisibility}}">
+                    <ui:NumberBox x:Name="TimesBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="100000"
+                                  Value="{Binding Times, Mode=TwoWay}" AutomationProperties.Name="Times" />
+                </ui:SettingsCard>
+
+                <ui:SettingsCard Header="Pause between" Description="Between one press and the next, when Times is more than 1"
+                                 IsEnabled="{Binding PauseEnabled}"
+                                 Visibility="{Binding ShowTimes, Converter={StaticResource BoolToVisibility}}">
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <ui:NumberBox x:Name="PauseBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
+                                      Value="{Binding PauseMs, Mode=TwoWay}" AutomationProperties.Name="Pause between" />
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
+                    </ikw:SimpleStackPanel>
+                </ui:SettingsCard>
+
+                <!-- Loop: where the pointer is, or a fixed point, last -->
+                <ui:SettingsCard Header="Position" Description="{Binding PointText}"
+                                 Visibility="{Binding ShowPositionLast, Converter={StaticResource BoolToVisibility}}">
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+                        <views:PositionPicker X="{Binding X}" Y="{Binding Y}"
+                                              Visibility="{Binding FixedPoint, Converter={StaticResource BoolToVisibility}}" />
+                        <ui:ToggleSwitch VerticalAlignment="Bottom" IsOn="{Binding FixedPoint, Mode=TwoWay}" AutomationProperties.Name="Fixed point" />
+                    </ikw:SimpleStackPanel>
+                </ui:SettingsCard>
+
+                <!-- Paste text -->
+                <ui:SettingsCard Header="Text" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch"
+                                 Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                    <TextBox x:Name="PasteTextBox" MinHeight="64" MaxHeight="140" AcceptsReturn="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" ui:ControlHelper.PlaceholderText="Text to paste"
+                             AutomationProperties.Name="Text to paste"
+                             Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="Press Enter before pasting" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                    <ui:ToggleSwitch IsOn="{Binding EnterBefore, Mode=TwoWay}" AutomationProperties.Name="Press Enter before pasting" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="Press Enter after pasting" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                    <ui:ToggleSwitch IsOn="{Binding EnterAfter, Mode=TwoWay}" AutomationProperties.Name="Press Enter after pasting" />
+                </ui:SettingsCard>
+
+                <!-- Move to -->
+                <ui:SettingsCard Header="Movement" Visibility="{Binding ShowMovement, Converter={StaticResource BoolToVisibility}}">
+                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding MovementIndex, Mode=TwoWay}" AutomationProperties.Name="Movement">
+                        <RadioButton Content="Instantly" />
+                        <RadioButton Content="Smoothly" />
+                    </ui:RadioButtons>
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="Speed" Description="{Binding SpeedText}"
+                                 Visibility="{Binding ShowSpeed, Converter={StaticResource BoolToVisibility}}">
+                    <Slider Width="200" Minimum="1" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True"
+                            Value="{Binding SmoothSpeed, Mode=TwoWay}" AutomationProperties.Name="Movement speed" />
+                </ui:SettingsCard>
+
+                <!-- Scroll -->
+                <ui:SettingsCard Header="Steps" Visibility="{Binding ShowSteps, Converter={StaticResource BoolToVisibility}}">
+                    <ui:NumberBox x:Name="StepsBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="1000"
+                                  Value="{Binding Steps, Mode=TwoWay}" AutomationProperties.Name="Steps" />
+                </ui:SettingsCard>
+            </ui:SettingsExpander.Items>
+        </ui:SettingsExpander>
+
+        <!-- Key down, Key up: nothing to open. Its own key field, which never waits on its own (only the box's
+             field of a new loop row does). -->
+        <ui:SettingsCard Header="{Binding Title}" Description="{Binding Summary}"
+                         Visibility="{Binding HasNoOptions, Converter={StaticResource BoolToVisibility}}">
+            <ui:SettingsCard.HeaderIcon>
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
+            </ui:SettingsCard.HeaderIcon>
+            <views:KeyCaptureField Value="{Binding Key}" KeyOnly="True" AllowModifierAlone="True" CanClear="False"
+                                   ItemName="key" Prompt="{Binding KeyPrompt}" Loaded="OnKeyFieldLoaded" />
+        </ui:SettingsCard>
+    </Grid>
+</UserControl>

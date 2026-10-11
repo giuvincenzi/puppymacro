@@ -3,6 +3,14 @@
 ## Unreleased
 
 ### Added
+- Loops and macros share the same **action boxes**: Press key, Click and Paste text in a loop, every action
+  in a macro's action window. A loop's bar has one button per action (**Press key**, **Click**, **Paste
+  text**).
+- **Combinations** in Press key, in loops and macros, for example Ctrl+C, with the side of each modifier.
+  **Key down** and **Key up** in a macro take Ctrl, Alt, Shift or Win alone too.
+- In a loop's Press key and Click: **Hold for**, **Times** and **Pause between**; in a loop's Click,
+  **Mode** (single or double) and **Position** (where the pointer is, or a fixed point).
+- **Enabled** in the loop, macro and remap editors.
 - Remaps from a **combination**: **When I press** takes Ctrl, Alt, Shift or Win with a key, for example
   Alt+J → Left arrow.
 - Remaps of **Ctrl, Alt, Shift or Win** alone, left and right apart (for example Right Alt → Enter), and
@@ -13,11 +21,21 @@
 - Macro editor: **Expand all groups** and **Collapse all groups** in **⋯** open or close every group at once.
 
 ### Changed
+- A macro action's window shows **Name** and **Delay** (before "Delay before this action"), then the
+  action's box with its options; its title names the action, for example "Edit click - Open inventory".
+- Mouse buttons in a loop are chosen in a list (Left, Right, Middle, Back, Forward) instead of by
+  clicking in the key field. Loops saved before keep their buttons.
+- The editors' titles name what they edit, for example "Edit loop - Spam".
+- The **Test** button of a macro action shows a play icon.
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves
   Alt+J as it is.
 - Every key field has the arrow next to the keys, also in Settings and in the remap editor.
 - Modifier keys are named Left Ctrl, Right Alt and so on, instead of LCtrl, RAlt.
 - The overlay panel's buttons are in the order move, exit, open.
+
+### Fixed
+- A macro's Code view no longer accepts a mouse button in a Press key, Key down or Key up, as the
+  action's window already did not.
 
 ## 1.13.0
 

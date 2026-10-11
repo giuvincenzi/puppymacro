@@ -338,6 +338,10 @@
             <!-- Right column: how the macro plays and starts -->
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="0,8,24,12" Spacing="4">
+                    <ui:SettingsCard Header="Enabled">
+                        <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="Enabled" />
+                    </ui:SettingsCard>
+
                     <ui:SettingsCard Header="Repeat" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
                         <WrapPanel>
                             <RadioButton x:Name="OnceRadio" Content="Once" GroupName="Repeat" Checked="OnRepeatChanged" />

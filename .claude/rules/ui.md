@@ -146,6 +146,21 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   Shift and Win of the value a `Separator` and three checkable `MenuItem`s, "Left Ctrl", "Right Ctrl",
   "Left or right Ctrl", built in code; iNKORE has no radio menu item). It keeps the same height in every state (a hidden zero-width button
   holding a key sets it), so nothing around it moves. Never build another one (`architecture.md`).
+- **An action is edited in `Views/ActionBox`** (approved), the same in a loop editor row and in the macro's
+  action window: a `SettingsExpander` with the type's icon (one `FontIcon` per kind), its name, a summary and
+  its main field in the header (key, `MouseButtonBox`, direction, or `PositionPicker` for Move to); opened,
+  one `SettingsCard` per option. Loop: While the loop runs, Every, Hold for, Mode, Times, Pause between
+  (off with Times 1), Position (a `ToggleSwitch`: off, where the pointer is; on, a point); with Hold down
+  only Position stays. Macro: Position, Mode, Hold for, Times, Pause between; Name and Delay are cards
+  above the box in the window. Key down and Key up have no options: a plain `SettingsCard` with no arrow.
+  A point is always `Views/PositionPicker` (X and Y `NumberBox`es with their headers, Pick on screen); a
+  mouse button always `Views/MouseButtonBox`.
+- The loop editor's bar (approved): a `CommandBar` above the actions with one `AppBarButton` per action
+  (Press key, Click, Paste text), label under the icon as the macro editor's bar, no overflow button.
+- The editors (loop, macro, remap) have an **Enabled** card with a `ToggleSwitch`, first on the right; the
+  same value as the list card's switch. Their titles name what they edit: "Edit loop - Spam", "Edit
+  click - Open inventory" (its name, or its description), "Edit remap - Sample: Caps Lock to Esc" (its
+  note, or its keys). The macro action's Test button shows the filled Play icon before its text.
 - **A key the user chose is shown as accent `KeyCap`s** wherever it appears: the template
   `AccentKeyCapItem` with the panel `KeyCapRow` (`App.xaml`), used by `KeyCaptureField` and by the list
   cards (a loop's or macro's hotkey after "Toggle with" / "Hold with", a remap's keys in its title).

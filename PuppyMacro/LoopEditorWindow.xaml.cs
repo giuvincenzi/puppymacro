@@ -17,9 +17,6 @@ namespace PuppyMacro;
 /// <summary>Add or edit a loop. On Save, <see cref="Result"/> holds the edited copy.</summary>
 public partial class LoopEditorWindow
 {
-    private const double NewKeyIntervalMs = 40;
-    private const double NewTextIntervalSeconds = 5;
-
     private readonly LoopEngine _engine;
     private readonly MacroLibrary _macros;
     private readonly SoundService _sounds;
@@ -29,8 +26,7 @@ public partial class LoopEditorWindow
     private readonly Guid _itemId;
     private readonly Func<EditedFloatingButton, Point?>? _placeButton;
     private readonly CodeViewSwitch<LoopDefinition> _code;
-    private bool _enabled;
-    private readonly ObservableCollection<ActionEditorViewModel> _actions = new();
+    private readonly ObservableCollection<ActionBoxViewModel> _actions = new();
     private HotkeyBinding? _hotkey;
     private bool _ready;
 
@@ -50,7 +46,7 @@ public partial class LoopEditorWindow
         source.Id = _itemId;
         _placeButton = placeButton;
 
-        string title = existing == null ? "Add loop" : "Edit loop";
+        string title = existing == null ? "Add loop" : $"Edit loop - {existing.Name}";
         Title = title;
 
         _soundName = source.SoundName;
@@ -86,7 +82,7 @@ public partial class LoopEditorWindow
     /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
     private void LoadLoop(LoopDefinition source)
     {
-        _enabled = source.Enabled;
+        EnabledSwitch.IsOn = source.Enabled;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
         SoundSwitch.IsOn = source.SoundEnabled;
@@ -99,7 +95,7 @@ public partial class LoopEditorWindow
             row.PropertyChanged -= OnRowChanged;
         _actions.Clear();
         foreach (var action in source.Actions)
-            AddRow(new ActionEditorViewModel(action));
+            AddRow(new ActionBoxViewModel(action));
 
         ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
         HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
@@ -116,10 +112,10 @@ public partial class LoopEditorWindow
     {
         Id = _itemId,
         Name = NameBox.Text.Trim(),
-        Actions = _actions.Select(a => a.ToAction()).ToList(),
+        Actions = _actions.Select(a => a.ToLoopAction()).ToList(),
         Mode = HoldRadio.IsChecked == true ? ActivationMode.Hold : ActivationMode.Toggle,
         Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
-        Enabled = _enabled,
+        Enabled = EnabledSwitch.IsOn,
         SoundEnabled = SoundSwitch.IsOn,
         SoundName = _soundName,
         FloatingButton = FloatingEditor.ToModel(),
@@ -139,7 +135,7 @@ public partial class LoopEditorWindow
 
     // ================= Rows =================
 
-    private void AddRow(ActionEditorViewModel row)
+    private void AddRow(ActionBoxViewModel row)
     {
         row.PropertyChanged += OnRowChanged;
         _actions.Add(row);
@@ -149,37 +145,26 @@ public partial class LoopEditorWindow
 
     private void OnRowChanged(object? sender, PropertyChangedEventArgs e) => Validate();
 
-    private void OnAddKeyClick(object sender, RoutedEventArgs e)
-    {
-        // The new row opens and its key field waits for the key.
-        AddRow(new ActionEditorViewModel(new LoopAction
-        {
-            Type = ActionType.Key,
-            IntervalValue = NewKeyIntervalMs,
-            IntervalUnit = IntervalUnit.Milliseconds,
-        })
-        {
-            IsExpanded = true,
-            CaptureOnLoad = true,
-        });
-    }
+    // One button per action in the bar. A new row opens; a Press key's key field waits for the key at once.
+    private void OnAddPressKeyClick(object sender, RoutedEventArgs e) => AddRow(ActionBoxViewModel.NewLoopRow(ActionKind.PressKey));
 
-    private void OnAddTextClick(object sender, RoutedEventArgs e)
-    {
-        AddRow(new ActionEditorViewModel(new LoopAction
-        {
-            Type = ActionType.Text,
-            IntervalValue = NewTextIntervalSeconds,
-            IntervalUnit = IntervalUnit.Seconds,
-        }));
-    }
+    private void OnAddClickClick(object sender, RoutedEventArgs e) => AddRow(ActionBoxViewModel.NewLoopRow(ActionKind.Click));
 
-    private void OnRemoveActionClick(object sender, RoutedEventArgs e)
+    private void OnAddPasteTextClick(object sender, RoutedEventArgs e) => AddRow(ActionBoxViewModel.NewLoopRow(ActionKind.PasteText));
+
+    private void OnRemoveAction(ActionBox box)
     {
-        if ((sender as FrameworkElement)?.Tag is not ActionEditorViewModel row)
+        if (box.Action is not { } row)
             return;
         row.PropertyChanged -= OnRowChanged; // its key field stops waiting when it goes away
         _actions.Remove(row);
+    }
+
+    /// <summary>A key a row's key field did not keep (a mouse button for Press key).</summary>
+    private void ShowError(string message)
+    {
+        ErrorText.Text = message;
+        ErrorText.Visibility = Visibility.Visible;
     }
 
     // ================= Sound =================
@@ -257,13 +242,11 @@ public partial class LoopEditorWindow
         if (string.IsNullOrWhiteSpace(NameBox.Text))
             return "Enter a name.";
         if (_actions.Count == 0)
-            return "Add at least one key or text.";
-        if (_actions.Any(a => a.IsKey && a.KeyVk == 0))
-            return "Choose the key for every key row.";
-        if (_actions.Any(a => a.IsText && string.IsNullOrEmpty(a.Text)))
-            return "Enter the text for every text row.";
+            return "Add at least one action.";
+        if (_actions.Select(a => a.Problem).FirstOrDefault(p => p != null) is string rowProblem)
+            return rowProblem;
         // Written so that an empty interval (NaN) fails too.
-        if (_actions.Any(a => a.ShowInterval && !(a.IntervalMs >= LoopAction.MinIntervalMs && a.IntervalMs <= LoopAction.MaxIntervalMs)))
+        if (_actions.Any(a => a.ShowEvery && !(a.IntervalMs >= LoopAction.MinIntervalMs && a.IntervalMs <= LoopAction.MaxIntervalMs)))
             return "Every interval must be between 10 ms and 24 h.";
         if (AppScopeCard.ValidationError is string appError)
             return appError;
@@ -272,7 +255,7 @@ public partial class LoopEditorWindow
             return HoldRadio.IsChecked == true ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
         if (HotkeyRules.Problem(_hotkey, hold: HoldRadio.IsChecked == true) is string problem)
             return problem;
-        if (!_hotkey.HasModifiers && _actions.Any(a => a.IsKey && a.KeyVk == _hotkey.Vk))
+        if (LoopJson.HotkeyIsPressed(_hotkey, _actions.Select(a => a.ToLoopAction())))
             return "The hotkey cannot be one of the keys this loop presses.";
 
         return HotkeyConflict(_hotkey, SelectedApp);
