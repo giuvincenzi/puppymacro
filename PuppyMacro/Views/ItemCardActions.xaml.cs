@@ -20,7 +20,7 @@ public partial class ItemCardActions : UserControl
 
     public static readonly DependencyProperty EditBlockedTextProperty = DependencyProperty.Register(
         nameof(EditBlockedText), typeof(string), typeof(ItemCardActions),
-        new PropertyMetadata("Stop running loops and macros to edit", (d, _) => ((ItemCardActions)d).Update()));
+        new PropertyMetadata("Stop running loops and macros first", (d, _) => ((ItemCardActions)d).Update()));
 
     public static readonly DependencyProperty IsOnProperty = DependencyProperty.Register(
         nameof(IsOn), typeof(bool), typeof(ItemCardActions),

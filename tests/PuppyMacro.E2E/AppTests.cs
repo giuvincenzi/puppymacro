@@ -39,7 +39,7 @@ public class AppTests
         Assert.True(app.Has(app.MainWindow, "Sample: Caps Lock to Esc"));
 
         app.GoTo("Settings");
-        Assert.True(app.Has(app.MainWindow, "Updates are available when PuppyMacro is installed with Setup."));
+        Assert.True(app.Has(app.MainWindow, "Install PuppyMacro with Setup to get updates"));
         Assert.True(app.Has(app.MainWindow, "Not available in the development build"));
 
         // About opens like the other groups. Its buttons open the browser: never clicked.
@@ -606,7 +606,7 @@ public class AppTests
         // A Paste text needs its text before the loop can be saved.
         app.FindById(editor, "AddPasteTextButton").AsButton().Invoke();
         Assert.True(app.Has(editor, "Press Enter after pasting"));
-        Assert.True(app.Has(editor, "Enter the text of every Paste text."));
+        Assert.True(app.Has(editor, "Enter the text for each Paste text."));
         Assert.False(app.FindById(editor, "SaveButton").IsEnabled);
         app.FindById(editor, "PasteTextBox").AsTextBox().Text = "hi";
 

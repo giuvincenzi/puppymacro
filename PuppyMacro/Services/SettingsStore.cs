@@ -46,7 +46,7 @@ internal sealed class SettingsStore
         {
             string backup = Path.ChangeExtension(_path, ".invalid.json");
             try { File.Copy(_path, backup, overwrite: true); } catch { /* best effort */ }
-            warning = $"settings.json could not be read and was reset to defaults.\nA copy was saved as {Path.GetFileName(backup)}.\n\nDetails: {ex.Message}";
+            warning = $"Your settings could not be read, so they were reset.\nThe old file was saved as {Path.GetFileName(backup)}.\n\nDetails: {ex.Message}";
             var defaults = AppSettings.CreateDefault();
             TrySave(defaults, out _);
             return defaults;

@@ -34,7 +34,7 @@
                     <ColumnDefinition Width="110" />
                 </Grid.ColumnDefinitions>
                 <Button x:Name="TestButton" Grid.Column="0" Click="OnTestClick" AutomationProperties.Name="Test"
-                        ToolTip="Hides PuppyMacro and plays this action once, in the window behind it">
+                        ToolTip="Play this action once in the window behind">
                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ui:FontIcon FontSize="14" Icon="{x:Static fsi:FluentSystemIcons.Play_16_Filled}" />
                         <TextBlock Text="Test" />
@@ -56,7 +56,7 @@
                  loop row (Views/ActionBox) -->
             <ScrollViewer x:Name="FormBody" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="24,4,24,12" Spacing="4">
-                    <ui:SettingsCard Header="Name (optional)" Description="Shown in the list in bold">
+                    <ui:SettingsCard Header="Name (optional)" Description="Shown in bold in the list">
                         <TextBox x:Name="ActionNameBox" Width="260" MaxLength="100" AutomationProperties.Name="Name"
                                  ui:ControlHelper.PlaceholderText="e.g. Open inventory" />
                     </ui:SettingsCard>

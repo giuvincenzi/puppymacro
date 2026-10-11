@@ -80,7 +80,7 @@ public class ActionBoxViewModelTests
         var point = ActionBoxViewModel.NewLoopRow(ActionKind.Click);
         point.FixedPoint = true;
         point.X = double.NaN;
-        Assert.Contains("X and Y", point.Problem);
+        Assert.Contains("position of each Click", point.Problem);
 
         var mouseKey = new ActionBoxViewModel(new MacroAction { Type = MacroActionType.PressKey, Vk = 0x01 });
         Assert.Contains("mouse buttons", mouseKey.Problem);

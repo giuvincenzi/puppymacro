@@ -13,7 +13,7 @@ public partial class RecordPromptWindow
         HotkeyText.Text = hotkey;
         _recordMouseMovement = recordMouseMovement;
         MouseMovementBox.IsChecked = recordMouseMovement;
-        DescriptionText.Text = $"Start recording gives you 3 seconds to switch to the window you want to record. " +
+        DescriptionText.Text = $"You get 3 seconds to switch to the window you want to record. " +
                                $"Everything you press, click and move is recorded until you press {hotkey} or select Stop.";
     }
 

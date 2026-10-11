@@ -128,13 +128,13 @@ public partial class RemapEditorWindow
         if (_target is not { IsSet: true })
             return "Choose what to send instead.";
         if (_target.SameAs(source))
-            return "What is sent must be different from what is pressed.";
+            return "Send something different from what you press.";
 
         if (AppScopeCard.ValidationError is string appError)
             return appError;
         string? app = AppScopeCard.AppExe;
         if (KeyNames.IsPrimaryMouse(source.Vk) && !source.HasModifiers && app == null)
-            return "Left and right click can be remapped only for a specific app, so they keep working everywhere else.";
+            return "Left and right click can be remapped only in a specific app, so they keep working everywhere else.";
 
         return SourceClash(source, app);
     }

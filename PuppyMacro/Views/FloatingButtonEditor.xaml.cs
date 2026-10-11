@@ -134,8 +134,8 @@ public partial class FloatingButtonEditor
             return;
         FloatingSwitch.IsEnabled = !_holdMode;
         FloatingExpander.Description = _holdMode
-            ? "Not available with Hold: a click can only start and stop. Switch to Toggle to use it."
-            : "A round button in overlay mode that starts and stops it. It replaces its row in the overlay panel.";
+            ? "Needs Toggle: a click can start and stop, but not hold"
+            : "A round button that starts and stops it in overlay mode, in place of its row in the panel";
         // Its options open only for a button that is on (not for Hold items).
         FloatingExpander.CanExpand = _button.Enabled && !_holdMode;
         // The details apply only to a button that is on.

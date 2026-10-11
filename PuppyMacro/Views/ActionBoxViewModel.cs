@@ -424,15 +424,15 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         get
         {
             if (IsKeyKind && _key is not { IsSet: true })
-                return InLoop ? "Choose the key of every Press key." : "Choose a key.";
+                return InLoop ? "Choose a key for each Press key." : "Choose a key.";
             if (IsKeyKind && KeyNames.IsMouse(_key!.Vk))
                 return "Use a Click or Mouse button action for mouse buttons.";
             if (InLoop && IsClick && _fixedPoint && (double.IsNaN(_x) || double.IsNaN(_y)))
-                return "Enter X and Y of every Click at a fixed point.";
+                return "Set the position of each Click at a fixed point.";
             if (IsText && string.IsNullOrEmpty(_text))
-                return InLoop ? "Enter the text of every Paste text." : "Enter the text to paste.";
+                return InLoop ? "Enter the text for each Paste text." : "Enter the text to paste.";
             if (IsHolding && _key is { HasModifiers: true })
-                return "Hold down takes a key without Ctrl, Alt, Shift or Win: use Repeat for a combination.";
+                return "Hold down works with a single key. For a combination, use Repeat.";
             return null;
         }
     }

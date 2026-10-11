@@ -76,7 +76,7 @@ internal static class LoopJson
         bool key = a.Type == ActionType.Key;
         string? whyNoModifiers = !key ? "Only Press key has Ctrl, Alt, Shift or Win. Remove it."
             : a.IsClick ? "A click has no Ctrl, Alt, Shift or Win. Remove it."
-            : a.HoldDown ? "Hold down takes a key without Ctrl, Alt, Shift or Win: use Repeat for a combination."
+            : a.HoldDown ? "Hold down works with a single key. For a combination, use Repeat."
             : null;
         check.KeyModifiers(path, a, whyNoModifiers);
 
@@ -151,11 +151,11 @@ internal static class RemapJson
         if (r.Target is not { IsSet: true } target)
             check.Add("Target", "Choose what to send instead.");
         else if (check.RemapKey("Target", target) && r.Source != null && target.SameAs(r.Source))
-            check.Add("Target", "What is sent must be different from what is pressed.");
+            check.Add("Target", "Send something different from what you press.");
 
         check.AppExe(r.AppExe);
         if (sourceValid && KeyNames.IsPrimaryMouse(r.Source!.Vk) && !r.Source.HasModifiers && r.AppExe == null)
-            check.Add("AppExe", "Left and right click can be remapped only for a specific app, so they keep working everywhere else.");
+            check.Add("AppExe", "Left and right click can be remapped only in a specific app, so they keep working everywhere else.");
 
         if (sourceValid && clash(r.Source!, AppScope.Normalize(r.AppExe)) is string message)
             check.Add("Source", message);

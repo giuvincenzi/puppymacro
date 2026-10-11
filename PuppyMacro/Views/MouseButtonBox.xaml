@@ -17,7 +17,7 @@
             <ComboBoxItem Content="Back (X1)" Tag="5" />
             <ComboBoxItem Content="Forward (X2)" Tag="6" />
         </ComboBox>
-        <Button x:Name="DetectButton" VerticalAlignment="Center" ToolTip="Detect the mouse button: press it"
+        <Button x:Name="DetectButton" VerticalAlignment="Center" ToolTip="Press a mouse button to detect it"
                 AutomationProperties.Name="Detect the mouse button" Click="OnDetectClick">
             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
         </Button>

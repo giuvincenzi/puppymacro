@@ -163,7 +163,7 @@ public partial class MainWindow
         }
         catch (Win32Exception ex)
         {
-            MessageBox.Show($"Hotkeys are not available:\n\n{ex.Message}", "PuppyMacro",
+            MessageBox.Show($"Hotkeys don't work right now:\n\n{ex.Message}", "PuppyMacro",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
@@ -288,7 +288,7 @@ public partial class MainWindow
         MacrosPage.Visibility = page == "Macros" ? Visibility.Visible : Visibility.Collapsed;
         RemapsPage.Visibility = page == "Remap" ? Visibility.Visible : Visibility.Collapsed;
         SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
-        // Enable overlay mode and Stop all belong to the lists, not to Settings.
+        // Enter overlay mode and Stop all belong to the lists, not to Settings.
         ActionBar.Visibility = page == "Settings" ? Visibility.Collapsed : Visibility.Visible;
         if (page != "Settings")
             _engine.CancelCapture(); // a Settings hotkey field that waits stops
@@ -406,7 +406,7 @@ public partial class MainWindow
 
         bool anyRunning = _engine.AnyRunning;
         AddLoopButton.IsEnabled = !anyRunning;
-        AddLoopButton.ToolTip = anyRunning ? "Stop running loops and macros to add a new one" : null;
+        AddLoopButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
         NewMacroButton.IsEnabled = !anyRunning;
         RecordMacroButton.IsEnabled = !anyRunning;
         NewMacroButton.ToolTip = RecordMacroButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
@@ -577,7 +577,7 @@ public partial class MainWindow
 
         if (total == 0)
         {
-            EmptyMacrosText.Text = "No macros yet. Select Record macro, or New macro to build one by hand.";
+            EmptyMacrosText.Text = "No macros yet. Record one, or select Add macro to build it step by step.";
             EmptyMacrosText.Visibility = Visibility.Visible;
         }
         else if (_macroView.Count == 0)
@@ -1131,7 +1131,7 @@ public partial class MainWindow
         }
         if (!_settings.ShowOverlayPanel && buttons.Count == 0)
         {
-            ShowSettingsError("Nothing to position: the overlay panel is off and there are no floating buttons.");
+            ShowSettingsError("Nothing to place. Turn on the overlay panel or add a floating button.");
             return null;
         }
 
@@ -1379,7 +1379,7 @@ public partial class MainWindow
     {
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_store.TrySave(_settings, out string? error))
-            ShowSettingsError($"Could not save settings.json: {error}");
+            ShowSettingsError($"Could not save your settings: {error}");
     }
 
     // ================= Remap =================
@@ -1439,7 +1439,7 @@ public partial class MainWindow
         RemapCountText.Text = $"{total} {(total == 1 ? "remap" : "remaps")}, {enabled} enabled";
         if (total == 0)
         {
-            EmptyRemapsText.Text = "No remaps yet. Select Add remap to send another key when you press one.";
+            EmptyRemapsText.Text = "No remaps yet. Select Add remap to turn one key or button into another.";
             EmptyRemapsText.Visibility = Visibility.Visible;
         }
         else if (_remapView.Count == 0)
@@ -1517,7 +1517,7 @@ public partial class MainWindow
         var confirm = new ContentDialog
         {
             Title = "Delete remap",
-            Content = $"Delete the remap {item.SourceText} → {item.TargetText}?",
+            Content = $"Delete the remap {item.SourceText} → {item.TargetText}? This cannot be undone.",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Close,
@@ -1595,8 +1595,8 @@ public partial class MainWindow
         var confirm = new ContentDialog
         {
             Title = "Import",
-            Content = "Replace all your loops, macros, remaps and settings with the ones in this file? " +
-                      "Your current data is saved first as a backup in the data folder. PuppyMacro restarts after the import.",
+            Content = "Replace all your loops, macros, remaps and settings with this file? " +
+                      "Your current data is backed up to the data folder first, then PuppyMacro restarts.",
             PrimaryButtonText = "Import and restart",
             CloseButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Close,

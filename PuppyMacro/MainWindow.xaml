@@ -208,7 +208,7 @@
                     <Grid Grid.Row="0">
                         <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="Macros" />
                         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
-                            <Button x:Name="NewMacroButton" Style="{StaticResource AccentButtonStyle}" Content="New macro" ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
+                            <Button x:Name="NewMacroButton" Style="{StaticResource AccentButtonStyle}" Content="Add macro" ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
                             <!-- A standard button with a red dot before its text (approved, ui.md) -->
                             <Button x:Name="RecordMacroButton" Margin="8,0,0,0"
                                     AutomationProperties.Name="Record macro" ToolTipService.ShowOnDisabled="True" Click="OnRecordMacroClick">
@@ -412,7 +412,7 @@
                             </ComboBox>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="Close to system tray"
-                                         Description="When you close the window, PuppyMacro keeps running in the system tray">
+                                         Description="Keep running in the system tray when you close the window">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.TVMonitor}" />
                             </ui:SettingsCard.HeaderIcon>
@@ -435,21 +435,18 @@
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
                             </ui:SettingsExpander.HeaderIcon>
-                            <ui:SettingsExpander.Description>
-                                <TextBlock TextWrapping="Wrap" Text="Hotkeys that work in every app" />
-                            </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard Header="Stop all" Description="Stop every loop and macro">
                                     <views:KeyCaptureField x:Name="StopAllHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Overlay mode" Description="Enable overlay mode">
+                                <ui:SettingsCard Header="Overlay mode" Description="Toggle overlay mode">
                                     <views:KeyCaptureField x:Name="OverlayModeHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Record" Description="Start and stop a macro recording">
+                                <ui:SettingsCard Header="Record" Description="Start and stop recording a macro">
                                     <views:KeyCaptureField x:Name="RecordHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
@@ -522,7 +519,7 @@
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard Header="Export or import"
-                                                 Description="Loops, macros, remaps and settings are kept in your user folder, so every new version finds them. Export them to one file to move them to another PC or keep a copy.">
+                                                 Description="Save your loops, macros, remaps and settings to one file, to keep a copy or move them to another PC">
                                     <StackPanel Orientation="Horizontal">
                                         <Button Content="Export…" Click="OnExportClick" />
                                         <Button Margin="8,0,0,0" Content="Import…" Click="OnImportClick" />
@@ -594,10 +591,10 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Button x:Name="OverlayModeButton" Grid.Column="0" HorizontalAlignment="Stretch"
-                            Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Enable overlay mode"
+                            Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Enter overlay mode"
                             Click="OnOverlayModeClick">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Enable overlay mode" />
+                            <TextBlock Text="Enter overlay mode" />
                             <TextBlock x:Name="OverlayModeButtonHotkeyText" Margin="10,0,0,0" Opacity="0.85" />
                         </StackPanel>
                     </Button>

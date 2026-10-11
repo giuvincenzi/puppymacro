@@ -22,7 +22,7 @@ internal static class HotkeyRules
                 return "Esc needs Ctrl, Alt, Shift or Win.";
         }
         if (hold && KeyNames.IsWheel(binding.Vk))
-            return "Hold needs a key or button that can be held down, and the scroll wheel cannot. Switch to Toggle.";
+            return "The scroll wheel can't be held down. Switch to Toggle, or choose another hotkey.";
         return null;
     }
 }

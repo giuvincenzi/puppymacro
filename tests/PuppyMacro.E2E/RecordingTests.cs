@@ -111,7 +111,7 @@ public class RecordingTests
 
         // After the countdown's time nothing started and no macro editor opened.
         TargetWindow.Quiet(4);
-        Assert.Null(app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName("New macro").And(cf.ByProcessId(app.ProcessId))));
+        Assert.Null(app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName("Add macro").And(cf.ByProcessId(app.ProcessId))));
         Assert.Empty(AppSession.SavedMacros());
     }
 
@@ -159,10 +159,10 @@ public class RecordingTests
         }
     }
 
-    /// <summary>Names the macro in the New macro window, saves it and returns it as saved.</summary>
+    /// <summary>Names the macro in the Add macro window, saves it and returns it as saved.</summary>
     private static MacroDefinition SaveRecordedMacro(AppSession app, string name)
     {
-        Window editor = app.Dialog("New macro");
+        Window editor = app.Dialog("Add macro");
         app.FindById(editor, "NameBox").AsTextBox().Text = name;
         app.FindById(editor, "SaveButton").AsButton().Invoke();
         MacroDefinition? saved = null;

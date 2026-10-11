@@ -111,7 +111,7 @@ public partial class MainWindow
         {
             UpdateBar.IsOpen = false;
             ShowSettingsBadge(false);
-            UpdateStatusText.Text = "Updates are available when PuppyMacro is installed with Setup.";
+            UpdateStatusText.Text = "Install PuppyMacro with Setup to get updates";
             UpdateWhatsNew.Visibility = Visibility.Collapsed;
             UpdateCardProgress.Visibility = Visibility.Collapsed;
             UpdateCardButton.Visibility = Visibility.Collapsed;
@@ -141,7 +141,7 @@ public partial class MainWindow
         }
         else if (version != null)
         {
-            status = $"PuppyMacro {version} is available. Installed: {_updates.CurrentVersion}";
+            status = $"PuppyMacro {version} is available (you have {_updates.CurrentVersion})";
             action = "Update";
             primary = true;
         }
@@ -153,7 +153,7 @@ public partial class MainWindow
         else
         {
             status = _lastUpdateCheck is DateTime checkedAt
-                ? $"PuppyMacro {_updates.CurrentVersion} is up to date. Last checked at {checkedAt:t}"
+                ? $"PuppyMacro {_updates.CurrentVersion} is up to date. Checked at {checkedAt:t}"
                 : $"PuppyMacro {_updates.CurrentVersion}";
             action = "Check now";
         }
@@ -171,7 +171,7 @@ public partial class MainWindow
         UpdateBar.Title = $"PuppyMacro {version} is available";
         UpdateBar.Message = downloading
             ? $"Downloading… {_downloadPercent}%"
-            : _updateError ?? "Loops and macros stop, then PuppyMacro restarts with the new version.";
+            : _updateError ?? "Updating stops loops and macros and restarts PuppyMacro";
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;

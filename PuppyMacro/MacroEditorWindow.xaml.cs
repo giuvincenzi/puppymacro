@@ -71,7 +71,7 @@ public partial class MacroEditorWindow
         _itemId = existing?.Id ?? Guid.NewGuid();
         _placeButton = placeButton;
 
-        string title = existing == null ? "New macro" : $"Edit macro - {existing.Name}";
+        string title = existing == null ? "Add macro" : $"Edit macro - {existing.Name}";
         Title = title;
 
         if (recorded != null)
@@ -344,7 +344,7 @@ public partial class MacroEditorWindow
             return;
         int count = _list.Expand(SelectedActions, SelectedGroups).Count;
         bool any = count > 0;
-        SelectionText.Text = (any ? $"{Count(count)} selected" : "Select actions to test, edit, group, duplicate, copy or delete them")
+        SelectionText.Text = (any ? $"{Count(count)} selected" : "Select actions to edit, group, copy and more")
                              + " · " + InsertHintText();
         foreach (var button in new[] { DuplicateButton, CopyButton, DeleteButton })
             button.IsEnabled = any;

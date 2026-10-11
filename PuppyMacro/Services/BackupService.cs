@@ -36,7 +36,7 @@ internal static class BackupService
         using (var check = ZipFile.OpenRead(path))
         {
             if (check.GetEntry("settings.json") == null)
-                throw new InvalidDataException("This file is not a PuppyMacro backup (settings.json is missing).");
+                throw new InvalidDataException("This file is not a PuppyMacro backup.");
         }
 
         string safety = Path.Combine(AppPaths.DataFolder, $"backup-before-import-{DateTime.Now:yyyyMMdd-HHmmss}{Extension}");

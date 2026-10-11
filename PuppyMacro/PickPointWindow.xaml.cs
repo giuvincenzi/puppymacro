@@ -93,7 +93,7 @@ public partial class PickPointWindow
         {
             _hoveredWindow = window.Handle;
             _hoveredApp = AppWindows.ExeName(window.ProcessId);
-            AppLabelText.Text = _hoveredApp.Length > 0 ? _hoveredApp : "This app's name cannot be read";
+            AppLabelText.Text = _hoveredApp.Length > 0 ? _hoveredApp : "Can't read this app's name";
         }
 
         // Physical pixels to this window's units.

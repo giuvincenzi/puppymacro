@@ -237,7 +237,7 @@ internal static class CodeJson
             if ((b.X == null) != (b.Y == null))
                 Add(b.X == null ? "FloatingButton.Y" : "FloatingButton.X", "Set both X and Y, or neither (null: the middle of the main screen).");
             if (b.Enabled && mode == ActivationMode.Hold)
-                Add("FloatingButton.Enabled", "Not available with Hold: a click can only start and stop. Use \"Toggle\".");
+                Add("FloatingButton.Enabled", "Needs \"Toggle\": a click can start and stop, but not hold.");
         }
     }
 

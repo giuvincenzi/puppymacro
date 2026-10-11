@@ -27,7 +27,6 @@
                 </Border>
                 <TextBlock Text=" or select " VerticalAlignment="Center" />
                 <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Start recording" VerticalAlignment="Center" />
-                <TextBlock Text=" to start recording" VerticalAlignment="Center" />
             </WrapPanel>
             <TextBlock x:Name="DescriptionText" Margin="0,12,0,0" TextWrapping="Wrap"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />

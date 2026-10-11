@@ -93,7 +93,7 @@
                         </ui:CommandBar.Content>
                         <ui:AppBarSeparator />
                         <ui:AppBarButton VerticalAlignment="Center" x:Name="TestActionButton" Label="Test" AutomationProperties.Name="Test action"
-                                         ToolTip="PuppyMacro hides and plays the selected action once in the window behind it" Click="OnTestActionClick">
+                                         ToolTip="Play the selected action once in the window behind" Click="OnTestActionClick">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Play}" />
                             </ui:AppBarButton.Icon>
@@ -104,7 +104,7 @@
                             </ui:AppBarButton.Icon>
                         </ui:AppBarButton>
                         <ui:AppBarButton VerticalAlignment="Center" x:Name="CopyButton" Label="Copy"
-                                         ToolTip="Copy the selected actions, also to paste them in another macro (Ctrl+C)" Click="OnCopySelectedClick">
+                                         ToolTip="Copy the selected actions, to paste here or in another macro (Ctrl+C)" Click="OnCopySelectedClick">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Copy}" />
                             </ui:AppBarButton.Icon>
@@ -372,7 +372,7 @@
                             <!-- The help, under all the options -->
                             <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       Text="Optional. With Ctrl, Alt, Shift or Win held, left and right click, the scroll wheel and Esc work too. Hold needs a hotkey." />
+                                       Text="Any key or mouse button, like F2 or A. For a combination, hold Ctrl, Alt, Shift or Win first; left and right click, the scroll wheel and Esc need one. Hold needs a hotkey." />
                         </StackPanel>
                     </ui:SettingsCard>
 
@@ -386,7 +386,7 @@
                         <ui:ToggleSwitch x:Name="SoundSwitch" Toggled="OnSoundSwitchChanged" />
                         <ui:SettingsExpander.Items>
                             <ui:SettingsCard x:Name="SoundCard" ContentAlignment="Vertical" HorizontalContentAlignment="Left"
-                                             Description="Click a sound to pick it and hear the start and stop versions.">
+                                             Description="Click a sound to choose it and hear how it starts and stops">
                                 <!-- Scrolls on its own so the long list does not make the editor scroll (approved, ui.md). -->
                                 <ScrollViewer x:Name="SoundScroll" MaxHeight="200" VerticalScrollBarVisibility="Auto">
                                     <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"

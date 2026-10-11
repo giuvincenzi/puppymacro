@@ -108,7 +108,7 @@
                             <!-- The help, under all the options -->
                             <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       Text="Optional. Press any key or mouse button, like F2 or A; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too. Hold needs a hotkey." />
+                                       Text="Any key or mouse button, like F2 or A. For a combination, hold Ctrl, Alt, Shift or Win first; left and right click, the scroll wheel and Esc need one. Hold needs a hotkey." />
                         </StackPanel>
                     </ui:SettingsCard>
 
@@ -122,7 +122,7 @@
                         <ui:ToggleSwitch x:Name="SoundSwitch" Toggled="OnSoundSwitchChanged" />
                         <ui:SettingsExpander.Items>
                             <ui:SettingsCard x:Name="SoundCard" ContentAlignment="Vertical" HorizontalContentAlignment="Left"
-                                             Description="Click a sound to pick it and hear the start and stop versions.">
+                                             Description="Click a sound to choose it and hear how it starts and stops">
                                 <!-- Scrolls on its own so the long list does not make the editor scroll (approved, ui.md). -->
                                 <ScrollViewer x:Name="SoundScroll" MaxHeight="200" VerticalScrollBarVisibility="Auto">
                                     <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"

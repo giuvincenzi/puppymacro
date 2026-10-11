@@ -126,8 +126,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     dashed) instead of its fill and border, a hollow `#9E9E9E` dot, the name and hotkey in `#8A8A8A` and
     the state "Disabled" in the usual `#C5C5C5`; a floating button with a dashed ring (`#66FFFFFF`, an
     `Ellipse` over the circle) instead of its border, the label and badge in `#8A8A8A` and its background
-    at 65% of its opacity. Under Stop all, while the panel can be clicked, the hint "Click: start / stop ·
-    Right-click: enable / disable".
+    at 65% of its opacity. Under Stop all, while the panel can be clicked, the hint "Click to start or stop ·
+    Right-click to enable or disable".
   - Specific app (`Views/AppScopeEditor`, in the loop, macro and remap editors): a
     `SwitchSettingsExpander` whose card holds the editable `ComboBox` of running apps, **Pick** (the
     `Eyedropper` icon) and **Browse…**. Pick's overlay (`PickPointWindow` with `pickApp`) outlines the

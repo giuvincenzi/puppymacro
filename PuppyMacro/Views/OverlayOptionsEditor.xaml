@@ -8,14 +8,14 @@
     <!-- Show in overlay expander, shared by the loop and macro editors -->
     <views:SwitchSettingsExpander x:Name="OverlayExpander" Header="Show in overlay"
                                   CanExpand="{Binding IsOn, ElementName=ShowSwitch}"
-                                  Description="Its row in the overlay panel, or its floating button">
+                                  Description="In the overlay panel, or as a floating button">
         <ui:ToggleSwitch x:Name="ShowSwitch" Toggled="OnShowSwitchChanged" AutomationProperties.Name="Show in overlay" />
 
         <ui:SettingsExpander.Items>
-            <ui:SettingsCard Header="Hide when disabled" Description="Not shown in the overlay while it is disabled">
+            <ui:SettingsCard Header="Hide when disabled" Description="Hidden from the overlay while it is disabled">
                 <ui:ToggleSwitch x:Name="HideWhenDisabledSwitch" AutomationProperties.Name="Hide when disabled" />
             </ui:SettingsCard>
-            <ui:SettingsCard Header="Clicks also reach the app behind" Description="A click on it in the overlay also clicks the window under it">
+            <ui:SettingsCard Header="Clicks also reach the app behind" Description="Clicking it in the overlay also clicks the window underneath">
                 <ui:ToggleSwitch x:Name="PassThroughSwitch" AutomationProperties.Name="Clicks also reach the app behind" />
             </ui:SettingsCard>
         </ui:SettingsExpander.Items>
