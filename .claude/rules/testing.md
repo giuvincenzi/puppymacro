@@ -28,7 +28,8 @@
   restored, actions added and removed), the AI tools (`AiToolsTests`, with `FakeAiHost` as the app and the user: access
   off, reads, saves checked like the editors and saved at once, each permission, Restore data, "waiting" and
   `wait_for_user`, the ready window before picks, settings, help, the message while PuppyMacro is closed;
-  `AiTools.WaitStep` is short there), the AI apps'
+  `AiTools.WaitStep` is short there; `AiJsonTests`: compact JSON read back as the same item, every JSON Patch operation and
+  its errors, `SetWhere`; `AiCallLogTests`; the size limits of the activity and the History), the AI apps'
   settings files (`AiAppsTests`: Claude Desktop with its Microsoft Store copy, VS Code's link and `mcp.json`, Codex's
   `config.toml`, never replacing a file with an error), `AiActivityLog` and `AllowAiAccess` in older files, and the XAML files
   (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`).

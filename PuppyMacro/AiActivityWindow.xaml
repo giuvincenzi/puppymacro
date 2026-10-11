@@ -16,7 +16,7 @@
     ui:TitleBar.MinimizeButtonAvailability="Collapsed"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
-    <!-- Everything AI apps asked in the last 30 days (AiActivityLog), with filters. -->
+    <!-- Everything AI apps asked that is kept (AiActivityLog, the newest 20 MB), with filters. -->
     <DockPanel LastChildFill="True">
         <Border DockPanel.Dock="Bottom" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
@@ -28,7 +28,7 @@
                     <ColumnDefinition Width="160" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Kept for 30 days on this PC." />
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Kept on this PC: the newest requests, up to 20 MB." />
                 <Button x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Stretch" Content="Clear history" Click="OnClearClick" />
                 <Button Grid.Column="3" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="Close"
                         IsCancel="True" Click="OnCloseClick" />
@@ -40,6 +40,7 @@
                 <ComboBoxItem Content="Today" />
                 <ComboBoxItem Content="Last 7 days" />
                 <ComboBoxItem Content="Last 30 days" />
+                <ComboBoxItem Content="All" />
             </ComboBox>
             <ComboBox x:Name="AppBox" MinWidth="160" ui:ControlHelper.Header="App" SelectionChanged="OnFilterChanged" />
             <ComboBox x:Name="KindBox" MinWidth="140" ui:ControlHelper.Header="Type" SelectionChanged="OnFilterChanged" />

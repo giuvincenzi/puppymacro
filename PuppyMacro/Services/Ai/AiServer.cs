@@ -25,16 +25,19 @@ internal sealed class AiServer : IDisposable
     private readonly AiTools _tools;
     private readonly AiActivityLog _log;
     private readonly Func<bool> _allowed;
+    private readonly AiCallLog? _calls;
     private readonly CancellationTokenSource _stop = new();
     private readonly object _sync = new();
     private readonly List<AiClient> _clients = new();
     private int _nextSession;
 
-    public AiServer(AiTools tools, AiActivityLog log, Func<bool> allowed)
+    /// <param name="calls">Where every tool call is logged with its times and sizes (debugging), or null.</param>
+    public AiServer(AiTools tools, AiActivityLog log, Func<bool> allowed, AiCallLog? calls = null)
     {
         _tools = tools;
         _log = log;
         _allowed = allowed;
+        _calls = calls;
     }
 
     /// <summary>Raised on a server thread when an AI app connects or disconnects.</summary>
@@ -108,7 +111,7 @@ internal sealed class AiServer : IDisposable
     private async Task Serve(NamedPipeServerStream pipe)
     {
         int session = Interlocked.Increment(ref _nextSession);
-        McpServerOptions options = Options(_tools.All, AiTools.Instructions, (tool, args, app, cancel) => _tools.Call(tool.Name, args, app, cancel));
+        McpServerOptions options = Options(_tools.All, AiTools.Instructions, (tool, args, app, cancel) => CallLogged(tool, args, app, cancel));
 
         try
         {
@@ -182,6 +185,25 @@ internal sealed class AiServer : IDisposable
     }
 
     /// <summary>The MCP server's options: PuppyMacro, its instructions and the tools, each answered by <paramref name="run"/>.</summary>
+    /// <summary>Runs a tool and logs its times and sizes (<see cref="AiCallLog"/>), whatever happens.</summary>
+    private async Task<AiToolResult> CallLogged(AiTool tool, JsonElement args, string app, CancellationToken cancel)
+    {
+        DateTime start = DateTime.Now;
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        AiToolResult? result = null;
+        try
+        {
+            return result = await _tools.Call(tool.Name, args, app, cancel).ConfigureAwait(false);
+        }
+        finally
+        {
+            int? ops = args.ValueKind == JsonValueKind.Object && args.TryGetProperty("patch", out JsonElement patch)
+                && patch.ValueKind == JsonValueKind.Array ? patch.GetArrayLength() : null;
+            _calls?.Add(new AiCall(start, Math.Round(watch.Elapsed.TotalMilliseconds, 1), app, tool.Name, args.GetRawText().Length,
+                result?.Text.Length ?? 0, result == null ? "failed" : result.IsError ? "error" : "ok", ops));
+        }
+    }
+
     internal static McpServerOptions Options(IEnumerable<AiTool> tools, string instructions,
         Func<AiTool, JsonElement, string, CancellationToken, Task<AiToolResult>> run)
     {

@@ -98,7 +98,8 @@ internal sealed class AiTools
         "is \"waiting\" with a request_id: call wait_for_user with it until the user answers.";
 
     private const string RewriteRule =
-        " To change an existing item, use patch_item instead: it sends only what changes (rewriting a big macro here takes minutes).";
+        " To change an existing item, use patch_item or update_actions instead: they send only what changes (rewriting a big " +
+        "macro here takes minutes).";
 
     private const string NoStart =
         "Starting and testing loops and macros is not available to AI apps: their keys and clicks would go to the window in " +
@@ -231,7 +232,7 @@ internal sealed class AiTools
                 Save("remap"), false, false, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
             new("patch_item",
                 "Changes part of a loop, macro or remap with a JSON Patch (RFC 6902): only what changes, so it is fast even for a " +
-                "big macro. Use it for every change to an existing item. The result is checked and saved like save_* (kept in " +
+                "big macro. Use it for changes to an existing item (the same change on many actions: update_actions). Checked and saved like save_* (kept in " +
                 "its History); the answer lists what changed.",
                 """
                 {"type":"object","properties":{
@@ -245,6 +246,18 @@ internal sealed class AiTools
                      "required":["op","path"]}}},
                  "required":["id","patch"],"additionalProperties":false}
                 """, false, false, (a, app, c) => PatchItem(a, app, c)),
+            new("update_actions",
+                "Changes the same fields of every action of a loop or macro that matches, in one short call: e.g. every delay of " +
+                "800 ms to 1200 in a macro of 33 slots. No need to read the item or count indexes; prefer it to patch_item for " +
+                "such changes. Checked and saved like save_* (kept in its History); the answer lists what changed.",
+                """
+                {"type":"object","properties":{
+                  "id":{"type":"string","description":"The Id of the loop or macro."},
+                  "where":{"type":"object","description":"Fields an action must have to change, with these values, e.g. {\"DelayMs\": 800} or {\"Type\": \"Click\", \"Vk\": 2}. Leave out to change every action."},
+                  "group":{"type":"string","description":"Only the actions in the macro group with this name."},
+                  "set":{"type":"object","description":"The fields to change and their new values, e.g. {\"DelayMs\": 1200}."}},
+                 "required":["id","set"],"additionalProperties":false}
+                """, false, false, (a, app, c) => UpdateActions(a, app, c)),
             new("delete_item", "Deletes a loop, macro or remap (the user may be asked to confirm; it can be restored in PuppyMacro).",
                 idOnly, false, true, (a, app, c) => Delete(a, app, c)),
             new("set_enabled", "Enables or disables a loop, macro or remap.",
@@ -496,6 +509,26 @@ internal sealed class AiTools
             "macro" => await SaveItem<MacroDefinition>(save, app, kind, cancel).ConfigureAwait(false),
             _ => await SaveItem<RemapDefinition>(save, app, kind, cancel).ConfigureAwait(false),
         };
+    }
+
+    /// <summary>update_actions: <see cref="AiJson.SetWhere"/> on the item's whole JSON, then save_*'s checks, permissions and History.</summary>
+    private async Task<AiToolResult> UpdateActions(JsonElement args, string app, CancellationToken cancel)
+    {
+        Guid id = IdArg(args, "id");
+        if (!args.TryGetProperty("set", out JsonElement set))
+            throw new FormatException("Give \"set\": the fields to change, e.g. {\"DelayMs\": 1200}.");
+        args.TryGetProperty("where", out JsonElement where);
+        (string? kind, string? json) = await _host.Ui(() => Task.FromResult(Find(id) is { } item and (LoopDefinition or MacroDefinition)
+            ? ((string?)Kind(item), (string?)Serialize(item))
+            : (null, null))).ConfigureAwait(false);
+        if (kind == null || json == null)
+            return AiToolResult.Error($"No loop or macro has the Id {id}. get_overview lists them.");
+
+        (JsonNode changed, _) = AiJson.SetWhere(JsonNode.Parse(json)!, where, set, Str(args, "group"));
+        JsonElement save = JsonSerializer.SerializeToElement(new JsonObject { ["item"] = changed, ["id"] = id.ToString() });
+        return kind == "loop"
+            ? await SaveItem<LoopDefinition>(save, app, kind, cancel).ConfigureAwait(false)
+            : await SaveItem<MacroDefinition>(save, app, kind, cancel).ConfigureAwait(false);
     }
 
     /// <summary>What changed, one per line, at most 30 (an AI app reads every line).</summary>

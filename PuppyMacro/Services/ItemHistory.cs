@@ -31,13 +31,14 @@ public sealed class HistoryVersion
 }
 
 /// <summary>
-/// The History of every loop, macro and remap: the last <see cref="MaxVersions"/> versions of each, in
+/// The History of every loop, macro and remap: the newest versions of each that fit in <see cref="MaxBytes"/>, in
 /// <c>history\{id}.json</c> in the data folder, recorded on every save (by the user or an AI app). A version equal to the
 /// one before is not kept. The first change of an item saved before the history existed keeps its earlier version too.
 /// </summary>
 internal sealed class ItemHistory
 {
-    public const int MaxVersions = 50;
+    /// <summary>Per item: a big macro keeps fewer versions than a small loop, never less than the newest one.</summary>
+    public const long MaxBytes = 10L * 1024 * 1024;
     public const string You = "You";
 
     private static readonly JsonSerializerOptions FileOptions = new()
@@ -48,12 +49,14 @@ internal sealed class ItemHistory
 
     private readonly string _folder;
     private readonly Func<DateTime> _now;
+    private readonly long _maxBytes;
     private readonly Dictionary<Guid, string> _current = new();
 
-    public ItemHistory(string folder, Func<DateTime>? now = null)
+    public ItemHistory(string folder, Func<DateTime>? now = null, long maxBytes = MaxBytes)
     {
         _folder = folder;
         _now = now ?? (() => DateTime.Now);
+        _maxBytes = maxBytes;
     }
 
     /// <summary>The ids whose current JSON is known (seeded or recorded).</summary>
@@ -123,7 +126,7 @@ internal sealed class ItemHistory
 
     private string PathOf(Guid id) => Path.Combine(_folder, id.ToString("D") + ".json");
 
-    /// <summary>Oldest first; keeps the last <see cref="MaxVersions"/>. A history that can't be written is only lost, never an error.</summary>
+    /// <summary>Oldest first; keeps the newest that fit in the limit. A history that can't be written is only lost, never an error.</summary>
     private void Write(Guid id, List<HistoryVersion> versions)
     {
         try
@@ -131,12 +134,35 @@ internal sealed class ItemHistory
             Directory.CreateDirectory(_folder);
             string path = PathOf(id);
             string temp = path + ".tmp";
-            File.WriteAllText(temp, JsonSerializer.Serialize(versions.TakeLast(MaxVersions).ToList(), FileOptions));
+            File.WriteAllText(temp, JsonSerializer.Serialize(Newest(versions), FileOptions));
             File.Move(temp, path, overwrite: true);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
         }
+    }
+
+    /// <summary>
+    /// The bytes an object's indented JSON takes as an item of an indented list: each of its lines indented 2 more, and the
+    /// comma and line break after it.
+    /// </summary>
+    internal static long SizeInList(string json) =>
+        System.Text.Encoding.UTF8.GetByteCount(json) + 2L * (json.Count(c => c == '\n') + 1) + 3;
+
+    /// <summary>The newest versions whose JSON fits in the limit, oldest first (the newest one always stays).</summary>
+    private List<HistoryVersion> Newest(List<HistoryVersion> versions)
+    {
+        var kept = new List<HistoryVersion>();
+        long size = 2; // [ ]
+        for (int i = versions.Count - 1; i >= 0; i--)
+        {
+            size += SizeInList(JsonSerializer.Serialize(versions[i], FileOptions));
+            if (size > _maxBytes && kept.Count > 0)
+                break;
+            kept.Add(versions[i]);
+        }
+        kept.Reverse();
+        return kept;
     }
 
     // ================= What changed =================

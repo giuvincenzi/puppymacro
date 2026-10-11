@@ -119,4 +119,44 @@ public class AiJsonTests
 
         Assert.Contains(reason, error.Message);
     }
+
+    [Fact]
+    public void Set_where_changes_every_matching_action_and_only_those()
+    {
+        MacroDefinition macro = BigMacro();
+        JsonNode doc = JsonNode.Parse(MacroJson.Serialize(macro))!;
+
+        (JsonNode result, int count) = AiJson.SetWhere(doc, Ops(new { DelayMs = 120 }), Ops(new { DelayMs = 1200 }), null);
+        MacroDefinition? after = MacroJson.Parse(result.ToJsonString(), macro.Id, NoClash, out _);
+
+        Assert.Equal(30, count);
+        Assert.All(after!.Actions.Where(a => a.Type == MacroActionType.Click), a => Assert.Equal(1200, a.DelayMs));
+        Assert.All(after.Actions.Where(a => a.Type == MacroActionType.PressKey), a => Assert.Equal(80, a.DelayMs));
+    }
+
+    [Fact]
+    public void Set_where_can_stay_in_one_group()
+    {
+        MacroDefinition macro = BigMacro();
+        JsonNode doc = JsonNode.Parse(MacroJson.Serialize(macro))!;
+
+        (_, int count) = AiJson.SetWhere(doc, Ops(new { Type = "Click" }), Ops(new { DelayMs = 5 }), "slot 1");
+
+        Assert.Equal(5, count); // the group holds the first 5 clicks
+    }
+
+    [Theory]
+    [InlineData("""{"DelayMs":999}""", """{"DelayMs":1}""", null, "no action matches")]
+    [InlineData("""{"DelayMs":120}""", """{"Nope":1}""", null, "no field \"Nope\"")]
+    [InlineData("""{"DelayMs":120}""", """{}""", null, "\"set\" must be")]
+    [InlineData("""{"DelayMs":120}""", """{"DelayMs":1}""", "Missing", "no group is named")]
+    public void Set_where_says_why_it_cannot(string where, string set, string? group, string reason)
+    {
+        JsonNode doc = JsonNode.Parse(MacroJson.Serialize(BigMacro()))!;
+        using JsonDocument w = JsonDocument.Parse(where), s = JsonDocument.Parse(set);
+
+        FormatException error = Assert.Throws<FormatException>(() => AiJson.SetWhere(doc, w.RootElement, s.RootElement, group));
+
+        Assert.Contains(reason, error.Message);
+    }
 }

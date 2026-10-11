@@ -65,13 +65,13 @@ public sealed class AiActivity
 }
 
 /// <summary>
-/// The AI apps' requests of the last <see cref="KeepDays"/> days, in <c>ai-activity.json</c> in the data folder.
+/// The AI apps' requests, the newest that fit in <see cref="MaxBytes"/> (a change keeps the item before and after it, so
+/// size, not days or a count, is what fills the disk), in <c>ai-activity.json</c> in the data folder.
 /// Written from the AI server's threads and read by the UI: every member is thread-safe.
 /// </summary>
 internal sealed class AiActivityLog
 {
-    public const int KeepDays = 30;
-    private const int MaxEntries = 5000;
+    public const long MaxBytes = 20L * 1024 * 1024;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -82,19 +82,21 @@ internal sealed class AiActivityLog
 
     private readonly string _path;
     private readonly Func<DateTime> _now;
+    private readonly long _maxBytes;
     private readonly object _sync = new();
     private List<AiActivity> _entries = new();
 
-    public AiActivityLog(string path, Func<DateTime>? now = null)
+    public AiActivityLog(string path, Func<DateTime>? now = null, long maxBytes = MaxBytes)
     {
         _path = path;
         _now = now ?? (() => DateTime.Now);
+        _maxBytes = maxBytes;
     }
 
     /// <summary>Raised after an entry is added or the history is cleared, on the thread that did it.</summary>
     public event Action? Changed;
 
-    /// <summary>Reads the file (a missing or unreadable file is an empty history) and drops entries older than <see cref="KeepDays"/>.</summary>
+    /// <summary>Reads the file (a missing or unreadable file is an empty history) and drops the oldest entries past <see cref="MaxBytes"/>.</summary>
     public void Load()
     {
         List<AiActivity> entries;
@@ -167,10 +169,20 @@ internal sealed class AiActivityLog
         Changed?.Invoke();
     }
 
+    /// <summary>Oldest first, the newest entries whose JSON fits in the limit (the newest one always stays).</summary>
     private List<AiActivity> Prune(List<AiActivity> entries)
     {
-        DateTime oldest = _now().AddDays(-KeepDays);
-        return entries.Where(e => e.Time >= oldest).OrderBy(e => e.Time).TakeLast(MaxEntries).ToList();
+        var kept = new List<AiActivity>();
+        long size = 2; // [ ]
+        foreach (AiActivity entry in entries.OrderByDescending(e => e.Time))
+        {
+            size += ItemHistory.SizeInList(JsonSerializer.Serialize(entry, JsonOptions));
+            if (size > _maxBytes && kept.Count > 0)
+                break;
+            kept.Add(entry);
+        }
+        kept.Reverse();
+        return kept;
     }
 
     /// <summary>Under <see cref="_sync"/>. A history that cannot be written stays in memory.</summary>

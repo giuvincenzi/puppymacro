@@ -49,7 +49,7 @@ public partial class MainWindow : IAiHost
         _aiLog = new AiActivityLog(AppPaths.AiActivityFile);
         _aiLog.Load();
         _aiTools = new AiTools(this, _aiLog);
-        _aiServer = new AiServer(_aiTools, _aiLog, () => _settings.AllowAiAccess);
+        _aiServer = new AiServer(_aiTools, _aiLog, () => _settings.AllowAiAccess, new AiCallLog(AppPaths.AiCallsFile));
         _aiLog.Changed += () => Dispatcher.InvokeAsync(RefreshAiPage);
         _aiServer.ClientsChanged += () => Dispatcher.InvokeAsync(RefreshAiPage);
         _aiServer.Start();

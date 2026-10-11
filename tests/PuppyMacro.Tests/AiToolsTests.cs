@@ -256,6 +256,32 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
+    public async Task Update_actions_changes_every_matching_delay_in_one_call()
+    {
+        MacroDefinition macro = AiJsonTests.BigMacro();
+        _host.Macros.Macros.Add(macro);
+
+        AiToolResult result = await Call("update_actions", new { id = macro.Id.ToString(), where = new { DelayMs = 120 }, set = new { DelayMs = 1200 } });
+
+        Assert.False(result.IsError, result.Text);
+        MacroDefinition after = Assert.IsType<MacroDefinition>(Assert.Single(_host.Saved).Item);
+        Assert.Equal(30, after.Actions.Count(a => a.DelayMs == 1200));
+        Assert.Contains("- Action 1", result.Text);
+    }
+
+    [Fact]
+    public async Task Update_actions_is_only_for_loops_and_macros()
+    {
+        var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) };
+        _settings.Remaps.Add(remap);
+
+        AiToolResult result = await Call("update_actions", new { id = remap.Id.ToString(), set = new { DelayMs = 1 } });
+
+        Assert.True(result.IsError);
+        Assert.Empty(_host.Saved);
+    }
+
+    [Fact]
     public async Task A_patch_that_breaks_the_item_saves_nothing()
     {
         MacroDefinition macro = AiJsonTests.BigMacro();

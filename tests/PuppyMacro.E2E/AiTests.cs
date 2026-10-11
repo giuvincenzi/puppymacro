@@ -365,6 +365,10 @@ public class AiTests
             seed.Macros.Add(macro);
         });
         await using McpClient client = await Connect();
+        // As with a user: the AI app is in front, PuppyMacro behind (no active window of its own).
+        using var target = new TargetWindow();
+        target.Activate();
+        target.RequireForeground();
 
         Task<(string Text, bool IsError)> call = Call(client, "open_item", new { id = macro.Id.ToString(), title = "Check the delays", description = "The E2E test opens it." });
         Window editor = app.Dialog("Edit macro");

@@ -70,16 +70,29 @@ public class ItemHistoryTests : IDisposable
     }
 
     [Fact]
-    public void Only_the_last_50_versions_are_kept()
+    public void Only_the_newest_versions_that_fit_in_the_size_limit_are_kept()
     {
         Guid id = Guid.NewGuid();
-        for (int i = 0; i < ItemHistory.MaxVersions + 10; i++)
-            _history.Record(id, LoopJson.Serialize(Loop(id, $"Spam {i}")), ItemHistory.You);
+        var history = new ItemHistory(_folder.File("small"), () => _now = _now.AddMinutes(1), maxBytes: 20_000);
+        for (int i = 0; i < 200; i++)
+            history.Record(id, LoopJson.Serialize(Loop(id, $"Spam {i}")), ItemHistory.You);
 
-        List<HistoryVersion> versions = _history.Versions(id);
+        List<HistoryVersion> versions = history.Versions(id);
 
-        Assert.Equal(ItemHistory.MaxVersions, versions.Count);
-        Assert.Contains("\"Spam 59\"", versions[0].Json);
+        Assert.InRange(versions.Count, 2, 199);
+        Assert.Contains("\"Spam 199\"", versions[0].Json);
+        Assert.True(new System.IO.FileInfo(System.IO.Path.Combine(_folder.File("small"), id + ".json")).Length <= 20_000);
+    }
+
+    [Fact]
+    public void A_version_bigger_than_the_limit_still_keeps_the_newest()
+    {
+        Guid id = Guid.NewGuid();
+        var history = new ItemHistory(_folder.File("tiny"), () => _now = _now.AddMinutes(1), maxBytes: 10);
+        history.Record(id, LoopJson.Serialize(Loop(id, "First")), ItemHistory.You);
+        history.Record(id, LoopJson.Serialize(Loop(id, "Second")), ItemHistory.You);
+
+        Assert.Contains("\"Second\"", Assert.Single(history.Versions(id)).Json);
     }
 
     [Fact]

@@ -11,7 +11,7 @@ using PuppyMacro.Views;
 
 namespace PuppyMacro;
 
-/// <summary>The AI page's View all: every request of the last 30 days, filtered by period, app, type, result and text.</summary>
+/// <summary>The AI page's View all: every request kept (AiActivityLog), filtered by period, app, type, result and text.</summary>
 public partial class AiActivityWindow
 {
     private const string AllApps = "All apps";
@@ -70,6 +70,7 @@ public partial class AiActivityWindow
         {
             0 => DateTime.Today,
             1 => DateTime.Today.AddDays(-6),
+            2 => DateTime.Today.AddDays(-29),
             _ => DateTime.MinValue,
         };
         string? appFilter = AppBox.SelectedItem as string is { } a && a != AllApps ? a : null;

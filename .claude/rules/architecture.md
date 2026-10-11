@@ -168,7 +168,7 @@ Rules:
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version in
-  `history\{id}.json` (the last 50; none for a save that changes nothing), with who saved it (`MainWindow._savedBy`: "You",
+  `history\{id}.json` (the newest up to 10 MB per item; none for a save that changes nothing), with who saved it (`MainWindow._savedBy`: "You",
   or the AI app while `SavingAs`) and what changed (`ItemHistory.Changes`, a readable diff of the JSON). It is recorded in
   one place: `MainWindow.Save()` (loops, remaps, deletions) and `SaveMacro` (macros), so every path is covered (editors,
   switches, the overlay's right click, AI apps). `InitializeHistory` seeds the current JSON at start; the first change of an
@@ -184,13 +184,16 @@ Rules:
   to system tray if they are off). It calls `AllowSetForegroundWindow` for PuppyMacro on every message; Windows may still
   refuse, so the request windows also open topmost (`Views/AiWindow.BringToFront`, activated once shown, not on Loaded).
   The pipe's first instance uses `FirstPipeInstance` and the bridge talks only to a server whose exe is its own
-  (`AppWindows.ExePath`). `AiServer` (in PuppyMacro) runs one MCP session per bridge with the SDK's
+  (`AppWindows.ExePath`). `AiServer` logs every tool call (`CallLogged` → `AiCallLog`, `logs\ai-calls.jsonl`: times and sizes, never the content);
+  the gap between a call's end and the next one's start is the AI app's own time (the model thinking and writing), the call's
+  ms is PuppyMacro's. `AiServer` (in PuppyMacro) runs one MCP session per bridge with the SDK's
   `StreamServerTransport` (`AiServer.Options`), lists the connected apps by the name they give (`FriendlyName`) and says
   why AI apps can't connect (`ListenError`, on the AI page).
   `AiTools` holds every tool without the protocol (unit tested with a fake `IAiHost`): reads; `save_loop/macro/remap`,
   checked with the Code views' `LoopJson`/`MacroJson`/`RemapJson` and the Id PuppyMacro gives, saved at once through
   `IAiHost.Save` (`MainWindow.SaveItem`: the editors' Add / ApplyEdit; a running item stops)
-  (the same for `patch_item`: a JSON Patch, RFC 6902, `AiJson.Patch`, on the item's whole JSON, then `SaveItem`'s checks);
+  (the same for `patch_item`: a JSON Patch, RFC 6902, `AiJson.Patch`, on the item's whole JSON, then `SaveItem`'s checks;
+  and `update_actions`: `AiJson.SetWhere`, the same fields on every action that matches, optionally in one macro group);
   **an AI app writes and reads every character**, so a change is a patch, not the whole item (a 100 KB macro took 1.5 minutes to
   rewrite), `get_item` gives `AiJson.Compact` (one line, fields at their default left out, read back as the same item: unit
   tested) and `get_schema` the defaults (`CodeSchema` `withDefaults`); the answers of `save_*` and `patch_item` are the new Id or
@@ -215,7 +218,7 @@ Rules:
   (5 minutes); the ready window closes after 5 minutes. One such request at a time; none while the user has a PuppyMacro
   editor or dialog open (`HotkeysSuspended`, or `ShowUserDialog` for the dialogs that do not suspend hotkeys). Starting and
   testing loops and macros are not tools on purpose (their input would go to the AI app's chat in front). Everything is
-  refused while `AppSettings.AllowAiAccess` is off. Every request goes to `AiActivityLog` (`ai-activity.json`, 30 days); a
+  refused while `AppSettings.AllowAiAccess` is off. Every request goes to `AiActivityLog` (`ai-activity.json`, the newest 20 MB); a
   change or deletion keeps the item's JSON before it (`Before`, `ItemKind`): Restore in Recent activity and
   `AiActivityWindow` puts it back as the user's own change (`MainWindow.RestoreActivity`). The AI page (`MainWindow.Ai.cs`):
   Allow AI access with the permissions inside, the apps as `SettingsCard`s built in code (`AppCard`; `AiApps`: Claude

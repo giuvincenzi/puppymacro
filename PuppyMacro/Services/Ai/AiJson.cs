@@ -97,6 +97,53 @@ internal static class AiJson
         return root;
     }
 
+    /// <summary>
+    /// Sets <paramref name="set"/>'s fields on every action of a copy of <paramref name="document"/> (a loop or macro) whose
+    /// fields equal <paramref name="where"/>'s, and that is in the macro group named <paramref name="group"/> when given.
+    /// The document is the item's whole JSON (every field there). Throws <see cref="FormatException"/> saying why it can't.
+    /// </summary>
+    public static (JsonNode Result, int Count) SetWhere(JsonNode document, JsonElement where, JsonElement set, string? group)
+    {
+        if (set.ValueKind != JsonValueKind.Object || !set.EnumerateObject().Any())
+            throw new FormatException("\"set\" must be an object with the fields to change, e.g. {\"DelayMs\": 1200}.");
+        if (where.ValueKind is not (JsonValueKind.Object or JsonValueKind.Undefined or JsonValueKind.Null))
+            throw new FormatException("\"where\" must be an object with the fields to match, e.g. {\"DelayMs\": 800}.");
+        JsonNode root = document.DeepClone();
+        if (root["Actions"] is not JsonArray actions)
+            throw new FormatException("this item has no actions.");
+
+        string? groupId = null;
+        if (!string.IsNullOrWhiteSpace(group))
+        {
+            JsonNode? found = (root["Groups"] as JsonArray)?.OfType<JsonObject>()
+                .FirstOrDefault(g => string.Equals(g["Name"]?.GetValue<string>(), group.Trim(), StringComparison.OrdinalIgnoreCase));
+            groupId = found?["Id"]?.GetValue<string>() ?? throw new FormatException($"no group is named \"{group}\".");
+        }
+
+        var match = where.ValueKind == JsonValueKind.Object
+            ? where.EnumerateObject().Select(p => (p.Name, Value: JsonNode.Parse(p.Value.GetRawText()))).ToList()
+            : new List<(string Name, JsonNode? Value)>();
+        var changes = set.EnumerateObject().Select(p => (p.Name, Value: JsonNode.Parse(p.Value.GetRawText()))).ToList();
+        int count = 0;
+        foreach (JsonObject action in actions.OfType<JsonObject>())
+        {
+            if (groupId != null && !string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase))
+                continue;
+            if (!match.All(m => action.ContainsKey(m.Name) && JsonNode.DeepEquals(action[m.Name], m.Value)))
+                continue;
+            foreach ((string name, JsonNode? value) in changes)
+            {
+                if (!action.ContainsKey(name))
+                    throw new FormatException($"an action has no field \"{name}\".");
+                action[name] = value?.DeepClone();
+            }
+            count++;
+        }
+        if (count == 0)
+            throw new FormatException("no action matches. get_item shows the actions.");
+        return (root, count);
+    }
+
     private static void Apply(JsonNode root, string op, string path, JsonElement operation)
     {
         JsonNode? Value() => operation.TryGetProperty("value", out JsonElement value)

@@ -147,7 +147,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `AppIconDefault` icon and the .exe name in caption style, secondary color.
   - The AI page (approved design: the Design canvas "PuppyMacro AI page", second round): the side rail's **AI** item in the
     bottom list above Settings (`BotSparkle_20_Regular` / `_Filled`: the library has no Sparkle alone); the title and a
-    description; Allow AI access, a `SwitchSettingsExpander` whose cards are the permissions (Ask before deleting, Ask
+    description; the "Beta" `InfoBar` (Informational, not closable: the feature is in beta, the user's choice); Allow AI access, a `SwitchSettingsExpander` whose cards are the permissions (Ask before deleting, Ask
     before changing, Ask before changing settings, Start PuppyMacro when an AI app needs it); Apps, one standard
     `SettingsCard` per app built in code (`MainWindow.AppCard`): the app's own icon read from its installed exe at run time
     as an `ImageIcon` (`AiAppTile.ExeIcon`, `SHGetFileInfo`; no logo is shipped, the user approved it) or a `FontIcon`, its

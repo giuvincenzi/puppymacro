@@ -500,6 +500,10 @@
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Text="Use PuppyMacro from an AI app on this PC, like Claude Desktop or Visual Studio Code. Ask in your own words: the AI makes loops, macros and remaps, and you try them right away." />
 
+                        <!-- The AI apps feature is in beta (the user asked to say so in the app) -->
+                        <ui:InfoBar x:Name="AiBetaBar" Margin="0,12,0,0" Severity="Informational" IsClosable="False" IsOpen="True"
+                                    Title="Beta" AutomationProperties.Name="Beta"
+                                    Message="AI apps in PuppyMacro are new: they work, but they may change, and an AI can get a request wrong. Every change is kept in the item's History, so you can always go back." />
                         <ui:InfoBar x:Name="AiMessage" Margin="0,12,0,0" IsOpen="False" />
                         <!-- PuppyMacro's AI connection could not be opened (AiServer.ListenError) -->
                         <ui:InfoBar x:Name="AiConnectionError" Margin="0,12,0,0" Severity="Warning" IsClosable="False" IsOpen="False" />
