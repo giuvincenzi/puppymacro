@@ -133,6 +133,48 @@ internal static class InputSender
         }
     }
 
+    /// <summary>
+    /// A loop's press held longer than a tap (its Hold for): held modifiers released and the key pressed under
+    /// <see cref="Gate"/>, then the wait outside it, so other loop rows, macros and remaps are not held up for
+    /// the whole hold; the release under it again. Only for a key or button without modifiers (a combination
+    /// keeps the whole press under the lock, <see cref="TapBinding"/>). With <paramref name="x"/> and
+    /// <paramref name="y"/>, a mouse button is pressed there (the move and the press together under the lock).
+    /// </summary>
+    public static bool PressFor(int vk, double holdMs, PreciseTimer timer, WaitHandle stop, int? x = null, int? y = null)
+    {
+        lock (Gate)
+        {
+            ReleaseHeldModifiers();
+            if (x is int px && y is int py)
+                MoveTo(px, py);
+            Down(vk);
+        }
+        bool keepGoing;
+        try
+        {
+            keepGoing = timer.Wait(holdMs, stop);
+        }
+        finally
+        {
+            lock (Gate)
+                Up(vk);
+        }
+        return keepGoing;
+    }
+
+    /// <summary>
+    /// Clicks <paramref name="vk"/> at a point: the move and the whole click under <see cref="Gate"/>, so another
+    /// loop row clicking elsewhere cannot move the pointer in between.
+    /// </summary>
+    public static bool TapAt(int vk, int x, int y, double holdMs, PreciseTimer timer, WaitHandle stop)
+    {
+        lock (Gate)
+        {
+            MoveTo(x, y);
+            return Tap(vk, holdMs, timer, stop);
+        }
+    }
+
     /// <summary>Presses and keeps <paramref name="vk"/> down (held modifiers are released first).</summary>
     public static void PressAndHold(int vk)
     {

@@ -26,6 +26,8 @@
 - Mouse buttons in a loop are chosen in a list (Left, Right, Middle, Back, Forward) instead of by
   clicking in the key field. Loops saved before keep their buttons.
 - The editors' titles name what they edit, for example "Edit loop - Spam".
+- The cards of loops name the click and the combination they send, for example "Left click every 1 s"
+  instead of "LButton every 1 s".
 - The **Test** button of a macro action shows a play icon.
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves
   Alt+J as it is.

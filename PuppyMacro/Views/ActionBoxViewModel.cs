@@ -53,7 +53,9 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     private int _unitIndex;
     private bool _captureOnLoad;
     private bool _isExpanded;
+    // Hold for and Pause between were left out of the loop file: their default stays left out.
     private readonly bool _holdWasDefault;
+    private readonly bool _pauseWasDefault;
 
     private ActionBoxViewModel(ActionKind kind, bool inLoop)
     {
@@ -69,6 +71,7 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         if (action.IsClick)
             _mouseVk = action.KeyVk;
         _holdWasDefault = action.HoldMs == null;
+        _pauseWasDefault = action.RepeatPauseMs == null;
         _holdMs = action.EffectiveHoldMs;
         _times = action.Times;
         _pauseMs = action.EffectiveRepeatPauseMs;
@@ -380,7 +383,7 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
 
     private string TimesText => Times > 1 ? $" {Times:0} times" : "";
 
-    private string Point => $"at {X:0}, {Y:0}";
+    private string Point => $"at {Number(X, 0):0}, {Number(Y, 0):0}";
 
     /// <summary>Under the title: what the action does (and, in a loop, how often).</summary>
     public string Summary
@@ -420,6 +423,10 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         {
             if (IsKeyKind && _key is not { IsSet: true })
                 return InLoop ? "Choose the key of every Press key." : "Choose a key.";
+            if (IsKeyKind && KeyNames.IsMouse(_key!.Vk))
+                return "Use a Click or Mouse button action for mouse buttons.";
+            if (InLoop && IsClick && _fixedPoint && (double.IsNaN(_x) || double.IsNaN(_y)))
+                return "Enter X and Y of every Click at a fixed point.";
             if (IsText && string.IsNullOrEmpty(_text))
                 return InLoop ? "Enter the text of every Paste text." : "Enter the text to paste.";
             if (IsHolding && _key is { HasModifiers: true })
@@ -465,7 +472,7 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
             int times = (int)Number(_times, 1);
             action.Repeat = times > 1 ? times : null;
             double pause = Number(_pauseMs, LoopAction.DefaultRepeatPauseMs);
-            action.RepeatPauseMs = pause == LoopAction.DefaultRepeatPauseMs ? null : pause;
+            action.RepeatPauseMs = pause == LoopAction.DefaultRepeatPauseMs && _pauseWasDefault ? null : pause;
         }
         action.Normalize();
         return action;

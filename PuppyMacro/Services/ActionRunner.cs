@@ -116,7 +116,15 @@ internal sealed class ActionRunner
                 // Held down for the whole time the loop runs; released when it stops. A mouse button with a
                 // fixed point is held there.
                 if (_action.IsClick && _action.HasFixedPoint)
-                    InputSender.MoveTo(_action.X!.Value, _action.Y!.Value);
+                {
+                    // Never on PuppyMacro's own windows: nothing is held, the row just waits for the stop.
+                    if (CursorGuard.IsOwnWindowAt(_action.X!.Value, _action.Y!.Value))
+                    {
+                        _stop.WaitOne();
+                        return;
+                    }
+                    InputSender.MoveTo(_action.X.Value, _action.Y.Value);
+                }
                 InputSender.PressAndHold(_action.KeyVk);
                 try
                 {
@@ -173,7 +181,6 @@ internal sealed class ActionRunner
             {
                 if (CursorGuard.IsOwnWindowAt(_action.X!.Value, _action.Y!.Value))
                     return !_stop.WaitOne(0);
-                InputSender.MoveTo(_action.X.Value, _action.Y.Value);
             }
             else if (CursorGuard.IsOverOwnWindow())
             {
@@ -190,14 +197,33 @@ internal sealed class ActionRunner
             {
                 if (p > 0 && !timer.Wait(DoubleClickGapMs, _stop))
                     return false;
-                bool keepGoing = !mouse && _action.HasModifiers
-                    ? InputSender.TapBinding(_action.Key, holdMs, timer, _stop)
-                    : InputSender.Tap(_action.KeyVk, holdMs, timer, _stop);
-                if (!keepGoing)
+                if (!PressOnce(mouse, holdMs, timer))
                     return false;
             }
         }
         return true;
+    }
+
+    /// <summary>
+    /// One press. A combination keeps the whole press under InputSender's lock; a longer Hold for than a tap
+    /// waits outside it, so other rows, macros and remaps go on meanwhile; a click at a fixed point moves there
+    /// with the press, so another row cannot move the pointer in between. A tap as before otherwise.
+    /// </summary>
+    private bool PressOnce(bool mouse, double holdMs, PreciseTimer timer)
+    {
+        if (!mouse && _action.HasModifiers)
+            return InputSender.TapBinding(_action.Key, holdMs, timer, _stop);
+        bool tap = holdMs <= LoopAction.DefaultHoldMs;
+        if (mouse && _action.HasFixedPoint)
+        {
+            int x = _action.X!.Value, y = _action.Y!.Value;
+            return tap
+                ? InputSender.TapAt(_action.KeyVk, x, y, holdMs, timer, _stop)
+                : InputSender.PressFor(_action.KeyVk, holdMs, timer, _stop, x, y);
+        }
+        return tap
+            ? InputSender.Tap(_action.KeyVk, holdMs, timer, _stop)
+            : InputSender.PressFor(_action.KeyVk, holdMs, timer, _stop);
     }
 
     private bool PasteText(PreciseTimer timer, double holdMs)
