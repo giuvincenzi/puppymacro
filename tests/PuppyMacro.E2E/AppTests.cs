@@ -338,7 +338,9 @@ public class AppTests
         // The button is never clicked.
         Window editor = AddF24LoopWithButton(app);
         Assert.Equal("EF", app.FindById(editor, "LabelBox").AsTextBox().Text);
-        app.FindById(editor, "OpacitySlider").Patterns.RangeValue.Pattern.SetValue(60);
+        // OpacitySlider is a ValueSlider: the Slider is inside it
+        app.FindById(editor, "OpacitySlider").FindFirstDescendant(cf => cf.ByControlType(ControlType.Slider))
+            .Patterns.RangeValue.Pattern.SetValue(60);
         app.FindById(editor, "SaveButton").AsButton().Click();
 
         Assert.True(Retry.WhileFalse(() =>
