@@ -573,13 +573,14 @@
                             <ui:SettingsCard.Description>
                                 <StackPanel>
                                     <TextBlock x:Name="UpdateStatusText" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="UpdateWhatsNew" Margin="0,2,0,0" Visibility="Collapsed">
-                                        <Hyperlink x:Name="UpdateWhatsNewLink" RequestNavigate="OnWhatsNewNavigate">What's new</Hyperlink>
-                                    </TextBlock>
                                     <ProgressBar x:Name="UpdateCardProgress" Margin="0,6,0,0" Maximum="100" Visibility="Collapsed" />
                                 </StackPanel>
                             </ui:SettingsCard.Description>
-                            <Button x:Name="UpdateCardButton" Click="OnUpdateActionClick" />
+                            <!-- The library's HyperlinkButton opens its NavigateUri in the browser -->
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ui:HyperlinkButton x:Name="UpdateWhatsNew" Content="What's new" Visibility="Collapsed" />
+                                <Button x:Name="UpdateCardButton" Click="OnUpdateActionClick" />
+                            </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="Check for updates automatically" Description="When PuppyMacro starts and every 12 hours">
                             <ui:SettingsCard.HeaderIcon>

@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Navigation;
 using System.Windows.Threading;
 using PuppyMacro.Services;
 using Velopack;
@@ -166,7 +165,7 @@ public partial class MainWindow
         UpdateCardProgress.Value = _downloadPercent;
         UpdateWhatsNew.Visibility = version != null && !downloading ? Visibility.Visible : Visibility.Collapsed;
         if (version != null)
-            UpdateWhatsNewLink.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
+            UpdateWhatsNew.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
 
         UpdateBar.Title = $"PuppyMacro {version} is available";
         UpdateBar.Message = downloading
@@ -215,12 +214,6 @@ public partial class MainWindow
     {
         if ((sender as FrameworkElement)?.Tag is string url)
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
-    }
-
-    private void OnWhatsNewNavigate(object sender, RequestNavigateEventArgs e)
-    {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
-        e.Handled = true;
     }
 
     private async void OnCheckForUpdatesChanged(object sender, RoutedEventArgs e)
