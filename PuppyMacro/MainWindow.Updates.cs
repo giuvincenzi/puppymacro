@@ -131,7 +131,7 @@ public partial class MainWindow
         string action;
         if (downloading)
         {
-            status = $"Downloading PuppyMacro {version}… {_downloadPercent}%";
+            status = $"Downloading version {version}… {_downloadPercent}%";
             action = "Cancel";
         }
         else if (_updateError != null)
@@ -141,7 +141,7 @@ public partial class MainWindow
         }
         else if (version != null)
         {
-            status = $"PuppyMacro {version} is available (you have {_updates.CurrentVersion})";
+            status = $"Version {version} is available (you have {_updates.CurrentVersion})";
             action = "Update";
         }
         else if (_checkingForUpdates)
@@ -167,10 +167,10 @@ public partial class MainWindow
         if (version != null)
             UpdateWhatsNew.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
 
-        UpdateBar.Title = $"PuppyMacro {version} is available";
+        UpdateBar.Title = "New version available";
         UpdateBar.Message = downloading
             ? $"Downloading… {_downloadPercent}%"
-            : _updateError ?? "Updating stops loops and macros and restarts PuppyMacro";
+            : _updateError ?? $"Version {version}. Updating restarts the app.";
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;
