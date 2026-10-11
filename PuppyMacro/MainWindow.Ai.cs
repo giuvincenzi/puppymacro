@@ -525,9 +525,9 @@ public partial class MainWindow : IAiHost
         }
     }
 
-    Task<(AiAnswer Answer, List<(int X, int Y)> Points)> IAiHost.PickPoints(string app, string message, int count)
+    Task<(AiAnswer Answer, List<(int X, int Y)> Points)> IAiHost.PickPoints(string app, string message, IReadOnlyList<string> labels)
     {
-        var picker = new PickPointWindow(askedBy: app, reason: message, count: count);
+        var picker = new PickPointWindow(askedBy: app, reason: message, labels: labels);
         AiAnswer answer = ShowForAi(picker);
         return Task.FromResult((answer, answer == AiAnswer.Done ? picker.Points.ToList() : new List<(int X, int Y)>()));
     }

@@ -31,59 +31,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <!-- ================= Status bar (approved design): the AI apps connected right now, each with a green dot whose halo
-             pulses slowly (still when Windows' animations are off). Shown only while one is connected; a click opens the AI page. ================= -->
-        <Border x:Name="AiStatusBar" Grid.Row="3" Height="28" Padding="16,0" BorderThickness="0,1,0,0" Visibility="Collapsed"
-                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Background="Transparent"
-                MouseLeftButtonUp="OnAiStatusBarClick" ToolTip="Connected AI apps: select to open the AI page"
-                AutomationProperties.Name="Connected AI apps">
-            <ItemsControl x:Name="AiStatusList" VerticalAlignment="Center" Focusable="False">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="18" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="8" Height="8" VerticalAlignment="Center">
-                                <Ellipse x:Name="Halo" Fill="{DynamicResource SystemFillColorSuccessBrush}" RenderTransformOrigin="0.5,0.5"
-                                         Opacity="0" Visibility="{Binding HaloVisibility}">
-                                    <Ellipse.RenderTransform>
-                                        <ScaleTransform />
-                                    </Ellipse.RenderTransform>
-                                    <Ellipse.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <BeginStoryboard>
-                                                <Storyboard RepeatBehavior="Forever">
-                                                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="1" To="2.6" Duration="0:0:2.4">
-                                                        <DoubleAnimation.EasingFunction>
-                                                            <CubicEase EasingMode="EaseOut" />
-                                                        </DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="1" To="2.6" Duration="0:0:2.4">
-                                                        <DoubleAnimation.EasingFunction>
-                                                            <CubicEase EasingMode="EaseOut" />
-                                                        </DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.55" To="0" Duration="0:0:2.4" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Ellipse.Triggers>
-                                </Ellipse>
-                                <Ellipse Fill="{DynamicResource SystemFillColorSuccessBrush}" />
-                            </Grid>
-                            <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{DynamicResource SystemFillColorSuccessBrush}" Text="{Binding Name}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>
 
         <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Enter overlay
              mode and Stop all on the right before the window buttons drawn by the library (as its
@@ -174,6 +122,58 @@
                  slightly lighter, a thin line on the top and left, the top-left corner rounded -->
             <Border Grid.Column="1" Background="{DynamicResource LayerFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1,1,0,0" CornerRadius="8,0,0,0">
+            <DockPanel>
+                <!-- ================= Status bar (approved design): the AI apps connected right now, each with a green dot whose halo
+                     pulses slowly (still when Windows' animations are off). Shown only while one is connected, on the right, inside the content layer (the side rail runs the whole height); a click opens the AI page. ================= -->
+                <Border x:Name="AiStatusBar" DockPanel.Dock="Bottom" Height="28" Padding="16,0" BorderThickness="0,1,0,0" Visibility="Collapsed"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Background="Transparent"
+                        MouseLeftButtonUp="OnAiStatusBarClick" ToolTip="Connected AI apps: select to open the AI page"
+                        AutomationProperties.Name="Connected AI apps">
+                    <ItemsControl x:Name="AiStatusList" HorizontalAlignment="Right" VerticalAlignment="Center" Focusable="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="18" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid Width="8" Height="8" VerticalAlignment="Center">
+                                        <Ellipse x:Name="Halo" Fill="{DynamicResource SystemFillColorSuccessBrush}" RenderTransformOrigin="0.5,0.5"
+                                                 Opacity="0" Visibility="{Binding HaloVisibility}">
+                                            <Ellipse.RenderTransform>
+                                                <ScaleTransform />
+                                            </Ellipse.RenderTransform>
+                                            <Ellipse.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever">
+                                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="1" To="1.8" Duration="0:0:2.4">
+                                                                <DoubleAnimation.EasingFunction>
+                                                                    <CubicEase EasingMode="EaseOut" />
+                                                                </DoubleAnimation.EasingFunction>
+                                                            </DoubleAnimation>
+                                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="1" To="1.8" Duration="0:0:2.4">
+                                                                <DoubleAnimation.EasingFunction>
+                                                                    <CubicEase EasingMode="EaseOut" />
+                                                                </DoubleAnimation.EasingFunction>
+                                                            </DoubleAnimation>
+                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.35" To="0" Duration="0:0:2.4" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Ellipse.Triggers>
+                                        </Ellipse>
+                                        <Ellipse Fill="{DynamicResource SystemFillColorSuccessBrush}" />
+                                    </Grid>
+                                    <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{DynamicResource SystemFillColorSuccessBrush}" Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
             <Grid>
 
                 <!-- ================= Loops page ================= -->
@@ -764,6 +764,7 @@
                 </ui:ScrollViewerEx>
 
             </Grid>
+            </DockPanel>
             </Border>
         </Grid>
     </Grid>

@@ -53,7 +53,9 @@ internal sealed class AiTools
         "top of everything, and waits until the user is ready (Enter or Start) before the user picks, so they can first open " +
         "the right screen (a game's inventory, a window). Give it a title (short, e.g. \"Pick the 3 items to destroy\"), a " +
         "description (one or two short sentences: what you are making and why) and the steps (one short instruction each, " +
-        "in order; PuppyMacro numbers them). For PuppyMacro's own screens, take the steps from the user guide (get_help).\n" +
+        "in order; PuppyMacro numbers them). For PuppyMacro's own screens, take the steps from the user guide (get_help). " +
+        "For each point, also give what it is (label, or labels for pick_points): it is shown next to the cursor while the " +
+        "user picks it. Write the title, description, steps and labels in the language the user writes to you in.\n" +
         "- place_floating_button gives a Toggle loop or macro a floating button for overlay mode and opens the screen where " +
         "the user places it, with your title, description and steps. open_item opens an item in PuppyMacro's editor, for the " +
         "user to look at or change it themselves.\n" +
@@ -64,6 +66,10 @@ internal sealed class AiTools
         "- Before building it, ask only the questions that matter for this item and that the user's words leave open, " +
         "for example how fast it should go, or which keys or items it covers. Skip questions that do not apply: a macro " +
         "that sells the inventory once needs no repeat count. Use sensible defaults for the rest, and say which.\n" +
+        "- When you have no more questions, and before any pick or save, write in the chat the exact steps the loop or " +
+        "macro will play, in order, one per line: each key or click and what it does there (\"1. Click the first item: " +
+        "selects it\", \"2. Press Space: destroys it\"). Ask the user to confirm them, and change them until they do. Only " +
+        "then ask for the points, in that same order, and save it.\n" +
         "- Once it is saved, offer in one short message only the extras it does not have yet and that make sense for it: " +
         "a hotkey, the overlay (Show in overlay) and a floating button (place_floating_button; Toggle items only), a sound " +
         "when it starts and stops, a specific app (if you already set AppExe, do not offer it). Do what the user picks.\n\n" +
@@ -210,11 +216,11 @@ internal sealed class AiTools
                 false, false, (a, app, c) => UpdateSettings(a, app, c)),
 
             new("pick_point", "Shows the user your title, description and steps, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y).",
-                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
-                true, false, (a, app, c) => PickPoints(a, app, 1, c)),
-            new("pick_points", "Like pick_point for several points in a row (for example the 3 items to click): the user clicks them in order.",
-                "{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "}," + asking + "},\"required\":[\"count\"," + askingRequired + "],\"additionalProperties\":false}",
-                true, false, (a, app, c) => PickPoints(a, app, null, c)),
+                "{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"description\":\"What this point is, shown next to the cursor while the user picks, e.g. \\\"The Salvage button\\\".\"}," + asking + "},\"required\":[\"label\"," + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickPoints(a, app, single: true, c)),
+            new("pick_points", "Like pick_point for several points in a row (for example the 3 items to click): the user clicks them in order, the order the loop or macro uses them.",
+                "{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"minItems\":2,\"maxItems\":" + MaxPoints + ",\"description\":\"One per point (as many as count), in order: what it is, shown next to the cursor while the user picks it, e.g. [\\\"The first item\\\", \\\"The second item\\\", \\\"The Confirm button\\\"].\"}," + asking + "},\"required\":[\"count\",\"labels\"," + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickPoints(a, app, single: false, c)),
             new("pick_app", "Shows the user your title, description and steps, waits until they are ready, then they click a window of an app: its .exe name, for AppExe.",
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickApp(a, app, c)),
@@ -643,12 +649,21 @@ internal sealed class AiTools
     // ================= Interactions =================
 
     /// <param name="count">1 for pick_point; null: the "count" argument (pick_points).</param>
-    private async Task<AiToolResult> PickPoints(JsonElement args, string app, int? count, CancellationToken cancel)
+    private async Task<AiToolResult> PickPoints(JsonElement args, string app, bool single, CancellationToken cancel)
     {
         AiAsk ask = Asking(args);
-        int points = count ?? (args.TryGetProperty("count", out JsonElement c) && c.TryGetInt32(out int n) ? n : 0);
-        if (count == null && (points < 2 || points > MaxPoints))
+        List<string> labels = single
+            ? new List<string> { (Str(args, "label") ?? "").Trim() }
+            : args.TryGetProperty("labels", out JsonElement list) && list.ValueKind == JsonValueKind.Array
+                ? list.EnumerateArray().Select(l => l.ValueKind == JsonValueKind.String ? l.GetString()!.Trim() : "").ToList()
+                : new List<string>();
+        if (labels.Any(l => l.Length == 0))
+            throw new FormatException(single ? "Give a \"label\": what the point is." : "Every one of the \"labels\" must say what its point is.");
+        int points = single ? 1 : args.TryGetProperty("count", out JsonElement c) && c.TryGetInt32(out int n) ? n : 0;
+        if (!single && (points < 2 || points > MaxPoints))
             return AiToolResult.Error($"count must be from 2 to {MaxPoints} (for one point, use pick_point).");
+        if (labels.Count != points)
+            return AiToolResult.Error($"Give one label per point: {points} points, {labels.Count} labels.");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         string label = (points == 1 ? "Asked for a point: " : $"Asked for {points} points: ") + ask.Title;
@@ -662,7 +677,7 @@ internal sealed class AiTools
             }
             if (BusyNow() is AiToolResult busy)
                 return busy;
-            var (answer, picked) = await _host.PickPoints(app, ask.Title, points);
+            var (answer, picked) = await _host.PickPoints(app, ask.Title, labels);
             string text = points == 1 && picked.Count == 1
                 ? JsonSerializer.Serialize(new { X = picked[0].X, Y = picked[0].Y })
                 : JsonSerializer.Serialize(picked.Select(p => new { X = p.X, Y = p.Y }));

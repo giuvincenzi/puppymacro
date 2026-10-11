@@ -195,7 +195,7 @@ Rules:
   `pick_points`, `pick_app`, `capture_hotkey`, `place_floating_button`) with a `title`, a `description` and `steps` the AI
   writes (`AiAsk`, no length limits; the steps shown numbered): first `AiReadyWindow` (centered, draggable, topmost, not
   activated; Enter or Esc alone from any app through `LoopEngine.WatchReadyKeys`, every other key passes; Start), then
-  `PickPointWindow` (`count` points, numbered), the key window or `PlacementWindow` (`place_floating_button`: Toggle loops
+  `PickPointWindow` (`count` points, numbered, each with the AI's `label` next to the cursor), the key window or `PlacementWindow` (`place_floating_button`: Toggle loops
   and macros only, the button and Show in overlay on, saved with its position through `SaveItem`); `open_item` opens the
   item's editor (`EditLoop` / `EditMacro` / `EditRemap` with `forAi`: centered, in front, the AI's title and description in
   its `NoticeBar`; the user's own changes); every window of an AI request opens centered on the screen (`ShowForAi`);

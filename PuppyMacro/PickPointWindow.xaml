@@ -26,6 +26,13 @@
             <TextBlock x:Name="AppLabelText" FontSize="12" Foreground="Black" />
         </Border>
 
+        <!-- An AI app's pick: what this point is, as the AI wrote it, next to the cursor and following it (approved): light
+             blue, see-through, never takes a click -->
+        <Border x:Name="PointLabel" MaxWidth="320" Padding="10,6" CornerRadius="6" Background="#CC60CDFF"
+                IsHitTestVisible="False" Visibility="Collapsed">
+            <TextBlock x:Name="PointLabelText" FontSize="13" Foreground="Black" TextWrapping="Wrap" />
+        </Border>
+
         <Border x:Name="Instructions" Padding="16,10" CornerRadius="8" BorderThickness="1"
                 Background="#F2202020" BorderBrush="#1FFFFFFF" Cursor="Arrow">
             <StackPanel Orientation="Horizontal">

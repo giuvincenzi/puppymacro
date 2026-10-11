@@ -263,6 +263,7 @@ public class AiTests
         Task<(string Text, bool IsError)> call = Call(client, "pick_points", new
         {
             count = 2,
+            labels = new[] { "The first test point", "The second test point" },
             title = "Pick the 2 test points",
             description = "The E2E test checks the picker.",
             steps = new[] { "Press Enter", "Click the 2 test points" },

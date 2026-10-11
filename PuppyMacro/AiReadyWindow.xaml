@@ -8,7 +8,7 @@
     AllowsTransparency="True"
     Background="Transparent"
     Topmost="True"
-    ShowInTaskbar="True"
+    ShowInTaskbar="False"
     ShowActivated="False"
     ResizeMode="NoResize"
     SizeToContent="Height"
@@ -19,7 +19,7 @@
     <!-- Before an AI app's pick or placement (approved design): what it asks, why and the steps, in the middle of the screen
          on top of the game or app the user prepares, and dragged anywhere; Enter (from any app) or Start when ready, Esc
          cancels. Fixed dark look, like the other windows over apps. -->
-    <Border CornerRadius="8" BorderThickness="1" Background="#F22B2B2B" BorderBrush="#1FFFFFFF" MouseLeftButtonDown="OnDrag">
+    <Border CornerRadius="8" BorderThickness="1" Background="#F22B2B2B" BorderBrush="#1FFFFFFF" MouseLeftButtonDown="OnDragStart" MouseMove="OnDragMove" MouseLeftButtonUp="OnDragEnd">
         <StackPanel>
             <StackPanel Margin="20,16,20,18">
                 <TextBlock x:Name="AskedByText" FontSize="12" Foreground="#C5C5C5" />

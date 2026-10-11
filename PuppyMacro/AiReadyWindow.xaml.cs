@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
+using PuppyMacro.Native;
 using PuppyMacro.Services.Ai;
 
 namespace PuppyMacro;
@@ -24,15 +26,9 @@ public partial class AiReadyWindow
         TitleText.Text = ask.Title;
         DescriptionText.Text = ask.Description;
         StepsList.ItemsSource = ask.Steps.Select((text, index) => new { Number = $"{index + 1}.", Text = text }).ToList();
-        // Closed from the taskbar or with Alt+F4: cancelled (the request does not wait, Enter is not taken any more).
+        SourceInitialized += OnSourceInitialized;
+        // Closed some other way: cancelled, so the request does not wait.
         Closed += (_, _) => Answer(AiAnswer.Cancelled);
-        PreviewKeyDown += (_, e) =>
-        {
-            if (e.Key == Key.Escape)
-                Answer(AiAnswer.Cancelled);
-            else if (e.Key == Key.Enter)
-                Answer(AiAnswer.Done);
-        };
     }
 
     /// <summary>The user is ready (Done), cancelled, or nobody answered (TimedOut).</summary>
@@ -49,10 +45,38 @@ public partial class AiReadyWindow
 
     private void OnStartClick(object sender, RoutedEventArgs e) => Answer(AiAnswer.Done);
 
-    /// <summary>Dragged anywhere on it (Start excepted), so it can be moved off what the user needs to see.</summary>
-    private void OnDrag(object sender, MouseButtonEventArgs e)
+    /// <summary>Never takes the focus from the app the user prepares, even when clicked or dragged (as the recording bar).</summary>
+    private void OnSourceInitialized(object? sender, EventArgs e)
     {
-        if (e.ButtonState == MouseButtonState.Pressed)
-            DragMove();
+        IntPtr hwnd = new WindowInteropHelper(this).Handle;
+        long exStyle = NativeMethods.GetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE).ToInt64();
+        NativeMethods.SetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE, new IntPtr(exStyle | NativeMethods.WS_EX_NOACTIVATE));
+    }
+
+    // Dragged anywhere on it (Start excepted), so it can be moved off what the user needs to see. Moved by hand with the
+    // mouse captured: Window.DragMove runs Windows' move loop, which can activate the window.
+    private Point? _grab;
+
+    private void OnDragStart(object sender, MouseButtonEventArgs e)
+    {
+        _grab = e.GetPosition(this);
+        ((UIElement)sender).CaptureMouse();
+        e.Handled = true;
+    }
+
+    private void OnDragMove(object sender, MouseEventArgs e)
+    {
+        if (_grab is not Point grab || e.LeftButton != MouseButtonState.Pressed
+            || PresentationSource.FromVisual(this)?.CompositionTarget is not { } target)
+            return;
+        Point screen = target.TransformFromDevice.Transform(PointToScreen(e.GetPosition(this)));
+        Left = screen.X - grab.X;
+        Top = screen.Y - grab.Y;
+    }
+
+    private void OnDragEnd(object sender, MouseButtonEventArgs e)
+    {
+        _grab = null;
+        ((UIElement)sender).ReleaseMouseCapture();
     }
 }

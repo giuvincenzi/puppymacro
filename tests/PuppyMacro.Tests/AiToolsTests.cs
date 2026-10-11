@@ -39,7 +39,7 @@ internal sealed class FakeAiHost : IAiHost
     public List<Guid> Placed { get; } = new();
     public AiAnswer OpenAnswer { get; set; } = AiAnswer.Done;
     public List<(Guid Id, string Title, string Description)> Opened { get; } = new();
-    public List<int> PointsAsked { get; } = new();
+    public List<IReadOnlyList<string>> PointsAsked { get; } = new();
     public List<AiSettingsValues> Applied { get; } = new();
     public bool StoppedAll { get; private set; }
 
@@ -102,10 +102,10 @@ internal sealed class FakeAiHost : IAiHost
         return ReadyAnswer;
     }
 
-    public Task<(AiAnswer Answer, List<(int X, int Y)> Points)> PickPoints(string app, string message, int count)
+    public Task<(AiAnswer Answer, List<(int X, int Y)> Points)> PickPoints(string app, string message, IReadOnlyList<string> labels)
     {
-        PointsAsked.Add(count);
-        return Task.FromResult((AiAnswer.Done, Enumerable.Range(0, count).Select(i => (640 + i, 360)).ToList()));
+        PointsAsked.Add(labels);
+        return Task.FromResult((AiAnswer.Done, Enumerable.Range(0, labels.Count).Select(i => (640 + i, 360)).ToList()));
     }
 
     public Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message) =>
@@ -172,6 +172,7 @@ public class AiToolsTests : IDisposable
     private static readonly object Asking = new
     {
         title = "Pick the Send button",
+        label = "The Send button",
         description = "We are making a macro that sends a message.",
         steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
     };
@@ -479,12 +480,20 @@ public class AiToolsTests : IDisposable
     public async Task A_pick_waits_until_the_user_is_ready_then_gives_the_points()
     {
         AiToolResult one = await Call("pick_point", Asking);
-        AiToolResult three = await Call("pick_points", new { count = 3, title = "Pick the 3 items", description = "We are making a macro.", steps = new[] { "Click the 3 items" } });
+        AiToolResult three = await Call("pick_points", new
+        {
+            count = 3,
+            labels = new[] { "First item", "Second item", "Third item" },
+            title = "Pick the 3 items",
+            description = "We are making a macro.",
+            steps = new[] { "Click the 3 items" },
+        });
 
         Assert.Equal("{\"X\":640,\"Y\":360}", one.Text);
         using JsonDocument points = JsonDocument.Parse(three.Text);
         Assert.Equal(3, points.RootElement.GetArrayLength());
-        Assert.Equal(new[] { 1, 3 }, _host.PointsAsked);
+        Assert.Equal(new[] { "The Send button" }, _host.PointsAsked[0]);
+        Assert.Equal(new[] { "First item", "Second item", "Third item" }, _host.PointsAsked[1]);
         Assert.Equal("Pick the Send button", _host.ReadyShown[0].Title);
         Assert.Equal("We are making a macro that sends a message.", _host.ReadyShown[0].Description);
         Assert.Equal(new[] { "Open the chat", "Press Enter", "Click the Send button" }, _host.ReadyShown[0].Steps);
@@ -505,10 +514,13 @@ public class AiToolsTests : IDisposable
     public async Task Interactions_need_a_title_a_description_and_steps()
     {
         string[] steps = { "Click it" };
-        Assert.True((await Call("pick_point", new { title = "Pick", description = "", steps })).IsError);
+        Assert.True((await Call("pick_point", new { label = "It", title = "Pick", description = "", steps })).IsError);
+        Assert.True((await Call("pick_point", new { title = "Pick", description = "Why", steps })).IsError); // no label
+        Assert.True((await Call("pick_points", new { count = 2, labels = new[] { "One", "" }, title = "Pick", description = "Why", steps })).IsError);
+        Assert.True((await Call("pick_points", new { count = 3, labels = new[] { "One", "Two" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_app", new { title = "", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_app", new { title = "Pick", description = "Why", steps = new[] { " " } })).IsError);
-        Assert.True((await Call("pick_points", new { count = 1, title = "Pick", description = "Why", steps })).IsError);
+        Assert.True((await Call("pick_points", new { count = 1, labels = new[] { "One" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.Empty(_host.ReadyShown);
     }
 
@@ -518,7 +530,7 @@ public class AiToolsTests : IDisposable
         string title = new('T', 300);
         string description = new('D', 2000);
 
-        await Call("pick_point", new { title, description, steps = new[] { "Click it" } });
+        await Call("pick_point", new { label = "It", title, description, steps = new[] { "Click it" } });
 
         Assert.Equal(title, _host.ReadyShown[0].Title);
         Assert.Equal(description, _host.ReadyShown[0].Description);

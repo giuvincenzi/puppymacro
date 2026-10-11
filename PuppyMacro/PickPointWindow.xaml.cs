@@ -20,15 +20,19 @@ public partial class PickPointWindow
 
     private readonly int _count;
     private readonly string _instructions;
+    private readonly IReadOnlyList<string>? _labels;
     private readonly List<(int X, int Y)> _points = new();
 
     /// <param name="askedBy">An AI app that asks for the points or app (pick_point(s), pick_app), shown with its <paramref name="reason"/>.</param>
     /// <param name="count">Points to click in a row (pick_points): "2 / 3" before the text, each one numbered where it was clicked.</param>
-    public PickPointWindow(bool pickApp = false, string? askedBy = null, string? reason = null, int count = 1)
+    /// <param name="labels">What each point is (an AI app's pick, one per point): shown next to the cursor, the current one.</param>
+    public PickPointWindow(bool pickApp = false, string? askedBy = null, string? reason = null, int count = 1,
+        IReadOnlyList<string>? labels = null)
     {
         InitializeComponent();
         _pickApp = pickApp;
-        _count = Math.Max(1, count);
+        _count = Math.Max(1, labels?.Count ?? count);
+        _labels = labels is { Count: > 0 } ? labels : null;
         if (pickApp)
         {
             Title = "Pick an app";
@@ -51,6 +55,7 @@ public partial class PickPointWindow
             Activate();
             Focus();
             UpdateHovered();
+            UpdatePointLabel();
         };
     }
 
@@ -64,6 +69,25 @@ public partial class PickPointWindow
     {
         if (_count > 1)
             InstructionsText.Text = $"{Math.Min(_points.Count + 1, _count)} / {_count}   {_instructions}";
+        if (_labels != null)
+            PointLabelText.Text = _labels[Math.Min(_points.Count, _labels.Count - 1)];
+    }
+
+    /// <summary>The current point's label just below and right of the cursor, on the other side near the screen's edges.</summary>
+    private void UpdatePointLabel()
+    {
+        if (_labels == null || !IsLoaded)
+            return;
+        PointLabel.Visibility = Visibility.Visible;
+        NativeMethods.GetCursorPos(out var cursor);
+        Point at = PointFromScreen(new Point(cursor.X, cursor.Y));
+        PointLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        Size size = PointLabel.DesiredSize;
+        const double gap = 20;
+        double x = at.X + gap + size.Width <= ActualWidth ? at.X + gap : at.X - gap - size.Width;
+        double y = at.Y + gap + size.Height <= ActualHeight ? at.Y + gap : at.Y - gap - size.Height;
+        Canvas.SetLeft(PointLabel, Math.Max(0, x));
+        Canvas.SetTop(PointLabel, Math.Max(0, y));
     }
 
     /// <summary>A number where a point was clicked, so the user sees which ones are done.</summary>
@@ -130,6 +154,7 @@ public partial class PickPointWindow
     {
         if (_pickApp)
             UpdateHovered();
+        UpdatePointLabel();
     }
 
     /// <summary>Outlines the app window under the cursor (this overlay and PuppyMacro's windows are skipped) and shows its .exe name.</summary>

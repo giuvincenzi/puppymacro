@@ -66,8 +66,8 @@ internal interface IAiHost
     /// </summary>
     Task<AiAnswer> Ready(string app, AiAsk ask);
 
-    /// <summary>The user clicks <paramref name="count"/> points on the screen, in order (physical pixels).</summary>
-    Task<(AiAnswer Answer, List<(int X, int Y)> Points)> PickPoints(string app, string message, int count);
+    /// <summary>The user clicks one point per label on the screen, in order (physical pixels), the current label next to the cursor.</summary>
+    Task<(AiAnswer Answer, List<(int X, int Y)> Points)> PickPoints(string app, string message, IReadOnlyList<string> labels);
 
     Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message);
 

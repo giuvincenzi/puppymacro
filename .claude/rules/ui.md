@@ -167,11 +167,15 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     …" in caption style with the `BotSparkle` icon, a key request also the AI's description and, under "Instructions"
     (`BodyStrongTextBlockStyle`), its steps as "1. …". An editor opened by `open_item` shows the AI's title and
     description in its `NoticeBar`. `AiReadyWindow`, before a pick or a placement, is drawn over other apps like the
-    overlays (fixed dark look, borderless, topmost, not activated, centered on the screen, dragged anywhere on it): "app
+    overlays (fixed dark look, borderless, topmost, centered on the screen; `WS_EX_NOACTIVATE`, so a click or a drag never
+    takes the focus from the app in front: dragged by hand with the mouse captured, not `DragMove`): "app
     asks", the title at 20 px semibold, the description, "Instructions" and the steps, numbered in `#60CDFF`, one per line,
     then "Press Enter when you're ready · Esc cancels" with keycaps and Start (a button template of its own in the accent
     blue, like the recording bar's). `PickPointWindow` with several points shows
-    "2 / 3" before its text and a numbered `#60CDFF` circle where each point was clicked.
+    "2 / 3" before its text and a numbered `#60CDFF` circle where each point was clicked; for an AI app, the current point's
+    label (the AI's text) in a see-through `#60CDFF` box 20 px below and right of the cursor, following it (on the other
+    side near the screen's edges), never hit-tested.
+  - The status bar's apps sit on the right; it is inside the pages' content layer, so the side rail runs the whole height.
   - An editor's History view (approved design): the third item of its Form / Code switch, shown only for a saved item; the
     versions in a standard `ListView` grouped by day (time, who, summary, "(current)" on the newest), the chosen one's
     changes in a card on the right with **Restore this version** (`AccentButtonStyle`); the editor's `NoticeBar`, a standard
