@@ -129,7 +129,6 @@ public partial class MainWindow
 
         string status;
         string action;
-        bool primary = false;
         if (downloading)
         {
             status = $"Downloading PuppyMacro {version}… {_downloadPercent}%";
@@ -144,7 +143,6 @@ public partial class MainWindow
         {
             status = $"PuppyMacro {version} is available (you have {_updates.CurrentVersion})";
             action = "Update";
-            primary = true;
         }
         else if (_checkingForUpdates)
         {
@@ -176,19 +174,7 @@ public partial class MainWindow
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;
-        SetUpdateButtonStyle(UpdateCardButton, primary);
-        SetUpdateButtonStyle(UpdateBarButton, primary);
         UpdateBar.IsClosable = !downloading; // Later
-    }
-
-    /// <summary>The accent button for Update, the standard one otherwise. Clearing the Style (not setting it to null)
-    /// lets the implicit iNKORE style apply again: a null Style falls back to WPF's own theme.</summary>
-    private void SetUpdateButtonStyle(System.Windows.Controls.Button button, bool primary)
-    {
-        if (primary)
-            button.Style = (Style)FindResource("AccentButtonStyle");
-        else
-            button.ClearValue(StyleProperty);
     }
 
     private async void OnUpdateActionClick(object sender, RoutedEventArgs e)

@@ -156,15 +156,18 @@
                             <Grid.RenderTransform>
                                 <TranslateTransform />
                             </Grid.RenderTransform>
-                            <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.Settings_20_Regular}" Style="{StaticResource WhenNotSelected}" />
-                            <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.Settings_20_Filled}" Style="{StaticResource WhenSelected}"
-                                         Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                            <!-- As wide as the icon, so the dot sits on its top-right corner and moves with it -->
+                            <Grid HorizontalAlignment="Center">
+                                <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.Settings_20_Regular}" Style="{StaticResource WhenNotSelected}" />
+                                <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.Settings_20_Filled}" Style="{StaticResource WhenSelected}"
+                                             Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                <!-- While an update is available, on the icon as the dot on Downloads in Microsoft Store -->
+                                <ui:InfoBadge x:Name="UpdateDot" Margin="0,-2,-3,0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                              Style="{StaticResource AttentionDotInfoBadgeStyle}" Visibility="Collapsed" />
+                            </Grid>
                         </Grid>
                         <TextBlock Style="{StaticResource Name}" Text="Settings" />
                     </StackPanel>
-                    <!-- While an update is available, as the dot on Downloads in Microsoft Store -->
-                    <ui:InfoBadge x:Name="UpdateDot" Margin="0,-2,-10,0" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                  Style="{StaticResource AttentionDotInfoBadgeStyle}" Visibility="Collapsed" />
                 </Grid>
             </ListViewItem>
         </ListView>
