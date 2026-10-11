@@ -491,7 +491,7 @@
                                     <views:PlaceButton MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
                                 </ui:SettingsCard>
                                 <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them"
-                                                 Description="Some fullscreen apps may react to the click. If so, turn this off.">
+                                                 Description="Some fullscreen apps may react to the click. If so, turn this off and use hotkeys only.">
                                     <ui:ToggleSwitch x:Name="ClickInPanelSwitch" Toggled="OnClickInPanelChanged" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
