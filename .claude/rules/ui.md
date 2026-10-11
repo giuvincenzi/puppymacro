@@ -94,8 +94,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     overlay mode (a standard button with the `MapLayers` icon) and Stop all, then the window buttons
     (`TitleBar.SystemOverlayRightInset`). Both have their hotkey in the tooltip and `WindowChrome.IsHitTestVisibleInChrome`,
     and show on every page. They sit 9 px from the top (the window's 1 px border, then 8), so they look 8 px from the top
-    and the bottom, as Microsoft Store's search box (measured). Minimize and close keep the standard 32 px height at the top
-    (`TitleBar.ButtonStyle`: the library's style with `Height` 32 and `VerticalAlignment` Top), as in Microsoft Store.
+    and the bottom, as Microsoft Store's search box (measured). Minimize and close are the library's, as tall as the bar;
+    16 px between our last button and them.
   - The main window's Stop all, in that title bar: the filled `Stop_16_Filled` icon and its text, `AccentButtonStyle` with
     `AccentButtonBackground`, `…PointerOver` and `…Pressed` redefined in its `Button.Resources` from
     `SystemFillColorCritical` (100%, 90%, 80%); shown only while something runs, hidden otherwise.

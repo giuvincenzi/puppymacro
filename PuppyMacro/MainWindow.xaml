@@ -17,16 +17,9 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:TitleBar.Height="48"
-    ui:TitleBar.ButtonStyle="{DynamicResource WindowButtonStyle}"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed">
 
     <Window.Resources>
-        <!-- Minimize and close keep the standard 32 px height at the top of the 48 px title bar, as in Microsoft Store
-             (the library stretches them to the whole bar) -->
-        <Style x:Key="WindowButtonStyle" TargetType="ui:TitleBarButton" BasedOn="{StaticResource {x:Type ui:TitleBarButton}}">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-        </Style>
         <!-- Cards of a list: 4 apart, as in Windows Settings -->
         <ItemsPanelTemplate x:Key="CardListPanel">
             <ikw:SimpleStackPanel Spacing="4" />
@@ -88,8 +81,9 @@
                         <TextBlock VerticalAlignment="Center" Text="Stop all" />
                     </StackPanel>
                 </Button>
-                <!-- The window buttons' place -->
-                <Rectangle Width="{Binding (ui:TitleBar.SystemOverlayRightInset), RelativeSource={RelativeSource AncestorType=Window}}" />
+                <!-- The window buttons' place, 8 more px before them: 16 from our last button -->
+                <Rectangle Margin="8,0,0,0"
+                           Width="{Binding (ui:TitleBar.SystemOverlayRightInset), RelativeSource={RelativeSource AncestorType=Window}}" />
             </StackPanel>
         </Grid>
 
