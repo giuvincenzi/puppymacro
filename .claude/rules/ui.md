@@ -161,13 +161,16 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     top, shown only while an AI app is connected: for each one a green dot (`SystemFillColorSuccessBrush`) whose halo grows
     and fades in 2.4 s, forever (still when `SystemParameters.ClientAreaAnimation` is off), and its name in caption style in
     the same green. A click opens the AI page.
-  - The windows of an AI app's request (`AiRequestWindow`, `PickPointWindow`) open topmost until the user activates them
-    (`Views/AiWindow.BringToFront`): the AI app is in front and Windows may not let PuppyMacro take the focus.
-    `AiRequestWindow` (title "AI request - app") shows "Asked by …" in caption style with the `BotSparkle` icon, a key
-    request also the AI's context. `AiReadyWindow`, before a pick, is drawn over other apps like the overlays (fixed dark
-    look, borderless, topmost, not activated, at the top right of the work area): "app asks", the message at 20 px
-    semibold, "Context" and the context, then "Press Enter when you're ready · Esc cancels" with keycaps and Start (a
-    button template of its own in the accent blue, like the recording bar's). `PickPointWindow` with several points shows
+  - The windows of an AI app's request (`AiRequestWindow`, `PickPointWindow`, an editor opened by `open_item`) open
+    centered on the screen and topmost until the user activates them (`Views/AiWindow.BringToFront`): the AI app is in
+    front and Windows may not let PuppyMacro take the focus. `AiRequestWindow` (title "AI request - app") shows "Asked by
+    …" in caption style with the `BotSparkle` icon, a key request also the AI's description and, under "Instructions"
+    (`BodyStrongTextBlockStyle`), its steps as "1. …". An editor opened by `open_item` shows the AI's title and
+    description in its `NoticeBar`. `AiReadyWindow`, before a pick or a placement, is drawn over other apps like the
+    overlays (fixed dark look, borderless, topmost, not activated, centered on the screen, dragged anywhere on it): "app
+    asks", the title at 20 px semibold, the description, "Instructions" and the steps, numbered in `#60CDFF`, one per line,
+    then "Press Enter when you're ready · Esc cancels" with keycaps and Start (a button template of its own in the accent
+    blue, like the recording bar's). `PickPointWindow` with several points shows
     "2 / 3" before its text and a numbered `#60CDFF` circle where each point was clicked.
   - An editor's History view (approved design): the third item of its Form / Code switch, shown only for a saved item; the
     versions in a standard `ListView` grouped by day (time, who, summary, "(current)" on the newest), the chosen one's

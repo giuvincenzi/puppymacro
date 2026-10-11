@@ -484,17 +484,24 @@ public partial class MainWindow
         menu.IsOpen = true;
     }
 
-    private void EditLoop(LoopItemViewModel item)
+    /// <param name="forAi">Opened for an AI app (open_item): prepares the editor instead of centering it on this window.</param>
+    /// <returns>Whether the user saved.</returns>
+    private bool EditLoop(LoopItemViewModel item, Action<Window>? forAi = null)
     {
         if (_engine.AnyRunning)
-            return;
+            return false;
 
-        var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
+        var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor);
+        if (forAi == null)
+            editor.Owner = this;
+        else
+            forAi(editor);
         if (_itemHistory != null)
             editor.EnableHistory(_itemHistory);
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
-            return;
+            return false;
         ApplyLoopEdit(item, editor.Result);
+        return true;
     }
 
     /// <summary>A change of a loop saved by the editor.</summary>
@@ -691,16 +698,23 @@ public partial class MainWindow
         menu.IsOpen = true;
     }
 
-    private void EditMacro(MacroItemViewModel item)
+    /// <param name="forAi">Opened for an AI app (open_item): prepares the editor instead of centering it on this window.</param>
+    /// <returns>Whether the user saved.</returns>
+    private bool EditMacro(MacroItemViewModel item, Action<Window>? forAi = null)
     {
         if (_engine.AnyRunning)
-            return;
-        var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
+            return false;
+        var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor);
+        if (forAi == null)
+            editor.Owner = this;
+        else
+            forAi(editor);
         if (_itemHistory != null)
             editor.EnableHistory(_itemHistory);
         if (ShowMacroEditor(editor) != true || editor.Result == null)
-            return;
+            return false;
         ApplyMacroEdit(item, editor.Result);
+        return true;
     }
 
     /// <summary>A change of a macro saved by the editor.</summary>
@@ -1140,7 +1154,8 @@ public partial class MainWindow
     /// Opens the placement overlay with the whole overlay as overlay mode shows it: the overlay
     /// panel (when shown) and every floating button, plus the one being edited.
     /// </summary>
-    private Point? OpenPlacement(EditedFloatingButton? edited)
+    /// <param name="show">Shows the placement screen (default: as the editors do); true when the user selected Done.</param>
+    private Point? OpenPlacement(EditedFloatingButton? edited, Func<Window, bool>? show = null)
     {
         var others = FloatingButtonItems().Where(i => i.Id != edited?.Id).ToList();
         var sources = others.Select(i => (SavedPosition(i.FloatingButton), i.FloatingButton.Size)).ToList();
@@ -1172,7 +1187,7 @@ public partial class MainWindow
 
         var placement = new PlacementWindow(_items, _macroItems, _settings.ShowOverlayPanel, PanelPosition(), _settings.OverlayPanelOpacity,
             KeyNames.Format(_settings.OverlayModeHotkey), KeyNames.Format(_settings.StopAllHotkey), buttons, edited?.Id);
-        if (ShowDialogWithoutHotkeys(placement) != true)
+        if (!(show?.Invoke(placement) ?? ShowDialogWithoutHotkeys(placement) == true))
             return null;
 
         if (_settings.ShowOverlayPanel)
@@ -1584,14 +1599,21 @@ public partial class MainWindow
         menu.IsOpen = true;
     }
 
-    private void EditRemap(RemapItemViewModel item)
+    /// <param name="forAi">Opened for an AI app (open_item): prepares the editor instead of centering it on this window.</param>
+    /// <returns>Whether the user saved.</returns>
+    private bool EditRemap(RemapItemViewModel item, Action<Window>? forAi = null)
     {
-        var editor = new RemapEditorWindow(_engine, _settings, _macros, item.Definition) { Owner = this };
+        var editor = new RemapEditorWindow(_engine, _settings, _macros, item.Definition);
+        if (forAi == null)
+            editor.Owner = this;
+        else
+            forAi(editor);
         if (_itemHistory != null)
             editor.EnableHistory(_itemHistory);
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
-            return;
+            return false;
         ApplyRemapEdit(item, editor.Result);
+        return true;
     }
 
     /// <summary>A change of a remap saved by the editor.</summary>

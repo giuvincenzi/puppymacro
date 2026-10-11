@@ -28,10 +28,11 @@
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
             </StackPanel>
             <TextBlock x:Name="HeadingText" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
-            <!-- A key request: why the AI asks (its context) -->
+            <!-- A key request: why the AI asks (its description), then its steps, numbered, under Instructions -->
             <TextBlock x:Name="ContextText" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Visibility="Collapsed" />
+            <TextBlock x:Name="InstructionsTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Instructions" Visibility="Collapsed" />
 
-            <!-- Confirmation: what changes, one line each -->
+            <!-- Confirmation: what changes, one line each; a key request: its steps -->
             <ItemsControl x:Name="Lines" Visibility="Collapsed">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

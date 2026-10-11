@@ -86,7 +86,6 @@ public class AiTests
         item = new { Source = new { Vk = Vk.F23 }, Target = new { Vk = Vk.F22 }, Note = "E2E remap" },
     };
 
-    private static readonly object Asking = new { message = "Click the test point", context = "The E2E test checks the picker." };
 
     [Fact]
     public async Task With_AI_access_off_an_AI_app_is_refused_and_the_page_shows_it()
@@ -234,10 +233,16 @@ public class AiTests
         using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
         await using McpClient client = await Connect();
 
-        Task<(string Text, bool IsError)> call = Call(client, "capture_hotkey", new { message = "The key to remap", context = "The E2E test checks the key window." });
+        Task<(string Text, bool IsError)> call = Call(client, "capture_hotkey", new
+        {
+            title = "The key to remap",
+            description = "The E2E test checks the key window.",
+            steps = new[] { "Press F22" },
+        });
         Window window = RequestWindow(app);
         Assert.True(app.Has(window, "The key to remap"));
         Assert.True(app.Has(window, "The E2E test checks the key window."));
+        Assert.True(app.Has(window, "1. Press F22"));
         app.Find(window, "Press the key or combination (Esc cancels)");
         Keyboard.Press(VirtualKeyShort.F22);
         Keyboard.Release(VirtualKeyShort.F22);
@@ -255,10 +260,18 @@ public class AiTests
         using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
         await using McpClient client = await Connect();
 
-        Task<(string Text, bool IsError)> call = Call(client, "pick_points", new { count = 2, message = "Click the 2 test points", context = "The E2E test checks the picker." });
+        Task<(string Text, bool IsError)> call = Call(client, "pick_points", new
+        {
+            count = 2,
+            title = "Pick the 2 test points",
+            description = "The E2E test checks the picker.",
+            steps = new[] { "Press Enter", "Click the 2 test points" },
+        });
         Window ready = RequestWindow(app);
-        Assert.True(app.Has(ready, "Click the 2 test points"));
+        Assert.True(app.Has(ready, "Pick the 2 test points"));
         Assert.True(app.Has(ready, "The E2E test checks the picker."));
+        Assert.True(app.Has(ready, "1."));
+        Assert.True(app.Has(ready, "Click the 2 test points"));
         Assert.Null(Retry.WhileNull(() => app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName("Pick a point").And(cf.ByProcessId(app.ProcessId))),
             TimeSpan.FromSeconds(1)).Result); // no picker before Start
         app.FindButton(ready, "Start").Invoke();
@@ -272,6 +285,64 @@ public class AiTests
         using JsonDocument points = JsonDocument.Parse(text);
         Assert.Equal(400, points.RootElement[0].GetProperty("X").GetInt32());
         Assert.Equal(320, points.RootElement[1].GetProperty("Y").GetInt32());
+    }
+
+    [Fact]
+    public async Task A_floating_button_asked_by_an_AI_app_is_placed_by_the_user()
+    {
+        var loop = new LoopDefinition { Name = "E2E button", Actions = { new LoopAction { KeyVk = Vk.F24, IntervalValue = 500 } } };
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.AllowAiAccess = true;
+            seed.Settings.Loops.Add(loop);
+        });
+        await using McpClient client = await Connect();
+
+        Task<(string Text, bool IsError)> call = Call(client, "place_floating_button", new
+        {
+            id = loop.Id.ToString(),
+            title = "Place the E2E button",
+            description = "The E2E test checks the placement.",
+            steps = new[] { "Drag the button", "Press Enter" },
+        });
+        Window ready = RequestWindow(app);
+        Assert.True(app.Has(ready, "Place the E2E button"));
+        app.FindButton(ready, "Start").Invoke();
+        AutomationElement? placement = app.TopWindow("Position the overlay");
+        Assert.NotNull(placement);
+        placement.Focus();
+        Keyboard.Type(VirtualKeyShort.ENTER);
+        var (text, isError) = await call;
+        var (saved, _) = await Call(client, "get_item", new { id = loop.Id.ToString() });
+
+        Assert.False(isError, text);
+        Assert.Contains("is on and placed", text);
+        using JsonDocument item = JsonDocument.Parse(saved);
+        JsonElement button = item.RootElement.GetProperty("FloatingButton");
+        Assert.True(button.GetProperty("Enabled").GetBoolean());
+        Assert.Equal(JsonValueKind.Number, button.GetProperty("X").ValueKind);
+    }
+
+    [Fact]
+    public async Task An_item_opened_by_an_AI_app_shows_why_in_its_editor()
+    {
+        var remap = new RemapDefinition { Source = HotkeyBinding.FromKey(Vk.F23), Target = HotkeyBinding.FromKey(Vk.F22), Note = "E2E remap" };
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.AllowAiAccess = true;
+            seed.Settings.Remaps.Add(remap);
+        });
+        await using McpClient client = await Connect();
+        string id = remap.Id.ToString();
+
+        Task<(string Text, bool IsError)> call = Call(client, "open_item", new { id, title = "Check the E2E remap", description = "The E2E test opens it." });
+        Window editor = app.Dialog("Edit remap");
+        Assert.True(app.Has(editor, "Check the E2E remap"));
+        editor.Close();
+        var (text, isError) = await call;
+
+        Assert.False(isError, text);
+        Assert.Contains("without saving", text);
     }
 
     [Fact]

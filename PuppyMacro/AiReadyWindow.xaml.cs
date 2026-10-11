@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using PuppyMacro.Services.Ai;
@@ -6,27 +7,23 @@ using PuppyMacro.Services.Ai;
 namespace PuppyMacro;
 
 /// <summary>
-/// "Ready?" before an AI app's pick or key request: its message and context, on top of everything, at the top right of the
-/// screen, without taking the focus from the app the user prepares. Enter and Esc come from any app through the engine
-/// (<c>LoopEngine.WatchReadyKeys</c>, set by <c>MainWindow</c>); Start and Esc here work too. <see cref="Answered"/> once.
+/// "Ready?" before an AI app's pick or placement: its title, description and numbered steps, on top of everything, in the
+/// middle of the screen (the user can drag it), without taking the focus from the app the user prepares. Enter and Esc come
+/// from any app through the engine (<c>LoopEngine.WatchReadyKeys</c>, set by <c>MainWindow</c>); Start and Esc here work
+/// too. <see cref="Answered"/> once.
 /// </summary>
 public partial class AiReadyWindow
 {
     private bool _answered;
 
-    internal AiReadyWindow(string app, string message, string context)
+    internal AiReadyWindow(string app, AiAsk ask)
     {
         InitializeComponent();
         Title = $"AI request - {app}";
         AskedByText.Text = $"{app} asks";
-        MessageText.Text = message;
-        ContextText.Text = context;
-        Loaded += (_, _) =>
-        {
-            Rect work = SystemParameters.WorkArea;
-            Left = work.Right - ActualWidth - 32;
-            Top = work.Top + 32;
-        };
+        TitleText.Text = ask.Title;
+        DescriptionText.Text = ask.Description;
+        StepsList.ItemsSource = ask.Steps.Select((text, index) => new { Number = $"{index + 1}.", Text = text }).ToList();
         // Closed from the taskbar or with Alt+F4: cancelled (the request does not wait, Enter is not taken any more).
         Closed += (_, _) => Answer(AiAnswer.Cancelled);
         PreviewKeyDown += (_, e) =>
@@ -51,4 +48,11 @@ public partial class AiReadyWindow
     }
 
     private void OnStartClick(object sender, RoutedEventArgs e) => Answer(AiAnswer.Done);
+
+    /// <summary>Dragged anywhere on it (Start excepted), so it can be moved off what the user needs to see.</summary>
+    private void OnDrag(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ButtonState == MouseButtonState.Pressed)
+            DragMove();
+    }
 }

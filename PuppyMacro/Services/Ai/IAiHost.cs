@@ -61,20 +61,32 @@ internal interface IAiHost
     Task<AiAnswer> Confirm(string app, string title, IReadOnlyList<string> lines, string primary);
 
     /// <summary>
-    /// The window before an interaction: what the AI asks (<paramref name="message"/>) and why (<paramref name="context"/>),
-    /// always on top; Enter or Start when the user is ready, Esc cancels.
+    /// The window before an interaction: the AI's title, description and numbered steps, centered on the screen and always
+    /// on top; Enter or Start when the user is ready, Esc cancels.
     /// </summary>
-    Task<AiAnswer> Ready(string app, string message, string context);
+    Task<AiAnswer> Ready(string app, AiAsk ask);
 
     /// <summary>The user clicks <paramref name="count"/> points on the screen, in order (physical pixels).</summary>
     Task<(AiAnswer Answer, List<(int X, int Y)> Points)> PickPoints(string app, string message, int count);
 
     Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message);
 
-    /// <summary>The user presses a key or combination in a window that shows <paramref name="message"/> and <paramref name="context"/>.</summary>
-    Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, string message, string context);
+    /// <summary>The user presses a key or combination in a window that shows the AI's title, description and steps.</summary>
+    Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, AiAsk ask);
+
+    /// <summary>
+    /// Turns on the floating button of a Toggle loop or macro (and Show in overlay), then opens the placement screen; Enter
+    /// saves its position, recorded as <paramref name="app"/>'s. Cancelled leaves the item as it was.
+    /// </summary>
+    Task<AiAnswer> PlaceFloatingButton(Guid id, string app);
+
+    /// <summary>Opens the item's editor with the AI's <paramref name="title"/> and <paramref name="description"/> on top: Done when the user saved.</summary>
+    Task<AiAnswer> OpenItem(Guid id, string app, string title, string description);
 
     void StopAll();
 
     IReadOnlyList<string> RunningApps();
 }
+
+/// <summary>What an AI app asks the user to do: a short title, why (description) and the steps, shown numbered.</summary>
+public sealed record AiAsk(string Title, string Description, IReadOnlyList<string> Steps);

@@ -49,14 +49,24 @@ internal sealed class AiTools
         "answer then says whether the user confirmed or cancelled. After a change, tell the user to try it.\n" +
         "- pick_point, pick_points, pick_app and capture_hotkey ask the user to click points on the screen, click a window " +
         "of an app, or press keys. Use them instead of guessing coordinates, app names or key codes. First explain in the " +
-        "chat what the user will have to do; then call the tool. PuppyMacro shows your message and context in a window on " +
-        "top of everything and waits until the user is ready (Enter or Start) before the user picks, so they can first open " +
-        "the right screen (a game's inventory, a window). Write the message as one short instruction (\"Click the 3 " +
-        "items to destroy, in order\") and the context as 1 to 3 sentences: what you are making, why you need this, and " +
-        "what to open first.\n" +
+        "chat what the user will have to do; then call the tool. PuppyMacro shows a window in the middle of the screen, on " +
+        "top of everything, and waits until the user is ready (Enter or Start) before the user picks, so they can first open " +
+        "the right screen (a game's inventory, a window). Give it a title (short, e.g. \"Pick the 3 items to destroy\"), a " +
+        "description (one or two short sentences: what you are making and why) and the steps (one short instruction each, " +
+        "in order; PuppyMacro numbers them). For PuppyMacro's own screens, take the steps from the user guide (get_help).\n" +
+        "- place_floating_button gives a Toggle loop or macro a floating button for overlay mode and opens the screen where " +
+        "the user places it, with your title, description and steps. open_item opens an item in PuppyMacro's editor, for the " +
+        "user to look at or change it themselves.\n" +
         "- A request that waits for the user answers after about 40 seconds at most. If the user has not answered yet, the " +
         "answer says so with a request_id: call wait_for_user with it (again if needed) until the user answers. Only one " +
         "such request at a time.\n\n" +
+        "Creating a new loop or macro (not when changing one):\n" +
+        "- Before building it, ask only the questions that matter for this item and that the user's words leave open, " +
+        "for example how fast it should go, or which keys or items it covers. Skip questions that do not apply: a macro " +
+        "that sells the inventory once needs no repeat count. Use sensible defaults for the rest, and say which.\n" +
+        "- Once it is saved, offer in one short message only the extras it does not have yet and that make sense for it: " +
+        "a hotkey, the overlay (Show in overlay) and a floating button (place_floating_button; Toggle items only), a sound " +
+        "when it starts and stops, a specific app (if you already set AppExe, do not offer it). Do what the user picks.\n\n" +
         "Not available: starting, stopping or testing loops and macros (only stop_all, which stops everything). Their keys " +
         "and clicks would go to the window in front, which is usually this chat. Ask the user to start them in " +
         "PuppyMacro: the Play button on the item's card, its hotkey, or overlay mode. A running item that you change stops.\n\n" +
@@ -134,9 +144,11 @@ internal sealed class AiTools
         const string none = """{"type":"object","properties":{},"additionalProperties":false}""";
         const string idOnly = """{"type":"object","properties":{"id":{"type":"string","description":"The Id of a loop, macro or remap (get_overview lists them)."}},"required":["id"],"additionalProperties":false}""";
         const string asking = """
-            "message":{"type":"string","description":"What the user should do, one short instruction shown big, e.g. \"Click the Send button\"."},
-            "context":{"type":"string","description":"1 to 3 sentences shown under it: what you are making, why you need this, and what to open first."}
+            "title":{"type":"string","description":"Short title shown big, e.g. \"Pick the 3 items to destroy\"."},
+            "description":{"type":"string","description":"One or two short sentences: what you are making together and why the user does this step."},
+            "steps":{"type":"array","items":{"type":"string"},"minItems":1,"description":"What to do, in order, one short step each (shown numbered), e.g. [\"Open the game's inventory\", \"Press Enter\", \"Click the 3 items, in order\"]. For PuppyMacro's own screens take them from the user guide (get_help)."}
             """;
+        const string askingRequired = "\"title\",\"description\",\"steps\"";
         static string Save(string kind) => """
             {"type":"object","properties":{
               "item":{"type":"object","description":"The KIND as JSON, in the format of get_schema(\"KIND\"). Leave out its Id."},
@@ -197,18 +209,28 @@ internal sealed class AiTools
                 """{"type":"object","properties":{"settings":{"type":"object","description":"Values to change, e.g. {\"Theme\": \"Dark\", \"StopAllHotkey\": {\"Vk\": 123}}."}},"required":["settings"],"additionalProperties":false}""",
                 false, false, (a, app, c) => UpdateSettings(a, app, c)),
 
-            new("pick_point", "Shows the user your message and context, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y).",
-                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[\"message\",\"context\"],\"additionalProperties\":false}",
+            new("pick_point", "Shows the user your title, description and steps, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y).",
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickPoints(a, app, 1, c)),
             new("pick_points", "Like pick_point for several points in a row (for example the 3 items to click): the user clicks them in order.",
-                "{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "}," + asking + "},\"required\":[\"count\",\"message\",\"context\"],\"additionalProperties\":false}",
+                "{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "}," + asking + "},\"required\":[\"count\"," + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickPoints(a, app, null, c)),
-            new("pick_app", "Shows the user your message and context, waits until they are ready, then they click a window of an app: its .exe name, for AppExe.",
-                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[\"message\",\"context\"],\"additionalProperties\":false}",
+            new("pick_app", "Shows the user your title, description and steps, waits until they are ready, then they click a window of an app: its .exe name, for AppExe.",
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickApp(a, app, c)),
-            new("capture_hotkey", "Shows the user your message and context and waits until they press a key, mouse button or combination: it as a HotkeyBinding.",
-                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[\"message\",\"context\"],\"additionalProperties\":false}",
+            new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding.",
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),
+            new("place_floating_button",
+                "Gives a loop or macro (Toggle mode only) a floating button for overlay mode, then shows the user your title, description and " +
+                "steps and opens PuppyMacro's placement screen, where the user drags the button and presses Enter (Esc cancels). Saved at once.",
+                "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The Id of the loop or macro.\"}," + asking + "},\"required\":[\"id\"," + askingRequired + "],\"additionalProperties\":false}",
+                false, false, (a, app, c) => PlaceFloatingButton(a, app, c)),
+            new("open_item",
+                "Opens a loop, macro or remap in PuppyMacro's editor on the user's screen, with your title and description at the top, " +
+                "and waits until the user saves or cancels (the user's own changes).",
+                """{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string","description":"Short, e.g. \"Check the salvage macro\"."},"description":{"type":"string","description":"One or two short sentences: what to look at or change."}},"required":["id","title","description"],"additionalProperties":false}""",
+                false, false, (a, app, c) => OpenItem(a, app, c)),
             new("wait_for_user", "Waits again for the user's answer to a request that answered \"waiting\" with this request_id.",
                 """{"type":"object","properties":{"request_id":{"type":"string"}},"required":["request_id"],"additionalProperties":false}""",
                 true, false, (a, app, c) => WaitAgain(a, app, c)),
@@ -623,16 +645,16 @@ internal sealed class AiTools
     /// <param name="count">1 for pick_point; null: the "count" argument (pick_points).</param>
     private async Task<AiToolResult> PickPoints(JsonElement args, string app, int? count, CancellationToken cancel)
     {
-        var (message, context) = Asking(args);
+        AiAsk ask = Asking(args);
         int points = count ?? (args.TryGetProperty("count", out JsonElement c) && c.TryGetInt32(out int n) ? n : 0);
         if (count == null && (points < 2 || points > MaxPoints))
             return AiToolResult.Error($"count must be from 2 to {MaxPoints} (for one point, use pick_point).");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string label = (points == 1 ? "Asked for a point: " : $"Asked for {points} points: ") + message;
+        string label = (points == 1 ? "Asked for a point: " : $"Asked for {points} points: ") + ask.Title;
         return await StartForUser(app, async () =>
         {
-            AiAnswer ready = await _host.Ready(app, message, context);
+            AiAnswer ready = await _host.Ready(app, ask);
             if (ready != AiAnswer.Done)
             {
                 Log(app, AiActivityKind.Interaction, label, ready, "");
@@ -640,7 +662,7 @@ internal sealed class AiTools
             }
             if (BusyNow() is AiToolResult busy)
                 return busy;
-            var (answer, picked) = await _host.PickPoints(app, message, points);
+            var (answer, picked) = await _host.PickPoints(app, ask.Title, points);
             string text = points == 1 && picked.Count == 1
                 ? JsonSerializer.Serialize(new { X = picked[0].X, Y = picked[0].Y })
                 : JsonSerializer.Serialize(picked.Select(p => new { X = p.X, Y = p.Y }));
@@ -651,13 +673,13 @@ internal sealed class AiTools
 
     private async Task<AiToolResult> PickApp(JsonElement args, string app, CancellationToken cancel)
     {
-        var (message, context) = Asking(args);
+        AiAsk ask = Asking(args);
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string label = "Asked for an app: " + message;
+        string label = "Asked for an app: " + ask.Title;
         return await StartForUser(app, async () =>
         {
-            AiAnswer ready = await _host.Ready(app, message, context);
+            AiAnswer ready = await _host.Ready(app, ask);
             if (ready != AiAnswer.Done)
             {
                 Log(app, AiActivityKind.Interaction, label, ready, "");
@@ -665,25 +687,107 @@ internal sealed class AiTools
             }
             if (BusyNow() is AiToolResult busy)
                 return busy;
-            var (answer, exe) = await _host.PickApp(app, message);
+            var (answer, exe) = await _host.PickApp(app, ask.Title);
             Log(app, AiActivityKind.Interaction, label, answer, exe ?? "");
             return Answered(answer, JsonSerializer.Serialize(new { AppExe = exe }, AnswerOptions));
         }, cancel).ConfigureAwait(false);
     }
 
-    /// <summary>No separate ready step: the key window itself shows the message and context and waits.</summary>
+    /// <summary>No separate ready step: the key window itself shows the title, description and steps and waits.</summary>
     private async Task<AiToolResult> CaptureKeys(JsonElement args, string app, CancellationToken cancel)
     {
-        var (message, context) = Asking(args);
+        AiAsk ask = Asking(args);
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string label = "Asked for a key: " + message;
+        string label = "Asked for a key: " + ask.Title;
         return await StartForUser(app, async () =>
         {
-            var (answer, keys) = await _host.CaptureKeys(app, message, context);
+            var (answer, keys) = await _host.CaptureKeys(app, ask);
             Log(app, AiActivityKind.Interaction, label, answer, Keys(keys) ?? "");
             return Answered(answer, keys == null ? "" :
                 $"{KeyNames.Format(keys)}: {JsonSerializer.Serialize(keys, AnswerOptions)}");
+        }, cancel).ConfigureAwait(false);
+    }
+
+    /// <summary>The item's floating button on (and shown in overlay), then the ready window and the placement screen.</summary>
+    private async Task<AiToolResult> PlaceFloatingButton(JsonElement args, string app, CancellationToken cancel)
+    {
+        Guid id = IdArg(args, "id");
+        AiAsk ask = Asking(args);
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+        (string? what, string? problem) = await _host.Ui(() => Task.FromResult(Find(id) switch
+        {
+            LoopDefinition { Mode: ActivationMode.Hold } or MacroDefinition { Mode: ActivationMode.Hold } =>
+                (null, "Floating buttons work only for Toggle items: change its Mode to Toggle first (save_loop or save_macro)."),
+            { } item when item is LoopDefinition or MacroDefinition => ((string?)Describe(item), (string?)null),
+            null => (null, $"No loop or macro has the Id {id}."),
+            _ => (null, "Only loops and macros have floating buttons."),
+        })).ConfigureAwait(false);
+        if (problem != null || what == null)
+            return AiToolResult.Error(problem ?? "");
+
+        string label = $"Placed the floating button of {what}";
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer ready = await _host.Ready(app, ask);
+            if (ready != AiAnswer.Done)
+            {
+                Log(app, AiActivityKind.Interaction, label, ready, "");
+                return Answered(ready, "");
+            }
+            if (BusyNow() is AiToolResult busy)
+                return busy;
+            if (Find(id) is not { } item)
+                return AiToolResult.Error("It was deleted meanwhile.");
+            string before = Serialize(item);
+            AiAnswer answer = await _host.PlaceFloatingButton(id, app);
+            if (answer == AiAnswer.Done)
+            {
+                _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", Serialize(Find(id)!), id, Kind(item), before);
+                return new AiToolResult($"The floating button of {what} is on and placed. It shows in overlay mode.");
+            }
+            Log(app, AiActivityKind.Interaction, label, answer, "");
+            return Answered(answer, "");
+        }, cancel).ConfigureAwait(false);
+    }
+
+    /// <summary>The item's editor, with the AI's title and description: the user's own changes, saved or not.</summary>
+    private async Task<AiToolResult> OpenItem(JsonElement args, string app, CancellationToken cancel)
+    {
+        Guid id = IdArg(args, "id");
+        string title = (Str(args, "title") ?? "").Trim();
+        string description = (Str(args, "description") ?? "").Trim();
+        if (title.Length == 0)
+            throw new FormatException("Give a short \"title\": it is shown to the user.");
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+        (string? what, string? problem) = await _host.Ui(() => Task.FromResult(Find(id) switch
+        {
+            null => (null, $"No loop, macro or remap has the Id {id}."),
+            LoopDefinition or MacroDefinition when _host.AnyRunning =>
+                (null, "Loops or macros are running: their editors open only when nothing runs. Ask the user to stop them (or call stop_all)."),
+            { } item => ((string?)Describe(item), (string?)null),
+        })).ConfigureAwait(false);
+        if (problem != null || what == null)
+            return AiToolResult.Error(problem ?? "");
+
+        string label = $"Opened {what}";
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer answer = await _host.OpenItem(id, app, title, description);
+            _log.Add(app, AiActivityKind.Interaction, label, answer switch
+            {
+                AiAnswer.Done => AiActivityResult.Saved,
+                AiAnswer.TimedOut => AiActivityResult.TimedOut,
+                _ => AiActivityResult.Cancelled,
+            });
+            return answer switch
+            {
+                AiAnswer.Done => new AiToolResult($"The user saved {what}:\n{(Find(id) is { } saved ? Serialize(saved) : "")}"),
+                AiAnswer.TimedOut => new AiToolResult("Nobody used PuppyMacro for a while: the editor closed without saving."),
+                _ => new AiToolResult("The user closed the editor without saving."),
+            };
         }, cancel).ConfigureAwait(false);
     }
 
@@ -881,17 +985,22 @@ internal sealed class AiTools
             ? JsonSerializer.Deserialize<T>(value.GetRawText(), ReadOptions) ?? throw new JsonException($"\"{name}\" is empty.")
             : throw new JsonException($"\"{name}\" is missing.");
 
-    /// <summary>The message (one line, shown big) and the context (a few sentences) the AI writes for the user.</summary>
-    private static (string Message, string Context) Asking(JsonElement args)
+    /// <summary>The title (shown big), the description (what and why) and the numbered steps the AI writes for the user.</summary>
+    private static AiAsk Asking(JsonElement args)
     {
-        string message = (Str(args, "message") ?? "").Trim();
-        string context = (Str(args, "context") ?? "").Trim();
-        if (message.Length == 0)
-            throw new FormatException("Give a short \"message\": what the user should do. It is shown to them.");
-        if (context.Length == 0)
-            throw new FormatException("Give a \"context\": 1 to 3 sentences on what you are making and why. It is shown to them.");
-        return (Cut(message, 140), Cut(context, 600));
+        string title = (Str(args, "title") ?? "").Trim();
+        string description = (Str(args, "description") ?? "").Trim();
+        if (title.Length == 0)
+            throw new FormatException("Give a short \"title\": it is shown big to the user.");
+        if (description.Length == 0)
+            throw new FormatException("Give a \"description\": one or two short sentences on what you are making and why.");
+        var steps = new List<string>();
+        if (args.TryGetProperty("steps", out JsonElement list) && list.ValueKind == JsonValueKind.Array)
+            foreach (JsonElement step in list.EnumerateArray())
+                if (step.ValueKind == JsonValueKind.String && step.GetString()!.Trim() is { Length: > 0 } text)
+                    steps.Add(text);
+        if (steps.Count == 0)
+            throw new FormatException("Give the \"steps\": what the user does, in order, one short step each.");
+        return new AiAsk(title, description, steps);
     }
-
-    private static string Cut(string text, int max) => text.Length > max ? text[..max] + "…" : text;
 }

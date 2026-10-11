@@ -503,9 +503,9 @@ public partial class MainWindow : IAiHost
     /// The "ready?" window: not modal and not activated, so the user keeps working in the app they prepare; Enter or Esc
     /// from any app (the engine's WatchReadyKeys), Start, or nothing for <see cref="AiTools.AnswerTimeout"/>.
     /// </summary>
-    async Task<AiAnswer> IAiHost.Ready(string app, string message, string context)
+    async Task<AiAnswer> IAiHost.Ready(string app, AiAsk ask)
     {
-        var window = new AiReadyWindow(app, message, context);
+        var window = new AiReadyWindow(app, ask);
         var answered = new TaskCompletionSource<AiAnswer>();
         window.Answered += answer => answered.TrySetResult(answer);
         var timeout = new DispatcherTimer { Interval = AiTools.AnswerTimeout };
@@ -539,11 +539,86 @@ public partial class MainWindow : IAiHost
         return Task.FromResult((answer, answer == AiAnswer.Done ? picker.ResultApp : null));
     }
 
-    Task<(AiAnswer Answer, HotkeyBinding? Keys)> IAiHost.CaptureKeys(string app, string message, string context)
+    Task<(AiAnswer Answer, HotkeyBinding? Keys)> IAiHost.CaptureKeys(string app, AiAsk ask)
     {
-        AiRequestWindow window = AiRequestWindow.KeyRequest(app, message, context, _engine);
+        AiRequestWindow window = AiRequestWindow.KeyRequest(app, ask, _engine);
         ShowForAi(window);
         return Task.FromResult((window.Answer, window.Keys));
+    }
+
+    /// <summary>
+    /// As the editor's Floating button switch and Position…: Show in overlay and the button on (its label proposed from the
+    /// name when empty), then the placement screen with the whole overlay. Saved only when the user presses Enter there.
+    /// </summary>
+    Task<AiAnswer> IAiHost.PlaceFloatingButton(Guid id, string app)
+    {
+        object? copy = null;
+        string name = "";
+        HotkeyBinding? hotkey = null;
+        FloatingButton? button = null;
+        if (_items.FirstOrDefault(i => i.Definition.Id == id) is { } loopItem)
+        {
+            LoopDefinition loop = loopItem.Definition.Clone();
+            loop.ShowInOverlay = true;
+            (copy, name, hotkey, button) = (loop, loop.Name, loop.Hotkey, loop.FloatingButton);
+        }
+        else if (_macroItems.FirstOrDefault(i => i.Definition.Id == id) is { } macroItem)
+        {
+            MacroDefinition macro = macroItem.Definition.Clone();
+            macro.ShowInOverlay = true;
+            (copy, name, hotkey, button) = (macro, macro.Name, macro.Hotkey, macro.FloatingButton);
+        }
+        if (copy == null || button == null)
+            return Task.FromResult(AiAnswer.Cancelled);
+        button.Enabled = true;
+        if (string.IsNullOrEmpty(button.Label))
+            button.Label = FloatingButton.DefaultLabel(name);
+
+        AiAnswer answer = AiAnswer.Cancelled;
+        Point? moved = OpenPlacement(new EditedFloatingButton(id, name, hotkey is { IsSet: true } ? KeyNames.Format(hotkey) : "", button),
+            placement =>
+            {
+                answer = ShowForAi(placement);
+                return answer == AiAnswer.Done;
+            });
+        if (answer != AiAnswer.Done)
+            return Task.FromResult(answer);
+        if (moved is Point at)
+        {
+            button.X = at.X;
+            button.Y = at.Y;
+        }
+        SavingAs(app, () =>
+        {
+            SaveItem(copy);
+            return true;
+        });
+        return Task.FromResult(AiAnswer.Done);
+    }
+
+    /// <summary>
+    /// The item's editor, centered on the screen and in front, with the AI's title and description in its notice bar: the
+    /// user's own changes (saved as You). Done when the user saved.
+    /// </summary>
+    Task<AiAnswer> IAiHost.OpenItem(Guid id, string app, string title, string description)
+    {
+        void ForAi(Window editor)
+        {
+            editor.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            AiWindow.BringToFront(editor);
+            AiWindow.Notice(editor switch
+            {
+                LoopEditorWindow loop => loop.NoticeBar,
+                MacroEditorWindow macro => macro.NoticeBar,
+                RemapEditorWindow remap => remap.NoticeBar,
+                _ => throw new InvalidOperationException("Not an editor."),
+            }, app, title, description);
+        }
+
+        bool saved = _items.FirstOrDefault(i => i.Definition.Id == id) is { } loop ? EditLoop(loop, ForAi)
+            : _macroItems.FirstOrDefault(i => i.Definition.Id == id) is { } macro ? EditMacro(macro, ForAi)
+            : _remapItems.FirstOrDefault(i => i.Definition.Id == id) is { } remap && EditRemap(remap, ForAi);
+        return Task.FromResult(saved ? AiAnswer.Done : AiAnswer.Cancelled);
     }
 
     void IAiHost.StopAll() => _engine.StopAll();
@@ -569,19 +644,17 @@ public partial class MainWindow : IAiHost
 
     /// <summary>
     /// Shows a window for an AI request as the editors open (hotkeys off, this window hidden meanwhile), in front of the
-    /// other apps, centered on this window or, in the tray, on the screen. Closes it when nobody used PuppyMacro (any key,
+    /// other apps and centered on the screen, wherever this window is. Closes it when nobody used PuppyMacro (any key,
     /// click or move in any of its windows) for <see cref="AiTools.AnswerTimeout"/>.
     /// </summary>
     private AiAnswer ShowForAi(Window dialog)
     {
-        if (IsVisible)
-            dialog.Owner = this;
-        else
+        // The picker and the placement screen cover the screen, are topmost and must stay so, and activate themselves.
+        if (dialog is not (PickPointWindow or PlacementWindow))
+        {
             dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
-        // The picker is topmost and must stay so (it covers the screen), and activates itself.
-        if (dialog is not PickPointWindow)
             AiWindow.BringToFront(dialog);
+        }
 
         bool timedOut = false;
         var timer = new DispatcherTimer { Interval = AiTools.AnswerTimeout };

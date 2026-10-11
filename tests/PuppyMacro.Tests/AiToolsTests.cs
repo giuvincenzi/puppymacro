@@ -34,7 +34,11 @@ internal sealed class FakeAiHost : IAiHost
     public AiAnswer ReadyAnswer { get; set; } = AiAnswer.Done;
     public List<(string Title, IReadOnlyList<string> Lines)> Confirmed { get; } = new();
     public List<(object Item, string App)> Saved { get; } = new();
-    public List<(string Message, string Context)> ReadyShown { get; } = new();
+    public List<AiAsk> ReadyShown { get; } = new();
+    public AiAnswer PlaceAnswer { get; set; } = AiAnswer.Done;
+    public List<Guid> Placed { get; } = new();
+    public AiAnswer OpenAnswer { get; set; } = AiAnswer.Done;
+    public List<(Guid Id, string Title, string Description)> Opened { get; } = new();
     public List<int> PointsAsked { get; } = new();
     public List<AiSettingsValues> Applied { get; } = new();
     public bool StoppedAll { get; private set; }
@@ -90,9 +94,9 @@ internal sealed class FakeAiHost : IAiHost
         return ConfirmAnswer;
     }
 
-    public async Task<AiAnswer> Ready(string app, string message, string context)
+    public async Task<AiAnswer> Ready(string app, AiAsk ask)
     {
-        ReadyShown.Add((message, context));
+        ReadyShown.Add(ask);
         if (Hold != null)
             await Hold.Task;
         return ReadyAnswer;
@@ -107,8 +111,30 @@ internal sealed class FakeAiHost : IAiHost
     public Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message) =>
         Task.FromResult<(AiAnswer, string?)>((AiAnswer.Done, "notepad.exe"));
 
-    public Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, string message, string context) =>
+    public Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, AiAsk ask) =>
         Task.FromResult<(AiAnswer, HotkeyBinding?)>((AiAnswer.Done, new HotkeyBinding { Vk = 0x58, Ctrl = true }));
+
+    /// <summary>As the window: the button and Show in overlay on, placed at 100, 200.</summary>
+    public Task<AiAnswer> PlaceFloatingButton(Guid id, string app)
+    {
+        Placed.Add(id);
+        if (PlaceAnswer == AiAnswer.Done)
+        {
+            LoopDefinition loop = Settings.Loops.First(l => l.Id == id).Clone();
+            loop.ShowInOverlay = true;
+            loop.FloatingButton.Enabled = true;
+            loop.FloatingButton.X = 100;
+            loop.FloatingButton.Y = 200;
+            Save(loop, app);
+        }
+        return Task.FromResult(PlaceAnswer);
+    }
+
+    public Task<AiAnswer> OpenItem(Guid id, string app, string title, string description)
+    {
+        Opened.Add((id, title, description));
+        return Task.FromResult(OpenAnswer);
+    }
 
     public void StopAll() => StoppedAll = true;
     public IReadOnlyList<string> RunningApps() => new[] { "notepad.exe" };
@@ -143,7 +169,12 @@ public class AiToolsTests : IDisposable
 
     private static readonly object CtrlXToA = new { item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 } } };
 
-    private static readonly object Asking = new { message = "Click the Send button", context = "We are making a macro that sends a message." };
+    private static readonly object Asking = new
+    {
+        title = "Pick the Send button",
+        description = "We are making a macro that sends a message.",
+        steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
+    };
 
     private static string RequestId(AiToolResult waiting) =>
         Regex.Match(waiting.Text, "request_id \"([0-9a-f]+)\"").Groups[1].Value;
@@ -448,13 +479,15 @@ public class AiToolsTests : IDisposable
     public async Task A_pick_waits_until_the_user_is_ready_then_gives_the_points()
     {
         AiToolResult one = await Call("pick_point", Asking);
-        AiToolResult three = await Call("pick_points", new { count = 3, message = "Click the 3 items", context = "We are making a macro." });
+        AiToolResult three = await Call("pick_points", new { count = 3, title = "Pick the 3 items", description = "We are making a macro.", steps = new[] { "Click the 3 items" } });
 
         Assert.Equal("{\"X\":640,\"Y\":360}", one.Text);
         using JsonDocument points = JsonDocument.Parse(three.Text);
         Assert.Equal(3, points.RootElement.GetArrayLength());
         Assert.Equal(new[] { 1, 3 }, _host.PointsAsked);
-        Assert.Equal(("Click the Send button", "We are making a macro that sends a message."), _host.ReadyShown[0]);
+        Assert.Equal("Pick the Send button", _host.ReadyShown[0].Title);
+        Assert.Equal("We are making a macro that sends a message.", _host.ReadyShown[0].Description);
+        Assert.Equal(new[] { "Open the chat", "Press Enter", "Click the Send button" }, _host.ReadyShown[0].Steps);
     }
 
     [Fact]
@@ -469,12 +502,96 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Interactions_need_a_message_and_a_context()
+    public async Task Interactions_need_a_title_a_description_and_steps()
     {
-        Assert.True((await Call("pick_point", new { message = "Click", context = "" })).IsError);
-        Assert.True((await Call("pick_app", new { message = "", context = "Why" })).IsError);
-        Assert.True((await Call("pick_points", new { count = 1, message = "Click", context = "Why" })).IsError);
+        string[] steps = { "Click it" };
+        Assert.True((await Call("pick_point", new { title = "Pick", description = "", steps })).IsError);
+        Assert.True((await Call("pick_app", new { title = "", description = "Why", steps })).IsError);
+        Assert.True((await Call("pick_app", new { title = "Pick", description = "Why", steps = new[] { " " } })).IsError);
+        Assert.True((await Call("pick_points", new { count = 1, title = "Pick", description = "Why", steps })).IsError);
         Assert.Empty(_host.ReadyShown);
+    }
+
+    [Fact]
+    public async Task A_long_title_and_description_are_shown_whole()
+    {
+        string title = new('T', 300);
+        string description = new('D', 2000);
+
+        await Call("pick_point", new { title, description, steps = new[] { "Click it" } });
+
+        Assert.Equal(title, _host.ReadyShown[0].Title);
+        Assert.Equal(description, _host.ReadyShown[0].Description);
+    }
+
+    [Fact]
+    public async Task Placing_a_floating_button_asks_when_ready_then_saves_it_as_the_app()
+    {
+        var loop = new LoopDefinition { Name = "Spam" };
+        _settings.Loops.Add(loop);
+
+        AiToolResult result = await Call("place_floating_button", new
+        {
+            id = loop.Id.ToString(),
+            title = "Place the Spam button",
+            description = "It starts and stops Spam in overlay mode.",
+            steps = new[] { "Drag the button", "Select Done" },
+        });
+
+        Assert.False(result.IsError, result.Text);
+        Assert.Equal("Place the Spam button", Assert.Single(_host.ReadyShown).Title);
+        Assert.Equal(loop.Id, Assert.Single(_host.Placed));
+        Assert.Equal(App, Assert.Single(_host.Saved).App);
+        AiActivity entry = _log.Entries().First();
+        Assert.Equal(AiActivityResult.Saved, entry.Result);
+        Assert.Equal(loop.Id, entry.ItemId);
+        Assert.False(JsonSerializer.Deserialize<LoopDefinition>(entry.Before!, CodeJson.Options)!.FloatingButton.Enabled); // for Restore
+    }
+
+    [Fact]
+    public async Task A_floating_button_is_only_for_Toggle_loops_and_macros()
+    {
+        var hold = new LoopDefinition { Name = "Hold", Mode = ActivationMode.Hold };
+        _settings.Loops.Add(hold);
+        var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) };
+        _settings.Remaps.Add(remap);
+        string[] steps = { "Drag it" };
+
+        AiToolResult forHold = await Call("place_floating_button", new { id = hold.Id.ToString(), title = "Place", description = "Why", steps });
+        AiToolResult forRemap = await Call("place_floating_button", new { id = remap.Id.ToString(), title = "Place", description = "Why", steps });
+
+        Assert.Contains("Toggle", forHold.Text);
+        Assert.True(forRemap.IsError);
+        Assert.Empty(_host.ReadyShown);
+        Assert.Empty(_host.Placed);
+    }
+
+    [Fact]
+    public async Task Open_item_opens_the_editor_with_the_title_and_says_whether_the_user_saved()
+    {
+        var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) };
+        _settings.Remaps.Add(remap);
+
+        AiToolResult saved = await Call("open_item", new { id = remap.Id.ToString(), title = "Check the remap", description = "See its keys." });
+        _host.OpenAnswer = AiAnswer.Cancelled;
+        AiToolResult closed = await Call("open_item", new { id = remap.Id.ToString(), title = "Check the remap", description = "See its keys." });
+
+        Assert.Equal((remap.Id, "Check the remap", "See its keys."), _host.Opened[0]);
+        Assert.StartsWith("The user saved", saved.Text);
+        Assert.Contains("without saving", closed.Text);
+    }
+
+    [Fact]
+    public async Task Open_item_waits_for_running_loops_and_macros_to_stop()
+    {
+        var loop = new LoopDefinition { Name = "Spam" };
+        _settings.Loops.Add(loop);
+        _host.Running.Add(loop.Id);
+
+        AiToolResult result = await Call("open_item", new { id = loop.Id.ToString(), title = "Check Spam", description = "Why" });
+
+        Assert.True(result.IsError);
+        Assert.Empty(_host.Opened);
     }
 
     [Fact]

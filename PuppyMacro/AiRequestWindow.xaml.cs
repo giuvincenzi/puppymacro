@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using PuppyMacro.Models;
@@ -47,12 +48,15 @@ public partial class AiRequestWindow
         return window;
     }
 
-    /// <summary>Asks for a key or combination; <paramref name="message"/> and <paramref name="context"/> are the AI app's words.</summary>
-    internal static AiRequestWindow KeyRequest(string app, string message, string context, LoopEngine engine)
+    /// <summary>Asks for a key or combination, with the AI app's title, description and steps (numbered).</summary>
+    internal static AiRequestWindow KeyRequest(string app, AiAsk ask, LoopEngine engine)
     {
-        var window = new AiRequestWindow(app, message, "OK");
-        window.ContextText.Text = context;
+        var window = new AiRequestWindow(app, ask.Title, "OK");
+        window.ContextText.Text = ask.Description;
         window.ContextText.Visibility = Visibility.Visible;
+        window.InstructionsTitle.Visibility = Visibility.Visible;
+        window.Lines.ItemsSource = ask.Steps.Select((step, index) => $"{index + 1}. {step}").ToList();
+        window.Lines.Visibility = Visibility.Visible;
         KeyCaptureField.SetEngine(window, engine); // the key field waits for keys through it
         window.KeyCard.Visibility = Visibility.Visible;
         window.KeyField.StartOnLoad = true;

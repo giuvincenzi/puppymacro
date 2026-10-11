@@ -192,9 +192,14 @@ Rules:
   `IAiHost.Save` (`MainWindow.SaveItem`: the editors' Add / ApplyEdit; a running item stops), unless `AiAskBeforeChanging`
   (then `AiRequestWindow` lists `ItemHistory.Changes`); `delete_item` (asks with `AiAskBeforeDeleting`, on by default),
   `set_enabled` (a change), `update_settings` (`AiAskBeforeSettings`, on by default); interactions (`pick_point`,
-  `pick_points`, `pick_app`, `capture_hotkey`) with a `message` and a `context` the AI writes: first `AiReadyWindow`
-  (topmost, not activated; Enter or Esc alone from any app through `LoopEngine.WatchReadyKeys`, every other key passes;
-  Start), then `PickPointWindow` (`count` points, numbered) or the key window; `stop_all`; `get_help` reads the guide of
+  `pick_points`, `pick_app`, `capture_hotkey`, `place_floating_button`) with a `title`, a `description` and `steps` the AI
+  writes (`AiAsk`, no length limits; the steps shown numbered): first `AiReadyWindow` (centered, draggable, topmost, not
+  activated; Enter or Esc alone from any app through `LoopEngine.WatchReadyKeys`, every other key passes; Start), then
+  `PickPointWindow` (`count` points, numbered), the key window or `PlacementWindow` (`place_floating_button`: Toggle loops
+  and macros only, the button and Show in overlay on, saved with its position through `SaveItem`); `open_item` opens the
+  item's editor (`EditLoop` / `EditMacro` / `EditRemap` with `forAi`: centered, in front, the AI's title and description in
+  its `NoticeBar`; the user's own changes); every window of an AI request opens centered on the screen (`ShowForAi`);
+  the `Instructions` tell the AI to ask, when creating, only the questions that matter and then offer the missing extras; `stop_all`; `get_help` reads the guide of
   this version, embedded from `site/guide` (`AiHelp`). AI apps cut long tool calls (Claude Desktop about 1 to 4 minutes,
   Codex 60 to 300 s): a request that waits for the user answers "waiting" with a request_id (random, tied to the app that
   asked) after `AiTools.WaitStep` (40 s) and the AI calls `wait_for_user`; an answer is given once (`Pending.Given`) and
