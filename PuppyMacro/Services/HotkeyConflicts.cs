@@ -21,29 +21,33 @@ internal static class HotkeyConflicts
             itemApp => ignoreGlobal != null || AppScope.Same(itemApp, appExe));
 
     /// <summary>
-    /// For a remap's source key: the hotkeys that would take it first (hotkeys come before remaps) in the apps the
-    /// remap works in (<paramref name="appExe"/>, null for all apps).
+    /// For a remap's source (a key, a combination or a modifier key alone): the hotkeys that would take it first
+    /// (hotkeys come before remaps) in the apps the remap works in (<paramref name="appExe"/>, null for all apps).
     /// </summary>
-    public static string? FindForRemap(int sourceVk, string? appExe, AppSettings settings, MacroLibrary macros) =>
-        Find(HotkeyBinding.FromKey(sourceVk), settings, macros, null, null,
+    public static string? FindForRemap(HotkeyBinding source, string? appExe, AppSettings settings, MacroLibrary macros) =>
+        Find(source, settings, macros, null, null,
             itemApp => itemApp == null || appExe == null || AppScope.Same(itemApp, appExe));
 
+    /// <summary>
+    /// Bindings clash when some key press would start both: the same key and modifiers, on sides that are not
+    /// opposite (Left Ctrl + A and Ctrl + A clash, Left Ctrl + A and Right Ctrl + A do not).
+    /// </summary>
     private static string? Find(HotkeyBinding binding, AppSettings settings, MacroLibrary macros,
         Guid? ignoreId, string? ignoreGlobal, Func<string?, bool> clashesWith)
     {
         string name = KeyNames.Format(binding);
-        if (ignoreGlobal != "StopAll" && binding.SameAs(settings.StopAllHotkey))
+        if (ignoreGlobal != "StopAll" && binding.Overlaps(settings.StopAllHotkey))
             return $"{name} is already used by Stop all.";
-        if (ignoreGlobal != "OverlayMode" && binding.SameAs(settings.OverlayModeHotkey))
+        if (ignoreGlobal != "OverlayMode" && binding.Overlaps(settings.OverlayModeHotkey))
             return $"{name} is already used by Overlay mode.";
-        if (ignoreGlobal != "Record" && binding.SameAs(settings.RecordHotkey))
+        if (ignoreGlobal != "Record" && binding.Overlaps(settings.RecordHotkey))
             return $"{name} is already used by Record.";
 
-        var loop = settings.Loops.FirstOrDefault(l => l.Id != ignoreId && binding.SameAs(l.Hotkey) && clashesWith(l.AppExe));
+        var loop = settings.Loops.FirstOrDefault(l => l.Id != ignoreId && binding.Overlaps(l.Hotkey) && clashesWith(l.AppExe));
         if (loop != null)
             return $"{name} is already used by the loop \"{loop.Name}\"{InApp(loop.AppExe)}.";
 
-        var macro = macros.Macros.FirstOrDefault(m => m.Id != ignoreId && binding.SameAs(m.Hotkey) && clashesWith(m.AppExe));
+        var macro = macros.Macros.FirstOrDefault(m => m.Id != ignoreId && binding.Overlaps(m.Hotkey) && clashesWith(m.AppExe));
         if (macro != null)
             return $"{name} is already used by the macro \"{macro.Name}\"{InApp(macro.AppExe)}.";
 

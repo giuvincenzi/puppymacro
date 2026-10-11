@@ -131,10 +131,26 @@ public class HotkeyConflictsTests : IDisposable
     {
         _settings.Loops.Add(new LoopDefinition { Name = "Game", Hotkey = HotkeyBinding.FromKey(0x79), AppExe = "Game.exe" }); // F10
 
-        Assert.NotNull(HotkeyConflicts.FindForRemap(0x79, null, _settings, _macros));          // all apps includes Game.exe
-        Assert.NotNull(HotkeyConflicts.FindForRemap(0x79, "game.exe", _settings, _macros));
-        Assert.Null(HotkeyConflicts.FindForRemap(0x79, "other.exe", _settings, _macros));
-        Assert.NotNull(HotkeyConflicts.FindForRemap(0x78, "other.exe", _settings, _macros));    // F9 is for all apps
+        Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), null, _settings, _macros));          // all apps includes Game.exe
+        Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), "game.exe", _settings, _macros));
+        Assert.Null(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), "other.exe", _settings, _macros));
+        Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x78), "other.exe", _settings, _macros));    // F9 is for all apps
+    }
+
+    [Fact]
+    public void Hotkeys_on_opposite_sides_do_not_clash()
+    {
+        // The macro "Craft" is on Ctrl + F6, either side.
+        var leftCtrlF6 = new HotkeyBinding { Vk = 0x75, Ctrl = true, CtrlSide = ModifierSide.Left };
+        Assert.Equal("Left Ctrl + F6 is already used by the macro \"Craft\".", Find(leftCtrlF6));
+
+        _macro.Hotkey = leftCtrlF6;
+        Assert.True(_macros.TrySave(_macro, out _));
+        _macros.Load(Array.Empty<Guid>(), out _);
+        Assert.Null(Find(new HotkeyBinding { Vk = 0x75, Ctrl = true, CtrlSide = ModifierSide.Right }));
+        Assert.NotNull(Find(new HotkeyBinding { Vk = 0x75, Ctrl = true }));
+        Assert.NotNull(HotkeyConflicts.FindForRemap(leftCtrlF6, null, _settings, _macros));
+        Assert.Null(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x75), null, _settings, _macros)); // F6 alone is another key press
     }
 
     [Fact]

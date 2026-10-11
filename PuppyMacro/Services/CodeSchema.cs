@@ -63,6 +63,10 @@ internal static class CodeSchema
         ["HotkeyBinding.Alt"] = "Alt held with the key.",
         ["HotkeyBinding.Shift"] = "Shift held with the key.",
         ["HotkeyBinding.Win"] = "Win held with the key.",
+        ["HotkeyBinding.CtrlSide"] = "With Ctrl: Left or Right for only that Ctrl key; Any (or left out) for either.",
+        ["HotkeyBinding.AltSide"] = "With Alt: Left or Right for only that Alt key; Any (or left out) for either.",
+        ["HotkeyBinding.ShiftSide"] = "With Shift: Left or Right for only that Shift key; Any (or left out) for either.",
+        ["HotkeyBinding.WinSide"] = "With Win: Left or Right for only that Win key; Any (or left out) for either.",
 
         ["FloatingButton.Enabled"] = "Show the floating button in overlay mode (not with Hold).",
         ["FloatingButton.Label"] = "One or two characters shown in the button. Empty: from the name.",
@@ -95,8 +99,8 @@ internal static class CodeSchema
         ["LoopAction.IntervalUnit"] = "Milliseconds, Seconds, Minutes or Hours.",
 
         ["RemapDefinition.Id"] = "The remap's id. It cannot be changed.",
-        ["RemapDefinition.SourceVk"] = "Virtual-key code of the key or mouse button you press (65 = A, 112 = F1, 5 = back button).",
-        ["RemapDefinition.Target"] = "The key, mouse button or combination sent instead.",
+        ["RemapDefinition.Source"] = "The key, mouse button or combination you press (Vk 65 = A, 112 = F1, 5 = back button), or Ctrl, Alt, Shift or Win alone by its key (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).",
+        ["RemapDefinition.Target"] = "The key, mouse button or combination sent instead, or Ctrl, Alt, Shift or Win alone by its key.",
         ["RemapDefinition.AppExe"] = "File name of the app it works in, like \"notepad.exe\"; null for all apps.",
         ["RemapDefinition.Note"] = "Optional note shown in the Remap list.",
         ["RemapDefinition.Enabled"] = "Off: the key works as usual.",
@@ -122,7 +126,6 @@ internal static class CodeSchema
         ["PathPoint.T"] = (0, double.MaxValue),
         ["LoopAction.KeyVk"] = (0, 254),
         ["LoopAction.IntervalValue"] = (0, double.MaxValue),
-        ["RemapDefinition.SourceVk"] = (1, 254),
     };
 
     private static readonly Dictionary<MacroActionType, string> ActionTypes = new()
@@ -154,8 +157,13 @@ internal static class CodeSchema
         }
     });
 
-    /// <summary>A remap: its Id is the only value allowed, and suggested.</summary>
-    public static string ForRemap(System.Guid id) => Build(typeof(RemapDefinition), schema => FixId(schema, id));
+    /// <summary>A remap: its Id is the only value allowed, and suggested. The single key of versions before schema 7 is left out.</summary>
+    public static string ForRemap(System.Guid id) => Build(typeof(RemapDefinition), schema =>
+    {
+        FixId(schema, id);
+        if (schema["properties"] is JsonObject properties)
+            properties.Remove("SourceVk");
+    });
 
     /// <summary>
     /// One macro action: its GroupId can be one of <paramref name="allowedGroups"/> (see

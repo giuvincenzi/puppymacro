@@ -139,9 +139,10 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   the user, made of standard controls), always on one line in three states: nothing set, a "Set
   hotkey" / "Set key" button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
   other button); set, the keys as `KeyCap`s in `AccentFillColorDefaultBrush` with
-  `TextOnAccentFillColorPrimaryBrush` text (approved) inside one standard control: where the key can
-  be removed (`CanClear`) a `SplitButton` (click: change; its `MenuFlyout`: Change, Clear), otherwise
-  a `Button` (click: change). It keeps the same height in every state (a hidden zero-width button
+  `TextOnAccentFillColorPrimaryBrush` text (approved) inside a `SplitButton`, everywhere (click: change;
+  its `MenuFlyout`: Change, Clear only where the key can be removed (`CanClear`), then for each Ctrl, Alt,
+  Shift and Win of the value a `Separator` and three checkable `MenuItem`s, "Left Ctrl", "Right Ctrl",
+  "Left or right Ctrl", built in code; iNKORE has no radio menu item). It keeps the same height in every state (a hidden zero-width button
   holding a key sets it), so nothing around it moves. Never build another one (`architecture.md`).
 - **A key the user chose is shown as accent `KeyCap`s** wherever it appears: the template
   `AccentKeyCapItem` with the panel `KeyCapRow` (`App.xaml`), used by `KeyCaptureField` and by the list

@@ -11,7 +11,7 @@ namespace PuppyMacro.Tests;
 [Collection(nameof(ModifierTracker))]
 public sealed class LoopEngineTests : IDisposable
 {
-    private const int F24 = 0x87, F23 = 0x86, LCtrl = 0xA2;
+    private const int F24 = 0x87, F23 = 0x86, LCtrl = 0xA2, RCtrl = 0xA3, LShift = 0xA0;
 
     private readonly LoopEngine _engine;
 
@@ -348,17 +348,17 @@ public sealed class LoopEngineTests : IDisposable
         Assert.True(_engine.OnKey(KeyNames.VK_LBUTTON, isDown: true, physicalModifierEvent: true));
         Assert.True(_engine.OnKey(KeyNames.VK_LBUTTON, isDown: false, physicalModifierEvent: true));
         RunDispatcher();
-        Assert.True(captured!.SameAs(new HotkeyBinding { Vk = KeyNames.VK_LBUTTON, Ctrl = true }));
+        Assert.True(captured!.SameAs(new HotkeyBinding { Vk = KeyNames.VK_LBUTTON, Ctrl = true, CtrlSide = ModifierSide.Left }));
 
         Begin();
         Assert.True(_engine.OnKey(KeyNames.VK_ESCAPE, isDown: true, physicalModifierEvent: true));
         RunDispatcher();
-        Assert.True(captured!.SameAs(new HotkeyBinding { Vk = KeyNames.VK_ESCAPE, Ctrl = true }));
+        Assert.True(captured!.SameAs(new HotkeyBinding { Vk = KeyNames.VK_ESCAPE, Ctrl = true, CtrlSide = ModifierSide.Left }));
 
         Begin();
         Assert.True(_engine.OnWheel(horizontal: false, delta: KeyNames.WheelDelta));
         RunDispatcher();
-        Assert.True(captured!.SameAs(new HotkeyBinding { Vk = KeyNames.VK_WHEEL_UP, Ctrl = true }));
+        Assert.True(captured!.SameAs(new HotkeyBinding { Vk = KeyNames.VK_WHEEL_UP, Ctrl = true, CtrlSide = ModifierSide.Left }));
     }
 
     [Fact]
@@ -372,5 +372,139 @@ public sealed class LoopEngineTests : IDisposable
         Assert.True(_engine.OnKey(KeyNames.VK_ESCAPE, isDown: true, physicalModifierEvent: true));
         RunDispatcher();
         Assert.True(cancelled);
+    }
+
+    // ---- Remaps and modifier sides (remap targets: F24 only) ----
+
+    private static RemapDefinition Remap(HotkeyBinding source) => new() { Source = source, Target = HotkeyBinding.FromKey(F24) };
+
+    private bool Press(int vk) => _engine.OnKey(vk, isDown: true, physicalModifierEvent: true);
+
+    private bool Release(int vk) => _engine.OnKey(vk, isDown: false, physicalModifierEvent: true);
+
+    [Fact]
+    public void A_remap_from_a_combination_works_only_with_its_modifiers_on_its_side()
+    {
+        _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(new HotkeyBinding { Vk = F23, Ctrl = true, CtrlSide = ModifierSide.Left }) } });
+
+        Assert.False(Press(F23));
+        Assert.False(Release(F23));
+
+        Assert.False(Press(RCtrl));
+        Assert.False(Press(F23));      // Right Ctrl: not this remap
+        Assert.False(Release(F23));
+        Assert.False(Release(RCtrl));
+
+        Assert.False(Press(LCtrl));    // a modifier that is not a source passes
+        Assert.True(Press(F23));
+        Assert.True(Press(F23));       // auto-repeat
+        Assert.True(Release(F23));
+        Assert.False(Release(LCtrl));
+    }
+
+    [Fact]
+    public void A_remap_of_a_key_alone_does_not_take_the_key_with_a_modifier()
+    {
+        _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(HotkeyBinding.FromKey(F23)) } });
+
+        Press(LCtrl);
+        Assert.False(Press(F23));
+        Assert.False(Release(F23));
+        Release(LCtrl);
+
+        Assert.True(Press(F23));
+        Assert.True(Release(F23));
+    }
+
+    [Fact]
+    public void A_remapped_modifier_is_blocked_and_no_longer_counts_as_a_modifier()
+    {
+        _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(HotkeyBinding.FromKey(RCtrl)) } });
+
+        Assert.True(Press(RCtrl));
+        Assert.True(Press(RCtrl));     // auto-repeat
+        Assert.False(ModifierTracker.Ctrl);
+        Assert.True(Release(RCtrl));
+
+        // The other side stays a modifier.
+        Assert.False(Press(LCtrl));
+        Assert.True(ModifierTracker.Ctrl);
+        Assert.False(Release(LCtrl));
+
+        // With another modifier held it is not this source (exact match): it is a modifier.
+        Press(LShift);
+        Assert.False(Press(RCtrl));
+        Assert.True(ModifierTracker.Ctrl);
+        Release(RCtrl);
+        Release(LShift);
+    }
+
+    [Fact]
+    public void The_fake_Ctrl_of_AltGr_is_blocked_only_while_Right_Alt_is_remapped()
+    {
+        Assert.False(_engine.OnKey(LCtrl, isDown: true, physicalModifierEvent: false, altGrCtrl: true));
+        Assert.False(_engine.OnKey(LCtrl, isDown: false, physicalModifierEvent: false, altGrCtrl: true));
+
+        _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(HotkeyBinding.FromKey(KeyNames.VK_RMENU)) } });
+        Assert.True(_engine.OnKey(LCtrl, isDown: true, physicalModifierEvent: false, altGrCtrl: true));
+        Assert.True(_engine.OnKey(LCtrl, isDown: false, physicalModifierEvent: false, altGrCtrl: true));
+        // A Ctrl sent by another program is never blocked, and changes nothing.
+        Assert.False(_engine.OnKey(LCtrl, isDown: true, physicalModifierEvent: false));
+        Assert.False(ModifierTracker.Ctrl);
+        _engine.OnKey(LCtrl, isDown: false, physicalModifierEvent: false);
+    }
+
+    [Fact]
+    public void A_capture_takes_a_modifier_alone_only_when_asked_and_keeps_the_side_of_a_combination()
+    {
+        HotkeyBinding? captured = null;
+        _engine.BeginCapture(b => captured = b, () => { }, allowPrimaryMouse: false);
+        Press(LCtrl);
+        Release(LCtrl);
+        RunDispatcher();
+        Assert.Null(captured);
+        _engine.CancelCapture();
+
+        _engine.BeginCapture(b => captured = b, () => { }, allowPrimaryMouse: false, modifierAlone: true);
+        // Two modifiers together are not a modifier alone.
+        Press(LCtrl);
+        Press(LShift);
+        Release(LShift);
+        Release(LCtrl);
+        RunDispatcher();
+        Assert.Null(captured);
+
+        Assert.False(Press(RCtrl));
+        Assert.False(Release(RCtrl));
+        RunDispatcher();
+        Assert.True(captured!.SameAs(HotkeyBinding.FromKey(RCtrl)));
+
+        captured = null;
+        _engine.BeginCapture(b => captured = b, () => { }, allowPrimaryMouse: false, modifierAlone: true);
+        Press(LCtrl);
+        Assert.True(Press(F23));
+        Release(F23);
+        Release(LCtrl);
+        RunDispatcher();
+        Assert.True(captured!.SameAs(new HotkeyBinding { Vk = F23, Ctrl = true, CtrlSide = ModifierSide.Left }));
+    }
+
+    [Fact]
+    public void A_hotkey_on_one_side_starts_only_with_that_side()
+    {
+        LoopDefinition loop = TapLoop(new HotkeyBinding { Vk = F23, Ctrl = true, CtrlSide = ModifierSide.Left });
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+
+        Press(RCtrl);
+        Assert.False(Press(F23));
+        Release(F23);
+        Release(RCtrl);
+        Assert.False(_engine.IsRunning(loop.Id));
+
+        Press(LCtrl);
+        Assert.True(Press(F23));
+        Release(F23);
+        Release(LCtrl);
+        Assert.True(_engine.IsRunning(loop.Id));
     }
 }

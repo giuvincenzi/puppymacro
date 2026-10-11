@@ -19,10 +19,10 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
 
     public RemapDefinition Definition { get; }
 
-    public string SourceText => KeyNames.Get(Definition.SourceVk);
+    public string SourceText => KeyNames.Format(Definition.Source);
     public string TargetText => KeyNames.Format(Definition.Target);
-    /// <summary>The title's keys, in the accent color: the source key, then the key or combination it sends.</summary>
-    public List<string> SourceParts => new() { SourceText };
+    /// <summary>The title's keys, in the accent color: the key or combination pressed, then the one it sends.</summary>
+    public List<string> SourceParts => KeyNames.Parts(Definition.Source);
     public List<string> TargetParts => KeyNames.Parts(Definition.Target);
     public bool IsAllApps => Definition.AppExe == null;
     public bool IsSpecificApp => Definition.AppExe != null;

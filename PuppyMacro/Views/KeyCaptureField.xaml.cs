@@ -13,7 +13,8 @@ namespace PuppyMacro.Views;
 /// <summary>
 /// The one field that asks the user for a key or a hotkey, everywhere, on one line: "Set hotkey" when there
 /// is none; while it waits for the key through <see cref="LoopEngine.BeginCapture"/>, a ring and the prompt
-/// (Esc cancels); then the keys in the accent color with Change and Clear. It keeps a key when
+/// (Esc cancels); then the keys in the accent color in a SplitButton whose menu has Change, Clear (with
+/// <see cref="CanClear"/>) and the side of each Ctrl, Alt, Shift and Win the hotkey holds. It keeps a key when
 /// <see cref="Validate"/> accepts it. The window gives the engine once, with
 /// <see cref="SetEngine"/> on itself (it is inherited by every field inside, also in templates).
 /// </summary>
@@ -49,11 +50,15 @@ public partial class KeyCaptureField : UserControl
     public static readonly DependencyProperty IsHotkeyProperty = DependencyProperty.Register(
         nameof(IsHotkey), typeof(bool), typeof(KeyCaptureField), new PropertyMetadata(false));
 
+    public static readonly DependencyProperty AllowModifierAloneProperty = DependencyProperty.Register(
+        nameof(AllowModifierAlone), typeof(bool), typeof(KeyCaptureField), new PropertyMetadata(false));
+
     public static readonly DependencyProperty StartOnLoadProperty = DependencyProperty.Register(
         nameof(StartOnLoad), typeof(bool), typeof(KeyCaptureField),
         new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     private bool _waiting;
+    private readonly List<Control> _sideItems = new();
 
     public KeyCaptureField()
     {
@@ -114,6 +119,13 @@ public partial class KeyCaptureField : UserControl
         set => SetValue(IsHotkeyProperty, value);
     }
 
+    /// <summary>Passed to <see cref="LoopEngine.BeginCapture"/>: a Ctrl, Alt, Shift or Win key pressed and released alone is kept, by its side.</summary>
+    public bool AllowModifierAlone
+    {
+        get => (bool)GetValue(AllowModifierAloneProperty);
+        set => SetValue(AllowModifierAloneProperty, value);
+    }
+
     /// <summary>Starts waiting as soon as the field is shown (a key row just added); set back to false then.</summary>
     public bool StartOnLoad
     {
@@ -143,7 +155,7 @@ public partial class KeyCaptureField : UserControl
         engine.CancelCapture(); // another field that waits goes back to its value
         Started?.Invoke(this, EventArgs.Empty);
         ShowWaiting(true);
-        engine.BeginCapture(OnCaptured, () => ShowWaiting(false), AllowPrimaryMouse, IsHotkey);
+        engine.BeginCapture(OnCaptured, () => ShowWaiting(false), AllowPrimaryMouse, IsHotkey, AllowModifierAlone);
     }
 
     /// <summary>Stops waiting, as Esc does.</summary>
@@ -162,17 +174,83 @@ public partial class KeyCaptureField : UserControl
         return keyOnly ? new List<string> { KeyNames.Get(value.Vk) } : KeyNames.Parts(value);
     }
 
+    /// <summary>One choice of the menu's side items: <see cref="Modifier"/> ("Ctrl") on <see cref="Side"/>.</summary>
+    internal sealed record SideChoice(string Modifier, ModifierSide Side, string Label, bool IsChecked);
+
+    /// <summary>
+    /// The side items of the menu: for each Ctrl, Alt, Shift and Win of <paramref name="value"/>, "Left Ctrl",
+    /// "Right Ctrl" and "Left or right Ctrl", the current one checked. None for a single key.
+    /// </summary>
+    internal static List<List<SideChoice>> SideChoices(HotkeyBinding? value, bool keyOnly)
+    {
+        var groups = new List<List<SideChoice>>();
+        if (keyOnly || value is not { IsSet: true })
+            return groups;
+        foreach (var (name, held, current) in Modifiers(value))
+        {
+            if (!held)
+                continue;
+            groups.Add(new List<SideChoice>
+            {
+                new(name, ModifierSide.Left, KeyNames.Modifier(name, ModifierSide.Left), current == ModifierSide.Left),
+                new(name, ModifierSide.Right, KeyNames.Modifier(name, ModifierSide.Right), current == ModifierSide.Right),
+                new(name, ModifierSide.Any, $"Left or right {name}", current == ModifierSide.Any),
+            });
+        }
+        return groups;
+    }
+
+    /// <summary>A copy of <paramref name="value"/> with <paramref name="modifier"/> ("Ctrl", "Alt", "Shift", "Win") on <paramref name="side"/>.</summary>
+    internal static HotkeyBinding WithSide(HotkeyBinding value, string modifier, ModifierSide side)
+    {
+        var copy = value.Clone();
+        switch (modifier)
+        {
+            case "Ctrl": copy.CtrlSide = side; break;
+            case "Alt": copy.AltSide = side; break;
+            case "Shift": copy.ShiftSide = side; break;
+            case "Win": copy.WinSide = side; break;
+        }
+        return copy;
+    }
+
+    private static (string Name, bool Held, ModifierSide Side)[] Modifiers(HotkeyBinding value) => new[]
+    {
+        ("Ctrl", value.Ctrl, value.CtrlSide),
+        ("Alt", value.Alt, value.AltSide),
+        ("Shift", value.Shift, value.ShiftSide),
+        ("Win", value.Win, value.WinSide),
+    };
+
     private void OnCaptured(HotkeyBinding binding)
     {
         ShowWaiting(false);
         var value = KeyOnly ? HotkeyBinding.FromKey(binding.Vk) : binding;
+        Keep(value);
+    }
+
+    /// <summary>Keeps <paramref name="value"/> when <see cref="Validate"/> accepts it; otherwise <see cref="Rejected"/>.</summary>
+    private void Keep(HotkeyBinding value)
+    {
         if (Validate?.Invoke(value) is { } problem)
         {
             Rejected?.Invoke(problem);
+            ShowValue(); // a side item clicked shows the side kept
             return;
         }
         Value = value;
         ValueChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnSideClick(SideChoice choice)
+    {
+        if (Value is not { IsSet: true } value)
+            return;
+        var changed = WithSide(value, choice.Modifier, choice.Side);
+        if (changed.SameAs(value))
+            ShowValue(); // clicking the checked item unchecks it: check it again
+        else
+            Keep(changed);
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
@@ -205,12 +283,30 @@ public partial class KeyCaptureField : UserControl
 
     private void ShowValue()
     {
-        var parts = DisplayParts(Value, KeyOnly);
-        SplitCaps.ItemsSource = parts;
-        ButtonCaps.ItemsSource = parts;
-        ValueSplit.Visibility = CanClear ? Visibility.Visible : Visibility.Collapsed;
-        ValueButton.Visibility = CanClear ? Visibility.Collapsed : Visibility.Visible;
+        SplitCaps.ItemsSource = DisplayParts(Value, KeyOnly);
+        ClearItem.Visibility = CanClear ? Visibility.Visible : Visibility.Collapsed;
+        ShowSideItems();
         ShowState();
+    }
+
+    /// <summary>The menu's side items after Change and Clear, a group per modifier, each after a separator.</summary>
+    private void ShowSideItems()
+    {
+        foreach (var item in _sideItems)
+            ValueMenu.Items.Remove(item);
+        _sideItems.Clear();
+        foreach (var group in SideChoices(Value, KeyOnly))
+        {
+            _sideItems.Add(new Separator());
+            foreach (var choice in group)
+            {
+                var item = new MenuItem { Header = choice.Label, IsCheckable = true, IsChecked = choice.IsChecked };
+                item.Click += (_, _) => OnSideClick(choice);
+                _sideItems.Add(item);
+            }
+        }
+        foreach (var item in _sideItems)
+            ValueMenu.Items.Add(item);
     }
 
     /// <summary>One of the three states: nothing set (Set), waiting (ring and prompt), set (keys, Change, Clear).</summary>
@@ -228,9 +324,7 @@ public partial class KeyCaptureField : UserControl
         AutomationProperties.SetName(SetButton, "Set " + ItemName);
         string change = "Change " + ItemName;
         AutomationProperties.SetName(ValueSplit, change);
-        AutomationProperties.SetName(ValueButton, change);
         ValueSplit.ToolTip = change;
-        ValueButton.ToolTip = change;
         ChangeItem.Header = "Change";
         ClearItem.Header = "Clear";
         AutomationProperties.SetName(ChangeItem, change);

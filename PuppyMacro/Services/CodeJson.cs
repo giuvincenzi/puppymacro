@@ -136,10 +136,58 @@ internal static class CodeJson
                 Add("Hotkey.Vk", "Ctrl, Alt, Shift and Win alone cannot be the key: set them with \"Ctrl\", \"Alt\", \"Shift\" and \"Win\".");
                 return;
             }
+            if (!ModifierSides("Hotkey", hotkey))
+                return;
             if (HotkeyRules.Problem(hotkey, hold) is string problem)
                 Add("Hotkey", problem);
             else if (conflict(hotkey) is string message)
                 Add("Hotkey", message);
+        }
+
+        /// <summary>
+        /// A remap's source or target at <paramref name="path"/>: a key or mouse button with its modifiers, or a modifier
+        /// key alone by its side. False when it is not valid.
+        /// </summary>
+        public bool RemapKey(string path, HotkeyBinding binding)
+        {
+            if (!IsKeyCode(binding.Vk))
+            {
+                Add($"{path}.Vk", "Choose a key or mouse button: a virtual-key code from 1 to 254.");
+                return false;
+            }
+            if (KeyNames.IsModifier(binding.Vk))
+            {
+                if (!KeyNames.IsSidedModifier(binding.Vk))
+                {
+                    Add($"{path}.Vk", "Ctrl, Alt, Shift or Win alone: use the code of its left or right key (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).");
+                    return false;
+                }
+                if (binding.HasModifiers)
+                {
+                    Add(path, "Ctrl, Alt, Shift or Win alone takes no other modifier: set \"Ctrl\", \"Alt\", \"Shift\" and \"Win\" to false.");
+                    return false;
+                }
+            }
+            return ModifierSides(path, binding);
+        }
+
+        /// <summary>A side (CtrlSide, AltSide, ShiftSide, WinSide) only for a modifier the binding holds.</summary>
+        public bool ModifierSides(string path, HotkeyBinding binding)
+        {
+            bool valid = true;
+            foreach (var (name, held, side) in new[]
+            {
+                ("Ctrl", binding.Ctrl, binding.CtrlSide), ("Alt", binding.Alt, binding.AltSide),
+                ("Shift", binding.Shift, binding.ShiftSide), ("Win", binding.Win, binding.WinSide),
+            })
+            {
+                if (!held && side != ModifierSide.Any)
+                {
+                    Add($"{path}.{name}Side", $"Only with \"{name}\": true. Remove it, or set \"{name}\" to true.");
+                    valid = false;
+                }
+            }
+            return valid;
         }
 
         /// <summary>The checks of the Specific app card: null (all apps) or an .exe file name.</summary>

@@ -13,7 +13,36 @@ namespace PuppyMacro.E2E;
 public class RemapTests
 {
     private static RemapDefinition Remap(int source, HotkeyBinding target, string? appExe = null, bool enabled = true) =>
-        new() { SourceVk = source, Target = target, AppExe = appExe, Enabled = enabled, Note = $"E2E {source:X2}" };
+        new() { Source = HotkeyBinding.FromKey(source), Target = target, AppExe = appExe, Enabled = enabled, Note = $"E2E {source:X2}" };
+
+    [Fact]
+    public void A_key_becomes_a_combination_with_the_right_Ctrl_or_a_modifier_alone()
+    {
+        using var app = new AppSession(seed => seed.Settings.Remaps.AddRange(new[]
+        {
+            Remap(Vk.F20, new HotkeyBinding { Vk = Vk.F16, Ctrl = true, CtrlSide = ModifierSide.Right }),
+            Remap(Vk.F21, Key(KeyLeftShift)),
+        }));
+        using var target = new TargetWindow();
+
+        // The right Ctrl, not the left one, around F16.
+        target.Tap(Vk.F20);
+        target.WaitFor(t => t.Ups(Vk.RControl).Count == 1, 5, "F20 did not become Right Ctrl + F16");
+        Assert.True(target.Downs(Vk.RControl)[0].Ms <= target.Downs(Vk.F16)[0].Ms
+            && target.Ups(Vk.F16)[0].Ms <= target.Ups(Vk.RControl)[0].Ms, $"F16 is not inside Right Ctrl. Received: {target.Describe()}");
+        Assert.Empty(target.Downs(Vk.Control));
+
+        // A modifier alone, held as long as the key.
+        target.Press(Vk.F21);
+        target.WaitFor(t => t.Downs(Vk.Shift).Count == 1, 5, "F21 did not become Left Shift");
+        target.Release(Vk.F21);
+        target.WaitFor(t => t.Ups(Vk.Shift).Count == 1, 5, "releasing F21 did not release Left Shift");
+
+        Assert.Empty(target.Downs(Vk.F20));
+        Assert.Empty(target.Downs(Vk.F21));
+    }
+
+    private const int KeyLeftShift = 0xA0;
 
     [Fact]
     public void A_key_or_button_becomes_another_key_a_combination_or_a_button_for_as_long_as_it_is_held()

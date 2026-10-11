@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
+using PuppyMacro.Models;
 
 namespace PuppyMacro.Services;
 
@@ -24,6 +25,12 @@ internal static class ModifierTracker
     public static bool Alt => IsDown(KeyNames.VK_LMENU) || IsDown(KeyNames.VK_RMENU);
     public static bool Shift => IsDown(KeyNames.VK_LSHIFT) || IsDown(KeyNames.VK_RSHIFT);
     public static bool Win => IsDown(KeyNames.VK_LWIN) || IsDown(KeyNames.VK_RWIN);
+
+    /// <summary>The side of the Ctrl held: Left or Right, Any when both are held (or none).</summary>
+    public static ModifierSide CtrlSide => SideOf(KeyNames.VK_LCONTROL, KeyNames.VK_RCONTROL);
+    public static ModifierSide AltSide => SideOf(KeyNames.VK_LMENU, KeyNames.VK_RMENU);
+    public static ModifierSide ShiftSide => SideOf(KeyNames.VK_LSHIFT, KeyNames.VK_RSHIFT);
+    public static ModifierSide WinSide => SideOf(KeyNames.VK_LWIN, KeyNames.VK_RWIN);
 
     /// <summary>Ctrl, Alt, Shift or Win is held.</summary>
     public static bool Any => Volatile.Read(ref _mask) != 0;
@@ -64,6 +71,13 @@ internal static class ModifierTracker
         int bit = BitOf(vk);
         return bit != 0 && (Volatile.Read(ref _mask) & bit) != 0;
     }
+
+    private static ModifierSide SideOf(int left, int right) => (IsDown(left), IsDown(right)) switch
+    {
+        (true, false) => ModifierSide.Left,
+        (false, true) => ModifierSide.Right,
+        _ => ModifierSide.Any,
+    };
 
     private static int BitOf(int vk)
     {

@@ -16,9 +16,11 @@ internal static class DevSampleData
     private const int Enter = 0x0D;
     private const int CapsLock = 0x14;
     private const int Escape = 0x1B;
+    private const int Left = 0x25;
     private const int KeyC = 0x43;
     private const int KeyH = 0x48;
     private const int KeyI = 0x49;
+    private const int KeyJ = 0x4A;
     private const int KeyW = 0x57;
     private const int F6 = 0x75;
     private const int F7 = 0x76;
@@ -55,14 +57,21 @@ internal static class DevSampleData
 
         settings.Remaps.Add(new RemapDefinition
         {
-            SourceVk = CapsLock,
+            Source = HotkeyBinding.FromKey(CapsLock),
             Target = HotkeyBinding.FromKey(Escape),
             Note = "Sample: Caps Lock to Esc",
             Enabled = false,
         });
         settings.Remaps.Add(new RemapDefinition
         {
-            SourceVk = XButton1,
+            Source = new HotkeyBinding { Vk = KeyJ, Alt = true, AltSide = ModifierSide.Left },
+            Target = HotkeyBinding.FromKey(Left),
+            Note = "Sample: Left Alt + J to the left arrow",
+            Enabled = false,
+        });
+        settings.Remaps.Add(new RemapDefinition
+        {
+            Source = HotkeyBinding.FromKey(XButton1),
             Target = new HotkeyBinding { Vk = KeyC, Ctrl = true },
             Note = "Sample: mouse back button to Ctrl+C",
             Enabled = false,

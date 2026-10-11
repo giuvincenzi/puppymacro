@@ -19,7 +19,7 @@ public partial class RemapEditorWindow
     private readonly Guid _itemId;
     private readonly CodeViewSwitch<RemapDefinition> _code;
     private bool _enabled;
-    private int _sourceVk;
+    private HotkeyBinding? _source;
     private HotkeyBinding? _target;
     private bool _ready;
 
@@ -62,7 +62,7 @@ public partial class RemapEditorWindow
     private void LoadRemap(RemapDefinition source)
     {
         _enabled = source.Enabled;
-        _sourceVk = source.SourceVk;
+        _source = source.Source?.Clone();
         _target = source.Target?.Clone();
         AppScopeCard.Load(source.AppExe);
         NoteBox.Text = source.Note;
@@ -74,36 +74,42 @@ public partial class RemapEditorWindow
     private RemapDefinition FormRemap() => new()
     {
         Id = _itemId,
-        SourceVk = _sourceVk,
+        Source = _source?.Clone(),
         Target = _target?.Clone(),
         AppExe = AppScopeCard.AppExe,
         Note = (NoteBox.Text ?? "").Trim(),
         Enabled = _enabled,
     };
 
-    /// <summary>Why <paramref name="sourceVk"/> cannot be remapped for <paramref name="app"/> (null: all apps): a hotkey or another remap.</summary>
-    private string? SourceClash(int sourceVk, string? app)
+    /// <summary>Why <paramref name="source"/> cannot be remapped for <paramref name="app"/> (null: all apps): a hotkey or another remap.</summary>
+    private string? SourceClash(HotkeyBinding source, string? app)
     {
-        string? conflict = HotkeyConflicts.FindForRemap(sourceVk, app, _settings, _macros);
+        string? conflict = HotkeyConflicts.FindForRemap(source, app, _settings, _macros);
         if (conflict != null)
             return conflict + " Hotkeys take priority over remaps.";
 
-        var same = _settings.Remaps.FirstOrDefault(r => r.Id != _editingId && r.SourceVk == sourceVk
+        var same = _settings.Remaps.FirstOrDefault(r => r.Id != _editingId && source.Overlaps(r.Source)
             && string.Equals(r.AppExe, app, StringComparison.OrdinalIgnoreCase));
-        return same != null ? $"{KeyNames.Get(sourceVk)} is already remapped {(app == null ? "for all apps" : "for " + app)}." : null;
+        return same != null ? $"{KeyNames.Format(source)} is already remapped {(app == null ? "for all apps" : "for " + app)}." : null;
     }
 
     private void UpdateLabels()
     {
-        SourceField.Value = _sourceVk == 0 ? null : HotkeyBinding.FromKey(_sourceVk);
+        SourceField.Value = _source?.Clone();
         TargetField.Value = _target?.Clone();
     }
 
-    /// <summary>The source is a single key or button (the field keeps no modifiers).</summary>
     private void OnSourceFieldChanged(object? sender, EventArgs e)
     {
-        _sourceVk = SourceField.Value?.Vk ?? 0;
+        _source = SourceField.Value?.Clone();
         Validate();
+    }
+
+    /// <summary>A side chosen in a key field's menu that cannot be kept.</summary>
+    private void ShowError(string message)
+    {
+        ErrorText.Text = message;
+        ErrorText.Visibility = Visibility.Visible;
     }
 
     private void OnTargetFieldChanged(object? sender, EventArgs e)
@@ -116,20 +122,20 @@ public partial class RemapEditorWindow
 
     private string? GetValidationError()
     {
-        if (_sourceVk == 0)
-            return "Choose the key or mouse button to remap.";
+        if (_source is not { IsSet: true } source)
+            return "Choose the key, mouse button or combination to remap.";
         if (_target is not { IsSet: true })
             return "Choose what to send instead.";
-        if (!_target.HasModifiers && _target.Vk == _sourceVk)
-            return "The key to send must be different from the key pressed.";
+        if (_target.SameAs(source))
+            return "What is sent must be different from what is pressed.";
 
         if (AppScopeCard.ValidationError is string appError)
             return appError;
         string? app = AppScopeCard.AppExe;
-        if (KeyNames.IsPrimaryMouse(_sourceVk) && app == null)
+        if (KeyNames.IsPrimaryMouse(source.Vk) && !source.HasModifiers && app == null)
             return "Left and right click can be remapped only for a specific app, so they keep working everywhere else.";
 
-        return SourceClash(_sourceVk, app);
+        return SourceClash(source, app);
     }
 
     private void Validate()

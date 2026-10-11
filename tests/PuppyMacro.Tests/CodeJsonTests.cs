@@ -141,12 +141,12 @@ public class CodeJsonTests
 
     // ---- Remap ----
 
-    private static string? NoClash(int sourceVk, string? app) => null;
+    private static string? NoClash(HotkeyBinding source, string? app) => null;
 
     [Fact]
     public void A_remap_reads_back_unchanged()
     {
-        var remap = new RemapDefinition { SourceVk = 0x14, Target = HotkeyBinding.FromKey(0x1B), AppExe = "notepad.exe", Note = "Caps to Esc" };
+        var remap = new RemapDefinition { Source = HotkeyBinding.FromKey(0x14), Target = HotkeyBinding.FromKey(0x1B), AppExe = "notepad.exe", Note = "Caps to Esc" };
         string text = RemapJson.Serialize(remap);
 
         RemapDefinition? read = RemapJson.Parse(text, remap.Id, NoClash, out var problems);
@@ -158,17 +158,59 @@ public class CodeJsonTests
     [Fact]
     public void A_remap_follows_the_remap_editor_rules()
     {
-        var click = new RemapDefinition { SourceVk = KeyNames.VK_LBUTTON, Target = HotkeyBinding.FromKey(KeyNames.VK_LBUTTON) };
+        var click = new RemapDefinition { Source = HotkeyBinding.FromKey(KeyNames.VK_LBUTTON), Target = HotkeyBinding.FromKey(KeyNames.VK_LBUTTON) };
         Assert.Null(RemapJson.Parse(RemapJson.Serialize(click), click.Id, NoClash, out var problems));
         Assert.Contains(problems, p => p.Message.StartsWith("Target:") && p.Message.Contains("different"));
         Assert.Contains(problems, p => p.Message.StartsWith("AppExe:") && p.Message.Contains("specific app"));
 
-        var noExe = new RemapDefinition { SourceVk = 0x14, Target = HotkeyBinding.FromKey(0x1B), AppExe = "notepad" };
+        var noExe = new RemapDefinition { Source = HotkeyBinding.FromKey(0x14), Target = HotkeyBinding.FromKey(0x1B), AppExe = "notepad" };
         Assert.Null(RemapJson.Parse(RemapJson.Serialize(noExe), noExe.Id, NoClash, out problems));
         Assert.Contains(problems, p => p.Message.StartsWith("AppExe:") && p.Message.Contains(".exe"));
 
-        var taken = new RemapDefinition { SourceVk = 0x14, Target = HotkeyBinding.FromKey(0x1B) };
+        var taken = new RemapDefinition { Source = HotkeyBinding.FromKey(0x14), Target = HotkeyBinding.FromKey(0x1B) };
         Assert.Null(RemapJson.Parse(RemapJson.Serialize(taken), taken.Id, (_, _) => "Caps Lock is already remapped for all apps.", out problems));
-        Assert.Contains(problems, p => p.Message == "SourceVk: Caps Lock is already remapped for all apps.");
+        Assert.Contains(problems, p => p.Message == "Source: Caps Lock is already remapped for all apps.");
+    }
+
+    [Fact]
+    public void A_remap_from_a_combination_or_a_modifier_alone_reads_back_unchanged()
+    {
+        var combination = new RemapDefinition
+        {
+            Source = new HotkeyBinding { Vk = 0x41, Alt = true, AltSide = ModifierSide.Left },
+            Target = new HotkeyBinding { Vk = 0x25, Ctrl = true, CtrlSide = ModifierSide.Right },
+        };
+        string text = RemapJson.Serialize(combination);
+        Assert.Contains("\"AltSide\": \"Left\"", text);
+        Assert.DoesNotContain("ShiftSide", text); // either side is the default, left out
+        RemapDefinition? read = RemapJson.Parse(text, combination.Id, NoClash, out var problems);
+        Assert.Empty(problems);
+        Assert.True(read!.Source!.SameAs(combination.Source));
+        Assert.True(read.Target!.SameAs(combination.Target));
+
+        var rightAlt = new RemapDefinition { Source = HotkeyBinding.FromKey(KeyNames.VK_RMENU), Target = HotkeyBinding.FromKey(KeyNames.VK_LCONTROL) };
+        Assert.NotNull(RemapJson.Parse(RemapJson.Serialize(rightAlt), rightAlt.Id, NoClash, out problems));
+        Assert.Empty(problems);
+    }
+
+    [Fact]
+    public void A_remap_checks_modifiers_alone_sides_and_the_old_source_key()
+    {
+        var eitherAlt = new RemapDefinition { Source = HotkeyBinding.FromKey(0x12), Target = HotkeyBinding.FromKey(0x0D) };
+        Assert.Null(RemapJson.Parse(RemapJson.Serialize(eitherAlt), eitherAlt.Id, NoClash, out var problems));
+        Assert.Contains(problems, p => p.Message.StartsWith("Source.Vk:") && p.Message.Contains("left or right key"));
+
+        var modifierWithModifier = new RemapDefinition { Source = new HotkeyBinding { Vk = KeyNames.VK_RMENU, Ctrl = true }, Target = HotkeyBinding.FromKey(0x0D) };
+        Assert.Null(RemapJson.Parse(RemapJson.Serialize(modifierWithModifier), modifierWithModifier.Id, NoClash, out problems));
+        Assert.Contains(problems, p => p.Message.StartsWith("Source:") && p.Message.Contains("no other modifier"));
+
+        var sideWithoutModifier = new RemapDefinition { Source = new HotkeyBinding { Vk = 0x41, CtrlSide = ModifierSide.Left }, Target = HotkeyBinding.FromKey(0x0D) };
+        Assert.Null(RemapJson.Parse(RemapJson.Serialize(sideWithoutModifier), sideWithoutModifier.Id, NoClash, out problems));
+        Assert.Contains(problems, p => p.Message.StartsWith("Source.CtrlSide:"));
+
+        var old = new RemapDefinition { SourceVk = 0x14, Target = HotkeyBinding.FromKey(0x1B) };
+        Assert.Null(RemapJson.Parse(RemapJson.Serialize(old), old.Id, NoClash, out problems));
+        Assert.Contains(problems, p => p.Message.StartsWith("SourceVk:") && p.Message.Contains("Not used any more"));
+        Assert.Contains(problems, p => p.Message.StartsWith("Source:"));
     }
 }
