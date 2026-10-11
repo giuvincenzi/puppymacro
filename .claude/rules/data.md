@@ -37,11 +37,21 @@ paths:
 - Schema 7: a remap's source is `Source` (a `HotkeyBinding`); the single key of older files, `SourceVk`, is
   read once and converted to a `Source` with no modifiers (`SettingsStore.Sanitize`); the remap Code view
   rejects `SourceVk`. Hotkeys have `CtrlSide`, `AltSide`, `ShiftSide`, `WinSide`, left out when `Any`
-  (either side), so older files mean either side, as before.
+  (either side), so older files mean either side, as before. The macro editor opens 240 px wider since
+  schema 7 (120 for its right column, 120 for the list): a `MacroEditorWidth` from an older file grows by 240 once.
+- Loop actions (`LoopAction`) and macro actions (`MacroAction`) share `KeyModifierFields`: `Ctrl`, `Alt`,
+  `Shift`, `Win` and their sides, flat next to the key, written only when set (a macro's Press key, a loop's
+  Press key). A loop's Click is a `Key` row whose `KeyVk` is a mouse button (`LoopAction.IsClick`), not a
+  new `ActionType`: an older version reading the file must not reset the settings on an unknown enum value.
+  A loop row's `HoldMs`, `Repeat`, `RepeatPauseMs`, `ClickCount`, `X`, `Y` are null in older files and
+  mean what loops did before (30 ms held, at most half the interval; once; single; where the pointer is);
+  `LoopAction.Normalize` (in `SettingsStore`) drops values that do not belong to the row. Older versions
+  ignore these fields: a combination plays as its key alone there.
 - `AppExe` (Specific app) on loops, macros and remaps: an .exe file name or null (all apps). Files
   without it work in all apps; an empty value is saved as null (`AppScope.Normalize`, in
   `SettingsStore`, `MacroLibrary.Sanitize` and the Code views).
 - Export / Import: `.puppymacro` zip (`BackupService`); Import keeps a backup and restarts
   the app (`--restart`).
-- Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`). Keep
+- Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
+  loop is enabled). Keep
   the samples working when models change.

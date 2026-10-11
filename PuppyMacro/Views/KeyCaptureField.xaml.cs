@@ -320,7 +320,7 @@ public partial class KeyCaptureField : UserControl
 
     private void UpdateNames()
     {
-        SetButton.Content = "Set " + ItemName;
+        SetText.Text = "Set " + ItemName;
         AutomationProperties.SetName(SetButton, "Set " + ItemName);
         string change = "Change " + ItemName;
         AutomationProperties.SetName(ValueSplit, change);

@@ -121,7 +121,7 @@ public partial class PlacementWindow
             InstructionsText.Text = showPanel
                 ? "Drag the panel and the buttons where you want them"
                 : buttons.Count == 1 ? "Drag the button where you want it" : "Drag the buttons where you want them";
-            NudgeText.Text = "Nudge the selected one (Shift ×10)";
+            NudgeText.Text = "Move the selected one by 1 pixel (Shift: 10)";
         }
         Select(_selected ?? first ?? throw new InvalidOperationException("Nothing to position."));
 

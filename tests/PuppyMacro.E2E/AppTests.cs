@@ -39,7 +39,7 @@ public class AppTests
         Assert.True(app.Has(app.MainWindow, "Sample: Caps Lock to Esc"));
 
         app.GoTo("Settings");
-        Assert.True(app.Has(app.MainWindow, "Updates are available when PuppyMacro is installed with Setup."));
+        Assert.True(app.Has(app.MainWindow, "Install PuppyMacro with Setup to get updates"));
         Assert.True(app.Has(app.MainWindow, "Not available in the development build"));
 
         // About opens like the other groups. Its buttons open the browser: never clicked.
@@ -57,8 +57,8 @@ public class AppTests
         app.Find(app.MainWindow, "Add loop").AsButton().Click();
         Window editor = app.Dialog("Add loop");
         app.FindById(editor, "NameBox").AsTextBox().Text = "E2E F24 loop";
-        app.Find(editor, "Add key").AsButton().Click(); // starts waiting for the key right away
-        app.Find(editor, "Press a key or mouse button (Esc cancels)");
+        app.FindById(editor, "AddPressKeyButton").AsButton().Invoke(); // a Press key that waits for the key right away
+        app.Find(editor, "Press the key or combination (Esc cancels)");
         Keyboard.Press(VirtualKeyShort.F24);
         Keyboard.Release(VirtualKeyShort.F24);
         app.Find(editor, "F24");
@@ -241,12 +241,11 @@ public class AppTests
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "menu item \"Press key\" not found").Result!
             .AsMenuItem().Invoke(); // UI Automation: a mouse click can miss the menu while its popup opens
         Window action = ChildDialog(editor, "Add press key");
-        app.Find(action, "Set key").AsButton().Invoke();
-        app.Find(action, "Press a key (Esc cancels)");
+        app.Find(action, "Press the key or combination (Esc cancels)"); // a new Press key waits for its key at once
         Keyboard.Press(VirtualKeyShort.F24);
         Keyboard.Release(VirtualKeyShort.F24);
         app.Find(action, "F24");
-        AutomationElement hold = app.FindById(action, "KeyHoldBox");
+        AutomationElement hold = app.FindById(action, "HoldBox");
         hold.Focus();
         Keyboard.TypeSimultaneously(VirtualKeyShort.CONTROL, VirtualKeyShort.KEY_A);
         Keyboard.Type("1500");
@@ -284,7 +283,7 @@ public class AppTests
 
     /// <summary>A dialog opened by another dialog.</summary>
     private static Window ChildDialog(Window owner, string title) =>
-        Retry.WhileNull(() => owner.ModalWindows.FirstOrDefault(w => w.Title == title), AppSession.Timeout, throwOnTimeout: true,
+        Retry.WhileNull(() => owner.ModalWindows.FirstOrDefault(w => AppSession.HasTitle(w.Title, title)), AppSession.Timeout, throwOnTimeout: true,
             timeoutMessage: $"window \"{title}\" not found").Result!;
 
     private static void AssertInside(System.Drawing.Rectangle workArea, AutomationElement element)
@@ -322,8 +321,8 @@ public class AppTests
         app.Find(app.MainWindow, "Add loop").AsButton().Click();
         Window editor = app.Dialog("Add loop");
         app.FindById(editor, "NameBox").AsTextBox().Text = "E2E F24 loop";
-        app.Find(editor, "Add key").AsButton().Click();
-        app.Find(editor, "Press a key or mouse button (Esc cancels)");
+        app.FindById(editor, "AddPressKeyButton").AsButton().Invoke();
+        app.Find(editor, "Press the key or combination (Esc cancels)");
         Keyboard.Press(VirtualKeyShort.F24);
         Keyboard.Release(VirtualKeyShort.F24);
         app.Find(editor, "F24");
@@ -339,7 +338,9 @@ public class AppTests
         // The button is never clicked.
         Window editor = AddF24LoopWithButton(app);
         Assert.Equal("EF", app.FindById(editor, "LabelBox").AsTextBox().Text);
-        app.FindById(editor, "OpacitySlider").Patterns.RangeValue.Pattern.SetValue(60);
+        // OpacitySlider is a ValueSlider: the Slider is inside it
+        app.FindById(editor, "OpacitySlider").FindFirstDescendant(cf => cf.ByControlType(ControlType.Slider))
+            .Patterns.RangeValue.Pattern.SetValue(60);
         app.FindById(editor, "SaveButton").AsButton().Click();
 
         Assert.True(Retry.WhileFalse(() =>
@@ -547,8 +548,8 @@ public class AppTests
         app.Find(app.MainWindow, "Add loop").AsButton().Click();
         Window editor = app.Dialog("Add loop");
         app.FindById(editor, "NameBox").AsTextBox().Text = "E2E app loop";
-        app.Find(editor, "Add key").AsButton().Click();
-        app.Find(editor, "Press a key or mouse button (Esc cancels)");
+        app.FindById(editor, "AddPressKeyButton").AsButton().Invoke();
+        app.Find(editor, "Press the key or combination (Esc cancels)");
         PressF24();
         app.Find(editor, "F24");
 
@@ -589,5 +590,83 @@ public class AppTests
         Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Replace(" ", "").Replace("\r", "").Replace("\n", "")
             .Contains("\"Source\":{\"Vk\":74,\"Ctrl\":false,\"Alt\":true,\"Shift\":false,\"Win\":false}"), AppSession.Timeout).Success,
             "the remap was not saved with Alt on either side");
+    }
+
+    [Fact]
+    public void The_loop_editor_adds_each_action_from_its_bar_with_its_options_and_Enabled_is_saved()
+    {
+        using var app = new AppSession();
+        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        Window editor = app.Dialog("Add loop");
+        app.FindById(editor, "NameBox").AsTextBox().Text = "E2E bar loop";
+
+        // A Click opens with the loop's and the click's options.
+        app.FindById(editor, "AddClickButton").AsButton().Invoke();
+        foreach (string row in new[] { "While the loop runs", "Every", "Hold for", "Mode", "Times", "Pause between", "Position" })
+            Assert.True(app.Has(editor, row), $"no \"{row}\" row");
+
+        // A Paste text needs its text before the loop can be saved.
+        app.FindById(editor, "AddPasteTextButton").AsButton().Invoke();
+        Assert.True(app.Has(editor, "Press Enter after pasting"));
+        Assert.True(app.Has(editor, "Enter the text for each Paste text."));
+        Assert.False(app.FindById(editor, "SaveButton").IsEnabled);
+        app.FindById(editor, "PasteTextBox").AsTextBox().Text = "hi";
+
+        app.FindById(editor, "EnabledSwitch").AsToggleButton().Toggle(); // off
+        Assert.True(Retry.WhileFalse(() => app.FindById(editor, "SaveButton").IsEnabled, AppSession.Timeout).Success);
+        app.FindById(editor, "SaveButton").AsButton().Invoke();
+
+        Assert.True(Retry.WhileFalse(() => SavedLoop("E2E bar loop") is { } loop && !loop.Enabled
+                && loop.Actions.Count == 2 && loop.Actions[0].IsClick && loop.Actions[1].Text == "hi", AppSession.Timeout).Success,
+            "the loop was not saved disabled with its Click and Paste text");
+    }
+
+    private static Models.LoopDefinition? SavedLoop(string name)
+    {
+        try
+        {
+            var settings = System.Text.Json.JsonSerializer.Deserialize<Models.AppSettings>(File.ReadAllText(AppSession.SettingsFile), Seed.JsonOptions);
+            return settings?.Loops.FirstOrDefault(l => l.Name == name);
+        }
+        catch (Exception ex) when (ex is IOException or System.Text.Json.JsonException)
+        {
+            return null; // being written
+        }
+    }
+
+    [Fact]
+    public void Detect_takes_the_mouse_button_pressed_in_a_loop_click_and_in_a_macro_click()
+    {
+        using var app = new AppSession();
+
+        // A loop's new Click: Detect, then the middle button (inside the editor; the press is taken, not clicked).
+        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        Window loop = app.Dialog("Add loop");
+        app.FindById(loop, "AddClickButton").AsButton().Invoke();
+        DetectWith(app, loop, MouseButton.Middle, "Middle");
+        loop.Close();
+
+        // A macro's Click (the sample's): Detect, then the back button.
+        app.GoTo("Macros");
+        app.EditItem("Sample: click and scroll");
+        Window editor = app.Dialog("Edit macro");
+        app.FindById(editor, "ActionList").AsListBox().Items[0].Select();
+        app.Find(editor, "Edit action").AsButton().Invoke();
+        Window action = ChildDialog(editor, "Edit click");
+        DetectWith(app, action, MouseButton.XButton1, "Back (X1)");
+        app.FindById(action, "CancelButton").AsButton().Invoke();
+    }
+
+    /// <summary>Detect in <paramref name="window"/>'s mouse button field, then <paramref name="button"/> pressed over the window.</summary>
+    private static void DetectWith(AppSession app, Window window, MouseButton button, string expected)
+    {
+        app.Find(window, "Detect the mouse button").AsButton().Invoke();
+        app.Find(window, "Press a mouse button (Esc cancels)");
+        System.Drawing.Rectangle place = window.BoundingRectangle;
+        Mouse.MoveTo(new System.Drawing.Point(place.X + place.Width / 2, place.Y + 60));
+        Mouse.Click(button);
+        ComboBox list = app.Find(window, "Mouse button").AsComboBox();
+        Assert.True(Retry.WhileFalse(() => list.SelectedItem?.Text == expected, AppSession.Timeout).Success,
+            $"the mouse button field shows \"{list.SelectedItem?.Text}\", not \"{expected}\"");
     }
 }

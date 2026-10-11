@@ -62,7 +62,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     3 px rounded Border above or below a list card (`DropBefore` / `DropAfter`), a 2 px border on a
     macro editor row.
   - Settings > Overlay > Opacity: a small preview of the panel (`OpacityPreviewPanel`) with the
-    overlay panel's fixed dark colors, so the chosen opacity can be seen.
+    overlay panel's fixed dark colors, so the chosen opacity can be seen, 36 px high so the row keeps the library's height like the others in the group.
   - Development builds: the orange "Development build" strip under the title bar (fixed colors,
     `build-and-release.md`).
   - Disabled loops, macros and remaps in the lists: the card's icon, header and description use
@@ -71,7 +71,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   - `Views/SwitchSettingsExpander`: a `SettingsExpander` with a switch in its header whose options
     open only while the switch is on (`CanExpand`): otherwise no arrow and the header does not open
     it. Use it for every group whose switch unlocks its options (today: Show in overlay, floating button, Sound
-    and Specific app in the loop and macro editors). It still lights up on mouse over when it cannot open (that is in
+    and Specific app in the loop and macro editors; Settings › Overlay panel, whose switch is Show the overlay panel and
+    which opens also while off, `CanExpand` always true, as its Position on screen places the floating buttons too). It still lights up on mouse over when it cannot open (that is in
     the library's template).
   - The main window's side rail, `Views/SideRail`, as in Microsoft Store (iNKORE and WinUI have no
     such control; the Store templates its NavigationView): always closed, 72 px wide, two standard
@@ -82,14 +83,25 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     the `_20_Filled` icon in `AccentTextFillColorPrimaryBrush` instead, and the name fades out while
     the icon slides down 10 px to the middle (167 ms, curve `0,0,0,1`, WinUI's
     `ControlFastAnimationDuration` and `ControlFastOutSlowInKeySpline`). The update dot on Settings is an
-    `AttentionDot` `InfoBadge`. The pages sit on the content layer the NavigationView draws (as in
+    `AttentionDot` `InfoBadge` placed as Microsoft Store's on Downloads (measured, approved): 6 px, 7 px right of the
+    icon and 3 px above it, inside the icon's grid so it moves with it. The update bar is the library's `InfoBar`
+    with no margins of ours: its action button `HorizontalAlignment` Right (the InfoBar gives the action the rest of
+    the row), and while downloading the progress bar ends 46 px from the right, as far as it starts from the left. The pages sit on the content layer the NavigationView draws (as in
     Microsoft Store): a Border with `LayerFillColorDefaultBrush`, `CardStrokeColorDefaultBrush` on the
     top and left (`1,1,0,0`) and the top-left corner rounded (`8,0,0,0`). In the rail
     `ListViewItemCompactSelectedBorderThemeThickness` is `4,0,4,4`, so the first page's background starts
     where that layer starts; the Settings list keeps the library's 4 (no extra margin), as Library in Microsoft Store.
-  - The main window's Stop all: `AccentButtonStyle` with `AccentButtonBackground`,
-    `…PointerOver` and `…Pressed` redefined in its `Button.Resources` from `SystemFillColorCritical`
-    (100%, 90%, 80%): red while something runs, the library's disabled grey otherwise.
+  - The main window's title bar: `TitleBar.ExtendViewIntoTitleBar` with `TitleBar.Height` 48, as Microsoft Store
+    and the library's ButtonsOnTitlebar sample: on the left the app icon at 24 px (12 px above and below) and "PuppyMacro"
+    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build); on the right Enter
+    overlay mode (a standard button with the `MapLayers` icon) and Stop all, then the window buttons
+    (`TitleBar.SystemOverlayRightInset`). Both have their hotkey in the tooltip and `WindowChrome.IsHitTestVisibleInChrome`,
+    and show on every page. They sit 9 px from the top (the window's 1 px border, then 8), so they look 8 px from the top
+    and the bottom, as Microsoft Store's search box (measured). Minimize and close are the library's, as tall as the bar;
+    16 px between our last button and them.
+  - The main window's Stop all, in that title bar: the filled `Stop_16_Filled` icon and its text, `AccentButtonStyle` with
+    `AccentButtonBackground`, `…PointerOver` and `…Pressed` redefined in its `Button.Resources` from
+    `SystemFillColorCritical` (100%, 90%, 80%); shown only while something runs, hidden otherwise.
   - The status dots in the lists are the library's `InfoBadge` dots: Running `SuccessDot`, Disabled
     `CautionDot`, Idle `IdleDotInfoBadgeStyle` (`App.xaml`), the `InformationalDot` in blue instead of
     its grey: `IdleDotBrush`, Windows' default blue per theme (`#60CDFF` dark, `#005FB8` light,
@@ -125,8 +137,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     dashed) instead of its fill and border, a hollow `#9E9E9E` dot, the name and hotkey in `#8A8A8A` and
     the state "Disabled" in the usual `#C5C5C5`; a floating button with a dashed ring (`#66FFFFFF`, an
     `Ellipse` over the circle) instead of its border, the label and badge in `#8A8A8A` and its background
-    at 65% of its opacity. Under Stop all, while the panel can be clicked, the hint "Click: start / stop ·
-    Right-click: enable / disable".
+    at 65% of its opacity. Under Stop all, while the panel can be clicked, the hint "Click to start or stop ·
+    Right-click to enable or disable".
   - Specific app (`Views/AppScopeEditor`, in the loop, macro and remap editors): a
     `SwitchSettingsExpander` whose card holds the editable `ComboBox` of running apps, **Pick** (the
     `Eyedropper` icon) and **Browse…**. Pick's overlay (`PickPointWindow` with `pickApp`) outlines the
@@ -139,13 +151,40 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     shown.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set
-  hotkey" / "Set key" button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
+  hotkey" / "Set key" button with the `Bullseye` icon before its text; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
   other button); set, the keys as `KeyCap`s in `AccentFillColorDefaultBrush` with
   `TextOnAccentFillColorPrimaryBrush` text (approved) inside a `SplitButton`, everywhere (click: change;
   its `MenuFlyout`: Change, Clear only where the key can be removed (`CanClear`), then for each Ctrl, Alt,
   Shift and Win of the value a `Separator` and three checkable `MenuItem`s, "Left Ctrl", "Right Ctrl",
   "Left or right Ctrl", built in code; iNKORE has no radio menu item). It keeps the same height in every state (a hidden zero-width button
   holding a key sets it), so nothing around it moves. Never build another one (`architecture.md`).
+- **An action is edited in `Views/ActionBox`** (approved), the same in a loop editor row and in the macro's
+  action window: a `SettingsExpander` with the type's icon (one `FontIcon` per kind), its name, a summary and
+  its main field in the header (key, `MouseButtonBox`, direction, or `PositionPicker` for Move to); opened,
+  one `SettingsCard` per option. Loop: While the loop runs, Every, Hold for, Mode, Times, Pause between
+  (off with Times 1), Position (a `ToggleSwitch`: off, where the pointer is; on, a point); with Hold down
+  only Position stays. Macro: Position, Mode, Hold for, Times, Pause between; Name and Delay are cards
+  above the box in the window. Key down and Key up have no options: a plain `SettingsCard` with no arrow.
+  A point is always `Views/PositionPicker` (on one line: "X" and "Y" each before its `NumberBox`, as "ms" after a
+  number, so the card keeps its height; Pick on screen); a new macro Press key / Key down / Key up waits for its key at once; a
+  mouse button always `Views/MouseButtonBox`: the list and, next to it, Detect (an icon button) that waits for a mouse
+  button through `LoopEngine.BeginCapture` (only the ring and "Press a mouse button (Esc cancels)" show meanwhile, the list
+  hidden too, as the key field) and selects it; a key instead is rejected ("Use Press key for keys.").
+- **Icons of the buttons that wait, pick or move** (approved; every such button has one): a button that waits for
+  a key or a mouse button, or picks something on the screen, has `Bullseye` (Set hotkey / Set key and Change in
+  `KeyCaptureField`; `PlaceButton`: Pick on screen; Specific app's Pick; Detect in `MouseButtonBox`), as the user
+  chose; one that moves the overlay has `Move` (`PlaceButton` with `MovesOverlay`: a floating button's Position,
+  Settings' Position on screen). `Views/PlaceButton` is the one button for picking and moving (icon, then its text).
+- **Every slider is `Views/ValueSlider`**: its value as text, then a 200 px standard `Slider`, on one line on the right of
+  its card, as in Windows Settings (Settings › Overlay panel › Opacity, Settings › Sound, a floating button's Opacity, a
+  macro's Speed). A percentage in steps of 5 by default; `Step` and `Format` change it (Speed: ×0.25 to ×4). Never a card
+  with `ContentAlignment="Vertical"` for a slider.
+- The loop editor's bar (approved): a `CommandBar` above the actions with one `AppBarButton` per action
+  (Press key, Click, Paste text), label under the icon as the macro editor's bar, no overflow button.
+- The editors (loop, macro, remap) have an **Enabled** card with a `ToggleSwitch`, first on the right; the
+  same value as the list card's switch. Their titles name what they edit: "Edit loop - Spam", "Edit
+  click - Open inventory" (its name, or its description), "Edit remap - Sample: Caps Lock to Esc" (its
+  note, or its keys). The macro action's Test button shows the filled Play icon before its text.
 - **A key the user chose is shown as accent `KeyCap`s** wherever it appears: the template
   `AccentKeyCapItem` with the panel `KeyCapRow` (`App.xaml`), used by `KeyCaptureField` and by the list
   cards (a loop's or macro's hotkey after "Toggle with" / "Hold with", a remap's keys in its title).

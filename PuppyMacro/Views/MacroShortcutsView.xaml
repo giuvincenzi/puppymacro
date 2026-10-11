@@ -64,7 +64,7 @@
             <StackPanel Style="{StaticResource Keys}">
                 <TextBlock VerticalAlignment="Center" Text="Drag" />
             </StackPanel>
-            <TextBlock Grid.Column="1" Style="{StaticResource What}" Text="Move the selected actions, also into or out of a group" />
+            <TextBlock Grid.Column="1" Style="{StaticResource What}" Text="Move the selected actions, also in or out of a group" />
             <StackPanel Grid.Row="1" Style="{StaticResource Keys}">
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
@@ -97,7 +97,7 @@
             <StackPanel Grid.Row="1" Style="{StaticResource Keys}">
                 <TextBlock VerticalAlignment="Center" Text="Right-click" />
             </StackPanel>
-            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource What}" Text="The commands for the selected actions" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource What}" Text="Show the commands for the selected actions" />
             <StackPanel Grid.Row="2" Style="{StaticResource Keys}">
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
@@ -115,13 +115,13 @@
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="C" /></Border>
             </StackPanel>
-            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource What}" Text="Copy the selected actions, also to paste them in another macro" />
+            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource What}" Text="Copy the selected actions, to paste here or in another macro" />
             <StackPanel Grid.Row="5" Style="{StaticResource Keys}">
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="V" /></Border>
             </StackPanel>
-            <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource What}" Text="Paste them where new actions go" />
+            <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource What}" Text="Paste the copied actions where new actions go" />
             <StackPanel Grid.Row="6" Style="{StaticResource Keys}">
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="Delete" /></Border>
             </StackPanel>

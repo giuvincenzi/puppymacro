@@ -7,7 +7,7 @@
 
     <!-- Floating button expander, shared by the loop and macro editors -->
     <views:SwitchSettingsExpander x:Name="FloatingExpander" Header="Floating button" CanExpand="False"
-                         Description="A round button in overlay mode that starts and stops it. It replaces its row in the overlay panel.">
+                         Description="A round button that starts and stops it in overlay mode, in place of its row in the panel">
         <ui:ToggleSwitch x:Name="FloatingSwitch" Toggled="OnSwitchChanged" />
 
         <ui:SettingsExpander.Items>
@@ -30,21 +30,16 @@
                 </ComboBox>
             </ui:SettingsCard>
 
-            <ui:SettingsCard Header="Opacity" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                <ui:SettingsCard.Description>
-                    <TextBlock x:Name="OpacityValueText" />
-                </ui:SettingsCard.Description>
-                <Slider x:Name="OpacitySlider"
-                        Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
-                        AutomationProperties.Name="Floating button opacity" ValueChanged="OnOpacityChanged" />
+            <!-- Position shows the whole overlay to drag it -->
+            <ui:SettingsCard Header="Position on screen">
+                <views:PlaceButton MovesOverlay="True" Text="Position" Click="OnPositionClick" />
             </ui:SettingsCard>
 
-            <ui:SettingsCard Description="Position… shows the whole overlay: drag this button, the other floating buttons and the overlay panel.">
-                <ui:SettingsCard.Header>
-                    <TextBlock x:Name="PositionText" TextWrapping="Wrap" />
-                </ui:SettingsCard.Header>
-                <Button Content="Position…" Click="OnPositionClick" />
+            <ui:SettingsCard Header="Opacity">
+                <views:ValueSlider x:Name="OpacitySlider" Minimum="20" Maximum="100" Label="Floating button opacity"
+                                   ValueChanged="OnOpacityChanged" />
             </ui:SettingsCard>
+
         </ui:SettingsExpander.Items>
     </views:SwitchSettingsExpander>
 </UserControl>

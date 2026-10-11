@@ -82,6 +82,99 @@ internal static class InputSender
         }
     }
 
+    /// <summary>
+    /// Presses and releases a combination (Ctrl+C), holding the key for <paramref name="holdMs"/>: held
+    /// Ctrl/Alt/Shift/Win are released first as by <see cref="Tap"/>, then the combination's modifiers go
+    /// down on their side (either side: the left one), the key, and everything comes up again in reverse
+    /// order, also when <paramref name="stop"/> ends the wait. All under <see cref="Gate"/>, so nothing
+    /// else PuppyMacro sends lands between them. Modifiers in <paramref name="alreadyDown"/> (a macro's
+    /// Key down) are neither pressed nor released. Returns false if <paramref name="stop"/> was signaled.
+    /// </summary>
+    public static bool TapBinding(HotkeyBinding binding, double holdMs, PreciseTimer timer, WaitHandle stop,
+        ISet<int>? alreadyDown = null)
+    {
+        var modifiers = new List<int>();
+        if (binding.Ctrl) modifiers.Add(binding.CtrlSide == ModifierSide.Right ? KeyNames.VK_RCONTROL : KeyNames.VK_LCONTROL);
+        if (binding.Alt) modifiers.Add(binding.AltSide == ModifierSide.Right ? KeyNames.VK_RMENU : KeyNames.VK_LMENU);
+        if (binding.Shift) modifiers.Add(binding.ShiftSide == ModifierSide.Right ? KeyNames.VK_RSHIFT : KeyNames.VK_LSHIFT);
+        if (binding.Win) modifiers.Add(binding.WinSide == ModifierSide.Right ? KeyNames.VK_RWIN : KeyNames.VK_LWIN);
+        if (alreadyDown != null)
+            modifiers.RemoveAll(alreadyDown.Contains);
+
+        lock (Gate)
+        {
+            ReleaseHeldModifiers();
+            var pressed = new List<int>();
+            try
+            {
+                foreach (int vk in modifiers)
+                {
+                    Down(vk);
+                    pressed.Add(vk);
+                }
+                Down(binding.Vk);
+                bool keepGoing;
+                try
+                {
+                    keepGoing = timer.Wait(holdMs, stop);
+                }
+                finally
+                {
+                    Up(binding.Vk);
+                }
+                return keepGoing;
+            }
+            finally
+            {
+                // Releasing Alt or Win right after pressing it alone would open a menu: the key went in between.
+                for (int i = pressed.Count - 1; i >= 0; i--)
+                    Up(pressed[i]);
+            }
+        }
+    }
+
+    /// <summary>
+    /// A loop's press held longer than a tap (its Hold for): held modifiers released and the key pressed under
+    /// <see cref="Gate"/>, then the wait outside it, so other loop rows, macros and remaps are not held up for
+    /// the whole hold; the release under it again. Only for a key or button without modifiers (a combination
+    /// keeps the whole press under the lock, <see cref="TapBinding"/>). With <paramref name="x"/> and
+    /// <paramref name="y"/>, a mouse button is pressed there (the move and the press together under the lock).
+    /// </summary>
+    public static bool PressFor(int vk, double holdMs, PreciseTimer timer, WaitHandle stop, int? x = null, int? y = null)
+    {
+        lock (Gate)
+        {
+            ReleaseHeldModifiers();
+            if (x is int px && y is int py)
+                MoveTo(px, py);
+            Down(vk);
+        }
+        bool keepGoing;
+        try
+        {
+            keepGoing = timer.Wait(holdMs, stop);
+        }
+        finally
+        {
+            lock (Gate)
+                Up(vk);
+        }
+        return keepGoing;
+    }
+
+    /// <summary>
+    /// Clicks <paramref name="vk"/> at a point: the move and the whole click under <see cref="Gate"/>, so another
+    /// loop row clicking elsewhere cannot move the pointer in between.
+    /// </summary>
+    public static bool TapAt(int vk, int x, int y, double holdMs, PreciseTimer timer, WaitHandle stop)
+    {
+        lock (Gate)
+        {
+            MoveTo(x, y);
+            return Tap(vk, holdMs, timer, stop);
+        }
+    }
+
     /// <summary>Presses and keeps <paramref name="vk"/> down (held modifiers are released first).</summary>
     public static void PressAndHold(int vk)
     {

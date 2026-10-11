@@ -63,9 +63,9 @@ public partial class MainWindow
         _macros = macros;
 
         Title = App.DisplayTitle;
-        AppTitleText.Text = App.DisplayTitle;
+        DevBuildRun.Text = App.ShowsDevMarks ? "DEV" : "";
         AboutText.Text = App.DisplayTitle;
-        DevBuildStrip.Visibility = App.IsDevBuild ? Visibility.Visible : Visibility.Collapsed;
+        DevBuildStrip.Visibility = App.ShowsDevMarks ? Visibility.Visible : Visibility.Collapsed;
 
         _sounds = new SoundService(Dispatcher) { Volume = settings.SoundVolume };
 
@@ -111,12 +111,9 @@ public partial class MainWindow
         _saveVolumeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
         _saveVolumeTimer.Tick += (_, _) => { _saveVolumeTimer.Stop(); Save(); };
         VolumeSlider.Value = settings.SoundVolume;
-        VolumeValueText.Text = $"{settings.SoundVolume}%";
 
         HotkeysGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Hotkeys");
         OverlayGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Overlay");
-        SoundGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Sound");
-        UpdatePositionBoxes();
 
         ClickInPanelSwitch.IsOn = settings.ClickItemsInPanel;
         ShowPanelSwitch.IsOn = settings.ShowOverlayPanel;
@@ -165,7 +162,7 @@ public partial class MainWindow
         }
         catch (Win32Exception ex)
         {
-            MessageBox.Show($"Hotkeys are not available:\n\n{ex.Message}", "PuppyMacro",
+            MessageBox.Show($"Hotkeys don't work right now:\n\n{ex.Message}", "PuppyMacro",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
@@ -298,9 +295,7 @@ public partial class MainWindow
     private void SetPanelOptionsEnabled(bool enabled)
     {
         OpacityCard.IsEnabled = enabled;
-        PositionCard.IsEnabled = enabled;
         ClickInPanelCard.IsEnabled = enabled;
-        ClickInPanelWarningCard.IsEnabled = enabled;
     }
 
     // ================= Loops list =================
@@ -408,11 +403,11 @@ public partial class MainWindow
 
         bool anyRunning = _engine.AnyRunning;
         AddLoopButton.IsEnabled = !anyRunning;
-        AddLoopButton.ToolTip = anyRunning ? "Stop running loops and macros to add a new one" : null;
+        AddLoopButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
         NewMacroButton.IsEnabled = !anyRunning;
         RecordMacroButton.IsEnabled = !anyRunning;
         NewMacroButton.ToolTip = RecordMacroButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
-        StopAllButton.IsEnabled = anyRunning;
+        StopAllButton.Visibility = anyRunning ? Visibility.Visible : Visibility.Collapsed;
         foreach (var loop in _items)
             loop.CanEdit = !anyRunning;
         foreach (var macro in _macroItems)
@@ -579,7 +574,7 @@ public partial class MainWindow
 
         if (total == 0)
         {
-            EmptyMacrosText.Text = "No macros yet. Select Record macro, or New macro to build one by hand.";
+            EmptyMacrosText.Text = "No macros yet. Record one, or select Add macro to build it step by step.";
             EmptyMacrosText.Visibility = Visibility.Visible;
         }
         else if (_macroView.Count == 0)
@@ -740,7 +735,6 @@ public partial class MainWindow
 
     private void SaveMacro(MacroDefinition macro)
     {
-        UpdateSettingsSummaries(); // the floating button count may have changed
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_macros.TrySave(macro, out string? error))
             ShowSettingsError($"Could not save the macro \"{macro.Name}\": {error}");
@@ -760,7 +754,6 @@ public partial class MainWindow
             return;
         _settings.ClickItemsInPanel = ClickInPanelSwitch.IsOn;
         UpdatePanelClicks();
-        UpdateSettingsSummaries();
         Save();
     }
 
@@ -779,7 +772,6 @@ public partial class MainWindow
                 _overlayPanelWindow.Hide();
             UpdatePanelClicks();
         }
-        UpdateSettingsSummaries();
         Save();
     }
 
@@ -1024,7 +1016,7 @@ public partial class MainWindow
 
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (OpacityValueText == null || _overlayPanelWindow == null)
+        if (_overlayPanelWindow == null)
             return; // still loading
 
         int percent = (int)Math.Round(e.NewValue);
@@ -1033,14 +1025,12 @@ public partial class MainWindow
             return;
 
         _settings.OverlayPanelOpacity = percent;
-        UpdateSettingsSummaries();
         _saveOpacityTimer.Stop();
         _saveOpacityTimer.Start();
     }
 
     private void ApplyOpacity(int percent)
     {
-        OpacityValueText.Text = $"{percent}%";
         byte alpha = (byte)Math.Round(percent * 255 / 100.0);
         OpacityPreviewPanel.Background = new SolidColorBrush(Color.FromArgb(alpha, 0x20, 0x20, 0x20));
         _overlayPanelWindow.SetBackgroundOpacity(percent);
@@ -1059,13 +1049,11 @@ public partial class MainWindow
 
     private void OnVolumeChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (VolumeValueText == null || _sounds == null)
+        if (_sounds == null)
             return; // still loading
 
         int percent = (int)Math.Round(e.NewValue);
-        VolumeValueText.Text = $"{percent}%";
         _sounds.Volume = percent;
-        UpdateSettingsSummaries();
         if (_initializing || percent == _settings.SoundVolume)
             return;
 
@@ -1098,36 +1086,11 @@ public partial class MainWindow
         return onScreen ? new Point(x, y) : DefaultPanelPosition();
     }
 
-    private bool _updatingPositionBoxes;
-
-    private void UpdatePositionBoxes()
-    {
-        Point p = PanelPosition();
-        _updatingPositionBoxes = true;
-        PositionXBox.Value = Math.Round(p.X);
-        PositionYBox.Value = Math.Round(p.Y);
-        _updatingPositionBoxes = false;
-        UpdateSettingsSummaries();
-    }
-
-    private void OnPositionBoxChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-    {
-        if (_initializing || _updatingPositionBoxes)
-            return;
-        double x = PositionXBox.Value, y = PositionYBox.Value;
-        if (!double.IsNaN(x) && !double.IsNaN(y))
-        {
-            _settings.OverlayPanelX = x;
-            _settings.OverlayPanelY = y;
-            UpdateSettingsSummaries();
-            Save();
-        }
-    }
 
     private void OnPositionOnScreenClick(object sender, RoutedEventArgs e) => OpenPlacement(null);
 
     /// <summary>
-    /// The editors' Position… button: places the whole overlay. The edited item is shown as in the
+    /// The editors' Position button: places the whole overlay. The edited item is shown as in the
     /// editor (its button is left out when off); its new position is returned to the editor, which
     /// saves it with the item. Null when cancelled.
     /// </summary>
@@ -1163,7 +1126,7 @@ public partial class MainWindow
         }
         if (!_settings.ShowOverlayPanel && buttons.Count == 0)
         {
-            ShowSettingsError("Nothing to position: the overlay panel is off and there are no floating buttons.");
+            ShowSettingsError("Nothing to place. Turn on the overlay panel or add a floating button.");
             return null;
         }
 
@@ -1176,7 +1139,6 @@ public partial class MainWindow
         {
             _settings.OverlayPanelX = Math.Round(placement.Result.X);
             _settings.OverlayPanelY = Math.Round(placement.Result.Y);
-            UpdatePositionBoxes();
         }
 
         foreach (IListItem item in others)
@@ -1302,39 +1264,6 @@ public partial class MainWindow
         _buttonWindows.Clear();
     }
 
-    private void OnResetPositionClick(object sender, RoutedEventArgs e)
-    {
-        _settings.OverlayPanelX = null;
-        _settings.OverlayPanelY = null;
-        UpdatePositionBoxes();
-        Save();
-    }
-
-    private void UpdateSettingsSummaries()
-    {
-        if (HotkeysSummary == null)
-            return;
-        HotkeysSummary.Text = $"Stop all {KeyNames.Format(_settings.StopAllHotkey)}, Overlay mode {KeyNames.Format(_settings.OverlayModeHotkey)}, Record {KeyNames.Format(_settings.RecordHotkey)}";
-        int buttons = FloatingButtonItems().Count();
-        string buttonsText = buttons switch { 0 => "no floating buttons", 1 => "1 floating button", _ => $"{buttons} floating buttons" };
-        if (_settings.ShowOverlayPanel)
-        {
-            Point p = PanelPosition();
-            OverlaySummary.Text = $"Panel: opacity {_settings.OverlayPanelOpacity}%, position X {Math.Round(p.X)}, Y {Math.Round(p.Y)}, click to start {(_settings.ClickItemsInPanel ? "on" : "off")}; {buttonsText}";
-        }
-        else
-        {
-            OverlaySummary.Text = $"Panel off; {buttonsText}";
-        }
-        FloatingButtonsText.Text = (buttons switch
-        {
-            0 => "None yet.",
-            1 => "1 loop or macro has a floating button.",
-            _ => $"{buttons} loops and macros have a floating button.",
-        }) + " Turn one on with Floating button in the loop or macro editor, where you also set its label, size and opacity.";
-        SoundSummary.Text = $"Volume {_settings.SoundVolume}%";
-    }
-
     /// <summary>The three global hotkey fields: each checks a pressed key against the rules and the other hotkeys.</summary>
     private void SetUpGlobalHotkeyFields()
     {
@@ -1366,10 +1295,10 @@ public partial class MainWindow
         StopAllHotkeyField.Value = _settings.StopAllHotkey?.Clone();
         OverlayModeHotkeyField.Value = _settings.OverlayModeHotkey?.Clone();
         RecordHotkeyField.Value = _settings.RecordHotkey?.Clone();
-        StopAllButtonHotkeyText.Text = stopAll;
-        OverlayModeButtonHotkeyText.Text = overlayMode;
+        // The hotkey in the tooltip, when there is one
+        StopAllButton.ToolTip = _settings.StopAllHotkey == null ? null : $"Stop all ({stopAll})";
+        OverlayModeButton.ToolTip = _settings.OverlayModeHotkey == null ? null : $"Enter overlay mode ({overlayMode})";
         _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll);
-        UpdateSettingsSummaries();
     }
 
     private void ShowSettingsError(string message)
@@ -1402,7 +1331,6 @@ public partial class MainWindow
             return;
         _settings.OverlayPanelX = Math.Round(_overlayPanelWindow.Left);
         _settings.OverlayPanelY = Math.Round(_overlayPanelWindow.Top);
-        UpdatePositionBoxes();
         Save();
         PublishPanelTargets(); // the clickable rectangles moved with the panel
     }
@@ -1445,10 +1373,9 @@ public partial class MainWindow
 
     private void Save()
     {
-        UpdateSettingsSummaries(); // the floating button count may have changed
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_store.TrySave(_settings, out string? error))
-            ShowSettingsError($"Could not save settings.json: {error}");
+            ShowSettingsError($"Could not save your settings: {error}");
     }
 
     // ================= Remap =================
@@ -1508,7 +1435,7 @@ public partial class MainWindow
         RemapCountText.Text = $"{total} {(total == 1 ? "remap" : "remaps")}, {enabled} enabled";
         if (total == 0)
         {
-            EmptyRemapsText.Text = "No remaps yet. Select Add remap to send another key when you press one.";
+            EmptyRemapsText.Text = "No remaps yet. Select Add remap to turn one key or button into another.";
             EmptyRemapsText.Visibility = Visibility.Visible;
         }
         else if (_remapView.Count == 0)
@@ -1586,7 +1513,7 @@ public partial class MainWindow
         var confirm = new ContentDialog
         {
             Title = "Delete remap",
-            Content = $"Delete the remap {item.SourceText} → {item.TargetText}?",
+            Content = $"Delete the remap {item.SourceText} → {item.TargetText}? This cannot be undone.",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Close,
@@ -1664,8 +1591,8 @@ public partial class MainWindow
         var confirm = new ContentDialog
         {
             Title = "Import",
-            Content = "Replace all your loops, macros, remaps and settings with the ones in this file? " +
-                      "Your current data is saved first as a backup in the data folder. PuppyMacro restarts after the import.",
+            Content = "Replace all your loops, macros, remaps and settings with this file? " +
+                      "Your current data is backed up to the data folder first, then PuppyMacro restarts.",
             PrimaryButtonText = "Import and restart",
             CloseButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Close,

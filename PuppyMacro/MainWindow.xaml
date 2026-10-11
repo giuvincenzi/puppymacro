@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
     xmlns:views="clr-namespace:PuppyMacro.Views"
     Title="PuppyMacro"
     Icon="pack://application:,,,/Assets/PuppyMacro.ico"
@@ -15,6 +16,7 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
+    ui:TitleBar.Height="48"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed">
 
     <Window.Resources>
@@ -31,13 +33,59 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ================= Title bar: icon and title, the window buttons are drawn by the library ================= -->
-        <StackPanel Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}"
-                    Margin="16,0,0,0" Orientation="Horizontal">
-            <Image Width="16" Height="16" VerticalAlignment="Center" Source="pack://application:,,,/Assets/PuppyMacro-256.png" />
-            <TextBlock x:Name="AppTitleText" Margin="12,0,0,0" VerticalAlignment="Center"
-                       Style="{StaticResource CaptionTextBlockStyle}" Text="PuppyMacro" />
-        </StackPanel>
+        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Enter overlay
+             mode and Stop all on the right before the window buttons drawn by the library (as its
+             ButtonsOnTitlebar sample) ================= -->
+        <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="12,0,0,0" Orientation="Horizontal">
+                <!-- 24 px: 12 px above and below it in the 48 px bar -->
+                <Image Width="24" Height="24" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"
+                       Source="pack://application:,,,/Assets/PuppyMacro-256.png" />
+                <!-- The name, and DEV in the secondary text color in a development build -->
+                <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
+                    <Run Text="PuppyMacro" />
+                    <Run x:Name="DevBuildRun" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </TextBlock>
+            </StackPanel>
+
+
+            <!-- On the right: Enter overlay mode, Stop all, the window buttons. The buttons sit 9 px from the top: the window's
+                 1 px border, then 8, so they look 8 px from the top and from the bottom (their bottom line is almost the bar's
+                 color), as Microsoft Store's search box -->
+            <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button x:Name="OverlayModeButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="Enter overlay mode" Click="OnOverlayModeClick">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
+                        <TextBlock VerticalAlignment="Center" Text="Enter overlay mode" />
+                    </StackPanel>
+                </Button>
+                <!-- Shown only while something runs. Approved (ui.md): the accent button with its accent colors replaced by
+                     the theme's critical one (WinUI lightweight styling), at 90% and 80% on mouse over and press as the
+                     accent ones are. -->
+                <Button x:Name="StopAllButton" Margin="0,9,8,0" VerticalAlignment="Top" Visibility="Collapsed"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Stop all" Click="OnStopAllClick">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="AccentButtonBackground" Color="{DynamicResource SystemFillColorCritical}" />
+                        <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.9" />
+                        <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.8" />
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static fsi:FluentSystemIcons.Stop_16_Filled}" />
+                        <TextBlock VerticalAlignment="Center" Text="Stop all" />
+                    </StackPanel>
+                </Button>
+                <!-- The window buttons' place, 8 more px before them: 16 from our last button -->
+                <Rectangle Margin="8,0,0,0"
+                           Width="{Binding (ui:TitleBar.SystemOverlayRightInset), RelativeSource={RelativeSource AncestorType=Window}}" />
+            </StackPanel>
+        </Grid>
 
         <StackPanel Grid.Row="1">
             <!-- ================= Development build (make dev) ================= -->
@@ -47,13 +95,17 @@
             </Border>
 
             <!-- ================= Update available ================= -->
-            <ui:InfoBar x:Name="UpdateBar" Margin="16,8,16,0" Severity="Informational" IsOpen="False"
+            <!-- Collapsed while closed: a closed InfoBar hides only its content and would keep its margin -->
+            <ui:InfoBar x:Name="UpdateBar" Severity="Informational" IsOpen="False" Visibility="Collapsed"
                         CloseButtonClick="OnUpdateLaterClick">
                 <ui:InfoBar.ActionButton>
-                    <Button x:Name="UpdateBarButton" Click="OnUpdateActionClick" />
+                    <!-- The InfoBar gives its action the rest of the row: on the right, next to the close button -->
+                    <Button x:Name="UpdateBarButton" HorizontalAlignment="Right" Click="OnUpdateActionClick" />
                 </ui:InfoBar.ActionButton>
                 <ui:InfoBar.Content>
-                    <ProgressBar x:Name="UpdateBarProgress" Margin="0,0,0,12" Maximum="100" Visibility="Collapsed" />
+                    <!-- 46 on the right: as far from the right edge as it starts from the left (the library's InfoBarContentRootPadding
+                         16 + InfoBarIconFontSize 16 + InfoBarIconMargin 14); while downloading no close button ends the row -->
+                    <ProgressBar x:Name="UpdateBarProgress" Margin="0,0,46,12" Maximum="100" Visibility="Collapsed" />
                 </ui:InfoBar.Content>
             </ui:InfoBar>
         </StackPanel>
@@ -71,10 +123,6 @@
             <Border Grid.Column="1" Background="{DynamicResource LayerFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1,1,0,0" CornerRadius="8,0,0,0">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
 
                 <!-- ================= Loops page ================= -->
                 <Grid x:Name="LoopsPage" Margin="40,12,40,0">
@@ -127,6 +175,8 @@
                                                     <Grid x:Name="TypeIcon">
                                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}"
                                                                      Visibility="{Binding ShowKeyIcon, Converter={StaticResource BoolToVisibility}}" />
+                                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}"
+                                                                     Visibility="{Binding ShowMouseIcon, Converter={StaticResource BoolToVisibility}}" />
                                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
                                                                      Visibility="{Binding ShowTextIcon, Converter={StaticResource BoolToVisibility}}" />
                                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.BulletedList}"
@@ -206,7 +256,7 @@
                     <Grid Grid.Row="0">
                         <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="Macros" />
                         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
-                            <Button x:Name="NewMacroButton" Style="{StaticResource AccentButtonStyle}" Content="New macro" ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
+                            <Button x:Name="NewMacroButton" Style="{StaticResource AccentButtonStyle}" Content="Add macro" ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
                             <!-- A standard button with a red dot before its text (approved, ui.md) -->
                             <Button x:Name="RecordMacroButton" Margin="8,0,0,0"
                                     AutomationProperties.Name="Record macro" ToolTipService.ShowOnDisabled="True" Click="OnRecordMacroClick">
@@ -410,7 +460,7 @@
                             </ComboBox>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="Close to system tray"
-                                         Description="When you close the window, PuppyMacro keeps running in the system tray">
+                                         Description="Keep running in the system tray when you close the window">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.TVMonitor}" />
                             </ui:SettingsCard.HeaderIcon>
@@ -433,21 +483,18 @@
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
                             </ui:SettingsExpander.HeaderIcon>
-                            <ui:SettingsExpander.Description>
-                                <TextBlock x:Name="HotkeysSummary" TextWrapping="Wrap" />
-                            </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Stop all" Description="Stops everything that is running: every loop and macro">
+                                <ui:SettingsCard Header="Stop all" Description="Stop every loop and macro">
                                     <views:KeyCaptureField x:Name="StopAllHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Overlay mode" Description="Switches between this window and the overlay">
+                                <ui:SettingsCard Header="Overlay mode" Description="Toggle overlay mode">
                                     <views:KeyCaptureField x:Name="OverlayModeHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Record" Description="Starts and stops macro recording">
+                                <ui:SettingsCard Header="Record" Description="Start and stop recording a macro">
                                     <views:KeyCaptureField x:Name="RecordHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
@@ -455,92 +502,50 @@
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
 
-                        <ui:SettingsExpander x:Name="OverlayGroup" Tag="Overlay" Header="Overlay"
-                                             Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                        <!-- The panel's switch is the group's own; it opens also while off: Position on screen places the
+                             floating buttons too -->
+                        <views:SwitchSettingsExpander x:Name="OverlayGroup" Tag="Overlay" Header="Overlay panel"
+                                                      Description="The list of your loops and macros" CanExpand="True"
+                                                      Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                            <ui:ToggleSwitch x:Name="ShowPanelSwitch" AutomationProperties.Name="Show the overlay panel" Toggled="OnShowPanelChanged" />
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
                             </ui:SettingsExpander.HeaderIcon>
-                            <ui:SettingsExpander.Description>
-                                <TextBlock x:Name="OverlaySummary" TextWrapping="Wrap" />
-                            </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Show the overlay panel"
-                                                 Description="The list of loops and macros with their hotkeys. Off: overlay mode shows only the floating buttons, and you leave it with the Overlay mode hotkey.">
-                                    <ui:ToggleSwitch x:Name="ShowPanelSwitch" AutomationProperties.Name="Show the overlay panel" Toggled="OnShowPanelChanged" />
-                                </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="OpacityCard" Header="Opacity" Description="Background of the overlay panel. Text stays fully visible.">
+                                <ui:SettingsCard x:Name="OpacityCard" Header="Opacity">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Name="OpacityValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                        <Slider x:Name="OpacitySlider" Width="200" VerticalAlignment="Center"
-                                                Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
-                                                SmallChange="5" LargeChange="10" AutomationProperties.Name="Overlay panel opacity"
-                                                ValueChanged="OnOpacityChanged" />
-                                        <Border Width="132" Height="52" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C" ClipToBounds="True">
-                                            <Border x:Name="OpacityPreviewPanel" Margin="10,9,10,0" Padding="8,6" VerticalAlignment="Top"
+                                        <views:ValueSlider x:Name="OpacitySlider" Minimum="20" Maximum="100" Label="Overlay panel opacity"
+                                                           ValueChanged="OnOpacityChanged" />
+                                        <Border Width="132" Height="36" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C" ClipToBounds="True">
+                                            <Border x:Name="OpacityPreviewPanel" Margin="10,6,10,0" Padding="8,5" VerticalAlignment="Top"
                                                     CornerRadius="5" BorderThickness="1" BorderBrush="#1AFFFFFF" Background="#D9202020">
                                                 <StackPanel>
                                                     <StackPanel Orientation="Horizontal">
                                                         <Ellipse Width="6" Height="6" Fill="#6CCB5F" VerticalAlignment="Center" />
                                                         <TextBlock Margin="5,0,0,0" FontSize="10" Foreground="White" Text="Left click spam" />
                                                     </StackPanel>
-                                                    <Border Width="60" Height="4" Margin="0,4,0,0" HorizontalAlignment="Left"
-                                                            CornerRadius="2" Background="#40FFFFFF" />
                                                 </StackPanel>
                                             </Border>
                                         </Border>
                                     </StackPanel>
                                 </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="PositionCard" Header="Position"
-                                                 Description="Where the overlay panel appears, measured from the top-left corner of the main screen.">
-                                    <StackPanel Orientation="Horizontal">
-                                        <ui:NumberBox x:Name="PositionXBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" ui:ControlHelper.Header="X"
-                                                      Minimum="-100000" Maximum="100000" ValueChanged="OnPositionBoxChanged" />
-                                        <ui:NumberBox x:Name="PositionYBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Margin="8,0,0,0" ui:ControlHelper.Header="Y"
-                                                      Minimum="-100000" Maximum="100000" ValueChanged="OnPositionBoxChanged" />
-                                        <Button Margin="8,0,0,0" VerticalAlignment="Bottom" Content="Reset" Click="OnResetPositionClick"
-                                                ToolTip="Back to the top-left corner of the main screen" />
-                                    </StackPanel>
+                                <ui:SettingsCard Header="Position on screen" Description="Drag the panel and the floating buttons">
+                                    <views:PlaceButton MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
                                 </ui:SettingsCard>
                                 <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them"
-                                                 Description="Loops, macros, Stop all and the exit button in the overlay panel become clickable. Hold items stay hotkey only. Floating buttons are always clickable.">
+                                                 Description="Some fullscreen apps may react to the click. If so, turn this off and use hotkeys only.">
                                     <ui:ToggleSwitch x:Name="ClickInPanelSwitch" Toggled="OnClickInPanelChanged" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="ClickInPanelWarningCard" HorizontalContentAlignment="Stretch" ContentAlignment="Left">
-                                    <ui:InfoBar IsOpen="True" IsClosable="False" Severity="Warning"
-                                                Message="Some fullscreen apps may react to the click or briefly lose focus. If you notice problems, turn this off and use hotkeys only." />
-                                </ui:SettingsCard>
-                                <ui:SettingsCard Header="Floating buttons">
-                                    <ui:SettingsCard.Description>
-                                        <TextBlock x:Name="FloatingButtonsText" TextWrapping="Wrap" />
-                                    </ui:SettingsCard.Description>
-                                </ui:SettingsCard>
-                                <ui:SettingsCard Header="Position on screen"
-                                                 Description="Shows the whole overlay as it appears in overlay mode: drag the overlay panel and every floating button where you want them.">
-                                    <Button Style="{StaticResource AccentButtonStyle}" Content="Position on screen" Click="OnPositionOnScreenClick" />
-                                </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
+                        </views:SwitchSettingsExpander>
 
-                        <ui:SettingsExpander x:Name="SoundGroup" Tag="Sound" Header="Sound"
-                                             Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
-                            <ui:SettingsExpander.HeaderIcon>
+                        <ui:SettingsCard Header="Sound" Description="Start and stop sounds of loops and macros">
+                            <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Volume}" />
-                            </ui:SettingsExpander.HeaderIcon>
-                            <ui:SettingsExpander.Description>
-                                <TextBlock x:Name="SoundSummary" />
-                            </ui:SettingsExpander.Description>
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Volume" Description="Start and stop sounds of every loop">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Name="VolumeValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                        <Slider x:Name="VolumeSlider" Width="200" VerticalAlignment="Center" Minimum="0" Maximum="100"
-                                                TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
-                                                AutomationProperties.Name="Sound volume"
-                                                ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
-                                    </StackPanel>
-                                </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
+                            </ui:SettingsCard.HeaderIcon>
+                            <views:ValueSlider x:Name="VolumeSlider" Label="Sound volume"
+                                               ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
+                        </ui:SettingsCard>
 
                         <!-- Data and updates -->
                         <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Data and updates" />
@@ -554,7 +559,7 @@
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard Header="Export or import"
-                                                 Description="Loops, macros, remaps and settings are kept in your user folder, so every new version finds them. Export them to one file to move them to another PC or keep a copy.">
+                                                 Description="Save your loops, macros, remaps and settings to one file, to keep a copy or move them to another PC">
                                     <StackPanel Orientation="Horizontal">
                                         <Button Content="Export…" Click="OnExportClick" />
                                         <Button Margin="8,0,0,0" Content="Import…" Click="OnImportClick" />
@@ -575,13 +580,14 @@
                             <ui:SettingsCard.Description>
                                 <StackPanel>
                                     <TextBlock x:Name="UpdateStatusText" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="UpdateWhatsNew" Margin="0,2,0,0" Visibility="Collapsed">
-                                        <Hyperlink x:Name="UpdateWhatsNewLink" RequestNavigate="OnWhatsNewNavigate">What's new</Hyperlink>
-                                    </TextBlock>
                                     <ProgressBar x:Name="UpdateCardProgress" Margin="0,6,0,0" Maximum="100" Visibility="Collapsed" />
                                 </StackPanel>
                             </ui:SettingsCard.Description>
-                            <Button x:Name="UpdateCardButton" Click="OnUpdateActionClick" />
+                            <!-- The library's HyperlinkButton opens its NavigateUri in the browser -->
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ui:HyperlinkButton x:Name="UpdateWhatsNew" Content="What's new" Visibility="Collapsed" />
+                                <Button x:Name="UpdateCardButton" Click="OnUpdateActionClick" />
+                            </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="Check for updates automatically" Description="When PuppyMacro starts and every 12 hours">
                             <ui:SettingsCard.HeaderIcon>
@@ -618,37 +624,6 @@
                     </ikw:SimpleStackPanel>
                 </ui:ScrollViewerEx>
 
-                <!-- ================= Always visible: overlay mode and stop all ================= -->
-                <Grid Grid.Row="1" Margin="40,12,40,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="8" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="OverlayModeButton" Grid.Column="0" HorizontalAlignment="Stretch"
-                            Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Enable overlay mode"
-                            Click="OnOverlayModeClick">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Enable overlay mode" />
-                            <TextBlock x:Name="OverlayModeButtonHotkeyText" Margin="10,0,0,0" Opacity="0.85" />
-                        </StackPanel>
-                    </Button>
-                    <!-- Red while something runs, grey (disabled) otherwise, as in the overlay panel. Approved (ui.md):
-                         the accent button with its accent colors replaced by the theme's critical one (WinUI
-                         lightweight styling), at 90% and 80% on mouse over and press as the accent ones are. -->
-                    <Button x:Name="StopAllButton" Grid.Column="2" HorizontalAlignment="Stretch" IsEnabled="False"
-                            Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Stop all" Click="OnStopAllClick">
-                        <Button.Resources>
-                            <SolidColorBrush x:Key="AccentButtonBackground" Color="{DynamicResource SystemFillColorCritical}" />
-                            <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.9" />
-                            <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.8" />
-                        </Button.Resources>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Stop all" />
-                            <TextBlock x:Name="StopAllButtonHotkeyText" Margin="10,0,0,0" Opacity="0.85" />
-                        </StackPanel>
-                    </Button>
-                </Grid>
             </Grid>
             </Border>
         </Grid>

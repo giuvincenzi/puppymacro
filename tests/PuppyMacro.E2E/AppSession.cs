@@ -158,12 +158,18 @@ public sealed class AppSession : IDisposable
     public void EditItem(string itemText) => CardButton(itemText, "Edit").AsButton().Invoke();
 
     /// <summary>
-    /// A window of PuppyMacro with this title. While an editor is open the main window is hidden, so the
+    /// A window of PuppyMacro with this title, or with this title and " - " what it edits ("Edit macro" finds
+    /// "Edit macro - Sample: type and confirm"). While an editor is open the main window is hidden, so the
     /// editors are looked for among this PuppyMacro's top-level windows, not as children of the main window.
     /// </summary>
     public Window Dialog(string title) =>
-        Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId)))?.AsWindow(),
+        Retry.WhileNull(() => Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId))
+                .FirstOrDefault(w => HasTitle(w.Name, title))?.AsWindow(),
             Timeout, throwOnTimeout: true, timeoutMessage: $"window \"{title}\" not found").Result!;
+
+    /// <summary>The window title is <paramref name="title"/>, or it followed by " - " and what the window edits.</summary>
+    public static bool HasTitle(string? windowTitle, string title) =>
+        windowTitle == title || windowTitle?.StartsWith(title + " - ", StringComparison.Ordinal) == true;
 
     /// <summary>An item of an open menu (a menu is a top-level window of its own) of this PuppyMacro.</summary>
     public AutomationElement MenuItem(string name) =>

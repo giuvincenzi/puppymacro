@@ -33,13 +33,26 @@ public partial class App : Application
         false;
 #endif
 
+    /// <summary>Set by make screenshots: a development build that looks like a release (no strip, no DEV). An environment
+    /// variable, not an argument: the script starts PuppyMacro with Start-Process, which waits for nothing.</summary>
+    public const string ScreenshotsVariable = "PUPPYMACRO_SCREENSHOTS";
+
+    /// <summary>A Debug build started with <see cref="ScreenshotsVariable"/> set to 1 (make screenshots).</summary>
+    /// <remarks>Declared before <see cref="DisplayTitle"/>: static initializers run in declaration order.</remarks>
+    public static bool IsScreenshotMode { get; } =
+        IsDevBuild && Environment.GetEnvironmentVariable(ScreenshotsVariable) == "1";
+
+    /// <summary>The development build's marks (the strip, DEV in titles and in the overlay panel) are shown: not in
+    /// <see cref="IsScreenshotMode"/>. Its data folder and samples stay a development build's (<see cref="IsDevBuild"/>).</summary>
+    public static bool ShowsDevMarks { get; } = IsDevBuild && !IsScreenshotMode;
+
     public static string DisplayTitle { get; } = BuildDisplayTitle();
 
     private static string BuildDisplayTitle()
     {
         Version? version = typeof(App).Assembly.GetName().Version;
         string title = version == null ? "PuppyMacro" : $"PuppyMacro v{version.Major}.{version.Minor}.{version.Build}";
-        return IsDevBuild ? $"{title} DEV" : title;
+        return ShowsDevMarks ? $"{title} DEV" : title;
     }
 
     public const string RestartArgument = "--restart";

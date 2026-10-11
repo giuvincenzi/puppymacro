@@ -52,6 +52,28 @@ public class SwitchSettingsExpander : SettingsExpander
             IsExpanded = false;
         if (_header?.Template?.FindName("ExpandCollapseChevronBorder", _header) is UIElement arrow)
             arrow.Visibility = CanExpand ? Visibility.Visible : Visibility.Collapsed;
+        // The header card leaves 4 px on the right for the arrow beside it (SettingsExpanderHeaderPadding); without the
+        // arrow, the switch keeps a card's 16 px from the edge, as the switches of the cards around it.
+        if (_header != null && FindCard(_header) is SettingsCard card)
+        {
+            if (CanExpand)
+                card.ClearValue(PaddingProperty);
+            else
+                card.Padding = new Thickness(card.Padding.Left, card.Padding.Top, 16, card.Padding.Bottom);
+        }
+    }
+
+    private static SettingsCard? FindCard(DependencyObject parent)
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+            if (child is SettingsCard card)
+                return card;
+            if (FindCard(child) is SettingsCard inner)
+                return inner;
+        }
+        return null;
     }
 
     private void OnHeaderMouseDown(object sender, MouseButtonEventArgs e)

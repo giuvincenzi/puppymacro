@@ -16,7 +16,7 @@
         <ui:NavigationView.MenuItems>
             <ui:NavigationViewItem x:Name="FormViewButton" Content="Form view" IsSelected="True" />
             <ui:NavigationViewItem x:Name="CodeViewButton" Content="Code view"
-                                   ToolTip="The JSON as it is saved, in a code editor: Ctrl+Space suggests what can go where" />
+                                   ToolTip="Edit it as JSON. Ctrl+Space shows suggestions" />
         </ui:NavigationView.MenuItems>
         <ui:NavigationView.PaneFooter>
             <Button x:Name="FormatButton" Margin="0,0,8,0" VerticalAlignment="Center" Content="Format"

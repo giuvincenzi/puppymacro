@@ -24,7 +24,7 @@ public partial class OverlayPanel
     public OverlayPanel()
     {
         InitializeComponent();
-        TitleText.Text = App.DisplayTitle;
+        TitleText.Text = App.ShowsDevMarks ? "PuppyMacro DEV" : "PuppyMacro"; // no version, as the main window's title bar
     }
 
     /// <summary>Shows the loops and macros shown in the overlay, in the same order as their lists.</summary>

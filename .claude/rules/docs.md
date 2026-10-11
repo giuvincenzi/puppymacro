@@ -61,7 +61,9 @@ before capturing (`testing.md`).
   PuppyMacro's window. Never show personal data, user names or other windows.
   `make screenshots` retakes this way the guide's editor screenshots (`site/guide/img/`:
   `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`) and the home
-  page's `site/assets/loops.png` (`scripts/screenshots.ps1`), then closes PuppyMacro (the process,
+  page's `site/assets/loops.png`, the whole main window with its title bar (`scripts/screenshots.ps1`). It starts
+  the development build with `PUPPYMACRO_SCREENSHOTS=1` (`App.ShowsDevMarks`): the sample data, but no strip and no DEV, and the first sample loop
+  enabled, so every screenshot looks like a release; new screenshots are taken the same way. Then it closes PuppyMacro (the process,
   not only to the tray; also after an error), so the PC is free when it returns. It drives the UI: ask
   the contributor before running it, like `make e2e`. `make dev` closes a running PuppyMacro first,
   the installed one too.

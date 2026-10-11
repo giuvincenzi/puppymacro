@@ -176,4 +176,42 @@ public class LoopTests
         Assert.Empty(target.Downs(Vk.F17));
         Assert.Empty(target.Downs(Vk.F14));
     }
+
+    [Fact]
+    public void A_press_key_sends_its_combination_and_its_times_and_a_click_its_double_click_at_a_fixed_point()
+    {
+        Point point = TargetWindow.PointAt(0.3, 0.6);
+        LoopDefinition loop = Loop("E2E action options", Vk.F13,
+            new LoopAction
+            {
+                Type = ActionType.Key,
+                Key = new HotkeyBinding { Vk = Vk.F16, Ctrl = true, CtrlSide = ModifierSide.Right },
+                IntervalValue = 2, IntervalUnit = IntervalUnit.Seconds,
+            },
+            new LoopAction { Type = ActionType.Key, KeyVk = Vk.F17, Repeat = 3, RepeatPauseMs = 100, IntervalValue = 2, IntervalUnit = IntervalUnit.Seconds },
+            new LoopAction { Type = ActionType.Key, KeyVk = Vk.LButton, ClickCount = 2, X = point.X, Y = point.Y, IntervalValue = 2, IntervalUnit = IntervalUnit.Seconds });
+        using var app = new AppSession(seed => seed.Settings.Loops.Add(loop));
+        using var target = new TargetWindow();
+        Mouse.MoveTo(TargetWindow.PointAt(0.7, 0.3)); // elsewhere: the click goes to its fixed point
+
+        target.Tap(Vk.F13);
+        target.WaitFor(t => t.Ups(Vk.RControl).Count >= 1 && t.Downs(Vk.F17).Count >= 3 && t.Downs(Vk.LButton).Count >= 2,
+            6, "the loop did not send its actions");
+        target.Tap(Vk.F13);
+        AssertStopped(target, Vk.F17, "the Times row");
+
+        // Right Ctrl + F16: the right Ctrl around F16, never the left one.
+        Assert.True(target.Downs(Vk.RControl)[0].Ms <= target.Downs(Vk.F16)[0].Ms
+            && target.Ups(Vk.F16)[0].Ms <= target.Ups(Vk.RControl)[0].Ms, $"F16 is not inside Right Ctrl. Received: {target.Describe()}");
+        Assert.Empty(target.Downs(Vk.Control));
+        // F17 three times: held 30 ms, 100 ms apart.
+        List<TargetEvent> f17 = target.Downs(Vk.F17);
+        foreach (double gap in Gaps(f17.GetRange(0, 3)))
+            About(gap, 130, "F17 times");
+        // A double click: two presses 60 ms apart after a 30 ms hold, at the fixed point.
+        List<TargetEvent> clicks = target.Downs(Vk.LButton);
+        About(clicks[1].Ms - clicks[0].Ms, 90, "double click");
+        Near(point, clicks[0].Position, "fixed point click");
+        Near(point, clicks[1].Position, "fixed point click");
+    }
 }

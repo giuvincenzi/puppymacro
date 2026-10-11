@@ -18,7 +18,6 @@ public partial class RemapEditorWindow
     private readonly Guid _editingId;
     private readonly Guid _itemId;
     private readonly CodeViewSwitch<RemapDefinition> _code;
-    private bool _enabled;
     private HotkeyBinding? _source;
     private HotkeyBinding? _target;
     private bool _ready;
@@ -36,7 +35,9 @@ public partial class RemapEditorWindow
         _itemId = existing?.Id ?? Guid.NewGuid();
         source.Id = _itemId;
 
-        string title = existing == null ? "Add remap" : "Edit remap";
+        // "Edit remap - Caps Lock to Esc": its note, or its keys when it has none.
+        string title = existing == null ? "Add remap"
+            : $"Edit remap - {(string.IsNullOrWhiteSpace(existing.Note) ? $"{KeyNames.Format(existing.Source)} → {KeyNames.Format(existing.Target)}" : existing.Note)}";
         Title = title;
 
         LoadRemap(source);
@@ -61,7 +62,7 @@ public partial class RemapEditorWindow
     /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
     private void LoadRemap(RemapDefinition source)
     {
-        _enabled = source.Enabled;
+        EnabledSwitch.IsOn = source.Enabled;
         _source = source.Source?.Clone();
         _target = source.Target?.Clone();
         AppScopeCard.Load(source.AppExe);
@@ -78,7 +79,7 @@ public partial class RemapEditorWindow
         Target = _target?.Clone(),
         AppExe = AppScopeCard.AppExe,
         Note = (NoteBox.Text ?? "").Trim(),
-        Enabled = _enabled,
+        Enabled = EnabledSwitch.IsOn,
     };
 
     /// <summary>Why <paramref name="source"/> cannot be remapped for <paramref name="app"/> (null: all apps): a hotkey or another remap.</summary>
@@ -127,13 +128,13 @@ public partial class RemapEditorWindow
         if (_target is not { IsSet: true })
             return "Choose what to send instead.";
         if (_target.SameAs(source))
-            return "What is sent must be different from what is pressed.";
+            return "Send something different from what you press.";
 
         if (AppScopeCard.ValidationError is string appError)
             return appError;
         string? app = AppScopeCard.AppExe;
         if (KeyNames.IsPrimaryMouse(source.Vk) && !source.HasModifiers && app == null)
-            return "Left and right click can be remapped only for a specific app, so they keep working everywhere else.";
+            return "Left and right click can be remapped only in a specific app, so they keep working everywhere else.";
 
         return SourceClash(source, app);
     }

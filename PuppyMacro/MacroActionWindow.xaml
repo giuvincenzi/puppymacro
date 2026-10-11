@@ -5,6 +5,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:views="clr-namespace:PuppyMacro.Views"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
     Title="Action"
     Width="760"
     Height="660"
@@ -32,8 +33,13 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="110" />
                 </Grid.ColumnDefinitions>
-                <Button x:Name="TestButton" Grid.Column="0" Content="Test" Click="OnTestClick"
-                        ToolTip="Hides PuppyMacro and plays this action once, in the window behind it" />
+                <Button x:Name="TestButton" Grid.Column="0" Click="OnTestClick" AutomationProperties.Name="Test"
+                        ToolTip="Play this action once in the window behind">
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <ui:FontIcon FontSize="14" Icon="{x:Static fsi:FluentSystemIcons.Play_16_Filled}" />
+                        <TextBlock Text="Test" />
+                    </ikw:SimpleStackPanel>
+                </Button>
                 <Button x:Name="SaveButton" Grid.Column="2" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
                         Content="Save" Click="OnSaveClick" />
                 <Button x:Name="CancelButton" Grid.Column="4" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
@@ -46,134 +52,23 @@
 
         <Grid>
             <views:CodeView x:Name="CodeView" Margin="24,0,24,12" Visibility="Collapsed" />
+            <!-- Form view: the action's Name and Delay (the macro's), then the action's box, open: the same box as a
+                 loop row (Views/ActionBox) -->
             <ScrollViewer x:Name="FormBody" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="24,4,24,12">
-                <!-- Name -->
-                <TextBox x:Name="ActionNameBox" Margin="0,0,0,16" MaxLength="100"
-                         ui:ControlHelper.Header="Name (optional)"
-                         ui:ControlHelper.PlaceholderText="e.g. Open inventory"
-                         ui:ControlHelper.Description="Shown in the list in bold, before the description of the action." />
-
-                <!-- Key -->
-                <StackPanel x:Name="KeyGroup" Margin="0,0,0,16">
-                    <TextBlock Margin="0,0,0,8" Text="Key" />
-                    <views:KeyCaptureField x:Name="KeyField" KeyOnly="True" CanClear="False" ItemName="key"
-                                           Prompt="Press a key (Esc cancels)"
-                                           ValueChanged="OnKeyFieldChanged" Rejected="ShowError" />
-                    <ikw:SimpleStackPanel x:Name="HoldKeyRow" Margin="0,12,0,0" Orientation="Horizontal" Spacing="8">
-                        <TextBlock Width="110" VerticalAlignment="Center" Text="Hold for" />
-                        <ui:NumberBox x:Name="KeyHoldBox" Width="120" Minimum="1" Maximum="60000" />
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
-                    </ikw:SimpleStackPanel>
-                </StackPanel>
-
-                <!-- Mouse button -->
-                <StackPanel x:Name="ButtonGroup" Margin="0,0,0,16">
-                    <ComboBox x:Name="ButtonBox" Width="180" HorizontalAlignment="Left" ui:ControlHelper.Header="Mouse button">
-                        <ComboBoxItem Content="Left" Tag="1" />
-                        <ComboBoxItem Content="Right" Tag="2" />
-                        <ComboBoxItem Content="Middle" Tag="4" />
-                        <ComboBoxItem Content="Back (X1)" Tag="5" />
-                        <ComboBoxItem Content="Forward (X2)" Tag="6" />
-                    </ComboBox>
-                    <StackPanel x:Name="ClickOptions" Margin="0,12,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton x:Name="SingleClickRadio" Content="Single click" GroupName="ClickCount" />
-                            <RadioButton x:Name="DoubleClickRadio" Content="Double click" GroupName="ClickCount" />
-                        </StackPanel>
-                        <ikw:SimpleStackPanel Margin="0,12,0,0" Orientation="Horizontal" Spacing="8">
-                            <TextBlock Width="110" VerticalAlignment="Center" Text="Hold for" />
-                            <ui:NumberBox x:Name="ClickHoldBox" Width="120" Minimum="1" Maximum="60000" />
+                <ikw:SimpleStackPanel Margin="24,4,24,12" Spacing="4">
+                    <ui:SettingsCard Header="Name (optional)" Description="Shown in bold in the list">
+                        <TextBox x:Name="ActionNameBox" Width="260" MaxLength="100" AutomationProperties.Name="Name"
+                                 ui:ControlHelper.PlaceholderText="e.g. Open inventory" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Header="Delay" Description="Wait before this action">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                            <ui:NumberBox x:Name="DelayBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
+                                          AutomationProperties.Name="Delay" />
                             <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
                         </ikw:SimpleStackPanel>
-                    </StackPanel>
-                </StackPanel>
-
-                <!-- Repeat (Press key, Click) -->
-                <StackPanel x:Name="RepeatGroup" Margin="0,0,0,16">
-                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock x:Name="RepeatLabel" Width="110" VerticalAlignment="Center" Text="Press" />
-                        <ui:NumberBox x:Name="RepeatBox" Width="120" Minimum="1" Maximum="100000" />
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="times" />
-                    </ikw:SimpleStackPanel>
-                    <ikw:SimpleStackPanel Margin="0,12,0,0" Orientation="Horizontal" Spacing="8">
-                        <TextBlock Width="110" VerticalAlignment="Center" Text="Pause between" />
-                        <ui:NumberBox x:Name="RepeatPauseBox" Width="120" Minimum="0" Maximum="86400000" />
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
-                    </ikw:SimpleStackPanel>
-                    <TextBlock Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               Text="Pause between only applies when it is repeated more than once. Default is 1 time." />
-                </StackPanel>
-
-                <!-- Position -->
-                <StackPanel x:Name="PositionGroup" Margin="0,0,0,16">
-                    <TextBlock Margin="0,0,0,8" Text="Position" />
-                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                        <ui:NumberBox x:Name="XBox" Width="100" Minimum="-100000" Maximum="100000" Header="X" />
-                        <ui:NumberBox x:Name="YBox" Width="100" Minimum="-100000" Maximum="100000" Header="Y" />
-                        <Button VerticalAlignment="Bottom" Content="Pick on screen" Click="OnPickClick" />
-                    </ikw:SimpleStackPanel>
-                    <TextBlock Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               Text="Screen pixels, from the top-left corner of the main screen." />
-                </StackPanel>
-
-                <!-- Movement -->
-                <StackPanel x:Name="MoveGroup" Margin="0,0,0,16">
-                    <TextBlock Margin="0,0,0,8" Text="Movement" />
-                    <StackPanel Orientation="Horizontal">
-                        <RadioButton x:Name="InstantRadio" Content="Instantly" GroupName="Movement" Checked="OnMovementChanged" />
-                        <RadioButton x:Name="SmoothRadio" Content="Smoothly" GroupName="Movement" Checked="OnMovementChanged" />
-                    </StackPanel>
-                    <StackPanel x:Name="SpeedRow" Margin="0,12,0,0">
-                        <TextBlock x:Name="SpeedLabel" Text="Speed" />
-                        <Slider x:Name="SpeedSlider" Margin="0,8,0,0" Minimum="1" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True"
-                                AutomationProperties.Name="Movement speed" ValueChanged="OnSpeedChanged" />
-                        <Grid>
-                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       Text="Very slow" />
-                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       Text="Very fast" HorizontalAlignment="Right" />
-                        </Grid>
-                    </StackPanel>
-                </StackPanel>
-
-                <!-- Scroll -->
-                <StackPanel x:Name="ScrollGroup" Margin="0,0,0,16">
-                    <TextBlock Margin="0,0,0,8" Text="Scroll" />
-                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                        <ComboBox x:Name="DirectionBox" Width="120">
-                            <ComboBoxItem Content="Up" />
-                            <ComboBoxItem Content="Down" />
-                            <ComboBoxItem Content="Left" />
-                            <ComboBoxItem Content="Right" />
-                        </ComboBox>
-                        <ui:NumberBox x:Name="StepsBox" Width="90" Minimum="1" Maximum="1000" />
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="steps" />
-                    </ikw:SimpleStackPanel>
-                </StackPanel>
-
-                <!-- Text -->
-                <StackPanel x:Name="TextGroup" Margin="0,0,0,16">
-                    <TextBox x:Name="PasteTextBox" MinHeight="70" MaxHeight="160" AcceptsReturn="True" TextWrapping="Wrap"
-                             VerticalScrollBarVisibility="Auto" TextChanged="OnTextChanged"
-                             ui:ControlHelper.Header="Text to paste"
-                             ui:ControlHelper.PlaceholderText="Text to paste" />
-                    <WrapPanel Margin="0,8,0,0">
-                        <CheckBox x:Name="EnterBeforeBox" Content="Press Enter before pasting" />
-                        <CheckBox x:Name="EnterAfterBox" Content="Press Enter after pasting" />
-                    </WrapPanel>
-                </StackPanel>
-
-                <!-- Delay -->
-                <TextBlock Margin="0,0,0,8" Text="Delay before this action" />
-                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                    <ui:NumberBox x:Name="DelayBox" Width="140" Minimum="0" Maximum="86400000" />
-                    <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
+                    </ui:SettingsCard>
+                    <views:ActionBox x:Name="Box" Margin="0,12,0,0" Rejected="ShowError" />
                 </ikw:SimpleStackPanel>
-
-            </StackPanel>
             </ScrollViewer>
         </Grid>
     </DockPanel>

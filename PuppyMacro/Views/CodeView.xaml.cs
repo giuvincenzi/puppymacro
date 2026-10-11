@@ -105,7 +105,7 @@ public partial class CodeView
             };
             core.NewWindowRequested += (_, e) => e.Handled = true;
             core.WebMessageReceived += OnWebMessage;
-            core.ProcessFailed += (_, _) => ShowStatus("The code editor stopped. Close the macro editor and open it again.");
+            core.ProcessFailed += (_, _) => ShowStatus("The code editor stopped. Close this window and open it again.");
             core.Navigate(PageUrl);
             return null;
         }
@@ -113,7 +113,7 @@ public partial class CodeView
         {
             Close();
             return ex is WebView2RuntimeNotFoundException
-                ? "Code view needs the Microsoft Edge WebView2 Runtime. It comes with Windows 11 and with the PuppyMacro installer; install it from Microsoft and open the editor again."
+                ? "Code view needs the Microsoft Edge WebView2 Runtime. Install it from Microsoft, then open this window again."
                 : $"The code editor could not start: {ex.Message}";
         }
     }

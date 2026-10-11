@@ -46,7 +46,7 @@ internal sealed class SettingsStore
         {
             string backup = Path.ChangeExtension(_path, ".invalid.json");
             try { File.Copy(_path, backup, overwrite: true); } catch { /* best effort */ }
-            warning = $"settings.json could not be read and was reset to defaults.\nA copy was saved as {Path.GetFileName(backup)}.\n\nDetails: {ex.Message}";
+            warning = $"Your settings could not be read, so they were reset.\nThe old file was saved as {Path.GetFileName(backup)}.\n\nDetails: {ex.Message}";
             var defaults = AppSettings.CreateDefault();
             TrySave(defaults, out _);
             return defaults;
@@ -141,6 +141,7 @@ internal sealed class SettingsStore
             foreach (var action in loop.Actions)
             {
                 action.Text ??= "";
+                action.Normalize();
                 double ms = action.IntervalMs;
                 if (double.IsNaN(ms) || ms < LoopAction.MinIntervalMs || ms > LoopAction.MaxIntervalMs)
                 {
@@ -168,6 +169,11 @@ internal sealed class SettingsStore
             foreach (var loop in settings.Loops)
                 loop.FloatingButton.Opacity ??= settings.OverlayPanelOpacity;
         }
+
+        // Schema 7: the macro editor opens 240 wider, 120 for its right column and 120 for the list of actions; a
+        // width kept from before grows as much.
+        if (settings.SchemaVersion < 7 && settings.MacroEditorWidth is double macroWidth)
+            settings.MacroEditorWidth = macroWidth + 240;
 
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
         settings.Remaps ??= new();

@@ -167,7 +167,7 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
 
     private string Description => Action.Type switch
     {
-        MacroActionType.PressKey => $"Press {KeyNames.Get(Action.Vk)}{Times}",
+        MacroActionType.PressKey => $"Press {KeyNames.Format(Action.Key)}{Times}",
         MacroActionType.KeyDown => $"Key down {KeyNames.Get(Action.Vk)}",
         MacroActionType.KeyUp => $"Key up {KeyNames.Get(Action.Vk)}",
         MacroActionType.Click => $"{ButtonName(Action.Vk)} {(Action.ClickCount == 2 ? "double click" : "click")}{Times}",

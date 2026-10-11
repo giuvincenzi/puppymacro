@@ -94,8 +94,8 @@ public partial class AppScopeEditor
     }
 
     private void UpdateHelp() =>
-        HelpText.Text = "Choose a running app, click its window with Pick, or browse for its .exe. It works only while that app is in front"
-            + (StopsWhenAppChanges ? "; it stops when another app comes in front." : ".");
+        HelpText.Text = "Choose a running app, pick its window, or browse for its .exe. It works only while that app is in front"
+            + (StopsWhenAppChanges ? ", and stops when you switch to another app." : ".");
 
     /// <summary>Lists the .exe names of the apps that have a window open.</summary>
     private void OnAppDropDownOpened(object? sender, EventArgs e)

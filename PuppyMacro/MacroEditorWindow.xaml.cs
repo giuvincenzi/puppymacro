@@ -39,7 +39,6 @@ public partial class MacroEditorWindow
     private readonly Guid _editingId;
     private readonly Guid _itemId;
     private readonly Func<EditedFloatingButton, Point?>? _placeButton;
-    private bool _enabled;
     private MacroEditList _list;
     private readonly ObservableCollection<MacroEditorItem> _items = new();
     private readonly Dictionary<MacroAction, MacroActionRowViewModel> _rowOf = new();
@@ -72,7 +71,7 @@ public partial class MacroEditorWindow
         _itemId = existing?.Id ?? Guid.NewGuid();
         _placeButton = placeButton;
 
-        string title = existing == null ? "New macro" : "Edit macro";
+        string title = existing == null ? "Add macro" : $"Edit macro - {existing.Name}";
         Title = title;
 
         if (recorded != null)
@@ -108,7 +107,7 @@ public partial class MacroEditorWindow
     [MemberNotNull(nameof(_list), nameof(_soundName))]
     private void LoadMacro(MacroDefinition source)
     {
-        _enabled = source.Enabled;
+        EnabledSwitch.IsOn = source.Enabled;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
 
@@ -124,8 +123,8 @@ public partial class MacroEditorWindow
         TimesBox.Value = source.RepeatCount;
         TimesBox.IsEnabled = source.Repeat == RepeatMode.Times;
         int speedIndex = Array.IndexOf(MacroDefinition.SpeedSteps, source.Speed);
+        SpeedSlider.Format = v => $"×{SpeedAt(v)}";
         SpeedSlider.Value = speedIndex >= 0 ? speedIndex : 2;
-        UpdateSpeedLabel();
 
         ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
         HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
@@ -155,7 +154,7 @@ public partial class MacroEditorWindow
             Speed = SelectedSpeed,
             Mode = IsHold ? ActivationMode.Hold : ActivationMode.Toggle,
             Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
-            Enabled = _enabled,
+            Enabled = EnabledSwitch.IsOn,
             SoundEnabled = SoundSwitch.IsOn,
             SoundName = _soundName,
             FloatingButton = FloatingEditor.ToModel(),
@@ -345,7 +344,7 @@ public partial class MacroEditorWindow
             return;
         int count = _list.Expand(SelectedActions, SelectedGroups).Count;
         bool any = count > 0;
-        SelectionText.Text = (any ? $"{Count(count)} selected" : "Select actions to test, edit, group, duplicate, copy or delete them")
+        SelectionText.Text = (any ? $"{Count(count)} selected" : "Select actions to edit, group, copy and more")
                              + " · " + InsertHintText();
         foreach (var button in new[] { DuplicateButton, CopyButton, DeleteButton })
             button.IsEnabled = any;
@@ -969,15 +968,10 @@ public partial class MacroEditorWindow
             TimesBox.IsEnabled = TimesRadio.IsChecked == true;
     }
 
-    private void OnSpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => UpdateSpeedLabel();
+    private static double SpeedAt(double index) =>
+        MacroDefinition.SpeedSteps[Math.Clamp((int)Math.Round(index), 0, MacroDefinition.SpeedSteps.Length - 1)];
 
-    private double SelectedSpeed => MacroDefinition.SpeedSteps[Math.Clamp((int)Math.Round(SpeedSlider.Value), 0, 4)];
-
-    private void UpdateSpeedLabel()
-    {
-        if (SpeedCard != null)
-            SpeedCard.Header = $"Speed ×{SelectedSpeed}";
-    }
+    private double SelectedSpeed => SpeedAt(SpeedSlider.Value);
 
     private bool IsHold => HoldRadio.IsChecked == true;
 

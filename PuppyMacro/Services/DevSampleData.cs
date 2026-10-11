@@ -7,7 +7,8 @@ namespace PuppyMacro.Services;
 
 /// <summary>
 /// Development build only: fills an empty dev data folder with example loops, macros and
-/// remaps, all disabled. `make dev` deletes the folder first, so every run starts from these.
+/// remaps, all disabled (in screenshots the first loop is enabled, so the lists do not look all off).
+/// `make dev` deletes the folder first, so every run starts from these.
 /// </summary>
 internal static class DevSampleData
 {
@@ -37,7 +38,7 @@ internal static class DevSampleData
             Name = "Sample: click every second",
             Actions = { new LoopAction { Type = ActionType.Key, KeyVk = LeftButton, IntervalValue = 1, IntervalUnit = IntervalUnit.Seconds } },
             Hotkey = HotkeyBinding.FromKey(F6),
-            Enabled = false,
+            Enabled = App.IsScreenshotMode,
         });
         settings.Loops.Add(new LoopDefinition
         {

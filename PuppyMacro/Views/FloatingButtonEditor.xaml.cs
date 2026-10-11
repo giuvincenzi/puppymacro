@@ -7,7 +7,7 @@ using PuppyMacro.Models;
 namespace PuppyMacro.Views;
 
 /// <summary>
-/// The "Floating button" expander of the loop and macro editors: on/off, label, size and Position….
+/// The "Floating button" expander of the loop and macro editors: on/off, label, size and Position.
 /// Works on a copy; <see cref="ToModel"/> returns the edited settings.
 /// </summary>
 public partial class FloatingButtonEditor
@@ -25,7 +25,7 @@ public partial class FloatingButtonEditor
         _loading = false;
     }
 
-    /// <summary>Raised by Position…; the host opens the placement overlay and calls <see cref="SetPosition"/>.</summary>
+    /// <summary>Raised by Position; the host opens the placement overlay and calls <see cref="SetPosition"/>.</summary>
     public event Action? PositionRequested;
 
     internal void Load(FloatingButton button, string name, string hotkeyText, bool holdMode)
@@ -120,7 +120,7 @@ public partial class FloatingButtonEditor
 
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (_loading || OpacityValueText == null)
+        if (_loading)
             return;
         _button.Opacity = (int)Math.Round(e.NewValue);
         Update();
@@ -134,8 +134,8 @@ public partial class FloatingButtonEditor
             return;
         FloatingSwitch.IsEnabled = !_holdMode;
         FloatingExpander.Description = _holdMode
-            ? "Not available with Hold: a click can only start and stop. Switch to Toggle to use it."
-            : "A round button in overlay mode that starts and stops it. It replaces its row in the overlay panel.";
+            ? "Needs Toggle: a click can start and stop, but not hold"
+            : "A round button that starts and stops it in overlay mode, in place of its row in the panel";
         // Its options open only for a button that is on (not for Hold items).
         FloatingExpander.CanExpand = _button.Enabled && !_holdMode;
         // The details apply only to a button that is on.
@@ -145,9 +145,5 @@ public partial class FloatingButtonEditor
         string label = string.IsNullOrEmpty(_button.Label) ? FloatingButton.DefaultLabel(_name) : _button.Label;
         Preview.Show(label, _hotkeyText, _button.Size);
         Preview.SetBackgroundOpacity(_button.EffectiveOpacity);
-        OpacityValueText.Text = $"{_button.EffectiveOpacity}%";
-        PositionText.Text = _button.X is double x && _button.Y is double y
-            ? $"X {Math.Round(x)}, Y {Math.Round(y)}"
-            : "Middle of the main screen until you place it";
     }
 }

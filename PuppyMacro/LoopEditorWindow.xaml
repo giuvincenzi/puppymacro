@@ -11,9 +11,9 @@
     ui:TitleBar.MinimizeButtonAvailability="Collapsed"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="Add loop"
-    Width="1120"
+    Width="1360"
     Height="780"
-    MinWidth="900"
+    MinWidth="1020"
     MinHeight="520"
     ResizeMode="CanResize"
     ShowInTaskbar="True"
@@ -41,18 +41,36 @@
         <Grid x:Name="FormBody" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="440" />
-                <ColumnDefinition Width="420" />
+                <ColumnDefinition Width="540" />
             </Grid.ColumnDefinitions>
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="24,8,24,12" Spacing="4">
                     <TextBox x:Name="NameBox" ui:ControlHelper.Header="Name" ui:ControlHelper.PlaceholderText="e.g. Left click spam"
                              TextChanged="OnNameChanged" />
 
-                    <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Keys and texts" />
-                    <TextBlock Margin="0,0,0,4" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               Text="Each one repeats on its own timer; a key can also stay held down while the loop runs. Texts are pasted all at once." />
+                    <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Actions" />
 
+                    <!-- One button per action (approved, ui.md): label under the icon, as the macro editor's bar -->
+                    <ui:CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Bottom" VerticalContentAlignment="Center"
+                                   IsDynamicOverflowEnabled="False" OverflowButtonVisibility="Collapsed">
+                        <ui:AppBarButton x:Name="AddPressKeyButton" VerticalAlignment="Center" Label="Press key" Click="OnAddPressKeyClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton x:Name="AddClickButton" VerticalAlignment="Center" Label="Click" Click="OnAddClickClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                        <ui:AppBarButton x:Name="AddPasteTextButton" VerticalAlignment="Center" Label="Paste text" Click="OnAddPasteTextClick">
+                            <ui:AppBarButton.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}" />
+                            </ui:AppBarButton.Icon>
+                        </ui:AppBarButton>
+                    </ui:CommandBar>
+
+                    <!-- The actions: the same box as the macro's action window (Views/ActionBox) -->
                     <ItemsControl x:Name="ActionsList">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -60,88 +78,20 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type views:ActionEditorViewModel}">
-                                <!-- One group per key or text: "Key" or "Text" and a summary; a key row has its key field in the
-                                     header, next to Remove; open, the other settings one per line. A key row just added
-                                     opens and its key field waits for the key. -->
-                                <ui:SettingsExpander IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
-                                    <ui:SettingsExpander.HeaderIcon>
-                                        <Grid>
-                                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}"
-                                                         Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}" />
-                                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
-                                                         Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
-                                        </Grid>
-                                    </ui:SettingsExpander.HeaderIcon>
-                                    <ui:SettingsExpander.Header>
-                                        <Grid>
-                                            <TextBlock Text="Key" Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}" />
-                                            <TextBlock Text="Text" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
-                                        </Grid>
-                                    </ui:SettingsExpander.Header>
-                                    <ui:SettingsExpander.Description>
-                                        <TextBlock Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
-                                    </ui:SettingsExpander.Description>
-
-                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                                        <views:KeyCaptureField VerticalAlignment="Center" Value="{Binding Key}" StartOnLoad="{Binding CaptureOnLoad}"
-                                                               KeyOnly="True" AllowPrimaryMouse="True" CanClear="True" ItemName="key"
-                                                               Prompt="Press a key or mouse button (Esc cancels)"
-                                                               Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}" />
-                                        <Button VerticalAlignment="Center" ToolTip="Remove" Tag="{Binding}" Click="OnRemoveActionClick"
-                                                AutomationProperties.Name="Remove">
-                                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
-                                        </Button>
-                                    </ikw:SimpleStackPanel>
-
-                                    <ui:SettingsExpander.Items>
-                                        <ui:SettingsCard Header="Mode" Visibility="{Binding IsKey, Converter={StaticResource BoolToVisibility}}">
-                                            <ComboBox SelectedIndex="{Binding ModeIndex, Mode=TwoWay}" AutomationProperties.Name="Repeat or hold down">
-                                                <ComboBoxItem Content="Repeat" />
-                                                <ComboBoxItem Content="Hold down" />
-                                            </ComboBox>
-                                        </ui:SettingsCard>
-                                        <ui:SettingsCard Header="Text" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch"
-                                                         Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
-                                            <StackPanel>
-                                                <TextBox MinHeight="64" MaxHeight="140" AcceptsReturn="True" TextWrapping="Wrap"
-                                                         VerticalScrollBarVisibility="Auto" ui:ControlHelper.PlaceholderText="Text to paste"
-                                                         Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                <WrapPanel Margin="0,4,0,0">
-                                                    <CheckBox Margin="0,0,16,0" Content="Press Enter before pasting" IsChecked="{Binding EnterBefore, Mode=TwoWay}" />
-                                                    <CheckBox Content="Press Enter after pasting" IsChecked="{Binding EnterAfter, Mode=TwoWay}" />
-                                                </WrapPanel>
-                                            </StackPanel>
-                                        </ui:SettingsCard>
-                                        <ui:SettingsCard Header="Every" Visibility="{Binding ShowInterval, Converter={StaticResource BoolToVisibility}}">
-                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                                                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
-                                                              SpinButtonPlacementMode="Inline"
-                                                              SmallChange="{Binding UnitIndex, Converter={StaticResource IntervalStep}}"
-                                                              Value="{Binding IntervalValue, Mode=TwoWay}" AutomationProperties.Name="Interval" />
-                                                <ComboBox SelectedIndex="{Binding UnitIndex, Mode=TwoWay}" AutomationProperties.Name="Unit">
-                                                    <ComboBoxItem Content="ms" />
-                                                    <ComboBoxItem Content="s" />
-                                                    <ComboBoxItem Content="min" />
-                                                    <ComboBoxItem Content="h" />
-                                                </ComboBox>
-                                            </ikw:SimpleStackPanel>
-                                        </ui:SettingsCard>
-                                    </ui:SettingsExpander.Items>
-                                </ui:SettingsExpander>
+                            <DataTemplate DataType="{x:Type views:ActionBoxViewModel}">
+                                <views:ActionBox RemoveRequested="OnRemoveAction" Rejected="ShowError" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-
-                    <ikw:SimpleStackPanel Margin="0,4,0,0" Orientation="Horizontal" Spacing="8">
-                        <Button Content="Add key" Click="OnAddKeyClick" />
-                        <Button Content="Add text" Click="OnAddTextClick" />
-                    </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
             </ScrollViewer>
 
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="0,8,24,12" Spacing="4">
+                    <ui:SettingsCard Header="Enabled">
+                        <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="Enabled" />
+                    </ui:SettingsCard>
+
                     <ui:SettingsCard Header="Activation" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
                         <ui:SettingsCard.Description>
                             <TextBlock x:Name="ActivationHint" />
@@ -158,7 +108,7 @@
                             <!-- The help, under all the options -->
                             <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       Text="Optional. Press any key or mouse button, like F2 or A; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too. Without a hotkey, start it with Play or from the overlay panel. Hold needs a hotkey." />
+                                       Text="Any key or mouse button, like F2 or A. For a combination, hold Ctrl, Alt, Shift or Win first; left and right click, the scroll wheel and Esc need one. Hold needs a hotkey." />
                         </StackPanel>
                     </ui:SettingsCard>
 
@@ -172,7 +122,7 @@
                         <ui:ToggleSwitch x:Name="SoundSwitch" Toggled="OnSoundSwitchChanged" />
                         <ui:SettingsExpander.Items>
                             <ui:SettingsCard x:Name="SoundCard" ContentAlignment="Vertical" HorizontalContentAlignment="Left"
-                                             Description="Click a sound to pick it and hear the start and stop versions.">
+                                             Description="Click a sound to choose it and hear how it starts and stops">
                                 <!-- Scrolls on its own so the long list does not make the editor scroll (approved, ui.md). -->
                                 <ScrollViewer x:Name="SoundScroll" MaxHeight="200" VerticalScrollBarVisibility="Auto">
                                     <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"

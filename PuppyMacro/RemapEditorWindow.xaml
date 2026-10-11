@@ -10,9 +10,9 @@
     ui:TitleBar.MinimizeButtonAvailability="Collapsed"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="Add remap"
-    Width="900"
+    Width="1140"
     Height="560"
-    MinWidth="760"
+    MinWidth="880"
     MinHeight="440"
     ResizeMode="CanResize"
     ShowInTaskbar="True"
@@ -48,13 +48,13 @@
             <Grid x:Name="FormBody">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="400" />
+                    <ColumnDefinition Width="520" />
                 </Grid.ColumnDefinitions>
 
                 <ikw:SimpleStackPanel Grid.Column="0" Margin="24,4,24,12" Spacing="4">
                     <!-- Source -->
                     <ui:SettingsCard Header="When I press"
-                                     Description="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first. Ctrl, Alt, Shift or Win alone: press and release it."
+                                     Description="A key, a mouse button or a combination (hold Ctrl, Alt, Shift or Win first). For Ctrl, Alt, Shift or Win alone, press and release it."
                                      ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
                         <views:KeyCaptureField x:Name="SourceField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
                                                ItemName="key" Prompt="Press the key or combination (Esc cancels)"
@@ -63,7 +63,7 @@
 
                     <!-- Target -->
                     <ui:SettingsCard Header="Send instead"
-                                     Description="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first. Ctrl, Alt, Shift or Win alone: press and release it."
+                                     Description="A key, a mouse button or a combination (hold Ctrl, Alt, Shift or Win first). For Ctrl, Alt, Shift or Win alone, press and release it."
                                      ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
                         <views:KeyCaptureField x:Name="TargetField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
                                                ItemName="key" Prompt="Press the key or combination (Esc cancels)"
@@ -73,6 +73,10 @@
 
                 <ikw:SimpleStackPanel Grid.Column="1" Margin="0,4,24,12" Spacing="4">
                     <!-- Scope -->
+                    <ui:SettingsCard Header="Enabled">
+                        <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="Enabled" />
+                    </ui:SettingsCard>
+
                     <views:AppScopeEditor x:Name="AppScopeCard" Changed="OnAppScopeChanged" />
 
                     <!-- Note -->

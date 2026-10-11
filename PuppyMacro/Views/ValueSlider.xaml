@@ -1,0 +1,14 @@
+<UserControl
+    x:Class="PuppyMacro.Views.ValueSlider"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Every slider in the app (opacity, volume, a macro's speed): its value, then the standard Slider, on one line on
+         the right of a card, as Windows Settings shows a slider -->
+    <StackPanel Orientation="Horizontal">
+        <TextBlock x:Name="ValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
+        <Slider x:Name="Bar" Width="200" VerticalAlignment="Center" Minimum="0" Maximum="100"
+                TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
+                ValueChanged="OnBarChanged" />
+    </StackPanel>
+</UserControl>

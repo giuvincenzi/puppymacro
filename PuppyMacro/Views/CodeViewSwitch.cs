@@ -141,7 +141,7 @@ internal sealed class CodeViewSwitch<T> where T : class
         _form.Visibility = code ? Visibility.Collapsed : Visibility.Visible;
         _code.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
         _cancel.Content = code ? "Discard changes" : _cancelContent;
-        _cancel.ToolTip = code ? "Drop the changes made in the code and go back to Form view" : null;
+        _cancel.ToolTip = code ? "Undo your code changes and go back to Form view" : null;
         _validate();
     }
 }

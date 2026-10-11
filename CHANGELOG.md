@@ -3,6 +3,16 @@
 ## Unreleased
 
 ### Added
+- Loops and macros share the same **action boxes**: Press key, Click and Paste text in a loop, every action
+  in a macro's action window. A loop's bar has one button per action (**Press key**, **Click**, **Paste
+  text**).
+- **Combinations** in Press key, in loops and macros, for example Ctrl+C, with the side of each modifier.
+  **Key down** and **Key up** in a macro take Ctrl, Alt, Shift or Win alone too.
+- In a loop's Press key and Click: **Hold for**, **Times** and **Pause between**; in a loop's Click,
+  **Mode** (single or double) and **Position** (where the pointer is, or a fixed point).
+- **Enabled** in the loop, macro and remap editors.
+- **Detect the mouse button**, next to the mouse button list of a Click or Mouse button down / up: press the
+  button you want.
 - Remaps from a **combination**: **When I press** takes Ctrl, Alt, Shift or Win with a key, for example
   Alt+J → Left arrow.
 - Remaps of **Ctrl, Alt, Shift or Win** alone, left and right apart (for example Right Alt → Enter), and
@@ -13,11 +23,39 @@
 - Macro editor: **Expand all groups** and **Collapse all groups** in **⋯** open or close every group at once.
 
 ### Changed
+- A macro action's window shows **Name** and **Delay** (before "Delay before this action"), then the
+  action's box with its options; its title names the action, for example "Edit click - Open inventory".
+- Mouse buttons in a loop are chosen in a list (Left, Right, Middle, Back, Forward) instead of by
+  clicking in the key field. Loops saved before keep their buttons.
+- The editors' titles name what they edit, for example "Edit loop - Spam".
+- The cards of loops name the click and the combination they send, for example "Left click every 1 s"
+  instead of "LButton every 1 s".
+- The **Test** button of a macro action shows a play icon.
+- **Enter overlay mode** and **Stop all** are in a taller title bar, on every page, instead of the bar at
+  the bottom; Stop all shows only while something runs. The title bar and the overlay panel no longer show
+  the version.
+- Settings: shorter texts; the **Overlay panel** switch is in its group's header; the overlay panel moves
+  only with **Position on screen** (the X, Y and Reset fields are gone) and the floating buttons card is
+  gone; **Sound** is one card with the volume.
+- Every slider (opacity, volume, a macro's speed) is on one line with its value, on the right of its card.
+- Shorter, friendlier texts across the app; **New macro** is now **Add macro**.
+- Buttons that wait for a key or a mouse button, or pick something on the screen, show a target icon;
+  buttons that place the overlay show a move icon.
+- Updates: the bar says only "Version X.Y.Z available", with **Update and restart** on its right (also in
+  Settings, next to **What's new**); while it downloads there is no button. The dot on Settings sits next to
+  its icon, as in Microsoft Store.
+- The loop, macro and remap editors open 240 px wider: 120 for their right column, whose lists (apps,
+  sounds) have more room, and 120 for the actions; a macro editor width you kept grows as much.
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves
   Alt+J as it is.
 - Every key field has the arrow next to the keys, also in Settings and in the remap editor.
 - Modifier keys are named Left Ctrl, Right Alt and so on, instead of LCtrl, RAlt.
 - The overlay panel's buttons are in the order move, exit, open.
+
+### Fixed
+- No more empty strip under the title bar while no update is shown.
+- A macro's Code view no longer accepts a mouse button in a Press key, Key down or Key up, as the
+  action's window already did not.
 
 ## 1.13.0
 

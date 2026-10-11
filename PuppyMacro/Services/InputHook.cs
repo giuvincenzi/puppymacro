@@ -56,11 +56,11 @@ internal sealed class InputHook : IDisposable
 
         _keyboardHook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_KEYBOARD_LL, _keyboardProc, module, 0);
         if (_keyboardHook == IntPtr.Zero)
-            throw new Win32Exception(Marshal.GetLastWin32Error(), "Could not install the keyboard hook.");
+            throw new Win32Exception(Marshal.GetLastWin32Error(), "Could not read the keyboard.");
 
         _mouseHook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_MOUSE_LL, _mouseProc, module, 0);
         if (_mouseHook == IntPtr.Zero)
-            throw new Win32Exception(Marshal.GetLastWin32Error(), "Could not install the mouse hook.");
+            throw new Win32Exception(Marshal.GetLastWin32Error(), "Could not read the mouse.");
     }
 
     private IntPtr KeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)

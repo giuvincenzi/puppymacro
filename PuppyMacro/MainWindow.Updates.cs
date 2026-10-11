@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Navigation;
 using System.Windows.Threading;
 using PuppyMacro.Services;
 using Velopack;
@@ -110,8 +109,9 @@ public partial class MainWindow
         if (!_updates.IsInstalled)
         {
             UpdateBar.IsOpen = false;
+            UpdateBar.Visibility = Visibility.Collapsed;
             ShowSettingsBadge(false);
-            UpdateStatusText.Text = "Updates are available when PuppyMacro is installed with Setup.";
+            UpdateStatusText.Text = "Install PuppyMacro with Setup to get updates";
             UpdateWhatsNew.Visibility = Visibility.Collapsed;
             UpdateCardProgress.Visibility = Visibility.Collapsed;
             UpdateCardButton.Visibility = Visibility.Collapsed;
@@ -123,16 +123,16 @@ public partial class MainWindow
 
         ShowSettingsBadge(version != null);
         UpdateBar.IsOpen = version != null && (downloading || version != _dismissedUpdateVersion);
+        UpdateBar.Visibility = UpdateBar.IsOpen ? Visibility.Visible : Visibility.Collapsed;
         UpdateStatusText.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty,
             _updateError != null && !downloading ? "SystemFillColorCriticalBrush" : "TextFillColorSecondaryBrush");
 
         string status;
         string action;
-        bool primary = false;
         if (downloading)
         {
-            status = $"Downloading PuppyMacro {version}… {_downloadPercent}%";
-            action = "Cancel";
+            status = $"Downloading version {version}… {_downloadPercent}%";
+            action = ""; // no button while downloading
         }
         else if (_updateError != null)
         {
@@ -141,9 +141,8 @@ public partial class MainWindow
         }
         else if (version != null)
         {
-            status = $"PuppyMacro {version} is available. Installed: {_updates.CurrentVersion}";
-            action = "Update";
-            primary = true;
+            status = $"Version {version} is available (you have {_updates.CurrentVersion})";
+            action = "Update and restart";
         }
         else if (_checkingForUpdates)
         {
@@ -153,48 +152,36 @@ public partial class MainWindow
         else
         {
             status = _lastUpdateCheck is DateTime checkedAt
-                ? $"PuppyMacro {_updates.CurrentVersion} is up to date. Last checked at {checkedAt:t}"
+                ? $"PuppyMacro {_updates.CurrentVersion} is up to date. Checked at {checkedAt:t}"
                 : $"PuppyMacro {_updates.CurrentVersion}";
             action = "Check now";
         }
 
         UpdateStatusText.Text = status;
-        UpdateCardButton.Visibility = Visibility.Visible;
+        UpdateCardButton.Visibility = downloading ? Visibility.Collapsed : Visibility.Visible;
         UpdateCardButton.Content = action;
         UpdateCardButton.IsEnabled = !_checkingForUpdates;
         UpdateCardProgress.Visibility = downloading ? Visibility.Visible : Visibility.Collapsed;
         UpdateCardProgress.Value = _downloadPercent;
         UpdateWhatsNew.Visibility = version != null && !downloading ? Visibility.Visible : Visibility.Collapsed;
         if (version != null)
-            UpdateWhatsNewLink.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
+            UpdateWhatsNew.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
 
-        UpdateBar.Title = $"PuppyMacro {version} is available";
-        UpdateBar.Message = downloading
-            ? $"Downloading… {_downloadPercent}%"
-            : _updateError ?? "Loops and macros stop, then PuppyMacro restarts with the new version.";
+        // Only the title (bold); a message only while downloading or after an error
+        UpdateBar.Title = $"Version {version} available";
+        UpdateBar.Message = downloading ? $"Downloading… {_downloadPercent}%" : _updateError ?? "";
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;
-        SetUpdateButtonStyle(UpdateCardButton, primary);
-        SetUpdateButtonStyle(UpdateBarButton, primary);
+        UpdateBarButton.Visibility = UpdateCardButton.Visibility;
         UpdateBar.IsClosable = !downloading; // Later
-    }
-
-    /// <summary>The accent button for Update, the standard one otherwise. Clearing the Style (not setting it to null)
-    /// lets the implicit iNKORE style apply again: a null Style falls back to WPF's own theme.</summary>
-    private void SetUpdateButtonStyle(System.Windows.Controls.Button button, bool primary)
-    {
-        if (primary)
-            button.Style = (Style)FindResource("AccentButtonStyle");
-        else
-            button.ClearValue(StyleProperty);
     }
 
     private async void OnUpdateActionClick(object sender, RoutedEventArgs e)
     {
         if (_downloadCancel != null)
-            _downloadCancel.Cancel();
-        else if (_availableUpdate != null)
+            return; // downloading: no button is shown
+        if (_availableUpdate != null)
             await DownloadAndApplyUpdateAsync();
         else
             await CheckForUpdatesAsync();
@@ -215,12 +202,6 @@ public partial class MainWindow
     {
         if ((sender as FrameworkElement)?.Tag is string url)
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
-    }
-
-    private void OnWhatsNewNavigate(object sender, RequestNavigateEventArgs e)
-    {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
-        e.Handled = true;
     }
 
     private async void OnCheckForUpdatesChanged(object sender, RoutedEventArgs e)

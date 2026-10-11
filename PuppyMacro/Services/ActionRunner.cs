@@ -58,7 +58,7 @@ internal sealed class PreciseTimer : IDisposable
 /// <summary>Runs one action of a loop on its own thread, at the action's interval.</summary>
 internal sealed class ActionRunner
 {
-    private const double MaxHoldMs = 30;
+    private const double DoubleClickGapMs = 60; // as macros
     private const double PasteSettleMs = 40;
     private const double ClipboardRestoreDelayMs = 150;
 
@@ -102,7 +102,8 @@ internal sealed class ActionRunner
     private void Run()
     {
         double intervalMs = Math.Clamp(_action.IntervalMs, LoopAction.MinIntervalMs, LoopAction.MaxIntervalMs);
-        double holdMs = Math.Min(MaxHoldMs, intervalMs / 2.0);
+        // Each press is held its Hold for (30 ms by default), at most half the interval.
+        double holdMs = Math.Min(_action.EffectiveHoldMs, intervalMs / 2.0);
         long frequency = Stopwatch.Frequency;
         long intervalTicks = (long)(intervalMs * frequency / 1000.0);
 
@@ -112,7 +113,18 @@ internal sealed class ActionRunner
 
             if (_action.Type == ActionType.Key && _action.HoldDown)
             {
-                // Held down for the whole time the loop runs; released when it stops.
+                // Held down for the whole time the loop runs; released when it stops. A mouse button with a
+                // fixed point is held there.
+                if (_action.IsClick && _action.HasFixedPoint)
+                {
+                    // Never on PuppyMacro's own windows: nothing is held, the row just waits for the stop.
+                    if (CursorGuard.IsOwnWindowAt(_action.X!.Value, _action.Y!.Value))
+                    {
+                        _stop.WaitOne();
+                        return;
+                    }
+                    InputSender.MoveTo(_action.X.Value, _action.Y.Value);
+                }
                 InputSender.PressAndHold(_action.KeyVk);
                 try
                 {
@@ -155,13 +167,63 @@ internal sealed class ActionRunner
         }
     }
 
+    /// <summary>
+    /// One time of a Key row: its key, combination or mouse button pressed <see cref="LoopAction.Times"/>
+    /// times (a double click is two presses 60 ms apart), with its pause between them.
+    /// </summary>
     private bool PressKey(PreciseTimer timer, double holdMs)
     {
-        // Never click on PuppyMacro's own windows (it could press its own buttons).
-        if (KeyNames.IsMouse(_action.KeyVk) && CursorGuard.IsOverOwnWindow())
-            return !_stop.WaitOne(0);
+        bool mouse = KeyNames.IsMouse(_action.KeyVk);
+        if (mouse)
+        {
+            // Never click on PuppyMacro's own windows (it could press its own buttons).
+            if (_action.HasFixedPoint)
+            {
+                if (CursorGuard.IsOwnWindowAt(_action.X!.Value, _action.Y!.Value))
+                    return !_stop.WaitOne(0);
+            }
+            else if (CursorGuard.IsOverOwnWindow())
+            {
+                return !_stop.WaitOne(0);
+            }
+        }
 
-        return InputSender.Tap(_action.KeyVk, holdMs, timer, _stop);
+        int presses = mouse && _action.IsDoubleClick ? 2 : 1;
+        for (int t = 0; t < _action.Times; t++)
+        {
+            if (t > 0 && !timer.Wait(_action.EffectiveRepeatPauseMs, _stop))
+                return false;
+            for (int p = 0; p < presses; p++)
+            {
+                if (p > 0 && !timer.Wait(DoubleClickGapMs, _stop))
+                    return false;
+                if (!PressOnce(mouse, holdMs, timer))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// One press. A combination keeps the whole press under InputSender's lock; a longer Hold for than a tap
+    /// waits outside it, so other rows, macros and remaps go on meanwhile; a click at a fixed point moves there
+    /// with the press, so another row cannot move the pointer in between. A tap as before otherwise.
+    /// </summary>
+    private bool PressOnce(bool mouse, double holdMs, PreciseTimer timer)
+    {
+        if (!mouse && _action.HasModifiers)
+            return InputSender.TapBinding(_action.Key, holdMs, timer, _stop);
+        bool tap = holdMs <= LoopAction.DefaultHoldMs;
+        if (mouse && _action.HasFixedPoint)
+        {
+            int x = _action.X!.Value, y = _action.Y!.Value;
+            return tap
+                ? InputSender.TapAt(_action.KeyVk, x, y, holdMs, timer, _stop)
+                : InputSender.PressFor(_action.KeyVk, holdMs, timer, _stop, x, y);
+        }
+        return tap
+            ? InputSender.Tap(_action.KeyVk, holdMs, timer, _stop)
+            : InputSender.PressFor(_action.KeyVk, holdMs, timer, _stop);
     }
 
     private bool PasteText(PreciseTimer timer, double holdMs)

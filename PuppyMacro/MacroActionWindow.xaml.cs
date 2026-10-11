@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
-using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
 
 namespace PuppyMacro;
 
-/// <summary>Adds or edits one macro action. On Save, <see cref="Result"/> holds the action.</summary>
+/// <summary>
+/// Adds or edits one macro action: its Name and Delay, then the action in the same box as a loop row
+/// (<see cref="ActionBox"/>), open. On Save, <see cref="Result"/> holds the action.
+/// </summary>
 public partial class MacroActionWindow
 {
     private readonly LoopEngine _engine;
     private readonly bool _isNew;
     private readonly CodeViewSwitch<MacroAction> _code;
     private MacroAction _action;
-    private int _keyVk;
+    private ActionBoxViewModel _box = null!;
     private bool _ready;
 
     /// <param name="allowedGroups">The groups the action can be in (<see cref="MacroJson.AllowedGroupIds"/>), for its Code view.</param>
@@ -28,10 +30,11 @@ public partial class MacroActionWindow
         WindowFit.Apply(this);
         _engine = engine;
         KeyCaptureField.SetEngine(this, engine); // the key field waits for keys through it
-        KeyField.Validate = KeyProblem;
         _isNew = isNew;
         _action = action.Clone();
         LoadAction(_action);
+        // A new Press key, Key down or Key up waits for its key at once, as a loop's new Press key.
+        _box.CaptureOnLoad = isNew && _box.IsKeyKind && _box.Key is not { IsSet: true };
 
         _code = new CodeViewSwitch<MacroAction>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForAction(allowedGroups, groupNames, action.GroupId), FormAction, MacroJson.Serialize,
@@ -46,54 +49,25 @@ public partial class MacroActionWindow
 
     public MacroAction? Result { get; private set; }
 
-    /// <summary>Shows <paramref name="action"/> in the Form view: the fields of its type, with its values.</summary>
+    /// <summary>Shows <paramref name="action"/> in the Form view: its Name, Delay and box, open.</summary>
     private void LoadAction(MacroAction action)
     {
         _action = action.Clone();
-        _keyVk = _action.Vk;
-
-        string title = (_isNew ? "Add " : "Edit ") + TypeName(_action.Type).ToLowerInvariant();
-        Title = title;
+        // "Add press key"; "Edit click - Open inventory" (its name, or what it does when it has none).
+        string type = TypeName(_action.Type).ToLowerInvariant();
+        Title = _isNew ? "Add " + type : $"Edit {type} - {new MacroActionRowViewModel(_action).Title}";
 
         ActionNameBox.Text = _action.Name;
-
-        var t = _action.Type;
-        bool isKey = t is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp;
-        bool isButton = t is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp;
-        KeyGroup.Visibility = isKey ? Visibility.Visible : Visibility.Collapsed;
-        HoldKeyRow.Visibility = t == MacroActionType.PressKey ? Visibility.Visible : Visibility.Collapsed;
-        ButtonGroup.Visibility = isButton ? Visibility.Visible : Visibility.Collapsed;
-        ClickOptions.Visibility = t == MacroActionType.Click ? Visibility.Visible : Visibility.Collapsed;
-        PositionGroup.Visibility = isButton || t == MacroActionType.MoveTo ? Visibility.Visible : Visibility.Collapsed;
-        MoveGroup.Visibility = t == MacroActionType.MoveTo ? Visibility.Visible : Visibility.Collapsed;
-        ScrollGroup.Visibility = t == MacroActionType.Scroll ? Visibility.Visible : Visibility.Collapsed;
-        TextGroup.Visibility = t == MacroActionType.PasteText ? Visibility.Visible : Visibility.Collapsed;
-        RepeatGroup.Visibility = t is MacroActionType.PressKey or MacroActionType.Click ? Visibility.Visible : Visibility.Collapsed;
-        RepeatLabel.Text = t == MacroActionType.Click ? "Click" : "Press";
-        RepeatBox.Value = Math.Max(1, _action.Repeat);
-        RepeatPauseBox.Value = _action.RepeatPauseMs;
-
-        KeyField.Value = _keyVk == 0 ? null : HotkeyBinding.FromKey(_keyVk);
-        KeyHoldBox.Value = _action.HoldMs;
-        ClickHoldBox.Value = _action.HoldMs;
-        SelectButton(_action.Vk == 0 ? KeyNames.VK_LBUTTON : _action.Vk);
-        SingleClickRadio.IsChecked = _action.ClickCount != 2;
-        DoubleClickRadio.IsChecked = _action.ClickCount == 2;
-        XBox.Value = _action.X;
-        YBox.Value = _action.Y;
-        InstantRadio.IsChecked = !_action.Smooth;
-        SmoothRadio.IsChecked = _action.Smooth;
-        SpeedSlider.Value = Math.Clamp(_action.SmoothSpeed, 1, 5);
-        DirectionBox.SelectedIndex = (int)_action.ScrollDirection;
-        StepsBox.Value = Math.Max(1, _action.ScrollSteps);
-        PasteTextBox.Text = _action.Text;
-        EnterBeforeBox.IsChecked = _action.EnterBefore;
-        EnterAfterBox.IsChecked = _action.EnterAfter;
         DelayBox.Value = _action.DelayMs;
-
-        UpdateSpeedLabel();
+        if (_box != null)
+            _box.PropertyChanged -= OnBoxChanged;
+        _box = new ActionBoxViewModel(_action) { IsExpanded = true };
+        _box.PropertyChanged += OnBoxChanged;
+        Box.DataContext = _box;
         Validate();
     }
+
+    private void OnBoxChanged(object? sender, PropertyChangedEventArgs e) => Validate();
 
     public static string TypeName(MacroActionType type) => type switch
     {
@@ -110,70 +84,7 @@ public partial class MacroActionWindow
         _ => type.ToString(),
     };
 
-    private void SelectButton(int vk)
-    {
-        foreach (ComboBoxItem item in ButtonBox.Items)
-        {
-            if (item.Tag is string tag && int.Parse(tag) == vk)
-            {
-                ButtonBox.SelectedItem = item;
-                return;
-            }
-        }
-        ButtonBox.SelectedIndex = 0;
-    }
-
-    /// <summary>A key action takes a key: mouse buttons have their own actions.</summary>
-    private static string? KeyProblem(HotkeyBinding binding) =>
-        KeyNames.IsMouse(binding.Vk) ? "Use a Click or Mouse button action for mouse buttons." : null;
-
-    private void OnKeyFieldChanged(object? sender, EventArgs e)
-    {
-        _keyVk = KeyField.Value?.Vk ?? 0;
-        Validate();
-    }
-
-    private void OnPickClick(object sender, RoutedEventArgs e)
-    {
-        // The overlay is topmost and covers this dialog, so the dialog does not need to be hidden.
-        var picker = new PickPointWindow();
-        if (picker.ShowDialog() == true)
-        {
-            XBox.Value = picker.ResultX;
-            YBox.Value = picker.ResultY;
-        }
-        Activate();
-    }
-
-    private void OnMovementChanged(object sender, RoutedEventArgs e)
-    {
-        if (SpeedRow != null)
-            SpeedRow.Visibility = SmoothRadio.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    private void OnSpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => UpdateSpeedLabel();
-
-    private void UpdateSpeedLabel()
-    {
-        if (SpeedLabel == null)
-            return;
-        int speed = (int)Math.Round(SpeedSlider.Value);
-        string name = speed switch { 1 => "very slow", 2 => "slow", 3 => "normal", 4 => "fast", _ => "very fast" };
-        double seconds = MacroAction.SmoothDurationMs(speed) / 1000;
-        SpeedLabel.Text = $"Speed: {name}, about {seconds:0.##} s";
-    }
-
-    private void OnTextChanged(object sender, TextChangedEventArgs e) => Validate();
-
-    private string? GetValidationError()
-    {
-        var t = _action.Type;
-        if ((t is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp) && _keyVk == 0)
-            return "Choose a key.";
-        if (t == MacroActionType.PasteText && string.IsNullOrEmpty(PasteTextBox.Text))
-            return "Enter the text to paste.";
-        return null;
-    }
+    private string? GetValidationError() => _box.Problem;
 
     private void Validate()
     {
@@ -239,52 +150,11 @@ public partial class MacroActionWindow
     /// <summary>The action as the Form view's fields describe it, also when they are not valid yet.</summary>
     private MacroAction FormAction()
     {
-        var a = _action.Clone();
-        var t = a.Type;
+        var a = _box.ToMacroAction(_action);
         a.Name = ActionNameBox.Text.Trim();
-        if (t is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp)
-        {
-            a.Vk = _keyVk;
-            a.HoldMs = Number(KeyHoldBox, 30);
-        }
-        if (t is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp)
-        {
-            a.Vk = ButtonBox.SelectedItem is ComboBoxItem { Tag: string tag } ? int.Parse(tag) : KeyNames.VK_LBUTTON;
-            a.ClickCount = DoubleClickRadio.IsChecked == true ? 2 : 1;
-            a.HoldMs = Number(ClickHoldBox, 30);
-        }
-        if (t is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo)
-        {
-            a.X = (int)Number(XBox, 0);
-            a.Y = (int)Number(YBox, 0);
-        }
-        if (t == MacroActionType.MoveTo)
-        {
-            a.Smooth = SmoothRadio.IsChecked == true;
-            a.SmoothSpeed = (int)Math.Round(SpeedSlider.Value);
-        }
-        if (t == MacroActionType.Scroll)
-        {
-            a.ScrollDirection = (ScrollDirection)Math.Max(0, DirectionBox.SelectedIndex);
-            a.ScrollSteps = (int)Math.Max(1, Number(StepsBox, 1));
-        }
-        if (t == MacroActionType.PasteText)
-        {
-            a.Text = PasteTextBox.Text;
-            a.EnterBefore = EnterBeforeBox.IsChecked == true;
-            a.EnterAfter = EnterAfterBox.IsChecked == true;
-        }
-        if (t is MacroActionType.PressKey or MacroActionType.Click)
-        {
-            a.Repeat = (int)Math.Max(1, Number(RepeatBox, 1));
-            a.RepeatPauseMs = Math.Max(0, Number(RepeatPauseBox, 50));
-        }
-        a.DelayMs = Math.Max(0, Number(DelayBox, 0));
+        a.DelayMs = double.IsNaN(DelayBox.Value) ? 0 : Math.Max(0, Math.Round(DelayBox.Value));
         return a;
     }
-
-    /// <summary>The whole number in <paramref name="box"/>, or <paramref name="empty"/> when it is empty.</summary>
-    private static double Number(NumberBox box, double empty) => double.IsNaN(box.Value) ? empty : Math.Round(box.Value);
 
     /// <summary>Form view: closes without saving. Code view: Discard changes (see <see cref="CodeViewSwitch{T}"/>).</summary>
     private void OnCancelClick(object sender, RoutedEventArgs e)

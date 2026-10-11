@@ -123,7 +123,7 @@
 
             <!-- What the clicks do, while the rows can be clicked -->
             <TextBlock x:Name="ClickHint" Margin="2,8,2,0" FontSize="11" Foreground="#9E9E9E" TextAlignment="Center"
-                       TextWrapping="Wrap" Text="Click: start / stop · Right-click: enable / disable" />
+                       TextWrapping="Wrap" Text="Click to start or stop · Right-click to enable or disable" />
         </StackPanel>
     </Border>
 </UserControl>
