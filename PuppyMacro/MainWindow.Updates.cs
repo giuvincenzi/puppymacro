@@ -142,7 +142,7 @@ public partial class MainWindow
         else if (version != null)
         {
             status = $"Version {version} is available (you have {_updates.CurrentVersion})";
-            action = "Update";
+            action = "Update and restart";
         }
         else if (_checkingForUpdates)
         {
@@ -167,10 +167,9 @@ public partial class MainWindow
         if (version != null)
             UpdateWhatsNew.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
 
-        UpdateBar.Title = "New version available";
-        UpdateBar.Message = downloading
-            ? $"Downloading… {_downloadPercent}%"
-            : _updateError ?? $"Version {version}. Updating restarts the app.";
+        // Only the title (bold); a message only while downloading or after an error
+        UpdateBar.Title = $"Version {version} available";
+        UpdateBar.Message = downloading ? $"Downloading… {_downloadPercent}%" : _updateError ?? "";
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;

@@ -96,10 +96,11 @@
 
             <!-- ================= Update available ================= -->
             <!-- Collapsed while closed: a closed InfoBar hides only its content and would keep its margin -->
-            <ui:InfoBar x:Name="UpdateBar" Margin="16,8,16,8" Severity="Informational" IsOpen="False" Visibility="Collapsed"
+            <ui:InfoBar x:Name="UpdateBar" Severity="Informational" IsOpen="False" Visibility="Collapsed"
                         CloseButtonClick="OnUpdateLaterClick">
                 <ui:InfoBar.ActionButton>
-                    <Button x:Name="UpdateBarButton" Click="OnUpdateActionClick" />
+                    <!-- The InfoBar gives its action the rest of the row: on the right, next to the close button -->
+                    <Button x:Name="UpdateBarButton" HorizontalAlignment="Right" Click="OnUpdateActionClick" />
                 </ui:InfoBar.ActionButton>
                 <ui:InfoBar.Content>
                     <ProgressBar x:Name="UpdateBarProgress" Margin="0,0,0,12" Maximum="100" Visibility="Collapsed" />
