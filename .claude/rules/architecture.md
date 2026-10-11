@@ -189,8 +189,12 @@ Rules:
   why AI apps can't connect (`ListenError`, on the AI page).
   `AiTools` holds every tool without the protocol (unit tested with a fake `IAiHost`): reads; `save_loop/macro/remap`,
   checked with the Code views' `LoopJson`/`MacroJson`/`RemapJson` and the Id PuppyMacro gives, saved at once through
-  `IAiHost.Save` (`MainWindow.SaveItem`: the editors' Add / ApplyEdit; a running item stops), unless `AiAskBeforeChanging`
-  (then `AiRequestWindow` lists `ItemHistory.Changes`); `delete_item` (asks with `AiAskBeforeDeleting`, on by default),
+  `IAiHost.Save` (`MainWindow.SaveItem`: the editors' Add / ApplyEdit; a running item stops)
+  (the same for `patch_item`: a JSON Patch, RFC 6902, `AiJson.Patch`, on the item's whole JSON, then `SaveItem`'s checks);
+  **an AI app writes and reads every character**, so a change is a patch, not the whole item (a 100 KB macro took 1.5 minutes to
+  rewrite), `get_item` gives `AiJson.Compact` (one line, fields at their default left out, read back as the same item: unit
+  tested) and `get_schema` the defaults (`CodeSchema` `withDefaults`); the answers of `save_*` and `patch_item` are the new Id or
+  the changes, never the item. With `AiAskBeforeChanging`, `AiRequestWindow` lists `ItemHistory.Changes` first; `delete_item` (asks with `AiAskBeforeDeleting`, on by default),
   `set_enabled` (a change), `update_settings` (`AiAskBeforeSettings`, on by default); interactions (`pick_point`,
   `pick_points`, `pick_app`, `capture_hotkey`, `place_floating_button`) with a `title`, a `description` and `steps` the AI
   writes (`AiAsk`, no length limits; the steps shown numbered): first `AiReadyWindow` (centered, draggable, topmost, not

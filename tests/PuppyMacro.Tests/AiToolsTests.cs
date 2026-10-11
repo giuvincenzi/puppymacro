@@ -219,7 +219,7 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_item_gives_the_saved_json_and_an_error_for_an_unknown_id()
+    public async Task Get_item_gives_the_compact_json_and_an_error_for_an_unknown_id()
     {
         var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41), Note = "Cut is A" };
         _settings.Remaps.Add(remap);
@@ -227,8 +227,75 @@ public class AiToolsTests : IDisposable
         AiToolResult found = await Call("get_item", new { id = remap.Id.ToString() });
         AiToolResult missing = await Call("get_item", new { id = Guid.NewGuid().ToString() });
 
-        Assert.Equal(RemapJson.Serialize(remap), found.Text);
+        Assert.Equal(AiJson.Compact(remap), found.Text);
         Assert.True(missing.IsError);
+    }
+
+    [Fact]
+    public async Task Patching_a_big_macro_changes_only_what_it_says_and_answers_with_the_changes()
+    {
+        MacroDefinition macro = AiJsonTests.BigMacro();
+        _host.Macros.Macros.Add(macro);
+
+        AiToolResult result = await Call("patch_item", new
+        {
+            id = macro.Id.ToString(),
+            patch = new object[] { new { op = "replace", path = "/Actions/4/DelayMs", value = 250 } },
+        });
+
+        Assert.False(result.IsError, result.Text);
+        Assert.StartsWith("Saved the changes to the macro:\n- Action 5", result.Text);
+        Assert.DoesNotContain("\"Actions\"", result.Text); // the answer is the changes, not the macro
+        var (saved, app) = Assert.Single(_host.Saved);
+        Assert.Equal(App, app);
+        MacroDefinition after = Assert.IsType<MacroDefinition>(saved);
+        Assert.Equal(250, after.Actions[4].DelayMs);
+        Assert.Equal(macro.Actions.Count, after.Actions.Count);
+        Assert.Equal(macro.Id, after.Id);
+        Assert.Contains(_log.Entries(), e => e.Result == AiActivityResult.Saved && e.Before != null); // Restore can undo it
+    }
+
+    [Fact]
+    public async Task A_patch_that_breaks_the_item_saves_nothing()
+    {
+        MacroDefinition macro = AiJsonTests.BigMacro();
+        _host.Macros.Macros.Add(macro);
+
+        AiToolResult badValue = await Call("patch_item", new
+        {
+            id = macro.Id.ToString(),
+            patch = new object[] { new { op = "replace", path = "/Speed", value = 3 } },
+        });
+        AiToolResult badPath = await Call("patch_item", new
+        {
+            id = macro.Id.ToString(),
+            patch = new object[] { new { op = "replace", path = "/Actions/999/DelayMs", value = 1 } },
+        });
+
+        Assert.True(badValue.IsError);
+        Assert.True(badPath.IsError);
+        Assert.Contains("Operation 1", badPath.Text);
+        Assert.Empty(_host.Saved);
+    }
+
+    [Fact]
+    public async Task A_new_item_answers_with_its_id_not_its_json()
+    {
+        AiToolResult result = await Call("save_remap", CtrlXToA);
+
+        Assert.StartsWith("Saved the new remap. Its Id: " + _settings.Remaps.Single().Id, result.Text);
+        Assert.DoesNotContain("\"Source\"", result.Text);
+    }
+
+    [Fact]
+    public async Task The_schema_for_AI_apps_gives_the_defaults()
+    {
+        AiToolResult schema = await Call("get_schema", new { kind = "macro" });
+
+        using JsonDocument doc = JsonDocument.Parse(schema.Text);
+        JsonElement properties = doc.RootElement.GetProperty("properties");
+        Assert.True(properties.GetProperty("ShowInOverlay").GetProperty("default").GetBoolean());
+        Assert.Equal("Once", properties.GetProperty("Repeat").GetProperty("default").GetString());
     }
 
     [Fact]

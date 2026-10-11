@@ -164,10 +164,12 @@ internal static class CodeSchema
     };
 
     /// <summary>A whole macro: its Id is the only value allowed, and suggested.</summary>
-    public static string ForMacro(System.Guid id) => Build(typeof(MacroDefinition), schema => FixId(schema, id));
+    /// <param name="withDefaults">Each field's default value too (for AI apps, which read items without them: get_item).</param>
+    public static string ForMacro(System.Guid id, bool withDefaults = false) =>
+        Build(typeof(MacroDefinition), schema => FixId(schema, id), withDefaults);
 
     /// <summary>A loop: its Id is the only value allowed, and suggested. The fields of version 1.0 are left out.</summary>
-    public static string ForLoop(System.Guid id) => Build(typeof(LoopDefinition), schema =>
+    public static string ForLoop(System.Guid id, bool withDefaults = false) => Build(typeof(LoopDefinition), schema =>
     {
         FixId(schema, id);
         if (schema["properties"] is JsonObject properties)
@@ -176,15 +178,15 @@ internal static class CodeSchema
             properties.Remove("IntervalMs");
             properties.Remove("HotkeyVk");
         }
-    });
+    }, withDefaults);
 
     /// <summary>A remap: its Id is the only value allowed, and suggested. The single key of versions before schema 7 is left out.</summary>
-    public static string ForRemap(System.Guid id) => Build(typeof(RemapDefinition), schema =>
+    public static string ForRemap(System.Guid id, bool withDefaults = false) => Build(typeof(RemapDefinition), schema =>
     {
         FixId(schema, id);
         if (schema["properties"] is JsonObject properties)
             properties.Remove("SourceVk");
-    });
+    }, withDefaults);
 
     /// <summary>
     /// One macro action: its GroupId can be one of <paramref name="allowedGroups"/> (see
@@ -202,12 +204,12 @@ internal static class CodeSchema
         group["default"] = current?.ToString();
     });
 
-    private static string Build(System.Type type, System.Action<JsonObject> customize)
+    private static string Build(System.Type type, System.Action<JsonObject> customize, bool withDefaults = false)
     {
         var exporter = new JsonSchemaExporterOptions
         {
             TreatNullObliviousAsNonNullable = true,
-            TransformSchemaNode = Transform,
+            TransformSchemaNode = withDefaults ? (context, node) => WithDefault(context, Transform(context, node)) : Transform,
         };
         JsonObject schema = CodeJson.StrictOptions.GetJsonSchemaAsNode(type, exporter).AsObject();
         customize(schema);
@@ -221,6 +223,18 @@ internal static class CodeSchema
             return;
         idSchema["default"] = id.ToString();
         idSchema["enum"] = new JsonArray(JsonValue.Create(id.ToString()));
+    }
+
+    /// <summary>The field's value in a new object of its type ("default"), except Ids: a new one each time.</summary>
+    private static JsonNode WithDefault(JsonSchemaExporterContext context, JsonNode node)
+    {
+        if (node is not JsonObject schema || context.PropertyInfo is not { Get: { } get } property
+            || property.PropertyType == typeof(System.Guid) || property.PropertyType == typeof(System.Guid?)
+            || property.DeclaringType.GetConstructor(System.Type.EmptyTypes) == null)
+            return node;
+        object? value = get(System.Activator.CreateInstance(property.DeclaringType)!);
+        schema["default"] = System.Text.Json.JsonSerializer.SerializeToNode(value, property.PropertyType, CodeJson.Options);
+        return schema;
     }
 
     private static JsonNode Transform(JsonSchemaExporterContext context, JsonNode node)

@@ -97,6 +97,9 @@ internal sealed class AiTools
         " Write every text shown to the user in the language the user writes to you in. If the user takes long, the answer " +
         "is \"waiting\" with a request_id: call wait_for_user with it until the user answers.";
 
+    private const string RewriteRule =
+        " To change an existing item, use patch_item instead: it sends only what changes (rewriting a big macro here takes minutes).";
+
     private const string NoStart =
         "Starting and testing loops and macros is not available to AI apps: their keys and clicks would go to the window in " +
         "front, usually your chat. Ask the user to start it in PuppyMacro (the Play button on its card, its hotkey, or overlay mode).";
@@ -187,10 +190,11 @@ internal sealed class AiTools
                 "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running) and the global hotkeys.",
                 none, true, false, (_, app, _) => Read(app, "Read your loops, macros and remaps", Overview)),
             new("get_item",
-                "Gives one loop, macro or remap as JSON, exactly as PuppyMacro saves it (the format save_* takes).",
+                "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out " +
+                "(get_schema gives the defaults). save_* takes it as it is; patch_item's paths point into it.",
                 idOnly, true, false, (a, app, _) => GetItem(a, app)),
             new("get_schema",
-                "Gives the JSON Schema, with descriptions, of a loop, a macro or a remap: every field and allowed value.",
+                "Gives the JSON Schema, with descriptions and defaults, of a loop, a macro or a remap: every field and allowed value.",
                 """{"type":"object","properties":{"kind":{"type":"string","enum":["loop","macro","remap"]}},"required":["kind"],"additionalProperties":false}""",
                 true, false, (a, app, _) => Task.FromResult(Schema(a))),
             new("get_settings",
@@ -219,12 +223,28 @@ internal sealed class AiTools
                 """{"type":"object","properties":{"topic":{"type":"string","description":"A topic from the list, e.g. \"macros\"."}},"additionalProperties":false}""",
                 true, false, (a, app, _) => Task.FromResult(Help(a, app))),
 
-            new("save_loop", "Creates a loop, or changes the one with this id. Saved at once (kept in its History)." + NewItemRule + AfterNewItem,
+            new("save_loop", "Creates a loop, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
                 Save("loop"), false, false, (a, app, c) => SaveItem<LoopDefinition>(a, app, "loop", c)),
-            new("save_macro", "Creates a macro, or changes the one with this id. Saved at once (kept in its History)." + NewItemRule + AfterNewItem,
+            new("save_macro", "Creates a macro, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
                 Save("macro"), false, false, (a, app, c) => SaveItem<MacroDefinition>(a, app, "macro", c)),
-            new("save_remap", "Creates a remap, or changes the one with this id. Saved at once (kept in its History).",
+            new("save_remap", "Creates a remap, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule,
                 Save("remap"), false, false, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
+            new("patch_item",
+                "Changes part of a loop, macro or remap with a JSON Patch (RFC 6902): only what changes, so it is fast even for a " +
+                "big macro. Use it for every change to an existing item. The result is checked and saved like save_* (kept in " +
+                "its History); the answer lists what changed.",
+                """
+                {"type":"object","properties":{
+                  "id":{"type":"string","description":"The Id of the loop, macro or remap."},
+                  "patch":{"type":"array","minItems":1,"description":"Operations applied in order, all or nothing. Paths are JSON Pointers into the item as get_item gives it, with list indexes from 0; a field get_item left out exists with its default, so replace works on it. E.g. [{\"op\":\"replace\",\"path\":\"/Actions/4/DelayMs\",\"value\":250}, {\"op\":\"add\",\"path\":\"/Actions/-\",\"value\":{\"Type\":\"PressKey\",\"Vk\":13}}, {\"op\":\"remove\",\"path\":\"/Actions/2\"}].",
+                    "items":{"type":"object","properties":{
+                      "op":{"type":"string","enum":["add","remove","replace","move","copy","test"]},
+                      "path":{"type":"string"},
+                      "from":{"type":"string","description":"move and copy: where the value comes from."},
+                      "value":{"description":"add, replace and test: the value."}},
+                     "required":["op","path"]}}},
+                 "required":["id","patch"],"additionalProperties":false}
+                """, false, false, (a, app, c) => PatchItem(a, app, c)),
             new("delete_item", "Deletes a loop, macro or remap (the user may be asked to confirm; it can be restored in PuppyMacro).",
                 idOnly, false, true, (a, app, c) => Delete(a, app, c)),
             new("set_enabled", "Enables or disables a loop, macro or remap.",
@@ -326,15 +346,15 @@ internal sealed class AiTools
             if (item == null)
                 return Task.FromResult(AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them."));
             _log.Add(app, AiActivityKind.Read, $"Read {Describe(item)}");
-            return Task.FromResult(new AiToolResult(Serialize(item)));
+            return Task.FromResult(new AiToolResult(AiJson.Compact(item)));
         }).ConfigureAwait(false);
     }
 
     private static AiToolResult Schema(JsonElement args) => Str(args, "kind") switch
     {
-        "loop" => new AiToolResult(WithoutId(CodeSchema.ForLoop(Guid.Empty))),
-        "macro" => new AiToolResult(WithoutId(CodeSchema.ForMacro(Guid.Empty))),
-        "remap" => new AiToolResult(WithoutId(CodeSchema.ForRemap(Guid.Empty))),
+        "loop" => new AiToolResult(WithoutId(CodeSchema.ForLoop(Guid.Empty, withDefaults: true))),
+        "macro" => new AiToolResult(WithoutId(CodeSchema.ForMacro(Guid.Empty, withDefaults: true))),
+        "remap" => new AiToolResult(WithoutId(CodeSchema.ForRemap(Guid.Empty, withDefaults: true))),
         _ => AiToolResult.Error("kind must be loop, macro or remap."),
     };
 
@@ -415,8 +435,8 @@ internal sealed class AiTools
             bool wasRunning = _host.IsRunning(id);
             _host.Save(parsed, app);
             _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", json, id, kind, before);
-            return new AiToolResult((before == null ? $"Saved the new {kind}." : $"Saved the changes to the {kind}.")
-                + (wasRunning ? " It was running: it stopped." : "") + $"\n{json}");
+            return new AiToolResult((before == null ? $"Saved the new {kind}. Its Id: {id}." : $"Saved the changes to the {kind}:\n" + ChangeList(changes))
+                + (wasRunning ? "\nIt was running: it stopped." : ""));
         }
 
         if (!_host.Settings.AiAskBeforeChanging)
@@ -455,6 +475,32 @@ internal sealed class AiTools
             ? (ok, null, existing == null ? null : Serialize(existing))
             : (null, string.Join("\n", problems.Select(p => "- " + p.Message)), null);
     }
+
+    /// <summary>The patch on the item's whole JSON (every field there), then save_*'s checks, permissions and History.</summary>
+    private async Task<AiToolResult> PatchItem(JsonElement args, string app, CancellationToken cancel)
+    {
+        Guid id = IdArg(args, "id");
+        if (!args.TryGetProperty("patch", out JsonElement patch))
+            throw new FormatException("Give the \"patch\": the operations that change the item.");
+        (string? kind, string? json) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
+            ? ((string?)Kind(item), (string?)Serialize(item))
+            : (null, null))).ConfigureAwait(false);
+        if (kind == null || json == null)
+            return AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them.");
+
+        JsonNode patched = AiJson.Patch(JsonNode.Parse(json)!, patch);
+        JsonElement save = JsonSerializer.SerializeToElement(new JsonObject { ["item"] = patched, ["id"] = id.ToString() });
+        return kind switch
+        {
+            "loop" => await SaveItem<LoopDefinition>(save, app, kind, cancel).ConfigureAwait(false),
+            "macro" => await SaveItem<MacroDefinition>(save, app, kind, cancel).ConfigureAwait(false),
+            _ => await SaveItem<RemapDefinition>(save, app, kind, cancel).ConfigureAwait(false),
+        };
+    }
+
+    /// <summary>What changed, one per line, at most 30 (an AI app reads every line).</summary>
+    private static string ChangeList(List<string> changes) =>
+        string.Join("\n", changes.Take(30).Select(c => "- " + c)) + (changes.Count > 30 ? $"\n- and {changes.Count - 30} more" : "");
 
     private async Task<AiToolResult> Delete(JsonElement args, string app, CancellationToken cancel)
     {

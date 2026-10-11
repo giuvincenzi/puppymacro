@@ -326,6 +326,32 @@ public class AiTests
     }
 
     [Fact]
+    public async Task An_AI_app_changes_only_part_of_an_item_with_a_patch()
+    {
+        var remap = new RemapDefinition { Source = HotkeyBinding.FromKey(Vk.F23), Target = HotkeyBinding.FromKey(Vk.F22), Note = "E2E remap" };
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.AllowAiAccess = true;
+            seed.Settings.Remaps.Add(remap);
+        });
+        await using McpClient client = await Connect();
+
+        var (text, isError) = await Call(client, "patch_item", new
+        {
+            id = remap.Id.ToString(),
+            patch = new object[] { new { op = "replace", path = "/Note", value = "E2E patched" } },
+        });
+        var (saved, _) = await Call(client, "get_item", new { id = remap.Id.ToString() });
+
+        Assert.False(isError, text);
+        Assert.StartsWith("Saved the changes to the remap", text);
+        using JsonDocument item = JsonDocument.Parse(saved);
+        Assert.Equal("E2E patched", item.RootElement.GetProperty("Note").GetString());
+        app.GoTo("Remap");
+        Assert.True(app.Has(app.MainWindow, "E2E patched"));
+    }
+
+    [Fact]
     public async Task An_item_opened_by_an_AI_app_shows_why_in_its_editor()
     {
         var remap = new RemapDefinition { Source = HotkeyBinding.FromKey(Vk.F23), Target = HotkeyBinding.FromKey(Vk.F22), Note = "E2E remap" };
