@@ -86,6 +86,8 @@ public class AiTests
         item = new { Source = new { Vk = Vk.F23 }, Target = new { Vk = Vk.F22 }, Note = "E2E remap" },
     };
 
+    private static readonly object Asking = new { message = "Click the test point", context = "The E2E test checks the picker." };
+
     [Fact]
     public async Task With_AI_access_off_an_AI_app_is_refused_and_the_page_shows_it()
     {
@@ -100,6 +102,8 @@ public class AiTests
         Assert.Equal(ToggleState.Off, app.FindById(app.MainWindow, "AiAccessSwitch").AsToggleButton().ToggleState);
         Assert.True(app.Has(app.MainWindow, $"Connected: {ClientName}"));
         Assert.True(app.Has(app.MainWindow, "Tried to connect while AI access was off"));
+        // The status bar names the connected app.
+        Assert.False(app.FindById(app.MainWindow, "AiStatusBar").IsOffscreen);
     }
 
     [Fact]
@@ -120,34 +124,43 @@ public class AiTests
     }
 
     [Fact]
-    public async Task A_proposed_remap_opens_the_editor_and_is_saved_with_Save()
+    public async Task A_remap_from_an_AI_app_is_saved_at_once_and_its_History_says_who()
     {
         using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
         await using McpClient client = await Connect();
 
-        Task<(string Text, bool IsError)> call = Call(client, "propose_remap", F23ToF22);
-        Window editor = app.Dialog("Add remap");
-        app.FindById(editor, "ProposalBar"); // open only for a proposal (its text is not a UI Automation name)
-        Assert.True(app.Has(editor, "F23"));
-        app.FindById(editor, "SaveButton").AsButton().Invoke();
-        var (text, isError) = await call;
+        var (text, isError) = await Call(client, "save_remap", F23ToF22);
 
         Assert.False(isError, text);
-        Assert.StartsWith("Saved as proposed", text);
-        RemapDefinition remap = Assert.Single(SavedSettings().Remaps);
+        Assert.StartsWith("Saved the new remap", text);
+        RemapDefinition remap = Assert.Single(Retry.WhileNull(() => SavedSettings().Remaps is { Count: 1 } r ? r : null, AppSession.Timeout).Result!);
         Assert.Equal(Vk.F23, remap.Source!.Vk);
-        Assert.Equal(Vk.F22, remap.Target!.Vk);
         Assert.Equal("E2E remap", remap.Note);
+
+        // Its editor's History: created by the AI app.
+        app.GoTo("Remap");
+        app.EditItem("E2E remap");
+        Window editor = app.Dialog("Edit remap");
+        app.FindById(editor, "HistoryViewButton").Patterns.SelectionItem.Pattern.Select();
+        Assert.True(app.Has(editor, ClientName));
+        Assert.True(app.Has(editor, "Created (current)"));
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
     }
 
     [Fact]
-    public async Task A_cancelled_proposal_changes_nothing()
+    public async Task With_ask_before_changing_a_cancelled_change_saves_nothing()
     {
-        using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.AllowAiAccess = true;
+            seed.Settings.AiAskBeforeChanging = true;
+        });
         await using McpClient client = await Connect();
 
-        Task<(string Text, bool IsError)> call = Call(client, "propose_remap", F23ToF22);
-        app.FindById(app.Dialog("Add remap"), "CancelButton").AsButton().Invoke();
+        Task<(string Text, bool IsError)> call = Call(client, "save_remap", F23ToF22);
+        Window confirm = RequestWindow(app);
+        Assert.True(app.Has(confirm, "Save this new remap?"));
+        app.FindButton(confirm, "Cancel").Invoke();
         var (text, _) = await call;
 
         Assert.Contains("cancelled", text);
@@ -155,17 +168,16 @@ public class AiTests
     }
 
     [Fact]
-    public async Task A_proposal_the_editor_would_refuse_opens_nothing()
+    public async Task A_remap_the_editor_would_refuse_is_not_saved()
     {
         using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
         await using McpClient client = await Connect();
 
-        var (text, isError) = await Call(client, "propose_remap", new { item = new { Source = new { Vk = Vk.F23 }, Target = new { Vk = Vk.F23 } } });
+        var (text, isError) = await Call(client, "save_remap", new { item = new { Source = new { Vk = Vk.F23 }, Target = new { Vk = Vk.F23 } } });
 
         Assert.True(isError);
         Assert.Contains("Send something different from what you press.", text);
-        Assert.False(Retry.WhileNull(() => app.Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(app.ProcessId))
-            .FirstOrDefault(w => AppSession.HasTitle(w.Name, "Add remap")), TimeSpan.FromSeconds(2)).Success);
+        Assert.Empty(SavedSettings().Remaps);
     }
 
     [Fact]
@@ -192,14 +204,40 @@ public class AiTests
     }
 
     [Fact]
+    public async Task Restore_brings_back_what_an_AI_app_deleted()
+    {
+        var remap = new RemapDefinition { Source = HotkeyBinding.FromKey(Vk.F23), Target = HotkeyBinding.FromKey(Vk.F22), Note = "Keep me" };
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.AllowAiAccess = true;
+            seed.Settings.AiAskBeforeDeleting = false;
+            seed.Settings.Remaps.Add(remap);
+        });
+        await using (McpClient client = await Connect())
+        {
+            var (text, isError) = await Call(client, "delete_item", new { id = remap.Id.ToString() });
+            Assert.False(isError, text);
+        }
+        Assert.Empty(SavedSettings().Remaps);
+
+        app.GoTo("AI");
+        app.Find(app.MainWindow, $"Restore: Deleted remap F23 → F22").AsButton().Invoke();
+
+        RemapDefinition back = Assert.Single(Retry.WhileNull(() => SavedSettings().Remaps is { Count: 1 } r ? r : null, AppSession.Timeout).Result!);
+        Assert.Equal("Keep me", back.Note);
+        Assert.Equal(remap.Id, back.Id);
+    }
+
+    [Fact]
     public async Task A_key_asked_by_an_AI_app_is_pressed_by_the_user()
     {
         using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
         await using McpClient client = await Connect();
 
-        Task<(string Text, bool IsError)> call = Call(client, "capture_hotkey", new { reason = "The key to remap" });
+        Task<(string Text, bool IsError)> call = Call(client, "capture_hotkey", new { message = "The key to remap", context = "The E2E test checks the key window." });
         Window window = RequestWindow(app);
         Assert.True(app.Has(window, "The key to remap"));
+        Assert.True(app.Has(window, "The E2E test checks the key window."));
         app.Find(window, "Press the key or combination (Esc cancels)");
         Keyboard.Press(VirtualKeyShort.F22);
         Keyboard.Release(VirtualKeyShort.F22);
@@ -212,21 +250,28 @@ public class AiTests
     }
 
     [Fact]
-    public async Task A_point_asked_by_an_AI_app_is_clicked_by_the_user()
+    public async Task Points_asked_by_an_AI_app_wait_until_the_user_is_ready()
     {
         using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
         await using McpClient client = await Connect();
 
-        Task<(string Text, bool IsError)> call = Call(client, "pick_point", new { reason = "Click the test point" });
+        Task<(string Text, bool IsError)> call = Call(client, "pick_points", new { count = 2, message = "Click the 2 test points", context = "The E2E test checks the picker." });
+        Window ready = RequestWindow(app);
+        Assert.True(app.Has(ready, "Click the 2 test points"));
+        Assert.True(app.Has(ready, "The E2E test checks the picker."));
+        Assert.Null(Retry.WhileNull(() => app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName("Pick a point").And(cf.ByProcessId(app.ProcessId))),
+            TimeSpan.FromSeconds(1)).Result); // no picker before Start
+        app.FindButton(ready, "Start").Invoke();
+
         Assert.NotNull(app.TopWindow("Pick a point"));
-        Assert.True(app.Has(app.TopWindow("Pick a point")!, $"{ClientName}: Click the test point"));
         Mouse.Click(new System.Drawing.Point(400, 300)); // on the picker, which covers the screen: nothing else gets it
+        Mouse.Click(new System.Drawing.Point(420, 320));
         var (text, isError) = await call;
 
         Assert.False(isError, text);
-        using JsonDocument point = JsonDocument.Parse(text);
-        Assert.Equal(400, point.RootElement.GetProperty("X").GetInt32());
-        Assert.Equal(300, point.RootElement.GetProperty("Y").GetInt32());
+        using JsonDocument points = JsonDocument.Parse(text);
+        Assert.Equal(400, points.RootElement[0].GetProperty("X").GetInt32());
+        Assert.Equal(320, points.RootElement[1].GetProperty("Y").GetInt32());
     }
 
     [Fact]

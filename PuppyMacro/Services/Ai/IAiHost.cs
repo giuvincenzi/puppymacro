@@ -8,23 +8,21 @@ namespace PuppyMacro.Services.Ai;
 /// <summary>How a window opened for an AI request ended.</summary>
 public enum AiAnswer
 {
-    /// <summary>Saved, applied, picked or pressed.</summary>
+    /// <summary>Confirmed, picked or pressed.</summary>
     Done,
     Cancelled,
 
-    /// <summary>Nobody answered within <see cref="AiTools.AnswerTimeout"/>: the window closed by itself.</summary>
+    /// <summary>Nobody used PuppyMacro for <see cref="AiTools.AnswerTimeout"/>: the window closed by itself.</summary>
     TimedOut,
 }
-
-/// <summary>An editor opened with an AI proposal: how it ended and, when saved, what was saved.</summary>
-internal sealed record AiEdited<T>(AiAnswer Answer, T? Saved) where T : class;
 
 /// <summary>A setting an AI app asks to change, as the confirmation shows it ("Stop all hotkey", "Alt + Shift + S", "F12").</summary>
 internal sealed record AiSettingChange(string Label, string From, string To);
 
 /// <summary>
-/// What the AI tools need from the app: its data and the windows the user answers in. <c>MainWindow</c> implements it
-/// on the UI thread (every member is called there, through <see cref="Ui{T}"/>); the unit tests use a fake one.
+/// What the AI tools need from the app: its data, the changes it makes as the user's own Save would (recorded in the
+/// History by the AI app's name) and the windows the user answers in. <c>MainWindow</c> implements it on the UI thread
+/// (every member is called there, through <see cref="Ui{T}"/>); the unit tests use a fake one.
 /// </summary>
 internal interface IAiHost
 {
@@ -45,32 +43,36 @@ internal interface IAiHost
     Task<T> Ui<T>(Func<Task<T>> action);
 
     /// <summary>
-    /// Opens the loop editor with <paramref name="proposal"/>: a new loop when <paramref name="isNew"/>, otherwise a change
-    /// of the loop with the same Id. Saving adds or changes the loop as the editor's Save does.
+    /// Adds <paramref name="item"/> (a loop, macro or remap) or replaces the one with its Id, as the editor's Save does (a
+    /// running one stops first), recorded as <paramref name="app"/>'s.
     /// </summary>
-    Task<AiEdited<LoopDefinition>> EditLoop(LoopDefinition proposal, bool isNew, string app);
+    void Save(object item, string app);
 
-    Task<AiEdited<MacroDefinition>> EditMacro(MacroDefinition proposal, bool isNew, string app);
-
-    Task<AiEdited<RemapDefinition>> EditRemap(RemapDefinition proposal, bool isNew, string app);
-
-    /// <summary>Asks the user to confirm; true when they chose <paramref name="primary"/>.</summary>
-    Task<AiAnswer> Confirm(string app, string title, IReadOnlyList<string> lines, string primary);
-
-    /// <summary>Deletes a loop, macro or remap (stopping it first), as its card's Delete does after the confirmation.</summary>
-    void Delete(Guid id);
+    /// <summary>Deletes a loop, macro or remap (stopping it first), as its card's Delete does.</summary>
+    void Delete(Guid id, string app);
 
     /// <summary>Enables or disables a loop, macro or remap, as its card's switch does.</summary>
-    void SetEnabled(Guid id, bool enabled);
+    void SetEnabled(Guid id, bool enabled, string app);
 
     /// <summary>Applies settings already checked by the tools, and saves.</summary>
     void ApplySettings(AiSettingsValues values);
 
-    Task<(AiAnswer Answer, int X, int Y)> PickPoint(string app, string reason);
+    /// <summary>Asks the user to confirm a change (Ask before … on the AI page).</summary>
+    Task<AiAnswer> Confirm(string app, string title, IReadOnlyList<string> lines, string primary);
 
-    Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string reason);
+    /// <summary>
+    /// The window before an interaction: what the AI asks (<paramref name="message"/>) and why (<paramref name="context"/>),
+    /// always on top; Enter or Start when the user is ready, Esc cancels.
+    /// </summary>
+    Task<AiAnswer> Ready(string app, string message, string context);
 
-    Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, string reason);
+    /// <summary>The user clicks <paramref name="count"/> points on the screen, in order (physical pixels).</summary>
+    Task<(AiAnswer Answer, List<(int X, int Y)> Points)> PickPoints(string app, string message, int count);
+
+    Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message);
+
+    /// <summary>The user presses a key or combination in a window that shows <paramref name="message"/> and <paramref name="context"/>.</summary>
+    Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, string message, string context);
 
     void StopAll();
 

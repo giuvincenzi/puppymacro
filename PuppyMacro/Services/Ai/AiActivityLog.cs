@@ -50,6 +50,18 @@ public sealed class AiActivity
 
     /// <summary>The JSON the AI proposed, or what was saved, for the details of the AI activity window.</summary>
     public string? Data { get; set; }
+
+    /// <summary>The loop, macro or remap it changed or deleted (null: none, or the settings).</summary>
+    public Guid? ItemId { get; set; }
+
+    /// <summary>"loop", "macro", "remap" or "settings": what <see cref="Before"/> is.</summary>
+    public string? ItemKind { get; set; }
+
+    /// <summary>The item (or the settings) before this change, JSON: Restore puts it back. Null for something new.</summary>
+    public string? Before { get; set; }
+
+    /// <summary>The user put <see cref="Before"/> back.</summary>
+    public bool Restored { get; set; }
 }
 
 /// <summary>
@@ -109,7 +121,7 @@ internal sealed class AiActivityLog
 
     /// <summary>Adds an entry with the current time and saves the file.</summary>
     public AiActivity Add(string app, AiActivityKind kind, string request, AiActivityResult result = AiActivityResult.None,
-        string detail = "", string? data = null)
+        string detail = "", string? data = null, Guid? itemId = null, string? itemKind = null, string? before = null)
     {
         var entry = new AiActivity
         {
@@ -120,6 +132,9 @@ internal sealed class AiActivityLog
             Result = result,
             Detail = detail,
             Data = data,
+            ItemId = itemId,
+            ItemKind = itemKind,
+            Before = before,
         };
         lock (_sync)
         {
@@ -129,6 +144,17 @@ internal sealed class AiActivityLog
         }
         Changed?.Invoke();
         return entry;
+    }
+
+    /// <summary>The user restored what <paramref name="entry"/> changed: its Restore is done.</summary>
+    public void MarkRestored(AiActivity entry)
+    {
+        lock (_sync)
+        {
+            entry.Restored = true;
+            Save();
+        }
+        Changed?.Invoke();
     }
 
     public void Clear()

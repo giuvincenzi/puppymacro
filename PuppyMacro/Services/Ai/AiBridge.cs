@@ -25,13 +25,15 @@ internal static class AiBridge
         NamedPipeClientStream? pipe = Connect(TimeSpan.FromMilliseconds(500));
         if (pipe == null)
         {
+            // PuppyMacro is closed: started in the tray, unless the user turned that off (Start PuppyMacro when an AI app
+            // needs it). Then, or when it does not start, the AI app still gets an answer: why, and what the user can do.
+            ClosedSettings settings = ReadSettings();
+            if (!settings.StartWhenNeeded)
+                return AnswerWhileClosed(ClosedMessage(settings));
             StartPuppyMacro();
             pipe = Connect(StartTimeout);
-        }
-        if (pipe == null)
-        {
-            Console.Error.WriteLine("PuppyMacro did not start: open PuppyMacro, then try again.");
-            return 1;
+            if (pipe == null)
+                return AnswerWhileClosed("PuppyMacro did not start. Ask the user to open PuppyMacro, then try again.");
         }
 
         using (pipe)
@@ -59,6 +61,71 @@ internal static class AiBridge
             done.Cancel();
         }
         return 0;
+    }
+
+    /// <summary>What the bridge reads of the settings while PuppyMacro is closed.</summary>
+    internal sealed record ClosedSettings(bool StartWhenNeeded, bool StartWithWindows, bool CloseToTray);
+
+    /// <summary>The settings file as it is (never written by the bridge); a missing or unreadable one: the defaults.</summary>
+    private static ClosedSettings ReadSettings()
+    {
+        try
+        {
+            if (File.Exists(AppPaths.SettingsFile))
+            {
+                using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(AppPaths.SettingsFile));
+                bool Flag(string name, bool fallback) =>
+                    doc.RootElement.TryGetProperty(name, out var value) && value.ValueKind is System.Text.Json.JsonValueKind.True or System.Text.Json.JsonValueKind.False
+                        ? value.GetBoolean()
+                        : fallback;
+                return new ClosedSettings(Flag("AiStartWhenNeeded", true), Flag("StartWithWindows", false), Flag("CloseToTray", true));
+            }
+        }
+        catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or UnauthorizedAccessException)
+        {
+        }
+        return new ClosedSettings(true, false, true);
+    }
+
+    /// <summary>
+    /// What the AI app tells the user while PuppyMacro is closed and may not be started: open it, and how to keep it
+    /// available (only the settings that are off).
+    /// </summary>
+    internal static string ClosedMessage(ClosedSettings settings)
+    {
+        var ways = new System.Collections.Generic.List<string>();
+        if (!settings.StartWithWindows)
+            ways.Add("turning on Start with Windows in PuppyMacro's Settings");
+        if (!settings.CloseToTray)
+            ways.Add("turning on Close to system tray in PuppyMacro's Settings");
+        ways.Add("turning on Start PuppyMacro when an AI app needs it on PuppyMacro's AI page (Allow AI access)");
+        return "PuppyMacro is closed, and the user chose that AI apps don't start it. Ask the user to open PuppyMacro, then " +
+            "try again. To keep it always available, suggest " + string.Join(", or ", ways) + ".";
+    }
+
+    /// <summary>
+    /// A small MCP server on stdio, in this process, while PuppyMacro is closed: the same tools, each answering
+    /// <paramref name="message"/>, until the AI app closes the connection.
+    /// </summary>
+    private static int AnswerWhileClosed(string message)
+    {
+        var options = AiServer.Options(AiTools.Definitions(), message,
+            (_, _, _, _) => Task.FromResult(AiToolResult.Error(message)));
+        try
+        {
+            RunStdioServer(options).GetAwaiter().GetResult();
+        }
+        catch (Exception ex) when (ex is IOException or OperationCanceledException or ObjectDisposedException)
+        {
+        }
+        return 0;
+    }
+
+    private static async Task RunStdioServer(ModelContextProtocol.Server.McpServerOptions options)
+    {
+        await using var transport = new ModelContextProtocol.Server.StdioServerTransport(options);
+        await using ModelContextProtocol.Server.McpServer server = ModelContextProtocol.Server.McpServer.Create(transport, options);
+        await server.RunAsync().ConfigureAwait(false);
     }
 
     private static NamedPipeClientStream? Connect(TimeSpan timeout)

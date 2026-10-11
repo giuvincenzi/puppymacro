@@ -47,10 +47,12 @@ public partial class AiRequestWindow
         return window;
     }
 
-    /// <summary>Asks for a key or combination; <paramref name="reason"/> is the AI app's words ("The key to remap").</summary>
-    internal static AiRequestWindow KeyRequest(string app, string reason, LoopEngine engine)
+    /// <summary>Asks for a key or combination; <paramref name="message"/> and <paramref name="context"/> are the AI app's words.</summary>
+    internal static AiRequestWindow KeyRequest(string app, string message, string context, LoopEngine engine)
     {
-        var window = new AiRequestWindow(app, reason, "OK");
+        var window = new AiRequestWindow(app, message, "OK");
+        window.ContextText.Text = context;
+        window.ContextText.Visibility = Visibility.Visible;
         KeyCaptureField.SetEngine(window, engine); // the key field waits for keys through it
         window.KeyCard.Visibility = Visibility.Visible;
         window.KeyField.StartOnLoad = true;

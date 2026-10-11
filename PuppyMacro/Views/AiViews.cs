@@ -21,7 +21,8 @@ internal sealed class AiActivityRow
         DayText = entry.Time.Date == DateTime.Today ? "Today"
             : entry.Time.Date == DateTime.Today.AddDays(-1) ? "Yesterday"
             : entry.Time.ToString("D");
-        ResultText = ResultName(entry.Result) is { Length: > 0 } result ? result : entry.Detail;
+        ResultText = entry.Restored ? "Restored"
+            : ResultName(entry.Result) is { Length: > 0 } result ? result : entry.Detail;
         KindText = KindName(entry.Kind);
         DetailText = string.Join("\n", new[]
         {
@@ -38,15 +39,23 @@ internal sealed class AiActivityRow
     public string KindText { get; }
     public string ResultText { get; }
 
-    /// <summary>The detail and the JSON proposed or saved, shown under a selected row.</summary>
+    /// <summary>The detail and the JSON saved, shown under a selected row.</summary>
     public string DetailText { get; }
+
+    /// <summary>A change or deletion an AI app made, not restored yet: Restore puts back what was there before.</summary>
+    public bool CanRestore => Entry.Before != null && !Entry.Restored
+        && Entry.Result is AiActivityResult.Saved or AiActivityResult.SavedWithChanges or AiActivityResult.Applied;
+
+    public Visibility RestoreVisibility => CanRestore ? Visibility.Visible : Visibility.Collapsed;
+
+    public string RestoreName => $"Restore: {Entry.Request}";
 
     public static string KindName(AiActivityKind kind) => kind switch
     {
         AiActivityKind.Read => "Read",
-        AiActivityKind.Proposal => "Proposal",
+        AiActivityKind.Proposal => "Save",
         AiActivityKind.Interaction => "Interaction",
-        AiActivityKind.Confirmation => "Confirmation",
+        AiActivityKind.Confirmation => "Change",
         _ => "Connection",
     };
 
@@ -63,7 +72,7 @@ internal sealed class AiActivityRow
     };
 }
 
-/// <summary>An AI app's tile on the AI page: its icon and state, and its button.</summary>
+/// <summary>An AI app on the AI page: its icon and state, and its button.</summary>
 internal sealed class AiAppTile
 {
     public required string Id { get; init; }
@@ -80,14 +89,8 @@ internal sealed class AiAppTile
     public string? LinkText { get; init; }
     public Uri? LinkUri { get; init; }
 
-    public Visibility IconVisibility => Icon != null ? Visibility.Visible : Visibility.Collapsed;
-    public Visibility GenericIconVisibility => Icon == null ? Visibility.Visible : Visibility.Collapsed;
-    public Visibility ConnectedVisibility => Connected ? Visibility.Visible : Visibility.Collapsed;
-    public Visibility WaitingVisibility => Waiting ? Visibility.Visible : Visibility.Collapsed;
-    public Visibility ActionVisibility => ActionText != null ? Visibility.Visible : Visibility.Collapsed;
-    public Visibility LinkVisibility => LinkText != null ? Visibility.Visible : Visibility.Collapsed;
-    public Style? ActionStyle => ActionIsAccent ? Application.Current.TryFindResource("AccentButtonStyle") as Style : null;
-    public string ActionAutomationName => $"{ActionText} {Name}";
+    /// <summary>What is shown: the page is rebuilt only when this changes.</summary>
+    public string Shown => $"{Id}:{Status}:{Connected}:{Waiting}:{ActionText}:{ActionEnabled}:{LinkText}:{Icon != null}";
 
     /// <summary>The icon Windows shows for an exe (its own icon), or null when the file is not there.</summary>
     public static ImageSource? ExeIcon(string? exe)
@@ -109,4 +112,15 @@ internal sealed class AiAppTile
             NativeMethods.DestroyIcon(info.hIcon);
         }
     }
+}
+
+/// <summary>A connected AI app in the status bar.</summary>
+internal sealed class AiStatusItem
+{
+    public AiStatusItem(string name) => Name = name;
+
+    public string Name { get; }
+
+    /// <summary>The pulsing halo, only while Windows' animations are on.</summary>
+    public Visibility HaloVisibility => SystemParameters.ClientAreaAnimation ? Visibility.Visible : Visibility.Collapsed;
 }

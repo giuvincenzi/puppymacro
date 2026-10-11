@@ -28,6 +28,8 @@
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
             </StackPanel>
             <TextBlock x:Name="HeadingText" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
+            <!-- A key request: why the AI asks (its context) -->
+            <TextBlock x:Name="ContextText" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Visibility="Collapsed" />
 
             <!-- Confirmation: what changes, one line each -->
             <ItemsControl x:Name="Lines" Visibility="Collapsed">

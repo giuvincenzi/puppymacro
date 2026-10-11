@@ -55,7 +55,10 @@ paths:
   Right Alt applies, otherwise it passes as before. While a key field waits with `modifierAlone` (remap
   source and target), a modifier pressed and released with no other key or modifier is captured; a lone
   Alt or Win release is then blocked and sent again behind the mask key, so no menu or Start opens.
-- Routing order in `LoopEngine.OnKey`: modifiers (`OnModifier`) → key capture → record hotkey/recording →
+- An AI request waiting for the user to be ready (`LoopEngine.WatchReadyKeys`, set by `MainWindow` while `AiReadyWindow`
+  shows): Enter and Esc pressed with no modifier, in any app, answer it once and are blocked (their release too); every
+  other key passes, so the user can open the right screen first.
+- Routing order in `LoopEngine.OnKey`: modifiers (`OnModifier`) → AI ready keys → key capture → record hotkey/recording →
   key-up handling (swallowed ups, remap ups, Hold release, keys held by a loop) → auto-repeat →
   global hotkeys, loop and macro hotkeys (`RunHotkey`, skipped while `HotkeysSuspended`) →
   keys held by a loop → remaps.

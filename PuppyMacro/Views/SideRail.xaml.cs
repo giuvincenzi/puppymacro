@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -23,6 +24,13 @@ public partial class SideRail : UserControl
 
     /// <summary>Another page was selected.</summary>
     public event Action<string>? PageChanged;
+
+    /// <summary>Selects a page by its name ("AI"), as a click on it does.</summary>
+    public void Select(string page)
+    {
+        if (Pages.Items.Cast<ListViewItem>().Concat(Footer.Items.Cast<ListViewItem>()).FirstOrDefault(i => (string)i.Tag == page) is { } item)
+            item.IsSelected = true;
+    }
 
     /// <summary>The dot on Settings while an update is available.</summary>
     public void ShowUpdateDot(bool show) => UpdateDot.Visibility = show ? Visibility.Visible : Visibility.Collapsed;

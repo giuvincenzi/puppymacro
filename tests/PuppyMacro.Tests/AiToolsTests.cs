@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
@@ -10,7 +11,7 @@ using Xunit;
 
 namespace PuppyMacro.Tests;
 
-/// <summary>A user that answers the AI tools' windows as each test says, and remembers what happened.</summary>
+/// <summary>The app as the AI tools see it: its data, changed as the windows would, and a user who answers as each test says.</summary>
 internal sealed class FakeAiHost : IAiHost
 {
     public FakeAiHost(AppSettings settings, MacroLibrary macros)
@@ -26,17 +27,15 @@ internal sealed class FakeAiHost : IAiHost
     public bool OverlayModeActive { get; set; }
     public bool UserIsEditing { get; set; }
 
-    /// <summary>What the user does in an editor: null cancels; otherwise what is saved from the proposal.</summary>
-    public Func<object, object?> Edit { get; set; } = proposal => proposal;
-
-    /// <summary>Set: the editor waits until the test completes it.</summary>
+    /// <summary>Set: the user's windows (confirmation, ready) wait until the test completes it.</summary>
     public TaskCompletionSource<bool>? Hold { get; set; }
 
     public AiAnswer ConfirmAnswer { get; set; } = AiAnswer.Done;
+    public AiAnswer ReadyAnswer { get; set; } = AiAnswer.Done;
     public List<(string Title, IReadOnlyList<string> Lines)> Confirmed { get; } = new();
-    public List<(object Proposal, bool IsNew, string App)> Opened { get; } = new();
-    public List<Guid> Deleted { get; } = new();
-    public List<(Guid Id, bool Enabled)> Enabled { get; } = new();
+    public List<(object Item, string App)> Saved { get; } = new();
+    public List<(string Message, string Context)> ReadyShown { get; } = new();
+    public List<int> PointsAsked { get; } = new();
     public List<AiSettingsValues> Applied { get; } = new();
     public bool StoppedAll { get; private set; }
 
@@ -44,31 +43,71 @@ internal sealed class FakeAiHost : IAiHost
 
     public Task<T> Ui<T>(Func<Task<T>> action) => action();
 
-    private async Task<AiEdited<T>> Open<T>(T proposal, bool isNew, string app) where T : class
+    public void Save(object item, string app)
     {
-        Opened.Add((proposal, isNew, app));
-        if (Hold != null)
-            await Hold.Task;
-        return Edit(proposal) is T saved ? new AiEdited<T>(AiAnswer.Done, saved) : new AiEdited<T>(AiAnswer.Cancelled, null);
+        Saved.Add((item, app));
+        switch (item)
+        {
+            case LoopDefinition loop:
+                Settings.Loops.RemoveAll(l => l.Id == loop.Id);
+                Settings.Loops.Add(loop);
+                Running.Remove(loop.Id);
+                break;
+            case MacroDefinition macro:
+                Macros.Macros.RemoveAll(m => m.Id == macro.Id);
+                Macros.Macros.Add(macro);
+                Running.Remove(macro.Id);
+                break;
+            case RemapDefinition remap:
+                Settings.Remaps.RemoveAll(r => r.Id == remap.Id);
+                Settings.Remaps.Add(remap);
+                break;
+        }
     }
 
-    public Task<AiEdited<LoopDefinition>> EditLoop(LoopDefinition proposal, bool isNew, string app) => Open(proposal, isNew, app);
-    public Task<AiEdited<MacroDefinition>> EditMacro(MacroDefinition proposal, bool isNew, string app) => Open(proposal, isNew, app);
-    public Task<AiEdited<RemapDefinition>> EditRemap(RemapDefinition proposal, bool isNew, string app) => Open(proposal, isNew, app);
+    public void Delete(Guid id, string app)
+    {
+        Settings.Loops.RemoveAll(l => l.Id == id);
+        Macros.Macros.RemoveAll(m => m.Id == id);
+        Settings.Remaps.RemoveAll(r => r.Id == id);
+    }
 
-    public Task<AiAnswer> Confirm(string app, string title, IReadOnlyList<string> lines, string primary)
+    public void SetEnabled(Guid id, bool enabled, string app)
+    {
+        foreach (LoopDefinition loop in Settings.Loops.Where(l => l.Id == id))
+            loop.Enabled = enabled;
+        foreach (RemapDefinition remap in Settings.Remaps.Where(r => r.Id == id))
+            remap.Enabled = enabled;
+    }
+
+    public void ApplySettings(AiSettingsValues values) => Applied.Add(values);
+
+    public async Task<AiAnswer> Confirm(string app, string title, IReadOnlyList<string> lines, string primary)
     {
         Confirmed.Add((title, lines));
-        return Task.FromResult(ConfirmAnswer);
+        if (Hold != null)
+            await Hold.Task;
+        return ConfirmAnswer;
     }
 
-    public void Delete(Guid id) => Deleted.Add(id);
-    public void SetEnabled(Guid id, bool enabled) => Enabled.Add((id, enabled));
-    public void ApplySettings(AiSettingsValues values) => Applied.Add(values);
-    public Task<(AiAnswer Answer, int X, int Y)> PickPoint(string app, string reason) => Task.FromResult((AiAnswer.Done, 640, 360));
-    public Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string reason) => Task.FromResult<(AiAnswer, string?)>((AiAnswer.Done, "notepad.exe"));
+    public async Task<AiAnswer> Ready(string app, string message, string context)
+    {
+        ReadyShown.Add((message, context));
+        if (Hold != null)
+            await Hold.Task;
+        return ReadyAnswer;
+    }
 
-    public Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, string reason) =>
+    public Task<(AiAnswer Answer, List<(int X, int Y)> Points)> PickPoints(string app, string message, int count)
+    {
+        PointsAsked.Add(count);
+        return Task.FromResult((AiAnswer.Done, Enumerable.Range(0, count).Select(i => (640 + i, 360)).ToList()));
+    }
+
+    public Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message) =>
+        Task.FromResult<(AiAnswer, string?)>((AiAnswer.Done, "notepad.exe"));
+
+    public Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, string message, string context) =>
         Task.FromResult<(AiAnswer, HotkeyBinding?)>((AiAnswer.Done, new HotkeyBinding { Vk = 0x58, Ctrl = true }));
 
     public void StopAll() => StoppedAll = true;
@@ -98,9 +137,16 @@ public class AiToolsTests : IDisposable
     public void Dispose() => _folder.Dispose();
 
     private Task<AiToolResult> Call(string tool, object? args = null) =>
-        _tools.Call(tool, JsonSerializer.SerializeToElement(args ?? new { }), App);
+        _tools.Call(tool, JsonSerializer.SerializeToElement(args ?? new { }), App, TestContext.Current.CancellationToken);
 
     private static readonly HotkeyBinding CtrlX = new() { Vk = 0x58, Ctrl = true };
+
+    private static readonly object CtrlXToA = new { item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 } } };
+
+    private static readonly object Asking = new { message = "Click the Send button", context = "We are making a macro that sends a message." };
+
+    private static string RequestId(AiToolResult waiting) =>
+        Regex.Match(waiting.Text, "request_id \"([0-9a-f]+)\"").Groups[1].Value;
 
     [Fact]
     public async Task Every_tool_is_refused_while_AI_access_is_off()
@@ -113,7 +159,7 @@ public class AiToolsTests : IDisposable
             Assert.True(result.IsError, tool.Name);
             Assert.Contains("Allow AI access", result.Text);
         }
-        Assert.Empty(_host.Opened);
+        Assert.Empty(_host.Saved);
         Assert.All(_log.Entries(), e => Assert.Equal(AiActivityResult.Refused, e.Result));
     }
 
@@ -161,38 +207,57 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task A_new_remap_opens_the_editor_and_says_it_was_saved()
+    public async Task A_new_remap_is_saved_at_once()
     {
-        AiToolResult result = await Call("propose_remap", new
+        AiToolResult result = await Call("save_remap", new
         {
             item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 }, AppExe = "notepad.exe" },
         });
 
         Assert.False(result.IsError, result.Text);
-        Assert.StartsWith("Saved as proposed", result.Text);
-        var (proposal, isNew, app) = Assert.Single(_host.Opened);
-        var remap = Assert.IsType<RemapDefinition>(proposal);
-        Assert.True(isNew);
+        Assert.StartsWith("Saved the new remap", result.Text);
+        Assert.Empty(_host.Confirmed);
+        var (item, app) = Assert.Single(_host.Saved);
+        var remap = Assert.IsType<RemapDefinition>(item);
         Assert.Equal(App, app);
         Assert.True(remap.Source!.SameAs(CtrlX));
         Assert.Equal("notepad.exe", remap.AppExe);
-        Assert.NotEqual(Guid.Empty, remap.Id);
         AiActivity entry = _log.Entries().First();
         Assert.Equal(AiActivityResult.Saved, entry.Result);
         Assert.Contains("Ctrl + X → A in notepad.exe", entry.Request);
+        Assert.Equal(remap.Id, entry.ItemId);
+        Assert.Null(entry.Before); // nothing to restore for something new
     }
 
     [Fact]
-    public async Task A_proposal_the_editor_would_refuse_opens_nothing()
+    public async Task A_change_keeps_its_id_says_what_changed_and_keeps_the_version_before()
     {
-        AiToolResult result = await Call("propose_remap", new
+        var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41), Note = "Old" };
+        _settings.Remaps.Add(remap);
+        string before = RemapJson.Serialize(remap);
+
+        AiToolResult result = await Call("save_remap", new
         {
-            item = new { Source = new { Vk = 0x41 }, Target = new { Vk = 0x41 } },
+            id = remap.Id.ToString(),
+            item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 }, Note = "New" },
         });
+
+        Assert.StartsWith("Saved the changes to the remap", result.Text);
+        Assert.Equal(remap.Id, Assert.IsType<RemapDefinition>(Assert.Single(_host.Saved).Item).Id);
+        AiActivity entry = _log.Entries().First();
+        Assert.Contains("Note: \"Old\" → \"New\"", entry.Request);
+        Assert.Equal(before, entry.Before);
+        Assert.Equal("remap", entry.ItemKind);
+    }
+
+    [Fact]
+    public async Task A_proposal_the_editor_would_refuse_saves_nothing()
+    {
+        AiToolResult result = await Call("save_remap", new { item = new { Source = new { Vk = 0x41 }, Target = new { Vk = 0x41 } } });
 
         Assert.True(result.IsError);
         Assert.Contains("Send something different from what you press.", result.Text);
-        Assert.Empty(_host.Opened);
+        Assert.Empty(_host.Saved);
         Assert.Equal(AiActivityResult.Error, _log.Entries().First().Result);
     }
 
@@ -201,163 +266,117 @@ public class AiToolsTests : IDisposable
     {
         _settings.Remaps.Add(new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x42) });
 
-        AiToolResult result = await Call("propose_remap", new
-        {
-            item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 } },
-        });
+        AiToolResult result = await Call("save_remap", CtrlXToA);
 
         Assert.True(result.IsError);
         Assert.Contains("is already remapped for all apps", result.Text);
     }
 
     [Fact]
-    public async Task Changes_the_user_made_before_saving_are_in_the_answer()
+    public async Task With_ask_before_changing_the_user_sees_the_changes_first()
     {
-        _host.Edit = proposal =>
-        {
-            var saved = ((RemapDefinition)proposal).Clone();
-            saved.Note = "Changed by the user";
-            return saved;
-        };
-
-        AiToolResult result = await Call("propose_remap", new
-        {
-            item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 } },
-        });
-
-        Assert.StartsWith("Saved, with changes", result.Text);
-        Assert.Contains("Changed by the user", result.Text);
-        Assert.Equal(AiActivityResult.SavedWithChanges, _log.Entries().First().Result);
-    }
-
-    [Fact]
-    public async Task A_cancelled_proposal_is_not_saved()
-    {
-        _host.Edit = _ => null;
-
-        AiToolResult result = await Call("propose_loop", new
-        {
-            item = new { Name = "Spam F24", Actions = new[] { new { Type = "Key", KeyVk = 0x87, IntervalValue = 100 } } },
-        });
-
-        Assert.Contains("cancelled", result.Text);
-        Assert.Equal(AiActivityResult.Cancelled, _log.Entries().First().Result);
-    }
-
-    [Fact]
-    public async Task A_change_keeps_the_id_of_the_item_changed()
-    {
-        var loop = new LoopDefinition
-        {
-            Name = "Old", Actions = { new LoopAction { KeyVk = 0x87, IntervalValue = 100 } },
-        };
+        _settings.AiAskBeforeChanging = true;
+        var loop = new LoopDefinition { Name = "Spam", Actions = { new LoopAction { KeyVk = 0x87, IntervalValue = 100 } } };
         _settings.Loops.Add(loop);
 
-        await Call("propose_loop", new
+        _host.ConfirmAnswer = AiAnswer.Cancelled;
+        AiToolResult cancelled = await Call("save_loop", new
         {
             id = loop.Id.ToString(),
-            item = new { Name = "New", Actions = new[] { new { Type = "Key", KeyVk = 0x87, IntervalValue = 200 } } },
+            item = new { Name = "Spam", Actions = new[] { new { Type = "Key", KeyVk = 0x87, IntervalValue = 250 } } },
         });
 
-        var (proposal, isNew, _) = Assert.Single(_host.Opened);
-        Assert.False(isNew);
-        Assert.Equal(loop.Id, ((LoopDefinition)proposal).Id);
-        Assert.Equal("New", ((LoopDefinition)proposal).Name);
+        Assert.Contains("cancelled", cancelled.Text);
+        Assert.Empty(_host.Saved);
+        var (title, lines) = Assert.Single(_host.Confirmed);
+        Assert.Equal("Save these changes to the loop?", title);
+        Assert.Contains("Action 1 (Key): Interval value 100 → 250", lines);
     }
 
     [Fact]
-    public async Task Loops_and_macros_cannot_be_changed_while_something_runs()
+    public async Task A_running_item_that_changes_stops()
     {
-        _host.Running.Add(Guid.NewGuid());
+        var loop = new LoopDefinition { Name = "Spam", Actions = { new LoopAction { KeyVk = 0x87, IntervalValue = 100 } } };
+        _settings.Loops.Add(loop);
+        _host.Running.Add(loop.Id);
 
-        AiToolResult result = await Call("propose_loop", new
+        AiToolResult result = await Call("save_loop", new
         {
-            item = new { Name = "Spam", Actions = new[] { new { Type = "Key", KeyVk = 0x87, IntervalValue = 100 } } },
+            id = loop.Id.ToString(),
+            item = new { Name = "Spam 2", Actions = new[] { new { Type = "Key", KeyVk = 0x87, IntervalValue = 100 } } },
         });
 
-        Assert.True(result.IsError);
-        Assert.Contains("stop_all", result.Text);
-        Assert.Empty(_host.Opened);
+        Assert.Contains("It was running: it stopped.", result.Text);
     }
 
     [Fact]
-    public async Task Nothing_opens_while_the_user_has_a_PuppyMacro_window_open()
+    public async Task Deleting_asks_by_default_and_not_when_turned_off()
     {
-        _host.UserIsEditing = true;
+        var first = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) };
+        var second = new RemapDefinition { Source = HotkeyBinding.FromKey(0x7C), Target = HotkeyBinding.FromKey(0x41) };
+        _settings.Remaps.AddRange(new[] { first, second });
 
-        AiToolResult result = await Call("pick_point", new { reason = "Click the button" });
+        AiToolResult asked = await Call("delete_item", new { id = first.Id.ToString() });
+        _settings.AiAskBeforeDeleting = false;
+        AiToolResult direct = await Call("delete_item", new { id = second.Id.ToString() });
 
-        Assert.True(result.IsError);
-        Assert.Contains("PuppyMacro window open", result.Text);
-    }
-
-    private static string RequestId(AiToolResult waiting) =>
-        System.Text.RegularExpressions.Regex.Match(waiting.Text, "request_id \"([0-9a-f]+)\"").Groups[1].Value;
-
-    private static readonly object CtrlXToA = new { item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 } } };
-
-    [Fact]
-    public async Task A_user_who_takes_long_gets_a_request_id_and_wait_for_user_gives_the_answer()
-    {
-        _host.Hold = new TaskCompletionSource<bool>();
-
-        AiToolResult first = await Call("propose_remap", CtrlXToA);
-        string id = RequestId(first);
-        AiToolResult other = await Call("pick_point", new { reason = "Click" });
-        AiToolResult stillWaiting = await Call("wait_for_user", new { request_id = id });
-        _host.Hold.SetResult(true);
-        AiToolResult answer = await Call("wait_for_user", new { request_id = id });
-
-        Assert.StartsWith("Waiting", first.Text);
-        Assert.Equal(8, id.Length);
-        Assert.True(other.IsError);
-        Assert.Contains($"request_id \"{id}\"", other.Text);
-        Assert.StartsWith("Waiting", stillWaiting.Text);
-        Assert.StartsWith("Saved as proposed", answer.Text);
-        Assert.True((await Call("wait_for_user", new { request_id = id })).IsError); // given once
+        Assert.StartsWith("Deleted", asked.Text);
+        Assert.StartsWith("Deleted", direct.Text);
+        Assert.Equal("Delete this remap?", Assert.Single(_host.Confirmed).Title);
+        Assert.Empty(_settings.Remaps);
+        Assert.All(_log.Entries().Take(2), e => Assert.NotNull(e.Before)); // both can be restored
     }
 
     [Fact]
-    public async Task An_answer_that_came_after_waiting_is_kept_for_wait_for_user()
+    public async Task A_cancelled_deletion_keeps_the_item()
     {
-        _host.Hold = new TaskCompletionSource<bool>();
-        string id = RequestId(await Call("propose_remap", CtrlXToA));
+        var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) };
+        _settings.Remaps.Add(remap);
+        _host.ConfirmAnswer = AiAnswer.Cancelled;
 
-        _host.Hold.SetResult(true);
-        await Task.Delay(200, TestContext.Current.CancellationToken);
-        AiToolResult answer = await Call("wait_for_user", new { request_id = id });
+        AiToolResult result = await Call("delete_item", new { id = remap.Id.ToString() });
 
-        Assert.StartsWith("Saved as proposed", answer.Text);
+        Assert.Contains("cancelled", result.Text);
+        Assert.Single(_settings.Remaps);
     }
 
     [Fact]
-    public async Task An_answer_not_taken_yet_is_kept_when_another_request_starts()
+    public async Task Set_enabled_is_direct_by_default()
     {
-        _host.Hold = new TaskCompletionSource<bool>();
-        string id = RequestId(await Call("propose_remap", CtrlXToA));
-        _host.Hold.SetResult(true);
-        _host.Hold = null;
+        var loop = new LoopDefinition { Name = "Spam" };
+        _settings.Loops.Add(loop);
 
-        AiToolResult point = await Call("pick_point", new { reason = "Click" });
-        AiToolResult answer = await Call("wait_for_user", new { request_id = id });
+        AiToolResult result = await Call("set_enabled", new { id = loop.Id.ToString(), enabled = false });
+        AiToolResult again = await Call("set_enabled", new { id = loop.Id.ToString(), enabled = false });
 
-        Assert.False(point.IsError, point.Text);
-        Assert.StartsWith("Saved as proposed", answer.Text);
+        Assert.StartsWith("Disabled loop \"Spam\"", result.Text);
+        Assert.Contains("already disabled", again.Text);
+        Assert.False(loop.Enabled);
+        Assert.Empty(_host.Confirmed);
     }
 
     [Fact]
-    public async Task Only_the_app_that_asked_gets_the_answer()
+    public async Task Settings_ask_by_default_with_every_change_listed()
     {
-        _host.Hold = new TaskCompletionSource<bool>();
-        string id = RequestId(await Call("propose_remap", CtrlXToA));
-        _host.Hold.SetResult(true);
+        AiToolResult result = await Call("update_settings", new { settings = new { Theme = "Light", StopAllHotkey = new { Vk = 0x7B } } });
 
-        AiToolResult other = await _tools.Call("wait_for_user", JsonSerializer.SerializeToElement(new { request_id = id }), "Codex",
-            TestContext.Current.CancellationToken);
-        AiToolResult mine = await Call("wait_for_user", new { request_id = id });
+        Assert.StartsWith("Settings changed", result.Text);
+        IReadOnlyList<string> lines = Assert.Single(_host.Confirmed).Lines;
+        Assert.Contains("Theme: Dark → Light", lines);
+        Assert.Contains($"Stop all hotkey: {KeyNames.Format(_settings.StopAllHotkey)} → F12", lines);
+        Assert.Equal(AppTheme.Light, Assert.Single(_host.Applied).Theme);
+        Assert.Equal("settings", _log.Entries().First().ItemKind);
+    }
 
-        Assert.True(other.IsError);
-        Assert.StartsWith("Saved as proposed", mine.Text);
+    [Fact]
+    public async Task Settings_are_direct_when_asking_is_off()
+    {
+        _settings.AiAskBeforeSettings = false;
+
+        await Call("update_settings", new { settings = new { SoundVolume = 30 } });
+
+        Assert.Empty(_host.Confirmed);
+        Assert.Equal(30, Assert.Single(_host.Applied).SoundVolume);
     }
 
     [Fact]
@@ -374,67 +393,12 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_asks_the_user_and_deletes_only_when_confirmed()
-    {
-        var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) };
-        _settings.Remaps.Add(remap);
-
-        _host.ConfirmAnswer = AiAnswer.Cancelled;
-        AiToolResult cancelled = await Call("delete_item", new { id = remap.Id.ToString() });
-        _host.ConfirmAnswer = AiAnswer.Done;
-        AiToolResult deleted = await Call("delete_item", new { id = remap.Id.ToString() });
-
-        Assert.Contains("cancelled", cancelled.Text);
-        Assert.StartsWith("Deleted", deleted.Text);
-        Assert.Equal(new[] { remap.Id }, _host.Deleted);
-        Assert.Equal("Delete this remap?", _host.Confirmed[0].Title);
-    }
-
-    [Fact]
-    public async Task Set_enabled_asks_the_user()
-    {
-        var loop = new LoopDefinition { Name = "Spam" };
-        _settings.Loops.Add(loop);
-
-        AiToolResult result = await Call("set_enabled", new { id = loop.Id.ToString(), enabled = false });
-
-        Assert.StartsWith("Disabled loop \"Spam\"", result.Text);
-        Assert.Equal((loop.Id, false), Assert.Single(_host.Enabled));
-    }
-
-    [Fact]
-    public async Task Settings_changes_are_listed_in_the_confirmation_and_applied()
-    {
-        AiToolResult result = await Call("update_settings", new { settings = new { Theme = "Light", StopAllHotkey = new { Vk = 0x7B } } });
-
-        Assert.StartsWith("Settings changed", result.Text);
-        IReadOnlyList<string> lines = Assert.Single(_host.Confirmed).Lines;
-        Assert.Contains("Theme: Dark → Light", lines);
-        Assert.Contains($"Stop all hotkey: {KeyNames.Format(_settings.StopAllHotkey)} → F12", lines);
-        AiSettingsValues applied = Assert.Single(_host.Applied);
-        Assert.Equal(AppTheme.Light, applied.Theme);
-    }
-
-    [Fact]
-    public async Task A_global_hotkey_that_clashes_is_refused_before_asking()
-    {
-        AiToolResult result = await Call("update_settings", new
-        {
-            settings = new { StopAllHotkey = new { Vk = _settings.OverlayModeHotkey!.Vk, Alt = true, Shift = true } },
-        });
-
-        Assert.True(result.IsError);
-        Assert.Contains("Stop all hotkey", result.Text);
-        Assert.Empty(_host.Confirmed);
-    }
-
-    [Fact]
     public async Task Unknown_settings_are_refused()
     {
         AiToolResult result = await Call("update_settings", new { settings = new { AllowAiAccess = false } });
 
         Assert.True(result.IsError);
-        Assert.Empty(_host.Confirmed);
+        Assert.Empty(_host.Applied);
     }
 
     [Fact]
@@ -452,16 +416,109 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Interactions_give_what_the_user_picked_or_pressed()
+    public async Task A_pick_waits_until_the_user_is_ready_then_gives_the_points()
     {
-        AiToolResult point = await Call("pick_point", new { reason = "Click the Send button" });
-        AiToolResult app = await Call("pick_app", new { reason = "Click the game" });
-        AiToolResult keys = await Call("capture_hotkey", new { reason = "The key to remap" });
+        AiToolResult one = await Call("pick_point", Asking);
+        AiToolResult three = await Call("pick_points", new { count = 3, message = "Click the 3 items", context = "We are making a macro." });
 
-        Assert.Equal("{\"X\":640,\"Y\":360}", point.Text);
+        Assert.Equal("{\"X\":640,\"Y\":360}", one.Text);
+        using JsonDocument points = JsonDocument.Parse(three.Text);
+        Assert.Equal(3, points.RootElement.GetArrayLength());
+        Assert.Equal(new[] { 1, 3 }, _host.PointsAsked);
+        Assert.Equal(("Click the Send button", "We are making a macro that sends a message."), _host.ReadyShown[0]);
+    }
+
+    [Fact]
+    public async Task Cancelled_when_not_ready_nothing_is_picked()
+    {
+        _host.ReadyAnswer = AiAnswer.Cancelled;
+
+        AiToolResult result = await Call("pick_point", Asking);
+
+        Assert.Contains("cancelled", result.Text);
+        Assert.Empty(_host.PointsAsked);
+    }
+
+    [Fact]
+    public async Task Interactions_need_a_message_and_a_context()
+    {
+        Assert.True((await Call("pick_point", new { message = "Click", context = "" })).IsError);
+        Assert.True((await Call("pick_app", new { message = "", context = "Why" })).IsError);
+        Assert.True((await Call("pick_points", new { count = 1, message = "Click", context = "Why" })).IsError);
+        Assert.Empty(_host.ReadyShown);
+    }
+
+    [Fact]
+    public async Task App_and_key_requests_give_what_the_user_picked_or_pressed()
+    {
+        AiToolResult app = await Call("pick_app", Asking);
+        AiToolResult keys = await Call("capture_hotkey", Asking);
+
         Assert.Contains("notepad.exe", app.Text);
         Assert.StartsWith(KeyNames.Format(CtrlX), keys.Text);
-        Assert.True((await Call("pick_point", new { reason = "" })).IsError);
+    }
+
+    [Fact]
+    public async Task A_user_who_takes_long_gets_a_request_id_and_wait_for_user_gives_the_answer()
+    {
+        _host.Hold = new TaskCompletionSource<bool>();
+
+        AiToolResult first = await Call("pick_point", Asking);
+        string id = RequestId(first);
+        AiToolResult other = await Call("pick_app", Asking);
+        AiToolResult stillWaiting = await Call("wait_for_user", new { request_id = id });
+        _host.Hold.SetResult(true);
+        AiToolResult answer = await Call("wait_for_user", new { request_id = id });
+
+        Assert.StartsWith("Waiting", first.Text);
+        Assert.Equal(8, id.Length);
+        Assert.True(other.IsError);
+        Assert.Contains($"request_id \"{id}\"", other.Text);
+        Assert.StartsWith("Waiting", stillWaiting.Text);
+        Assert.Equal("{\"X\":640,\"Y\":360}", answer.Text);
+        Assert.True((await Call("wait_for_user", new { request_id = id })).IsError); // given once
+    }
+
+    [Fact]
+    public async Task An_answer_not_taken_yet_is_kept_when_another_request_starts()
+    {
+        _host.Hold = new TaskCompletionSource<bool>();
+        string id = RequestId(await Call("pick_point", Asking));
+        _host.Hold.SetResult(true);
+        _host.Hold = null;
+
+        AiToolResult app = await Call("pick_app", Asking);
+        AiToolResult answer = await Call("wait_for_user", new { request_id = id });
+
+        Assert.False(app.IsError, app.Text);
+        Assert.Equal("{\"X\":640,\"Y\":360}", answer.Text);
+    }
+
+    [Fact]
+    public async Task Only_the_app_that_asked_gets_the_answer()
+    {
+        _host.Hold = new TaskCompletionSource<bool>();
+        string id = RequestId(await Call("pick_point", Asking));
+        _host.Hold.SetResult(true);
+
+        AiToolResult other = await _tools.Call("wait_for_user", JsonSerializer.SerializeToElement(new { request_id = id }), "Codex",
+            TestContext.Current.CancellationToken);
+        AiToolResult mine = await Call("wait_for_user", new { request_id = id });
+
+        Assert.True(other.IsError);
+        Assert.Equal("{\"X\":640,\"Y\":360}", mine.Text);
+    }
+
+    [Fact]
+    public async Task Nothing_runs_while_the_user_has_a_PuppyMacro_window_open()
+    {
+        _host.UserIsEditing = true;
+
+        AiToolResult result = await Call("save_remap", CtrlXToA);
+
+        Assert.True(result.IsError);
+        Assert.Contains("PuppyMacro window open", result.Text);
+        Assert.Empty(_host.Saved);
     }
 
     [Fact]
@@ -498,5 +555,21 @@ public class AiToolsTests : IDisposable
             Assert.Equal("object", schema.RootElement.GetProperty("type").GetString());
         }
         Assert.Equal(_tools.All.Count, _tools.All.Select(t => t.Name).Distinct().Count());
+        Assert.Equal(_tools.All.Select(t => t.Name), AiTools.Definitions().Select(t => t.Name));
+    }
+
+    [Fact]
+    public void While_PuppyMacro_is_closed_the_AI_is_told_how_to_keep_it_available()
+    {
+        string allOff = AiBridge.ClosedMessage(new AiBridge.ClosedSettings(false, false, false));
+        string allOn = AiBridge.ClosedMessage(new AiBridge.ClosedSettings(false, true, true));
+
+        Assert.Contains("Ask the user to open PuppyMacro", allOff);
+        Assert.Contains("Start with Windows", allOff);
+        Assert.Contains("Close to system tray", allOff);
+        Assert.Contains("Start PuppyMacro when an AI app needs it", allOff);
+        Assert.DoesNotContain("Start with Windows", allOn);
+        Assert.DoesNotContain("Close to system tray", allOn);
+        Assert.Contains("Start PuppyMacro when an AI app needs it", allOn);
     }
 }

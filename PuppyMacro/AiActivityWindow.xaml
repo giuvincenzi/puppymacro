@@ -52,10 +52,15 @@
         <Border x:Name="DetailCard" DockPanel.Dock="Bottom" Margin="24,0,24,12" Padding="16,12" MaxHeight="200"
                 CornerRadius="{DynamicResource ControlCornerRadius}" BorderThickness="1" Visibility="Collapsed"
                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
-            <ui:ScrollViewerEx VerticalScrollBarVisibility="Auto">
-                <TextBox x:Name="DetailText" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"
-                         AutomationProperties.Name="Details" />
-            </ui:ScrollViewerEx>
+            <DockPanel>
+                <!-- What an AI app changed or deleted comes back as it was -->
+                <Button x:Name="RestoreButton" DockPanel.Dock="Right" Margin="12,0,0,0" VerticalAlignment="Top" Content="Restore"
+                        Visibility="Collapsed" Click="OnRestoreClick" />
+                <ui:ScrollViewerEx VerticalScrollBarVisibility="Auto">
+                    <TextBox x:Name="DetailText" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"
+                             AutomationProperties.Name="Details" />
+                </ui:ScrollViewerEx>
+            </DockPanel>
         </Border>
 
         <Grid Margin="24,0,24,12">

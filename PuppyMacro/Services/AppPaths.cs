@@ -18,6 +18,9 @@ internal static class AppPaths
 
     public static string MacrosFolder => Path.Combine(DataFolder, "macros");
 
+    /// <summary>The History of each loop, macro and remap (<c>ItemHistory</c>): history\{id}.json.</summary>
+    public static string HistoryFolder => Path.Combine(DataFolder, "history");
+
     /// <summary>What AI apps asked in the last 30 days (the AI page's activity, <c>AiActivityLog</c>).</summary>
     public static string AiActivityFile => Path.Combine(DataFolder, "ai-activity.json");
 

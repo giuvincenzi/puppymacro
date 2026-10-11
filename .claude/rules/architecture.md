@@ -167,30 +167,45 @@ Rules:
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
+- History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version in
+  `history\{id}.json` (the last 50; none for a save that changes nothing), with who saved it (`MainWindow._savedBy`: "You",
+  or the AI app while `SavingAs`) and what changed (`ItemHistory.Changes`, a readable diff of the JSON). It is recorded in
+  one place: `MainWindow.Save()` (loops, remaps, deletions) and `SaveMacro` (macros), so every path is covered (editors,
+  switches, the overlay's right click, AI apps). `InitializeHistory` seeds the current JSON at start; the first change of an
+  item saved before the history existed also keeps its earlier version. The editors of a saved item get a third view,
+  History (`ViewSwitchBar` / `CodeViewSwitch`, `EditorView`; `EnableHistory`): Restore puts the version in the fields
+  (`HistoryRestore`) and the `NoticeBar` says to Save.
 - AI apps (MCP, `Services/Ai/`): an AI app on the PC starts `PuppyMacro.exe --mcp` (`AiBridge`, run in `App.Main` before
   Velopack and WPF: no window, no update applied). The bridge only copies stdin/stdout to the running PuppyMacro's named
   pipe (`AiPipe`: one per Windows user and per build, the development build has its own; current user only; elevated, a
-  medium integrity label so a non-elevated AI app can open it) and starts PuppyMacro in the tray when it is not running.
-  It calls `AllowSetForegroundWindow` for PuppyMacro on every message; Windows may still refuse, so the windows of a
-  request also open topmost (`Views/AiProposal.BringToFront`). `AiServer` (in PuppyMacro) runs one MCP session per bridge
-  with the SDK's `StreamServerTransport` and exposes `AiTools`; it lists the connected apps by the name they give
-  (`FriendlyName`). `AiTools` holds every tool without the protocol (unit tested with a fake `IAiHost`): reads; proposals
-  (`propose_loop/macro/remap`) checked with the Code views' `LoopJson`/`MacroJson`/`RemapJson` and the Id PuppyMacro gives,
-  then the editor opens filled in (`proposal` parameter of the editors, `ShowProposal`: the "Proposed by" `InfoBar`) and the
-  user saves or cancels; confirmations (`delete_item`, `set_enabled`, `update_settings`) in `AiRequestWindow`; interactions
-  (`pick_point`, `pick_app` through `PickPointWindow`, `capture_hotkey` through `AiRequestWindow` with a `KeyCaptureField`);
-  `stop_all`; `get_help` reads the guide of this version, embedded from `site/guide` (`AiHelp`). AI apps cut long tool
-  calls (Claude Desktop about 1 to 4 minutes, Codex 60 to 300 s): a request that needs the user answers "waiting" with a
-  request_id (random, tied to the app that asked) after `AiTools.WaitStep` (40 s) and the AI calls `wait_for_user`; an
-  answer is given once (`Pending.Given`) and kept until taken. `MainWindow.ShowForAi` closes the window when nobody used
-  PuppyMacro for `AnswerTimeout` (5 minutes: any input in its windows, also a dialog the editor opened, starts it again).
-  One such request at a time; none while the user has a PuppyMacro editor or dialog open (`HotkeysSuspended`, or
-  `ShowUserDialog` for the dialogs that do not suspend hotkeys); proposals of loops and macros not while something runs.
-  The editors keep the Id a new proposal was checked with. The pipe's first instance is created with `FirstPipeInstance`
-  and the bridge talks only to a server whose exe is its own (`AppWindows.ExePath`), so a program that took the name
-  first never gets the AI apps' messages. Starting and testing loops and macros
-  are not tools on purpose (their input would go to the AI app's chat in front). Everything is refused while
-  `AppSettings.AllowAiAccess` is off. Every request goes to `AiActivityLog` (`ai-activity.json`, 30 days). The AI page
-  (`MainWindow.Ai.cs`): Allow AI access, the apps' tiles (`AiApps`: Claude Desktop's `claude_desktop_config.json`, also
-  the Microsoft Store copy under `Packages\Claude_*`; VS Code's `vscode:mcp/install` link and `mcp.json`; Codex's
-  `config.toml` with `tool_timeout_sec = 600`; Copy configuration), Recent activity and `AiActivityWindow`.
+  medium integrity label so a non-elevated AI app can open it, without it when Windows refuses the label) and starts
+  PuppyMacro in the tray when it is not running, unless `AppSettings.AiStartWhenNeeded` is off: then it answers itself (a
+  small MCP server on stdio with the same tools, `AiBridge.ClosedMessage`: open PuppyMacro, and Start with Windows / Close
+  to system tray if they are off). It calls `AllowSetForegroundWindow` for PuppyMacro on every message; Windows may still
+  refuse, so the request windows also open topmost (`Views/AiWindow.BringToFront`, activated once shown, not on Loaded).
+  The pipe's first instance uses `FirstPipeInstance` and the bridge talks only to a server whose exe is its own
+  (`AppWindows.ExePath`). `AiServer` (in PuppyMacro) runs one MCP session per bridge with the SDK's
+  `StreamServerTransport` (`AiServer.Options`), lists the connected apps by the name they give (`FriendlyName`) and says
+  why AI apps can't connect (`ListenError`, on the AI page).
+  `AiTools` holds every tool without the protocol (unit tested with a fake `IAiHost`): reads; `save_loop/macro/remap`,
+  checked with the Code views' `LoopJson`/`MacroJson`/`RemapJson` and the Id PuppyMacro gives, saved at once through
+  `IAiHost.Save` (`MainWindow.SaveItem`: the editors' Add / ApplyEdit; a running item stops), unless `AiAskBeforeChanging`
+  (then `AiRequestWindow` lists `ItemHistory.Changes`); `delete_item` (asks with `AiAskBeforeDeleting`, on by default),
+  `set_enabled` (a change), `update_settings` (`AiAskBeforeSettings`, on by default); interactions (`pick_point`,
+  `pick_points`, `pick_app`, `capture_hotkey`) with a `message` and a `context` the AI writes: first `AiReadyWindow`
+  (topmost, not activated; Enter or Esc alone from any app through `LoopEngine.WatchReadyKeys`, every other key passes;
+  Start), then `PickPointWindow` (`count` points, numbered) or the key window; `stop_all`; `get_help` reads the guide of
+  this version, embedded from `site/guide` (`AiHelp`). AI apps cut long tool calls (Claude Desktop about 1 to 4 minutes,
+  Codex 60 to 300 s): a request that waits for the user answers "waiting" with a request_id (random, tied to the app that
+  asked) after `AiTools.WaitStep` (40 s) and the AI calls `wait_for_user`; an answer is given once (`Pending.Given`) and
+  kept until taken. `MainWindow.ShowForAi` closes a modal request window when nobody used PuppyMacro for `AnswerTimeout`
+  (5 minutes); the ready window closes after 5 minutes. One such request at a time; none while the user has a PuppyMacro
+  editor or dialog open (`HotkeysSuspended`, or `ShowUserDialog` for the dialogs that do not suspend hotkeys). Starting and
+  testing loops and macros are not tools on purpose (their input would go to the AI app's chat in front). Everything is
+  refused while `AppSettings.AllowAiAccess` is off. Every request goes to `AiActivityLog` (`ai-activity.json`, 30 days); a
+  change or deletion keeps the item's JSON before it (`Before`, `ItemKind`): Restore in Recent activity and
+  `AiActivityWindow` puts it back as the user's own change (`MainWindow.RestoreActivity`). The AI page (`MainWindow.Ai.cs`):
+  Allow AI access with the permissions inside, the apps as `SettingsCard`s built in code (`AppCard`; `AiApps`: Claude
+  Desktop's `claude_desktop_config.json`, also the Microsoft Store copy under `Packages\Claude_*`; VS Code's
+  `vscode:mcp/install` link and `mcp.json`; Codex's `config.toml` with `tool_timeout_sec = 600`; Copy configuration), Recent
+  activity; the status bar at the bottom of the main window (`AiStatusBar`) while an app is connected.

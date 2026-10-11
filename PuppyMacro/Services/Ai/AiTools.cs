@@ -20,37 +20,46 @@ internal sealed record AiTool(string Name, string Description, string InputSchem
     Func<JsonElement, string, CancellationToken, Task<AiToolResult>> Run);
 
 /// <summary>
-/// The tools PuppyMacro gives AI apps (MCP), without the protocol (<see cref="AiServer"/> adds it). Reads answer at once;
-/// proposals, confirmations and interactions open a PuppyMacro window and wait for the user, at most
-/// <see cref="WaitStep"/> per call (AI apps cut long calls): then they answer "waiting" and the AI calls wait_for_user.
-/// One request that needs the user at a time. Everything is refused while Allow AI access is off.
+/// The tools PuppyMacro gives AI apps (MCP), without the protocol (<see cref="AiServer"/> adds it). Reads answer at once.
+/// Changes are saved at once, as the user's Save would, and kept in the item's History; they wait for the user's OK only
+/// where the AI page's Ask before … says so. Interactions show what the AI asks and why, and start when the user is ready.
+/// A request that waits for the user answers "waiting" after <see cref="WaitStep"/> (AI apps cut long calls) and the AI
+/// calls wait_for_user. One such request at a time. Everything is refused while Allow AI access is off.
 /// </summary>
 internal sealed class AiTools
 {
-    /// <summary>How long a window opened for the AI stays open without an answer.</summary>
+    /// <summary>How long a window opened for the AI stays open while nobody uses PuppyMacro.</summary>
     public static readonly TimeSpan AnswerTimeout = TimeSpan.FromMinutes(5);
 
     /// <summary>How long one call waits for the user before answering "waiting" (AI apps cut calls after a minute or more).</summary>
     public static TimeSpan WaitStep { get; set; } = TimeSpan.FromSeconds(40);
 
+    /// <summary>The most points pick_points asks for at once.</summary>
+    public const int MaxPoints = 20;
+
     public const string Instructions =
         "PuppyMacro automates keyboard and mouse input on Windows: loops (press keys or click at intervals), macros " +
-        "(recorded or built step by step) and remaps (a key or combination sends another one). These tools read the " +
-        "user's loops, macros, remaps and settings, and propose new or changed ones.\n\n" +
+        "(recorded or built step by step) and remaps (a key or combination sends another one). These tools read and change " +
+        "the user's loops, macros, remaps and settings.\n\n" +
         "How requests work:\n" +
         "- Read tools (get_overview, get_item, get_schema, get_settings, check_hotkey, get_status, list_apps, get_help) answer at once.\n" +
-        "- propose_loop, propose_macro and propose_remap open PuppyMacro's editor on the user's screen, filled in with " +
-        "your proposal, and wait until the user saves or cancels. Tell the user to check the PuppyMacro window. The user " +
-        "may change your proposal before saving: the answer says what was saved.\n" +
-        "- delete_item, set_enabled and update_settings ask the user to confirm in a PuppyMacro window.\n" +
-        "- pick_point, pick_app and capture_hotkey ask the user to click a point on the screen, click a window of an app, " +
-        "or press keys. Use them instead of guessing coordinates, app names or key codes.\n" +
-        "- A request that needs the user waits up to about 40 seconds per call. If the user has not answered yet, the " +
-        "answer says so with a request_id: call wait_for_user with it (again if needed) until the user answers. The " +
-        "PuppyMacro window stays open for 5 minutes. Only one such request at a time.\n\n" +
+        "- save_loop, save_macro and save_remap create or change an item; delete_item, set_enabled and update_settings do " +
+        "what they say. They are saved at once and kept in the item's History in PuppyMacro, where the user can restore " +
+        "any version. Some may wait for the user's OK in PuppyMacro, as the user chose in PuppyMacro's AI settings: the " +
+        "answer then says whether the user confirmed or cancelled. After a change, tell the user to try it.\n" +
+        "- pick_point, pick_points, pick_app and capture_hotkey ask the user to click points on the screen, click a window " +
+        "of an app, or press keys. Use them instead of guessing coordinates, app names or key codes. First explain in the " +
+        "chat what the user will have to do; then call the tool. PuppyMacro shows your message and context in a window on " +
+        "top of everything and waits until the user is ready (Enter or Start) before the user picks, so they can first open " +
+        "the right screen (a game's inventory, a window). Write the message as one short instruction (\"Click the 3 " +
+        "items to destroy, in order\") and the context as 1 to 3 sentences: what you are making, why you need this, and " +
+        "what to open first.\n" +
+        "- A request that waits for the user answers after about 40 seconds at most. If the user has not answered yet, the " +
+        "answer says so with a request_id: call wait_for_user with it (again if needed) until the user answers. Only one " +
+        "such request at a time.\n\n" +
         "Not available: starting, stopping or testing loops and macros (only stop_all, which stops everything). Their keys " +
         "and clicks would go to the window in front, which is usually this chat. Ask the user to start them in " +
-        "PuppyMacro: the Play button on the item's card, its hotkey, or overlay mode.\n\n" +
+        "PuppyMacro: the Play button on the item's card, its hotkey, or overlay mode. A running item that you change stops.\n\n" +
         "Formats: items are JSON exactly as PuppyMacro saves them (get_schema gives the JSON Schema, get_item real " +
         "examples). Leave out the Id of a new item. Keys are Windows virtual-key codes (A = 65, 0 = 48, F1 = 112, " +
         "Enter = 13, Space = 32; mouse: 1 left, 2 right, 4 middle, 5 and 6 side buttons). Points are physical screen " +
@@ -82,6 +91,9 @@ internal sealed class AiTools
     }
 
     public IReadOnlyList<AiTool> All { get; }
+
+    /// <summary>The tools' names, descriptions and schemas without a host: for the bridge while PuppyMacro is closed (never run).</summary>
+    public static IReadOnlyList<AiTool> Definitions() => new AiTools(null!, null!).All;
 
     /// <summary>A request waiting for the user: its id (random), the app that asked, the answer it will give.</summary>
     private sealed class Pending(string id, string app, Task<AiToolResult> answer)
@@ -121,8 +133,11 @@ internal sealed class AiTools
     {
         const string none = """{"type":"object","properties":{},"additionalProperties":false}""";
         const string idOnly = """{"type":"object","properties":{"id":{"type":"string","description":"The Id of a loop, macro or remap (get_overview lists them)."}},"required":["id"],"additionalProperties":false}""";
-        const string reason = """{"type":"object","properties":{"reason":{"type":"string","description":"What the user should do, shown to them, e.g. \"Click the Send button\"."}},"required":["reason"],"additionalProperties":false}""";
-        static string Propose(string kind) => """
+        const string asking = """
+            "message":{"type":"string","description":"What the user should do, one short instruction shown big, e.g. \"Click the Send button\"."},
+            "context":{"type":"string","description":"1 to 3 sentences shown under it: what you are making, why you need this, and what to open first."}
+            """;
+        static string Save(string kind) => """
             {"type":"object","properties":{
               "item":{"type":"object","description":"The KIND as JSON, in the format of get_schema(\"KIND\"). Leave out its Id."},
               "id":{"type":"string","description":"To change an existing KIND: its Id. Leave out for a new KIND."}},
@@ -135,7 +150,7 @@ internal sealed class AiTools
                 "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running) and the global hotkeys.",
                 none, true, false, (_, app, _) => Read(app, "Read your loops, macros and remaps", Overview)),
             new("get_item",
-                "Gives one loop, macro or remap as JSON, exactly as PuppyMacro saves it (the format propose_* takes).",
+                "Gives one loop, macro or remap as JSON, exactly as PuppyMacro saves it (the format save_* takes).",
                 idOnly, true, false, (a, app, _) => GetItem(a, app)),
             new("get_schema",
                 "Gives the JSON Schema, with descriptions, of a loop, a macro or a remap: every field and allowed value.",
@@ -167,27 +182,33 @@ internal sealed class AiTools
                 """{"type":"object","properties":{"topic":{"type":"string","description":"A topic from the list, e.g. \"macros\"."}},"additionalProperties":false}""",
                 true, false, (a, app, _) => Task.FromResult(Help(a, app))),
 
-            new("propose_loop", "Opens the loop editor on the user's screen with this loop, new or changed, and waits until the user saves or cancels.",
-                Propose("loop"), false, false, (a, app, c) => Propose<LoopDefinition>(a, app, "loop", c)),
-            new("propose_macro", "Opens the macro editor on the user's screen with this macro, new or changed, and waits until the user saves or cancels.",
-                Propose("macro"), false, false, (a, app, c) => Propose<MacroDefinition>(a, app, "macro", c)),
-            new("propose_remap", "Opens the remap editor on the user's screen with this remap, new or changed, and waits until the user saves or cancels.",
-                Propose("remap"), false, false, (a, app, c) => Propose<RemapDefinition>(a, app, "remap", c)),
-            new("delete_item", "Asks the user to confirm, then deletes a loop, macro or remap.",
+            new("save_loop", "Creates a loop, or changes the one with this id. Saved at once (kept in its History).",
+                Save("loop"), false, false, (a, app, c) => SaveItem<LoopDefinition>(a, app, "loop", c)),
+            new("save_macro", "Creates a macro, or changes the one with this id. Saved at once (kept in its History).",
+                Save("macro"), false, false, (a, app, c) => SaveItem<MacroDefinition>(a, app, "macro", c)),
+            new("save_remap", "Creates a remap, or changes the one with this id. Saved at once (kept in its History).",
+                Save("remap"), false, false, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
+            new("delete_item", "Deletes a loop, macro or remap (the user may be asked to confirm; it can be restored in PuppyMacro).",
                 idOnly, false, true, (a, app, c) => Delete(a, app, c)),
-            new("set_enabled", "Asks the user to confirm, then enables or disables a loop, macro or remap.",
+            new("set_enabled", "Enables or disables a loop, macro or remap.",
                 """{"type":"object","properties":{"id":{"type":"string"},"enabled":{"type":"boolean"}},"required":["id","enabled"],"additionalProperties":false}""",
                 false, false, (a, app, c) => SetEnabled(a, app, c)),
-            new("update_settings", "Asks the user to confirm, then changes settings. Give only the values to change, in get_settings' format.",
+            new("update_settings", "Changes settings. Give only the values to change, in get_settings' format.",
                 """{"type":"object","properties":{"settings":{"type":"object","description":"Values to change, e.g. {\"Theme\": \"Dark\", \"StopAllHotkey\": {\"Vk\": 123}}."}},"required":["settings"],"additionalProperties":false}""",
                 false, false, (a, app, c) => UpdateSettings(a, app, c)),
 
-            new("pick_point", "Asks the user to click a point on the screen and gives its position in physical pixels (X, Y), for a click or a move.",
-                reason, true, false, (a, app, c) => PickPoint(a, app, c)),
-            new("pick_app", "Asks the user to click a window of an app and gives its .exe name, for AppExe.",
-                reason, true, false, (a, app, c) => PickApp(a, app, c)),
-            new("capture_hotkey", "Asks the user to press a key, mouse button or combination and gives it as a HotkeyBinding.",
-                reason, true, false, (a, app, c) => CaptureKeys(a, app, c)),
+            new("pick_point", "Shows the user your message and context, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y).",
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[\"message\",\"context\"],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickPoints(a, app, 1, c)),
+            new("pick_points", "Like pick_point for several points in a row (for example the 3 items to click): the user clicks them in order.",
+                "{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "}," + asking + "},\"required\":[\"count\",\"message\",\"context\"],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickPoints(a, app, null, c)),
+            new("pick_app", "Shows the user your message and context, waits until they are ready, then they click a window of an app: its .exe name, for AppExe.",
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[\"message\",\"context\"],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickApp(a, app, c)),
+            new("capture_hotkey", "Shows the user your message and context and waits until they press a key, mouse button or combination: it as a HotkeyBinding.",
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[\"message\",\"context\"],\"additionalProperties\":false}",
+                true, false, (a, app, c) => CaptureKeys(a, app, c)),
             new("wait_for_user", "Waits again for the user's answer to a request that answered \"waiting\" with this request_id.",
                 """{"type":"object","properties":{"request_id":{"type":"string"}},"required":["request_id"],"additionalProperties":false}""",
                 true, false, (a, app, c) => WaitAgain(a, app, c)),
@@ -254,16 +275,11 @@ internal sealed class AiTools
         Guid id = IdArg(args, "id");
         return await _host.Ui(() =>
         {
-            AiToolResult result = Find(id) switch
-            {
-                LoopDefinition loop => new AiToolResult(LoopJson.Serialize(loop)),
-                MacroDefinition macro => new AiToolResult(MacroJson.Serialize(macro)),
-                RemapDefinition remap => new AiToolResult(RemapJson.Serialize(remap)),
-                _ => AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them."),
-            };
-            if (!result.IsError)
-                _log.Add(app, AiActivityKind.Read, $"Read {Describe(id)}");
-            return Task.FromResult(result);
+            object? item = Find(id);
+            if (item == null)
+                return Task.FromResult(AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them."));
+            _log.Add(app, AiActivityKind.Read, $"Read {Describe(item)}");
+            return Task.FromResult(new AiToolResult(Serialize(item)));
         }).ConfigureAwait(false);
     }
 
@@ -314,54 +330,59 @@ internal sealed class AiTools
         return new AiToolResult(problem == null ? $"{KeyNames.Format(binding)} is free." : $"{KeyNames.Format(binding)} can't be used: {problem}");
     }
 
-    // ================= Proposals =================
+    // ================= Changes =================
 
-    private async Task<AiToolResult> Propose<T>(JsonElement args, string app, string kind, CancellationToken cancel) where T : class
+    private async Task<AiToolResult> SaveItem<T>(JsonElement args, string app, string kind, CancellationToken cancel) where T : class
     {
         if (!args.TryGetProperty("item", out JsonElement item) || item.ValueKind != JsonValueKind.Object)
             return AiToolResult.Error("Give the " + kind + " in \"item\", as a JSON object.");
         Guid? editId = Str(args, "id") is { Length: > 0 } idText ? Guid.Parse(idText) : null;
-
-        if (await Refusal(kind != "remap").ConfigureAwait(false) is string busy)
+        if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
         // The checks of the editor's Code view, with the Id the item has (a new one for a new item).
-        (T? parsed, string? problems, string? original) = await _host.Ui(() => Task.FromResult(ParseProposal<T>(item, editId)))
+        (T? parsed, string? problems, string? before) = await _host.Ui(() => Task.FromResult(ParseItem<T>(item, editId)))
             .ConfigureAwait(false);
         if (parsed == null)
         {
-            _log.Add(app, AiActivityKind.Proposal, $"New {kind}", AiActivityResult.Error, problems ?? "", item.GetRawText());
-            return AiToolResult.Error($"The {kind} has problems, nothing was opened:\n{problems}");
+            _log.Add(app, AiActivityKind.Proposal, $"{(editId == null ? "New" : "Change to")} {kind}", AiActivityResult.Error,
+                problems ?? "", item.GetRawText());
+            return AiToolResult.Error($"The {kind} has problems, nothing was saved:\n{problems}");
         }
 
-        string label = $"{(editId == null ? "New" : "Change to")} {kind}: {Title(parsed)}";
-        return await StartForUser(app, label, AiActivityKind.Proposal, async () =>
+        string json = Serialize(parsed);
+        List<string> changes = before == null ? new List<string>() : ItemHistory.Changes(before, json);
+        string label = before == null ? $"New {kind} {Title(parsed)}"
+            : $"Changed {kind} {Title(parsed)}: {(changes.Count == 1 ? changes[0] : $"{changes.Count} changes")}";
+        if (before != null && changes.Count == 0)
+            return new AiToolResult($"Nothing to change: the {kind} is already like this.");
+        Guid id = Id(parsed);
+
+        AiToolResult Apply()
         {
-            AiEdited<T> edited = parsed switch
-            {
-                LoopDefinition loop => (AiEdited<T>)(object)await _host.EditLoop(loop, editId == null, app),
-                MacroDefinition macro => (AiEdited<T>)(object)await _host.EditMacro(macro, editId == null, app),
-                RemapDefinition remap => (AiEdited<T>)(object)await _host.EditRemap(remap, editId == null, app),
-                _ => throw new InvalidOperationException(),
-            };
-            if (edited.Answer != AiAnswer.Done || edited.Saved == null)
-            {
-                Log(app, AiActivityKind.Proposal, label, edited.Answer, "", Serialize(parsed));
-                return new AiToolResult(edited.Answer == AiAnswer.TimedOut
-                    ? $"Nobody answered in {AnswerTimeout.TotalMinutes:0} minutes: the editor closed without saving."
-                    : $"The user cancelled: the {kind} was not saved.");
-            }
-            string saved = Serialize(edited.Saved);
-            bool changed = saved != Serialize(parsed);
-            _log.Add(app, AiActivityKind.Proposal, label, changed ? AiActivityResult.SavedWithChanges : AiActivityResult.Saved, "", saved);
-            return new AiToolResult(changed
-                ? $"Saved, with changes the user made. What was saved:\n{saved}"
-                : $"Saved as proposed:\n{saved}");
+            bool wasRunning = _host.IsRunning(id);
+            _host.Save(parsed, app);
+            _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", json, id, kind, before);
+            return new AiToolResult((before == null ? $"Saved the new {kind}." : $"Saved the changes to the {kind}.")
+                + (wasRunning ? " It was running: it stopped." : "") + $"\n{json}");
+        }
+
+        if (!_host.Settings.AiAskBeforeChanging)
+            return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
+
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer answer = await _host.Confirm(app, before == null ? $"Save this new {kind}?" : $"Save these changes to the {kind}?",
+                before == null ? new List<string> { $"{Capital(kind)} {Title(parsed)}" } : changes, "Save");
+            if (answer == AiAnswer.Done)
+                return Apply();
+            Log(app, AiActivityKind.Proposal, label, answer, "", json);
+            return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
 
-    /// <summary>On the UI thread: the item with the Id it must have, read with the editor's checks.</summary>
-    private (T? Item, string? Problems, string? Original) ParseProposal<T>(JsonElement item, Guid? editId) where T : class
+    /// <summary>On the UI thread: the item with the Id it must have, read with the editor's checks, and the JSON it replaces.</summary>
+    private (T? Item, string? Problems, string? Before) ParseItem<T>(JsonElement item, Guid? editId) where T : class
     {
         object? existing = editId is Guid id ? Find(id) : null;
         if (editId != null && existing is not T)
@@ -379,46 +400,40 @@ internal sealed class AiTools
                 ? MacroJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems)
                 : RemapJson.Parse(text, itemId, (b, a) => HotkeyConflicts.RemapClash(b, a, _host.Settings, _host.Macros, itemId), out problems);
         return parsed is T ok
-            ? (ok, null, text)
-            : (null, string.Join("\n", problems.Select(p => "- " + p.Message)), text);
+            ? (ok, null, existing == null ? null : Serialize(existing))
+            : (null, string.Join("\n", problems.Select(p => "- " + p.Message)), null);
     }
-
-    private static string Serialize(object item) => item switch
-    {
-        LoopDefinition loop => LoopJson.Serialize(loop),
-        MacroDefinition macro => MacroJson.Serialize(macro),
-        RemapDefinition remap => RemapJson.Serialize(remap),
-        _ => JsonSerializer.Serialize(item, CodeJson.Options),
-    };
-
-    private static string Title(object item) => item switch
-    {
-        LoopDefinition loop => loop.Name,
-        MacroDefinition macro => macro.Name,
-        RemapDefinition remap => $"{KeyNames.Format(remap.Source)} → {KeyNames.Format(remap.Target)}" +
-            (remap.AppExe == null ? "" : $" in {remap.AppExe}"),
-        _ => "",
-    };
-
-    // ================= Confirmations =================
 
     private async Task<AiToolResult> Delete(JsonElement args, string app, CancellationToken cancel)
     {
         Guid id = IdArg(args, "id");
-        if (await Refusal(false).ConfigureAwait(false) is string busy)
+        if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string? what = await _host.Ui(() => Task.FromResult(Find(id) == null ? null : Describe(id))).ConfigureAwait(false);
+        (string? what, string? kind, string? before) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
+            ? ((string?)Describe(item), (string?)Kind(item), (string?)Serialize(item))
+            : (null, null, null))).ConfigureAwait(false);
         if (what == null)
             return AiToolResult.Error($"No loop, macro or remap has the Id {id}.");
 
-        string label = $"Delete {what}";
-        return await StartForUser(app, label, AiActivityKind.Confirmation, async () =>
+        string label = $"Deleted {what}";
+        AiToolResult Apply()
         {
-            AiAnswer answer = await _host.Confirm(app, $"Delete this {Kind(id)}?", new[] { what, "You can't undo this." }, "Delete");
-            if (answer == AiAnswer.Done && Find(id) != null)
-                _host.Delete(id);
+            if (Find(id) == null)
+                return AiToolResult.Error($"The {kind} is already gone.");
+            _host.Delete(id, app);
+            _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied, "", null, id, kind, before);
+            return new AiToolResult($"Deleted {what}. The user can restore it in PuppyMacro.");
+        }
+
+        if (!_host.Settings.AiAskBeforeDeleting)
+            return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer answer = await _host.Confirm(app, $"Delete this {kind}?", new[] { Capital(what) }, "Delete");
+            if (answer == AiAnswer.Done)
+                return Apply();
             Log(app, AiActivityKind.Confirmation, label, answer, "");
-            return Answered(answer, $"Deleted {what}.");
+            return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
 
@@ -426,21 +441,34 @@ internal sealed class AiTools
     {
         Guid id = IdArg(args, "id");
         bool enabled = args.TryGetProperty("enabled", out JsonElement e) && e.ValueKind == JsonValueKind.True;
-        if (await Refusal(false).ConfigureAwait(false) is string busy)
+        if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string? what = await _host.Ui(() => Task.FromResult(Find(id) == null ? null : Describe(id))).ConfigureAwait(false);
+        (string? what, string? kind, string? before, bool already) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
+            ? ((string?)Describe(item), (string?)Kind(item), (string?)Serialize(item), IsEnabled(item) == enabled)
+            : (null, null, null, false))).ConfigureAwait(false);
         if (what == null)
             return AiToolResult.Error($"No loop, macro or remap has the Id {id}.");
+        if (already)
+            return new AiToolResult($"{Capital(what)} is already {(enabled ? "enabled" : "disabled")}.");
 
         string verb = enabled ? "Enable" : "Disable";
-        string label = $"{verb} {what}";
-        return await StartForUser(app, label, AiActivityKind.Confirmation, async () =>
+        string label = $"{(enabled ? "Enabled" : "Disabled")} {what}";
+        AiToolResult Apply()
         {
-            AiAnswer answer = await _host.Confirm(app, $"{verb} this {Kind(id)}?", new[] { what }, verb);
+            _host.SetEnabled(id, enabled, app);
+            _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied, "", null, id, kind, before);
+            return new AiToolResult($"{(enabled ? "Enabled" : "Disabled")} {what}.");
+        }
+
+        if (!_host.Settings.AiAskBeforeChanging)
+            return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer answer = await _host.Confirm(app, $"{verb} this {kind}?", new[] { Capital(what) }, verb);
             if (answer == AiAnswer.Done && Find(id) != null)
-                _host.SetEnabled(id, enabled);
+                return Apply();
             Log(app, AiActivityKind.Confirmation, label, answer, "");
-            return Answered(answer, $"{(enabled ? "Enabled" : "Disabled")} {what}.");
+            return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
 
@@ -450,7 +478,7 @@ internal sealed class AiTools
             return AiToolResult.Error("Give the values to change in \"settings\", as a JSON object.");
         AiSettingsValues wanted = JsonSerializer.Deserialize<AiSettingsValues>(json.GetRawText(), ReadOptions)
             ?? throw new JsonException("settings must be an object.");
-        if (await Refusal(false).ConfigureAwait(false) is string busy)
+        if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
         (List<AiSettingChange> changes, string? problem) = await _host.Ui(() => Task.FromResult(SettingChanges(wanted))).ConfigureAwait(false);
@@ -459,24 +487,33 @@ internal sealed class AiTools
         if (changes.Count == 0)
             return new AiToolResult("Nothing to change: the settings already have these values.");
 
-        string label = "Change settings: " + string.Join(", ", changes.Select(c => c.Label));
-        return await StartForUser(app, label, AiActivityKind.Confirmation, async () =>
+        string label = "Changed settings: " + string.Join(", ", changes.Select(c => c.Label));
+        AiToolResult Apply()
+        {
+            // Checked again: the user may have changed something meanwhile.
+            (_, string? stillProblem) = SettingChanges(wanted);
+            if (stillProblem != null)
+            {
+                _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Error, stillProblem);
+                return AiToolResult.Error(stillProblem);
+            }
+            string before = JsonSerializer.Serialize(AiSettingsValues.From(_host.Settings), CodeJson.Options);
+            _host.ApplySettings(wanted);
+            _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied,
+                string.Join("; ", changes.Select(c => $"{c.Label}: {c.From} → {c.To}")), null, null, "settings", before);
+            return new AiToolResult("Settings changed: " + string.Join("; ", changes.Select(c => $"{c.Label} {c.To}")) + ".");
+        }
+
+        if (!_host.Settings.AiAskBeforeSettings)
+            return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
+        return await StartForUser(app, async () =>
         {
             AiAnswer answer = await _host.Confirm(app, "Change these settings?",
                 changes.Select(c => $"{c.Label}: {c.From} → {c.To}").ToList(), "Apply");
             if (answer == AiAnswer.Done)
-            {
-                // Checked again: the user may have changed something while the window was open.
-                (_, string? stillProblem) = SettingChanges(wanted);
-                if (stillProblem != null)
-                {
-                    _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Error, stillProblem);
-                    return AiToolResult.Error(stillProblem);
-                }
-                _host.ApplySettings(wanted);
-            }
+                return Apply();
             Log(app, AiActivityKind.Confirmation, label, answer, "");
-            return Answered(answer, "Settings changed: " + string.Join("; ", changes.Select(c => $"{c.Label} {c.To}")) + ".");
+            return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
 
@@ -535,41 +572,64 @@ internal sealed class AiTools
 
     // ================= Interactions =================
 
-    private async Task<AiToolResult> PickPoint(JsonElement args, string app, CancellationToken cancel)
+    /// <param name="count">1 for pick_point; null: the "count" argument (pick_points).</param>
+    private async Task<AiToolResult> PickPoints(JsonElement args, string app, int? count, CancellationToken cancel)
     {
-        string reason = Reason(args);
-        if (await Refusal(false).ConfigureAwait(false) is string busy)
+        var (message, context) = Asking(args);
+        int points = count ?? (args.TryGetProperty("count", out JsonElement c) && c.TryGetInt32(out int n) ? n : 0);
+        if (count == null && (points < 2 || points > MaxPoints))
+            return AiToolResult.Error($"count must be from 2 to {MaxPoints} (for one point, use pick_point).");
+        if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        return await StartForUser(app, "Asked for a point: " + reason, AiActivityKind.Interaction, async () =>
+        string label = (points == 1 ? "Asked for a point: " : $"Asked for {points} points: ") + message;
+        return await StartForUser(app, async () =>
         {
-            var (answer, x, y) = await _host.PickPoint(app, reason);
-            Log(app, AiActivityKind.Interaction, "Asked for a point: " + reason, answer, answer == AiAnswer.Done ? $"{x}, {y}" : "");
-            return Answered(answer, JsonSerializer.Serialize(new { X = x, Y = y }));
+            AiAnswer ready = await _host.Ready(app, message, context);
+            if (ready != AiAnswer.Done)
+            {
+                Log(app, AiActivityKind.Interaction, label, ready, "");
+                return Answered(ready, "");
+            }
+            var (answer, picked) = await _host.PickPoints(app, message, points);
+            string text = points == 1 && picked.Count == 1
+                ? JsonSerializer.Serialize(new { X = picked[0].X, Y = picked[0].Y })
+                : JsonSerializer.Serialize(picked.Select(p => new { X = p.X, Y = p.Y }));
+            Log(app, AiActivityKind.Interaction, label, answer, answer == AiAnswer.Done ? string.Join("; ", picked.Select(p => $"{p.X}, {p.Y}")) : "");
+            return Answered(answer, text);
         }, cancel).ConfigureAwait(false);
     }
 
     private async Task<AiToolResult> PickApp(JsonElement args, string app, CancellationToken cancel)
     {
-        string reason = Reason(args);
-        if (await Refusal(false).ConfigureAwait(false) is string busy)
+        var (message, context) = Asking(args);
+        if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        return await StartForUser(app, "Asked for an app: " + reason, AiActivityKind.Interaction, async () =>
+        string label = "Asked for an app: " + message;
+        return await StartForUser(app, async () =>
         {
-            var (answer, exe) = await _host.PickApp(app, reason);
-            Log(app, AiActivityKind.Interaction, "Asked for an app: " + reason, answer, exe ?? "");
+            AiAnswer ready = await _host.Ready(app, message, context);
+            if (ready != AiAnswer.Done)
+            {
+                Log(app, AiActivityKind.Interaction, label, ready, "");
+                return Answered(ready, "");
+            }
+            var (answer, exe) = await _host.PickApp(app, message);
+            Log(app, AiActivityKind.Interaction, label, answer, exe ?? "");
             return Answered(answer, JsonSerializer.Serialize(new { AppExe = exe }, AnswerOptions));
         }, cancel).ConfigureAwait(false);
     }
 
+    /// <summary>No separate ready step: the key window itself shows the message and context and waits.</summary>
     private async Task<AiToolResult> CaptureKeys(JsonElement args, string app, CancellationToken cancel)
     {
-        string reason = Reason(args);
-        if (await Refusal(false).ConfigureAwait(false) is string busy)
+        var (message, context) = Asking(args);
+        if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        return await StartForUser(app, "Asked for a key: " + reason, AiActivityKind.Interaction, async () =>
+        string label = "Asked for a key: " + message;
+        return await StartForUser(app, async () =>
         {
-            var (answer, keys) = await _host.CaptureKeys(app, reason);
-            Log(app, AiActivityKind.Interaction, "Asked for a key: " + reason, answer, Keys(keys) ?? "");
+            var (answer, keys) = await _host.CaptureKeys(app, message, context);
+            Log(app, AiActivityKind.Interaction, label, answer, Keys(keys) ?? "");
             return Answered(answer, keys == null ? "" :
                 $"{KeyNames.Format(keys)}: {JsonSerializer.Serialize(keys, AnswerOptions)}");
         }, cancel).ConfigureAwait(false);
@@ -588,14 +648,13 @@ internal sealed class AiTools
 
     // ================= Waiting for the user =================
 
-    /// <summary>Why a request that needs the user can't start now, or null.</summary>
-    private async Task<string?> Refusal(bool needsNothingRunning)
+    /// <summary>Why a request can't run now, or null.</summary>
+    private async Task<string?> Refusal()
     {
         if (WaitingId() is string waiting)
             return $"Another request is waiting for the user (request_id \"{waiting}\"). Call wait_for_user with it first.";
-        return await _host.Ui(() => Task.FromResult<string?>(
-                _host.UserIsEditing ? "The user has a PuppyMacro window open (an editor or a dialog). Ask them to close it, then try again."
-                : needsNothingRunning && _host.AnyRunning ? "Loops or macros are running: they can't be changed now. Ask the user to stop them, or call stop_all."
+        return await _host.Ui(() => Task.FromResult<string?>(_host.UserIsEditing
+                ? "The user has a PuppyMacro window open (an editor or a dialog). Ask them to close it, then try again."
                 : null))
             .ConfigureAwait(false);
     }
@@ -607,8 +666,7 @@ internal sealed class AiTools
     }
 
     /// <summary>Opens the user's window (on the UI thread) and waits for the answer, at most <see cref="WaitStep"/>.</summary>
-    private async Task<AiToolResult> StartForUser(string app, string label, AiActivityKind kind, Func<Task<AiToolResult>> ask,
-        CancellationToken cancel)
+    private async Task<AiToolResult> StartForUser(string app, Func<Task<AiToolResult>> ask, CancellationToken cancel)
     {
         Pending pending;
         lock (_sync)
@@ -693,7 +751,7 @@ internal sealed class AiTools
     private static AiToolResult Answered(AiAnswer answer, string done) => answer switch
     {
         AiAnswer.Done => new AiToolResult(done),
-        AiAnswer.TimedOut => new AiToolResult($"Nobody answered in {AnswerTimeout.TotalMinutes:0} minutes: the window closed and nothing changed."),
+        AiAnswer.TimedOut => new AiToolResult($"Nobody used PuppyMacro for {AnswerTimeout.TotalMinutes:0} minutes: the window closed and nothing changed."),
         _ => new AiToolResult("The user cancelled: nothing changed."),
     };
 
@@ -713,21 +771,50 @@ internal sealed class AiTools
         ?? (object?)_host.Macros.Find(id)
         ?? _host.Settings.Remaps.FirstOrDefault(r => r.Id == id);
 
-    private string Kind(Guid id) => Find(id) switch
+    private static string Kind(object item) => item switch
     {
         LoopDefinition => "loop",
         MacroDefinition => "macro",
         _ => "remap",
     };
 
-    /// <summary>"loop \"Spam\"", "remap Ctrl + X → A".</summary>
-    private string Describe(Guid id) => Find(id) switch
+    private static Guid Id(object item) => item switch
     {
-        LoopDefinition loop => $"loop \"{loop.Name}\"",
-        MacroDefinition macro => $"macro \"{macro.Name}\"",
-        RemapDefinition remap => "remap " + Title(remap),
-        _ => id.ToString(),
+        LoopDefinition loop => loop.Id,
+        MacroDefinition macro => macro.Id,
+        RemapDefinition remap => remap.Id,
+        _ => Guid.Empty,
     };
+
+    private static bool IsEnabled(object item) => item switch
+    {
+        LoopDefinition loop => loop.Enabled,
+        MacroDefinition macro => macro.Enabled,
+        RemapDefinition remap => remap.Enabled,
+        _ => false,
+    };
+
+    /// <summary>"loop \"Spam\"", "remap Ctrl + X → A".</summary>
+    private static string Describe(object item) => $"{Kind(item)} {Title(item)}";
+
+    private static string Title(object item) => item switch
+    {
+        LoopDefinition loop => $"\"{loop.Name}\"",
+        MacroDefinition macro => $"\"{macro.Name}\"",
+        RemapDefinition remap => $"{KeyNames.Format(remap.Source)} → {KeyNames.Format(remap.Target)}" +
+            (remap.AppExe == null ? "" : $" in {remap.AppExe}"),
+        _ => "",
+    };
+
+    private static string Serialize(object item) => item switch
+    {
+        LoopDefinition loop => LoopJson.Serialize(loop),
+        MacroDefinition macro => MacroJson.Serialize(macro),
+        RemapDefinition remap => RemapJson.Serialize(remap),
+        _ => JsonSerializer.Serialize(item, CodeJson.Options),
+    };
+
+    private static string Capital(string text) => text.Length == 0 ? text : char.ToUpperInvariant(text[0]) + text[1..];
 
     private static string? Str(JsonElement args, string name) =>
         args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement value) && value.ValueKind == JsonValueKind.String
@@ -742,11 +829,17 @@ internal sealed class AiTools
             ? JsonSerializer.Deserialize<T>(value.GetRawText(), ReadOptions) ?? throw new JsonException($"\"{name}\" is empty.")
             : throw new JsonException($"\"{name}\" is missing.");
 
-    private static string Reason(JsonElement args)
+    /// <summary>The message (one line, shown big) and the context (a few sentences) the AI writes for the user.</summary>
+    private static (string Message, string Context) Asking(JsonElement args)
     {
-        string reason = (Str(args, "reason") ?? "").Trim();
-        if (reason.Length == 0)
-            throw new FormatException("Give a short \"reason\": it is shown to the user.");
-        return reason.Length > 120 ? reason[..120] + "…" : reason;
+        string message = (Str(args, "message") ?? "").Trim();
+        string context = (Str(args, "context") ?? "").Trim();
+        if (message.Length == 0)
+            throw new FormatException("Give a short \"message\": what the user should do. It is shown to them.");
+        if (context.Length == 0)
+            throw new FormatException("Give a \"context\": 1 to 3 sentences on what you are making and why. It is shown to them.");
+        return (Cut(message, 140), Cut(context, 600));
     }
+
+    private static string Cut(string text, int max) => text.Length > max ? text[..max] + "…" : text;
 }

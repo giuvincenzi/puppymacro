@@ -108,14 +108,7 @@ internal sealed class AiServer : IDisposable
     private async Task Serve(NamedPipeServerStream pipe)
     {
         int session = Interlocked.Increment(ref _nextSession);
-        var options = new McpServerOptions
-        {
-            ServerInfo = new Implementation { Name = "PuppyMacro", Version = Version() },
-            ServerInstructions = AiTools.Instructions,
-            ToolCollection = new McpServerPrimitiveCollection<McpServerTool>(),
-        };
-        foreach (AiTool tool in _tools.All)
-            options.ToolCollection.Add(new McpTool(tool, _tools));
+        McpServerOptions options = Options(_tools.All, AiTools.Instructions, (tool, args, app, cancel) => _tools.Call(tool.Name, args, app, cancel));
 
         try
         {
@@ -187,6 +180,21 @@ internal sealed class AiServer : IDisposable
         return name.Length == 0 ? "Unknown app" : name;
     }
 
+    /// <summary>The MCP server's options: PuppyMacro, its instructions and the tools, each answered by <paramref name="run"/>.</summary>
+    internal static McpServerOptions Options(IEnumerable<AiTool> tools, string instructions,
+        Func<AiTool, JsonElement, string, CancellationToken, Task<AiToolResult>> run)
+    {
+        var options = new McpServerOptions
+        {
+            ServerInfo = new Implementation { Name = "PuppyMacro", Version = Version() },
+            ServerInstructions = instructions,
+            ToolCollection = new McpServerPrimitiveCollection<McpServerTool>(),
+        };
+        foreach (AiTool tool in tools)
+            options.ToolCollection.Add(new McpTool(tool, run));
+        return options;
+    }
+
     private static string Version()
     {
         Version? version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -203,12 +211,12 @@ internal sealed class AiServer : IDisposable
     private sealed class McpTool : McpServerTool
     {
         private readonly AiTool _tool;
-        private readonly AiTools _tools;
+        private readonly Func<AiTool, JsonElement, string, CancellationToken, Task<AiToolResult>> _run;
 
-        public McpTool(AiTool tool, AiTools tools)
+        public McpTool(AiTool tool, Func<AiTool, JsonElement, string, CancellationToken, Task<AiToolResult>> run)
         {
             _tool = tool;
-            _tools = tools;
+            _run = run;
             using JsonDocument schema = JsonDocument.Parse(tool.InputSchema);
             ProtocolTool = new Tool
             {
@@ -234,7 +242,7 @@ internal sealed class AiServer : IDisposable
             JsonElement args = JsonSerializer.SerializeToElement(
                 request.Params?.Arguments ?? new Dictionary<string, JsonElement>());
             string app = FriendlyName(request.Server.ClientInfo);
-            AiToolResult result = await _tools.Call(_tool.Name, args, app, cancellationToken).ConfigureAwait(false);
+            AiToolResult result = await _run(_tool, args, app, cancellationToken).ConfigureAwait(false);
             return new CallToolResult
             {
                 Content = new List<ContentBlock> { new TextContentBlock { Text = result.Text } },

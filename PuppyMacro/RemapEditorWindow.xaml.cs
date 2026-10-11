@@ -22,8 +22,7 @@ public partial class RemapEditorWindow
     private HotkeyBinding? _target;
     private bool _ready;
 
-    internal RemapEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, RemapDefinition? existing,
-        RemapDefinition? proposal = null)
+    internal RemapEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, RemapDefinition? existing)
     {
         InitializeComponent();
         WindowFit.Apply(this);
@@ -31,10 +30,9 @@ public partial class RemapEditorWindow
         _settings = settings;
         _macros = macros;
 
-        // An AI app's proposal fills the fields: a new remap, or a change of existing.
-        var source = (proposal ?? existing)?.Clone() ?? new RemapDefinition();
+        var source = existing?.Clone() ?? new RemapDefinition();
         _editingId = existing?.Id ?? Guid.Empty;
-        _itemId = existing?.Id ?? proposal?.Id ?? Guid.NewGuid(); // a new remap keeps the Id its proposal was checked with
+        _itemId = existing?.Id ?? Guid.NewGuid();
         source.Id = _itemId;
 
         // "Edit remap - Caps Lock to Esc": its note, or its keys when it has none.
@@ -61,8 +59,21 @@ public partial class RemapEditorWindow
 
     public RemapDefinition? Result { get; private set; }
 
-    /// <summary>Opened with an AI app's proposal: says so at the top.</summary>
-    public void ShowProposal(string app) => AiProposal.ShowBar(ProposalBar, app);
+    /// <summary>Offers the History view of a remap saved before.</summary>
+    internal void EnableHistory(ItemHistory history)
+    {
+        if (_editingId == Guid.Empty)
+            return;
+        _code.EnableHistory(HistoryPanel, () => HistoryPanel.Load(history.Versions(_itemId)));
+        HistoryPanel.RestoreRequested += version =>
+        {
+            if (HistoryRestore.Read<RemapDefinition>(version, _itemId) is not { } remap)
+                return;
+            LoadRemap(remap);
+            _code.ShowFormView();
+            HistoryRestore.Notice(NoticeBar, version);
+        };
+    }
 
     /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
     private void LoadRemap(RemapDefinition source)

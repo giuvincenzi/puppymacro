@@ -56,7 +56,12 @@ paths:
   loop is enabled). Keep
   the samples working when models change.
 - AI apps: `AppSettings.AllowAiAccess` is off by default and in older files (a new field with the old behavior, no
-  migration). `ai-activity.json` in the data folder holds the AI requests of the last 30 days (`AiActivityLog`, at most
-  5000), not user data: a missing or unreadable file is an empty history; Export / Import leave it out.
+  migration); so are its permissions' defaults in older files: `AiAskBeforeDeleting` on, `AiAskBeforeChanging` off,
+  `AiAskBeforeSettings` on, `AiStartWhenNeeded` on (the bridge reads them from `settings.json` without writing it).
+  `ai-activity.json` in the data folder holds the AI requests of the last 30 days (`AiActivityLog`, at most 5000), with
+  the JSON before a change or deletion for Restore; not user data: a missing or unreadable file is an empty history.
+- History: `history\{id}.json` in the data folder, one per loop, macro or remap, the last 50 versions (`ItemHistory`): time,
+  who, summary, changes, the item's JSON, `Deleted`. Not user data: a missing or unreadable file is an empty history.
+  Export / Import leave `ai-activity.json` and `history` out.
   PuppyMacro's entry in the AI apps' own settings is named `puppymacro` (`puppymacro-dev` for the development build, so
   it never replaces the installed one's) and starts `AppPaths.ExecutablePath` (Velopack's `current` folder) with `--mcp`.

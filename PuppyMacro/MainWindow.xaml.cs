@@ -140,6 +140,7 @@ public partial class MainWindow
         UpdateHotkeyLabels();
         UpdateLoopState();
         RestorePlacement();
+        InitializeHistory();
         InitializeAi();
 
         Loaded += OnLoaded;
@@ -489,6 +490,8 @@ public partial class MainWindow
             return;
 
         var editor = new LoopEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
+        if (_itemHistory != null)
+            editor.EnableHistory(_itemHistory);
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
         ApplyLoopEdit(item, editor.Result);
@@ -693,6 +696,8 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return;
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor) { Owner = this };
+        if (_itemHistory != null)
+            editor.EnableHistory(_itemHistory);
         if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
         ApplyMacroEdit(item, editor.Result);
@@ -772,6 +777,7 @@ public partial class MainWindow
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_macros.TrySave(macro, out string? error))
             ShowSettingsError($"Could not save the macro \"{macro.Name}\": {error}");
+        _itemHistory?.Record(macro.Id, MacroJson.Serialize(macro), _savedBy);
     }
 
     private void SaveMacroOrder()
@@ -1410,6 +1416,60 @@ public partial class MainWindow
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_store.TrySave(_settings, out string? error))
             ShowSettingsError($"Could not save your settings: {error}");
+        RecordHistory();
+    }
+
+    // ================= History =================
+
+    /// <summary>The History of every item (the editors' History view), recorded on every save.</summary>
+    private ItemHistory? _itemHistory;
+
+    /// <summary>Who the saves are by: "You", or the AI app while it changes something (<see cref="SavingAs"/>).</summary>
+    private string _savedBy = ItemHistory.You;
+
+    private void InitializeHistory()
+    {
+        _itemHistory = new ItemHistory(AppPaths.HistoryFolder);
+        foreach (LoopDefinition loop in _settings.Loops)
+            _itemHistory.Seed(loop.Id, LoopJson.Serialize(loop));
+        foreach (MacroDefinition macro in _macros.Macros)
+            _itemHistory.Seed(macro.Id, MacroJson.Serialize(macro));
+        foreach (RemapDefinition remap in _settings.Remaps)
+            _itemHistory.Seed(remap.Id, RemapJson.Serialize(remap));
+    }
+
+    /// <summary>
+    /// Every save goes through here (the editors, a card's switch, the overlay's right click, an AI app): the loops and
+    /// remaps that changed get a new version, and the items gone are recorded as deleted. Macros are recorded by
+    /// <see cref="SaveMacro"/>, one file each.
+    /// </summary>
+    private void RecordHistory()
+    {
+        if (_itemHistory == null)
+            return;
+        foreach (LoopDefinition loop in _settings.Loops)
+            _itemHistory.Record(loop.Id, LoopJson.Serialize(loop), _savedBy);
+        foreach (RemapDefinition remap in _settings.Remaps)
+            _itemHistory.Record(remap.Id, RemapJson.Serialize(remap), _savedBy);
+        var existing = _settings.Loops.Select(l => l.Id).Concat(_settings.Remaps.Select(r => r.Id))
+            .Concat(_macros.Macros.Select(m => m.Id)).ToHashSet();
+        foreach (Guid gone in _itemHistory.Known.Where(id => !existing.Contains(id)).ToList())
+            _itemHistory.RecordDeleted(gone, _savedBy);
+    }
+
+    /// <summary>Runs <paramref name="change"/> with its saves recorded as <paramref name="by"/> (an AI app) in the History.</summary>
+    private T SavingAs<T>(string by, Func<T> change)
+    {
+        string previous = _savedBy;
+        _savedBy = by;
+        try
+        {
+            return change();
+        }
+        finally
+        {
+            _savedBy = previous;
+        }
     }
 
     // ================= Remap =================
@@ -1527,6 +1587,8 @@ public partial class MainWindow
     private void EditRemap(RemapItemViewModel item)
     {
         var editor = new RemapEditorWindow(_engine, _settings, _macros, item.Definition) { Owner = this };
+        if (_itemHistory != null)
+            editor.EnableHistory(_itemHistory);
         if (ShowDialogWithoutHotkeys(editor) != true || editor.Result == null)
             return;
         ApplyRemapEdit(item, editor.Result);

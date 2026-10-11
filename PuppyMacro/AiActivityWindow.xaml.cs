@@ -19,13 +19,16 @@ public partial class AiActivityWindow
     private const string AllResults = "All results";
 
     private readonly AiActivityLog _log;
+    private readonly Func<AiActivity, string?> _restore;
     private bool _ready;
 
-    internal AiActivityWindow(AiActivityLog log)
+    /// <param name="restore">Puts back what an AI app's change replaced (MainWindow): null when done, otherwise why not.</param>
+    internal AiActivityWindow(AiActivityLog log, Func<AiActivity, string?> restore)
     {
         InitializeComponent();
         WindowFit.Apply(this);
         _log = log;
+        _restore = restore;
 
         PeriodBox.SelectedIndex = 1; // Last 7 days
         KindBox.ItemsSource = new[] { AllTypes }.Concat(Enum.GetValues<AiActivityKind>().Select(AiActivityRow.KindName)).ToList();
@@ -99,9 +102,19 @@ public partial class AiActivityWindow
 
     private void ShowDetail()
     {
-        string detail = (ActivityList.SelectedItem as AiActivityRow)?.DetailText ?? "";
+        var row = ActivityList.SelectedItem as AiActivityRow;
+        string detail = row?.DetailText ?? "";
         DetailText.Text = detail;
-        DetailCard.Visibility = detail.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+        RestoreButton.Visibility = row?.CanRestore == true ? Visibility.Visible : Visibility.Collapsed;
+        DetailCard.Visibility = detail.Length > 0 || row?.CanRestore == true ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void OnRestoreClick(object sender, RoutedEventArgs e)
+    {
+        if (ActivityList.SelectedItem is not AiActivityRow { CanRestore: true } row)
+            return;
+        if (_restore(row.Entry) is string error)
+            System.Windows.MessageBox.Show(this, error, "AI activity", MessageBoxButton.OK, MessageBoxImage.Warning);
     }
 
     private async void OnClearClick(object sender, RoutedEventArgs e)
