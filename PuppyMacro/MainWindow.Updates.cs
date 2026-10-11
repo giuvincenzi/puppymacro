@@ -109,6 +109,7 @@ public partial class MainWindow
         if (!_updates.IsInstalled)
         {
             UpdateBar.IsOpen = false;
+            UpdateBar.Visibility = Visibility.Collapsed;
             ShowSettingsBadge(false);
             UpdateStatusText.Text = "Install PuppyMacro with Setup to get updates";
             UpdateWhatsNew.Visibility = Visibility.Collapsed;
@@ -122,6 +123,7 @@ public partial class MainWindow
 
         ShowSettingsBadge(version != null);
         UpdateBar.IsOpen = version != null && (downloading || version != _dismissedUpdateVersion);
+        UpdateBar.Visibility = UpdateBar.IsOpen ? Visibility.Visible : Visibility.Collapsed;
         UpdateStatusText.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty,
             _updateError != null && !downloading ? "SystemFillColorCriticalBrush" : "TextFillColorSecondaryBrush");
 

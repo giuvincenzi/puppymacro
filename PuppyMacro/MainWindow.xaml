@@ -17,9 +17,16 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:TitleBar.Height="48"
+    ui:TitleBar.ButtonStyle="{DynamicResource WindowButtonStyle}"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed">
 
     <Window.Resources>
+        <!-- Minimize and close keep the standard 32 px height at the top of the 48 px title bar, as in Microsoft Store
+             (the library stretches them to the whole bar) -->
+        <Style x:Key="WindowButtonStyle" TargetType="ui:TitleBarButton" BasedOn="{StaticResource {x:Type ui:TitleBarButton}}">
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
         <!-- Cards of a list: 4 apart, as in Windows Settings -->
         <ItemsPanelTemplate x:Key="CardListPanel">
             <ikw:SimpleStackPanel Spacing="4" />
@@ -92,7 +99,8 @@
             </Border>
 
             <!-- ================= Update available ================= -->
-            <ui:InfoBar x:Name="UpdateBar" Margin="16,8,16,0" Severity="Informational" IsOpen="False"
+            <!-- Collapsed while closed: a closed InfoBar hides only its content and would keep its margin -->
+            <ui:InfoBar x:Name="UpdateBar" Margin="16,8,16,0" Severity="Informational" IsOpen="False" Visibility="Collapsed"
                         CloseButtonClick="OnUpdateLaterClick">
                 <ui:InfoBar.ActionButton>
                     <Button x:Name="UpdateBarButton" Click="OnUpdateActionClick" />
