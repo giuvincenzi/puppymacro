@@ -111,7 +111,6 @@ public partial class MainWindow
         _saveVolumeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
         _saveVolumeTimer.Tick += (_, _) => { _saveVolumeTimer.Stop(); Save(); };
         VolumeSlider.Value = settings.SoundVolume;
-        VolumeValueText.Text = $"{settings.SoundVolume}%";
 
         HotkeysGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Hotkeys");
         OverlayGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Overlay");
@@ -1019,7 +1018,7 @@ public partial class MainWindow
 
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (OpacityValueText == null || _overlayPanelWindow == null)
+        if (_overlayPanelWindow == null)
             return; // still loading
 
         int percent = (int)Math.Round(e.NewValue);
@@ -1034,7 +1033,6 @@ public partial class MainWindow
 
     private void ApplyOpacity(int percent)
     {
-        OpacityValueText.Text = $"{percent}%";
         byte alpha = (byte)Math.Round(percent * 255 / 100.0);
         OpacityPreviewPanel.Background = new SolidColorBrush(Color.FromArgb(alpha, 0x20, 0x20, 0x20));
         _overlayPanelWindow.SetBackgroundOpacity(percent);
@@ -1053,11 +1051,10 @@ public partial class MainWindow
 
     private void OnVolumeChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (VolumeValueText == null || _sounds == null)
+        if (_sounds == null)
             return; // still loading
 
         int percent = (int)Math.Round(e.NewValue);
-        VolumeValueText.Text = $"{percent}%";
         _sounds.Volume = percent;
         if (_initializing || percent == _settings.SoundVolume)
             return;

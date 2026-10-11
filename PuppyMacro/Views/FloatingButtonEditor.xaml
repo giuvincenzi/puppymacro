@@ -35,13 +35,9 @@
                 <views:PlaceButton MovesOverlay="True" Text="Position" Click="OnPositionClick" />
             </ui:SettingsCard>
 
-            <ui:SettingsCard Header="Opacity" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                <ui:SettingsCard.Description>
-                    <TextBlock x:Name="OpacityValueText" />
-                </ui:SettingsCard.Description>
-                <Slider x:Name="OpacitySlider"
-                        Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
-                        AutomationProperties.Name="Floating button opacity" ValueChanged="OnOpacityChanged" />
+            <ui:SettingsCard Header="Opacity">
+                <views:ValueSlider x:Name="OpacitySlider" Minimum="20" Maximum="100" Label="Floating button opacity"
+                                   ValueChanged="OnOpacityChanged" />
             </ui:SettingsCard>
 
         </ui:SettingsExpander.Items>

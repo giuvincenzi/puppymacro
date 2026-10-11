@@ -466,11 +466,8 @@
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard x:Name="OpacityCard" Header="Opacity">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Name="OpacityValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                        <Slider x:Name="OpacitySlider" Width="200" VerticalAlignment="Center"
-                                                Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
-                                                SmallChange="5" LargeChange="10" AutomationProperties.Name="Overlay panel opacity"
-                                                ValueChanged="OnOpacityChanged" />
+                                        <views:ValueSlider x:Name="OpacitySlider" Minimum="20" Maximum="100" Label="Overlay panel opacity"
+                                                           ValueChanged="OnOpacityChanged" />
                                         <Border Width="132" Height="36" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C" ClipToBounds="True">
                                             <Border x:Name="OpacityPreviewPanel" Margin="10,6,10,0" Padding="8,5" VerticalAlignment="Top"
                                                     CornerRadius="5" BorderThickness="1" BorderBrush="#1AFFFFFF" Background="#D9202020">
@@ -498,13 +495,8 @@
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Volume}" />
                             </ui:SettingsCard.HeaderIcon>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="VolumeValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                <Slider x:Name="VolumeSlider" Width="200" VerticalAlignment="Center" Minimum="0" Maximum="100"
-                                        TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
-                                        AutomationProperties.Name="Sound volume"
-                                        ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
-                            </StackPanel>
+                            <views:ValueSlider x:Name="VolumeSlider" Label="Sound volume"
+                                               ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
                         </ui:SettingsCard>
 
                         <!-- Data and updates -->

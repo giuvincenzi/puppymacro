@@ -123,8 +123,8 @@ public partial class MacroEditorWindow
         TimesBox.Value = source.RepeatCount;
         TimesBox.IsEnabled = source.Repeat == RepeatMode.Times;
         int speedIndex = Array.IndexOf(MacroDefinition.SpeedSteps, source.Speed);
+        SpeedSlider.Format = v => $"×{SpeedAt(v)}";
         SpeedSlider.Value = speedIndex >= 0 ? speedIndex : 2;
-        UpdateSpeedLabel();
 
         ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
         HoldRadio.IsChecked = source.Mode == ActivationMode.Hold;
@@ -968,15 +968,10 @@ public partial class MacroEditorWindow
             TimesBox.IsEnabled = TimesRadio.IsChecked == true;
     }
 
-    private void OnSpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => UpdateSpeedLabel();
+    private static double SpeedAt(double index) =>
+        MacroDefinition.SpeedSteps[Math.Clamp((int)Math.Round(index), 0, MacroDefinition.SpeedSteps.Length - 1)];
 
-    private double SelectedSpeed => MacroDefinition.SpeedSteps[Math.Clamp((int)Math.Round(SpeedSlider.Value), 0, 4)];
-
-    private void UpdateSpeedLabel()
-    {
-        if (SpeedCard != null)
-            SpeedCard.Header = $"Speed ×{SelectedSpeed}";
-    }
+    private double SelectedSpeed => SpeedAt(SpeedSlider.Value);
 
     private bool IsHold => HoldRadio.IsChecked == true;
 

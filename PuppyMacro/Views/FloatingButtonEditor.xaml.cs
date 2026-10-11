@@ -120,7 +120,7 @@ public partial class FloatingButtonEditor
 
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (_loading || OpacityValueText == null)
+        if (_loading)
             return;
         _button.Opacity = (int)Math.Round(e.NewValue);
         Update();
@@ -145,6 +145,5 @@ public partial class FloatingButtonEditor
         string label = string.IsNullOrEmpty(_button.Label) ? FloatingButton.DefaultLabel(_name) : _button.Label;
         Preview.Show(label, _hotkeyText, _button.Size);
         Preview.SetBackgroundOpacity(_button.EffectiveOpacity);
-        OpacityValueText.Text = $"{_button.EffectiveOpacity}%";
     }
 }

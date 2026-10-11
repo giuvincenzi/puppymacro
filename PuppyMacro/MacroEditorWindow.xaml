@@ -351,9 +351,9 @@
                         </WrapPanel>
                     </ui:SettingsCard>
 
-                    <ui:SettingsCard x:Name="SpeedCard" Header="Speed" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                        <Slider x:Name="SpeedSlider" Minimum="0" Maximum="4" TickFrequency="1" IsSnapToTickEnabled="True"
-                                AutomationProperties.Name="Speed" ValueChanged="OnSpeedChanged" />
+                    <ui:SettingsCard Header="Speed">
+                        <!-- The index of MacroDefinition.SpeedSteps; its text is the speed (×0.25 to ×4) -->
+                        <views:ValueSlider x:Name="SpeedSlider" Minimum="0" Maximum="4" Step="1" Label="Speed" />
                     </ui:SettingsCard>
 
                     <ui:SettingsCard Header="Activation" ContentAlignment="Vertical" HorizontalContentAlignment="Left">

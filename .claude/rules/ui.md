@@ -164,6 +164,10 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   `KeyCaptureField`; `PlaceButton`: Pick on screen; Specific app's Pick; Detect in `MouseButtonBox`), as the user
   chose; one that moves the overlay has `Move` (`PlaceButton` with `MovesOverlay`: a floating button's Position,
   Settings' Position on screen). `Views/PlaceButton` is the one button for picking and moving (icon, then its text).
+- **Every slider is `Views/ValueSlider`**: its value as text, then a 200 px standard `Slider`, on one line on the right of
+  its card, as in Windows Settings (Settings › Overlay panel › Opacity, Settings › Sound, a floating button's Opacity, a
+  macro's Speed). A percentage in steps of 5 by default; `Step` and `Format` change it (Speed: ×0.25 to ×4). Never a card
+  with `ContentAlignment="Vertical"` for a slider.
 - The loop editor's bar (approved): a `CommandBar` above the actions with one `AppBarButton` per action
   (Press key, Click, Paste text), label under the icon as the macro editor's bar, no overflow button.
 - The editors (loop, macro, remap) have an **Enabled** card with a `ToggleSwitch`, first on the right; the
