@@ -71,7 +71,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   - `Views/SwitchSettingsExpander`: a `SettingsExpander` with a switch in its header whose options
     open only while the switch is on (`CanExpand`): otherwise no arrow and the header does not open
     it. Use it for every group whose switch unlocks its options (today: Show in overlay, floating button, Sound
-    and Specific app in the loop and macro editors). It still lights up on mouse over when it cannot open (that is in
+    and Specific app in the loop and macro editors; Settings › Overlay panel, whose switch is Show the overlay panel and
+    which opens also while off, `CanExpand` always true, as its Position on screen places the floating buttons too). It still lights up on mouse over when it cannot open (that is in
     the library's template).
   - The main window's side rail, `Views/SideRail`, as in Microsoft Store (iNKORE and WinUI have no
     such control; the Store templates its NavigationView): always closed, 72 px wide, two standard

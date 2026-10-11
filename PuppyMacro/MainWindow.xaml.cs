@@ -1279,9 +1279,8 @@ public partial class MainWindow
 
     private void UpdateSettingsSummaries()
     {
-        if (OverlaySummary == null)
+        if (SoundSummary == null)
             return;
-        OverlaySummary.Text = $"Opacity {_settings.OverlayPanelOpacity}%";
         SoundSummary.Text = $"Volume {_settings.SoundVolume}%";
     }
 

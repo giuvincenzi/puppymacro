@@ -457,18 +457,16 @@
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
 
-                        <ui:SettingsExpander x:Name="OverlayGroup" Tag="Overlay" Header="Overlay"
-                                             Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                        <!-- The panel's switch is the group's own; it opens also while off: Position on screen places the
+                             floating buttons too -->
+                        <views:SwitchSettingsExpander x:Name="OverlayGroup" Tag="Overlay" Header="Overlay panel"
+                                                      Description="The list of your loops and macros" CanExpand="True"
+                                                      Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                            <ui:ToggleSwitch x:Name="ShowPanelSwitch" AutomationProperties.Name="Show the overlay panel" Toggled="OnShowPanelChanged" />
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
                             </ui:SettingsExpander.HeaderIcon>
-                            <ui:SettingsExpander.Description>
-                                <TextBlock x:Name="OverlaySummary" TextWrapping="Wrap" />
-                            </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Show the overlay panel" Description="The list of your loops and macros">
-                                    <ui:ToggleSwitch x:Name="ShowPanelSwitch" AutomationProperties.Name="Show the overlay panel" Toggled="OnShowPanelChanged" />
-                                </ui:SettingsCard>
                                 <ui:SettingsCard x:Name="OpacityCard" Header="Opacity">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock x:Name="OpacityValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
@@ -494,19 +492,12 @@
                                 <ui:SettingsCard Header="Position on screen" Description="Drag the panel and the floating buttons">
                                     <views:PlaceButton IsAccent="True" MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
                                 </ui:SettingsCard>
-                                <!-- Its warning is part of it, under its description -->
-                                <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them">
-                                    <ui:SettingsCard.Description>
-                                        <StackPanel>
-                                            <TextBlock TextWrapping="Wrap" Text="Hold items still need their hotkey" />
-                                            <ui:InfoBar Margin="0,8,0,0" IsOpen="True" IsClosable="False" Severity="Warning"
-                                                        Message="Some fullscreen apps may react to the click. If so, turn this off." />
-                                        </StackPanel>
-                                    </ui:SettingsCard.Description>
+                                <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them"
+                                                 Description="Some fullscreen apps may react to the click. If so, turn this off.">
                                     <ui:ToggleSwitch x:Name="ClickInPanelSwitch" Toggled="OnClickInPanelChanged" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
+                        </views:SwitchSettingsExpander>
 
                         <ui:SettingsExpander x:Name="SoundGroup" Tag="Sound" Header="Sound"
                                              Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
