@@ -15,6 +15,7 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
+    ui:TitleBar.Height="48"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed">
 
     <Window.Resources>
@@ -31,13 +32,51 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ================= Title bar: icon and title, the window buttons are drawn by the library ================= -->
-        <StackPanel Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}"
-                    Margin="16,0,0,0" Orientation="Horizontal">
-            <Image Width="16" Height="16" VerticalAlignment="Center" Source="pack://application:,,,/Assets/PuppyMacro-256.png" />
-            <TextBlock x:Name="AppTitleText" Margin="12,0,0,0" VerticalAlignment="Center"
-                       Style="{StaticResource CaptionTextBlockStyle}" Text="PuppyMacro" />
-        </StackPanel>
+        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and title, then Enter overlay
+             mode and Stop all, then the window buttons drawn by the library (as its ButtonsOnTitlebar sample) ================= -->
+        <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="12,0,0,0" Orientation="Horizontal">
+                <!-- 24 px: 12 px above and below it in the 48 px bar -->
+                <Image Width="24" Height="24" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"
+                       Source="pack://application:,,,/Assets/PuppyMacro-256.png" />
+                <TextBlock x:Name="AppTitleText" Margin="12,0,0,0" VerticalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}" Text="PuppyMacro" />
+            </StackPanel>
+
+            <ikw:SimpleStackPanel Grid.Column="1" Margin="0,0,8,0" VerticalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                <Button x:Name="OverlayModeButton" WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="Enter overlay mode" Click="OnOverlayModeClick">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
+                        <TextBlock VerticalAlignment="Center" Text="Enter overlay mode" />
+                    </StackPanel>
+                </Button>
+                <!-- Shown only while something runs. Approved (ui.md): the accent button with its accent colors replaced by
+                     the theme's critical one (WinUI lightweight styling), at 90% and 80% on mouse over and press as the
+                     accent ones are. -->
+                <Button x:Name="StopAllButton" Visibility="Collapsed" WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Stop all" Click="OnStopAllClick">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="AccentButtonBackground" Color="{DynamicResource SystemFillColorCritical}" />
+                        <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.9" />
+                        <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.8" />
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Stop}" />
+                        <TextBlock VerticalAlignment="Center" Text="Stop all" />
+                    </StackPanel>
+                </Button>
+            </ikw:SimpleStackPanel>
+
+            <!-- The window buttons' place -->
+            <Rectangle Grid.Column="2"
+                       Width="{Binding (ui:TitleBar.SystemOverlayRightInset), RelativeSource={RelativeSource AncestorType=Window}}" />
+        </Grid>
 
         <StackPanel Grid.Row="1">
             <!-- ================= Development build (make dev) ================= -->
@@ -71,10 +110,6 @@
             <Border Grid.Column="1" Background="{DynamicResource LayerFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1,1,0,0" CornerRadius="8,0,0,0">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
 
                 <!-- ================= Loops page ================= -->
                 <Grid x:Name="LoopsPage" Margin="40,12,40,0">
@@ -575,37 +610,6 @@
                     </ikw:SimpleStackPanel>
                 </ui:ScrollViewerEx>
 
-                <!-- ================= Always visible: overlay mode and stop all ================= -->
-                <Grid x:Name="ActionBar" Grid.Row="1" Margin="40,12,40,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="8" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="OverlayModeButton" Grid.Column="0" HorizontalAlignment="Stretch"
-                            Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Enter overlay mode"
-                            Click="OnOverlayModeClick">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Enter overlay mode" />
-                            <TextBlock x:Name="OverlayModeButtonHotkeyText" Margin="10,0,0,0" Opacity="0.85" />
-                        </StackPanel>
-                    </Button>
-                    <!-- Red while something runs, grey (disabled) otherwise, as in the overlay panel. Approved (ui.md):
-                         the accent button with its accent colors replaced by the theme's critical one (WinUI
-                         lightweight styling), at 90% and 80% on mouse over and press as the accent ones are. -->
-                    <Button x:Name="StopAllButton" Grid.Column="2" HorizontalAlignment="Stretch" IsEnabled="False"
-                            Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Stop all" Click="OnStopAllClick">
-                        <Button.Resources>
-                            <SolidColorBrush x:Key="AccentButtonBackground" Color="{DynamicResource SystemFillColorCritical}" />
-                            <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.9" />
-                            <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.8" />
-                        </Button.Resources>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Stop all" />
-                            <TextBlock x:Name="StopAllButtonHotkeyText" Margin="10,0,0,0" Opacity="0.85" />
-                        </StackPanel>
-                    </Button>
-                </Grid>
             </Grid>
             </Border>
         </Grid>

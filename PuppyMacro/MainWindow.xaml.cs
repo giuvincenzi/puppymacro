@@ -287,8 +287,6 @@ public partial class MainWindow
         MacrosPage.Visibility = page == "Macros" ? Visibility.Visible : Visibility.Collapsed;
         RemapsPage.Visibility = page == "Remap" ? Visibility.Visible : Visibility.Collapsed;
         SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
-        // Enter overlay mode and Stop all belong to the lists, not to Settings.
-        ActionBar.Visibility = page == "Settings" ? Visibility.Collapsed : Visibility.Visible;
         if (page != "Settings")
             _engine.CancelCapture(); // a Settings hotkey field that waits stops
     }
@@ -409,7 +407,7 @@ public partial class MainWindow
         NewMacroButton.IsEnabled = !anyRunning;
         RecordMacroButton.IsEnabled = !anyRunning;
         NewMacroButton.ToolTip = RecordMacroButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
-        StopAllButton.IsEnabled = anyRunning;
+        StopAllButton.Visibility = anyRunning ? Visibility.Visible : Visibility.Collapsed;
         foreach (var loop in _items)
             loop.CanEdit = !anyRunning;
         foreach (var macro in _macroItems)
@@ -1297,8 +1295,9 @@ public partial class MainWindow
         StopAllHotkeyField.Value = _settings.StopAllHotkey?.Clone();
         OverlayModeHotkeyField.Value = _settings.OverlayModeHotkey?.Clone();
         RecordHotkeyField.Value = _settings.RecordHotkey?.Clone();
-        StopAllButtonHotkeyText.Text = stopAll;
-        OverlayModeButtonHotkeyText.Text = overlayMode;
+        // The hotkey in the tooltip, when there is one
+        StopAllButton.ToolTip = _settings.StopAllHotkey == null ? null : $"Stop all ({stopAll})";
+        OverlayModeButton.ToolTip = _settings.OverlayModeHotkey == null ? null : $"Enter overlay mode ({overlayMode})";
         _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll);
     }
 
