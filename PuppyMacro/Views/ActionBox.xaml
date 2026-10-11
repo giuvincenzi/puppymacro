@@ -141,7 +141,7 @@
                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="16">
                         <views:PositionPicker X="{Binding X}" Y="{Binding Y}"
                                               Visibility="{Binding FixedPoint, Converter={StaticResource BoolToVisibility}}" />
-                        <ui:ToggleSwitch VerticalAlignment="Bottom" IsOn="{Binding FixedPoint, Mode=TwoWay}" AutomationProperties.Name="Fixed point" />
+                        <ui:ToggleSwitch VerticalAlignment="Center" IsOn="{Binding FixedPoint, Mode=TwoWay}" AutomationProperties.Name="Fixed point" />
                     </ikw:SimpleStackPanel>
                 </ui:SettingsCard>
 
@@ -188,8 +188,8 @@
             <ui:SettingsCard.HeaderIcon>
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
             </ui:SettingsCard.HeaderIcon>
-            <views:KeyCaptureField Value="{Binding Key}" KeyOnly="True" AllowModifierAlone="True" CanClear="False"
-                                   ItemName="key" Prompt="{Binding KeyPrompt}" Loaded="OnKeyFieldLoaded" />
+            <views:KeyCaptureField Value="{Binding Key}" StartOnLoad="{Binding CaptureOnLoad}" KeyOnly="True" AllowModifierAlone="True"
+                                   CanClear="False" ItemName="key" Prompt="{Binding KeyPrompt}" Loaded="OnKeyFieldLoaded" />
         </ui:SettingsCard>
     </Grid>
 </UserControl>

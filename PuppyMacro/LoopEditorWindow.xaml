@@ -49,9 +49,6 @@
                              TextChanged="OnNameChanged" />
 
                     <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Actions" />
-                    <TextBlock Margin="0,0,0,4" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               Text="Each one repeats on its own timer; a key or a mouse button can also stay held down while the loop runs. Texts are pasted all at once." />
 
                     <!-- One button per action (approved, ui.md): label under the icon, as the macro editor's bar -->
                     <ui:CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Bottom" VerticalContentAlignment="Center"

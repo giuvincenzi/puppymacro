@@ -241,8 +241,7 @@ public class AppTests
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "menu item \"Press key\" not found").Result!
             .AsMenuItem().Invoke(); // UI Automation: a mouse click can miss the menu while its popup opens
         Window action = ChildDialog(editor, "Add press key");
-        app.Find(action, "Set key").AsButton().Invoke();
-        app.Find(action, "Press the key or combination (Esc cancels)");
+        app.Find(action, "Press the key or combination (Esc cancels)"); // a new Press key waits for its key at once
         Keyboard.Press(VirtualKeyShort.F24);
         Keyboard.Release(VirtualKeyShort.F24);
         app.Find(action, "F24");

@@ -153,7 +153,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   (off with Times 1), Position (a `ToggleSwitch`: off, where the pointer is; on, a point); with Hold down
   only Position stays. Macro: Position, Mode, Hold for, Times, Pause between; Name and Delay are cards
   above the box in the window. Key down and Key up have no options: a plain `SettingsCard` with no arrow.
-  A point is always `Views/PositionPicker` (X and Y `NumberBox`es with their headers, Pick on screen); a
+  A point is always `Views/PositionPicker` (on one line: "X" and "Y" each before its `NumberBox`, as "ms" after a
+  number, so the card keeps its height; Pick on screen); a new macro Press key / Key down / Key up waits for its key at once; a
   mouse button always `Views/MouseButtonBox`.
 - The loop editor's bar (approved): a `CommandBar` above the actions with one `AppBarButton` per action
   (Press key, Click, Paste text), label under the icon as the macro editor's bar, no overflow button.

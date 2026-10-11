@@ -199,7 +199,9 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     /// <summary>Pause between counts only with more than one press.</summary>
     public bool PauseEnabled => Times > 1;
 
-    public string HoldDescription => IsClick ? "How long the button stays pressed each time" : "How long the key stays pressed each time";
+    public string HoldDescription => IsClick
+        ? "How long the button stays pressed before it is released"
+        : "How long the key stays pressed before it is released";
 
     // ---- The key field (Press key: a combination; Key down / up: one key or a modifier alone) ----
 

@@ -33,6 +33,8 @@ public partial class MacroActionWindow
         _isNew = isNew;
         _action = action.Clone();
         LoadAction(_action);
+        // A new Press key, Key down or Key up waits for its key at once, as a loop's new Press key.
+        _box.CaptureOnLoad = isNew && _box.IsKeyKind && _box.Key is not { IsSet: true };
 
         _code = new CodeViewSwitch<MacroAction>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForAction(allowedGroups, groupNames, action.GroupId), FormAction, MacroJson.Serialize,
