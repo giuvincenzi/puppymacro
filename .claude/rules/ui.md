@@ -140,7 +140,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     shown.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set
-  hotkey" / "Set key" button with the `Radar` icon before its text; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
+  hotkey" / "Set key" button with the `Bullseye` icon before its text; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
   other button); set, the keys as `KeyCap`s in `AccentFillColorDefaultBrush` with
   `TextOnAccentFillColorPrimaryBrush` text (approved) inside a `SplitButton`, everywhere (click: change;
   its `MenuFlyout`: Change, Clear only where the key can be removed (`CanClear`), then for each Ctrl, Alt,
@@ -160,9 +160,9 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   button through `LoopEngine.BeginCapture` (only the ring and "Press a mouse button (Esc cancels)" show meanwhile, the list
   hidden too, as the key field) and selects it; a key instead is rejected ("Use Press key for keys.").
 - **Icons of the buttons that wait, pick or move** (approved; every such button has one): a button that waits for
-  a key has `Radar` (Set hotkey / Set key and Change in `KeyCaptureField`); one that picks something on the
-  screen, or waits for a mouse button, has `Bullseye` (`PlaceButton`: Pick on screen; Specific app's Pick; Detect in
-  `MouseButtonBox`, as the user chose); one that moves the overlay has `Move` (`PlaceButton` with `MovesOverlay`: a floating button's Position,
+  a key or a mouse button, or picks something on the screen, has `Bullseye` (Set hotkey / Set key and Change in
+  `KeyCaptureField`; `PlaceButton`: Pick on screen; Specific app's Pick; Detect in `MouseButtonBox`), as the user
+  chose; one that moves the overlay has `Move` (`PlaceButton` with `MovesOverlay`: a floating button's Position,
   Settings' Position on screen). `Views/PlaceButton` is the one button for picking and moving (icon, then its text).
 - The loop editor's bar (approved): a `CommandBar` above the actions with one `AppBarButton` per action
   (Press key, Click, Paste text), label under the icon as the macro editor's bar, no overflow button.
