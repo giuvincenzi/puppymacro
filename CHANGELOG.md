@@ -31,9 +31,17 @@
 - The cards of loops name the click and the combination they send, for example "Left click every 1 s"
   instead of "LButton every 1 s".
 - The **Test** button of a macro action shows a play icon.
-- Settings: shorter texts; the overlay panel moves only with **Position on screen** (the X, Y and Reset
-  fields are gone), the floating buttons card is gone, and Enable overlay mode and Stop all are not shown
-  on the Settings page.
+- **Enter overlay mode** and **Stop all** are in a taller title bar, on every page, instead of the bar at
+  the bottom; Stop all shows only while something runs. The title bar and the overlay panel no longer show
+  the version.
+- Settings: shorter texts; the **Overlay panel** switch is in its group's header; the overlay panel moves
+  only with **Position on screen** (the X, Y and Reset fields are gone) and the floating buttons card is
+  gone; **Sound** is one card with the volume.
+- Every slider (opacity, volume, a macro's speed) is on one line with its value, on the right of its card.
+- Shorter, friendlier texts across the app; **New macro** is now **Add macro**.
+- Buttons that wait for a key or a mouse button, or pick something on the screen, show a target icon;
+  buttons that place the overlay show a move icon.
+- **What's new** sits next to **Update** in Settings.
 - The loop, macro and remap editors open 240 px wider: 120 for their right column, whose lists (apps,
   sounds) have more room, and 120 for the actions; a macro editor width you kept grows as much.
 - A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves
@@ -43,6 +51,7 @@
 - The overlay panel's buttons are in the order move, exit, open.
 
 ### Fixed
+- No more empty strip under the title bar while no update is shown.
 - A macro's Code view no longer accepts a mouse button in a Press key, Key down or Key up, as the
   action's window already did not.
 
