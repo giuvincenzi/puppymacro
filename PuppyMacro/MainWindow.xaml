@@ -474,23 +474,21 @@
                                                 Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
                                                 SmallChange="5" LargeChange="10" AutomationProperties.Name="Overlay panel opacity"
                                                 ValueChanged="OnOpacityChanged" />
-                                        <Border Width="132" Height="52" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C" ClipToBounds="True">
-                                            <Border x:Name="OpacityPreviewPanel" Margin="10,9,10,0" Padding="8,6" VerticalAlignment="Top"
+                                        <Border Width="132" Height="36" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C" ClipToBounds="True">
+                                            <Border x:Name="OpacityPreviewPanel" Margin="10,6,10,0" Padding="8,5" VerticalAlignment="Top"
                                                     CornerRadius="5" BorderThickness="1" BorderBrush="#1AFFFFFF" Background="#D9202020">
                                                 <StackPanel>
                                                     <StackPanel Orientation="Horizontal">
                                                         <Ellipse Width="6" Height="6" Fill="#6CCB5F" VerticalAlignment="Center" />
                                                         <TextBlock Margin="5,0,0,0" FontSize="10" Foreground="White" Text="Left click spam" />
                                                     </StackPanel>
-                                                    <Border Width="60" Height="4" Margin="0,4,0,0" HorizontalAlignment="Left"
-                                                            CornerRadius="2" Background="#40FFFFFF" />
                                                 </StackPanel>
                                             </Border>
                                         </Border>
                                     </StackPanel>
                                 </ui:SettingsCard>
                                 <ui:SettingsCard Header="Position on screen" Description="Drag the panel and the floating buttons">
-                                    <views:PlaceButton IsAccent="True" MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
+                                    <views:PlaceButton MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
                                 </ui:SettingsCard>
                                 <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them"
                                                  Description="Some fullscreen apps may react to the click. If so, turn this off.">
@@ -499,26 +497,18 @@
                             </ui:SettingsExpander.Items>
                         </views:SwitchSettingsExpander>
 
-                        <ui:SettingsExpander x:Name="SoundGroup" Tag="Sound" Header="Sound"
-                                             Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
-                            <ui:SettingsExpander.HeaderIcon>
+                        <ui:SettingsCard Header="Sound" Description="Start and stop sounds of loops and macros">
+                            <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Volume}" />
-                            </ui:SettingsExpander.HeaderIcon>
-                            <ui:SettingsExpander.Description>
-                                <TextBlock x:Name="SoundSummary" />
-                            </ui:SettingsExpander.Description>
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Volume" Description="Start and stop sounds of every loop">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Name="VolumeValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                        <Slider x:Name="VolumeSlider" Width="200" VerticalAlignment="Center" Minimum="0" Maximum="100"
-                                                TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
-                                                AutomationProperties.Name="Sound volume"
-                                                ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
-                                    </StackPanel>
-                                </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
+                            </ui:SettingsCard.HeaderIcon>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="VolumeValueText" Margin="0,0,12,0" VerticalAlignment="Center" />
+                                <Slider x:Name="VolumeSlider" Width="200" VerticalAlignment="Center" Minimum="0" Maximum="100"
+                                        TickFrequency="5" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="10"
+                                        AutomationProperties.Name="Sound volume"
+                                        ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
+                            </StackPanel>
+                        </ui:SettingsCard>
 
                         <!-- Data and updates -->
                         <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Data and updates" />

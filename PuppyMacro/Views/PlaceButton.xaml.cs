@@ -5,16 +5,12 @@ using System.Windows.Controls;
 namespace PuppyMacro.Views;
 
 /// <summary>
-/// The one button that places something on the screen or picks a point: the target icon and <see cref="Text"/>.
-/// <see cref="IsAccent"/> gives it the library's accent style (Settings' Position on screen).
+/// The one button that places something on the screen or picks a point: its icon and <see cref="Text"/>.
 /// </summary>
 public partial class PlaceButton : UserControl
 {
     public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
         nameof(Text), typeof(string), typeof(PlaceButton), new PropertyMetadata("", (d, _) => ((PlaceButton)d).ShowText()));
-
-    public static readonly DependencyProperty IsAccentProperty = DependencyProperty.Register(
-        nameof(IsAccent), typeof(bool), typeof(PlaceButton), new PropertyMetadata(false, (d, _) => ((PlaceButton)d).ShowStyle()));
 
     public static readonly DependencyProperty MovesOverlayProperty = DependencyProperty.Register(
         nameof(MovesOverlay), typeof(bool), typeof(PlaceButton), new PropertyMetadata(false, (d, _) => ((PlaceButton)d).ShowIcon()));
@@ -40,12 +36,6 @@ public partial class PlaceButton : UserControl
         set => SetValue(TextProperty, value);
     }
 
-    public bool IsAccent
-    {
-        get => (bool)GetValue(IsAccentProperty);
-        set => SetValue(IsAccentProperty, value);
-    }
-
     public event RoutedEventHandler? Click;
 
     private void ShowText()
@@ -53,9 +43,6 @@ public partial class PlaceButton : UserControl
         Label.Text = Text;
         AutomationProperties.SetName(TheButton, Text);
     }
-
-    private void ShowStyle() =>
-        TheButton.Style = IsAccent ? (Style)FindResource("AccentButtonStyle") : null;
 
     private void OnClick(object sender, RoutedEventArgs e) => Click?.Invoke(this, e);
 }

@@ -62,7 +62,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     3 px rounded Border above or below a list card (`DropBefore` / `DropAfter`), a 2 px border on a
     macro editor row.
   - Settings > Overlay > Opacity: a small preview of the panel (`OpacityPreviewPanel`) with the
-    overlay panel's fixed dark colors, so the chosen opacity can be seen.
+    overlay panel's fixed dark colors, so the chosen opacity can be seen, 36 px high so the row keeps the library's height like the others in the group.
   - Development builds: the orange "Development build" strip under the title bar (fixed colors,
     `build-and-release.md`).
   - Disabled loops, macros and remaps in the lists: the card's icon, header and description use

@@ -115,8 +115,6 @@ public partial class MainWindow
 
         HotkeysGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Hotkeys");
         OverlayGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Overlay");
-        SoundGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Sound");
-        UpdateSettingsSummaries();
 
         ClickInPanelSwitch.IsOn = settings.ClickItemsInPanel;
         ShowPanelSwitch.IsOn = settings.ShowOverlayPanel;
@@ -740,7 +738,6 @@ public partial class MainWindow
 
     private void SaveMacro(MacroDefinition macro)
     {
-        UpdateSettingsSummaries(); // the floating button count may have changed
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_macros.TrySave(macro, out string? error))
             ShowSettingsError($"Could not save the macro \"{macro.Name}\": {error}");
@@ -760,7 +757,6 @@ public partial class MainWindow
             return;
         _settings.ClickItemsInPanel = ClickInPanelSwitch.IsOn;
         UpdatePanelClicks();
-        UpdateSettingsSummaries();
         Save();
     }
 
@@ -779,7 +775,6 @@ public partial class MainWindow
                 _overlayPanelWindow.Hide();
             UpdatePanelClicks();
         }
-        UpdateSettingsSummaries();
         Save();
     }
 
@@ -1033,7 +1028,6 @@ public partial class MainWindow
             return;
 
         _settings.OverlayPanelOpacity = percent;
-        UpdateSettingsSummaries();
         _saveOpacityTimer.Stop();
         _saveOpacityTimer.Start();
     }
@@ -1065,7 +1059,6 @@ public partial class MainWindow
         int percent = (int)Math.Round(e.NewValue);
         VolumeValueText.Text = $"{percent}%";
         _sounds.Volume = percent;
-        UpdateSettingsSummaries();
         if (_initializing || percent == _settings.SoundVolume)
             return;
 
@@ -1151,7 +1144,6 @@ public partial class MainWindow
         {
             _settings.OverlayPanelX = Math.Round(placement.Result.X);
             _settings.OverlayPanelY = Math.Round(placement.Result.Y);
-            UpdateSettingsSummaries();
         }
 
         foreach (IListItem item in others)
@@ -1277,13 +1269,6 @@ public partial class MainWindow
         _buttonWindows.Clear();
     }
 
-    private void UpdateSettingsSummaries()
-    {
-        if (SoundSummary == null)
-            return;
-        SoundSummary.Text = $"Volume {_settings.SoundVolume}%";
-    }
-
     /// <summary>The three global hotkey fields: each checks a pressed key against the rules and the other hotkeys.</summary>
     private void SetUpGlobalHotkeyFields()
     {
@@ -1318,7 +1303,6 @@ public partial class MainWindow
         StopAllButtonHotkeyText.Text = stopAll;
         OverlayModeButtonHotkeyText.Text = overlayMode;
         _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll);
-        UpdateSettingsSummaries();
     }
 
     private void ShowSettingsError(string message)
@@ -1351,7 +1335,6 @@ public partial class MainWindow
             return;
         _settings.OverlayPanelX = Math.Round(_overlayPanelWindow.Left);
         _settings.OverlayPanelY = Math.Round(_overlayPanelWindow.Top);
-        UpdateSettingsSummaries();
         Save();
         PublishPanelTargets(); // the clickable rectangles moved with the panel
     }
@@ -1394,7 +1377,6 @@ public partial class MainWindow
 
     private void Save()
     {
-        UpdateSettingsSummaries(); // the floating button count may have changed
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_store.TrySave(_settings, out string? error))
             ShowSettingsError($"Could not save settings.json: {error}");
