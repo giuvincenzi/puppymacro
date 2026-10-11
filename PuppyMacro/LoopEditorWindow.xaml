@@ -108,7 +108,7 @@
                             <!-- The help, under all the options -->
                             <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       Text="Optional. Press any key or mouse button, like F2 or A; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too. Without a hotkey, start it with Play or from the overlay panel. Hold needs a hotkey." />
+                                       Text="Optional. Press any key or mouse button, like F2 or A; for a combination, hold Ctrl, Alt, Shift or Win first. With one of them held, left and right click, the scroll wheel and Esc work too. Hold needs a hotkey." />
                         </StackPanel>
                     </ui:SettingsCard>
 

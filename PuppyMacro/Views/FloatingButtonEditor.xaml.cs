@@ -148,6 +148,6 @@ public partial class FloatingButtonEditor
         OpacityValueText.Text = $"{_button.EffectiveOpacity}%";
         PositionText.Text = _button.X is double x && _button.Y is double y
             ? $"X {Math.Round(x)}, Y {Math.Round(y)}"
-            : "Middle of the main screen until you place it";
+            : "Middle of the main screen";
     }
 }
