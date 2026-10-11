@@ -19,7 +19,7 @@
         </ComboBox>
         <Button x:Name="DetectButton" VerticalAlignment="Center" ToolTip="Detect the mouse button: press it"
                 AutomationProperties.Name="Detect the mouse button" Click="OnDetectClick">
-            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Radar}" />
+            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
         </Button>
         <ikw:SimpleStackPanel x:Name="WaitPanel" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Visibility="Collapsed">
             <ui:ProgressRing x:Name="WaitRing" Width="16" Height="16" IsActive="False" />
