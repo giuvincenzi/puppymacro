@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.15.0
+
 ### Added
 - **AI apps** (beta, MCP ready): a new **AI** page connects PuppyMacro to the AI apps on your PC, **Claude Desktop**,
   **Visual Studio Code** (GitHub Copilot) and **Codex** with one click, any other MCP app (Claude Code too) with
