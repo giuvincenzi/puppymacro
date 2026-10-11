@@ -262,6 +262,7 @@ public class AiTests
 
         Task<(string Text, bool IsError)> call = Call(client, "pick_points", new
         {
+            confirmed_steps = new[] { "1. Click the first test point", "2. Click the second test point" },
             count = 2,
             labels = new[] { "The first test point", "The second test point" },
             title = "Pick the 2 test points",

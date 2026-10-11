@@ -199,7 +199,11 @@ Rules:
   and macros only, the button and Show in overlay on, saved with its position through `SaveItem`); `open_item` opens the
   item's editor (`EditLoop` / `EditMacro` / `EditRemap` with `forAi`: centered, in front, the AI's title and description in
   its `NoticeBar`; the user's own changes); every window of an AI request opens centered on the screen (`ShowForAi`);
-  the `Instructions` tell the AI to ask, when creating, only the questions that matter and then offer the missing extras; `stop_all`; `get_help` reads the guide of
+  the `Instructions` tell the AI to ask, when creating, only the questions that matter, to write the exact steps and wait
+  for the user's OK before picks, and then offer the missing extras. **What the model must do goes in the tools'
+  descriptions and schemas too** (`NewItemRule`, `AfterNewItem`, `UserWindow`; `confirmed_steps`, required by
+  `pick_point`/`pick_points`): MCP's server instructions are optional for the client, and Claude Desktop's agent mode did
+  not follow them, while every client gives the model the tools' descriptions. `stop_all`; `get_help` reads the guide of
   this version, embedded from `site/guide` (`AiHelp`). AI apps cut long tool calls (Claude Desktop about 1 to 4 minutes,
   Codex 60 to 300 s): a request that waits for the user answers "waiting" with a request_id (random, tied to the app that
   asked) after `AiTools.WaitStep` (40 s) and the AI calls `wait_for_user`; an answer is given once (`Pending.Given`) and

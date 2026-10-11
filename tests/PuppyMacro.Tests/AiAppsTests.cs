@@ -221,6 +221,7 @@ public class AiAppsTests : IDisposable
 
     [Theory]
     [InlineData("claude-ai", null, "Claude Desktop")]
+    [InlineData("local-agent-mode-puppymacro-dev", null, "Claude Desktop")]
     [InlineData("claude-code", null, "Claude Code")]
     [InlineData("Visual Studio Code", null, "Visual Studio Code")]
     [InlineData("codex-mcp-client", null, "Codex")]

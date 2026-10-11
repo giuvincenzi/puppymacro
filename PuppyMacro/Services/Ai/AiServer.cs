@@ -171,7 +171,8 @@ internal sealed class AiServer : IDisposable
         string lower = name.ToLowerInvariant();
         if (lower.Contains("claude-code") || lower.Contains("claude code"))
             return "Claude Code";
-        if (lower.Contains("claude"))
+        // Claude Desktop's agent mode names itself "local-agent-mode-" and the server's name in its settings.
+        if (lower.Contains("claude") || lower.StartsWith("local-agent-mode", StringComparison.Ordinal))
             return "Claude Desktop";
         if (lower.Contains("visual studio code") || lower.Contains("vscode"))
             return "Visual Studio Code";

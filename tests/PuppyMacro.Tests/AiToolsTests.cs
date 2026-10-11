@@ -169,10 +169,13 @@ public class AiToolsTests : IDisposable
 
     private static readonly object CtrlXToA = new { item = new { Source = new { Vk = 0x58, Ctrl = true }, Target = new { Vk = 0x41 } } };
 
+    private static readonly string[] Plan = { "1. Click the Send button: sends the message" };
+
     private static readonly object Asking = new
     {
         title = "Pick the Send button",
         label = "The Send button",
+        confirmed_steps = Plan,
         description = "We are making a macro that sends a message.",
         steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
     };
@@ -482,6 +485,7 @@ public class AiToolsTests : IDisposable
         AiToolResult one = await Call("pick_point", Asking);
         AiToolResult three = await Call("pick_points", new
         {
+            confirmed_steps = Plan,
             count = 3,
             labels = new[] { "First item", "Second item", "Third item" },
             title = "Pick the 3 items",
@@ -515,7 +519,9 @@ public class AiToolsTests : IDisposable
     {
         string[] steps = { "Click it" };
         Assert.True((await Call("pick_point", new { label = "It", title = "Pick", description = "", steps })).IsError);
-        Assert.True((await Call("pick_point", new { title = "Pick", description = "Why", steps })).IsError); // no label
+        Assert.True((await Call("pick_point", new { confirmed_steps = Plan, title = "Pick", description = "Why", steps })).IsError); // no label
+        Assert.True((await Call("pick_point", new { label = "It", title = "Pick", description = "Why", steps })).IsError); // no steps confirmed
+        Assert.True((await Call("pick_point", new { confirmed_steps = new[] { " " }, label = "It", title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_points", new { count = 2, labels = new[] { "One", "" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_points", new { count = 3, labels = new[] { "One", "Two" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_app", new { title = "", description = "Why", steps })).IsError);
@@ -530,7 +536,7 @@ public class AiToolsTests : IDisposable
         string title = new('T', 300);
         string description = new('D', 2000);
 
-        await Call("pick_point", new { label = "It", title, description, steps = new[] { "Click it" } });
+        await Call("pick_point", new { confirmed_steps = Plan, label = "It", title, description, steps = new[] { "Click it" } });
 
         Assert.Equal(title, _host.ReadyShown[0].Title);
         Assert.Equal(description, _host.ReadyShown[0].Description);

@@ -81,6 +81,22 @@ internal sealed class AiTools
         "Enter = 13, Space = 32; mouse: 1 left, 2 right, 4 middle, 5 and 6 side buttons). Points are physical screen " +
         "pixels. For how PuppyMacro works, read the user guide with get_help.";
 
+    /// <summary>In the descriptions of the tools that make a new loop or macro: AI apps may not pass <see cref="Instructions"/> to the model.</summary>
+    private const string NewItemRule =
+        " For a NEW loop or macro, before calling this: ask only the questions that matter for it and that the user's words " +
+        "leave open (how fast, which keys or items; none that do not apply), then write in the chat the exact steps it will " +
+        "play, in order, one per line, each key or click and what it does there, and wait for the user's OK. Only then pick " +
+        "the points (in that order) and save. A change to an existing item needs no such confirmation.";
+
+    private const string AfterNewItem =
+        " After saving a NEW one, offer in one short message only the extras it does not have yet and that fit it: a hotkey, " +
+        "Show in overlay and a floating button (place_floating_button, Toggle only), a sound, a specific app (not when AppExe " +
+        "is set). Then tell the user to try it: you can't start it.";
+
+    private const string UserWindow =
+        " Write every text shown to the user in the language the user writes to you in. If the user takes long, the answer " +
+        "is \"waiting\" with a request_id: call wait_for_user with it until the user answers.";
+
     private const string NoStart =
         "Starting and testing loops and macros is not available to AI apps: their keys and clicks would go to the window in " +
         "front, usually your chat. Ask the user to start it in PuppyMacro (the Play button on its card, its hotkey, or overlay mode).";
@@ -155,6 +171,9 @@ internal sealed class AiTools
             "steps":{"type":"array","items":{"type":"string"},"minItems":1,"description":"What to do, in order, one short step each (shown numbered), e.g. [\"Open the game's inventory\", \"Press Enter\", \"Click the 3 items, in order\"]. For PuppyMacro's own screens take them from the user guide (get_help)."}
             """;
         const string askingRequired = "\"title\",\"description\",\"steps\"";
+        const string confirmed = """
+            "confirmed_steps":{"type":"array","items":{"type":"string"},"minItems":1,"description":"The steps the loop or macro will play, one per item, each key or click and what it does: for a NEW item, exactly as you wrote them in the chat and the user confirmed (do not call this tool before); for a change to an existing one, the steps as they will be after it."},
+            """;
         static string Save(string kind) => """
             {"type":"object","properties":{
               "item":{"type":"object","description":"The KIND as JSON, in the format of get_schema(\"KIND\"). Leave out its Id."},
@@ -200,9 +219,9 @@ internal sealed class AiTools
                 """{"type":"object","properties":{"topic":{"type":"string","description":"A topic from the list, e.g. \"macros\"."}},"additionalProperties":false}""",
                 true, false, (a, app, _) => Task.FromResult(Help(a, app))),
 
-            new("save_loop", "Creates a loop, or changes the one with this id. Saved at once (kept in its History).",
+            new("save_loop", "Creates a loop, or changes the one with this id. Saved at once (kept in its History)." + NewItemRule + AfterNewItem,
                 Save("loop"), false, false, (a, app, c) => SaveItem<LoopDefinition>(a, app, "loop", c)),
-            new("save_macro", "Creates a macro, or changes the one with this id. Saved at once (kept in its History).",
+            new("save_macro", "Creates a macro, or changes the one with this id. Saved at once (kept in its History)." + NewItemRule + AfterNewItem,
                 Save("macro"), false, false, (a, app, c) => SaveItem<MacroDefinition>(a, app, "macro", c)),
             new("save_remap", "Creates a remap, or changes the one with this id. Saved at once (kept in its History).",
                 Save("remap"), false, false, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
@@ -215,26 +234,26 @@ internal sealed class AiTools
                 """{"type":"object","properties":{"settings":{"type":"object","description":"Values to change, e.g. {\"Theme\": \"Dark\", \"StopAllHotkey\": {\"Vk\": 123}}."}},"required":["settings"],"additionalProperties":false}""",
                 false, false, (a, app, c) => UpdateSettings(a, app, c)),
 
-            new("pick_point", "Shows the user your title, description and steps, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y).",
-                "{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"description\":\"What this point is, shown next to the cursor while the user picks, e.g. \\\"The Salvage button\\\".\"}," + asking + "},\"required\":[\"label\"," + askingRequired + "],\"additionalProperties\":false}",
+            new("pick_point", "Shows the user your title, description and steps, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y)." + NewItemRule + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + confirmed + "\"label\":{\"type\":\"string\",\"description\":\"What this point is, shown next to the cursor while the user picks, e.g. \\\"The Salvage button\\\".\"}," + asking + "},\"required\":[\"confirmed_steps\",\"label\"," + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickPoints(a, app, single: true, c)),
-            new("pick_points", "Like pick_point for several points in a row (for example the 3 items to click): the user clicks them in order, the order the loop or macro uses them.",
-                "{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"minItems\":2,\"maxItems\":" + MaxPoints + ",\"description\":\"One per point (as many as count), in order: what it is, shown next to the cursor while the user picks it, e.g. [\\\"The first item\\\", \\\"The second item\\\", \\\"The Confirm button\\\"].\"}," + asking + "},\"required\":[\"count\",\"labels\"," + askingRequired + "],\"additionalProperties\":false}",
+            new("pick_points", "Like pick_point for several points in a row (for example the 3 items to click): the user clicks them in order, the order the loop or macro uses them." + NewItemRule + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + confirmed + "\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"minItems\":2,\"maxItems\":" + MaxPoints + ",\"description\":\"One per point (as many as count), in order: what it is, shown next to the cursor while the user picks it, e.g. [\\\"The first item\\\", \\\"The second item\\\", \\\"The Confirm button\\\"].\"}," + asking + "},\"required\":[\"confirmed_steps\",\"count\",\"labels\"," + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickPoints(a, app, single: false, c)),
-            new("pick_app", "Shows the user your title, description and steps, waits until they are ready, then they click a window of an app: its .exe name, for AppExe.",
+            new("pick_app", "Shows the user your title, description and steps, waits until they are ready, then they click a window of an app: its .exe name, for AppExe." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickApp(a, app, c)),
-            new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding.",
+            new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),
             new("place_floating_button",
                 "Gives a loop or macro (Toggle mode only) a floating button for overlay mode, then shows the user your title, description and " +
-                "steps and opens PuppyMacro's placement screen, where the user drags the button and presses Enter (Esc cancels). Saved at once.",
+                "steps and opens PuppyMacro's placement screen, where the user drags the button and presses Enter (Esc cancels). Saved at once." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The Id of the loop or macro.\"}," + asking + "},\"required\":[\"id\"," + askingRequired + "],\"additionalProperties\":false}",
                 false, false, (a, app, c) => PlaceFloatingButton(a, app, c)),
             new("open_item",
                 "Opens a loop, macro or remap in PuppyMacro's editor on the user's screen, with your title and description at the top, " +
-                "and waits until the user saves or cancels (the user's own changes).",
+                "and waits until the user saves or cancels (the user's own changes)." + UserWindow,
                 """{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string","description":"Short, e.g. \"Check the salvage macro\"."},"description":{"type":"string","description":"One or two short sentences: what to look at or change."}},"required":["id","title","description"],"additionalProperties":false}""",
                 false, false, (a, app, c) => OpenItem(a, app, c)),
             new("wait_for_user", "Waits again for the user's answer to a request that answered \"waiting\" with this request_id.",
@@ -652,6 +671,10 @@ internal sealed class AiTools
     private async Task<AiToolResult> PickPoints(JsonElement args, string app, bool single, CancellationToken cancel)
     {
         AiAsk ask = Asking(args);
+        if (!(args.TryGetProperty("confirmed_steps", out JsonElement plan) && plan.ValueKind == JsonValueKind.Array
+              && plan.EnumerateArray().Any(step => step.ValueKind == JsonValueKind.String && step.GetString()!.Trim().Length > 0)))
+            throw new FormatException("Give \"confirmed_steps\": the steps the loop or macro will play. For a new one, write them " +
+                "in the chat first and wait for the user's OK.");
         List<string> labels = single
             ? new List<string> { (Str(args, "label") ?? "").Trim() }
             : args.TryGetProperty("labels", out JsonElement list) && list.ValueKind == JsonValueKind.Array
