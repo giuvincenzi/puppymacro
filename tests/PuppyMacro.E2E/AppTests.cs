@@ -192,13 +192,13 @@ public class AppTests
         Assert.StartsWith("Group Type hi", list.Items[0].Name);
         Assert.True(list.Items[0].IsSelected, "the closed group's header is not selected");
 
-        // Every group closed: only Expand all groups is on. The action is selected again.
+        // Every group closed: only Expand all groups is on. The group stays selected as a whole: its header.
         AutomationElement expand = MoreCommand(app, editor, "ExpandAllGroupsButton");
         Assert.False(MoreCommand(app, editor, "CollapseAllGroupsButton").IsEnabled, "Collapse all groups is on with every group closed");
         Assert.True(expand.IsEnabled, "Expand all groups is off with a group closed");
         expand.AsButton().Invoke();
         Assert.True(Retry.WhileFalse(() => list.Items.Length == 4, AppSession.Timeout).Success, $"{list.Items.Length} rows");
-        Assert.True(list.Items[1].IsSelected, "the action is not selected after Expand all groups");
+        Assert.True(list.Items[0].IsSelected, "the group's header is not selected after Expand all groups");
 
         // No groups: both off.
         list.Items[0].Select();
