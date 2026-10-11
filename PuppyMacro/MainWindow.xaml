@@ -518,7 +518,7 @@
                                 </ui:SettingsCard>
                                 <ui:SettingsCard Header="Position on screen"
                                                  Description="Shows the whole overlay as it appears in overlay mode: drag the overlay panel and every floating button where you want them.">
-                                    <views:PlaceButton IsAccent="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
+                                    <views:PlaceButton IsAccent="True" MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>

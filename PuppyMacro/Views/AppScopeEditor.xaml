@@ -25,7 +25,7 @@
                         <Button x:Name="PickButton" Grid.Column="1" Margin="8,0,0,0" Click="OnPickClick"
                                 AutomationProperties.Name="Pick" ToolTip="Click a window of the app">
                             <StackPanel Orientation="Horizontal">
-                                <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Eyedropper}" />
+                                <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
                                 <TextBlock Margin="8,0,0,0" Text="Pick" />
                             </StackPanel>
                         </Button>

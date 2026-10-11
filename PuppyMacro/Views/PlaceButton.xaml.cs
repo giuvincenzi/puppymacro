@@ -16,7 +16,23 @@ public partial class PlaceButton : UserControl
     public static readonly DependencyProperty IsAccentProperty = DependencyProperty.Register(
         nameof(IsAccent), typeof(bool), typeof(PlaceButton), new PropertyMetadata(false, (d, _) => ((PlaceButton)d).ShowStyle()));
 
+    public static readonly DependencyProperty MovesOverlayProperty = DependencyProperty.Register(
+        nameof(MovesOverlay), typeof(bool), typeof(PlaceButton), new PropertyMetadata(false, (d, _) => ((PlaceButton)d).ShowIcon()));
+
     public PlaceButton() => InitializeComponent();
+
+    /// <summary>The button moves the overlay (the Move icon); otherwise it picks something on the screen (Bullseye).</summary>
+    public bool MovesOverlay
+    {
+        get => (bool)GetValue(MovesOverlayProperty);
+        set => SetValue(MovesOverlayProperty, value);
+    }
+
+    private void ShowIcon()
+    {
+        PickIcon.Visibility = MovesOverlay ? Visibility.Collapsed : Visibility.Visible;
+        MoveIcon.Visibility = MovesOverlay ? Visibility.Visible : Visibility.Collapsed;
+    }
 
     public string Text
     {

@@ -139,7 +139,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     shown.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set
-  hotkey" / "Set key" button with the `Bullseye` icon before its text (as `PlaceButton` and Detect); waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
+  hotkey" / "Set key" button with the `Radar` icon before its text; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
   other button); set, the keys as `KeyCap`s in `AccentFillColorDefaultBrush` with
   `TextOnAccentFillColorPrimaryBrush` text (approved) inside a `SplitButton`, everywhere (click: change;
   its `MenuFlyout`: Change, Clear only where the key can be removed (`CanClear`), then for each Ctrl, Alt,
@@ -155,11 +155,14 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   above the box in the window. Key down and Key up have no options: a plain `SettingsCard` with no arrow.
   A point is always `Views/PositionPicker` (on one line: "X" and "Y" each before its `NumberBox`, as "ms" after a
   number, so the card keeps its height; Pick on screen); a new macro Press key / Key down / Key up waits for its key at once; a
-  mouse button always `Views/MouseButtonBox`: the list and, next to it, Detect (an icon button, the `Bullseye` icon)
-  that waits for a mouse button through `LoopEngine.BeginCapture` (only the ring and "Press a mouse button (Esc cancels)"
-  show meanwhile, the list hidden too, as the key field) and selects it; a key instead is rejected ("Use Press key for keys.").
-  Every button that places something on the screen or picks a point is `Views/PlaceButton` (the `Bullseye` icon before
-  its text): Pick on screen, a floating button's Position, Settings' Position on screen (accent).
+  mouse button always `Views/MouseButtonBox`: the list and, next to it, Detect (an icon button) that waits for a mouse
+  button through `LoopEngine.BeginCapture` (only the ring and "Press a mouse button (Esc cancels)" show meanwhile, the list
+  hidden too, as the key field) and selects it; a key instead is rejected ("Use Press key for keys.").
+- **Icons of the buttons that wait, pick or move** (approved; every such button has one): a button that waits for
+  something you press, key or mouse, has `Radar` (Set hotkey / Set key and Change in `KeyCaptureField`, Detect in
+  `MouseButtonBox`); one that picks something on the screen has `Bullseye` (`PlaceButton`: Pick on screen; Specific
+  app's Pick); one that moves the overlay has `Move` (`PlaceButton` with `MovesOverlay`: a floating button's Position,
+  Settings' Position on screen). `Views/PlaceButton` is the one button for picking and moving (icon, then its text).
 - The loop editor's bar (approved): a `CommandBar` above the actions with one `AppBarButton` per action
   (Press key, Click, Paste text), label under the icon as the macro editor's bar, no overflow button.
 - The editors (loop, macro, remap) have an **Enabled** card with a `ToggleSwitch`, first on the right; the

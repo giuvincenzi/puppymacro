@@ -5,11 +5,15 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf">
 
-    <!-- Every button that places something on the screen or picks a point (Pick on screen, a floating button's
-         Position, Settings' Position on screen): the target icon, then its text -->
+    <!-- Every button that picks something on the screen (Pick on screen, Specific app's Pick: Bullseye) or moves the
+         overlay (a floating button's Position, Settings' Position on screen: Move), the icon before its text. One
+         FontIcon per icon, shown or hidden (ui.md: a FontIcon's Icon never changes). -->
     <Button x:Name="TheButton" Click="OnClick">
         <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-            <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
+            <Grid VerticalAlignment="Center">
+                <ui:FontIcon x:Name="PickIcon" FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
+                <ui:FontIcon x:Name="MoveIcon" FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Move}" Visibility="Collapsed" />
+            </Grid>
             <TextBlock x:Name="Label" VerticalAlignment="Center" />
         </ikw:SimpleStackPanel>
     </Button>

@@ -32,7 +32,7 @@
 
             <!-- Position shows the whole overlay to drag it -->
             <ui:SettingsCard Header="Position on screen">
-                <views:PlaceButton Text="Position" Click="OnPositionClick" />
+                <views:PlaceButton MovesOverlay="True" Text="Position" Click="OnPositionClick" />
             </ui:SettingsCard>
 
             <ui:SettingsCard Header="Opacity" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
