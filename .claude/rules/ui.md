@@ -90,10 +90,12 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     where that layer starts; the Settings list keeps the library's 4 (no extra margin), as Library in Microsoft Store.
   - The main window's title bar: `TitleBar.ExtendViewIntoTitleBar` with `TitleBar.Height` 48, as Microsoft Store
     and the library's ButtonsOnTitlebar sample: on the left the app icon at 24 px (12 px above and below) and "PuppyMacro"
-    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build); in the middle of the
-    window Enter overlay mode (a standard button with the `MapLayers` icon); on the right, before the window buttons
-    (`TitleBar.SystemOverlayRightInset`), Stop all. Both have their hotkey in the tooltip and
-    `WindowChrome.IsHitTestVisibleInChrome`, and show on every page.
+    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build); on the right Enter
+    overlay mode (a standard button with the `MapLayers` icon) and Stop all, then the window buttons
+    (`TitleBar.SystemOverlayRightInset`). Both have their hotkey in the tooltip and `WindowChrome.IsHitTestVisibleInChrome`,
+    and show on every page. They sit 9 px from the top (the window's 1 px border, then 8), so they look 8 px from the top
+    and the bottom, as Microsoft Store's search box (measured). Minimize and close keep the standard 32 px height at the top
+    (`TitleBar.ButtonStyle`: the library's style with `Height` 32 and `VerticalAlignment` Top), as in Microsoft Store.
   - The main window's Stop all, in that title bar: the filled `Stop_16_Filled` icon and its text, `AccentButtonStyle` with
     `AccentButtonBackground`, `…PointerOver` and `…Pressed` redefined in its `Button.Resources` from
     `SystemFillColorCritical` (100%, 90%, 80%); shown only while something runs, hidden otherwise.

@@ -41,7 +41,7 @@
         </Grid.RowDefinitions>
 
         <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Enter overlay
-             mode in the middle, Stop all on the right before the window buttons drawn by the library (as its
+             mode and Stop all on the right before the window buttons drawn by the library (as its
              ButtonsOnTitlebar sample) ================= -->
         <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}">
             <Grid.ColumnDefinitions>
@@ -60,20 +60,22 @@
                 </TextBlock>
             </StackPanel>
 
-            <!-- In the middle of the window: the two side columns share the rest equally -->
-            <Button x:Name="OverlayModeButton" Grid.Column="1" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True"
-                    AutomationProperties.Name="Enter overlay mode" Click="OnOverlayModeClick">
-                <StackPanel Orientation="Horizontal">
-                    <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
-                    <TextBlock VerticalAlignment="Center" Text="Enter overlay mode" />
-                </StackPanel>
-            </Button>
 
+            <!-- On the right: Enter overlay mode, Stop all, the window buttons. The buttons sit 9 px from the top: the window's
+                 1 px border, then 8, so they look 8 px from the top and from the bottom (their bottom line is almost the bar's
+                 color), as Microsoft Store's search box -->
             <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button x:Name="OverlayModeButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="Enter overlay mode" Click="OnOverlayModeClick">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
+                        <TextBlock VerticalAlignment="Center" Text="Enter overlay mode" />
+                    </StackPanel>
+                </Button>
                 <!-- Shown only while something runs. Approved (ui.md): the accent button with its accent colors replaced by
                      the theme's critical one (WinUI lightweight styling), at 90% and 80% on mouse over and press as the
                      accent ones are. -->
-                <Button x:Name="StopAllButton" Margin="0,0,8,0" VerticalAlignment="Center" Visibility="Collapsed"
+                <Button x:Name="StopAllButton" Margin="0,9,8,0" VerticalAlignment="Top" Visibility="Collapsed"
                         WindowChrome.IsHitTestVisibleInChrome="True"
                         Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Stop all" Click="OnStopAllClick">
                     <Button.Resources>
