@@ -139,7 +139,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     shown.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set
-  hotkey" / "Set key" button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
+  hotkey" / "Set key" button with the `Bullseye` icon before its text (as `PlaceButton` and Detect); waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no
   other button); set, the keys as `KeyCap`s in `AccentFillColorDefaultBrush` with
   `TextOnAccentFillColorPrimaryBrush` text (approved) inside a `SplitButton`, everywhere (click: change;
   its `MenuFlyout`: Change, Clear only where the key can be removed (`CanClear`), then for each Ctrl, Alt,

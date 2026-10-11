@@ -16,7 +16,13 @@
             <ItemsControl ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" ItemsSource="A" />
         </Button>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <Button x:Name="SetButton" VerticalAlignment="Center" Click="OnSetClick" />
+            <!-- Set hotkey / Set key: the target icon, as every button that waits for or picks something -->
+            <Button x:Name="SetButton" VerticalAlignment="Center" Click="OnSetClick">
+                <StackPanel Orientation="Horizontal">
+                    <ui:FontIcon Margin="0,0,8,0" FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
+                    <TextBlock x:Name="SetText" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
 
             <StackPanel x:Name="WaitPanel" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
                 <ui:ProgressRing x:Name="WaitRing" Width="16" Height="16" Margin="0,0,8,0" IsActive="False" />
