@@ -23,7 +23,7 @@
                                        CanClear="{Binding InLoop}" ItemName="key" Prompt="{Binding KeyPrompt}"
                                        Loaded="OnKeyFieldLoaded"
                                        Visibility="{Binding IsKeyKind, Converter={StaticResource BoolToVisibility}}" />
-                <views:MouseButtonBox VerticalAlignment="Center" Vk="{Binding MouseVk}"
+                <views:MouseButtonBox VerticalAlignment="Center" Vk="{Binding MouseVk}" Rejected="OnMouseRejected"
                                       Visibility="{Binding IsMouseKind, Converter={StaticResource BoolToVisibility}}" />
                 <ComboBox VerticalAlignment="Center" MinWidth="120" SelectedIndex="{Binding DirectionIndex, Mode=TwoWay}"
                           AutomationProperties.Name="Direction"

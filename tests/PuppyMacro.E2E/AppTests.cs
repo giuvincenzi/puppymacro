@@ -631,4 +631,40 @@ public class AppTests
             return null; // being written
         }
     }
+
+    [Fact]
+    public void Detect_takes_the_mouse_button_pressed_in_a_loop_click_and_in_a_macro_click()
+    {
+        using var app = new AppSession();
+
+        // A loop's new Click: Detect, then the middle button (inside the editor; the press is taken, not clicked).
+        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        Window loop = app.Dialog("Add loop");
+        app.FindById(loop, "AddClickButton").AsButton().Invoke();
+        DetectWith(app, loop, MouseButton.Middle, "Middle");
+        loop.Close();
+
+        // A macro's Click (the sample's): Detect, then the back button.
+        app.GoTo("Macros");
+        app.EditItem("Sample: click and scroll");
+        Window editor = app.Dialog("Edit macro");
+        app.FindById(editor, "ActionList").AsListBox().Items[0].Select();
+        app.Find(editor, "Edit action").AsButton().Invoke();
+        Window action = ChildDialog(editor, "Edit click");
+        DetectWith(app, action, MouseButton.XButton1, "Back (X1)");
+        app.FindById(action, "CancelButton").AsButton().Invoke();
+    }
+
+    /// <summary>Detect in <paramref name="window"/>'s mouse button field, then <paramref name="button"/> pressed over the window.</summary>
+    private static void DetectWith(AppSession app, Window window, MouseButton button, string expected)
+    {
+        app.Find(window, "Detect the mouse button").AsButton().Invoke();
+        app.Find(window, "Press a mouse button (Esc cancels)");
+        System.Drawing.Rectangle place = window.BoundingRectangle;
+        Mouse.MoveTo(new System.Drawing.Point(place.X + place.Width / 2, place.Y + 60));
+        Mouse.Click(button);
+        ComboBox list = app.Find(window, "Mouse button").AsComboBox();
+        Assert.True(Retry.WhileFalse(() => list.SelectedItem?.Text == expected, AppSession.Timeout).Success,
+            $"the mouse button field shows \"{list.SelectedItem?.Text}\", not \"{expected}\"");
+    }
 }

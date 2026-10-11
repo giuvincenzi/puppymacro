@@ -11,6 +11,8 @@
 - In a loop's Press key and Click: **Hold for**, **Times** and **Pause between**; in a loop's Click,
   **Mode** (single or double) and **Position** (where the pointer is, or a fixed point).
 - **Enabled** in the loop, macro and remap editors.
+- **Detect the mouse button**, next to the mouse button list of a Click or Mouse button down / up: press the
+  button you want.
 - Remaps from a **combination**: **When I press** takes Ctrl, Alt, Shift or Win with a key, for example
   Alt+J → Left arrow.
 - Remaps of **Ctrl, Alt, Shift or Win** alone, left and right apart (for example Right Alt → Enter), and

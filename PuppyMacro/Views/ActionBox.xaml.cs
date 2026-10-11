@@ -40,5 +40,8 @@ public partial class ActionBox : UserControl
         field.Rejected += reason => Rejected?.Invoke(reason);
     }
 
+    /// <summary>The mouse button field's Detect got a key.</summary>
+    private void OnMouseRejected(string reason) => Rejected?.Invoke(reason);
+
     private void OnRemoveClick(object sender, RoutedEventArgs e) => RemoveRequested?.Invoke(this);
 }
