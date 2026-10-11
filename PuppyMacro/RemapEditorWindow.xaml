@@ -53,19 +53,21 @@
 
                 <ikw:SimpleStackPanel Grid.Column="0" Margin="24,4,24,12" Spacing="4">
                     <!-- Source -->
-                    <ui:SettingsCard Header="When I press" Description="A key or mouse button."
+                    <ui:SettingsCard Header="When I press"
+                                     Description="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first. Ctrl, Alt, Shift or Win alone: press and release it."
                                      ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                        <views:KeyCaptureField x:Name="SourceField" KeyOnly="True" AllowPrimaryMouse="True" CanClear="False"
-                                               ItemName="key" Prompt="Press a key or mouse button (Esc cancels)"
-                                               ValueChanged="OnSourceFieldChanged" />
+                        <views:KeyCaptureField x:Name="SourceField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
+                                               ItemName="key" Prompt="Press the key or combination (Esc cancels)"
+                                               ValueChanged="OnSourceFieldChanged" Rejected="ShowError" />
                     </ui:SettingsCard>
 
                     <!-- Target -->
-                    <ui:SettingsCard Header="Send instead" Description="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first."
+                    <ui:SettingsCard Header="Send instead"
+                                     Description="A key, a mouse button or a combination: hold Ctrl, Alt, Shift or Win first. Ctrl, Alt, Shift or Win alone: press and release it."
                                      ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                        <views:KeyCaptureField x:Name="TargetField" AllowPrimaryMouse="True" CanClear="False"
+                        <views:KeyCaptureField x:Name="TargetField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
                                                ItemName="key" Prompt="Press the key or combination (Esc cancels)"
-                                               ValueChanged="OnTargetFieldChanged" />
+                                               ValueChanged="OnTargetFieldChanged" Rejected="ShowError" />
                     </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
 

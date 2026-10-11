@@ -17,6 +17,52 @@ public class HotkeyBindingTests
     }
 
     [Fact]
+    public void SameAs_needs_the_same_sides_but_ignores_the_side_of_a_modifier_not_held()
+    {
+        var leftCtrlA = new HotkeyBinding { Vk = 0x41, Ctrl = true, CtrlSide = ModifierSide.Left };
+
+        Assert.True(leftCtrlA.SameAs(new HotkeyBinding { Vk = 0x41, Ctrl = true, CtrlSide = ModifierSide.Left }));
+        Assert.False(leftCtrlA.SameAs(new HotkeyBinding { Vk = 0x41, Ctrl = true }));
+        Assert.True(HotkeyBinding.FromKey(0x41).SameAs(new HotkeyBinding { Vk = 0x41, AltSide = ModifierSide.Right }));
+    }
+
+    [Fact]
+    public void Matches_takes_the_sides_a_hotkey_accepts()
+    {
+        var eitherCtrlA = new HotkeyBinding { Vk = 0x41, Ctrl = true };
+        var leftCtrlA = new HotkeyBinding { Vk = 0x41, Ctrl = true, CtrlSide = ModifierSide.Left };
+        var pressedLeft = new HotkeyBinding { Vk = 0x41, Ctrl = true, CtrlSide = ModifierSide.Left };
+        var pressedRight = new HotkeyBinding { Vk = 0x41, Ctrl = true, CtrlSide = ModifierSide.Right };
+        var pressedBoth = new HotkeyBinding { Vk = 0x41, Ctrl = true, CtrlSide = ModifierSide.Any };
+
+        Assert.True(eitherCtrlA.Matches(pressedLeft));
+        Assert.True(eitherCtrlA.Matches(pressedRight));
+        Assert.True(eitherCtrlA.Matches(pressedBoth));
+        Assert.True(leftCtrlA.Matches(pressedLeft));
+        Assert.False(leftCtrlA.Matches(pressedRight));
+        Assert.False(leftCtrlA.Matches(pressedBoth));
+        // Exact: other modifiers or none do not match.
+        Assert.False(leftCtrlA.Matches(HotkeyBinding.FromKey(0x41)));
+        Assert.False(HotkeyBinding.FromKey(0x41).Matches(pressedLeft));
+        Assert.False(new HotkeyBinding().Matches(new HotkeyBinding()));
+    }
+
+    [Fact]
+    public void Overlaps_unless_a_modifier_is_on_opposite_sides()
+    {
+        var left = new HotkeyBinding { Vk = 0x41, Alt = true, AltSide = ModifierSide.Left };
+        var right = new HotkeyBinding { Vk = 0x41, Alt = true, AltSide = ModifierSide.Right };
+        var either = new HotkeyBinding { Vk = 0x41, Alt = true };
+
+        Assert.False(left.Overlaps(right));
+        Assert.True(left.Overlaps(either));
+        Assert.True(either.Overlaps(right));
+        Assert.True(left.Overlaps(left.Clone()));
+        Assert.False(left.Overlaps(HotkeyBinding.FromKey(0x41)));
+        Assert.False(left.Overlaps(null));
+    }
+
+    [Fact]
     public void IsSet_is_false_without_a_key()
     {
         Assert.False(new HotkeyBinding { Ctrl = true }.IsSet);

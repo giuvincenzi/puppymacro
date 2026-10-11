@@ -19,7 +19,8 @@
   - `make docs`, `make docs-serve`: website preview in `site-preview/`, served locally by
     `docs-serve` (see `docs.md`).
   - `make screenshots`: `make dev`, then retakes the guide's editor screenshots and the home
-    page's screenshot (drives the UI, see `docs.md`).
+    page's screenshot (drives the UI, see `docs.md`), then closes PuppyMacro (the process, also
+    after an error).
   - `make release-pr`, `make release`: see Releases below.
   - `make clean`.
 - From WSL the Makefile calls Windows PowerShell (`powershell.exe`), so builds use the Windows

@@ -16,7 +16,8 @@ internal sealed class InputHook : IDisposable
     /// False for events that must not change the physical modifier state: injected by another
     /// program, or the fake left Ctrl that Windows adds when AltGr is pressed.
     /// </param>
-    public delegate bool KeyEventHandler(int vk, bool isDown, bool physicalModifierEvent);
+    /// <param name="altGrCtrl">The fake left Ctrl that Windows adds when AltGr (Right Alt) is pressed.</param>
+    public delegate bool KeyEventHandler(int vk, bool isDown, bool physicalModifierEvent, bool altGrCtrl);
 
     private const uint LLKHF_INJECTED = 0x10;
     private const uint FakeCtrlScanCodeFlag = 0x200; // AltGr's synthesized left Ctrl
@@ -74,8 +75,10 @@ internal sealed class InputHook : IDisposable
                     int message = (int)wParam;
                     bool isDown = message is NativeMethods.WM_KEYDOWN or NativeMethods.WM_SYSKEYDOWN;
                     bool isUp = message is NativeMethods.WM_KEYUP or NativeMethods.WM_SYSKEYUP;
-                    bool physical = (data.flags & LLKHF_INJECTED) == 0 && (data.scanCode & FakeCtrlScanCodeFlag) == 0;
-                    if ((isDown || isUp) && Handler?.Invoke((int)data.vkCode, isDown, physical) == true)
+                    bool injected = (data.flags & LLKHF_INJECTED) != 0;
+                    bool altGrCtrl = !injected && (data.scanCode & FakeCtrlScanCodeFlag) != 0;
+                    bool physical = !injected && !altGrCtrl;
+                    if ((isDown || isUp) && Handler?.Invoke((int)data.vkCode, isDown, physical, altGrCtrl) == true)
                         return new IntPtr(1);
                 }
             }
@@ -141,7 +144,7 @@ internal sealed class InputHook : IDisposable
                 if (kind is MouseKind.Wheel or MouseKind.HWheel && Wheel?.Invoke(kind == MouseKind.HWheel, wheel) == true)
                     return new IntPtr(1);
 
-                if (vk != 0 && Handler?.Invoke(vk, isDown, true) == true)
+                if (vk != 0 && Handler?.Invoke(vk, isDown, true, false) == true)
                     return new IntPtr(1);
             }
             catch (Exception ex)

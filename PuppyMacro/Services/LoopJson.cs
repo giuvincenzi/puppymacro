@@ -70,8 +70,8 @@ internal static class RemapJson
     public static string Serialize(RemapDefinition remap) => CodeJson.Serialize(remap);
 
     /// <summary>Checks a remap's text with the remap editor's rules and reads it. Null when there are problems.</summary>
-    /// <param name="clash">For a source key and app (null: all apps): why it cannot be remapped (a hotkey, another remap), or null.</param>
-    public static RemapDefinition? Parse(string text, Guid id, Func<int, string?, string?> clash, out List<CodeProblem> problems)
+    /// <param name="clash">For a source and app (null: all apps): why it cannot be remapped (a hotkey, another remap), or null.</param>
+    public static RemapDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?, string?> clash, out List<CodeProblem> problems)
     {
         RemapDefinition? remap = CodeJson.Read<RemapDefinition>(text, (r, check) => Check(r, id, clash, check), out problems);
         if (remap != null)
@@ -82,25 +82,30 @@ internal static class RemapJson
         return remap;
     }
 
-    private static void Check(RemapDefinition r, Guid id, Func<int, string?, string?> clash, CodeJson.Checker check)
+    private static void Check(RemapDefinition r, Guid id, Func<HotkeyBinding, string?, string?> clash, CodeJson.Checker check)
     {
         check.SameId(r.Id, id);
-        bool sourceValid = CodeJson.IsKeyCode(r.SourceVk) && !KeyNames.IsModifier(r.SourceVk);
-        if (!sourceValid)
-            check.Add("SourceVk", "Choose the key or mouse button to remap: a virtual-key code from 1 to 254, not Ctrl, Alt, Shift or Win.");
+
+        // The single key of versions before schema 7, converted when settings.json is loaded.
+        if (r.SourceVk != null)
+            check.Add("SourceVk", "Not used any more: use \"Source\", like {\"Vk\": 65} for A. Remove it.");
+
+        bool sourceValid = false;
+        if (r.Source is not { IsSet: true } source)
+            check.Add("Source", "Choose the key, mouse button or combination to remap.");
+        else
+            sourceValid = check.RemapKey("Source", source);
 
         if (r.Target is not { IsSet: true } target)
             check.Add("Target", "Choose what to send instead.");
-        else if (!CodeJson.IsKeyCode(target.Vk) || KeyNames.IsModifier(target.Vk))
-            check.Add("Target.Vk", "Choose the key or mouse button to send: a virtual-key code from 1 to 254; set Ctrl, Alt, Shift and Win with their own fields.");
-        else if (!target.HasModifiers && target.Vk == r.SourceVk)
-            check.Add("Target", "The key to send must be different from the key pressed.");
+        else if (check.RemapKey("Target", target) && r.Source != null && target.SameAs(r.Source))
+            check.Add("Target", "What is sent must be different from what is pressed.");
 
         check.AppExe(r.AppExe);
-        if (KeyNames.IsPrimaryMouse(r.SourceVk) && r.AppExe == null)
+        if (sourceValid && KeyNames.IsPrimaryMouse(r.Source!.Vk) && !r.Source.HasModifiers && r.AppExe == null)
             check.Add("AppExe", "Left and right click can be remapped only for a specific app, so they keep working everywhere else.");
 
-        if (sourceValid && clash(r.SourceVk, AppScope.Normalize(r.AppExe)) is string message)
-            check.Add("SourceVk", message);
+        if (sourceValid && clash(r.Source!, AppScope.Normalize(r.AppExe)) is string message)
+            check.Add("Source", message);
     }
 }

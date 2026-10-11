@@ -61,7 +61,9 @@ before capturing (`testing.md`).
   PuppyMacro's window. Never show personal data, user names or other windows.
   `make screenshots` retakes this way the guide's editor screenshots (`site/guide/img/`:
   `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`) and the home
-  page's `site/assets/loops.png` (`scripts/screenshots.ps1`). It drives the UI: ask the
-  contributor before running it, like `make e2e`.
+  page's `site/assets/loops.png` (`scripts/screenshots.ps1`), then closes PuppyMacro (the process,
+  not only to the tray; also after an error), so the PC is free when it returns. It drives the UI: ask
+  the contributor before running it, like `make e2e`. `make dev` closes a running PuppyMacro first,
+  the installed one too.
 - The download link is `https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe`:
   keep the Setup file name stable.

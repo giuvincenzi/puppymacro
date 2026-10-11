@@ -171,7 +171,15 @@ internal sealed class SettingsStore
 
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
         settings.Remaps ??= new();
-        settings.Remaps.RemoveAll(r => r.SourceVk == 0 || r.Target is not { IsSet: true });
+        // Schema 7: a remap's source is a key or a combination (Source); the single key of older files
+        // (SourceVk) becomes a Source with no modifiers. Hotkeys without sides take either side (ModifierSide.Any).
+        foreach (var remap in settings.Remaps)
+        {
+            if (remap.SourceVk is int sourceVk)
+                remap.Source ??= HotkeyBinding.FromKey(sourceVk);
+            remap.SourceVk = null;
+        }
+        settings.Remaps.RemoveAll(r => r.Source is not { IsSet: true } || r.Target is not { IsSet: true });
         foreach (var remap in settings.Remaps)
         {
             if (remap.Id == Guid.Empty)

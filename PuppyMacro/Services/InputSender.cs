@@ -92,27 +92,51 @@ internal static class InputSender
         }
     }
 
-    /// <summary>Sends a combination down (modifiers first) or up (main key first). Used by remaps.</summary>
-    public static void SendBinding(HotkeyBinding binding, bool isDown)
+    /// <summary>
+    /// Sends a combination down (modifiers first) or up (main key first), each modifier on its side (either side:
+    /// the left one). Used by remaps. With <paramref name="releaseHeld"/> (a source with modifiers), the modifiers
+    /// held for the source are released first, so the app gets only the combination sent; they are not pressed again.
+    /// </summary>
+    public static void SendBinding(HotkeyBinding binding, bool isDown, bool releaseHeld = false)
     {
+        int ctrl = binding.CtrlSide == ModifierSide.Right ? KeyNames.VK_RCONTROL : KeyNames.VK_LCONTROL;
+        int alt = binding.AltSide == ModifierSide.Right ? KeyNames.VK_RMENU : KeyNames.VK_LMENU;
+        int shift = binding.ShiftSide == ModifierSide.Right ? KeyNames.VK_RSHIFT : KeyNames.VK_LSHIFT;
+        int win = binding.WinSide == ModifierSide.Right ? KeyNames.VK_RWIN : KeyNames.VK_LWIN;
         lock (Gate)
         {
             if (isDown)
             {
-                if (binding.Ctrl) Down(KeyNames.VK_LCONTROL);
-                if (binding.Alt) Down(KeyNames.VK_LMENU);
-                if (binding.Shift) Down(KeyNames.VK_LSHIFT);
-                if (binding.Win) Down(KeyNames.VK_LWIN);
+                if (releaseHeld)
+                    ReleaseHeldModifiers();
+                if (binding.Ctrl) Down(ctrl);
+                if (binding.Alt) Down(alt);
+                if (binding.Shift) Down(shift);
+                if (binding.Win) Down(win);
                 Down(binding.Vk);
             }
             else
             {
                 Up(binding.Vk);
-                if (binding.Win) Up(KeyNames.VK_LWIN);
-                if (binding.Shift) Up(KeyNames.VK_LSHIFT);
-                if (binding.Alt) Up(KeyNames.VK_LMENU);
-                if (binding.Ctrl) Up(KeyNames.VK_LCONTROL);
+                if (binding.Win) Up(win);
+                if (binding.Shift) Up(shift);
+                if (binding.Alt) Up(alt);
+                if (binding.Ctrl) Up(ctrl);
             }
+        }
+    }
+
+    /// <summary>
+    /// Taps the mask key, then releases <paramref name="vk"/>: a lone Alt or Win release that opens no menu (a modifier
+    /// pressed alone while a key field waits for it).
+    /// </summary>
+    public static void MaskedUp(int vk)
+    {
+        lock (Gate)
+        {
+            Down(MaskKeyVk);
+            Up(MaskKeyVk);
+            Up(vk);
         }
     }
 

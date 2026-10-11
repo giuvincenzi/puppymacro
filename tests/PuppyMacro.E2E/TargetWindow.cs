@@ -257,6 +257,9 @@ public sealed class TargetWindow : IDisposable
     private const int WM_XBUTTONDOWN = 0x020B, WM_XBUTTONUP = 0x020C, WM_XBUTTONDBLCLK = 0x020D;
     private const int WM_MOUSEHWHEEL = 0x020E;
 
+    /// <summary>The key of a key message; the right Ctrl (Ctrl with bit 24, extended key) as <see cref="Vk.RControl"/>.</summary>
+    private static int KeyCode(long w, long l) => w == Vk.Control && (l & 0x01000000) != 0 ? Vk.RControl : (int)w;
+
     /// <summary>Sees every input message of the window's thread, whichever control it is for.</summary>
     private void Record(ref Message m)
     {
@@ -267,10 +270,10 @@ public sealed class TargetWindow : IDisposable
             case WM_KEYDOWN or WM_SYSKEYDOWN:
                 // Bit 30: the key was already down (keyboard auto-repeat).
                 if ((l & 0x40000000) == 0)
-                    Add(TargetEventKind.KeyDown, (int)w, Cursor);
+                    Add(TargetEventKind.KeyDown, KeyCode(w, l), Cursor);
                 break;
             case WM_KEYUP or WM_SYSKEYUP:
-                Add(TargetEventKind.KeyUp, (int)w, Cursor);
+                Add(TargetEventKind.KeyUp, KeyCode(w, l), Cursor);
                 break;
             case WM_MOUSEMOVE:
                 Add(TargetEventKind.Move, 0, ToScreen(m.HWnd, l));
@@ -454,7 +457,7 @@ internal static class Native
 public static class Vk
 {
     public const int LButton = 0x01, RButton = 0x02, MButton = 0x04, XButton1 = 0x05, XButton2 = 0x06;
-    public const int Return = 0x0D, Control = 0x11, LControl = 0xA2, A = 0x41;
+    public const int Return = 0x0D, Shift = 0x10, Control = 0x11, LControl = 0xA2, RControl = 0xA3, A = 0x41;
     public const int F13 = 0x7C, F14 = 0x7D, F15 = 0x7E, F16 = 0x7F, F17 = 0x80, F18 = 0x81;
     public const int F19 = 0x82, F20 = 0x83, F21 = 0x84, F22 = 0x85, F23 = 0x86, F24 = 0x87;
 }

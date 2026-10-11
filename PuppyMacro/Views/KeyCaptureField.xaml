@@ -7,8 +7,8 @@
 
     <!-- The one field that asks the user for a key or a hotkey, on one line in three states:
          nothing set: "Set hotkey"; waiting: a turning ring and "Press … (Esc cancels)";
-         set: the keys in the accent color (AccentKeyCapItem, App.xaml) in one standard control: a SplitButton
-         (click: change; its menu: Change, Clear) where the key can be removed, otherwise a Button (click: change). -->
+         set: the keys in the accent color (AccentKeyCapItem, App.xaml) in a SplitButton (click: change; its menu:
+         Change, Clear where the key can be removed, and the side of each Ctrl, Alt, Shift and Win it holds). -->
     <Grid>
         <!-- Always the same height, whichever state it shows (Set, waiting, the keys), so nothing around it moves:
              an invisible standard button holding an accent key (the tallest state), 0 wide, sets the height -->
@@ -28,7 +28,7 @@
                     <ItemsControl x:Name="SplitCaps" Focusable="False"
                                   ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
                     <ui:SplitButton.Flyout>
-                        <ui:MenuFlyout Placement="Bottom">
+                        <ui:MenuFlyout x:Name="ValueMenu" Placement="Bottom">
                             <MenuItem x:Name="ChangeItem" Click="OnSetClick">
                                 <MenuItem.Icon>
                                     <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Edit_16_Regular}" />
@@ -42,10 +42,6 @@
                         </ui:MenuFlyout>
                     </ui:SplitButton.Flyout>
                 </ui:SplitButton>
-                <Button x:Name="ValueButton" Click="OnSetClick">
-                    <ItemsControl x:Name="ButtonCaps" Focusable="False"
-                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
-                </Button>
             </Grid>
         </StackPanel>
     </Grid>

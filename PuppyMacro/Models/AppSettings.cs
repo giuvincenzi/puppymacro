@@ -45,7 +45,19 @@ public enum LoopFilter
     Running,
 }
 
-/// <summary>A key (or mouse button) plus optional Ctrl, Alt, Shift and Win modifiers.</summary>
+/// <summary>Which Ctrl, Alt, Shift or Win of a hotkey counts: either one, or only the left or the right one.</summary>
+public enum ModifierSide
+{
+    Any,
+    Left,
+    Right,
+}
+
+/// <summary>
+/// A key (or mouse button) plus optional Ctrl, Alt, Shift and Win modifiers, each with its side
+/// (<see cref="ModifierSide"/>; files without one: <see cref="ModifierSide.Any"/>). A remap's source or target can
+/// also be a modifier key alone, by its left or right code (<see cref="Vk"/> 0xA0 to 0xA5, 0x5B, 0x5C).
+/// </summary>
 public sealed class HotkeyBinding
 {
     public int Vk { get; set; }
@@ -53,6 +65,18 @@ public sealed class HotkeyBinding
     public bool Alt { get; set; }
     public bool Shift { get; set; }
     public bool Win { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide CtrlSide { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide AltSide { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide ShiftSide { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide WinSide { get; set; }
 
     [JsonIgnore]
     public bool IsSet => Vk != 0;
@@ -62,11 +86,39 @@ public sealed class HotkeyBinding
 
     public static HotkeyBinding FromKey(int vk) => new() { Vk = vk };
 
+    /// <summary>The same key, modifiers and sides.</summary>
     public bool SameAs(HotkeyBinding? other) =>
         other != null && other.Vk == Vk && other.Ctrl == Ctrl && other.Alt == Alt
-        && other.Shift == Shift && other.Win == Win;
+        && other.Shift == Shift && other.Win == Win
+        && Side(Ctrl, CtrlSide) == Side(other.Ctrl, other.CtrlSide) && Side(Alt, AltSide) == Side(other.Alt, other.AltSide)
+        && Side(Shift, ShiftSide) == Side(other.Shift, other.ShiftSide) && Side(Win, WinSide) == Side(other.Win, other.WinSide);
+
+    /// <summary>
+    /// The keys pressed (<paramref name="pressed"/>: each held modifier with the side held, <see cref="ModifierSide.Any"/>
+    /// when both are) start this hotkey: the same key and modifiers, and each modifier on a side this hotkey accepts.
+    /// </summary>
+    public bool Matches(HotkeyBinding pressed) =>
+        IsSet && pressed.Vk == Vk && pressed.Ctrl == Ctrl && pressed.Alt == Alt && pressed.Shift == Shift && pressed.Win == Win
+        && Accepts(Ctrl, CtrlSide, pressed.CtrlSide) && Accepts(Alt, AltSide, pressed.AltSide)
+        && Accepts(Shift, ShiftSide, pressed.ShiftSide) && Accepts(Win, WinSide, pressed.WinSide);
+
+    /// <summary>Some key presses would start both: the same key and modifiers, on sides that are not opposite.</summary>
+    public bool Overlaps(HotkeyBinding? other) =>
+        other != null && other.IsSet && other.Vk == Vk && other.Ctrl == Ctrl && other.Alt == Alt
+        && other.Shift == Shift && other.Win == Win
+        && SidesOverlap(Ctrl, CtrlSide, other.CtrlSide) && SidesOverlap(Alt, AltSide, other.AltSide)
+        && SidesOverlap(Shift, ShiftSide, other.ShiftSide) && SidesOverlap(Win, WinSide, other.WinSide);
 
     public HotkeyBinding Clone() => (HotkeyBinding)MemberwiseClone();
+
+    /// <summary>A side counts only with its modifier.</summary>
+    private static ModifierSide Side(bool held, ModifierSide side) => held ? side : ModifierSide.Any;
+
+    private static bool Accepts(bool held, ModifierSide side, ModifierSide pressed) =>
+        !held || side == ModifierSide.Any || side == pressed;
+
+    private static bool SidesOverlap(bool held, ModifierSide a, ModifierSide b) =>
+        !held || a == ModifierSide.Any || b == ModifierSide.Any || a == b;
 }
 
 /// <summary>One thing a loop repeats: a key or a text, each on its own interval.</summary>
@@ -269,7 +321,7 @@ public sealed class LoopDefinition
 /// <summary>Everything persisted in settings.json.</summary>
 public sealed class AppSettings
 {
-    public const int CurrentSchemaVersion = 6;
+    public const int CurrentSchemaVersion = 7;
     public const int DefaultRecordVk = 0x77;    // F8
 
     /// <summary>Stop all for new installs: Alt+Shift+S. Existing files keep their hotkey.</summary>
@@ -390,15 +442,15 @@ public sealed class AppSettings
     }
 }
 
-/// <summary>When <see cref="SourceVk"/> is pressed, <see cref="Target"/> is sent instead.</summary>
+/// <summary>When <see cref="Source"/> is pressed, <see cref="Target"/> is sent instead.</summary>
 public sealed class RemapDefinition
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    /// <summary>Key or mouse button pressed by the user.</summary>
-    public int SourceVk { get; set; }
+    /// <summary>Key, mouse button or combination pressed by the user, or a modifier key alone (by its side).</summary>
+    public HotkeyBinding? Source { get; set; }
 
-    /// <summary>Key, mouse button or combination sent instead.</summary>
+    /// <summary>Key, mouse button or combination sent instead, or a modifier key alone (by its side).</summary>
     public HotkeyBinding? Target { get; set; }
 
     /// <summary>Executable name (e.g. "Diablo IV.exe"); null = all apps (<see cref="AppScope"/>).</summary>
@@ -407,16 +459,21 @@ public sealed class RemapDefinition
     public string Note { get; set; } = "";
     public bool Enabled { get; set; } = true;
 
+    // ---- Before schema 7 the source was a single key; read once and converted by SettingsStore ----
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? SourceVk { get; set; }
+
     public RemapDefinition Clone()
     {
         var copy = (RemapDefinition)MemberwiseClone();
+        copy.Source = Source?.Clone();
         copy.Target = Target?.Clone();
         return copy;
     }
 
     public void CopyFrom(RemapDefinition other)
     {
-        SourceVk = other.SourceVk;
+        Source = other.Source?.Clone();
         Target = other.Target?.Clone();
         AppExe = other.AppExe;
         Note = other.Note;

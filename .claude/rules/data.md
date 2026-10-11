@@ -34,6 +34,10 @@ paths:
   `AppSettings.LoadedSchemaVersion` < 6); afterwards null means 85%. New installs get Stop all
   Alt+Shift+S and Overlay mode Alt+Shift+W (`AppSettings.CreateDefault`); existing files keep
   theirs.
+- Schema 7: a remap's source is `Source` (a `HotkeyBinding`); the single key of older files, `SourceVk`, is
+  read once and converted to a `Source` with no modifiers (`SettingsStore.Sanitize`); the remap Code view
+  rejects `SourceVk`. Hotkeys have `CtrlSide`, `AltSide`, `ShiftSide`, `WinSide`, left out when `Any`
+  (either side), so older files mean either side, as before.
 - `AppExe` (Specific app) on loops, macros and remaps: an .exe file name or null (all apps). Files
   without it work in all apps; an empty value is saved as null (`AppScope.Normalize`, in
   `SettingsStore`, `MacroLibrary.Sanitize` and the Code views).

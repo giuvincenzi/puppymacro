@@ -9,7 +9,8 @@
 #   make build      create the distribution in dist/ (Setup.exe + update packages), no upload
 #   make docs       build the website in site-preview/ with the guide of the current code
 #   make docs-serve same, then serve it at http://localhost:8080/ (Ctrl+C to stop)
-#   make screenshots make dev, then retake the guide's editor screenshots and the home page one (drives the UI)
+#   make screenshots make dev, then retake the guide's editor screenshots and the home page one (drives the UI),
+#                   then close PuppyMacro
 #   make release-pr open the release pull request (next version from the latest tag and CHANGELOG);
 #                   merging it publishes the release
 #   make release    retry the Release workflow on main (it never republishes an existing tag)

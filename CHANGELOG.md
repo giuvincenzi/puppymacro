@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+### Added
+- Remaps from a **combination**: **When I press** takes Ctrl, Alt, Shift or Win with a key, for example
+  Alt+J → Left arrow.
+- Remaps of **Ctrl, Alt, Shift or Win** alone, left and right apart (for example Right Alt → Enter), and
+  Ctrl, Alt, Shift or Win alone in **Send instead**.
+- **Left and right modifiers**: hotkeys, remaps and Settings' hotkeys keep the side of Ctrl, Alt, Shift
+  and Win you pressed, so Left Ctrl+F6 and Right Ctrl+F6 can do different things. The arrow next to the
+  keys chooses Left, Right or Left or right for each one.
+
+### Changed
+- A remap of a key alone no longer applies when Ctrl, Alt, Shift or Win is held: a remap of J leaves
+  Alt+J as it is.
+- Every key field has the arrow next to the keys, also in Settings and in the remap editor.
+- Modifier keys are named Left Ctrl, Right Alt and so on, instead of LCtrl, RAlt.
+
 ## 1.13.0
 
 ### Added

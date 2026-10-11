@@ -13,15 +13,16 @@
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
-  `HotkeyConflicts` (also per app and for remap sources), `HotkeyRules`, which items the overlay shows
-  (`OverlayItems`, `FloatingButtons`), `ModifierTracker`, `KeyNames`, `HotkeyBinding`, what the key
-  field shows (`KeyCaptureField.DisplayParts`), loop intervals, `FloatingButton` (labels,
+  `HotkeyConflicts` (also per app, for remap sources and for modifier sides), `HotkeyRules`, which items the overlay shows
+  (`OverlayItems`, `FloatingButtons`), `ModifierTracker`, `KeyNames`, `HotkeyBinding` (`Matches`, `Overlaps`, sides), what the key
+  field shows and its side items (`KeyCaptureField.DisplayParts`, `SideChoices`, `WithSide`), loop intervals, `FloatingButton` (labels,
   sanitizing, opacity, old files), the Code views' checks and schemas (`MacroJson`, `LoopJson`,
   `RemapJson`, `CodeSchema`, the groups an action can be in), `LoopEngine`'s input decisions (keys
   held by a Hold down loop, wheel hotkeys, hotkey capture, the overlay panel's Stop all, Exit, Open and Move, right
   clicks on the overlay's items, disabled items and clicks that pass through,
   hotkeys of items for a specific app and their stop when another app comes in front, through
-  `OnForegroundApp`),
+  `OnForegroundApp`, hotkeys and remaps with modifier sides, remaps from a combination or of a modifier
+  alone, AltGr's fake Ctrl, capture of a modifier alone),
   driven through `OnKey` / `OnWheel` / `OnMouseDetail` without hooks, and the XAML files
   (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`).
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,

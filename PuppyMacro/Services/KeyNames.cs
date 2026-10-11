@@ -47,7 +47,11 @@ internal static class KeyNames
         vk is 0x10 or 0x11 or 0x12 or VK_LSHIFT or VK_RSHIFT or VK_LCONTROL or VK_RCONTROL
             or VK_LMENU or VK_RMENU or VK_LWIN or VK_RWIN;
 
-    /// <summary>Display parts of a hotkey, e.g. ["Ctrl", "Shift", "F9"].</summary>
+    /// <summary>A modifier key alone, by its side (left or right Ctrl, Alt, Shift, Win): a remap's source or target.</summary>
+    public static bool IsSidedModifier(int vk) =>
+        vk is VK_LSHIFT or VK_RSHIFT or VK_LCONTROL or VK_RCONTROL or VK_LMENU or VK_RMENU or VK_LWIN or VK_RWIN;
+
+    /// <summary>Display parts of a hotkey, e.g. ["Left Ctrl", "Shift", "F9"] (no side: either one).</summary>
     public static List<string> Parts(HotkeyBinding? hotkey)
     {
         var parts = new List<string>();
@@ -56,13 +60,21 @@ internal static class KeyNames
             parts.Add("No hotkey");
             return parts;
         }
-        if (hotkey.Ctrl) parts.Add("Ctrl");
-        if (hotkey.Alt) parts.Add("Alt");
-        if (hotkey.Shift) parts.Add("Shift");
-        if (hotkey.Win) parts.Add("Win");
+        if (hotkey.Ctrl) parts.Add(Modifier("Ctrl", hotkey.CtrlSide));
+        if (hotkey.Alt) parts.Add(Modifier("Alt", hotkey.AltSide));
+        if (hotkey.Shift) parts.Add(Modifier("Shift", hotkey.ShiftSide));
+        if (hotkey.Win) parts.Add(Modifier("Win", hotkey.WinSide));
         parts.Add(Get(hotkey.Vk));
         return parts;
     }
+
+    /// <summary>"Ctrl", "Left Ctrl" or "Right Ctrl".</summary>
+    public static string Modifier(string name, ModifierSide side) => side switch
+    {
+        ModifierSide.Left => "Left " + name,
+        ModifierSide.Right => "Right " + name,
+        _ => name,
+    };
 
     public static string Format(HotkeyBinding? hotkey) => string.Join(" + ", Parts(hotkey));
 
@@ -107,8 +119,8 @@ internal static class KeyNames
         0x2E => "Delete",
         >= 0x30 and <= 0x39 => ((char)vk).ToString(),
         >= 0x41 and <= 0x5A => ((char)vk).ToString(),
-        0x5B => "LWin",
-        0x5C => "RWin",
+        0x5B => "Left Win",
+        0x5C => "Right Win",
         >= 0x60 and <= 0x69 => "Numpad" + (vk - 0x60),
         0x6A => "Numpad*",
         0x6B => "Numpad+",
@@ -118,12 +130,12 @@ internal static class KeyNames
         >= 0x70 and <= 0x87 => "F" + (vk - 0x6F),
         0x90 => "NumLock",
         0x91 => "ScrollLock",
-        0xA0 => "LShift",
-        0xA1 => "RShift",
-        0xA2 => "LCtrl",
-        0xA3 => "RCtrl",
-        0xA4 => "LAlt",
-        0xA5 => "RAlt",
+        0xA0 => "Left Shift",
+        0xA1 => "Right Shift",
+        0xA2 => "Left Ctrl",
+        0xA3 => "Right Ctrl",
+        0xA4 => "Left Alt",
+        0xA5 => "Right Alt",
         _ => FromSystem(vk),
     };
 

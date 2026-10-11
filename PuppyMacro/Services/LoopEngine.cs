@@ -82,13 +82,18 @@ internal sealed class LoopEngine : IDisposable
     // Key-up events to swallow because we blocked the matching key-down.
     private readonly HashSet<int> _swallowUp = new();
 
-    // Remaps currently held: source key -> target sent.
+    // Remaps currently held: source key (the main key, or the modifier key of a modifier alone) -> target sent.
     private readonly Dictionary<int, HotkeyBinding> _activeRemaps = new();
 
     private Action<HotkeyBinding>? _captureDone;
     private Action? _captureCancelled;
     private bool _captureAllowsPrimaryMouse;
     private bool _captureHotkey;
+    private bool _captureModifierAlone;
+
+    // While a capture takes a modifier alone: the modifier key pressed with no other modifier held, captured if it is
+    // released before any other key; -1 once another modifier was pressed with it (until all are released).
+    private int _captureLoneModifier;
 
     // ---- Wheel hotkeys: one notch (WHEEL_DELTA) is one press; smaller steps (touchpads) add up ----
     private int _wheelVk;
@@ -614,8 +619,11 @@ internal sealed class LoopEngine : IDisposable
     /// With <paramref name="hotkey"/>, while a modifier is held, left and right click, the scroll
     /// wheel and Esc are captured too (see <see cref="HotkeyRules"/>); alone they still pass
     /// through, scroll and cancel.
+    /// With <paramref name="modifierAlone"/> (a remap's source and target), a Ctrl, Alt, Shift or Win key pressed and
+    /// released alone is captured too, by its side (e.g. Right Alt).
     /// </summary>
-    public void BeginCapture(Action<HotkeyBinding> done, Action cancelled, bool allowPrimaryMouse, bool hotkey = false)
+    public void BeginCapture(Action<HotkeyBinding> done, Action cancelled, bool allowPrimaryMouse, bool hotkey = false,
+        bool modifierAlone = false)
     {
         CancelCapture();
         lock (_sync)
@@ -624,6 +632,8 @@ internal sealed class LoopEngine : IDisposable
             _captureCancelled = cancelled;
             _captureAllowsPrimaryMouse = allowPrimaryMouse;
             _captureHotkey = hotkey;
+            _captureModifierAlone = modifierAlone;
+            _captureLoneModifier = 0;
         }
     }
 
@@ -639,36 +649,38 @@ internal sealed class LoopEngine : IDisposable
         cancelled?.Invoke();
     }
 
-    private static HotkeyBinding CurrentBinding(int vk) => new()
+    /// <summary><paramref name="vk"/> with the modifiers physically held, each on the side held (both: Any).</summary>
+    private static HotkeyBinding CurrentBinding(int vk)
     {
-        Vk = vk,
-        Ctrl = ModifierTracker.Ctrl,
-        Alt = ModifierTracker.Alt,
-        Shift = ModifierTracker.Shift,
-        Win = ModifierTracker.Win,
-    };
+        var binding = new HotkeyBinding
+        {
+            Vk = vk,
+            Ctrl = ModifierTracker.Ctrl,
+            Alt = ModifierTracker.Alt,
+            Shift = ModifierTracker.Shift,
+            Win = ModifierTracker.Win,
+        };
+        if (binding.Ctrl) binding.CtrlSide = ModifierTracker.CtrlSide;
+        if (binding.Alt) binding.AltSide = ModifierTracker.AltSide;
+        if (binding.Shift) binding.ShiftSide = ModifierTracker.ShiftSide;
+        if (binding.Win) binding.WinSide = ModifierTracker.WinSide;
+        return binding;
+    }
 
     private static bool Matches(HotkeyBinding? hotkey, HotkeyBinding pressed) =>
-        hotkey != null && hotkey.IsSet && hotkey.SameAs(pressed);
+        hotkey != null && hotkey.Matches(pressed);
 
     // ================= Key routing (input thread) =================
 
     // Returns true to block the event. Internal for the unit tests.
-    internal bool OnKey(int vk, bool isDown, bool physicalModifierEvent)
+    internal bool OnKey(int vk, bool isDown, bool physicalModifierEvent, bool altGrCtrl = false)
     {
         lock (_sync)
         {
             bool isMouse = KeyNames.IsMouse(vk);
 
-            // Modifiers always pass through. Only real key events change their state.
             if (KeyNames.IsModifier(vk))
-            {
-                if (physicalModifierEvent)
-                    ModifierTracker.Update(vk, isDown);
-                if (_recording && physicalModifierEvent && !CursorGuard.IsOwnWindowForeground())
-                    Record(isDown ? RawEventKind.KeyDown : RawEventKind.KeyUp, vk);
-                return false;
-            }
+                return OnModifier(vk, isDown, physicalModifierEvent, altGrCtrl);
 
             if (_captureDone != null)
                 return HandleCapture(vk, isDown);
@@ -759,17 +771,88 @@ internal sealed class LoopEngine : IDisposable
                 return Block();
             }
 
-            // Remaps: an app-specific remap wins over an "all apps" one.
-            var remap = FindRemap(snap, vk);
+            // Remaps: an app-specific remap wins over an "all apps" one. A source with modifiers (Alt + A): the
+            // modifiers held for it are released first, so the app gets only the target.
+            var remap = FindRemap(snap, pressed);
             if (remap?.Target is { IsSet: true } target)
             {
                 _activeRemaps[vk] = target;
-                _injector.Post(() => SendRemapTarget(target, isDown: true));
+                bool releaseHeld = pressed.HasModifiers;
+                _injector.Post(() => SendRemapTarget(target, isDown: true, releaseHeld));
                 return true;
             }
 
             return false;
         }
+    }
+
+    /// <summary>
+    /// A Ctrl, Alt, Shift or Win event. Called with the lock held. Modifiers pass through, and only real key events
+    /// change their state; a modifier key that is a remap's source (Right Alt → Enter) is blocked instead, sends its
+    /// target and does not count as a modifier. While a key field waits for a modifier alone, pressing and releasing
+    /// one alone captures it.
+    /// </summary>
+    private bool OnModifier(int vk, bool isDown, bool physical, bool altGrCtrl)
+    {
+        if (!physical)
+        {
+            // AltGr is the fake left Ctrl plus Right Alt: while Right Alt is remapped, its fake Ctrl goes with it.
+            return altGrCtrl && _captureDone == null && !_recording
+                && FindRemap(_snapshot, HotkeyBinding.FromKey(KeyNames.VK_RMENU)) != null;
+        }
+
+        if (_captureDone == null && !_recording)
+        {
+            if (!isDown && _activeRemaps.Remove(vk, out var remapTarget))
+            {
+                _injector.Post(() => SendRemapTarget(remapTarget, isDown: false));
+                return true;
+            }
+            if (isDown && _activeRemaps.TryGetValue(vk, out var repeating))
+            {
+                // Auto-repeat of a remapped modifier: repeat the target key (not its modifiers).
+                if (!KeyNames.IsMouse(repeating.Vk))
+                    _injector.Post(() => InputSender.Down(repeating.Vk));
+                return true;
+            }
+            // The state before this press: the other modifiers held (exact match, as for any source).
+            if (isDown && FindRemap(_snapshot, CurrentBinding(vk))?.Target is { IsSet: true } target)
+            {
+                _activeRemaps[vk] = target;
+                _injector.Post(() => SendRemapTarget(target, isDown: true));
+                return true;
+            }
+        }
+
+        if (isDown && _captureDone != null && _captureModifierAlone && _captureLoneModifier != vk)
+            _captureLoneModifier = ModifierTracker.Any || _captureLoneModifier != 0 ? -1 : vk;
+
+        ModifierTracker.Update(vk, isDown);
+        if (_recording && !CursorGuard.IsOwnWindowForeground())
+            Record(isDown ? RawEventKind.KeyDown : RawEventKind.KeyUp, vk);
+
+        if (!isDown && _captureDone != null && _captureModifierAlone)
+        {
+            if (vk == _captureLoneModifier)
+            {
+                var done = _captureDone;
+                var binding = HotkeyBinding.FromKey(vk);
+                _captureDone = null;
+                _captureCancelled = null;
+                _captureLoneModifier = 0;
+                _dispatcher.InvokeAsync(() => done(binding));
+                // A lone Alt or Win release would open a menu or Start: release it behind the mask key.
+                if (vk is KeyNames.VK_LMENU or KeyNames.VK_RMENU or KeyNames.VK_LWIN or KeyNames.VK_RWIN)
+                {
+                    _injector.Post(() => InputSender.MaskedUp(vk));
+                    return true;
+                }
+                return false;
+            }
+            if (!ModifierTracker.Any)
+                _captureLoneModifier = 0;
+        }
+        return false;
     }
 
     /// <summary>
@@ -897,13 +980,14 @@ internal sealed class LoopEngine : IDisposable
         }
     }
 
-    private RemapDefinition? FindRemap(EngineSnapshot snap, int vk)
+    /// <summary>The remap whose source is exactly <paramref name="pressed"/> (key, modifiers and their sides).</summary>
+    private RemapDefinition? FindRemap(EngineSnapshot snap, HotkeyBinding pressed)
     {
         RemapDefinition? forAllApps = null;
         string? foreground = null;
         foreach (var remap in snap.Remaps)
         {
-            if (remap.SourceVk != vk)
+            if (remap.Source?.Matches(pressed) != true)
                 continue;
             if (remap.AppExe == null)
             {
@@ -917,18 +1001,8 @@ internal sealed class LoopEngine : IDisposable
         return forAllApps;
     }
 
-    private static void SendRemapTarget(HotkeyBinding target, bool isDown)
-    {
-        if (KeyNames.IsMouse(target.Vk) && !target.HasModifiers)
-        {
-            if (isDown)
-                InputSender.Down(target.Vk);
-            else
-                InputSender.Up(target.Vk);
-            return;
-        }
-        InputSender.SendBinding(target, isDown);
-    }
+    private static void SendRemapTarget(HotkeyBinding target, bool isDown, bool releaseHeld = false) =>
+        InputSender.SendBinding(target, isDown, releaseHeld);
 
     /// <summary>File name of the foreground window's process, e.g. "Diablo IV.exe" (cached per process).</summary>
     private string? ForegroundExeName()

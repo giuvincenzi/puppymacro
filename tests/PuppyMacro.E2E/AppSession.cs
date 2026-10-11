@@ -165,6 +165,13 @@ public sealed class AppSession : IDisposable
         Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId)))?.AsWindow(),
             Timeout, throwOnTimeout: true, timeoutMessage: $"window \"{title}\" not found").Result!;
 
+    /// <summary>An item of an open menu (a menu is a top-level window of its own) of this PuppyMacro.</summary>
+    public AutomationElement MenuItem(string name) =>
+        Retry.WhileNull(() => Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId))
+                .Select(w => w.FindFirstDescendant(cf => cf.ByName(name).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.MenuItem))))
+                .FirstOrDefault(i => i != null),
+            Timeout, throwOnTimeout: true, timeoutMessage: $"menu item \"{name}\" not found").Result!;
+
     /// <summary>A top-level window of this PuppyMacro (overlay panel, floating buttons), or null after a timeout.</summary>
     public AutomationElement? TopWindow(string title) =>
         Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId))),

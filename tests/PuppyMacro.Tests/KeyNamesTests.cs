@@ -17,7 +17,8 @@ public class KeyNamesTests
     [InlineData(0x70, "F1")]
     [InlineData(0x87, "F24")]
     [InlineData(0x63, "Numpad3")]
-    [InlineData(0xA3, "RCtrl")]
+    [InlineData(0xA3, "Right Ctrl")]
+    [InlineData(0x5B, "Left Win")]
     public void Get_returns_the_display_name(int vk, string expected) =>
         Assert.Equal(expected, KeyNames.Get(vk));
 
@@ -27,6 +28,14 @@ public class KeyNamesTests
         var hotkey = new HotkeyBinding { Vk = 0x78, Win = true, Shift = true, Alt = true, Ctrl = true };
 
         Assert.Equal("Ctrl + Alt + Shift + Win + F9", KeyNames.Format(hotkey));
+    }
+
+    [Fact]
+    public void Format_names_the_side_of_a_modifier_when_only_one_counts()
+    {
+        var hotkey = new HotkeyBinding { Vk = 0x41, Ctrl = true, CtrlSide = ModifierSide.Right, Alt = true, AltSide = ModifierSide.Left, Shift = true };
+
+        Assert.Equal("Right Ctrl + Left Alt + Shift + A", KeyNames.Format(hotkey));
     }
 
     [Fact]

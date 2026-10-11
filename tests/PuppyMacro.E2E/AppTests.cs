@@ -511,4 +511,28 @@ public class AppTests
         Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"AppExe\": \"e2e-app.exe\""),
             AppSession.Timeout).Success);
     }
+
+    [Fact]
+    public void The_key_field_menu_sets_the_side_of_a_modifier()
+    {
+        using var app = new AppSession();
+        app.GoTo("Remap");
+        // The sample's source was chosen with the left Alt: only that Alt counts.
+        app.EditItem("Sample: Left Alt + J to the left arrow");
+        Window remap = app.Dialog("Edit remap");
+        AutomationElement source = app.FindById(remap, "SourceField");
+        Assert.True(app.Has(source, "Left Alt"));
+
+        // The keys are a split button: its menu has Change and the sides of Alt.
+        app.Find(source, "Change key").Patterns.ExpandCollapse.Pattern.Expand();
+        app.MenuItem("Right Alt");
+        app.MenuItem("Left or right Alt").AsMenuItem().Invoke();
+        Assert.True(Retry.WhileFalse(() => app.Has(source, "Alt") && !app.Has(source, "Left Alt"), AppSession.Timeout).Success,
+            "the source does not show Alt for either side");
+
+        app.FindById(remap, "SaveButton").AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Replace(" ", "").Replace("\r", "").Replace("\n", "")
+            .Contains("\"Source\":{\"Vk\":74,\"Ctrl\":false,\"Alt\":true,\"Shift\":false,\"Win\":false}"), AppSession.Timeout).Success,
+            "the remap was not saved with Alt on either side");
+    }
 }

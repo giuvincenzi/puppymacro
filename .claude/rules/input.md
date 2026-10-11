@@ -11,7 +11,16 @@ paths:
 - The scroll wheel as a hotkey key has its own codes outside the virtual-key range (keyboard
   hooks report 1 to 254): `KeyNames.VK_WHEEL_UP` 0x100, down 0x101, left 0x102, right 0x103.
   They are only hotkeys, never keys to send.
-- `HotkeyBinding` = main key + Ctrl/Alt/Shift/Win. Matching is **exact**.
+- `HotkeyBinding` = main key + Ctrl/Alt/Shift/Win, each with a side (`ModifierSide`: `Left`, `Right`,
+  or `Any` = either one, the value of files from before sides existed). Matching is **exact**
+  (`HotkeyBinding.Matches`): the same key and modifiers, each held on a side the binding accepts. The
+  pressed binding (`LoopEngine.CurrentBinding`) has the side held, `Any` when both are. A capture keeps
+  the side pressed; the key field's menu changes it. Conflicts use `Overlaps`: opposite sides do not clash.
+- A remap's source (`RemapDefinition.Source`) is a binding too, matched the same way (a remap of J does
+  not take Alt+J), or a modifier key alone by its left or right code (Right Alt). Its target can also be a
+  modifier key alone; modifiers in a target are sent on their side (`Any`: the left one).
+- A source with modifiers (Alt+J): the remap releases the modifiers held (`InputSender.SendBinding` with
+  `releaseHeld`, mask key first) before the target, and does not press them again.
 - **Modifier state comes only from physical key events** (`ModifierTracker`, updated by the
   hook). Injected events (`LLKHF_INJECTED`) and AltGr's fake left Ctrl (scan code flag
   0x200) never change it. Do not use `GetAsyncKeyState` for this.
@@ -32,7 +41,13 @@ paths:
 - A key or button held by a running **Hold down** loop row (`ActionRunner.HeldVk`): its physical
   presses and releases are blocked, otherwise the release would let go of the loop's key while
   the loop still shows as running.
-- Routing order in `LoopEngine.OnKey`: modifiers → key capture → record hotkey/recording →
+- Modifier events (`LoopEngine.OnModifier`): a physical one that is a remap's source is blocked, sends
+  the target and never reaches `ModifierTracker`, so it does not count as a modifier (its auto-repeat
+  repeats the target). AltGr's fake left Ctrl (`InputHook` passes `altGrCtrl`) is blocked while a remap of
+  Right Alt applies, otherwise it passes as before. While a key field waits with `modifierAlone` (remap
+  source and target), a modifier pressed and released with no other key or modifier is captured; a lone
+  Alt or Win release is then blocked and sent again behind the mask key, so no menu or Start opens.
+- Routing order in `LoopEngine.OnKey`: modifiers (`OnModifier`) → key capture → record hotkey/recording →
   key-up handling (swallowed ups, remap ups, Hold release, keys held by a loop) → auto-repeat →
   global hotkeys, loop and macro hotkeys (`RunHotkey`, skipped while `HotkeysSuspended`) →
   keys held by a loop → remaps.

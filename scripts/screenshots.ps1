@@ -1,7 +1,8 @@
 # make screenshots: retakes the editor screenshots of the user guide (site/guide/img: loop-editor.png,
 # macro-editor.png, macro-editor-code.png, remap-editor.png) and the home page's (site/assets/loops.png) from the
 # running development build (start it first with make dev, so it shows the sample data).
-# It drives the UI with UI Automation: do not use the mouse or keyboard while it runs.
+# It drives the UI with UI Automation: do not use the mouse or keyboard while it runs. At the end (also after an
+# error) it closes that PuppyMacro, so the PC is free again when it returns.
 # Each window is captured alone, at its visible edges, and saved at 100% scale.
 param([string]$OutDir = (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/guide/img'))
 $ErrorActionPreference = 'Stop'
@@ -29,6 +30,13 @@ function WaitFor([scriptblock]$get, [string]$what) {
 function ByName($root, $name) { $root.FindFirst($TS::Descendants, (New-Object $PC($A::NameProperty, $name))) }
 
 $proc = WaitFor { Get-Process PuppyMacro -ErrorAction SilentlyContinue | Where-Object MainWindowHandle -ne 0 | Select-Object -First 1 } 'PuppyMacro'
+
+# When it ends, also on an error: PuppyMacro is closed (the process, not only its window to the system tray).
+function ClosePuppyMacro {
+  Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+  Write-Host "Closed PuppyMacro ($($proc.Path))"
+}
+trap { ClosePuppyMacro; break }
 $main = WaitFor { $A::FromHandle($proc.MainWindowHandle) } 'main window'
 Start-Sleep -Seconds 2
 
@@ -148,3 +156,5 @@ $r = Bounds $h
 $top = [Math]::Round($strip.Current.BoundingRectangle.Bottom + 3 * $scale)
 SaveRegion $h $r.L $top $r.R $r.B (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/assets/loops.png')
 $transform.Resize($restoreWidth, $restoreHeight)
+
+ClosePuppyMacro

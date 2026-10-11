@@ -43,7 +43,8 @@ public class SettingsStoreTests : IDisposable
         settings.Theme = AppTheme.Light;
         settings.SoundVolume = 35;
         settings.CheckForUpdates = false;
-        settings.Remaps.Add(new RemapDefinition { SourceVk = 0x14, Target = HotkeyBinding.FromKey(0x1B), AppExe = "app.exe" });
+        var source = new HotkeyBinding { Vk = 0x41, Alt = true, AltSide = ModifierSide.Right };
+        settings.Remaps.Add(new RemapDefinition { Source = source, Target = HotkeyBinding.FromKey(0x1B), AppExe = "app.exe" });
 
         Assert.True(store.TrySave(settings, out _));
         AppSettings loaded = store.Load(out string? warning);
@@ -53,7 +54,8 @@ public class SettingsStoreTests : IDisposable
         Assert.Equal(35, loaded.SoundVolume);
         Assert.False(loaded.CheckForUpdates);
         RemapDefinition remap = Assert.Single(loaded.Remaps);
-        Assert.Equal(0x14, remap.SourceVk);
+        Assert.True(remap.Source!.SameAs(source));
+        Assert.Null(remap.SourceVk);
         Assert.Equal(0x1B, remap.Target!.Vk);
         Assert.Equal("app.exe", remap.AppExe);
     }
@@ -210,6 +212,36 @@ public class SettingsStoreTests : IDisposable
         RemapDefinition remap = Assert.Single(settings.Remaps);
         Assert.Null(remap.AppExe);
         Assert.NotEqual(Guid.Empty, remap.Id);
+    }
+
+    [Fact]
+    public void Schema_6_remaps_get_a_source_and_old_hotkeys_take_either_side()
+    {
+        var store = new SettingsStore(SettingsPath);
+        File.WriteAllText(SettingsPath, """
+            {
+              "SchemaVersion": 6,
+              "StopAllHotkey": { "Vk": 83, "Alt": true, "Shift": true },
+              "Remaps": [ { "SourceVk": 65, "Target": { "Vk": 37, "Ctrl": true } } ]
+            }
+            """);
+
+        AppSettings settings = store.Load(out _);
+
+        RemapDefinition remap = Assert.Single(settings.Remaps);
+        Assert.True(remap.Source!.SameAs(HotkeyBinding.FromKey(65)));
+        Assert.Null(remap.SourceVk);
+        Assert.Equal(ModifierSide.Any, remap.Target!.CtrlSide);
+        Assert.Equal(AppSettings.CurrentSchemaVersion, settings.SchemaVersion);
+        // Left or right Alt and Shift start it, as before.
+        foreach (var (alt, shift) in new[] { (ModifierSide.Left, ModifierSide.Left), (ModifierSide.Right, ModifierSide.Left), (ModifierSide.Any, ModifierSide.Right) })
+            Assert.True(settings.StopAllHotkey!.Matches(new HotkeyBinding { Vk = 83, Alt = true, AltSide = alt, Shift = true, ShiftSide = shift }));
+
+        Assert.True(store.TrySave(settings, out _));
+        string saved = File.ReadAllText(SettingsPath);
+        Assert.DoesNotContain("SourceVk", saved);
+        Assert.DoesNotContain("AltSide", saved);
+        Assert.DoesNotContain("CtrlSide", saved);
     }
 
     [Fact]
