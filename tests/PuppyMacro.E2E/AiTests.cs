@@ -373,7 +373,7 @@ public class AiTests
         Task<(string Text, bool IsError)> call = Call(client, "open_item", new { id = macro.Id.ToString(), title = "Check the delays", description = "The E2E test opens it." });
         Window editor = app.Dialog("Edit macro");
         Assert.Equal("Check the delays", app.FindById(editor, "NoticeBar").Name);
-        // While the editor is open the request waits for it (it once ended at once, leaving the editor without its dialog).
+        // While the editor is open the request waits for it.
         Assert.False(Retry.WhileFalse(() => call.IsCompleted, TimeSpan.FromSeconds(3)).Result, "open_item ended while its editor was open");
         app.FindById(editor, "CancelButton").AsButton().Invoke();
         var (text, isError) = await call;
