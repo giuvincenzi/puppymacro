@@ -1,4 +1,6 @@
-# Unit tests on every push and pull request (same command as `make test`).
+# Unit tests on every push and pull request (same command as `make test`). Not on the push of a
+# release commit ("Release X.Y.Z (#N)", from `make release-pr`): the Release workflow runs them on
+# that commit before publishing.
 name: Test
 
 on:
@@ -12,6 +14,7 @@ permissions:
 
 jobs:
   test:
+    if: ${{ !(github.event_name == 'push' && startsWith(github.event.head_commit.message, 'Release ')) }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7

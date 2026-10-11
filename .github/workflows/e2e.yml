@@ -2,6 +2,9 @@
 # a contributor's desktop. Runs on every pull request (required to merge), every push to main,
 # before every release (the Release workflow calls it), and on a branch with
 # `gh workflow run e2e.yml --ref <branch>`. The runner's screen is 1024x768.
+# Not on the push of a release commit ("Release X.Y.Z (#N)", from `make release-pr`): the Release
+# workflow runs them on that commit before publishing. Called by Release, github.workflow is
+# "Release" (a called workflow gets its caller's github context), so they run there.
 name: E2E
 
 on:
@@ -16,6 +19,7 @@ permissions:
 
 jobs:
   e2e:
+    if: ${{ !(github.workflow == 'E2E' && github.event_name == 'push' && startsWith(github.event.head_commit.message, 'Release ')) }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
