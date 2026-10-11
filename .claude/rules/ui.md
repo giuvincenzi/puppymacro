@@ -89,11 +89,12 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `ListViewItemCompactSelectedBorderThemeThickness` is `4,0,4,4`, so the first page's background starts
     where that layer starts; the Settings list keeps the library's 4 (no extra margin), as Library in Microsoft Store.
   - The main window's title bar: `TitleBar.ExtendViewIntoTitleBar` with `TitleBar.Height` 48, as Microsoft Store
-    and the library's ButtonsOnTitlebar sample: the app icon at 24 px (12 px above and below), the title in caption
-    style with the version in `TextFillColorSecondaryBrush`, then on the right, before the window buttons (`TitleBar.SystemOverlayRightInset`), Enter overlay mode (a
-    standard button with the `MapLayers` icon) and Stop all, each with its hotkey in the tooltip and
-    `WindowChrome.IsHitTestVisibleInChrome`. They show on every page.
-  - The main window's Stop all, in that title bar: the `Stop` icon and its text, `AccentButtonStyle` with
+    and the library's ButtonsOnTitlebar sample: on the left the app icon at 24 px (12 px above and below) and "PuppyMacro"
+    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build); in the middle of the
+    window Enter overlay mode (a standard button with the `MapLayers` icon); on the right, before the window buttons
+    (`TitleBar.SystemOverlayRightInset`), Stop all. Both have their hotkey in the tooltip and
+    `WindowChrome.IsHitTestVisibleInChrome`, and show on every page.
+  - The main window's Stop all, in that title bar: the filled `Stop_16_Filled` icon and its text, `AccentButtonStyle` with
     `AccentButtonBackground`, `…PointerOver` and `…Pressed` redefined in its `Button.Resources` from
     `SystemFillColorCritical` (100%, 90%, 80%); shown only while something runs, hidden otherwise.
   - The status dots in the lists are the library's `InfoBadge` dots: Running `SuccessDot`, Disabled
