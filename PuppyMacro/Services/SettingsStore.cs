@@ -141,6 +141,7 @@ internal sealed class SettingsStore
             foreach (var action in loop.Actions)
             {
                 action.Text ??= "";
+                action.Normalize();
                 double ms = action.IntervalMs;
                 if (double.IsNaN(ms) || ms < LoopAction.MinIntervalMs || ms > LoopAction.MaxIntervalMs)
                 {

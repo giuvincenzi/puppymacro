@@ -178,6 +178,8 @@ internal static class MacroJson
             case MacroActionType.KeyUp:
                 if (!CodeJson.IsKeyCode(a.Vk))
                     check.Add($"{prefix}Vk", "Choose a key: a virtual-key code from 1 to 254.");
+                else if (KeyNames.IsMouse(a.Vk))
+                    check.Add($"{prefix}Vk", "Use a Click, Mouse down or Mouse up action for mouse buttons.");
                 break;
             case MacroActionType.Click:
             case MacroActionType.MouseDown:
@@ -186,6 +188,13 @@ internal static class MacroJson
                     check.Add($"{prefix}Vk", "Choose a mouse button: 1 left, 2 right, 4 middle, 5 back (X1), 6 forward (X2).");
                 break;
         }
+        check.KeyModifiers(prefix, a, a.Type switch
+        {
+            MacroActionType.PressKey => null,
+            MacroActionType.KeyDown or MacroActionType.KeyUp =>
+                "Key down and Key up take one key: for Ctrl, Alt, Shift or Win alone use its key code in \"Vk\" (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).",
+            _ => "Only a Press key action has Ctrl, Alt, Shift or Win. Remove it.",
+        });
         if (a.Type is MacroActionType.PressKey or MacroActionType.Click)
         {
             check.Range($"{prefix}HoldMs", a.HoldMs, HoldMs);

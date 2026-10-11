@@ -190,6 +190,32 @@ internal static class CodeJson
             return valid;
         }
 
+        /// <summary>
+        /// The Ctrl, Alt, Shift and Win of a loop action or a macro action (<paramref name="prefix"/>: "" or
+        /// "Actions[2]."). Where it can have none, <paramref name="whyNone"/> says why. False when not valid.
+        /// </summary>
+        public bool KeyModifiers(string prefix, KeyModifierFields f, string? whyNone)
+        {
+            bool valid = true;
+            foreach (var (name, held, side) in new[]
+            {
+                ("Ctrl", f.Ctrl, f.CtrlSide), ("Alt", f.Alt, f.AltSide), ("Shift", f.Shift, f.ShiftSide), ("Win", f.Win, f.WinSide),
+            })
+            {
+                if (held && whyNone != null)
+                {
+                    Add($"{prefix}{name}", whyNone);
+                    valid = false;
+                }
+                else if (!held && side != ModifierSide.Any)
+                {
+                    Add($"{prefix}{name}Side", $"Only with \"{name}\": true. Remove it, or set \"{name}\" to true.");
+                    valid = false;
+                }
+            }
+            return valid;
+        }
+
         /// <summary>The checks of the Specific app card: null (all apps) or an .exe file name.</summary>
         public void AppExe(string? appExe)
         {

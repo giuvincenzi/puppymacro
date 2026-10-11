@@ -48,19 +48,71 @@ internal static class LoopJson
             if (a.Type == ActionType.Text && string.IsNullOrEmpty(a.Text))
                 check.Add($"{path}.Text", "Enter the text.");
             if (a.Type == ActionType.Text && a.HoldDown)
-                check.Add($"{path}.HoldDown", "Only key rows can be held down.");
+                check.Add($"{path}.HoldDown", "Only Press key and Click can be held down.");
             bool hasInterval = !(a.Type == ActionType.Key && a.HoldDown);
             if (hasInterval && (double.IsNaN(a.IntervalMs) || a.IntervalMs < LoopAction.MinIntervalMs || a.IntervalMs > LoopAction.MaxIntervalMs))
                 check.Add($"{path}.IntervalValue", "The interval must be between 10 ms and 24 h.");
+            CheckPressOptions(a, $"{path}.", check);
         }
 
         check.AppExe(l.AppExe);
         check.Hotkey(l.Hotkey, l.Mode, binding => conflict(binding, AppScope.Normalize(l.AppExe)));
-        if (l.Hotkey is { IsSet: true } hotkey && !hotkey.HasModifiers
-            && l.Actions.Any(a => a.Type == ActionType.Key && a.KeyVk == hotkey.Vk))
+        if (HotkeyIsPressed(l.Hotkey, l.Actions))
             check.Add("Hotkey", "The hotkey cannot be one of the keys this loop presses.");
         check.KnownSound(l.SoundName);
         check.FloatingButton(l.FloatingButton, l.Mode);
+    }
+
+    /// <summary>
+    /// The loop's hotkey is a key or combination one of its Press key or Click actions presses (the loop editor
+    /// has the same rule).
+    /// </summary>
+    public static bool HotkeyIsPressed(HotkeyBinding? hotkey, IEnumerable<LoopAction> actions) =>
+        hotkey is { IsSet: true } && actions.Any(a => a.Type == ActionType.Key && hotkey.Overlaps(a.Key));
+
+    /// <summary>A row's Press key / Click options, as the loop editor allows them.</summary>
+    private static void CheckPressOptions(LoopAction a, string path, CodeJson.Checker check)
+    {
+        bool key = a.Type == ActionType.Key;
+        string? whyNoModifiers = !key ? "Only Press key has Ctrl, Alt, Shift or Win. Remove it."
+            : a.IsClick ? "A click has no Ctrl, Alt, Shift or Win. Remove it."
+            : a.HoldDown ? "Hold down takes a key without Ctrl, Alt, Shift or Win: use Repeat for a combination."
+            : null;
+        check.KeyModifiers(path, a, whyNoModifiers);
+
+        void NotHere(string field, object? value, string why)
+        {
+            if (value != null)
+                check.Add(path + field, why);
+        }
+        if (!key)
+        {
+            const string onlyKeys = "Only Press key and Click have it. Remove it.";
+            NotHere("HoldMs", a.HoldMs, onlyKeys);
+            NotHere("Repeat", a.Repeat, onlyKeys);
+            NotHere("RepeatPauseMs", a.RepeatPauseMs, onlyKeys);
+        }
+        if (!a.IsClick)
+        {
+            const string onlyClicks = "Only Click has it. Remove it.";
+            NotHere("ClickCount", a.ClickCount, onlyClicks);
+            NotHere("X", a.X, onlyClicks);
+            NotHere("Y", a.Y, onlyClicks);
+        }
+        if (a.HoldMs is double hold)
+            check.Range(path + "HoldMs", hold, MacroJson.HoldMs);
+        if (a.Repeat is int repeat)
+            check.Range(path + "Repeat", repeat, MacroJson.Repeat);
+        if (a.RepeatPauseMs is double pause)
+            check.Range(path + "RepeatPauseMs", pause, MacroJson.RepeatPauseMs);
+        if (a.IsClick && a.ClickCount is not null and not (1 or 2))
+            check.Add(path + "ClickCount", "Must be 1 (single click), 2 (double click) or null.");
+        if (a.IsClick && (a.X == null) != (a.Y == null))
+            check.Add(path + (a.X == null ? "Y" : "X"), "Set both X and Y for a fixed point, or neither (null: where the pointer is).");
+        if (a.IsClick && a.X is int x)
+            check.Range(path + "X", x, MacroJson.Coordinate);
+        if (a.IsClick && a.Y is int y)
+            check.Range(path + "Y", y, MacroJson.Coordinate);
     }
 }
 

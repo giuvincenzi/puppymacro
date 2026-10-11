@@ -44,7 +44,7 @@ public sealed class PathPoint
 /// One step of a macro. <see cref="DelayMs"/> is the wait before the step starts,
 /// counted from the end of the previous step. Positions are physical screen pixels.
 /// </summary>
-public sealed class MacroAction
+public sealed class MacroAction : KeyModifierFields
 {
     public MacroActionType Type { get; set; }
     public double DelayMs { get; set; }
@@ -87,6 +87,21 @@ public sealed class MacroAction
     public string Text { get; set; } = "";
     public bool EnterBefore { get; set; }
     public bool EnterAfter { get; set; }
+
+    /// <summary>
+    /// PressKey: the key with its Ctrl, Alt, Shift and Win (the other types have none); KeyDown, KeyUp: the key,
+    /// which can be a modifier key alone.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public HotkeyBinding Key
+    {
+        get => Combine(Vk);
+        set
+        {
+            Vk = value.Vk;
+            SetModifiers(value);
+        }
+    }
 
     public MacroAction Clone()
     {

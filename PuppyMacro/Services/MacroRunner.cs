@@ -100,7 +100,11 @@ internal sealed class MacroRunner
                 {
                     if (r > 0 && !Wait(a.RepeatPauseMs))
                         return false;
-                    if (!InputSender.Tap(a.Vk, hold, _timer!, _stop))
+                    // A combination presses its modifiers too; those a Key down holds stay as they are.
+                    bool keepGoing = a.HasModifiers
+                        ? InputSender.TapBinding(a.Key, hold, _timer!, _stop, _held)
+                        : InputSender.Tap(a.Vk, hold, _timer!, _stop);
+                    if (!keepGoing)
                         return false;
                 }
                 return true;

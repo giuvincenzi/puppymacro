@@ -121,11 +121,81 @@ public sealed class HotkeyBinding
         !held || a == ModifierSide.Any || b == ModifierSide.Any || a == b;
 }
 
-/// <summary>One thing a loop repeats: a key or a text, each on its own interval.</summary>
-public sealed class LoopAction
+/// <summary>
+/// The Ctrl, Alt, Shift and Win of a key or combination kept as flat fields next to its key (a loop's
+/// <see cref="LoopAction"/>, a macro's PressKey). Written to the file only when set, so files without them
+/// stay exactly as they were.
+/// </summary>
+public abstract class KeyModifierFields
+{
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Ctrl { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Alt { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Shift { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Win { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide CtrlSide { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide AltSide { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide ShiftSide { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ModifierSide WinSide { get; set; }
+
+    [JsonIgnore]
+    public bool HasModifiers => Ctrl || Alt || Shift || Win;
+
+    /// <summary><paramref name="vk"/> with these modifiers.</summary>
+    protected HotkeyBinding Combine(int vk) => new()
+    {
+        Vk = vk,
+        Ctrl = Ctrl, Alt = Alt, Shift = Shift, Win = Win,
+        CtrlSide = Ctrl ? CtrlSide : ModifierSide.Any,
+        AltSide = Alt ? AltSide : ModifierSide.Any,
+        ShiftSide = Shift ? ShiftSide : ModifierSide.Any,
+        WinSide = Win ? WinSide : ModifierSide.Any,
+    };
+
+    /// <summary>Takes the modifiers of <paramref name="binding"/> (a side only with its modifier).</summary>
+    protected void SetModifiers(HotkeyBinding? binding)
+    {
+        Ctrl = binding?.Ctrl == true;
+        Alt = binding?.Alt == true;
+        Shift = binding?.Shift == true;
+        Win = binding?.Win == true;
+        CtrlSide = Ctrl ? binding!.CtrlSide : ModifierSide.Any;
+        AltSide = Alt ? binding!.AltSide : ModifierSide.Any;
+        ShiftSide = Shift ? binding!.ShiftSide : ModifierSide.Any;
+        WinSide = Win ? binding!.WinSide : ModifierSide.Any;
+    }
+
+    /// <summary>No modifiers (a type that has none).</summary>
+    public void ClearModifiers() => SetModifiers(null);
+}
+
+/// <summary>
+/// One thing a loop repeats: a key or combination, a mouse button (a Key row whose key is a mouse button,
+/// shown as Click) or a text, each on its own interval. The fields after <see cref="IntervalUnit"/> are null
+/// in older files and mean what loops did before them.
+/// </summary>
+public sealed class LoopAction : KeyModifierFields
 {
     public const double MinIntervalMs = 10;
     public const double MaxIntervalMs = 24 * 60 * 60 * 1000; // 24 h
+
+    /// <summary>A press is held this long by default, at most half the interval (as before HoldMs existed).</summary>
+    public const double DefaultHoldMs = 30;
+    public const double DefaultRepeatPauseMs = 50;
 
     public ActionType Type { get; set; } = ActionType.Key;
     public int KeyVk { get; set; }
@@ -139,8 +209,62 @@ public sealed class LoopAction
     public double IntervalValue { get; set; } = 40;
     public IntervalUnit IntervalUnit { get; set; } = IntervalUnit.Milliseconds;
 
+    /// <summary>Key rows: how long each press is held; null = <see cref="DefaultHoldMs"/>.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? HoldMs { get; set; }
+
+    /// <summary>Key rows: presses each time (null = 1).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Repeat { get; set; }
+
+    /// <summary>Key rows: pause between those presses; null = <see cref="DefaultRepeatPauseMs"/>.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? RepeatPauseMs { get; set; }
+
+    /// <summary>Mouse button rows: 2 = double click (null = single).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? ClickCount { get; set; }
+
+    /// <summary>Mouse button rows: the fixed point clicked (physical pixels); null = where the pointer is.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? X { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Y { get; set; }
+
     [JsonIgnore]
     public double IntervalMs => ToMilliseconds(IntervalValue, IntervalUnit);
+
+    /// <summary>A Key row whose key is a mouse button: shown and edited as Click.</summary>
+    [JsonIgnore]
+    public bool IsClick => Type == ActionType.Key && KeyVk is 1 or 2 or 4 or 5 or 6;
+
+    /// <summary>The key or combination of a Key row.</summary>
+    [JsonIgnore]
+    public HotkeyBinding Key
+    {
+        get => Combine(KeyVk);
+        set
+        {
+            KeyVk = value.Vk;
+            SetModifiers(value);
+        }
+    }
+
+    [JsonIgnore]
+    public double EffectiveHoldMs => HoldMs ?? DefaultHoldMs;
+
+    [JsonIgnore]
+    public int Times => Math.Max(1, Repeat ?? 1);
+
+    [JsonIgnore]
+    public double EffectiveRepeatPauseMs => RepeatPauseMs ?? DefaultRepeatPauseMs;
+
+    [JsonIgnore]
+    public bool IsDoubleClick => ClickCount == 2;
+
+    [JsonIgnore]
+    public bool HasFixedPoint => X != null && Y != null;
 
     public static double ToMilliseconds(double value, IntervalUnit unit) => unit switch
     {
@@ -151,6 +275,33 @@ public sealed class LoopAction
     };
 
     public LoopAction Clone() => (LoopAction)MemberwiseClone();
+
+    /// <summary>
+    /// Drops values that do not belong to the row's kind (a loaded file): modifiers only on a key that is
+    /// not held down, click options only on a mouse button, the defaults left out.
+    /// </summary>
+    public void Normalize()
+    {
+        bool key = Type == ActionType.Key && !IsClick;
+        if (!key || HoldDown)
+            ClearModifiers();
+        if (Type != ActionType.Key)
+            HoldMs = Repeat = null;
+        if (Type != ActionType.Key)
+            RepeatPauseMs = null;
+        if (HoldMs is double hold && (double.IsNaN(hold) || hold < 1))
+            HoldMs = null;
+        else if (HoldMs is double longHold)
+            HoldMs = Math.Min(longHold, 60_000);
+        if (Repeat is int times)
+            Repeat = times <= 1 ? null : Math.Min(times, 100_000);
+        if (RepeatPauseMs is double pause && (double.IsNaN(pause) || pause < 0))
+            RepeatPauseMs = null;
+        if (!IsClick || ClickCount != 2)
+            ClickCount = null;
+        if (!IsClick || X == null || Y == null)
+            X = Y = null;
+    }
 }
 
 public enum FloatingButtonSize

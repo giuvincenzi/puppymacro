@@ -127,6 +127,8 @@ internal sealed class MacroLibrary
             action.DelayMs = Math.Clamp(action.DelayMs, 0, 86_400_000);
             action.Repeat = Math.Clamp(action.Repeat, 1, 100000);
             action.RepeatPauseMs = Math.Clamp(action.RepeatPauseMs, 0, 86_400_000);
+            if (action.Type != MacroActionType.PressKey)
+                action.ClearModifiers(); // only a Press key is a combination
         }
         macro.NormalizeGroups();
     }
