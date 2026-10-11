@@ -13,8 +13,10 @@ paths:
   `CommandBar`, `ToggleSwitch`, `NumberBox`, `InfoBar`, `ContentDialog`, `FontIcon` with
   `SegoeFluentIcons` and `FluentSystemIcons`...).
   How to use them: `ui.md`. Its license asks for the attribution in `README.md`.
-- **Velopack 1.2.161** (installer and updates) and **Microsoft.Web.WebView2** (the editors'
-  Code view). No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
+- **Velopack 1.2.161** (installer and updates), **Microsoft.Web.WebView2** (the editors'
+  Code view) and **ModelContextProtocol.Core 2.2.0** (the official MCP C# SDK, Apache-2.0, its core only: no
+  generic host; it brings Microsoft.Extensions.AI.Abstractions, Logging.Abstractions and
+  DependencyInjection.Abstractions). No other NuGet packages. Win32 through P/Invoke in `Native/NativeMethods.cs`.
 - **Monaco editor 0.52.2** (MIT, the editor of VS Code), only the files JSON needs, in
   `Assets/Monaco` with its license; `Assets/CodeEditor` is the page around it. To update it, copy
   the same files from the npm package's `min/vs` and keep the version here. The loader's `vs`
@@ -32,15 +34,18 @@ scripts/                        PowerShell scripts run by the Makefile
 site/                           website and user guide sources (docs.md)
 tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end tests (testing.md)
 PuppyMacro/
-  App.xaml(.cs)                 Main (Velopack), single instance, data migration, theme, tray start
-  MainWindow.xaml(.cs)          side rail (Views/SideRail): Loops, Macros, Remap, Settings; overlay mode; tray
+  App.xaml(.cs)                 Main (--mcp bridge, Velopack), single instance, data migration, theme, tray start
+  MainWindow.xaml(.cs)          side rail (Views/SideRail): Loops, Macros, Remap, AI, Settings; overlay mode; tray
   MainWindow.Updates.cs         update bar, Settings dot and Updates card
+  MainWindow.Ai.cs              AI page; the AI tools' host (IAiHost)
+  AiRequestWindow, AiActivityWindow   what an AI app asks the user (confirm, a key); AI activity (View all)
   LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow, GroupNameWindow
   OverlayPanelWindow, FloatingButtonWindow, PlacementWindow, PickPointWindow, RecordPromptWindow,
   RecordingBarWindow, CountdownWindow
   Models/                       AppSettings (settings.json), loops, macros, remaps
   Services/                     input thread and hooks, LoopEngine, runners, InputSender,
                                 recording, sounds, storage, Code view checks, tray, startup, updates
+  Services/Ai/                  MCP server for AI apps: pipe, bridge, tools, activity, apps' settings, help
   Views/                        view models, SideRail, ItemCardActions (+ SubtleButtons.xaml),
                                 KeyCaptureField, SwitchSettingsExpander, overlay panel, floating
                                 buttons, Code view (CodeView, ViewSwitchBar, CodeViewSwitch),
@@ -58,6 +63,7 @@ PuppyMacro/
 | `InputThread` | `WH_KEYBOARD_LL` / `WH_MOUSE_LL` hooks + message loop, desktop-switch and foreground WinEvent hooks |
 | `Injector` | Input sent on behalf of the hook (remap targets, menu mask key), in order |
 | One per running loop row (`ActionRunner`) / per running macro (`MacroRunner`) | Timing with `PreciseTimer` (high-resolution waitable timer) and `SendInput` |
+| Thread pool (`AiServer`) | The AI pipe's accept loop and one MCP session per connected AI app; the tools reach the UI only through `IAiHost.Ui` |
 
 Rules:
 - **Never block the input thread** and never touch WPF objects from it. The hook only
@@ -161,3 +167,61 @@ Rules:
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
+- History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version in
+  `history\{id}.json` (the newest up to 10 MB per item; none for a save that changes nothing), with who saved it (`MainWindow._savedBy`: "You",
+  or the AI app while `SavingAs`) and what changed (`ItemHistory.Changes`, a readable diff of the JSON). It is recorded in
+  one place: `MainWindow.Save()` (loops, remaps, deletions) and `SaveMacro` (macros), so every path is covered (editors,
+  switches, the overlay's right click, AI apps). `InitializeHistory` seeds the current JSON at start; the first change of an
+  item saved before the history existed also keeps its earlier version. The editors of a saved item get a third view,
+  History (`ViewSwitchBar` / `CodeViewSwitch`, `EditorView`; `EnableHistory`): Restore puts the version in the fields
+  (`HistoryRestore`) and the `NoticeBar` says to Save.
+- AI apps (MCP, `Services/Ai/`): an AI app on the PC starts `PuppyMacro.exe --mcp` (`AiBridge`, run in `App.Main` before
+  Velopack and WPF: no window, no update applied). The bridge only copies stdin/stdout to the running PuppyMacro's named
+  pipe (`AiPipe`: one per Windows user and per build, the development build has its own; current user only; elevated, a
+  medium integrity label so a non-elevated AI app can open it, without it when Windows refuses the label) and starts
+  PuppyMacro in the tray when it is not running, unless `AppSettings.AiStartWhenNeeded` is off: then it answers itself (a
+  small MCP server on stdio with the same tools, `AiBridge.ClosedMessage`: open PuppyMacro, and Start with Windows / Close
+  to system tray if they are off). It calls `AllowSetForegroundWindow` for PuppyMacro on every message; Windows may still
+  refuse, so the request windows also open topmost (`Views/AiWindow.BringToFront`, activated once shown, not on Loaded).
+  The pipe's first instance uses `FirstPipeInstance` and the bridge talks only to a server whose exe is its own
+  (`AppWindows.ExePath`). `AiServer` logs every tool call (`CallLogged` → `AiCallLog`, `logs\ai-calls.jsonl`: times and sizes, never the content);
+  the gap between a call's end and the next one's start is the AI app's own time (the model thinking and writing), the call's
+  ms is PuppyMacro's. `AiServer` (in PuppyMacro) runs one MCP session per bridge with the SDK's
+  `StreamServerTransport` (`AiServer.Options`), lists the connected apps by the name they give (`FriendlyName`) and says
+  why AI apps can't connect (`ListenError`, on the AI page).
+  `AiTools` holds every tool without the protocol (unit tested with a fake `IAiHost`): reads; `save_loop/macro/remap`,
+  checked with the Code views' `LoopJson`/`MacroJson`/`RemapJson` and the Id PuppyMacro gives, saved at once through
+  `IAiHost.Save` (`MainWindow.SaveItem`: the editors' Add / ApplyEdit; a running item stops)
+  (the same for `patch_item`: a JSON Patch, RFC 6902, `AiJson.Patch`, on the item's whole JSON, then `SaveItem`'s checks;
+  and `update_actions`: `AiJson.SetWhere`, the same fields on every action that matches, optionally in one macro group);
+  **an AI app writes and reads every character**, so a change is a patch, not the whole item (a 100 KB macro took 1.5 minutes to
+  rewrite), `get_item` gives `AiJson.Compact` (one line, fields at their default left out, read back as the same item: unit
+  tested) and `get_schema` the defaults (`CodeSchema` `withDefaults`); the answers of `save_*` and `patch_item` are the new Id or
+  the changes, never the item. With `AiAskBeforeChanging`, `AiRequestWindow` lists `ItemHistory.Changes` first; `delete_item` (asks with `AiAskBeforeDeleting`, on by default),
+  `set_enabled` (a change), `update_settings` (`AiAskBeforeSettings`, on by default); interactions (`pick_point`,
+  `pick_points`, `pick_app`, `capture_hotkey`, `place_floating_button`) with a `title`, a `description` and `steps` the AI
+  writes (`AiAsk`, no length limits; the steps shown numbered): first `AiReadyWindow` (centered, draggable, topmost, not
+  activated; Enter or Esc alone from any app through `LoopEngine.WatchReadyKeys`, every other key passes; Start), then
+  `PickPointWindow` (`count` points, numbered, each with the AI's `label` next to the cursor), the key window or `PlacementWindow` (`place_floating_button`: Toggle loops
+  and macros only, the button and Show in overlay on, saved with its position through `SaveItem`); `open_item` opens the
+  item's editor (`EditLoop` / `EditMacro` / `EditRemap` with `forAi`: centered, in front, the AI's title and description in
+  its `NoticeBar`; the user's own changes); every window of an AI request opens centered on the screen (`ShowForAi`);
+  the `Instructions` tell the AI to ask, when creating, only the questions that matter, to write the exact steps and wait
+  for the user's OK before picks, and then offer the missing extras. **What the model must do goes in the tools'
+  descriptions and schemas too** (`NewItemRule`, `AfterNewItem`, `UserWindow`; `confirmed_steps`, required by
+  `pick_point`/`pick_points`): MCP's server instructions are optional for the client, and Claude Desktop's agent mode did
+  not follow them, while every client gives the model the tools' descriptions. `stop_all`; `get_help` reads the guide of
+  this version, embedded from `site/guide` (`AiHelp`). AI apps cut long tool calls (Claude Desktop about 1 to 4 minutes,
+  Codex 60 to 300 s): a request that waits for the user answers "waiting" with a request_id (random, tied to the app that
+  asked) after `AiTools.WaitStep` (40 s) and the AI calls `wait_for_user`; an answer is given once (`Pending.Given`) and
+  kept until taken. `MainWindow.ShowForAi` closes a modal request window when nobody used PuppyMacro for `AnswerTimeout`
+  (5 minutes); the ready window closes after 5 minutes. One such request at a time; none while the user has a PuppyMacro
+  editor or dialog open (`HotkeysSuspended`, or `ShowUserDialog` for the dialogs that do not suspend hotkeys). Starting and
+  testing loops and macros are not tools on purpose (their input would go to the AI app's chat in front). Everything is
+  refused while `AppSettings.AllowAiAccess` is off. Every request goes to `AiActivityLog` (`ai-activity.json`, the newest 20 MB); a
+  change or deletion keeps the item's JSON before it (`Before`, `ItemKind`): Restore in Recent activity and
+  `AiActivityWindow` puts it back as the user's own change (`MainWindow.RestoreActivity`). The AI page (`MainWindow.Ai.cs`):
+  Allow AI access with the permissions inside, the apps as `SettingsCard`s built in code (`AppCard`; `AiApps`: Claude
+  Desktop's `claude_desktop_config.json`, also the Microsoft Store copy under `Packages\Claude_*`; VS Code's
+  `vscode:mcp/install` link and `mcp.json`; Codex's `config.toml` with `tool_timeout_sec = 600`; Copy configuration), Recent
+  activity; the status bar at the bottom of the main window (`AiStatusBar`) while an app is connected.

@@ -1,6 +1,6 @@
 # make e2e: builds the development build and the end-to-end tests, then runs them.
 # make e2e CATEGORY=Macros runs only the tests of that category (their [Trait("Category", ...)]:
-# UI, Macros, Loops, Remaps, Recording, Overlay).
+# UI, Macros, Loops, Remaps, Recording, Overlay, AI).
 # The tests close any running PuppyMacro (also the installed one), use the development build's
 # data folder (%AppData%\PuppyMacro Dev) and move the mouse and press keys: do not use the PC
 # while they run.
@@ -11,7 +11,8 @@ Set-Location $root
 
 Get-Process -Name PuppyMacro -ErrorAction SilentlyContinue | ForEach-Object {
     Write-Host "Closing the running PuppyMacro ($($_.Path))"
-    Stop-Process -Id $_.Id -Force
+    # Also AI bridges (PuppyMacro.exe --mcp): they exit by themselves when PuppyMacro closes, maybe already gone here.
+    Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
     $_.WaitForExit()
 }
 

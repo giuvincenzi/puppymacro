@@ -62,16 +62,35 @@ internal sealed class CodeViewSwitch<T> where T : class
         _bar.FormatRequested += _code.Format;
     }
 
-    public bool IsCode { get; private set; }
+    public bool IsCode => View == EditorView.Code;
 
-    /// <summary>Called before the Code view opens (e.g. to stop a key capture).</summary>
+    public EditorView View { get; private set; } = EditorView.Form;
+
+    /// <summary>Called before the Code view or the History opens (e.g. to stop a key capture).</summary>
     public event Action? Opening;
+
+    private FrameworkElement? _history;
+    private Action? _historyOpening;
+
+    /// <summary>
+    /// Offers the History view: <paramref name="history"/> shows instead of the form, after <paramref name="opening"/> filled
+    /// it. From the Code view it opens only without problems, as the Form view.
+    /// </summary>
+    public void EnableHistory(FrameworkElement history, Action opening)
+    {
+        _history = history;
+        _historyOpening = opening;
+        _bar.HistoryAvailable = true;
+    }
+
+    /// <summary>Back to the Form view (after a version was restored from the History).</summary>
+    public void ShowFormView() => SetView(EditorView.Form);
 
     /// <summary>The code's item, or null while it has problems or has not been checked yet.</summary>
     public T? Read() => _code.IsUpToDate && _code.Problems.Count == 0 ? _reader(_code.Text, out _) : null;
 
     /// <summary>Discard changes: back to the Form view as it was before the Code view.</summary>
-    public void Discard() => SetView(code: false);
+    public void Discard() => SetView(EditorView.Form);
 
     /// <summary>
     /// The window's Validate in the Code view: Save and Form view need code without problems.
@@ -98,22 +117,43 @@ internal sealed class CodeViewSwitch<T> where T : class
         return true;
     }
 
-    private async void OnViewRequested(bool code)
+    private async void OnViewRequested(EditorView view)
     {
-        if (code && !IsCode)
+        if (view == View)
+            return;
+        if (view == EditorView.Code)
+        {
             await ShowCode();
-        else if (!code && IsCode)
-            ShowForm();
+            return;
+        }
+        // To the Form view or the History: from the Code view only without problems, its item in the fields.
+        if (IsCode)
+        {
+            if (Read() is not T item)
+            {
+                // Problems: stay in the Code view (Form view and History are off meanwhile, see ValidateCode).
+                _bar.Show(EditorView.Code);
+                _validate();
+                return;
+            }
+            _load(item);
+        }
+        if (view == EditorView.History)
+        {
+            Opening?.Invoke(); // a key field waiting in the form stops, as for the Code view
+            _historyOpening?.Invoke();
+        }
+        SetView(view);
     }
 
     private async Task ShowCode()
     {
         Opening?.Invoke();
         string text = _serialize(_build());
-        SetView(code: true);
+        SetView(EditorView.Code);
         if (await _code.ShowAsync(text) is string error)
         {
-            SetView(code: false);
+            SetView(EditorView.Form);
             _errorText.Text = error;
             _errorText.Visibility = Visibility.Visible;
             return;
@@ -121,25 +161,15 @@ internal sealed class CodeViewSwitch<T> where T : class
         _code.FocusEditor();
     }
 
-    private void ShowForm()
+    private void SetView(EditorView view)
     {
-        if (Read() is not T item)
-        {
-            // Problems: stay in the Code view (Form view is off meanwhile, see ValidateCode).
-            _bar.Show(code: true);
-            _validate();
-            return;
-        }
-        _load(item);
-        SetView(code: false);
-    }
-
-    private void SetView(bool code)
-    {
-        IsCode = code;
-        _bar.Show(code);
-        _form.Visibility = code ? Visibility.Collapsed : Visibility.Visible;
+        View = view;
+        bool code = view == EditorView.Code;
+        _bar.Show(view);
+        _form.Visibility = view == EditorView.Form ? Visibility.Visible : Visibility.Collapsed;
         _code.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
+        if (_history != null)
+            _history.Visibility = view == EditorView.History ? Visibility.Visible : Visibility.Collapsed;
         _cancel.Content = code ? "Discard changes" : _cancelContent;
         _cancel.ToolTip = code ? "Undo your code changes and go back to Form view" : null;
         _validate();

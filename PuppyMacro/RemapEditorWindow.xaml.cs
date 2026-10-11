@@ -59,6 +59,22 @@ public partial class RemapEditorWindow
 
     public RemapDefinition? Result { get; private set; }
 
+    /// <summary>Offers the History view of a remap saved before.</summary>
+    internal void EnableHistory(ItemHistory history)
+    {
+        if (_editingId == Guid.Empty)
+            return;
+        _code.EnableHistory(HistoryPanel, () => HistoryPanel.Load(history.Versions(_itemId)));
+        HistoryPanel.RestoreRequested += version =>
+        {
+            if (HistoryRestore.Read<RemapDefinition>(version, _itemId) is not { } remap)
+                return;
+            LoadRemap(remap);
+            _code.ShowFormView();
+            HistoryRestore.Notice(NoticeBar, version);
+        };
+    }
+
     /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
     private void LoadRemap(RemapDefinition source)
     {
@@ -83,16 +99,8 @@ public partial class RemapEditorWindow
     };
 
     /// <summary>Why <paramref name="source"/> cannot be remapped for <paramref name="app"/> (null: all apps): a hotkey or another remap.</summary>
-    private string? SourceClash(HotkeyBinding source, string? app)
-    {
-        string? conflict = HotkeyConflicts.FindForRemap(source, app, _settings, _macros);
-        if (conflict != null)
-            return conflict + " Hotkeys take priority over remaps.";
-
-        var same = _settings.Remaps.FirstOrDefault(r => r.Id != _editingId && source.Overlaps(r.Source)
-            && string.Equals(r.AppExe, app, StringComparison.OrdinalIgnoreCase));
-        return same != null ? $"{KeyNames.Format(source)} is already remapped {(app == null ? "for all apps" : "for " + app)}." : null;
-    }
+    private string? SourceClash(HotkeyBinding source, string? app) =>
+        HotkeyConflicts.RemapClash(source, app, _settings, _macros, _editingId);
 
     private void UpdateLabels()
     {

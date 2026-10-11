@@ -1,0 +1,68 @@
+<UserControl
+    x:Class="PuppyMacro.Views.HistoryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf">
+
+    <!-- An editor's History (approved design): the saved versions by day on the left, the chosen one's changes on the right. -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="420" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock x:Name="EmptyText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                   Text="No versions yet: each time it is saved, the version is kept here." Visibility="Collapsed" />
+        <ListView x:Name="VersionList" SelectionMode="Single" SelectionChanged="OnSelectionChanged" AutomationProperties.Name="Versions">
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="0,12,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{Binding Name}" />
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="52" />
+                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding TimeText}" />
+                        <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding By}" />
+                        <TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" Text="{Binding SummaryText}" ToolTip="{Binding SummaryText}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Border Grid.Column="2" Padding="16" CornerRadius="{DynamicResource ControlCornerRadius}" BorderThickness="1"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+            <DockPanel x:Name="DetailPanel" LastChildFill="True" Visibility="Collapsed">
+                <TextBlock x:Name="DetailTitle" DockPanel.Dock="Top" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                <TextBlock DockPanel.Dock="Top" Margin="0,8,0,8" Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Changes from the version before:" />
+                <ikw:SimpleStackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0" Spacing="12">
+                    <TextBlock x:Name="RestoreHint" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Text="Restore puts this version in the editor: select Save to keep it. The current version stays in the History." />
+                    <Button x:Name="RestoreButton" Style="{StaticResource AccentButtonStyle}" Content="Restore this version" Click="OnRestoreClick" />
+                </ikw:SimpleStackPanel>
+                <ui:ScrollViewerEx VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="ChangeList" Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,0,0,6" TextWrapping="Wrap" Text="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ui:ScrollViewerEx>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

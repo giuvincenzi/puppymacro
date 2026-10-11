@@ -1,0 +1,102 @@
+<Window
+    x:Class="PuppyMacro.AiActivityWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    Title="AI activity"
+    Width="1000"
+    Height="720"
+    MinWidth="720"
+    MinHeight="480"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica"
+    ui:TitleBar.MinimizeButtonAvailability="Collapsed"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <!-- Everything AI apps asked that is kept (AiActivityLog, the newest 20 MB), with filters. -->
+    <DockPanel LastChildFill="True">
+        <Border DockPanel.Dock="Bottom" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="160" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Kept on this PC: the newest requests, up to 20 MB." />
+                <Button x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Stretch" Content="Clear history" Click="OnClearClick" />
+                <Button Grid.Column="3" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="Close"
+                        IsCancel="True" Click="OnCloseClick" />
+            </Grid>
+        </Border>
+
+        <ikw:SimpleStackPanel DockPanel.Dock="Top" Margin="24,4,24,12" Orientation="Horizontal" Spacing="8">
+            <ComboBox x:Name="PeriodBox" MinWidth="140" ui:ControlHelper.Header="Period" SelectionChanged="OnFilterChanged">
+                <ComboBoxItem Content="Today" />
+                <ComboBoxItem Content="Last 7 days" />
+                <ComboBoxItem Content="Last 30 days" />
+                <ComboBoxItem Content="All" />
+            </ComboBox>
+            <ComboBox x:Name="AppBox" MinWidth="160" ui:ControlHelper.Header="App" SelectionChanged="OnFilterChanged" />
+            <ComboBox x:Name="KindBox" MinWidth="140" ui:ControlHelper.Header="Type" SelectionChanged="OnFilterChanged" />
+            <ComboBox x:Name="ResultBox" MinWidth="140" ui:ControlHelper.Header="Result" SelectionChanged="OnFilterChanged" />
+            <TextBox x:Name="SearchBox" MinWidth="220" ui:ControlHelper.Header="Search" ui:ControlHelper.PlaceholderText="Search activity"
+                     TextChanged="OnSearchChanged" />
+        </ikw:SimpleStackPanel>
+
+        <!-- The selected request's details: what was proposed or saved -->
+        <Border x:Name="DetailCard" DockPanel.Dock="Bottom" Margin="24,0,24,12" Padding="16,12" MaxHeight="200"
+                CornerRadius="{DynamicResource ControlCornerRadius}" BorderThickness="1" Visibility="Collapsed"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+            <DockPanel>
+                <!-- What an AI app changed or deleted comes back as it was -->
+                <Button x:Name="RestoreButton" DockPanel.Dock="Right" Margin="12,0,0,0" VerticalAlignment="Top" Content="Restore"
+                        Visibility="Collapsed" Click="OnRestoreClick" />
+                <ui:ScrollViewerEx VerticalScrollBarVisibility="Auto">
+                    <TextBox x:Name="DetailText" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"
+                             AutomationProperties.Name="Details" />
+                </ui:ScrollViewerEx>
+            </DockPanel>
+        </Border>
+
+        <Grid Margin="24,0,24,12">
+            <TextBlock x:Name="EmptyText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Text="No requests match the filters." Visibility="Collapsed" />
+            <ListView x:Name="ActivityList" SelectionMode="Single" SelectionChanged="OnSelectionChanged" AutomationProperties.Name="AI activity">
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,12,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{Binding Name}" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="56" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="140" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding TimeText}" />
+                            <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding App}" />
+                            <TextBlock Grid.Column="2" Text="{Binding KindText}" />
+                            <TextBlock Grid.Column="3" Margin="0,0,12,0" TextTrimming="CharacterEllipsis" Text="{Binding Request}" ToolTip="{Binding Request}" />
+                            <TextBlock Grid.Column="4" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="{Binding ResultText}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </DockPanel>
+</Window>

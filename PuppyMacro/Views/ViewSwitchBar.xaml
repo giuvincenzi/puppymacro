@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
 
-    <!-- Form view: the editor's fields. Code view: the item's JSON in a code editor.
+    <!-- Form view: the editor's fields. Code view: the item's JSON in a code editor. History: its saved versions.
          The standard NavigationView at the top switches the view; Format sits in its pane footer. -->
     <ui:NavigationView
         x:Name="Views"
@@ -17,6 +17,8 @@
             <ui:NavigationViewItem x:Name="FormViewButton" Content="Form view" IsSelected="True" />
             <ui:NavigationViewItem x:Name="CodeViewButton" Content="Code view"
                                    ToolTip="Edit it as JSON. Ctrl+Space shows suggestions" />
+            <ui:NavigationViewItem x:Name="HistoryViewButton" Content="History" Visibility="Collapsed"
+                                   ToolTip="Its saved versions: who changed what, and Restore" />
         </ui:NavigationView.MenuItems>
         <ui:NavigationView.PaneFooter>
             <Button x:Name="FormatButton" Margin="0,0,8,0" VerticalAlignment="Center" Content="Format"

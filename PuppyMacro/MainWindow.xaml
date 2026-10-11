@@ -122,6 +122,58 @@
                  slightly lighter, a thin line on the top and left, the top-left corner rounded -->
             <Border Grid.Column="1" Background="{DynamicResource LayerFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1,1,0,0" CornerRadius="8,0,0,0">
+            <DockPanel>
+                <!-- ================= Status bar (approved design): the AI apps connected right now, each with a green dot whose halo
+                     pulses slowly (still when Windows' animations are off). Shown only while one is connected, on the right, inside the content layer (the side rail runs the whole height); a click opens the AI page. ================= -->
+                <Border x:Name="AiStatusBar" DockPanel.Dock="Bottom" Height="28" Padding="16,0" BorderThickness="0,1,0,0" Visibility="Collapsed"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Background="Transparent"
+                        MouseLeftButtonUp="OnAiStatusBarClick" ToolTip="Connected AI apps: select to open the AI page"
+                        AutomationProperties.Name="Connected AI apps">
+                    <ItemsControl x:Name="AiStatusList" HorizontalAlignment="Right" VerticalAlignment="Center" Focusable="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="18" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid Width="8" Height="8" VerticalAlignment="Center">
+                                        <Ellipse x:Name="Halo" Fill="{DynamicResource SystemFillColorSuccessBrush}" RenderTransformOrigin="0.5,0.5"
+                                                 Opacity="0" Visibility="{Binding HaloVisibility}">
+                                            <Ellipse.RenderTransform>
+                                                <ScaleTransform />
+                                            </Ellipse.RenderTransform>
+                                            <Ellipse.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever">
+                                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="1" To="1.8" Duration="0:0:2.4">
+                                                                <DoubleAnimation.EasingFunction>
+                                                                    <CubicEase EasingMode="EaseOut" />
+                                                                </DoubleAnimation.EasingFunction>
+                                                            </DoubleAnimation>
+                                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="1" To="1.8" Duration="0:0:2.4">
+                                                                <DoubleAnimation.EasingFunction>
+                                                                    <CubicEase EasingMode="EaseOut" />
+                                                                </DoubleAnimation.EasingFunction>
+                                                            </DoubleAnimation>
+                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.35" To="0" Duration="0:0:2.4" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Ellipse.Triggers>
+                                        </Ellipse>
+                                        <Ellipse Fill="{DynamicResource SystemFillColorSuccessBrush}" />
+                                    </Grid>
+                                    <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{DynamicResource SystemFillColorSuccessBrush}" Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
             <Grid>
 
                 <!-- ================= Loops page ================= -->
@@ -440,6 +492,97 @@
                     </ui:ScrollViewerEx>
                 </Grid>
 
+                <!-- ================= AI page: AI apps on this PC use PuppyMacro through its MCP server (MainWindow.Ai.cs) ================= -->
+                <ui:ScrollViewerEx x:Name="AiPage" Padding="40,12,40,0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <ikw:SimpleStackPanel Margin="0,0,0,16" Spacing="4">
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="AI" />
+                        <TextBlock Margin="0,4,0,0" MaxWidth="760" HorizontalAlignment="Left" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Text="Use PuppyMacro from an AI app on this PC, like Claude Desktop or Visual Studio Code. Ask in your own words: the AI makes loops, macros and remaps, and you try them right away." />
+
+                        <!-- The AI apps feature is in beta (the user asked to say so in the app) -->
+                        <ui:InfoBar x:Name="AiBetaBar" Margin="0,12,0,0" Severity="Informational" IsClosable="False" IsOpen="True"
+                                    Title="Beta" AutomationProperties.Name="Beta"
+                                    Message="AI apps in PuppyMacro are new: they work, but they may change, and an AI can get a request wrong. Every change is kept in the item's History, so you can always go back." />
+                        <ui:InfoBar x:Name="AiMessage" Margin="0,12,0,0" IsOpen="False" />
+                        <!-- PuppyMacro's AI connection could not be opened (AiServer.ListenError) -->
+                        <ui:InfoBar x:Name="AiConnectionError" Margin="0,12,0,0" Severity="Warning" IsClosable="False" IsOpen="False" />
+
+                        <!-- Access -->
+                        <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Access" />
+                        <!-- Allow AI access, and what the AI apps may do without asking (SwitchSettingsExpander, ui.md) -->
+                        <views:SwitchSettingsExpander x:Name="AiAccessExpander" Header="Allow AI access"
+                                                      Description="AI apps on this PC can read and change your loops, macros, remaps and settings. Every change is kept in the item's History."
+                                                      CanExpand="{Binding IsOn, ElementName=AiAccessSwitch}">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Shield}" />
+                            </ui:SettingsExpander.HeaderIcon>
+                            <ui:ToggleSwitch x:Name="AiAccessSwitch" AutomationProperties.Name="Allow AI access" Toggled="OnAiAccessChanged" />
+                            <ui:SettingsExpander.Items>
+                                <ui:SettingsCard Header="Ask before deleting a loop, macro or remap">
+                                    <ui:ToggleSwitch x:Name="AiAskDeleteSwitch" AutomationProperties.Name="Ask before deleting" Toggled="OnAiPermissionChanged" />
+                                </ui:SettingsCard>
+                                <ui:SettingsCard Header="Ask before changing a loop, macro or remap"
+                                                 Description="Off: the AI's new and changed items are saved at once, ready to try.">
+                                    <ui:ToggleSwitch x:Name="AiAskChangeSwitch" AutomationProperties.Name="Ask before changing" Toggled="OnAiPermissionChanged" />
+                                </ui:SettingsCard>
+                                <ui:SettingsCard Header="Ask before changing settings" Description="Theme, global hotkeys, overlay panel, sound">
+                                    <ui:ToggleSwitch x:Name="AiAskSettingsSwitch" AutomationProperties.Name="Ask before changing settings" Toggled="OnAiPermissionChanged" />
+                                </ui:SettingsCard>
+                                <ui:SettingsCard Header="Start PuppyMacro when an AI app needs it"
+                                                 Description="Off: while PuppyMacro is closed, AI apps can't use it and tell you to open it.">
+                                    <ui:ToggleSwitch x:Name="AiStartSwitch" AutomationProperties.Name="Start PuppyMacro when an AI app needs it" Toggled="OnAiPermissionChanged" />
+                                </ui:SettingsCard>
+                            </ui:SettingsExpander.Items>
+                        </views:SwitchSettingsExpander>
+
+                        <!-- Apps: one SettingsCard each, built in MainWindow.Ai.cs (the app's own icon from its exe) -->
+                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Apps" />
+                        <ikw:SimpleStackPanel x:Name="AiAppsPanel" Spacing="4" />
+
+                        <!-- Recent activity: the last requests; View all opens the AI activity window -->
+                        <Grid Margin="0,29,0,5">
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Recent activity" />
+                            <Button x:Name="AiViewAllButton" HorizontalAlignment="Right" Content="View all" Click="OnAiViewAllClick" />
+                        </Grid>
+                        <Border Padding="16,8" CornerRadius="{DynamicResource ControlCornerRadius}" BorderThickness="1"
+                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                            <Grid>
+                                <TextBlock x:Name="AiNoActivityText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="No requests yet. Connect an AI app above, then ask it to make a loop, a macro or a remap." TextWrapping="Wrap" />
+                                <ItemsControl x:Name="AiRecentList" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="80" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding TimeText}" />
+                                                <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding App}" />
+                                                <TextBlock Grid.Column="2" Margin="0,0,12,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                                           Text="{Binding Request}" ToolTip="{Binding Request}" />
+                                                <TextBlock Grid.Column="3" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding ResultText}" />
+                                                <!-- What the AI changed or deleted comes back as it was -->
+                                                <ui:HyperlinkButton Grid.Column="4" HorizontalAlignment="Right" Content="Restore" Tag="{Binding}"
+                                                                    Visibility="{Binding RestoreVisibility}" Click="OnAiRestoreClick"
+                                                                    AutomationProperties.Name="{Binding RestoreName}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+
+                        <ikw:SimpleStackPanel Margin="0,12,0,0" Orientation="Horizontal" Spacing="8">
+                            <ui:HyperlinkButton Content="How to use AI with PuppyMacro" NavigateUri="https://giuvincenzi.github.io/puppymacro/guide/latest/ai.html" />
+                        </ikw:SimpleStackPanel>
+                    </ikw:SimpleStackPanel>
+                </ui:ScrollViewerEx>
+
                 <!-- ================= Settings page: as the library's Gallery and Windows Settings ================= -->
                 <ui:ScrollViewerEx x:Name="SettingsPage" Padding="40,12,40,0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                     <ikw:SimpleStackPanel Margin="0,0,0,16" Spacing="4">
@@ -625,6 +768,7 @@
                 </ui:ScrollViewerEx>
 
             </Grid>
+            </DockPanel>
             </Border>
         </Grid>
     </Grid>

@@ -28,3 +28,7 @@ the others load when matching files are read or edited:
 - Start with Windows uses the user Run key, so it cannot start elevated.
 - Postponed idea: GitHub login, sync of user data (secret gist) and a public "store" of
   macros (issues in a public repository). Not started.
+- AI apps reach PuppyMacro only through MCP from an app installed on the PC (Claude Desktop, VS Code, Codex…):
+  claude.ai, ChatGPT and other apps on the web cannot reach a program on the PC without a relay on the internet,
+  which the project would have to host and secure. Not planned. PuppyMacro has no AI of its own and no API keys.
+- AI apps cannot start or test loops and macros: the input would go to the window in front, usually the AI chat.

@@ -1,0 +1,60 @@
+<p class="note"><strong>Beta.</strong> AI apps in PuppyMacro are new: they work, but they may change, and an AI can get a request wrong. Every change is kept in the item's <a href="macros.html#history">History</a>, so you can always go back.</p>
+<p>PuppyMacro works with the AI apps on your PC that support <strong>MCP</strong> (Model Context Protocol), like Claude Desktop, Claude Code, Visual Studio Code with GitHub Copilot and Codex. Ask in your own words, for example "in Notepad, make Ctrl+X type A" or "make a macro that opens my inventory and destroys the first 3 items": the AI makes the loop, macro or remap in PuppyMacro, ready to try. The AI and its account are your AI app's: PuppyMacro has no AI of its own.</p>
+
+<h3 id="set-up">Set it up</h3>
+<ol>
+  <li>Select <strong>AI</strong> in the side rail, above Settings, and turn on <strong>Allow AI access</strong>. While it is off, AI apps can connect but every request is refused, and the AI tells you to turn it on.</li>
+  <li>Under <strong>Apps</strong>, select <strong>Connect</strong> on your app:
+    <ul>
+      <li><strong>Claude Desktop</strong>: PuppyMacro is added to Claude Desktop's settings (<code>claude_desktop_config.json</code>). Restart Claude Desktop: quit it from its icon in the system tray, then open it again. Use the Claude Desktop app: claude.ai in the browser can't reach PuppyMacro.</li>
+      <li><strong>Visual Studio Code</strong>: VS Code opens on the page that installs PuppyMacro's MCP server: select <strong>Install</strong> there. Then ask in Copilot Chat in <strong>Agent</strong> mode, with the model you choose there.</li>
+      <li><strong>Codex</strong>: PuppyMacro is added to Codex's settings (<code>%UserProfile%\.codex\config.toml</code>). Restart Codex.</li>
+      <li><strong>Other apps</strong> (Claude Code and any app that supports local MCP servers): <strong>Copy configuration</strong> copies the settings to paste in the app's MCP settings (the usual <code>mcpServers</code> format), then restart that app.</li>
+    </ul>
+  </li>
+  <li>Once the app has started PuppyMacro's server, its row says <strong>Connected since</strong> and the time, and the <strong>status bar</strong> at the bottom of PuppyMacro's window shows its name with a green dot. Before that the row says, for example, <strong>Added. Restart Claude Desktop to connect.</strong> Select the status bar to open the AI page.</li>
+</ol>
+<p><strong>Remove</strong> takes PuppyMacro out of that app's settings. If VS Code's <code>mcp.json</code> has comments, PuppyMacro does not rewrite it: remove PuppyMacro in VS Code with <strong>MCP: Open User Configuration</strong>. The buttons are off while Allow AI access is off.</p>
+
+<h3 id="permissions">What the AI may do without asking</h3>
+<p>Open <strong>Allow AI access</strong> (the arrow on its right) to choose:</p>
+<ul>
+  <li><strong>Ask before deleting a loop, macro or remap</strong> (on): a PuppyMacro window, <strong>Asked by</strong> the app, asks you first.</li>
+  <li><strong>Ask before changing a loop, macro or remap</strong> (off): off, the AI's new and changed items are saved at once, ready to try; on, a window shows the changes first, for example <em>Action 2 (Destroy): Delay ms 100 → 250</em>, with <strong>Save</strong> and <strong>Cancel</strong>. Enabling and disabling count as changes.</li>
+  <li><strong>Ask before changing settings</strong> (on): theme, close to system tray, the global hotkeys, the overlay panel, its opacity, clicks in the panel, sound volume.</li>
+  <li><strong>Start PuppyMacro when an AI app needs it</strong> (on): when PuppyMacro is closed, the AI app starts it in the system tray. Off, AI apps can't use PuppyMacro while it is closed: the AI tells you to open it, and suggests <strong>Start with Windows</strong> or <strong>Close to system tray</strong> (those that are off) to keep it always available.</li>
+</ul>
+<p>Whatever you choose, every change is kept: see <a href="macros.html#history">History</a> and <a href="#activity">Activity</a>.</p>
+
+<h3 id="ask">What you can ask</h3>
+<ul>
+  <li><strong>Questions</strong>: which loops, macros and remaps you have, what one does, whether a key or combination is free, how something works in PuppyMacro (the AI reads this guide, of the version you have).</li>
+  <li><strong>New or changed loops, macros and remaps</strong>: saved as their editor's Save does, with the same checks. To change an item the AI sends only what changes (for example "every delay of 800 ms to 1200"), so even a big macro changes in seconds. One that is running stops when it changes. Then try it: the AI can't start it for you (see below).</li>
+  <li><strong>Delete, enable or disable</strong> a loop, macro or remap, and <strong>change settings</strong>.</li>
+  <li><strong>Points, apps and keys</strong>: instead of guessing, the AI can ask you to click one or more points on the screen (for clicks or moves), to click a window of an app (for <strong>Specific app</strong>), or to press a key or combination.</li>
+  <li><strong>A floating button</strong> for a loop or macro in Toggle mode: the AI turns on its <a href="overlay-mode.html">floating button</a> and <strong>Show in overlay</strong>, then opens the screen where you drag the button where you want it and press <kbd>Enter</kbd> (<kbd>Esc</kbd> cancels, nothing changes).</li>
+  <li><strong>Open a loop, macro or remap in its editor</strong>, with what the AI wants you to look at on top. What you change there is yours, saved with <strong>Save</strong> as usual.</li>
+  <li><strong>Stop all</strong>: the AI can stop every running loop and macro.</li>
+</ul>
+
+<h3 id="ready">When the AI needs you on the screen</h3>
+<p>Before you click points or an app, or place a floating button, a PuppyMacro window shows in the middle of the screen, on top of everything, what the AI wrote for you: a title, a short description (what it is making and why) and, under <strong>Instructions</strong>, the steps, numbered, in the language you write to the AI in. Drag it anywhere if it covers what you need. Clicking or dragging it never takes the focus from your game or app: get the screen ready first (open the game's inventory, the window to click), then press <kbd>Enter</kbd> or select <strong>Start</strong>. <kbd>Enter</kbd> works from any app and the app does not get it; <kbd>Esc</kbd> cancels. Then click the points: next to the cursor a light blue label says which point to click now, with several the bar shows <em>2 / 3</em> and a number marks each point clicked. For a key, the window shows the same title, description and steps and waits for the key.</p>
+<p>Every window the AI opens appears in the middle of the screen. When the AI makes a new loop or macro, it asks only what matters for it (how fast, which keys or items), then writes in the chat the exact steps it will play, each key and click and what it does, and waits for your OK before asking for points. Once it is saved, it offers the extras it does not have yet: a hotkey, the overlay and a floating button, a sound, a specific app.</p>
+<ul>
+  <li>One request that needs you at a time. A window closes by itself, with nothing changed, when nobody uses PuppyMacro for 5 minutes.</li>
+  <li>While you have an editor or a dialog of PuppyMacro open, the AI is told to wait until you close it.</li>
+  <li>If Windows only flashes a PuppyMacro window in the taskbar, select it there.</li>
+</ul>
+
+<h3 id="cannot">What AI apps cannot do</h3>
+<ul>
+  <li>Start or test loops and macros: their keys and clicks would go to the window in front, usually the AI app's chat. Start them yourself, with the Play button on their card, their hotkey or <a href="overlay-mode.html">overlay mode</a>.</li>
+  <li>Change Start with Windows, Allow AI access and what it may do, backups and updates.</li>
+  <li>Reach PuppyMacro from a website: claude.ai, ChatGPT and other AI apps in the browser or on the phone can't connect to an app on your PC. Use an app installed on the PC.</li>
+</ul>
+
+<h3 id="activity">Activity</h3>
+<p><strong>Recent activity</strong> on the AI page shows the last requests: when, which app, what it asked and how it ended (<strong>Saved</strong>, <strong>Done</strong>, <strong>Cancelled</strong>, <strong>Refused</strong>…). <strong>Restore</strong> on a change or deletion made by an AI app puts back what was there before (the row then says <strong>Restored</strong>). <strong>View all</strong> opens the <strong>AI activity</strong> window, with <strong>Period</strong>, <strong>App</strong>, <strong>Type</strong>, <strong>Result</strong> and <strong>Search</strong>; select a request to see what was saved, and <strong>Restore</strong> it. The activity is kept on this PC, the newest requests up to 20 MB; <strong>Clear history</strong> deletes it.</p>
+
+<h3 id="privacy">Privacy</h3>
+<p>PuppyMacro sends nothing to AI services. What the AI app reads through PuppyMacro (your loops, macros, remaps and settings, the names of the open apps, the points and keys you give) goes to that app's provider, under its own privacy policy. Turn off <strong>Allow AI access</strong> to stop every request.</p>

@@ -79,6 +79,22 @@ public partial class LoopEditorWindow
 
     public LoopDefinition? Result { get; private set; }
 
+    /// <summary>Offers the History view of a loop saved before.</summary>
+    internal void EnableHistory(ItemHistory history)
+    {
+        if (_editingId == Guid.Empty)
+            return;
+        _code.EnableHistory(HistoryPanel, () => HistoryPanel.Load(history.Versions(_itemId)));
+        HistoryPanel.RestoreRequested += version =>
+        {
+            if (HistoryRestore.Read<LoopDefinition>(version, _itemId) is not { } loop)
+                return;
+            LoadLoop(loop);
+            _code.ShowFormView();
+            HistoryRestore.Notice(NoticeBar, version);
+        };
+    }
+
     /// <summary>Shows <paramref name="source"/> in the Form view (at start, and when leaving the Code view).</summary>
     private void LoadLoop(LoopDefinition source)
     {

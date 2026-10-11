@@ -29,6 +29,22 @@ internal static class HotkeyConflicts
             itemApp => itemApp == null || appExe == null || AppScope.Same(itemApp, appExe));
 
     /// <summary>
+    /// Why <paramref name="source"/> cannot be remapped for <paramref name="appExe"/> (null: all apps): a hotkey, or another
+    /// remap of the same key for the same apps (the remap editor's and the AI tools' rule). Null when it can.
+    /// </summary>
+    /// <param name="editingId">The remap being changed: its own source is not a clash.</param>
+    public static string? RemapClash(HotkeyBinding source, string? appExe, AppSettings settings, MacroLibrary macros, Guid editingId)
+    {
+        string? conflict = FindForRemap(source, appExe, settings, macros);
+        if (conflict != null)
+            return conflict + " Hotkeys take priority over remaps.";
+
+        var same = settings.Remaps.FirstOrDefault(r => r.Id != editingId && source.Overlaps(r.Source)
+            && string.Equals(r.AppExe, appExe, StringComparison.OrdinalIgnoreCase));
+        return same != null ? $"{KeyNames.Format(source)} is already remapped {(appExe == null ? "for all apps" : "for " + appExe)}." : null;
+    }
+
+    /// <summary>
     /// Bindings clash when some key press would start both: the same key and modifiers, on sides that are not
     /// opposite (Left Ctrl + A and Ctrl + A clash, Left Ctrl + A and Right Ctrl + A do not).
     /// </summary>

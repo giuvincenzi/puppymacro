@@ -513,6 +513,24 @@ public sealed class AppSettings
     /// <summary>The "still running in the system tray" notification was shown once.</summary>
     public bool TrayNoticeShown { get; set; }
 
+    /// <summary>
+    /// AI apps on this PC may use PuppyMacro through its MCP server (the AI page's Allow AI access). Off by default,
+    /// also in older files, which do not have it.
+    /// </summary>
+    public bool AllowAiAccess { get; set; }
+
+    /// <summary>An AI app's deletion of a loop, macro or remap waits for the user's OK (on by default).</summary>
+    public bool AiAskBeforeDeleting { get; set; } = true;
+
+    /// <summary>An AI app's new or changed loop, macro or remap (and enabling one) waits for the user's OK (off by default).</summary>
+    public bool AiAskBeforeChanging { get; set; }
+
+    /// <summary>An AI app's change of the settings waits for the user's OK (on by default).</summary>
+    public bool AiAskBeforeSettings { get; set; } = true;
+
+    /// <summary>An AI app may start PuppyMacro, in the system tray, when it is closed (on by default; read by the bridge).</summary>
+    public bool AiStartWhenNeeded { get; set; } = true;
+
     public List<RemapDefinition> Remaps { get; set; } = new();
     public LoopFilter Filter { get; set; } = LoopFilter.All;
 

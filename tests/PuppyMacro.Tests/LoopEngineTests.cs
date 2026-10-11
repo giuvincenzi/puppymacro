@@ -51,6 +51,47 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void While_an_AI_request_waits_Enter_and_Esc_answer_it_and_other_keys_pass()
+    {
+        const int Enter = 0x0D, Esc = 0x1B, I = 0x49;
+        int ready = 0, cancelled = 0;
+        _engine.WatchReadyKeys(() => ready++, () => cancelled++);
+
+        Assert.False(_engine.OnKey(I, true, false));   // the game gets it (opening the inventory)
+        Assert.False(_engine.OnKey(I, false, false));
+        Assert.True(_engine.OnKey(Enter, true, false)); // taken: the game does not get it
+        Assert.True(_engine.OnKey(Enter, false, false)); // nor its release
+        RunDispatcher();
+        Assert.Equal(1, ready);
+
+        // Answered once: Enter is a normal key again.
+        Assert.False(_engine.OnKey(Enter, true, false));
+        Assert.False(_engine.OnKey(Enter, false, false));
+
+        _engine.WatchReadyKeys(() => ready++, () => cancelled++);
+        Assert.True(_engine.OnKey(Esc, true, false));
+        Assert.True(_engine.OnKey(Esc, false, false));
+        RunDispatcher();
+        Assert.Equal(1, cancelled);
+
+        // With a modifier held, Enter is the user's (Alt+Enter in a game).
+        _engine.WatchReadyKeys(() => ready++, () => cancelled++);
+        _engine.OnKey(0xA4, true, true); // left Alt
+        Assert.False(_engine.OnKey(Enter, true, false));
+        _engine.OnKey(Enter, false, false);
+        _engine.OnKey(0xA4, false, true);
+
+        // While PuppyMacro uses the keys itself (a dialog or an editor open), Enter and Esc are its own.
+        _engine.HotkeysSuspended = true;
+        Assert.False(_engine.OnKey(Enter, true, false));
+        _engine.OnKey(Enter, false, false);
+        _engine.HotkeysSuspended = false;
+        _engine.StopReadyKeys();
+        RunDispatcher();
+        Assert.Equal(1, ready);
+    }
+
+    [Fact]
     public void A_physical_press_or_release_of_a_key_held_by_a_loop_is_blocked()
     {
         LoopDefinition loop = HoldDownLoop(F24);

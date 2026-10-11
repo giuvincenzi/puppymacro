@@ -22,6 +22,8 @@
     <DockPanel LastChildFill="True">
         <!-- Form view: the remap's fields. Code view: the remap's JSON, as in settings.json. -->
         <views:ViewSwitchBar x:Name="ViewBar" DockPanel.Dock="Top" Margin="24,4,24,8" />
+        <!-- A version restored from the History, waiting for Save -->
+        <ui:InfoBar x:Name="NoticeBar" DockPanel.Dock="Top" Margin="24,0,24,8" Severity="Informational" IsOpen="False" />
 
         <Border DockPanel.Dock="Bottom" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
@@ -44,6 +46,7 @@
 
         <Grid>
             <views:CodeView x:Name="CodeView" Margin="24,0,24,12" Visibility="Collapsed" />
+            <views:HistoryView x:Name="HistoryPanel" Margin="24,0,24,12" Visibility="Collapsed" />
             <!-- Form view: the keys on the left, where and why on the right -->
             <Grid x:Name="FormBody">
                 <Grid.ColumnDefinitions>

@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Ai;
 using iNKORE.UI.WPF.Modern;
 using Velopack;
 
@@ -57,9 +58,20 @@ public partial class App : Application
 
     public const string RestartArgument = "--restart";
 
+    /// <summary>The mutex a running PuppyMacro holds (one at a time; the AI bridge checks it to know PuppyMacro is open).</summary>
+    public const string SingleInstanceName = "PuppyMacro.SingleInstance";
+
     [STAThread]
     private static void Main()
     {
+        // Started by an AI app as its MCP server: only the bridge to the running PuppyMacro, no window, no update
+        // applied (that would restart PuppyMacro from here).
+        if (Environment.GetCommandLineArgs().Skip(1).Contains(AiBridge.Argument))
+        {
+            Environment.ExitCode = AiBridge.Run();
+            return;
+        }
+
         // Handles install, update and uninstall hooks (it exits the process for those),
         // and applies an update that was downloaded but not applied yet.
         VelopackApp.Build()
@@ -77,7 +89,7 @@ public partial class App : Application
         bool startInTray = e.Args.Contains(StartupService.TrayArgument);
         bool restarting = e.Args.Contains(RestartArgument);
 
-        _singleInstance = new Mutex(initiallyOwned: true, "PuppyMacro.SingleInstance", out _ownsMutex);
+        _singleInstance = new Mutex(initiallyOwned: true, SingleInstanceName, out _ownsMutex);
         if (!_ownsMutex && restarting)
         {
             // After Import, the previous instance is still closing: wait for it.

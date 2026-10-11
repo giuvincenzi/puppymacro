@@ -103,6 +103,22 @@ public partial class MacroEditorWindow
 
     public MacroDefinition? Result { get; private set; }
 
+    /// <summary>Offers the History view of a macro saved before.</summary>
+    internal void EnableHistory(ItemHistory history)
+    {
+        if (_editingId == Guid.Empty)
+            return;
+        _code.EnableHistory(HistoryPanel, () => HistoryPanel.Load(history.Versions(_itemId)));
+        HistoryPanel.RestoreRequested += version =>
+        {
+            if (HistoryRestore.Read<MacroDefinition>(version, _itemId) is not { } macro)
+                return;
+            LoadMacro(macro);
+            _code.ShowFormView();
+            HistoryRestore.Notice(NoticeBar, version);
+        };
+    }
+
     /// <summary>Shows <paramref name="source"/> in the List view's fields (at start, and when leaving the Code view).</summary>
     [MemberNotNull(nameof(_list), nameof(_soundName))]
     private void LoadMacro(MacroDefinition source)

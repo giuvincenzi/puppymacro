@@ -637,6 +637,29 @@ internal sealed class LoopEngine : IDisposable
         }
     }
 
+    private Action? _readyEnter;
+    private Action? _readyEscape;
+
+    /// <summary>
+    /// Until one of them is pressed (or <see cref="StopReadyKeys"/>): Enter calls <paramref name="enter"/>, Esc
+    /// <paramref name="escape"/> (on the UI thread), pressed alone in any app; they are blocked, so the app in front does not
+    /// get them. Every other key passes. For an AI request's "ready?" window.
+    /// </summary>
+    public void WatchReadyKeys(Action enter, Action escape)
+    {
+        lock (_sync)
+        {
+            _readyEnter = enter;
+            _readyEscape = escape;
+        }
+    }
+
+    public void StopReadyKeys()
+    {
+        lock (_sync)
+            _readyEnter = _readyEscape = null;
+    }
+
     public void CancelCapture()
     {
         Action? cancelled;
@@ -681,6 +704,20 @@ internal sealed class LoopEngine : IDisposable
 
             if (KeyNames.IsModifier(vk))
                 return OnModifier(vk, isDown, physicalModifierEvent, altGrCtrl);
+
+            // An AI request waits for the user to be ready: Enter or Esc alone, from any app, answers it; every other key
+            // passes, so the user can open the right screen first (WatchReadyKeys). Not while PuppyMacro itself uses the
+            // keys (a dialog or an editor open, a key field waiting, a recording). Only a press answers: the release of a
+            // key held before is the app's (the press's own release is swallowed).
+            if (_readyEnter != null && isDown && vk is KeyNames.VK_RETURN or KeyNames.VK_ESCAPE && !ModifierTracker.Any
+                && !_hotkeysSuspended && _captureDone == null && !_recording)
+            {
+                Action answer = vk == KeyNames.VK_RETURN ? _readyEnter : _readyEscape!;
+                _readyEnter = _readyEscape = null;
+                _swallowUp.Add(vk);
+                _dispatcher.InvokeAsync(answer);
+                return Block();
+            }
 
             if (_captureDone != null)
                 return HandleCapture(vk, isDown);

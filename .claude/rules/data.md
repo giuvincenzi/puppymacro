@@ -55,3 +55,18 @@ paths:
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
   loop is enabled). Keep
   the samples working when models change.
+- AI apps: `AppSettings.AllowAiAccess` is off by default and in older files (a new field with the old behavior, no
+  migration); so are its permissions' defaults in older files: `AiAskBeforeDeleting` on, `AiAskBeforeChanging` off,
+  `AiAskBeforeSettings` on, `AiStartWhenNeeded` on (the bridge reads them from `settings.json` without writing it).
+  `ai-activity.json` in the data folder holds the newest AI requests up to 20 MB (`AiActivityLog.MaxBytes`; no age limit), with
+  the JSON before a change or deletion for Restore; not user data: a missing or unreadable file is an empty history.
+- Limits are sizes, never days or counts (the user's choice): a change of a big macro is 100 KB, a remap's a few hundred bytes.
+  The oldest entries go first and the newest one always stays.
+- `logs\ai-calls.jsonl` in the data folder (`AiCallLog`): one JSON line per tool call of an AI app, for debugging: start, ms,
+  app, tool, characters in and out, ok / error / failed, patch operations. Never the arguments or answers. The newest 5 MB.
+  Not user data: a missing or unreadable file or line is skipped. `logs\` is for debugging logs only.
+- History: `history\{id}.json` in the data folder, one per loop, macro or remap, the newest versions up to 10 MB per item (`ItemHistory.MaxBytes`): time,
+  who, summary, changes, the item's JSON, `Deleted`. Not user data: a missing or unreadable file is an empty history.
+  Export / Import leave `ai-activity.json`, `history` and `logs` out (`BackupService` takes only settings.json and macros).
+  PuppyMacro's entry in the AI apps' own settings is named `puppymacro` (`puppymacro-dev` for the development build, so
+  it never replaces the installed one's) and starts `AppPaths.ExecutablePath` (Velopack's `current` folder) with `--mcp`.

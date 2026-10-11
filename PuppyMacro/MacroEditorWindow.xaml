@@ -28,9 +28,14 @@
         </Grid.RowDefinitions>
 
         <!-- Form view: the actions as rows. Code view: the macro file's JSON in a code editor. -->
-        <views:ViewSwitchBar x:Name="ViewBar" Grid.Row="0" Margin="24,0,24,8" />
+        <StackPanel Grid.Row="0">
+            <views:ViewSwitchBar x:Name="ViewBar" Margin="24,0,24,8" />
+            <!-- A version restored from the History, waiting for Save -->
+            <ui:InfoBar x:Name="NoticeBar" Margin="24,0,24,8" Severity="Informational" IsOpen="False" />
+        </StackPanel>
 
         <views:CodeView x:Name="CodeView" Grid.Row="1" Margin="24,0,24,12" Visibility="Collapsed" />
+        <views:HistoryView x:Name="HistoryPanel" Grid.Row="1" Margin="24,0,24,12" Visibility="Collapsed" />
 
         <Grid x:Name="ListBody" Grid.Row="1">
             <Grid.ColumnDefinitions>

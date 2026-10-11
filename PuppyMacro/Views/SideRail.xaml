@@ -149,6 +149,19 @@
             <ListView.Resources>
                 <Thickness x:Key="ListViewItemCompactSelectedBorderThemeThickness">4</Thickness>
             </ListView.Resources>
+            <ListViewItem x:Name="AiItem" Tag="AI" Style="{StaticResource RailItem}" AutomationProperties.Name="AI" ToolTip="AI">
+                <StackPanel>
+                    <Grid Style="{StaticResource IconSlide}">
+                        <Grid.RenderTransform>
+                            <TranslateTransform />
+                        </Grid.RenderTransform>
+                        <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.BotSparkle_20_Regular}" Style="{StaticResource WhenNotSelected}" />
+                        <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.BotSparkle_20_Filled}" Style="{StaticResource WhenSelected}"
+                                     Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                    </Grid>
+                    <TextBlock Style="{StaticResource Name}" Text="AI" />
+                </StackPanel>
+            </ListViewItem>
             <ListViewItem x:Name="SettingsItem" Tag="Settings" Style="{StaticResource RailItem}" AutomationProperties.Name="Settings" ToolTip="Settings">
                 <Grid>
                     <StackPanel>

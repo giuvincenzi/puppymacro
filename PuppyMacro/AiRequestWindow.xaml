@@ -1,0 +1,68 @@
+<Window
+    x:Class="PuppyMacro.AiRequestWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    Title="AI request"
+    Width="480"
+    SizeToContent="Height"
+    ResizeMode="NoResize"
+    ShowInTaskbar="True"
+    WindowStartupLocation="CenterScreen"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica"
+    ui:TitleBar.MinimizeButtonAvailability="Collapsed"
+    ui:TitleBar.MaximizeButtonAvailability="Collapsed"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <!-- What an AI app asks the user: a confirmation (delete, enable, settings) or a key to press. -->
+    <StackPanel>
+        <ikw:SimpleStackPanel Margin="24,4,24,20" Spacing="12">
+            <StackPanel Orientation="Horizontal">
+                <ui:FontIcon FontSize="16" Icon="{x:Static fsi:FluentSystemIcons.BotSparkle_20_Regular}"
+                             Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <TextBlock x:Name="AskedByText" Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+            <TextBlock x:Name="HeadingText" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
+            <!-- A key request: why the AI asks (its description), then its steps, numbered, under Instructions -->
+            <TextBlock x:Name="ContextText" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Visibility="Collapsed" />
+            <TextBlock x:Name="InstructionsTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Instructions" Visibility="Collapsed" />
+
+            <!-- Confirmation: what changes, one line each; a key request: its steps -->
+            <ItemsControl x:Name="Lines" Visibility="Collapsed">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,0,4" Text="{Binding}" TextWrapping="Wrap" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Key: the same field as the editors -->
+            <ui:SettingsCard x:Name="KeyCard" Header="Key or combination" Visibility="Collapsed"
+                             Description="Hold Ctrl, Alt, Shift or Win first for a combination. For Ctrl, Alt, Shift or Win alone, press and release it."
+                             ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                <views:KeyCaptureField x:Name="KeyField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
+                                       ItemName="key" Prompt="Press the key or combination (Esc cancels)"
+                                       ValueChanged="OnKeyChanged" />
+            </ui:SettingsCard>
+        </ikw:SimpleStackPanel>
+
+        <Border Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="OkButton" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
+                        Content="OK" Click="OnOkClick" />
+                <Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" IsCancel="True" Click="OnCancelClick" />
+            </Grid>
+        </Border>
+    </StackPanel>
+</Window>

@@ -18,6 +18,17 @@ internal static class AppPaths
 
     public static string MacrosFolder => Path.Combine(DataFolder, "macros");
 
+    /// <summary>The History of each loop, macro and remap (<c>ItemHistory</c>): history\{id}.json.</summary>
+    public static string HistoryFolder => Path.Combine(DataFolder, "history");
+
+    /// <summary>What AI apps asked, the newest 20 MB (the AI page's activity, <c>AiActivityLog</c>).</summary>
+    public static string AiActivityFile => Path.Combine(DataFolder, "ai-activity.json");
+
+    /// <summary>Debugging logs, not user data: logsi-calls.jsonl (<c>AiCallLog</c>).</summary>
+    public static string LogsFolder => Path.Combine(DataFolder, "logs");
+
+    public static string AiCallsFile => Path.Combine(LogsFolder, "ai-calls.jsonl");
+
     /// <summary>
     /// The Code view's WebView2 data (cache, not user data): %LocalAppData%\PuppyMacro\WebView2, next
     /// to Velopack's "current" folder, so it survives updates and goes away on uninstall. The

@@ -28,6 +28,8 @@
     <!-- The macro editor's Code view (Monaco in Assets\Monaco). The runtime comes with Windows 11;
          the Setup installs it when missing (the vpk framework "webview2" in scripts\build.ps1). -->
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
+    <!-- The MCP server AI apps use (Services/Ai): the official C# SDK, its core only (no generic host). -->
+    <PackageReference Include="ModelContextProtocol.Core" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +46,12 @@
     <Resource Include="Assets\PuppyMacro-256.png" />
     <Resource Include="Assets\PuppyMacro.ico" />
     <Resource Include="Assets\Sounds\*.wav" />
+  </ItemGroup>
+
+  <!-- The user guide of this version, for the AI tool get_help (Services/Ai/AiHelp). -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\site\guide\*.html" Exclude="..\site\guide\_page.html" LogicalName="PuppyMacro.Guide.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\site\guide\sections.txt" LogicalName="PuppyMacro.Guide.sections.txt" />
   </ItemGroup>
 
   <!-- Files the Code view's WebView2 loads from disk (AppPaths.WebAssetsFolder). -->
