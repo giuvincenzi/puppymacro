@@ -37,3 +37,16 @@
 - No analogies or metaphors in explanations; be direct.
 - When pointing to Windows settings or menus, use their English names.
 - Do not lecture about game terms of service or anti-cheat.
+
+## Keeping the rules up to date
+
+- A change that adds something developers must know (a new system or feature area, a new
+  convention, a decision, a new test category or file layout) updates `.claude/rules/` in the
+  same pull request (a new rule file also gets its line in the table of `.claude/CLAUDE.md`).
+- The plan given before implementing lists the rule files to add or change and what changes,
+  next to the documentation checklist of `docs.md`, or says "no rule changes" with the reason.
+- Rules record decisions the user approved. Change a rule only when the user approved the
+  change it describes, in the pull request that makes it true.
+- Never change, loosen or remove a rule to make code, a test or a build work, or because the
+  current code does not follow it: fix the code. If a rule looks wrong or blocks a request,
+  say so, explain why, and ask the user before touching it.

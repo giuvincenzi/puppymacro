@@ -50,7 +50,7 @@ The plan given to the user before implementing (`working-rules.md`) lists every 
 checklist, each marked as needed or not needed with the reason: the guide file, the feature
 cards in `site/index.html`, the `CHANGELOG.md` line and each screenshot by file name.
 Screenshots need the app running on the contributor's PC, so the plan names them and asks
-before capturing (`testing.md`).
+before capturing (`testing.md`). The plan also lists the rule changes (`working-rules.md`).
 
 ## Accuracy
 
