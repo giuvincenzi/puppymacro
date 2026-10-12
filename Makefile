@@ -11,6 +11,8 @@
 #   make docs-serve same, then serve it at http://localhost:8080/ (Ctrl+C to stop)
 #   make screenshots make dev (without the development build marks), then retake the guide's editor screenshots and the home page one (drives the UI),
 #                   then close PuppyMacro
+#   make screenshots-remote  the same screenshots taken on GitHub (the Screenshots workflow on the current branch, pushed),
+#                   put in site/ when it ends: the PC stays free
 #   make file-icons draw the icons of .puppyitems and .puppymacro files again (PuppyMacro/Assets/FileIcons);
 #                   make file-icons PREVIEW=<folder> also writes each size as a PNG there
 #   make release-pr open the release pull request (next version from the latest tag and CHANGELOG);
@@ -28,7 +30,7 @@ endif
 
 RUN_SCRIPT = $(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/$(1).ps1
 
-.PHONY: dev dev-keep test e2e build docs docs-serve screenshots file-icons release-pr release clean
+.PHONY: dev dev-keep test e2e build docs docs-serve screenshots screenshots-remote file-icons release-pr release clean
 
 dev:
 	$(call RUN_SCRIPT,dev)
@@ -48,6 +50,23 @@ build:
 screenshots:
 	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 -Screenshots
 	$(call RUN_SCRIPT,screenshots)
+
+# The Screenshots workflow on the current branch: the API answers with its run's Id (return_run_details), then gh waits
+# for it and downloads its artifact into site/. On Windows in scripts/screenshots-remote.ps1; in WSL in this shell, where
+# git and gh are Linux's.
+screenshots-remote:
+ifeq ($(OS),Windows_NT)
+	$(call RUN_SCRIPT,screenshots-remote)
+else
+	@branch=$$(git rev-parse --abbrev-ref HEAD) && git fetch --quiet origin "$$branch" \
+	  && { [ "$$(git rev-parse HEAD)" = "$$(git rev-parse "origin/$$branch")" ] || { echo "Push $$branch first: the workflow takes the code from GitHub."; exit 1; }; } \
+	  && run=$$(gh api --method POST 'repos/{owner}/{repo}/actions/workflows/screenshots.yml/dispatches' -f "ref=$$branch" -F return_run_details=true -q .workflow_run_id) \
+	  && [ -n "$$run" ] && echo "Screenshots running on GitHub: run $$run" \
+	  && gh run watch "$$run" --exit-status \
+	  && tmp=$$(mktemp -d) && gh run download "$$run" --name screenshots --dir "$$tmp" \
+	  && cp -r "$$tmp"/. site/ && rm -rf "$$tmp" \
+	  && echo "Screenshots in site/guide/img and site/assets/loops.png: check them with git diff, then commit."
+endif
 
 file-icons:
 	$(call RUN_SCRIPT,file-icons) $(if $(PREVIEW),-Preview '$(PREVIEW)')
