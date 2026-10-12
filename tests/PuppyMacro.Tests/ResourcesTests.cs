@@ -17,6 +17,12 @@ public sealed class ResourcesTests
 {
     private static readonly string[] Forms = { Plurals.Zero, Plurals.One, Plurals.Two, Plurals.Few, Plurals.Many, Plurals.Other };
 
+    /// <summary>
+    /// Global texts (i18n.md): the same in every language, so no translation has them and every language shows the
+    /// English one. "AI" as the side rail's item and the AI page's title (the user's choice).
+    /// </summary>
+    public static readonly string[] Global = { "Rail_Ai", "AiPage_Title" };
+
     private static string ResourcesFolder =>
         Path.Combine(Path.GetDirectoryName(ThisFile())!, "..", "..", "PuppyMacro", "Resources");
 
@@ -44,7 +50,9 @@ public sealed class ResourcesTests
         Dictionary<string, string> texts = Read(file);
         var problems = new List<string>();
 
-        foreach (var (key, value) in english.Where(e => PluralBase(e.Key) == null))
+        foreach (string key in Global.Where(texts.ContainsKey))
+            problems.Add($"{key}: a global text, the same in every language: remove it from Strings.{language}.resx");
+        foreach (var (key, value) in english.Where(e => PluralBase(e.Key) == null && !Global.Contains(e.Key)))
         {
             if (!texts.TryGetValue(key, out string? translated) || translated.Length == 0)
                 problems.Add($"{key}: missing");
@@ -115,6 +123,19 @@ public sealed class ResourcesTests
             if (!english.ContainsKey(key))
                 missing.Add(key);
         Assert.Empty(missing);
+    }
+
+    [Fact]
+    public void Global_texts_are_the_english_ones_in_every_language()
+    {
+        foreach (string code in AppLanguages.All.Select(l => l.Code))
+        {
+            CultureInfo language = CultureInfo.GetCultureInfo(code);
+            foreach (string key in Global)
+                Assert.Equal(Strings.ResourceManager.GetString(key, CultureInfo.InvariantCulture),
+                    Strings.ResourceManager.GetString(key, language));
+        }
+        Assert.Equal("AI", Strings.Rail_Ai);
     }
 
     [Fact]

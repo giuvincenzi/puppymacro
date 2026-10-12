@@ -303,7 +303,6 @@
   <data name="Rail_Loops" xml:space="preserve"><value>الحلقات</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>وحدات الماكرو</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>إعادة التعيين</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>الذكاء الاصطناعي</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>الإعدادات</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>تحرير</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>ممكّن</value></data>
@@ -387,7 +386,6 @@
   <data name="Backup_NotABackup" xml:space="preserve"><value>هذا الملف ليس نسخة احتياطية من PuppyMacro.</value></data>
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>تطبيقات الذكاء الاصطناعي المتصلة: حدد لفتح صفحة الذكاء الاصطناعي</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>تطبيقات الذكاء الاصطناعي المتصلة</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>الذكاء الاصطناعي</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>استخدم PuppyMacro من تطبيق ذكاء اصطناعي على هذا الكمبيوتر، مثل Claude Desktop أو Visual Studio Code. اطلب بكلماتك الخاصة: ينشئ الذكاء الاصطناعي الحلقات ووحدات الماكرو وعمليات إعادة التعيين، وتجربها على الفور.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>إصدار تجريبي</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>تطبيقات الذكاء الاصطناعي في PuppyMacro جديدة: إنها تعمل، لكنها قد تتغير، وقد يخطئ الذكاء الاصطناعي في فهم طلب. يتم الاحتفاظ بكل تغيير في محفوظات العنصر، لذا يمكنك دائمًا الرجوع.</value></data>

@@ -271,7 +271,6 @@ Was die Datei nicht enthält, bleibt unverändert. Ihre aktuellen Daten werden z
   <data name="Rail_Loops" xml:space="preserve"><value>Schleifen</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>Makros</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Neu zuordnen</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>KI</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Einstellungen</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Aktiviert</value></data>
@@ -335,7 +334,6 @@ Details: {1}</value></data>
   <data name="Backup_NotABackup" xml:space="preserve"><value>Diese Datei ist keine PuppyMacro-Sicherung.</value></data>
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>Verbundene KI-Apps: Auswählen, um die KI-Seite zu öffnen</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>Verbundene KI-Apps</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>KI</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Verwenden Sie PuppyMacro aus einer KI-App auf diesem PC, z. B. Claude Desktop oder Visual Studio Code. Fragen Sie in Ihren eigenen Worten: Die KI erstellt Schleifen, Makros und Neuzuordnungen, und Sie probieren sie sofort aus.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>KI-Apps in PuppyMacro sind neu: Sie funktionieren, können sich aber noch ändern, und eine KI kann eine Anfrage falsch verstehen. Jede Änderung wird im Verlauf des Elements gespeichert, sodass Sie jederzeit zurückkehren können.</value></data>

@@ -278,7 +278,6 @@
   <data name="Rail_Loops" xml:space="preserve"><value>Ciklet</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>Makrot</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Ricakto</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>AI</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Cilësimet</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Redakto</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Aktivizuar</value></data>
@@ -343,7 +342,6 @@ Detajet: {1}</value></data>
 
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplikacionet AI të lidhura: përzgjidhni për të hapur faqen AI</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>Aplikacionet AI të lidhura</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>AI</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Përdoreni PuppyMacro nga një aplikacion AI në këtë PC, si Claude Desktop ose Visual Studio Code. Kërkoni me fjalët tuaja: AI krijon cikle, makro dhe ricaktime, dhe ju i provoni menjëherë.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>Aplikacionet AI në PuppyMacro janë të reja: funksionojnë, por mund të ndryshojnë, dhe një AI mund ta kuptojë gabim një kërkesë. Çdo ndryshim ruhet në Historikun e elementit, kështu që mund të ktheheni gjithmonë pas.</value></data>

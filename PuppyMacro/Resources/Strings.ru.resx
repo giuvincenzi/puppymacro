@@ -286,7 +286,6 @@
   <data name="Rail_Loops" xml:space="preserve"><value>Циклы</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>Макросы</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Переназначение</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>ИИ</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Параметры</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Изменить</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Включено</value></data>
@@ -356,7 +355,6 @@
 
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>Подключенные приложения ИИ: выберите, чтобы открыть страницу ИИ</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>Подключенные приложения ИИ</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>ИИ</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Используйте PuppyMacro из приложения ИИ на этом компьютере, например Claude Desktop или Visual Studio Code. Просите своими словами: ИИ создает циклы, макросы и переназначения, а вы сразу их пробуете.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Бета-версия</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>Приложения ИИ в PuppyMacro — новая функция: она работает, но может измениться, а ИИ может неправильно понять запрос. Каждое изменение сохраняется в журнале элемента, поэтому всегда можно вернуться назад.</value></data>

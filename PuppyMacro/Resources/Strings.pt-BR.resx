@@ -288,7 +288,6 @@ O que o arquivo não contém permanece como está. Primeiro é feito um backup d
   <data name="Rail_Loops" xml:space="preserve"><value>Loops</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>Macros</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Remapear</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>IA</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Configurações</value></data>
   <!-- ===== Views/ItemCardActions ===== -->
   <data name="Card_Edit" xml:space="preserve"><value>Editar</value></data>
@@ -359,7 +358,6 @@ Detalhes: {1}</value></data>
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplicativos de IA conectados: selecione para abrir a página IA</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>Aplicativos de IA conectados</value></data>
   <!-- ===== MainWindow.xaml: AI page ===== -->
-  <data name="AiPage_Title" xml:space="preserve"><value>IA</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Use o PuppyMacro a partir de um aplicativo de IA neste PC, como o Claude Desktop ou o Visual Studio Code. Peça com suas próprias palavras: a IA cria loops, macros e remapeamentos, e você os experimenta na hora.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>Os aplicativos de IA no PuppyMacro são novos: eles funcionam, mas podem mudar, e uma IA pode entender um pedido errado. Cada alteração fica guardada no Histórico do item, então você sempre pode voltar atrás.</value></data>

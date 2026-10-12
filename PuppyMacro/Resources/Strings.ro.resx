@@ -286,7 +286,6 @@ Ce nu conține fișierul rămâne neschimbat. Datele curente se salvează mai î
   <data name="Rail_Loops" xml:space="preserve"><value>Bucle</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>Macrocomenzi</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Remapare</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>AI</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Setări</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Editare</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Activat</value></data>
@@ -356,7 +355,6 @@ Detalii: {1}</value></data>
 
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplicații AI conectate: selectați pentru a deschide pagina AI</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>Aplicații AI conectate</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>AI</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Utilizați PuppyMacro dintr-o aplicație AI de pe acest PC, cum ar fi Claude Desktop sau Visual Studio Code. Cereți cu propriile cuvinte: AI-ul creează bucle, macrocomenzi și remapări, iar dvs. le încercați imediat.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>Aplicațiile AI în PuppyMacro sunt noi: funcționează, dar se pot schimba, iar un AI poate înțelege greșit o cerere. Fiecare modificare este păstrată în Istoricul elementului, așa că puteți reveni oricând.</value></data>

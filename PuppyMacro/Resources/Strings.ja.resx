@@ -263,7 +263,6 @@
   <data name="Rail_Loops" xml:space="preserve"><value>ループ</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>マクロ</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>リマップ</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>AI</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>設定</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>編集</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>有効</value></data>
@@ -322,7 +321,6 @@
   <data name="Backup_NotABackup" xml:space="preserve"><value>このファイルは PuppyMacro のバックアップではありません。</value></data>
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>接続中の AI アプリ: 選ぶと AI ページを開きます</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>接続中の AI アプリ</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>AI</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Claude Desktop や Visual Studio Code など、この PC の AI アプリから PuppyMacro を使えます。普段の言葉で頼むだけで、AI がループ、マクロ、リマップを作成し、すぐに試せます。</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>ベータ</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>PuppyMacro の AI アプリ対応は新しい機能です。動作しますが、今後変わる可能性があり、AI が要求を誤解することもあります。変更はすべて項目の履歴に残るため、いつでも元に戻せます。</value></data>

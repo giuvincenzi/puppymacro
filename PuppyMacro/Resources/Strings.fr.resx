@@ -271,7 +271,6 @@ Ce que le fichier ne contient pas reste inchangé. Vos données actuelles sont d
   <data name="Rail_Loops" xml:space="preserve"><value>Boucles</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>Macros</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Remapper</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>IA</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Paramètres</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Modifier</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Activé</value></data>
@@ -335,7 +334,6 @@ Détails : {1}</value></data>
   <data name="Backup_NotABackup" xml:space="preserve"><value>Ce fichier n'est pas une sauvegarde PuppyMacro.</value></data>
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>Applications d'IA connectées : sélectionnez pour ouvrir la page IA</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>Applications d'IA connectées</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>IA</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Utilisez PuppyMacro depuis une application d'IA sur ce PC, comme Claude Desktop ou Visual Studio Code. Demandez avec vos propres mots : l'IA crée des boucles, des macros et des remappages, et vous les essayez tout de suite.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Bêta</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>Les applications d'IA dans PuppyMacro sont nouvelles : elles fonctionnent, mais elles peuvent changer, et une IA peut mal comprendre une demande. Chaque modification est conservée dans l'Historique de l'élément : vous pouvez toujours revenir en arrière.</value></data>

@@ -263,7 +263,6 @@
   <data name="Rail_Loops" xml:space="preserve"><value>循环</value></data>
   <data name="Rail_Macros" xml:space="preserve"><value>宏</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>重映射</value></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>AI</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>设置</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>编辑</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>已启用</value></data>
@@ -322,7 +321,6 @@
   <data name="Backup_NotABackup" xml:space="preserve"><value>此文件不是 PuppyMacro 备份。</value></data>
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>已连接的 AI 应用：选择以打开 AI 页面</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>已连接的 AI 应用</value></data>
-  <data name="AiPage_Title" xml:space="preserve"><value>AI</value></data>
   <data name="AiPage_Description" xml:space="preserve"><value>在这台电脑上通过 AI 应用（如 Claude Desktop 或 Visual Studio Code）使用 PuppyMacro。用你自己的话提出要求：AI 会创建循环、宏和重映射，你可以立即试用。</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta 版</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>PuppyMacro 中的 AI 应用是新功能：它们可以正常工作，但可能会发生变化，而且 AI 可能会误解请求。每次更改都保留在项目的历史记录中，因此你随时可以恢复。</value></data>
