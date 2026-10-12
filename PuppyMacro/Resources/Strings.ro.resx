@@ -1054,4 +1054,82 @@ Detalii: {1}</value></data>
   <data name="Countdown_Starts" xml:space="preserve"><value>Înregistrarea începe…</value></data>
   <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Tastatura nu a putut fi citită.</value></data>
   <data name="Input_CannotReadMouse" xml:space="preserve"><value>Mouse-ul nu a putut fi citit.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>Acest fișier nu este un fișier de elemente PuppyMacro.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>Acest fișier a fost creat cu PuppyMacro {0}, mai nou decât acesta ({1}). Actualizați PuppyMacro pentru a-l importa.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>Acest fișier a fost creat cu o versiune mai nouă de PuppyMacro. Actualizați PuppyMacro pentru a-l importa.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Elementul {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Tip necunoscut „{0}”: PuppyMacro importă bucle, macrocomenzi și remapări.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>Bucla lipsește.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>Macrocomanda lipsește.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>Remaparea lipsește.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Există deja o buclă cu acest nume: importată ca „{0}”.</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Există deja o macrocomandă cu acest nume: importată ca „{0}”.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} este deja utilizată de bucla „{1}” în acest fișier.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} este deja utilizată de macrocomanda „{1}” în acest fișier.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: importată fără tastă rapidă.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: importată fără tastă rapidă, ca Comutare (Menținere necesită o tastă rapidă).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} este deja utilizată de bucla „{1}” în acest fișier. Tastele rapide au prioritate față de remapări.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} este deja utilizată de macrocomanda „{1}” în acest fișier. Tastele rapide au prioritate față de remapări.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} este deja remapată pentru toate aplicațiile în acest fișier.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} este deja remapată pentru {1} în acest fișier.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>Elemente PuppyMacro</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Remapare {0}</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>A exportat {0} element</value></data>
+  <data name="Ai_Exported_few" xml:space="preserve"><value>A exportat {0} elemente</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>A exportat {0} de elemente</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>A importat bucla {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>A importat macrocomanda {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>A importat remaparea {0}</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>Import {0} element</value></data>
+  <data name="Ai_ImportCount_few" xml:space="preserve"><value>Import {0} elemente</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>Import {0} de elemente</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>Importați acest element?</value></data>
+  <data name="Ai_ConfirmImport_few" xml:space="preserve"><value>Importați aceste {0} elemente?</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>Importați aceste {0} de elemente?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Import</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>A deschis Import</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>A deschis Export</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>Import</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Adăugați bucle, macrocomenzi și remapări dintr-un fișier</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Export</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Salvați bucle, macrocomenzi și remapări într-un fișier, pentru a le partaja</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Export…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>Elemente PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Import bucle, macrocomenzi și remapări</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Export bucle, macrocomenzi și remapări</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>Din {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>Fișierul nu a putut fi citit: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Căutare actualizări</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>Import {0} element</value></data>
+  <data name="ImportItems_Button_few" xml:space="preserve"><value>Import {0} elemente</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>Import {0} de elemente</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>Export {0} element…</value></data>
+  <data name="ExportItems_Button_few" xml:space="preserve"><value>Export {0} elemente…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>Export {0} de elemente…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Exportul nu a reușit</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Bucle</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Macrocomenzi</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Remapări</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Altele</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Alegeți buclele, macrocomenzile și remapările de salvat într-un singur fișier, pentru a le partaja sau a le utiliza pe alt PC.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Căutare</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Tip</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>Toate tipurile</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Selectare toate cele afișate</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} afișate · {1} selectate</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>Nu aveți încă bucle, macrocomenzi sau remapări.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Nimic nu corespunde căutării.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Alegere alt fișier…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Selectare totală</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Elementele importate pornesc dezactivate.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Activați fiecare element după ce ați verificat ce face.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} alt element</value></data>
+  <data name="ImportItems_OtherCount_few" xml:space="preserve"><value>{0} alte elemente</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} de alte elemente</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>Niciun element</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>Din PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>Elemente PuppyMacro</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>Copie de rezervă PuppyMacro</value></data>
 </root>

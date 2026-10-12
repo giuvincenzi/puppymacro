@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Views;
 
@@ -43,9 +45,9 @@ public partial class ExportItemsView : UserControl
     {
         string group = ExportKindBox.SelectedIndex switch
         {
-            1 => "Loops",
-            2 => "Macros",
-            3 => "Remaps",
+            1 => Strings.Share_GroupLoops,
+            2 => Strings.Share_GroupMacros,
+            3 => Strings.Share_GroupRemaps,
             _ => "",
         };
         string search = ExportSearchBox.Text.Trim();
@@ -78,8 +80,8 @@ public partial class ExportItemsView : UserControl
         int shownChecked = shown.Count(r => r.IsChecked);
         ExportSelectAllBox.IsEnabled = shown.Count > 0;
         ExportSelectAllBox.IsChecked = shownChecked == 0 ? false : shownChecked == shown.Count ? true : null;
-        ExportCountText.Text = $"{shown.Count} shown · {ChosenCount} selected";
-        ExportEmptyText.Text = _rows.Count == 0 ? "You have no loops, macros or remaps yet." : "Nothing matches the search.";
+        ExportCountText.Text = string.Format(CultureInfo.CurrentCulture, Strings.ExportItems_ShownSelected, shown.Count, ChosenCount);
+        ExportEmptyText.Text = _rows.Count == 0 ? Strings.ExportItems_NoItems : Strings.ExportItems_NoMatch;
         ExportEmptyText.Visibility = shown.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ChoiceChanged?.Invoke();
     }

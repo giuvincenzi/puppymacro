@@ -38,36 +38,20 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <!-- Selecting a page (approved, ui.md): its name fades out and its icon slides down by half the name's
-             height (caption line 16 + margin 4), so it ends in the middle; back when another page is selected.
-             167 ms with the fast-out slow-in curve, as WinUI's ControlFastAnimationDuration and
-             ControlFastOutSlowInKeySpline (a storyboard in a style cannot use resources). -->
-        <Style x:Key="IconSlide" TargetType="Grid">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListViewItem}}" Value="True">
-                    <DataTrigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
-                                    <SplineDoubleKeyFrame KeyTime="0:0:0.167" KeySpline="0,0,0,1" Value="10" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.EnterActions>
-                    <DataTrigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
-                                    <SplineDoubleKeyFrame KeyTime="0:0:0.167" KeySpline="0,0,0,1" Value="0" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.ExitActions>
-                </DataTrigger>
-            </Style.Triggers>
+        <!-- Selecting a page (approved, ui.md): its name fades out and its icon (a Grid with a TranslateTransform, Tag
+             "Icon") slides down by half the name's height and its margin, so it ends in the middle; back when another page
+             is selected. The distance is measured (SideRail.Slide): a long name is shrunk, so its height differs. -->
+        <!-- A page's name on one line, shrunk to fit the rail when it is longer (approved, ui.md: Microsoft Store does the
+             same with "Downloads"): never larger than the caption style, never wider than the item. -->
+        <Style x:Key="NameBox" TargetType="Viewbox">
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="StretchDirection" Value="DownOnly" />
+            <Setter Property="MaxWidth" Value="60" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
         <Style x:Key="Name" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListViewItem}}" Value="True">
@@ -105,7 +89,7 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{x:Static r:Strings.Rail_Pages}">
             <ListViewItem x:Name="LoopsItem" Tag="Loops" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Loops}" ToolTip="{x:Static r:Strings.Rail_Loops}">
                 <StackPanel>
-                    <Grid Style="{StaticResource IconSlide}">
+                    <Grid Tag="Icon">
                         <Grid.RenderTransform>
                             <TranslateTransform />
                         </Grid.RenderTransform>
@@ -113,12 +97,14 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.ArrowClockwiseDashes_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Loops}" />
+                    <Viewbox Style="{StaticResource NameBox}">
+                        <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Loops}" />
+                    </Viewbox>
                 </StackPanel>
             </ListViewItem>
             <ListViewItem x:Name="MacrosItem" Tag="Macros" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Macros}" ToolTip="{x:Static r:Strings.Rail_Macros}">
                 <StackPanel>
-                    <Grid Style="{StaticResource IconSlide}">
+                    <Grid Tag="Icon">
                         <Grid.RenderTransform>
                             <TranslateTransform />
                         </Grid.RenderTransform>
@@ -126,12 +112,14 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.Script_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Macros}" />
+                    <Viewbox Style="{StaticResource NameBox}">
+                        <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Macros}" />
+                    </Viewbox>
                 </StackPanel>
             </ListViewItem>
             <ListViewItem x:Name="RemapItem" Tag="Remap" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Remap}" ToolTip="{x:Static r:Strings.Rail_Remap}">
                 <StackPanel>
-                    <Grid Style="{StaticResource IconSlide}">
+                    <Grid Tag="Icon">
                         <Grid.RenderTransform>
                             <TranslateTransform />
                         </Grid.RenderTransform>
@@ -139,7 +127,9 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.ArrowRouting_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Remap}" />
+                    <Viewbox Style="{StaticResource NameBox}">
+                        <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Remap}" />
+                    </Viewbox>
                 </StackPanel>
             </ListViewItem>
         </ListView>
@@ -152,7 +142,7 @@
             </ListView.Resources>
             <ListViewItem x:Name="AiItem" Tag="AI" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Ai}" ToolTip="{x:Static r:Strings.Rail_Ai}">
                 <StackPanel>
-                    <Grid Style="{StaticResource IconSlide}">
+                    <Grid Tag="Icon">
                         <Grid.RenderTransform>
                             <TranslateTransform />
                         </Grid.RenderTransform>
@@ -160,13 +150,15 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.BotSparkle_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Ai}" />
+                    <Viewbox Style="{StaticResource NameBox}">
+                        <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Ai}" />
+                    </Viewbox>
                 </StackPanel>
             </ListViewItem>
             <ListViewItem x:Name="SettingsItem" Tag="Settings" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Settings}" ToolTip="{x:Static r:Strings.Rail_Settings}">
                 <Grid>
                     <StackPanel>
-                        <Grid Style="{StaticResource IconSlide}">
+                        <Grid Tag="Icon">
                             <Grid.RenderTransform>
                                 <TranslateTransform />
                             </Grid.RenderTransform>
@@ -181,7 +173,9 @@
                                               Style="{StaticResource AttentionDotInfoBadgeStyle}" Visibility="Collapsed" />
                             </Grid>
                         </Grid>
-                        <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Settings}" />
+                        <Viewbox Style="{StaticResource NameBox}">
+                            <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Settings}" />
+                        </Viewbox>
                     </StackPanel>
                 </Grid>
             </ListViewItem>

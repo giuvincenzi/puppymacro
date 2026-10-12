@@ -1028,7 +1028,7 @@ internal sealed class AiTools
             return AiToolResult.Error($"No loop, macro or remap has the Id {unknown}. get_overview lists them.");
         if (count == 0)
             return AiToolResult.Error("There is nothing to export: the user has no loops, macros or remaps.");
-        _log.Add(app, AiActivityKind.Read, count == 1 ? "Exported 1 item" : $"Exported {count} items");
+        _log.Add(app, AiActivityKind.Read, Phrase.Plural("Ai_Exported", count));
         return new AiToolResult(text!);
     }
 
@@ -1041,7 +1041,9 @@ internal sealed class AiTools
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
-        ItemFileContent content = await _host.Ui(() => Task.FromResult(ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only)))
+        // In English: its problems and notes are the AI app's answer (the user's window reads the file in their language).
+        ItemFileContent content = await _host.Ui(() => Task.FromResult(Loc.English(() =>
+                ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only))))
             .ConfigureAwait(false);
         if (content.Error != null)
             return AiToolResult.Error(content.Error);
@@ -1058,14 +1060,14 @@ internal sealed class AiTools
             if (BusyNow() is AiToolResult busyNow)
                 return busyNow;
             // Read again: meanwhile the user may have taken a name or a hotkey.
-            ItemFileContent now = ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only);
+            ItemFileContent now = Loc.English(() => ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only));
             var lines = new List<string>();
             foreach (ItemFileEntry entry in now.Entries.Where(e => e.Selected))
             {
                 object item = entry.Item!;
                 _host.Save(item, app);
-                _log.Add(app, AiActivityKind.Proposal, $"Imported {Describe(item)}", AiActivityResult.Saved, "", Serialize(item), Id(item), Kind(item));
-                lines.Add($"- {Capital(Describe(item))}, Id {Id(item)}" + string.Concat(entry.Notes.Select(n => " " + n)));
+                _log.Add(app, AiActivityKind.Proposal, About("Ai_Imported", item), AiActivityResult.Saved, "", Serialize(item), Id(item), Kind(item));
+                lines.Add($"- {Capital(Loc.English(() => Describe(item)))}, Id {Id(item)}" + string.Concat(entry.Notes.Select(n => " " + n)));
             }
             return new AiToolResult($"Imported {lines.Count} item{(lines.Count == 1 ? "" : "s")}, all disabled: the user turns them on " +
                                     $"(set_enabled, or the switch on their card).\n{string.Join("\n", lines)}{skipped}");
@@ -1074,15 +1076,16 @@ internal sealed class AiTools
         if (!_host.Settings.AiAskBeforeChanging)
             return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
 
-        string title = chosen.Count == 1 ? "Import this item?" : $"Import these {chosen.Count} items?";
-        var shown = chosen.Select(e => $"{Capital(e.Kind)} {(e.Item is RemapDefinition ? e.Title : $"\"{e.Title}\"")}"
-                                       + string.Concat(e.Notes.Select(n => " " + n))).ToList();
         return await StartForUser(app, async () =>
         {
-            AiAnswer answer = await _host.Confirm(app, title, shown, "Import");
+            // The user's window: the file read again in the user's language (its notes), each item named as the cards do.
+            List<string> shown = ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only).Entries
+                .Where(e => e.Selected)
+                .Select(e => About("Ai_Item", e.Item!).ToString() + string.Concat(e.Notes.Select(n => " " + n))).ToList();
+            AiAnswer answer = await _host.Confirm(app, Plurals.Format("Ai_ConfirmImport", chosen.Count), shown, Strings.Ai_Import);
             if (answer == AiAnswer.Done)
                 return Apply();
-            Log(app, AiActivityKind.Proposal, chosen.Count == 1 ? "Import 1 item" : $"Import {chosen.Count} items", answer, "");
+            Log(app, AiActivityKind.Proposal, Phrase.Plural("Ai_ImportCount", chosen.Count), answer, "");
             return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
@@ -1098,12 +1101,12 @@ internal sealed class AiTools
             if (answer == AiAnswer.Done)
             {
                 foreach (object item in items)
-                    _log.Add(app, AiActivityKind.Proposal, $"Imported {Describe(item)}", AiActivityResult.Saved, "", Serialize(item), Id(item), Kind(item));
+                    _log.Add(app, AiActivityKind.Proposal, About("Ai_Imported", item), AiActivityResult.Saved, "", Serialize(item), Id(item), Kind(item));
                 return new AiToolResult(items.Count == 0 ? "The user imported nothing."
                     : $"The user imported {items.Count} item{(items.Count == 1 ? "" : "s")}, all disabled:\n" +
-                      string.Join("\n", items.Select(i => $"- {Capital(Describe(i))}, Id {Id(i)}")));
+                      string.Join("\n", items.Select(i => $"- {Capital(Loc.English(() => Describe(i)))}, Id {Id(i)}")));
             }
-            Log(app, AiActivityKind.Interaction, "Opened Import", answer, "");
+            Log(app, AiActivityKind.Interaction, Phrase.Of("Ai_OpenedImport"), answer, "");
             return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
@@ -1119,7 +1122,7 @@ internal sealed class AiTools
         return await StartForUser(app, async () =>
         {
             (AiAnswer answer, List<object> items, string? file) = await _host.ShowExport(app, ids);
-            Log(app, AiActivityKind.Interaction, "Opened Export", answer, "");
+            Log(app, AiActivityKind.Interaction, Phrase.Of("Ai_OpenedExport"), answer, "");
             return answer == AiAnswer.Done
                 ? new AiToolResult($"The user exported {items.Count} item{(items.Count == 1 ? "" : "s")} to {System.IO.Path.GetFileName(file)}.")
                 : Answered(answer, "");

@@ -114,6 +114,9 @@ public class ItemFileTests : IDisposable
 
         Assert.Equal("This file was made with PuppyMacro 2.0.0, newer than this one (1.17.0). Update PuppyMacro to import it.",
             Read(text).Error);
+        // Import's button opens Updates by this flag, in every language (never by the text).
+        Assert.True(Read(text).NeedsUpdate);
+        Assert.False(Read("not json").NeedsUpdate);
     }
 
     [Fact]

@@ -1054,4 +1054,82 @@
   <data name="Countdown_Starts" xml:space="preserve"><value>Запись начинается…</value></data>
   <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Не удалось прочитать клавиатуру.</value></data>
   <data name="Input_CannotReadMouse" xml:space="preserve"><value>Не удалось прочитать мышь.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>Этот файл не является файлом элементов PuppyMacro.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>Этот файл создан в PuppyMacro {0}, более новой версии, чем эта ({1}). Обновите PuppyMacro, чтобы импортировать его.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>Этот файл создан в более новой версии PuppyMacro. Обновите PuppyMacro, чтобы импортировать его.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Элемент {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Неизвестный тип «{0}»: PuppyMacro импортирует циклы, макросы и переназначения.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>Цикл отсутствует.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>Макрос отсутствует.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>Переназначение отсутствует.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Цикл с таким именем уже есть: импортирован как «{0}».</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Макрос с таким именем уже есть: импортирован как «{0}».</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} уже используется циклом «{1}» в этом файле.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} уже используется макросом «{1}» в этом файле.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: импортировано без горячей клавиши.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: импортировано без горячей клавиши, в режиме «Переключение» (для удержания нужна горячая клавиша).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} уже используется циклом «{1}» в этом файле. Горячие клавиши имеют приоритет над переназначениями.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} уже используется макросом «{1}» в этом файле. Горячие клавиши имеют приоритет над переназначениями.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0}: уже переназначено для всех приложений в этом файле.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0}: уже переназначено для {1} в этом файле.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>Элементы PuppyMacro</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Переназначение {0}</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>Экспортирован {0} элемент</value></data>
+  <data name="Ai_Exported_few" xml:space="preserve"><value>Экспортировано {0} элемента</value></data>
+  <data name="Ai_Exported_many" xml:space="preserve"><value>Экспортировано {0} элементов</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>Импортирован цикл {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>Импортирован макрос {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>Импортировано переназначение {0}</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>Импортировать {0} элемент</value></data>
+  <data name="Ai_ImportCount_few" xml:space="preserve"><value>Импортировать {0} элемента</value></data>
+  <data name="Ai_ImportCount_many" xml:space="preserve"><value>Импортировать {0} элементов</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>Импортировать {0} элемент?</value></data>
+  <data name="Ai_ConfirmImport_few" xml:space="preserve"><value>Импортировать эти {0} элемента?</value></data>
+  <data name="Ai_ConfirmImport_many" xml:space="preserve"><value>Импортировать эти {0} элементов?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Импорт</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>Открыто окно «Импорт»</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>Открыто окно «Экспорт»</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>Импорт</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Добавить циклы, макросы и переназначения из файла</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Экспорт</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Сохранить циклы, макросы и переназначения в файл, чтобы поделиться ими</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Экспорт…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>Элементы PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Импорт циклов, макросов и переназначений</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Экспорт циклов, макросов и переназначений</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>ОК</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>От {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>Не удалось прочитать файл: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Проверить наличие обновлений</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>Импортировать {0} элемент</value></data>
+  <data name="ImportItems_Button_few" xml:space="preserve"><value>Импортировать {0} элемента</value></data>
+  <data name="ImportItems_Button_many" xml:space="preserve"><value>Импортировать {0} элементов</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>Экспортировать {0} элемент…</value></data>
+  <data name="ExportItems_Button_few" xml:space="preserve"><value>Экспортировать {0} элемента…</value></data>
+  <data name="ExportItems_Button_many" xml:space="preserve"><value>Экспортировать {0} элементов…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Не удалось выполнить экспорт</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Циклы</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Макросы</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Переназначения</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Другое</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Выберите циклы, макросы и переназначения, которые нужно сохранить в один файл, чтобы поделиться ими или использовать их на другом компьютере.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Поиск</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Тип</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>Все типы</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Выбрать все показанные</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>Показано: {0} · выбрано: {1}</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>У вас пока нет циклов, макросов или переназначений.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Ничего не найдено.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Выбрать другой файл…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Выбрать все</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Импортированные элементы изначально отключены.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Включайте каждый из них после того, как проверите, что он делает.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} другой элемент</value></data>
+  <data name="ImportItems_OtherCount_few" xml:space="preserve"><value>{0} других элемента</value></data>
+  <data name="ImportItems_OtherCount_many" xml:space="preserve"><value>{0} других элементов</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>Нет элементов</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>Создано в PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>Элементы PuppyMacro</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>Резервная копия PuppyMacro</value></data>
 </root>

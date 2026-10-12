@@ -102,10 +102,11 @@
                         <ui:SettingsCard.Description>
                             <TextBlock x:Name="ActivationHint" />
                         </ui:SettingsCard.Description>
-                        <StackPanel Orientation="Horizontal">
+                        <!-- The library's group of choices: columns as wide as the longest choice, with its spacing, in every language -->
+                        <ui:RadioButtons MaxColumns="2" AutomationProperties.Name="{x:Static r:Strings.Editor_Activation}">
                             <RadioButton x:Name="ToggleRadio" Content="{x:Static r:Strings.Editor_Toggle}" GroupName="Activation" Checked="OnActivationChanged" />
                             <RadioButton x:Name="HoldRadio" Content="{x:Static r:Strings.Editor_Hold}" GroupName="Activation" Checked="OnActivationChanged" />
-                        </StackPanel>
+                        </ui:RadioButtons>
                     </ui:SettingsCard>
 
                     <ui:SettingsCard Header="{x:Static r:Strings.Editor_Hotkey}" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">

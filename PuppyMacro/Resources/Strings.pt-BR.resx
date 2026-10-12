@@ -1093,4 +1093,76 @@ Detalhes: {1}</value></data>
   <!-- ===== Services/InputHook.cs (shown in the "hotkeys not working" message) ===== -->
   <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Não foi possível ler o teclado.</value></data>
   <data name="Input_CannotReadMouse" xml:space="preserve"><value>Não foi possível ler o mouse.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>Este arquivo não é um arquivo de itens do PuppyMacro.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>Este arquivo foi criado com o PuppyMacro {0}, mais recente que este ({1}). Atualize o PuppyMacro para importá-lo.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>Este arquivo foi criado com um PuppyMacro mais recente. Atualize o PuppyMacro para importá-lo.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Item {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Tipo desconhecido "{0}": o PuppyMacro importa loops, macros e remapeamentos.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>O loop está faltando.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>A macro está faltando.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>O remapeamento está faltando.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Já existe um loop com este nome: importado como "{0}".</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Já existe uma macro com este nome: importada como "{0}".</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} já é usado pelo loop "{1}" neste arquivo.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} já é usado pela macro "{1}" neste arquivo.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: importação sem tecla de atalho.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: importação sem tecla de atalho, como Alternar (Segurar precisa de uma tecla de atalho).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} já é usado pelo loop "{1}" neste arquivo. As teclas de atalho têm prioridade sobre os remapeamentos.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} já é usado pela macro "{1}" neste arquivo. As teclas de atalho têm prioridade sobre os remapeamentos.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} já está remapeado para todos os aplicativos neste arquivo.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} já está remapeado para {1} neste arquivo.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>Itens do PuppyMacro</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Remapeamento {0}</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>{0} item exportado</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>{0} itens exportados</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>Loop {0} importado</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>Macro {0} importada</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>Remapeamento {0} importado</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>Importar {0} item</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>Importar {0} itens</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>Importar este item?</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>Importar estes {0} itens?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Importar</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>Abriu Importar</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>Abriu Exportar</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>Importar</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Adicionar loops, macros e remapeamentos de um arquivo</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Exportar</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Salvar loops, macros e remapeamentos em um arquivo, para compartilhá-los</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Exportar…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>Itens do PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importar loops, macros e remapeamentos</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Exportar loops, macros e remapeamentos</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>De {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>Não foi possível ler o arquivo: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Verificar se há atualizações</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>Importar {0} item</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>Importar {0} itens</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>Exportar {0} item…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>Exportar {0} itens…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Falha na exportação</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Loops</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Macros</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Remapeamentos</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Outros</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Escolha os loops, macros e remapeamentos a salvar em um arquivo, para compartilhá-los ou usá-los em outro PC.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Pesquisar</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Tipo</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>Todos os tipos</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Selecionar todos os mostrados</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} mostrados · {1} selecionados</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>Você ainda não tem loops, macros ou remapeamentos.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Nada corresponde à pesquisa.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Escolher outro arquivo…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Selecionar tudo</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Os itens importados começam desabilitados.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Habilite cada um depois de verificar o que ele faz.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} outro item</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} outros itens</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>Nenhum item</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>Do PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>Itens do PuppyMacro</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>Backup do PuppyMacro</value></data>
 </root>

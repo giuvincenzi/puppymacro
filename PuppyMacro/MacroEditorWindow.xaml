@@ -349,12 +349,15 @@
                     </ui:SettingsCard>
 
                     <ui:SettingsCard Header="{x:Static r:Strings.MacroEditor_Repeat}" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
-                        <WrapPanel>
-                            <RadioButton x:Name="OnceRadio" Content="{x:Static r:Strings.MacroEditor_Once}" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <RadioButton x:Name="LoopRadio" Content="{x:Static r:Strings.MacroEditor_Loop}" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <RadioButton x:Name="TimesRadio" Content="{x:Static r:Strings.MacroEditor_NTimes}" GroupName="Repeat" Checked="OnRepeatChanged" />
-                            <ui:NumberBox x:Name="TimesBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="100000" AutomationProperties.Name="{x:Static r:Strings.MacroEditor_Times}" />
-                        </WrapPanel>
+                        <!-- The library's group of choices: columns as wide as the longest choice, with its spacing, in every language -->
+                        <ikw:SimpleStackPanel Spacing="4">
+                            <ui:RadioButtons MaxColumns="3" AutomationProperties.Name="{x:Static r:Strings.MacroEditor_Repeat}">
+                                <RadioButton x:Name="OnceRadio" Content="{x:Static r:Strings.MacroEditor_Once}" GroupName="Repeat" Checked="OnRepeatChanged" />
+                                <RadioButton x:Name="LoopRadio" Content="{x:Static r:Strings.MacroEditor_Loop}" GroupName="Repeat" Checked="OnRepeatChanged" />
+                                <RadioButton x:Name="TimesRadio" Content="{x:Static r:Strings.MacroEditor_NTimes}" GroupName="Repeat" Checked="OnRepeatChanged" />
+                            </ui:RadioButtons>
+                            <ui:NumberBox x:Name="TimesBox" HorizontalAlignment="Left" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="100000" AutomationProperties.Name="{x:Static r:Strings.MacroEditor_Times}" />
+                        </ikw:SimpleStackPanel>
                     </ui:SettingsCard>
 
                     <ui:SettingsCard Header="{x:Static r:Strings.MacroEditor_Speed}">
@@ -366,10 +369,10 @@
                         <ui:SettingsCard.Description>
                             <TextBlock x:Name="ActivationHint" />
                         </ui:SettingsCard.Description>
-                        <StackPanel Orientation="Horizontal">
+                        <ui:RadioButtons MaxColumns="2" AutomationProperties.Name="{x:Static r:Strings.Editor_Activation}">
                             <RadioButton x:Name="ToggleRadio" Content="{x:Static r:Strings.Editor_Toggle}" GroupName="Activation" Checked="OnActivationChanged" />
                             <RadioButton x:Name="HoldRadio" Content="{x:Static r:Strings.Editor_Hold}" GroupName="Activation" Checked="OnActivationChanged" />
-                        </StackPanel>
+                        </ui:RadioButtons>
                     </ui:SettingsCard>
 
                     <ui:SettingsCard Header="{x:Static r:Strings.Editor_Hotkey}" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">

@@ -101,13 +101,16 @@ public sealed class ResourcesTests
         {
             foreach (string key in new[] { "Ai_Read", "Ai_New", "Ai_Changed", "Ai_Deleted", "Ai_Enabled", "Ai_Disabled", "Ai_Opened",
                          "Ai_Item", "Ai_NewProposal", "Ai_ChangeProposal", "Ai_ConfirmNew", "Ai_ConfirmChanges",
-                         "Ai_ConfirmDelete", "Ai_ConfirmEnable", "Ai_ConfirmDisable" })
+                         "Ai_ConfirmDelete", "Ai_ConfirmEnable", "Ai_ConfirmDisable", "Ai_Imported", "ItemFile_Missing" })
                 if (!english.ContainsKey($"{key}_{kind}"))
                     missing.Add($"{key}_{kind}");
         }
         foreach (string kind in new[] { "loop", "macro" })
-            if (!english.ContainsKey($"Ai_PlacedButton_{kind}"))
-                missing.Add($"Ai_PlacedButton_{kind}");
+        {
+            foreach (string key in new[] { "Ai_PlacedButton", "ItemFile_NameTaken", "ItemFile_HotkeyUsedInFile", "ItemFile_RemapUsedInFile" })
+                if (!english.ContainsKey($"{key}_{kind}"))
+                    missing.Add($"{key}_{kind}");
+        }
         foreach (string key in new[] { "Ai_Enable", "Ai_Disable" }.Concat(Enum.GetNames<Models.AppTheme>().Select(t => $"Theme_{t}")))
             if (!english.ContainsKey(key))
                 missing.Add(key);

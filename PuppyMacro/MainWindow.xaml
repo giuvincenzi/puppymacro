@@ -65,17 +65,17 @@
             <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
                 <!-- Loops, macros and remaps shared as .puppyitems files (MainWindow.Share.cs); not the backup -->
                 <Button x:Name="ImportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="Import" ToolTip="Add loops, macros and remaps from a file" Click="OnImportItemsClick">
+                        AutomationProperties.Name="{x:Static r:Strings.Share_Import}" ToolTip="{x:Static r:Strings.Share_ImportTooltip}" Click="OnImportItemsClick">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Download}" />
-                        <TextBlock VerticalAlignment="Center" Text="Import" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Share_Import}" />
                     </StackPanel>
                 </Button>
                 <Button x:Name="ExportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="Export" ToolTip="Save loops, macros and remaps to a file, to share them" Click="OnExportItemsClick">
+                        AutomationProperties.Name="{x:Static r:Strings.Share_Export}" ToolTip="{x:Static r:Strings.Share_ExportTooltip}" Click="OnExportItemsClick">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Share}" />
-                        <TextBlock VerticalAlignment="Center" Text="Export" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Share_Export}" />
                     </StackPanel>
                 </Button>
                 <Button x:Name="OverlayModeButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"

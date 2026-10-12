@@ -482,7 +482,7 @@ public partial class MainWindow
         };
         moveDown.Click += (_, _) => MoveItem(item, index + 1);
 
-        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
         export.Click += (_, _) => ExportOne(item.Definition);
         var menu = new ContextMenu
         {
@@ -704,7 +704,7 @@ public partial class MainWindow
         moveDown.Click += (_, _) => MoveMacro(item, index + 1);
         var delete = new MenuItem { Header = Strings.Card_Delete, Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteMacro(item);
-        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
@@ -1659,7 +1659,7 @@ public partial class MainWindow
         duplicate.Click += (_, _) => DuplicateRemap(item);
         var delete = new MenuItem { Header = Strings.Card_Delete, Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteRemap(item);
-        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };

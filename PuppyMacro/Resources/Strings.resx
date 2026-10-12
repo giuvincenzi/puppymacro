@@ -1093,4 +1093,85 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <!-- ===== Services/InputHook.cs (shown in the "hotkeys not working" message) ===== -->
   <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Could not read the keyboard.</value></data>
   <data name="Input_CannotReadMouse" xml:space="preserve"><value>Could not read the mouse.</value></data>
+
+  <!-- ===== Services/ItemFile.cs ===== -->
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>This is not a PuppyMacro items file.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>This file was made with PuppyMacro {0}, newer than this one ({1}). Update PuppyMacro to import it.</value><comment>{0}: the version that made the file; {1}: this version.</comment></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>This file was made with a newer PuppyMacro. Update PuppyMacro to import it.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Item {0}</value><comment>An item of the file without a name; {0}: its number.</comment></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Unknown kind "{0}": PuppyMacro imports loops, macros and remaps.</value><comment>{0}: the word written in the file.</comment></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>The loop is missing.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>The macro is missing.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>The remap is missing.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>A loop has this name: imported as "{0}".</value><comment>{0}: the new name, "Spam (2)".</comment></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>A macro has this name: imported as "{0}".</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} is already used by the loop "{1}" in this file.</value><comment>{0}: the keys; {1}: the loop's name.</comment></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} is already used by the macro "{1}" in this file.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: imported without a hotkey.</value><comment>{0}: why the hotkey can't be used, a sentence without its full stop.</comment></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: imported without a hotkey, as Toggle (Hold needs a hotkey).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} is already used by the loop "{1}" in this file. Hotkeys take priority over remaps.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} is already used by the macro "{1}" in this file. Hotkeys take priority over remaps.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} is already remapped for all apps in this file.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} is already remapped for {1} in this file.</value><comment>{1}: an app's .exe name.</comment></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro items</value><comment>The suggested file name when several items are exported.</comment></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Remap {0}</value><comment>The suggested file name of one remap without a note; {0}: its keys.</comment></data>
+  <!-- ===== Services/Ai/AiTools.cs: sharing ===== -->
+  <data name="Ai_Exported_one" xml:space="preserve"><value>Exported {0} item</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>Exported {0} items</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>Imported loop {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>Imported macro {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>Imported remap {0}</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>Import {0} item</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>Import {0} items</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>Import this item?</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>Import these {0} items?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Import</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>Opened Import</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>Opened Export</value></data>
+
+  <!-- ===== MainWindow.xaml / MainWindow.xaml.cs / MainWindow.Share.cs ===== -->
+  <data name="Share_Import" xml:space="preserve"><value>Import</value><comment>The title bar's button and the title of its dialog: add loops, macros and remaps from a file.</comment></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Add loops, macros and remaps from a file</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Export</value><comment>The title bar's button and the title of its dialog: save loops, macros and remaps to a file.</comment></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Save loops, macros and remaps to a file, to share them</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Export…</value><comment>In a loop's, macro's or remap's card menu: save it to a file.</comment></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro items (*{0})|*{0}</value><comment>A file dialog filter: keep "(*{0})|*{0}" as it is. {0}: the file extension.</comment></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Import loops, macros and remaps</value><comment>The title of the Open file dialog.</comment></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Export loops, macros and remaps</value><comment>The title of the Save file dialog.</comment></data>
+  <data name="Share_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>From {0}</value><comment>Instead of a file name, when an AI app gave the items. {0}: the AI app's name.</comment></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>Could not read the file: {0}</value><comment>{0}: the error.</comment></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Check for updates</value><comment>Import's button when the file was made with a newer PuppyMacro: opens Updates.</comment></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>Import {0} item</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>Import {0} items</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>Export {0} item…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>Export {0} items…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Export failed</value><comment>A dialog's title; the error follows below it.</comment></data>
+  <!-- ===== Views/ItemFileRows.cs (also the Kind box of ExportItemsView.xaml) ===== -->
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Loops</value><comment>A group in Import's and Export's lists, and in Export's kind box.</comment></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Macros</value><comment>A group in Import's and Export's lists, and in Export's kind box.</comment></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Remaps</value><comment>A group in Import's and Export's lists, and in Export's kind box.</comment></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Other</value><comment>A group in Import's list: items of a kind PuppyMacro does not know.</comment></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value><comment>A remap in Import's and Export's lists. {0}: its app or "All apps"; {1}: its note.</comment></data>
+  <!-- ===== Views/ExportItemsView.xaml / .xaml.cs ===== -->
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Choose the loops, macros and remaps to save to one file, to share them or use them on another PC.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Search</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Kind</value><comment>The name of the box that shows only loops, macros or remaps.</comment></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>All kinds</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Select all shown</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} shown · {1} selected</value><comment>{0}: how many items the list shows; {1}: how many are checked.</comment></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>You have no loops, macros or remaps yet.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Nothing matches the search.</value></data>
+  <!-- ===== Views/ImportItemsView.xaml / .xaml.cs ===== -->
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Choose another file…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Select all</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Imported items start disabled.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Turn each one on when you have checked what it does.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} other item</value><comment>Items of a kind PuppyMacro does not know, in the file.</comment></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} other items</value><comment>Items of a kind PuppyMacro does not know, in the file.</comment></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>No items</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>From PuppyMacro {0} · {1}</value><comment>Below the file name. {0}: the PuppyMacro version that made the file; {1}: what it holds, like "2 loops, 1 macro".</comment></data>
+  <!-- ===== Services/FileTypes.cs ===== -->
+  <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro items</value><comment>The file type File Explorer shows for .puppyitems files.</comment></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro backup</value><comment>The file type File Explorer shows for .puppymacro backup files.</comment></data>
 </root>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
 using PuppyMacro.Views;
@@ -22,7 +24,7 @@ namespace PuppyMacro;
 /// </summary>
 public partial class MainWindow
 {
-    private const string ItemsFilter = "PuppyMacro items (*" + ItemFile.Extension + ")|*" + ItemFile.Extension;
+    private static string ItemsFilter => string.Format(CultureInfo.CurrentCulture, Strings.Share_FileFilter, ItemFile.Extension);
 
     /// <summary>Files opened from File Explorer, waiting until PuppyMacro has no editor or dialog open.</summary>
     private readonly Queue<string> _filesToOpen = new();
@@ -59,14 +61,14 @@ public partial class MainWindow
         var view = new ImportItemsView();
         var dialog = new ContentDialog
         {
-            Title = "Import",
+            Title = Strings.Share_Import,
             Content = view,
-            CloseButtonText = "Cancel",
+            CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Primary,
         };
         void Load(string? file, string? given)
         {
-            string name = file != null ? Path.GetFileName(file) : $"From {app}";
+            string name = file != null ? Path.GetFileName(file) : string.Format(CultureInfo.CurrentCulture, Strings.ImportItems_FromApp, app);
             string? content = given;
             string? error = null;
             if (content == null)
@@ -77,7 +79,7 @@ public partial class MainWindow
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
-                    error = $"Could not read the file: {ex.Message}";
+                    error = string.Format(CultureInfo.CurrentCulture, Strings.ImportItems_ReadFailed, ex.Message);
                 }
             }
             view.Show(name, only => error != null
@@ -89,13 +91,13 @@ public partial class MainWindow
             if (view.Error != null)
             {
                 // A file of a newer PuppyMacro: its button opens Updates.
-                bool newer = view.Error.Contains("Update PuppyMacro", StringComparison.Ordinal) && _updates.IsInstalled;
-                dialog.PrimaryButtonText = newer ? "Check for updates" : "";
+                bool newer = view.NeedsUpdate && _updates.IsInstalled;
+                dialog.PrimaryButtonText = newer ? Strings.ImportItems_CheckForUpdates : "";
                 dialog.IsPrimaryButtonEnabled = newer;
                 return;
             }
             int count = view.ChosenCount;
-            dialog.PrimaryButtonText = count == 1 ? "Import 1 item" : $"Import {count} items";
+            dialog.PrimaryButtonText = Plurals.Format("ImportItems_Button", count);
             dialog.IsPrimaryButtonEnabled = count > 0;
         }
         view.ChoiceChanged += RefreshButton;
@@ -146,15 +148,15 @@ public partial class MainWindow
         var view = new ExportItemsView(all, chosen);
         var dialog = new ContentDialog
         {
-            Title = "Export",
+            Title = Strings.Share_Export,
             Content = view,
-            CloseButtonText = "Cancel",
+            CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Primary,
         };
         void RefreshButton()
         {
             int count = view.ChosenCount;
-            dialog.PrimaryButtonText = count == 1 ? "Export 1 item…" : $"Export {count} items…";
+            dialog.PrimaryButtonText = Plurals.Format("ExportItems_Button", count);
             dialog.IsPrimaryButtonEnabled = count > 0;
         }
         view.ChoiceChanged += RefreshButton;
@@ -224,7 +226,7 @@ public partial class MainWindow
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Import loops, macros and remaps",
+            Title = Strings.Share_ImportFileTitle,
             Filter = ItemsFilter,
         };
         return ShowUserDialog(() => dialog.ShowDialog(this)) == true ? dialog.FileName : null;
@@ -236,7 +238,7 @@ public partial class MainWindow
         file = null;
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Title = "Export loops, macros and remaps",
+            Title = Strings.Share_ExportFileTitle,
             FileName = ItemFile.FileName(items),
             Filter = ItemsFilter,
             DefaultExt = ItemFile.Extension,
@@ -249,7 +251,7 @@ public partial class MainWindow
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            _ = ShowMessage("Export failed", ex.Message);
+            _ = ShowMessage(Strings.ExportItems_Failed, ex.Message);
             return false;
         }
         file = dialog.FileName;
@@ -258,7 +260,7 @@ public partial class MainWindow
 
     private async Task ShowMessage(string title, string text)
     {
-        var message = new ContentDialog { Title = title, Content = text, CloseButtonText = "OK", DefaultButton = ContentDialogButton.Close };
+        var message = new ContentDialog { Title = title, Content = text, CloseButtonText = Strings.Share_Ok, DefaultButton = ContentDialogButton.Close };
         _userDialogs++;
         try
         {

@@ -1019,4 +1019,76 @@ Details: {1}</value></data>
   <data name="Countdown_Starts" xml:space="preserve"><value>Aufnahme beginnt…</value></data>
   <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Die Tastatur konnte nicht gelesen werden.</value></data>
   <data name="Input_CannotReadMouse" xml:space="preserve"><value>Die Maus konnte nicht gelesen werden.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>Diese Datei ist keine PuppyMacro-Elementdatei.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>Diese Datei wurde mit PuppyMacro {0} erstellt, einer neueren Version als dieser ({1}). Aktualisieren Sie PuppyMacro, um sie zu importieren.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>Diese Datei wurde mit einer neueren Version von PuppyMacro erstellt. Aktualisieren Sie PuppyMacro, um sie zu importieren.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Element {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Unbekannte Art „{0}“: PuppyMacro importiert Schleifen, Makros und Neuzuordnungen.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>Die Schleife fehlt.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>Das Makro fehlt.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>Die Neuzuordnung fehlt.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Es gibt bereits eine Schleife mit diesem Namen: als „{0}“ importiert.</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Es gibt bereits ein Makro mit diesem Namen: als „{0}“ importiert.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} wird bereits von der Schleife „{1}“ in dieser Datei verwendet.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} wird bereits vom Makro „{1}“ in dieser Datei verwendet.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: ohne Hotkey importiert.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: ohne Hotkey importiert, als „Umschalten“ („Halten“ benötigt einen Hotkey).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} wird bereits von der Schleife „{1}“ in dieser Datei verwendet. Hotkeys haben Vorrang vor Neuzuordnungen.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} wird bereits vom Makro „{1}“ in dieser Datei verwendet. Hotkeys haben Vorrang vor Neuzuordnungen.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} ist in dieser Datei bereits für alle Apps neu zugeordnet.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} ist in dieser Datei bereits für {1} neu zugeordnet.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro-Elemente</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Neuzuordnung {0}</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>{0} Element exportiert</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>{0} Elemente exportiert</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>Schleife {0} importiert</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>Makro {0} importiert</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>Neuzuordnung {0} importiert</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>{0} Element importieren</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>{0} Elemente importieren</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>Dieses Element importieren?</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>Diese {0} Elemente importieren?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Importieren</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>„Importieren“ geöffnet</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>„Exportieren“ geöffnet</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>Importieren</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen aus einer Datei hinzufügen</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Exportieren</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen in einer Datei speichern, um sie zu teilen</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Exportieren…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro-Elemente (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen importieren</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen exportieren</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>Von {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>Die Datei konnte nicht gelesen werden: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Nach Updates suchen</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>{0} Element importieren</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>{0} Elemente importieren</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>{0} Element exportieren…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>{0} Elemente exportieren…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Fehler beim Exportieren</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Schleifen</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Makros</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Neuzuordnungen</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Andere</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Wählen Sie die Schleifen, Makros und Neuzuordnungen aus, die in einer Datei gespeichert werden sollen, um sie zu teilen oder auf einem anderen PC zu verwenden.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Suchen</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Art</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>Alle Arten</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Alle angezeigten auswählen</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} angezeigt · {1} ausgewählt</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>Sie haben noch keine Schleifen, Makros oder Neuzuordnungen.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Keine Elemente entsprechen der Suche.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Andere Datei auswählen…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Alle auswählen</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Importierte Elemente sind zunächst deaktiviert.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Aktivieren Sie jedes Element, nachdem Sie geprüft haben, was es tut.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} anderes Element</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} andere Elemente</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>Keine Elemente</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>Erstellt mit PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro-Elemente</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro-Sicherung</value></data>
 </root>

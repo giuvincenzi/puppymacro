@@ -995,4 +995,70 @@
   <data name="Countdown_Starts" xml:space="preserve"><value>即将开始录制…</value></data>
   <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>无法读取键盘。</value></data>
   <data name="Input_CannotReadMouse" xml:space="preserve"><value>无法读取鼠标。</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>此文件不是 PuppyMacro 项目文件。</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>此文件由 PuppyMacro {0} 创建，比此版本（{1}）新。请更新 PuppyMacro 以导入它。</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>此文件由更新版本的 PuppyMacro 创建。请更新 PuppyMacro 以导入它。</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>项目 {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>未知类型“{0}”：PuppyMacro 可导入循环、宏和重映射。</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>缺少循环。</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>缺少宏。</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>缺少重映射。</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>已有同名循环：已导入为“{0}”。</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>已有同名宏：已导入为“{0}”。</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} 已被此文件中的循环“{1}”使用。</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} 已被此文件中的宏“{1}”使用。</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}：导入时未设置热键。</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}：导入时未设置热键，并设为“切换”（“按住”需要热键）。</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} 已被此文件中的循环“{1}”使用。热键优先于重映射。</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} 已被此文件中的宏“{1}”使用。热键优先于重映射。</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} 已在此文件中为所有应用重映射。</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} 已在此文件中为 {1} 重映射。</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro 项目</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>重映射 {0}</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>导出了 {0} 个项目</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>导入了循环 {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>导入了宏 {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>导入了重映射 {0}</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>导入 {0} 个项目</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>要导入这 {0} 个项目吗？</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>导入</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>打开了“导入”</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>打开了“导出”</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>导入</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>从文件添加循环、宏和重映射</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>导出</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>将循环、宏和重映射保存到文件，以便分享</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>导出…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 项目 (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>导入循环、宏和重映射</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>导出循环、宏和重映射</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>确定</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>来自 {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>无法读取文件：{0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>检查更新</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>导入 {0} 个项目</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>导出 {0} 个项目…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>导出失败</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>循环</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>宏</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>重映射</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>其他</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>选择要保存到一个文件中的循环、宏和重映射，以便分享或在另一台电脑上使用。</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>搜索</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>类型</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>所有类型</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>选择所有显示的项目</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>显示 {0} 个 · 已选择 {1} 个</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>你还没有循环、宏或重映射。</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>没有与搜索匹配的内容。</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>选择其他文件…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>全选</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>导入的项目初始为禁用状态。</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>确认每个项目的作用后，再将其启用。</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} 个其他项目</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>没有项目</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>来自 PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro 项目</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro 备份</value></data>
 </root>

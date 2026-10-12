@@ -1030,4 +1030,76 @@ Detajet: {1}</value></data>
   <data name="Countdown_Starts" xml:space="preserve"><value>Regjistrimi po nis…</value></data>
   <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Tastiera nuk mund të lexohej.</value></data>
   <data name="Input_CannotReadMouse" xml:space="preserve"><value>Miu nuk mund të lexohej.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>Ky nuk është skedar elementesh i PuppyMacro.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>Ky skedar u krijua me PuppyMacro {0}, më të ri se ky ({1}). Përditësoni PuppyMacro për ta importuar.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>Ky skedar u krijua me një PuppyMacro më të ri. Përditësoni PuppyMacro për ta importuar.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Elementi {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Lloj i panjohur "{0}": PuppyMacro importon cikle, makro dhe ricaktime.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>Cikli mungon.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>Makroja mungon.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>Ricaktimi mungon.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Ekziston një cikël me këtë emër: u importua si "{0}".</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Ekziston një makro me këtë emër: u importua si "{0}".</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}" në këtë skedar.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}" në këtë skedar.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: u importua pa tast të shpejtë.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: u importua pa tast të shpejtë, si Ndërrim (Mbajtja ka nevojë për një tast të shpejtë).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}" në këtë skedar. Tastet e shpejta kanë përparësi ndaj ricaktimeve.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}" në këtë skedar. Tastet e shpejta kanë përparësi ndaj ricaktimeve.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} është ricaktuar tashmë për të gjitha aplikacionet në këtë skedar.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} është ricaktuar tashmë për {1} në këtë skedar.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>Elementet e PuppyMacro</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Ricaktimi {0}</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>Eksportoi {0} element</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>Eksportoi {0} elemente</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>Importoi ciklin {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>Importoi makronë {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>Importoi ricaktimin {0}</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>Importim i {0} elementi</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>Importim i {0} elementeve</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>Të importohet ky element?</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>Të importohen këto {0} elemente?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Importo</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>Hapi Importo</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>Hapi Eksporto</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>Importo</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Shtoni cikle, makro dhe ricaktime nga një skedar</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Eksporto</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Ruani cikle, makro dhe ricaktime në një skedar, për t'i ndarë me të tjerët</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Eksporto…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>Elementet e PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importo cikle, makro dhe ricaktime</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Eksporto cikle, makro dhe ricaktime</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>Në rregull</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>Nga {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>Skedari nuk mund të lexohej: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Kontrollo për përditësime</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>Importo {0} element</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>Importo {0} elemente</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>Eksporto {0} element…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>Eksporto {0} elemente…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Eksportimi dështoi</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Ciklet</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Makrot</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Ricaktimet</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Të tjera</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Zgjidhni ciklet, makrot dhe ricaktimet që do të ruhen në një skedar, për t'i ndarë me të tjerët ose për t'i përdorur në një PC tjetër.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Kërko</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Lloji</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>Të gjitha llojet</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Përzgjidh të gjitha të shfaqurat</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} të shfaqura · {1} të përzgjedhura</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>Ende nuk keni cikle, makro ose ricaktime.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Asgjë nuk përputhet me kërkimin.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Zgjidh një skedar tjetër…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Përzgjidh të gjitha</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Elementet e importuara nisin të çaktivizuara.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Aktivizojeni secilin pasi të keni kontrolluar se çfarë bën.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} element tjetër</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} elemente të tjera</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>Asnjë element</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>Nga PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>Elementet e PuppyMacro</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>Kopje rezervë e PuppyMacro</value></data>
 </root>
