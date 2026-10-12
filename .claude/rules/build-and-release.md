@@ -79,6 +79,13 @@
   unsigned. The environment allows only the `main` branch (Settings > Environments > `signing` >
   Deployment branches and tags), so no other branch or pull request can use the secrets. To try a
   change to signing before a release, build signed locally (below).
+- Code merged into `main` runs in the Release workflow with the certificate. Before merging a pull
+  request from someone else, check above all what it changes in `scripts/` and `.github/workflows/`.
+  Pull requests from forks never get the secrets, and their workflows wait for approval the first
+  time a contributor opens one.
+- **The repository is public: never publish secrets anywhere in it**, on any branch, in any commit,
+  pull request, issue, comment or workflow log: passwords, tokens, keys, the SimplySign seed, codes
+  or links, certificate files, personal documents. Secrets go only in GitHub's encrypted secrets.
 - Locally (`make build`): set `CERTUM_EMAIL` and `CERTUM_TOKEN` (a 6-digit code from the SimplySign
   app) in the shell to try a signed build; the code is used once to log in. In WSL the Makefile
   passes them to Windows PowerShell through `WSLENV`.
