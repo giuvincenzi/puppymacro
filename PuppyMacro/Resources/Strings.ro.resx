@@ -1,0 +1,1057 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="ListSeparator" xml:space="preserve"><value>, </value></data>
+  <data name="Day_Today" xml:space="preserve"><value>Astăzi</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>Ieri</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>Sistem</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Luminos</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Întunecat</value></data>
+
+  <data name="Settings_Language" xml:space="preserve"><value>Limbă</value></data>
+  <data name="Settings_LanguageDescription" xml:space="preserve"><value>PuppyMacro repornește pentru a o schimba</value></data>
+  <data name="Settings_LanguageSystem" xml:space="preserve"><value>Utilizați limba sistemului</value></data>
+  <data name="LanguageRestart_Title" xml:space="preserve"><value>Reporniți PuppyMacro?</value></data>
+  <data name="LanguageRestart_Content" xml:space="preserve"><value>PuppyMacro repornește pentru a afișa limba {0}. Buclele și macrocomenzile în execuție se opresc.</value></data>
+  <data name="LanguageRestart_Restart" xml:space="preserve"><value>Reporniți acum</value></data>
+  <data name="LanguageRestart_Later" xml:space="preserve"><value>Mai târziu</value></data>
+
+  <data name="History_BeforeHistory" xml:space="preserve"><value>Înainte de începerea istoricului</value></data>
+  <data name="History_Created" xml:space="preserve"><value>Creat</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>Salvat</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>Șters</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>Restaurat</value></data>
+  <data name="History_Changes_one" xml:space="preserve"><value>{0} modificare</value></data>
+  <data name="History_Changes_few" xml:space="preserve"><value>{0} modificări</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0} de modificări</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>Acțiunea {0} a fost adăugată</value></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>Acțiunea {0} ({1}) a fost adăugată</value></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>Acțiunea {0} a fost eliminată</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>Acțiunea {0} ({1}) a fost eliminată</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>Acțiunea {0}: {1} {2} → {3}</value></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>Acțiunea {0} ({1}): {2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>niciuna</value></data>
+  <data name="History_On" xml:space="preserve"><value>Activat</value></data>
+  <data name="History_Off" xml:space="preserve"><value>Dezactivat</value></data>
+  <data name="History_Path_one" xml:space="preserve"><value>un traseu de {0} punct{1}</value></data>
+  <data name="History_Path_few" xml:space="preserve"><value>un traseu de {0} puncte{1}</value></data>
+  <data name="History_Path_other" xml:space="preserve"><value>un traseu de {0} de puncte{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0} (curentă)</value></data>
+  <data name="History_You" xml:space="preserve"><value>Dvs.</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>Aceasta este versiunea curentă.</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>Restaurarea pune această versiune în editor: selectați Salvare pentru a o păstra. Versiunea curentă rămâne în Istoric.</value></data>
+
+  <data name="Ai_Connected" xml:space="preserve"><value>Conectat</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>A încercat să se conecteze în timp ce accesul AI era dezactivat</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>A apelat {0} în timp ce accesul AI era dezactivat</value></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>A citit buclele, macrocomenzile și remapările dvs.</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>A citit setările dvs.</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>A listat aplicațiile deschise</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>A citit ghidul: {0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>A citit bucla {0}</value></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>A citit macrocomanda {0}</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>A citit remaparea {0}</value></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>Buclă nouă</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>Macrocomandă nouă</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>Remapare nouă</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>Modificare a buclei</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>Modificare a macrocomenzii</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>Modificare a remapării</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>Buclă nouă {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>Macrocomandă nouă {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>Remapare nouă {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>A modificat bucla {0}: {1}</value></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>A modificat macrocomanda {0}: {1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>A modificat remaparea {0}: {1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>A șters bucla {0}</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>A șters macrocomanda {0}</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>A șters remaparea {0}</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>A activat bucla {0}</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>A activat macrocomanda {0}</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>A activat remaparea {0}</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>A dezactivat bucla {0}</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>A dezactivat macrocomanda {0}</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>A dezactivat remaparea {0}</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>A poziționat butonul flotant al buclei {0}</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>A poziționat butonul flotant al macrocomenzii {0}</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>A deschis bucla {0}</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>A deschis macrocomanda {0}</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>A deschis remaparea {0}</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>A modificat setările: {0}</value></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>A cerut un punct: {0}</value></data>
+  <data name="Ai_AskedPoints_one" xml:space="preserve"><value>A cerut {0} punct: {1}</value></data>
+  <data name="Ai_AskedPoints_few" xml:space="preserve"><value>A cerut {0} puncte: {1}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>A cerut {0} de puncte: {1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>A cerut o aplicație: {0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>A cerut o tastă: {0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>A oprit toate buclele și macrocomenzile</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{0} → {1} în {2}</value></data>
+
+  <data name="Ai_Item_loop" xml:space="preserve"><value>Bucla {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>Macrocomanda {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>Remaparea {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>Salvați această buclă nouă?</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>Salvați această macrocomandă nouă?</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>Salvați această remapare nouă?</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>Salvați aceste modificări ale buclei?</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>Salvați aceste modificări ale macrocomenzii?</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>Salvați aceste modificări ale remapării?</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>Ștergeți această buclă?</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>Ștergeți această macrocomandă?</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>Ștergeți această remapare?</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>Activați această buclă?</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>Activați această macrocomandă?</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>Activați această remapare?</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>Dezactivați această buclă?</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>Dezactivați această macrocomandă?</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>Dezactivați această remapare?</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>Modificați aceste setări?</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>Salvare</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>Ștergere</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>Activare</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>Dezactivare</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>Aplicare</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>Niciuna</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Aceste setări nu pot fi restaurate: {0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>Temă</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Închidere în zona de notificare</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Panou de suprapunere</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Clic pe elementele din panou</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Opacitatea panoului de suprapunere</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>Volumul sunetului</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Tasta rapidă „Opriți tot”</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Tasta rapidă Mod suprapunere</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Tasta rapidă Înregistrare</value></data>
+
+  <data name="AiKind_Read" xml:space="preserve"><value>Citire</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>Salvare</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>Interacțiune</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>Modificare</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>Conexiune</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>Restaurat</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>Salvat</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>Salvat cu modificări</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>Efectuat</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>Anulat</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>Niciun răspuns</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>Refuzat</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>Eroare</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>Restaurare: {0}</value></data>
+
+  <data name="Main_EnterOverlayMode" xml:space="preserve"><value>Intrare în modul suprapunere</value></data>
+  <data name="Main_StopAll" xml:space="preserve"><value>Opriți tot</value></data>
+  <data name="Main_DevelopmentBuild" xml:space="preserve"><value>Versiune de dezvoltare</value></data>
+  <data name="Main_FilterEnabled" xml:space="preserve"><value>Activate</value></data>
+  <data name="Main_FilterDisabled" xml:space="preserve"><value>Dezactivate</value></data>
+  <data name="Main_FilterRunning" xml:space="preserve"><value>În execuție</value></data>
+  <data name="Loops_Title" xml:space="preserve"><value>Bucle</value></data>
+  <data name="Loops_Add" xml:space="preserve"><value>Adăugare buclă</value></data>
+  <data name="Loops_Search" xml:space="preserve"><value>Căutare bucle</value></data>
+  <data name="Loops_FilterAll" xml:space="preserve"><value>Toate buclele</value></data>
+  <data name="Macros_Title" xml:space="preserve"><value>Macrocomenzi</value></data>
+  <data name="Macros_Add" xml:space="preserve"><value>Adăugare macrocomandă</value></data>
+  <data name="Macros_Record" xml:space="preserve"><value>Înregistrare macrocomandă</value></data>
+  <data name="Macros_Search" xml:space="preserve"><value>Căutare macrocomenzi</value></data>
+  <data name="Macros_FilterAll" xml:space="preserve"><value>Toate macrocomenzile</value></data>
+  <data name="Remaps_Title" xml:space="preserve"><value>Remapare</value></data>
+  <data name="Remaps_Add" xml:space="preserve"><value>Adăugare remapare</value></data>
+  <data name="Remaps_Search" xml:space="preserve"><value>Căutare remapări</value></data>
+  <data name="Remaps_FilterAll" xml:space="preserve"><value>Toate remapările</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Setări</value></data>
+  <data name="Settings_General" xml:space="preserve"><value>General</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>Temă</value></data>
+  <data name="Settings_ThemeDescription" xml:space="preserve"><value>Sistem urmează setarea Windows</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>Închidere în zona de notificare</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Rămâne în execuție în zona de notificare când închideți fereastra</value></data>
+  <data name="Settings_StartWithWindows" xml:space="preserve"><value>Pornire odată cu Windows</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Pornește în zona de notificare când vă conectați</value></data>
+  <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Taste rapide și suprapunere</value></data>
+  <data name="Settings_Hotkeys" xml:space="preserve"><value>Taste rapide</value></data>
+  <data name="Settings_StopAllDescription" xml:space="preserve"><value>Oprește toate buclele și macrocomenzile</value></data>
+  <data name="Settings_OverlayMode" xml:space="preserve"><value>Mod suprapunere</value></data>
+  <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Activează sau dezactivează modul suprapunere</value></data>
+  <data name="Settings_Record" xml:space="preserve"><value>Înregistrare</value></data>
+  <data name="Settings_RecordDescription" xml:space="preserve"><value>Pornește și oprește înregistrarea unei macrocomenzi</value></data>
+  <data name="Settings_OverlayPanel" xml:space="preserve"><value>Panou de suprapunere</value></data>
+  <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>Lista buclelor și macrocomenzilor dvs.</value></data>
+  <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Afișare panou de suprapunere</value></data>
+  <data name="Settings_Opacity" xml:space="preserve"><value>Opacitate</value></data>
+  <data name="Settings_OverlayPanelOpacity" xml:space="preserve"><value>Opacitatea panoului de suprapunere</value></data>
+  <data name="Settings_OpacityPreviewItem" xml:space="preserve"><value>Clic stânga repetat</value></data>
+  <data name="Settings_PositionOnScreen" xml:space="preserve"><value>Poziție pe ecran</value></data>
+  <data name="Settings_PositionOnScreenDescription" xml:space="preserve"><value>Glisați panoul și butoanele flotante</value></data>
+  <data name="Settings_ClickInPanel" xml:space="preserve"><value>Clic pe elementele din panou pentru a le porni sau opri</value></data>
+  <data name="Settings_ClickInPanelDescription" xml:space="preserve"><value>Unele aplicații pe ecran complet pot reacționa la clic. În acest caz, dezactivați această opțiune și utilizați doar tastele rapide.</value></data>
+  <data name="Settings_Sound" xml:space="preserve"><value>Sunet</value></data>
+  <data name="Settings_SoundDescription" xml:space="preserve"><value>Sunete de pornire și oprire ale buclelor și macrocomenzilor</value></data>
+  <data name="Settings_SoundVolume" xml:space="preserve"><value>Volumul sunetului</value></data>
+  <data name="Settings_DataAndUpdates" xml:space="preserve"><value>Date și actualizări</value></data>
+  <data name="Settings_Backup" xml:space="preserve"><value>Copie de rezervă</value></data>
+  <data name="Settings_ExportOrImport" xml:space="preserve"><value>Export sau import</value></data>
+  <data name="Settings_ExportOrImportDescription" xml:space="preserve"><value>Salvați datele într-un singur fișier, pentru a păstra o copie sau a muta PuppyMacro pe alt PC</value></data>
+  <data name="Settings_ExportButton" xml:space="preserve"><value>Export…</value></data>
+  <data name="Settings_ImportButton" xml:space="preserve"><value>Import…</value></data>
+  <data name="Settings_OpenDataFolder" xml:space="preserve"><value>Deschidere folder de date</value></data>
+  <data name="Settings_Updates" xml:space="preserve"><value>Actualizări</value></data>
+  <data name="Settings_WhatsNew" xml:space="preserve"><value>Noutăți</value></data>
+  <data name="Settings_CheckForUpdates" xml:space="preserve"><value>Căutare automată de actualizări</value></data>
+  <data name="Settings_CheckForUpdatesDescription" xml:space="preserve"><value>La pornirea PuppyMacro și la fiecare 12 ore</value></data>
+  <data name="Settings_About" xml:space="preserve"><value>Despre</value></data>
+  <data name="Settings_UserGuide" xml:space="preserve"><value>Ghidul utilizatorului</value></data>
+  <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Indisponibil în versiunea de dezvoltare</value></data>
+  <data name="Settings_DataSavedIn" xml:space="preserve"><value>Date salvate în {0}</value></data>
+  <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Tastele rapide nu funcționează acum:
+{0}</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro este încă în execuție în zona de notificare. Faceți clic dreapta pe pictograma sa pentru a ieși.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Deschidere PuppyMacro</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>Ieșire</value></data>
+  <data name="Main_RunningCount_one" xml:space="preserve"><value>{0} în execuție</value></data>
+  <data name="Main_RunningCount_few" xml:space="preserve"><value>{0} în execuție</value></data>
+  <data name="Main_RunningCount_other" xml:space="preserve"><value>{0} în execuție</value></data>
+  <data name="Loops_Count_one" xml:space="preserve"><value>{0} buclă</value></data>
+  <data name="Loops_Count_few" xml:space="preserve"><value>{0} bucle</value></data>
+  <data name="Loops_Count_other" xml:space="preserve"><value>{0} de bucle</value></data>
+  <data name="Loops_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Loops_Empty" xml:space="preserve"><value>Nicio buclă încă. Selectați Adăugare buclă pentru a crea una.</value></data>
+  <data name="Loops_NoMatch" xml:space="preserve"><value>Nicio buclă nu corespunde căutării sau filtrului.</value></data>
+  <data name="Main_StopRunningFirst" xml:space="preserve"><value>Opriți mai întâi buclele și macrocomenzile în execuție</value></data>
+  <data name="Card_Delete" xml:space="preserve"><value>Ștergere</value></data>
+  <data name="Card_MoveUp" xml:space="preserve"><value>Mutare în sus</value></data>
+  <data name="Card_MoveDown" xml:space="preserve"><value>Mutare în jos</value></data>
+  <data name="Card_Duplicate" xml:space="preserve"><value>Dublare</value></data>
+  <data name="Main_Cancel" xml:space="preserve"><value>Anulare</value></data>
+  <data name="Main_DeleteNamedConfirm" xml:space="preserve"><value>Ștergeți „{0}”? Acțiunea nu poate fi anulată.</value></data>
+  <data name="Loops_DeleteTitle" xml:space="preserve"><value>Ștergere buclă</value></data>
+  <data name="Macros_Count_one" xml:space="preserve"><value>{0} macrocomandă</value></data>
+  <data name="Macros_Count_few" xml:space="preserve"><value>{0} macrocomenzi</value></data>
+  <data name="Macros_Count_other" xml:space="preserve"><value>{0} de macrocomenzi</value></data>
+  <data name="Macros_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Macros_Empty" xml:space="preserve"><value>Nicio macrocomandă încă. Înregistrați una sau selectați Adăugare macrocomandă pentru a o construi pas cu pas.</value></data>
+  <data name="Macros_NoMatch" xml:space="preserve"><value>Nicio macrocomandă nu corespunde căutării sau filtrului.</value></data>
+  <data name="Macros_DeleteTitle" xml:space="preserve"><value>Ștergere macrocomandă</value></data>
+  <data name="Macros_SaveFailed" xml:space="preserve"><value>Macrocomanda „{0}” nu a putut fi salvată: {1}</value></data>
+  <data name="Settings_NothingToPlace" xml:space="preserve"><value>Nimic de poziționat. Activați panoul de suprapunere sau adăugați un buton flotant.</value></data>
+  <data name="Main_StopAllTooltip" xml:space="preserve"><value>Opriți tot ({0})</value></data>
+  <data name="Main_EnterOverlayModeTooltip" xml:space="preserve"><value>Intrare în modul suprapunere ({0})</value></data>
+  <data name="Settings_SaveFailed" xml:space="preserve"><value>Setările nu au putut fi salvate: {0}</value></data>
+  <data name="Remaps_Count_one" xml:space="preserve"><value>{0} remapare</value></data>
+  <data name="Remaps_Count_few" xml:space="preserve"><value>{0} remapări</value></data>
+  <data name="Remaps_Count_other" xml:space="preserve"><value>{0} de remapări</value></data>
+  <data name="Remaps_EnabledCount_one" xml:space="preserve"><value>{0} activată</value></data>
+  <data name="Remaps_EnabledCount_few" xml:space="preserve"><value>{0} activate</value></data>
+  <data name="Remaps_EnabledCount_other" xml:space="preserve"><value>{0} activate</value></data>
+  <data name="Remaps_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Remaps_Empty" xml:space="preserve"><value>Nicio remapare încă. Selectați Adăugare remapare pentru a transforma o tastă sau un buton în altul.</value></data>
+  <data name="Remaps_NoMatch" xml:space="preserve"><value>Nicio remapare nu corespunde căutării sau filtrului.</value></data>
+  <data name="Remaps_DeleteTitle" xml:space="preserve"><value>Ștergere remapare</value></data>
+  <data name="Remaps_DeleteConfirm" xml:space="preserve"><value>Ștergeți remaparea {0} → {1}? Acțiunea nu poate fi anulată.</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>Export</value></data>
+  <data name="Export_FileDialogTitle" xml:space="preserve"><value>Export date PuppyMacro</value></data>
+  <data name="Backup_FileFilter" xml:space="preserve"><value>Copie de rezervă PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>Exportul nu a reușit: {0}</value></data>
+  <data name="Backup_ImportFileDialogTitle" xml:space="preserve"><value>Import date PuppyMacro</value></data>
+  <data name="Backup_ImportFailed" xml:space="preserve"><value>Importul nu a reușit: {0}</value></data>
+  <data name="Backup_ImportTitle" xml:space="preserve"><value>Import</value></data>
+  <data name="Backup_ImportConfirm" xml:space="preserve"><value>Acest fișier conține {0}. Le înlocuiți pe ale dvs. cu acestea?
+Ce nu conține fișierul rămâne neschimbat. Datele curente se salvează mai întâi în folderul de date, apoi PuppyMacro repornește.</value></data>
+  <data name="Backup_ImportAndRestart" xml:space="preserve"><value>Import și repornire</value></data>
+  <data name="Backup_PartData" xml:space="preserve"><value>bucle, macrocomenzi, remapări și setări</value></data>
+  <data name="Backup_PartHistory" xml:space="preserve"><value>Istoricul</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>activitatea AI</value></data>
+  <data name="Backup_PartLogs" xml:space="preserve"><value>jurnale</value></data>
+  <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} și {1}</value></data>
+  <data name="Update_CheckFailed" xml:space="preserve"><value>Nu s-a putut căuta actualizări. {0}</value></data>
+  <data name="Update_DownloadFailed" xml:space="preserve"><value>Actualizarea nu a putut fi descărcată. {0}</value></data>
+  <data name="Update_NotInstalled" xml:space="preserve"><value>Instalați PuppyMacro cu Setup pentru a primi actualizări</value></data>
+  <data name="Update_DownloadingVersion" xml:space="preserve"><value>Se descarcă versiunea {0}… {1}%</value></data>
+  <data name="Update_TryAgain" xml:space="preserve"><value>Încercați din nou</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>Versiunea {0} este disponibilă (aveți {1})</value></data>
+  <data name="Update_UpdateAndRestart" xml:space="preserve"><value>Actualizare și repornire</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>Se caută actualizări…</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>PuppyMacro {0} este actualizat. Verificat la {1}</value></data>
+  <data name="Update_CurrentVersion" xml:space="preserve"><value>PuppyMacro {0}</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>Verificați acum</value></data>
+  <data name="Update_BarTitle" xml:space="preserve"><value>Versiunea {0} este disponibilă</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>Se descarcă… {0}%</value></data>
+  <data name="Rail_Pages" xml:space="preserve"><value>Pagini</value></data>
+  <data name="Rail_SettingsAndHelp" xml:space="preserve"><value>Setări și ajutor</value></data>
+  <data name="Rail_Loops" xml:space="preserve"><value>Bucle</value></data>
+  <data name="Rail_Macros" xml:space="preserve"><value>Macrocomenzi</value></data>
+  <data name="Rail_Remap" xml:space="preserve"><value>Remapare</value></data>
+  <data name="Rail_Ai" xml:space="preserve"><value>AI</value></data>
+  <data name="Rail_Settings" xml:space="preserve"><value>Setări</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Editare</value></data>
+  <data name="Card_Enabled" xml:space="preserve"><value>Activat</value></data>
+  <data name="Card_MoreOptions" xml:space="preserve"><value>Mai multe opțiuni</value></data>
+  <data name="Card_Play" xml:space="preserve"><value>Redare</value></data>
+  <data name="Card_Stop" xml:space="preserve"><value>Oprire</value></data>
+  <data name="Export_WhatToExport" xml:space="preserve"><value>Ce se exportă</value></data>
+  <data name="Export_Everything" xml:space="preserve"><value>Totul</value></data>
+  <data name="Export_Choose" xml:space="preserve"><value>Alegeți ce se exportă</value></data>
+  <data name="Export_PartData" xml:space="preserve"><value>Bucle, macrocomenzi, remapări și setări</value></data>
+  <data name="Export_PartHistory" xml:space="preserve"><value>Istoric</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>Activitate AI</value></data>
+  <data name="Export_PartLogs" xml:space="preserve"><value>Jurnale</value></data>
+  <data name="Export_EverythingDescription" xml:space="preserve"><value>O copie identică, pentru a muta PuppyMacro pe alt PC · {0}</value></data>
+  <data name="Export_PartDataDescription" xml:space="preserve"><value>Inclus întotdeauna · {0}</value></data>
+  <data name="Export_PartHistoryDescription" xml:space="preserve"><value>Versiunile anterioare ale fiecărei bucle, macrocomenzi și remapări · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Ce au cerut aplicațiile AI, cu Restaurare · {0}</value></data>
+  <data name="Export_PartLogsDescription" xml:space="preserve"><value>Pentru depanare · {0}</value></data>
+  <data name="Export_SizeB" xml:space="preserve"><value>{0} B</value></data>
+  <data name="Export_SizeKB" xml:space="preserve"><value>{0} KB</value></data>
+  <data name="Export_SizeMB" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Export_SizeGB" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Card_ToggleWith" xml:space="preserve"><value>Comutare cu</value></data>
+  <data name="Card_HoldWith" xml:space="preserve"><value>Menținere cu</value></data>
+  <data name="Card_ToggleNoHotkey" xml:space="preserve"><value>Comutare, fără tastă rapidă</value></data>
+  <data name="Card_HoldNoHotkey" xml:space="preserve"><value>Menținere, fără tastă rapidă</value></data>
+  <data name="Card_StatusRunning" xml:space="preserve"><value>În execuție</value></data>
+  <data name="Card_StatusIdle" xml:space="preserve"><value>Inactivă</value></data>
+  <data name="Card_StatusDisabled" xml:space="preserve"><value>Dezactivată</value></data>
+  <data name="Card_StatusEnabled" xml:space="preserve"><value>Activată</value></data>
+  <data name="Loops_NoActions" xml:space="preserve"><value>Nicio acțiune</value></data>
+  <data name="Loops_ActionsSummary_one" xml:space="preserve"><value>{0} acțiune: {1}</value></data>
+  <data name="Loops_ActionsSummary_few" xml:space="preserve"><value>{0} acțiuni: {1}</value></data>
+  <data name="Loops_ActionsSummary_other" xml:space="preserve"><value>{0} de acțiuni: {1}</value></data>
+  <data name="Loops_IntervalMilliseconds" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="Loops_IntervalSeconds" xml:space="preserve"><value>{0} s</value></data>
+  <data name="Loops_IntervalMinutes" xml:space="preserve"><value>{0} min</value></data>
+  <data name="Loops_IntervalHours" xml:space="preserve"><value>{0} h</value></data>
+  <data name="Loops_HeldDown" xml:space="preserve"><value>{0} menținut apăsat</value></data>
+  <data name="Loops_KeyEvery" xml:space="preserve"><value>{0} la fiecare {1}</value></data>
+  <data name="Loops_KeyTimesEvery_one" xml:space="preserve"><value>{1} ({0} dată) la fiecare {2}</value></data>
+  <data name="Loops_KeyTimesEvery_few" xml:space="preserve"><value>{1} de {0} ori la fiecare {2}</value></data>
+  <data name="Loops_KeyTimesEvery_other" xml:space="preserve"><value>{1} de {0} de ori la fiecare {2}</value></data>
+  <data name="Loops_PastesEvery" xml:space="preserve"><value>lipește „{0}” la fiecare {1}</value></data>
+  <data name="Macros_RepeatLoop" xml:space="preserve"><value>în buclă</value></data>
+  <data name="Macros_RepeatOnce" xml:space="preserve"><value>o dată</value></data>
+  <data name="Macros_RepeatTimes_one" xml:space="preserve"><value>{0} dată</value></data>
+  <data name="Macros_RepeatTimes_few" xml:space="preserve"><value>de {0} ori</value></data>
+  <data name="Macros_RepeatTimes_other" xml:space="preserve"><value>de {0} de ori</value></data>
+  <data name="Macros_Summary_one" xml:space="preserve"><value>{0} acțiune, {1}, repetare {2}</value></data>
+  <data name="Macros_Summary_few" xml:space="preserve"><value>{0} acțiuni, {1}, repetare {2}</value></data>
+  <data name="Macros_Summary_other" xml:space="preserve"><value>{0} de acțiuni, {1}, repetare {2}</value></data>
+  <data name="Macros_SummaryWithSpeed_one" xml:space="preserve"><value>{0} acțiune, {1}, repetare {2}, viteză ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_few" xml:space="preserve"><value>{0} acțiuni, {1}, repetare {2}, viteză ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} de acțiuni, {1}, repetare {2}, viteză ×{3}</value></data>
+  <data name="Remaps_AllApps" xml:space="preserve"><value>Toate aplicațiile</value></data>
+  <data name="App_MigrationFailed" xml:space="preserve"><value>Buclele și macrocomenzile dvs. nu au putut fi copiate în {0}.
+Detalii: {1}</value></data>
+  <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Unele fișiere de macrocomenzi nu au putut fi actualizate la această versiune.</value></data>
+  <data name="App_UnexpectedError" xml:space="preserve"><value>Eroare neașteptată:
+{0}</value></data>
+  <data name="App_SettingsReset" xml:space="preserve"><value>Setările dvs. nu au putut fi citite, așa că au fost resetate.
+Fișierul vechi a fost salvat ca {0}.
+Detalii: {1}</value></data>
+  <data name="App_MacroFilesSkipped" xml:space="preserve"><value>Unele fișiere de macrocomenzi nu au putut fi citite și au fost omise (de ex. {0}).</value></data>
+  <data name="Backup_NotABackup" xml:space="preserve"><value>Acest fișier nu este o copie de rezervă PuppyMacro.</value></data>
+
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplicații AI conectate: selectați pentru a deschide pagina AI</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>Aplicații AI conectate</value></data>
+  <data name="AiPage_Title" xml:space="preserve"><value>AI</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Utilizați PuppyMacro dintr-o aplicație AI de pe acest PC, cum ar fi Claude Desktop sau Visual Studio Code. Cereți cu propriile cuvinte: AI-ul creează bucle, macrocomenzi și remapări, iar dvs. le încercați imediat.</value></data>
+  <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>Aplicațiile AI în PuppyMacro sunt noi: funcționează, dar se pot schimba, iar un AI poate înțelege greșit o cerere. Fiecare modificare este păstrată în Istoricul elementului, așa că puteți reveni oricând.</value></data>
+  <data name="AiPage_Access" xml:space="preserve"><value>Acces</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>Permiteți accesul AI</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>Aplicațiile AI de pe acest PC pot citi și modifica buclele, macrocomenzile, remapările și setările dvs. Fiecare modificare este păstrată în Istoricul elementului.</value></data>
+  <data name="AiPage_AskDelete" xml:space="preserve"><value>Întreabă înainte de a șterge o buclă, o macrocomandă sau o remapare</value></data>
+  <data name="AiPage_AskDeleteName" xml:space="preserve"><value>Întreabă înainte de ștergere</value></data>
+  <data name="AiPage_AskChange" xml:space="preserve"><value>Întreabă înainte de a modifica o buclă, o macrocomandă sau o remapare</value></data>
+  <data name="AiPage_AskChangeName" xml:space="preserve"><value>Întreabă înainte de modificare</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Dezactivat: elementele noi și modificate de AI sunt salvate imediat, gata de încercat.</value></data>
+  <data name="AiPage_AskSettings" xml:space="preserve"><value>Întreabă înainte de a modifica setările</value></data>
+  <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Temă, taste rapide globale, panou de suprapunere, sunet</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Pornește PuppyMacro când o aplicație AI are nevoie de el</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Dezactivat: cât timp PuppyMacro este închis, aplicațiile AI nu îl pot utiliza și vă spun să îl deschideți.</value></data>
+  <data name="AiPage_Apps" xml:space="preserve"><value>Aplicații</value></data>
+  <data name="AiPage_RecentActivity" xml:space="preserve"><value>Activitate recentă</value></data>
+  <data name="AiPage_ViewAll" xml:space="preserve"><value>Vizualizați tot</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>Nicio cerere încă. Conectați o aplicație AI mai sus, apoi cereți-i să creeze o buclă, o macrocomandă sau o remapare.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>Cum se utilizează AI cu PuppyMacro</value></data>
+  <data name="AiApps_ConnectedSince" xml:space="preserve"><value>Conectat de la {0}</value></data>
+  <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>Adăugat. Reporniți Claude Desktop pentru a vă conecta.</value></data>
+  <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>Adăugat. Deschideți Copilot Chat în Agent mode pentru a vă conecta.</value></data>
+  <data name="AiApps_CodexAdded" xml:space="preserve"><value>Adăugat. Reporniți Codex pentru a vă conecta.</value></data>
+  <data name="AiApps_InstalledNotConnected" xml:space="preserve"><value>Instalat, neconectat</value></data>
+  <data name="AiApps_VsCodeInstalled" xml:space="preserve"><value>Instalat. Utilizează GitHub Copilot, cu modelul pe care îl alegeți acolo.</value></data>
+  <data name="AiApps_NotInstalled" xml:space="preserve"><value>Neinstalat</value></data>
+  <data name="AiApps_Connect" xml:space="preserve"><value>Conectare</value></data>
+  <data name="AiApps_Remove" xml:space="preserve"><value>Eliminare</value></data>
+  <data name="AiApps_CopyConfiguration" xml:space="preserve"><value>Copiere configurație</value></data>
+  <data name="AiApps_ActionName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="AiApps_GetClaude" xml:space="preserve"><value>Obțineți Claude Desktop</value></data>
+  <data name="AiApps_GetVsCode" xml:space="preserve"><value>Obțineți Visual Studio Code</value></data>
+  <data name="AiApps_GetCodex" xml:space="preserve"><value>Obțineți Codex</value></data>
+  <data name="AiApps_OtherApps" xml:space="preserve"><value>Alte aplicații</value></data>
+  <data name="AiApps_OthersConnected" xml:space="preserve"><value>Conectate: {0}</value></data>
+  <data name="AiApps_OthersHint" xml:space="preserve"><value>Orice aplicație care acceptă servere MCP locale: lipiți configurația în setările MCP ale acesteia.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Configurația a fost copiată. Lipiți-o în setările MCP ale aplicației AI, apoi reporniți aplicația.</value></data>
+  <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code nu s-a deschis: {0}</value></data>
+  <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Eliminați-l în Visual Studio Code: rulați „MCP: Open User Configuration” și ștergeți „{0}”.</value></data>
+  <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>Folderul PuppyMacro conține un caracter pe care setările Codex nu îl pot reține.</value></data>
+  <data name="AiApps_SettingsNotChanged" xml:space="preserve"><value>Setările {0} nu au putut fi modificate: {1}</value></data>
+  <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>Fișierul de setări {0} nu este un obiect JSON, așa că PuppyMacro nu l-a modificat ({1}).</value></data>
+  <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>În fișierul de setări {0}, „{1}” nu este un obiect, așa că PuppyMacro nu l-a modificat ({2}).</value></data>
+  <data name="AiApps_SettingsFileError" xml:space="preserve"><value>Fișierul de setări {0} conține o eroare, așa că PuppyMacro nu l-a modificat: {1} ({2})</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Alt program utilizează conexiunea AI a PuppyMacro, așa că aplicațiile AI nu se pot conecta. Închideți-l sau reporniți Windows.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>Aplicațiile AI nu se pot conecta: {0}</value></data>
+  <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>Aceste setări nu pot fi restaurate.</value></data>
+  <data name="AiActivity_CantRestore" xml:space="preserve"><value>Această modificare nu poate fi restaurată.</value></data>
+  <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>Această modificare nu poate fi restaurată: {0}</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>Activitate AI</value></data>
+  <data name="AiActivity_KeptNote" xml:space="preserve"><value>Păstrate pe acest PC: cele mai noi cereri, până la 20 MB.</value></data>
+  <data name="AiActivity_ClearHistory" xml:space="preserve"><value>Golire istoric</value></data>
+  <data name="AiActivity_Close" xml:space="preserve"><value>Închidere</value></data>
+  <data name="AiActivity_Period" xml:space="preserve"><value>Perioadă</value></data>
+  <data name="AiActivity_Last7Days" xml:space="preserve"><value>Ultimele 7 zile</value></data>
+  <data name="AiActivity_Last30Days" xml:space="preserve"><value>Ultimele 30 de zile</value></data>
+  <data name="AiActivity_All" xml:space="preserve"><value>Toate</value></data>
+  <data name="AiActivity_App" xml:space="preserve"><value>Aplicație</value></data>
+  <data name="AiActivity_Type" xml:space="preserve"><value>Tip</value></data>
+  <data name="AiActivity_Result" xml:space="preserve"><value>Rezultat</value></data>
+  <data name="AiActivity_Search" xml:space="preserve"><value>Căutare</value></data>
+  <data name="AiActivity_SearchPlaceholder" xml:space="preserve"><value>Căutare în activitate</value></data>
+  <data name="AiActivity_AllApps" xml:space="preserve"><value>Toate aplicațiile</value></data>
+  <data name="AiActivity_AllTypes" xml:space="preserve"><value>Toate tipurile</value></data>
+  <data name="AiActivity_AllResults" xml:space="preserve"><value>Toate rezultatele</value></data>
+  <data name="AiActivity_Restore" xml:space="preserve"><value>Restaurare</value></data>
+  <data name="AiActivity_Details" xml:space="preserve"><value>Detalii</value></data>
+  <data name="AiActivity_NoRequests" xml:space="preserve"><value>Nicio cerere încă.</value></data>
+  <data name="AiActivity_NoMatch" xml:space="preserve"><value>Nicio cerere nu corespunde filtrelor.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>Ștergeți istoricul cererilor AI? Acțiunea nu poate fi anulată.</value></data>
+  <data name="AiActivity_Clear" xml:space="preserve"><value>Golire</value></data>
+  <data name="AiActivity_Cancel" xml:space="preserve"><value>Anulare</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>Cerere AI</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>Cerere AI - {0}</value></data>
+  <data name="AiRequest_AskedBy" xml:space="preserve"><value>Cerută de {0}</value></data>
+  <data name="AiRequest_Instructions" xml:space="preserve"><value>Instrucțiuni</value></data>
+  <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>
+  <data name="AiRequest_KeyHeader" xml:space="preserve"><value>Tastă sau combinație</value></data>
+  <data name="AiRequest_KeyDescription" xml:space="preserve"><value>Pentru o combinație, țineți apăsat mai întâi Ctrl, Alt, Shift sau Win. Pentru Ctrl, Alt, Shift sau Win singure, apăsați-le și eliberați-le.</value></data>
+  <data name="AiRequest_KeyPrompt" xml:space="preserve"><value>Apăsați tasta sau combinația (Esc anulează)</value></data>
+  <data name="AiRequest_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="AiRequest_Cancel" xml:space="preserve"><value>Anulare</value></data>
+  <data name="AiRequest_NoticeWithDescription" xml:space="preserve"><value>{0} (cerut de {1})</value></data>
+  <data name="AiRequest_NoticeAskedBy" xml:space="preserve"><value>Cerut de {0}.</value></data>
+  <data name="AiReady_AppAsks" xml:space="preserve"><value>{0} cere</value></data>
+  <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
+  <data name="AiReady_Hint" xml:space="preserve"><value>Apăsați {0} când sunteți gata · {1} anulează</value></data>
+  <data name="AiReady_Start" xml:space="preserve"><value>Pornire</value></data>
+  <data name="Pick_Title" xml:space="preserve"><value>Alegeți un punct</value></data>
+  <data name="Pick_ClickPoint" xml:space="preserve"><value>Faceți clic pe punctul la care trebuie să ajungă cursorul</value></data>
+  <data name="Pick_Cancel" xml:space="preserve"><value>Anulare</value></data>
+  <data name="Pick_AppTitle" xml:space="preserve"><value>Alegeți o aplicație</value></data>
+  <data name="Pick_ClickApp" xml:space="preserve"><value>Faceți clic pe o fereastră a aplicației</value></data>
+  <data name="Pick_AskedBy" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Pick_Counter" xml:space="preserve"><value>{0} / {1}   {2}</value></data>
+  <data name="Pick_CantReadName" xml:space="preserve"><value>Numele acestei aplicații nu poate fi citit</value></data>
+  <data name="Placement_Title" xml:space="preserve"><value>Poziționare suprapunere</value></data>
+  <data name="Placement_DragPanel" xml:space="preserve"><value>Glisați panoul unde doriți</value></data>
+  <data name="Placement_DragPanelAndButtons" xml:space="preserve"><value>Glisați panoul și butoanele unde doriți</value></data>
+  <data name="Placement_DragButton" xml:space="preserve"><value>Glisați butonul unde doriți</value></data>
+  <data name="Placement_DragButtons" xml:space="preserve"><value>Glisați butoanele unde doriți</value></data>
+  <data name="Placement_Save" xml:space="preserve"><value>Salvare</value></data>
+  <data name="Placement_Cancel" xml:space="preserve"><value>Anulare</value></data>
+  <data name="Placement_Arrows" xml:space="preserve"><value>Săgeți</value></data>
+  <data name="Placement_Nudge" xml:space="preserve"><value>Mutare cu 1 pixel (Shift: 10)</value></data>
+  <data name="Placement_NudgeSelected" xml:space="preserve"><value>Mutare a elementului selectat cu 1 pixel (Shift: 10)</value></data>
+  <data name="Placement_Selection" xml:space="preserve"><value>{0}   X {1}   Y {2}</value></data>
+
+  <data name="MacroEditor_EditTitle" xml:space="preserve"><value>Editare macrocomandă</value></data>
+  <data name="Editor_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="MacroEditor_NamePlaceholder" xml:space="preserve"><value>de ex. Creare și dezmembrare</value></data>
+  <data name="Editor_Actions" xml:space="preserve"><value>Acțiuni</value></data>
+  <data name="MacroEditor_AddAction" xml:space="preserve"><value>Adăugare acțiune</value></data>
+  <data name="MacroEditor_Record" xml:space="preserve"><value>Înregistrare</value></data>
+  <data name="MacroEditor_RecordActions" xml:space="preserve"><value>Înregistrare acțiuni</value></data>
+  <data name="Editor_Test" xml:space="preserve"><value>Testare</value></data>
+  <data name="MacroEditor_TestAction" xml:space="preserve"><value>Testare acțiune</value></data>
+  <data name="MacroEditor_TestTooltip" xml:space="preserve"><value>Redă o dată acțiunea selectată în fereastra din spate</value></data>
+  <data name="MacroEditor_Edit" xml:space="preserve"><value>Editare</value></data>
+  <data name="MacroEditor_EditAction" xml:space="preserve"><value>Editare acțiune</value></data>
+  <data name="MacroEditor_Copy" xml:space="preserve"><value>Copiere</value></data>
+  <data name="MacroEditor_CopyTooltip" xml:space="preserve"><value>Copiază acțiunile selectate, pentru a le lipi aici sau în altă macrocomandă (Ctrl+C)</value></data>
+  <data name="MacroEditor_Paste" xml:space="preserve"><value>Lipire</value></data>
+  <data name="MacroEditor_PasteTooltip" xml:space="preserve"><value>Lipește acțiunile copiate acolo unde se adaugă acțiunile noi (Ctrl+V)</value></data>
+  <data name="MacroEditor_Duplicate" xml:space="preserve"><value>Dublare</value></data>
+  <data name="MacroEditor_DuplicateTooltip" xml:space="preserve"><value>Dublează acțiunile selectate (Ctrl+D)</value></data>
+  <data name="MacroEditor_Group" xml:space="preserve"><value>Grupare</value></data>
+  <data name="MacroEditor_GroupTooltip" xml:space="preserve"><value>Pune acțiunile selectate într-un grup (Ctrl+G)</value></data>
+  <data name="MacroEditor_Delete" xml:space="preserve"><value>Ștergere</value></data>
+  <data name="MacroEditor_DeleteTooltip" xml:space="preserve"><value>Șterge acțiunile selectate (Delete)</value></data>
+  <data name="MacroEditor_RenameGroup" xml:space="preserve"><value>Redenumire grup</value></data>
+  <data name="MacroEditor_Ungroup" xml:space="preserve"><value>Anulare grupare</value></data>
+  <data name="MacroEditor_UngroupTooltip" xml:space="preserve"><value>Anulează gruparea (păstrează acțiunile)</value></data>
+  <data name="MacroEditor_ExpandAllGroups" xml:space="preserve"><value>Extindere toate grupurile</value></data>
+  <data name="MacroEditor_CollapseAllGroups" xml:space="preserve"><value>Restrângere toate grupurile</value></data>
+  <data name="MacroEditor_Shortcuts" xml:space="preserve"><value>Comenzi rapide</value></data>
+  <data name="MacroEditor_CompactList" xml:space="preserve"><value>Listă compactă</value></data>
+  <data name="MacroEditor_CompactListTooltip" xml:space="preserve"><value>Listă compactă: rânduri mai mici</value></data>
+  <data name="MacroEditor_DensityNormal" xml:space="preserve"><value>Normală</value></data>
+  <data name="MacroEditor_DensityCompact" xml:space="preserve"><value>Compactă</value></data>
+  <data name="MacroEditor_DelayTooltip" xml:space="preserve"><value>Întârziere înainte de această acțiune</value></data>
+  <data name="MacroEditor_NoActions" xml:space="preserve"><value>Nicio acțiune încă. Înregistrați acțiuni sau adăugați-le una câte una.</value></data>
+  <data name="Editor_Enabled" xml:space="preserve"><value>Activat</value></data>
+  <data name="MacroEditor_Repeat" xml:space="preserve"><value>Repetare</value></data>
+  <data name="MacroEditor_Once" xml:space="preserve"><value>O dată</value></data>
+  <data name="MacroEditor_Loop" xml:space="preserve"><value>În buclă</value></data>
+  <data name="MacroEditor_NTimes" xml:space="preserve"><value>De N ori</value></data>
+  <data name="MacroEditor_Times" xml:space="preserve"><value>Număr de repetări</value></data>
+  <data name="MacroEditor_Speed" xml:space="preserve"><value>Viteză</value></data>
+  <data name="Editor_Activation" xml:space="preserve"><value>Activare</value></data>
+  <data name="Editor_Toggle" xml:space="preserve"><value>Comutare</value></data>
+  <data name="Editor_Hold" xml:space="preserve"><value>Menținere</value></data>
+  <data name="Editor_Hotkey" xml:space="preserve"><value>Tastă rapidă</value></data>
+  <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Orice tastă sau buton al mouse-ului, cum ar fi F2 sau A. Pentru o combinație, țineți apăsat mai întâi Ctrl, Alt, Shift sau Win; clicul stânga și dreapta, rotița de defilare și Esc necesită una. Menținere necesită o tastă rapidă.</value></data>
+  <data name="Editor_Sound" xml:space="preserve"><value>Sunet</value></data>
+  <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Se redă când macrocomanda pornește și se oprește</value></data>
+  <data name="Editor_SoundChoose" xml:space="preserve"><value>Faceți clic pe un sunet pentru a-l alege și a auzi cum pornește și se oprește</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>Salvare</value></data>
+  <data name="Editor_Cancel" xml:space="preserve"><value>Anulare</value></data>
+  <data name="LoopEditor_AddTitle" xml:space="preserve"><value>Adăugare buclă</value></data>
+  <data name="LoopEditor_NamePlaceholder" xml:space="preserve"><value>de ex. Clic stânga repetat</value></data>
+  <data name="LoopEditor_PressKey" xml:space="preserve"><value>Apăsare tastă</value></data>
+  <data name="LoopEditor_Click" xml:space="preserve"><value>Clic</value></data>
+  <data name="LoopEditor_PasteText" xml:space="preserve"><value>Lipire text</value></data>
+  <data name="LoopEditor_SoundDescription" xml:space="preserve"><value>Se redă când bucla pornește și se oprește</value></data>
+  <data name="RemapEditor_AddTitle" xml:space="preserve"><value>Adăugare remapare</value></data>
+  <data name="RemapEditor_WhenIPress" xml:space="preserve"><value>Când apăs</value></data>
+  <data name="RemapEditor_SendInstead" xml:space="preserve"><value>Trimite în schimb</value></data>
+  <data name="RemapEditor_KeyDescription" xml:space="preserve"><value>O tastă, un buton al mouse-ului sau o combinație (țineți apăsat mai întâi Ctrl, Alt, Shift sau Win). Pentru Ctrl, Alt, Shift sau Win singure, apăsați-le și eliberați-le.</value></data>
+  <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Apăsați tasta sau combinația (Esc anulează)</value></data>
+  <data name="RemapEditor_Note" xml:space="preserve"><value>Notă (opțional)</value></data>
+  <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>de ex. Reîmprospătare cu butonul lateral</value></data>
+  <data name="ActionWindow_Title" xml:space="preserve"><value>Acțiune</value></data>
+  <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Redă o dată această acțiune în fereastra din spate</value></data>
+  <data name="ActionWindow_Name" xml:space="preserve"><value>Nume (opțional)</value></data>
+  <data name="ActionWindow_NameDescription" xml:space="preserve"><value>Afișat cu aldin în listă</value></data>
+  <data name="ActionWindow_NamePlaceholder" xml:space="preserve"><value>de ex. Deschidere inventar</value></data>
+  <data name="ActionWindow_Delay" xml:space="preserve"><value>Întârziere</value></data>
+  <data name="ActionWindow_DelayDescription" xml:space="preserve"><value>Așteptare înainte de această acțiune</value></data>
+  <data name="Editor_Ms" xml:space="preserve"><value>ms</value></data>
+  <data name="Group_Title" xml:space="preserve"><value>Grupare acțiuni</value></data>
+  <data name="Group_Name" xml:space="preserve"><value>Nume grup</value></data>
+  <data name="Group_NamePlaceholder" xml:space="preserve"><value>de ex. Deschidere bancă de lucru</value></data>
+  <data name="Group_Ok" xml:space="preserve"><value>Grupare</value></data>
+  <data name="MacroEditor_AddTitle" xml:space="preserve"><value>Adăugare macrocomandă</value></data>
+  <data name="MacroEditor_EditNamedTitle" xml:space="preserve"><value>Editare macrocomandă - {0}</value></data>
+  <data name="MacroEditor_SpeedValue" xml:space="preserve"><value>×{0}</value></data>
+  <data name="MacroEditor_ActionNumber" xml:space="preserve"><value>#{0}</value></data>
+  <data name="MacroEditor_ActionRange" xml:space="preserve"><value>#{0}–{1}</value></data>
+  <data name="MacroEditor_GroupInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="MacroEditor_Total" xml:space="preserve"><value>{0}, {1} la ×1</value></data>
+  <data name="MacroEditor_TotalInGroups" xml:space="preserve"><value>{0} în {1}, {2} la ×1</value></data>
+  <data name="MacroEditor_ActionCount_one" xml:space="preserve"><value>{0} acțiune</value></data>
+  <data name="MacroEditor_ActionCount_few" xml:space="preserve"><value>{0} acțiuni</value></data>
+  <data name="MacroEditor_ActionCount_other" xml:space="preserve"><value>{0} de acțiuni</value></data>
+  <data name="MacroEditor_GroupCount_one" xml:space="preserve"><value>{0} grup</value></data>
+  <data name="MacroEditor_GroupCount_few" xml:space="preserve"><value>{0} grupuri</value></data>
+  <data name="MacroEditor_GroupCount_other" xml:space="preserve"><value>{0} de grupuri</value></data>
+  <data name="MacroEditor_InsertAfterGroup" xml:space="preserve"><value>Acțiunile noi se adaugă după grupul „{0}”</value></data>
+  <data name="MacroEditor_InsertAfterInGroup" xml:space="preserve"><value>Acțiunile noi se adaugă după #{0}, în „{1}”</value></data>
+  <data name="MacroEditor_InsertAfter" xml:space="preserve"><value>Acțiunile noi se adaugă după #{0}</value></data>
+  <data name="MacroEditor_InsertAtEnd" xml:space="preserve"><value>Acțiunile noi se adaugă la sfârșit</value></data>
+  <data name="MacroEditor_Selected_one" xml:space="preserve"><value>{0} acțiune selectată · {1}</value></data>
+  <data name="MacroEditor_Selected_few" xml:space="preserve"><value>{0} acțiuni selectate · {1}</value></data>
+  <data name="MacroEditor_Selected_other" xml:space="preserve"><value>{0} de acțiuni selectate · {1}</value></data>
+  <data name="MacroEditor_NoneSelected" xml:space="preserve"><value>Selectați acțiuni pentru a le edita, grupa, copia și altele · {0}</value></data>
+  <data name="MacroEditor_DelayHeader" xml:space="preserve"><value>Întârziere înainte de această acțiune (ms)</value></data>
+  <data name="Editor_Close" xml:space="preserve"><value>Închidere</value></data>
+  <data name="MacroEditor_NewGroupName" xml:space="preserve"><value>Grupul {0}</value></data>
+  <data name="MacroEditor_HoldHint" xml:space="preserve"><value>Se redă doar cât timp tasta rapidă este ținută apăsată.</value></data>
+  <data name="Editor_ToggleHint" xml:space="preserve"><value>Apăsați tasta rapidă pentru a porni, apăsați-o din nou pentru a opri.</value></data>
+  <data name="Editor_EnterName" xml:space="preserve"><value>Introduceți un nume.</value></data>
+  <data name="MacroEditor_NoActionsError" xml:space="preserve"><value>Adăugați sau înregistrați cel puțin o acțiune.</value></data>
+  <data name="Editor_HoldNeedsHotkey" xml:space="preserve"><value>Menținere necesită o tastă rapidă. Alegeți una sau treceți la Comutare.</value></data>
+  <data name="LoopEditor_EditNamedTitle" xml:space="preserve"><value>Editare buclă - {0}</value></data>
+  <data name="LoopEditor_HoldHint" xml:space="preserve"><value>Rulează doar cât timp tasta rapidă este ținută apăsată.</value></data>
+  <data name="LoopEditor_NoActionsError" xml:space="preserve"><value>Adăugați cel puțin o acțiune.</value></data>
+  <data name="LoopEditor_IntervalError" xml:space="preserve"><value>Fiecare interval trebuie să fie între 10 ms și 24 h.</value></data>
+  <data name="LoopEditor_HotkeyIsPressed" xml:space="preserve"><value>Tasta rapidă nu poate fi una dintre tastele pe care le apasă această buclă.</value></data>
+  <data name="RemapEditor_EditNamedTitle" xml:space="preserve"><value>Editare remapare - {0}</value></data>
+  <data name="RemapEditor_EditKeysTitle" xml:space="preserve"><value>Editare remapare - {0} → {1}</value></data>
+  <data name="RemapEditor_NoSourceError" xml:space="preserve"><value>Alegeți tasta, butonul mouse-ului sau combinația de remapat.</value></data>
+  <data name="RemapEditor_NoTargetError" xml:space="preserve"><value>Alegeți ce se trimite în schimb.</value></data>
+  <data name="RemapEditor_SameKeysError" xml:space="preserve"><value>Trimiteți altceva decât ceea ce apăsați.</value></data>
+  <data name="RemapEditor_PrimaryMouseError" xml:space="preserve"><value>Clicul stânga și dreapta pot fi remapate doar într-o aplicație specifică, pentru a funcționa în continuare peste tot în rest.</value></data>
+  <data name="ActionWindow_Type_PressKey" xml:space="preserve"><value>Apăsare tastă</value></data>
+  <data name="ActionWindow_Type_KeyDown" xml:space="preserve"><value>Tastă apăsată</value></data>
+  <data name="ActionWindow_Type_KeyUp" xml:space="preserve"><value>Tastă eliberată</value></data>
+  <data name="ActionWindow_Type_Click" xml:space="preserve"><value>Clic</value></data>
+  <data name="ActionWindow_Type_MouseDown" xml:space="preserve"><value>Buton mouse apăsat</value></data>
+  <data name="ActionWindow_Type_MouseUp" xml:space="preserve"><value>Buton mouse eliberat</value></data>
+  <data name="ActionWindow_Type_MoveTo" xml:space="preserve"><value>Mutare la</value></data>
+  <data name="ActionWindow_Type_MovePath" xml:space="preserve"><value>Mutare pe traseu</value></data>
+  <data name="ActionWindow_Type_Scroll" xml:space="preserve"><value>Defilare</value></data>
+  <data name="ActionWindow_Type_PasteText" xml:space="preserve"><value>Lipire text</value></data>
+  <data name="ActionWindow_Add_PressKey" xml:space="preserve"><value>Adăugare Apăsare tastă</value></data>
+  <data name="ActionWindow_Add_KeyDown" xml:space="preserve"><value>Adăugare Tastă apăsată</value></data>
+  <data name="ActionWindow_Add_KeyUp" xml:space="preserve"><value>Adăugare Tastă eliberată</value></data>
+  <data name="ActionWindow_Add_Click" xml:space="preserve"><value>Adăugare Clic</value></data>
+  <data name="ActionWindow_Add_MouseDown" xml:space="preserve"><value>Adăugare Buton mouse apăsat</value></data>
+  <data name="ActionWindow_Add_MouseUp" xml:space="preserve"><value>Adăugare Buton mouse eliberat</value></data>
+  <data name="ActionWindow_Add_MoveTo" xml:space="preserve"><value>Adăugare Mutare la</value></data>
+  <data name="ActionWindow_Add_MovePath" xml:space="preserve"><value>Adăugare Mutare pe traseu</value></data>
+  <data name="ActionWindow_Add_Scroll" xml:space="preserve"><value>Adăugare Defilare</value></data>
+  <data name="ActionWindow_Add_PasteText" xml:space="preserve"><value>Adăugare Lipire text</value></data>
+  <data name="ActionWindow_Edit_PressKey" xml:space="preserve"><value>Editare Apăsare tastă - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyDown" xml:space="preserve"><value>Editare Tastă apăsată - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyUp" xml:space="preserve"><value>Editare Tastă eliberată - {0}</value></data>
+  <data name="ActionWindow_Edit_Click" xml:space="preserve"><value>Editare Clic - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseDown" xml:space="preserve"><value>Editare Buton mouse apăsat - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseUp" xml:space="preserve"><value>Editare Buton mouse eliberat - {0}</value></data>
+  <data name="ActionWindow_Edit_MoveTo" xml:space="preserve"><value>Editare Mutare la - {0}</value></data>
+  <data name="ActionWindow_Edit_MovePath" xml:space="preserve"><value>Editare Mutare pe traseu - {0}</value></data>
+  <data name="ActionWindow_Edit_Scroll" xml:space="preserve"><value>Editare Defilare - {0}</value></data>
+  <data name="ActionWindow_Edit_PasteText" xml:space="preserve"><value>Editare Lipire text - {0}</value></data>
+  <data name="Shortcuts_Select" xml:space="preserve"><value>Selectare</value></data>
+  <data name="Shortcuts_Click" xml:space="preserve"><value>clic</value></data>
+  <data name="Shortcuts_CtrlClick" xml:space="preserve"><value>Adaugă o acțiune la selecție sau o elimină</value></data>
+  <data name="Shortcuts_ShiftClick" xml:space="preserve"><value>Selectează toate acțiunile până la aceasta</value></data>
+  <data name="Shortcuts_Move" xml:space="preserve"><value>Mutare</value></data>
+  <data name="Shortcuts_Drag" xml:space="preserve"><value>Glisare</value></data>
+  <data name="Shortcuts_DragWhat" xml:space="preserve"><value>Mută acțiunile selectate, inclusiv în sau din afara unui grup</value></data>
+  <data name="Shortcuts_MoveUpDown" xml:space="preserve"><value>Mută acțiunile selectate în sus sau în jos</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>Editare</value></data>
+  <data name="Shortcuts_DoubleClick" xml:space="preserve"><value>Dublu clic</value></data>
+  <data name="Shortcuts_DoubleClickWhat" xml:space="preserve"><value>Editează o acțiune; deschide sau închide un grup</value></data>
+  <data name="Shortcuts_RightClick" xml:space="preserve"><value>Clic dreapta</value></data>
+  <data name="Shortcuts_RightClickWhat" xml:space="preserve"><value>Afișează comenzile pentru acțiunile selectate</value></data>
+  <data name="Shortcuts_Group" xml:space="preserve"><value>Pune acțiunile selectate într-un grup</value></data>
+  <data name="Shortcuts_Duplicate" xml:space="preserve"><value>Dublează acțiunile selectate</value></data>
+  <data name="Shortcuts_Copy" xml:space="preserve"><value>Copiază acțiunile selectate, pentru a le lipi aici sau în altă macrocomandă</value></data>
+  <data name="Shortcuts_Paste" xml:space="preserve"><value>Lipește acțiunile copiate acolo unde se adaugă acțiunile noi</value></data>
+  <data name="Shortcuts_Delete" xml:space="preserve"><value>Șterge acțiunile selectate</value></data>
+  <data name="Shortcuts_Note" xml:space="preserve"><value>Acțiunile noi se adaugă după acțiunea sau grupul selectat ori la sfârșit. Testare redă o dată acțiunea selectată în fereastra din spatele PuppyMacro.</value></data>
+  <data name="Editor_FormView" xml:space="preserve"><value>Vizualizare formular</value></data>
+  <data name="Editor_CodeView" xml:space="preserve"><value>Vizualizare cod</value></data>
+  <data name="Editor_CodeViewTooltip" xml:space="preserve"><value>Editați ca JSON. Ctrl+Space afișează sugestii</value></data>
+  <data name="Editor_History" xml:space="preserve"><value>Istoric</value></data>
+  <data name="Editor_HistoryTooltip" xml:space="preserve"><value>Versiunile salvate: cine a modificat ce și Restaurare</value></data>
+  <data name="CodeView_Format" xml:space="preserve"><value>Formatare</value></data>
+  <data name="CodeView_FormatTooltip" xml:space="preserve"><value>Formatează codul (Shift+Alt+F)</value></data>
+  <data name="CodeView_Loading" xml:space="preserve"><value>Se încarcă editorul de cod…</value></data>
+  <data name="CodeView_EditorName" xml:space="preserve"><value>Editor de cod</value></data>
+  <data name="CodeView_Stopped" xml:space="preserve"><value>Editorul de cod s-a oprit. Închideți această fereastră și deschideți-o din nou.</value></data>
+  <data name="CodeView_NeedsWebView2" xml:space="preserve"><value>Vizualizarea cod necesită Microsoft Edge WebView2 Runtime. Instalați-l de la Microsoft, apoi deschideți din nou această fereastră.</value></data>
+  <data name="CodeView_CouldNotStart" xml:space="preserve"><value>Editorul de cod nu a putut porni: {0}</value></data>
+  <data name="CodeView_Checking" xml:space="preserve"><value>Se verifică…</value></data>
+  <data name="CodeView_NoProblems" xml:space="preserve"><value>Nicio problemă.</value></data>
+  <data name="CodeView_CheckerFailed" xml:space="preserve"><value>Verificarea codului nu a putut porni: {0}</value></data>
+  <data name="CodeView_Problems" xml:space="preserve"><value>Probleme</value></data>
+  <data name="CodeView_ProblemsTitle" xml:space="preserve"><value>PROBLEME</value></data>
+  <data name="CodeView_Position" xml:space="preserve"><value>Ln {0}, Col {1}</value></data>
+  <data name="CodeView_FixProblems_one" xml:space="preserve"><value>Remediați problema sau renunțați la modificări.</value></data>
+  <data name="CodeView_FixProblems_few" xml:space="preserve"><value>Remediați cele {0} probleme sau renunțați la modificări.</value></data>
+  <data name="CodeView_FixProblems_other" xml:space="preserve"><value>Remediați cele {0} de probleme sau renunțați la modificări.</value></data>
+  <data name="CodeView_DiscardChanges" xml:space="preserve"><value>Renunțare la modificări</value></data>
+  <data name="CodeView_DiscardChangesTooltip" xml:space="preserve"><value>Anulează modificările codului și revine la Vizualizare formular</value></data>
+  <data name="HistoryView_Empty" xml:space="preserve"><value>Nicio versiune încă: la fiecare salvare, versiunea este păstrată aici.</value></data>
+  <data name="HistoryView_Versions" xml:space="preserve"><value>Versiuni</value></data>
+  <data name="HistoryView_ChangesTitle" xml:space="preserve"><value>Modificări față de versiunea anterioară:</value></data>
+  <data name="HistoryView_Restore" xml:space="preserve"><value>Restaurare versiune</value></data>
+  <data name="HistoryView_RestoredTitle" xml:space="preserve"><value>Versiunea din {0:g} este în editor.</value></data>
+  <data name="HistoryView_RestoredMessage" xml:space="preserve"><value>Selectați Salvare pentru a o păstra sau Anulare pentru a lăsa totul cum este.</value></data>
+  <data name="AppScope_Header" xml:space="preserve"><value>Aplicație specifică</value></data>
+  <data name="AppScope_AllApps" xml:space="preserve"><value>Funcționează în toate aplicațiile</value></data>
+  <data name="AppScope_App" xml:space="preserve"><value>Aplicație</value></data>
+  <data name="AppScope_AppTooltip" xml:space="preserve"><value>Numele .exe al aplicației, de ex. Diablo IV.exe</value></data>
+  <data name="AppScope_Pick" xml:space="preserve"><value>Alegere</value></data>
+  <data name="AppScope_PickTooltip" xml:space="preserve"><value>Faceți clic pe o fereastră a aplicației</value></data>
+  <data name="AppScope_Browse" xml:space="preserve"><value>Răsfoire…</value></data>
+  <data name="AppScope_NoAppError" xml:space="preserve"><value>Alegeți aplicația în care funcționează sau dezactivați Aplicație specifică.</value></data>
+  <data name="AppScope_ChooseApp" xml:space="preserve"><value>Alegeți aplicația în care funcționează</value></data>
+  <data name="AppScope_OnlyApp" xml:space="preserve"><value>Funcționează doar cât timp {0} este în prim-plan</value></data>
+  <data name="AppScope_Help" xml:space="preserve"><value>Alegeți o aplicație în execuție, alegeți fereastra acesteia sau răsfoiți după fișierul .exe. Funcționează doar cât timp aplicația este în prim-plan.</value></data>
+  <data name="AppScope_HelpStops" xml:space="preserve"><value>Alegeți o aplicație în execuție, alegeți fereastra acesteia sau răsfoiți după fișierul .exe. Funcționează doar cât timp aplicația este în prim-plan și se oprește când treceți la altă aplicație.</value></data>
+  <data name="AppScope_BrowseTitle" xml:space="preserve"><value>Alegeți aplicația</value></data>
+  <data name="AppScope_BrowseFilter" xml:space="preserve"><value>Programe (*.exe)|*.exe</value></data>
+  <data name="OverlayOptions_Show" xml:space="preserve"><value>Afișare în suprapunere</value></data>
+  <data name="OverlayOptions_ShowDescription" xml:space="preserve"><value>În panoul de suprapunere sau ca buton flotant</value></data>
+  <data name="OverlayOptions_HideWhenDisabled" xml:space="preserve"><value>Ascundere când este dezactivat</value></data>
+  <data name="OverlayOptions_HideWhenDisabledDescription" xml:space="preserve"><value>Ascuns din suprapunere cât timp este dezactivat</value></data>
+  <data name="OverlayOptions_PassThrough" xml:space="preserve"><value>Clicurile ajung și la aplicația din spate</value></data>
+  <data name="OverlayOptions_PassThroughDescription" xml:space="preserve"><value>Un clic pe el în suprapunere face clic și în fereastra de dedesubt</value></data>
+  <data name="FloatingButton_Header" xml:space="preserve"><value>Buton flotant</value></data>
+  <data name="FloatingButton_Description" xml:space="preserve"><value>Un buton rotund care îl pornește și îl oprește în modul suprapunere, în locul rândului său din panou</value></data>
+  <data name="FloatingButton_NeedsToggle" xml:space="preserve"><value>Necesită Comutare: un clic poate porni și opri, dar nu poate menține</value></data>
+  <data name="FloatingButton_Label" xml:space="preserve"><value>Etichetă</value></data>
+  <data name="FloatingButton_Size" xml:space="preserve"><value>Dimensiune</value></data>
+  <data name="FloatingButton_Small" xml:space="preserve"><value>Mică</value></data>
+  <data name="FloatingButton_Medium" xml:space="preserve"><value>Medie</value></data>
+  <data name="FloatingButton_Large" xml:space="preserve"><value>Mare</value></data>
+  <data name="FloatingButton_PositionOnScreen" xml:space="preserve"><value>Poziție pe ecran</value></data>
+  <data name="FloatingButton_Position" xml:space="preserve"><value>Poziție</value></data>
+  <data name="FloatingButton_Opacity" xml:space="preserve"><value>Opacitate</value></data>
+  <data name="FloatingButton_OpacityLabel" xml:space="preserve"><value>Opacitatea butonului flotant</value></data>
+  <data name="MacroEditor_ExpandGroup" xml:space="preserve"><value>Extindere grup</value></data>
+  <data name="MacroEditor_CollapseGroup" xml:space="preserve"><value>Restrângere grup</value></data>
+  <data name="MacroEditor_GroupAccessibleName" xml:space="preserve"><value>Grupul {0}, {1}</value></data>
+  <data name="MacroEditor_DelayMs" xml:space="preserve"><value>{0:0.##} ms</value></data>
+  <data name="MacroEditor_RowPress" xml:space="preserve"><value>Apăsare {0}</value></data>
+  <data name="MacroEditor_RowKeyDown" xml:space="preserve"><value>Tastă apăsată {0}</value></data>
+  <data name="MacroEditor_RowKeyUp" xml:space="preserve"><value>Tastă eliberată {0}</value></data>
+  <data name="MacroEditor_RowButtonDown" xml:space="preserve"><value>Buton {0} apăsat</value></data>
+  <data name="MacroEditor_RowButtonUp" xml:space="preserve"><value>Buton {0} eliberat</value></data>
+  <data name="MacroEditor_RowMoveSmoothly" xml:space="preserve"><value>Mutare lină</value></data>
+  <data name="MacroEditor_RowScrollUp" xml:space="preserve"><value>Defilare în sus</value></data>
+  <data name="MacroEditor_RowScrollDown" xml:space="preserve"><value>Defilare în jos</value></data>
+  <data name="MacroEditor_RowScrollLeft" xml:space="preserve"><value>Defilare la stânga</value></data>
+  <data name="MacroEditor_RowScrollRight" xml:space="preserve"><value>Defilare la dreapta</value></data>
+  <data name="MacroEditor_RowTimes_one" xml:space="preserve"><value>{1} de {0} ori</value></data>
+  <data name="MacroEditor_RowTimes_few" xml:space="preserve"><value>{1} de {0} ori</value></data>
+  <data name="MacroEditor_RowTimes_other" xml:space="preserve"><value>{1} de {0} de ori</value></data>
+  <data name="MacroEditor_RowHeld" xml:space="preserve"><value>menținut {0} ms</value></data>
+  <data name="MacroEditor_RowAt" xml:space="preserve"><value>la {0}, {1}</value></data>
+  <data name="MacroEditor_RowPath_one" xml:space="preserve"><value>{0} punct, {1}</value></data>
+  <data name="MacroEditor_RowPath_few" xml:space="preserve"><value>{0} puncte, {1}</value></data>
+  <data name="MacroEditor_RowPath_other" xml:space="preserve"><value>{0} de puncte, {1}</value></data>
+  <data name="MacroEditor_RowScrollSteps_one" xml:space="preserve"><value>{0} pas</value></data>
+  <data name="MacroEditor_RowScrollSteps_few" xml:space="preserve"><value>{0} pași</value></data>
+  <data name="MacroEditor_RowScrollSteps_other" xml:space="preserve"><value>{0} de pași</value></data>
+  <data name="MacroEditor_RowQuoted" xml:space="preserve"><value>„{0}”</value></data>
+
+  <data name="Action_Direction" xml:space="preserve"><value>Direcție</value></data>
+  <data name="Action_DirectionUp" xml:space="preserve"><value>Sus</value></data>
+  <data name="Action_DirectionDown" xml:space="preserve"><value>Jos</value></data>
+  <data name="Action_DirectionLeft" xml:space="preserve"><value>Stânga</value></data>
+  <data name="Action_DirectionRight" xml:space="preserve"><value>Dreapta</value></data>
+  <data name="Action_Remove" xml:space="preserve"><value>Eliminare</value></data>
+  <data name="Action_WhileLoopRuns" xml:space="preserve"><value>Cât timp rulează bucla</value></data>
+  <data name="Action_Repeat" xml:space="preserve"><value>Repetare</value></data>
+  <data name="Action_HoldDown" xml:space="preserve"><value>Menținere apăsată</value></data>
+  <data name="Action_Every" xml:space="preserve"><value>La fiecare</value></data>
+  <data name="Action_Interval" xml:space="preserve"><value>Interval</value></data>
+  <data name="Action_Unit" xml:space="preserve"><value>Unitate</value></data>
+  <data name="Action_UnitMs" xml:space="preserve"><value>ms</value></data>
+  <data name="Action_UnitS" xml:space="preserve"><value>s</value></data>
+  <data name="Action_UnitMin" xml:space="preserve"><value>min</value></data>
+  <data name="Action_UnitH" xml:space="preserve"><value>h</value></data>
+  <data name="Action_Position" xml:space="preserve"><value>Poziție</value></data>
+  <data name="Action_Mode" xml:space="preserve"><value>Mod</value></data>
+  <data name="Action_Single" xml:space="preserve"><value>Simplu</value></data>
+  <data name="Action_Double" xml:space="preserve"><value>Dublu</value></data>
+  <data name="Action_HoldFor" xml:space="preserve"><value>Menținere timp de</value></data>
+  <data name="Action_Times" xml:space="preserve"><value>Număr de repetări</value></data>
+  <data name="Action_PauseBetween" xml:space="preserve"><value>Pauză între</value></data>
+  <data name="Action_PauseBetweenDescription" xml:space="preserve"><value>Între o apăsare și următoarea, când Număr de repetări este mai mare de 1</value></data>
+  <data name="Action_FixedPoint" xml:space="preserve"><value>Punct fix</value></data>
+  <data name="Action_Text" xml:space="preserve"><value>Text</value></data>
+  <data name="Action_TextToPaste" xml:space="preserve"><value>Text de lipit</value></data>
+  <data name="Action_EnterBefore" xml:space="preserve"><value>Apăsare Enter înainte de lipire</value></data>
+  <data name="Action_EnterAfter" xml:space="preserve"><value>Apăsare Enter după lipire</value></data>
+  <data name="Action_Movement" xml:space="preserve"><value>Mișcare</value></data>
+  <data name="Action_Instantly" xml:space="preserve"><value>Instantaneu</value></data>
+  <data name="Action_Smoothly" xml:space="preserve"><value>Lin</value></data>
+  <data name="Action_Speed" xml:space="preserve"><value>Viteză</value></data>
+  <data name="Action_MovementSpeed" xml:space="preserve"><value>Viteza mișcării</value></data>
+  <data name="Action_Steps" xml:space="preserve"><value>Pași</value></data>
+  <data name="Action_UseClick" xml:space="preserve"><value>Pentru butoanele mouse-ului, utilizați Clic.</value></data>
+  <data name="Action_UseMouseAction" xml:space="preserve"><value>Pentru butoanele mouse-ului, utilizați o acțiune Clic sau Buton mouse.</value></data>
+  <data name="Action_TitlePressKey" xml:space="preserve"><value>Apăsare tastă</value></data>
+  <data name="Action_TitleKeyDown" xml:space="preserve"><value>Tastă apăsată</value></data>
+  <data name="Action_TitleKeyUp" xml:space="preserve"><value>Tastă eliberată</value></data>
+  <data name="Action_TitleClick" xml:space="preserve"><value>Clic</value></data>
+  <data name="Action_TitleMouseDown" xml:space="preserve"><value>Buton mouse apăsat</value></data>
+  <data name="Action_TitleMouseUp" xml:space="preserve"><value>Buton mouse eliberat</value></data>
+  <data name="Action_TitleMoveTo" xml:space="preserve"><value>Mutare la</value></data>
+  <data name="Action_TitleScroll" xml:space="preserve"><value>Defilare</value></data>
+  <data name="Action_TitlePasteText" xml:space="preserve"><value>Lipire text</value></data>
+  <data name="Action_HoldButtonDescription" xml:space="preserve"><value>Cât timp rămâne apăsat butonul înainte de a fi eliberat</value></data>
+  <data name="Action_HoldKeyDescription" xml:space="preserve"><value>Cât timp rămâne apăsată tasta înainte de a fi eliberată</value></data>
+  <data name="Action_AFixedPoint" xml:space="preserve"><value>Un punct fix</value></data>
+  <data name="Action_WherePointerIs" xml:space="preserve"><value>Unde se află indicatorul</value></data>
+  <data name="Action_SpeedVerySlow" xml:space="preserve"><value>foarte lentă</value></data>
+  <data name="Action_SpeedSlow" xml:space="preserve"><value>lentă</value></data>
+  <data name="Action_SpeedNormal" xml:space="preserve"><value>normală</value></data>
+  <data name="Action_SpeedFast" xml:space="preserve"><value>rapidă</value></data>
+  <data name="Action_SpeedVeryFast" xml:space="preserve"><value>foarte rapidă</value></data>
+  <data name="Action_SpeedText" xml:space="preserve"><value>Viteză: {0}, aproximativ {1} s</value></data>
+  <data name="Action_SummaryEvery" xml:space="preserve"><value>la fiecare {0} {1}</value></data>
+  <data name="Action_SummaryTimes_one" xml:space="preserve"><value>{1} de {0} ori</value></data>
+  <data name="Action_SummaryTimes_few" xml:space="preserve"><value>{1} de {0} ori</value></data>
+  <data name="Action_SummaryTimes_other" xml:space="preserve"><value>{1} de {0} de ori</value></data>
+  <data name="Action_SummaryAt" xml:space="preserve"><value>la {0}, {1}</value></data>
+  <data name="Action_SummaryWherePointerIs" xml:space="preserve"><value>unde se află indicatorul</value></data>
+  <data name="Action_SummaryNoKey" xml:space="preserve"><value>Nicio tastă încă</value></data>
+  <data name="Action_SummaryNoText" xml:space="preserve"><value>Niciun text încă</value></data>
+  <data name="Action_SummaryUntilKeyUp" xml:space="preserve"><value>{0}, până la Tastă eliberată</value></data>
+  <data name="Action_SummarySteps_one" xml:space="preserve"><value>{0} pas</value></data>
+  <data name="Action_SummarySteps_few" xml:space="preserve"><value>{0} pași</value></data>
+  <data name="Action_SummarySteps_other" xml:space="preserve"><value>{0} de pași</value></data>
+  <data name="Action_SummaryText" xml:space="preserve"><value>„{0}”</value></data>
+  <data name="Action_SummaryTextThenEnter" xml:space="preserve"><value>„{0}”, apoi Enter</value></data>
+  <data name="Action_SummaryHeldDown" xml:space="preserve"><value>{0}, menținut apăsat cât timp rulează bucla</value></data>
+  <data name="Action_ChooseKeyEach" xml:space="preserve"><value>Alegeți o tastă pentru fiecare Apăsare tastă.</value></data>
+  <data name="Action_ChooseKey" xml:space="preserve"><value>Alegeți o tastă.</value></data>
+  <data name="Action_SetFixedPoint" xml:space="preserve"><value>Setați poziția fiecărui Clic la un punct fix.</value></data>
+  <data name="Action_EnterTextEach" xml:space="preserve"><value>Introduceți textul pentru fiecare Lipire text.</value></data>
+  <data name="Action_EnterText" xml:space="preserve"><value>Introduceți textul de lipit.</value></data>
+  <data name="Action_HoldNeedsSingleKey" xml:space="preserve"><value>Menținere apăsată funcționează cu o singură tastă. Pentru o combinație, utilizați Repetare.</value></data>
+  <data name="KeyField_PromptHotkey" xml:space="preserve"><value>Apăsați tasta rapidă (Esc anulează)</value></data>
+  <data name="KeyField_PromptCombination" xml:space="preserve"><value>Apăsați tasta sau combinația (Esc anulează)</value></data>
+  <data name="KeyField_PromptKeyOrModifier" xml:space="preserve"><value>Apăsați o tastă sau doar Ctrl, Alt, Shift ori Win (Esc anulează)</value></data>
+  <data name="KeyField_SetHotkey" xml:space="preserve"><value>Setare tastă rapidă</value></data>
+  <data name="KeyField_SetKey" xml:space="preserve"><value>Setare tastă</value></data>
+  <data name="KeyField_ChangeHotkey" xml:space="preserve"><value>Schimbare tastă rapidă</value></data>
+  <data name="KeyField_ChangeKey" xml:space="preserve"><value>Schimbare tastă</value></data>
+  <data name="KeyField_ClearHotkey" xml:space="preserve"><value>Golire tastă rapidă</value></data>
+  <data name="KeyField_ClearKey" xml:space="preserve"><value>Golire tastă</value></data>
+  <data name="KeyField_Change" xml:space="preserve"><value>Schimbare</value></data>
+  <data name="KeyField_Clear" xml:space="preserve"><value>Golire</value></data>
+  <data name="Mouse_Button" xml:space="preserve"><value>Butonul mouse-ului</value></data>
+  <data name="Mouse_Left" xml:space="preserve"><value>Stânga</value></data>
+  <data name="Mouse_Right" xml:space="preserve"><value>Dreapta</value></data>
+  <data name="Mouse_Middle" xml:space="preserve"><value>Mijloc</value></data>
+  <data name="Mouse_Back" xml:space="preserve"><value>Înapoi (X1)</value></data>
+  <data name="Mouse_Forward" xml:space="preserve"><value>Înainte (X2)</value></data>
+  <data name="Mouse_ClickLeft" xml:space="preserve"><value>Clic stânga</value></data>
+  <data name="Mouse_ClickRight" xml:space="preserve"><value>Clic dreapta</value></data>
+  <data name="Mouse_ClickMiddle" xml:space="preserve"><value>Clic mijloc</value></data>
+  <data name="Mouse_ClickBack" xml:space="preserve"><value>Clic Înapoi (X1)</value></data>
+  <data name="Mouse_ClickForward" xml:space="preserve"><value>Clic Înainte (X2)</value></data>
+  <data name="Mouse_DoubleClickLeft" xml:space="preserve"><value>Dublu clic stânga</value></data>
+  <data name="Mouse_DoubleClickRight" xml:space="preserve"><value>Dublu clic dreapta</value></data>
+  <data name="Mouse_DoubleClickMiddle" xml:space="preserve"><value>Dublu clic mijloc</value></data>
+  <data name="Mouse_DoubleClickBack" xml:space="preserve"><value>Dublu clic Înapoi (X1)</value></data>
+  <data name="Mouse_DoubleClickForward" xml:space="preserve"><value>Dublu clic Înainte (X2)</value></data>
+  <data name="Mouse_DetectTooltip" xml:space="preserve"><value>Apăsați un buton al mouse-ului pentru a-l detecta</value></data>
+  <data name="Mouse_Detect" xml:space="preserve"><value>Detectare buton mouse</value></data>
+  <data name="Mouse_Prompt" xml:space="preserve"><value>Apăsați un buton al mouse-ului (Esc anulează)</value></data>
+  <data name="Mouse_UsePressKey" xml:space="preserve"><value>Pentru taste, utilizați Apăsare tastă.</value></data>
+  <data name="Position_X" xml:space="preserve"><value>X</value></data>
+  <data name="Position_Y" xml:space="preserve"><value>Y</value></data>
+  <data name="Position_PickOnScreen" xml:space="preserve"><value>Alegere pe ecran</value></data>
+  <data name="Slider_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Keys_NoHotkey" xml:space="preserve"><value>Nicio tastă rapidă</value></data>
+  <data name="Keys_Join" xml:space="preserve"><value> + </value></data>
+  <data name="Keys_None" xml:space="preserve"><value>Niciuna</value></data>
+  <data name="Keys_WheelUp" xml:space="preserve"><value>Rotiță în sus</value></data>
+  <data name="Keys_WheelDown" xml:space="preserve"><value>Rotiță în jos</value></data>
+  <data name="Keys_WheelLeft" xml:space="preserve"><value>Rotiță la stânga</value></data>
+  <data name="Keys_WheelRight" xml:space="preserve"><value>Rotiță la dreapta</value></data>
+  <data name="Keys_LButton" xml:space="preserve"><value>LButton</value></data>
+  <data name="Keys_RButton" xml:space="preserve"><value>RButton</value></data>
+  <data name="Keys_MButton" xml:space="preserve"><value>MButton</value></data>
+  <data name="Keys_XButton1" xml:space="preserve"><value>XButton1</value></data>
+  <data name="Keys_XButton2" xml:space="preserve"><value>XButton2</value></data>
+  <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
+  <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>
+  <data name="Keys_Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="Keys_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Keys_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Keys_Win" xml:space="preserve"><value>Win</value></data>
+  <data name="Keys_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Keys_CapsLock" xml:space="preserve"><value>CapsLock</value></data>
+  <data name="Keys_Esc" xml:space="preserve"><value>Esc</value></data>
+  <data name="Keys_Space" xml:space="preserve"><value>Spațiu</value></data>
+  <data name="Keys_PageUp" xml:space="preserve"><value>PageUp</value></data>
+  <data name="Keys_PageDown" xml:space="preserve"><value>PageDown</value></data>
+  <data name="Keys_End" xml:space="preserve"><value>End</value></data>
+  <data name="Keys_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Keys_Left" xml:space="preserve"><value>Săgeată stânga</value></data>
+  <data name="Keys_Up" xml:space="preserve"><value>Săgeată sus</value></data>
+  <data name="Keys_Right" xml:space="preserve"><value>Săgeată dreapta</value></data>
+  <data name="Keys_Down" xml:space="preserve"><value>Săgeată jos</value></data>
+  <data name="Keys_PrintScreen" xml:space="preserve"><value>PrintScreen</value></data>
+  <data name="Keys_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Keys_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Keys_LeftWin" xml:space="preserve"><value>Win stânga</value></data>
+  <data name="Keys_RightWin" xml:space="preserve"><value>Win dreapta</value></data>
+  <data name="Keys_NumpadDigit" xml:space="preserve"><value>Numpad{0}</value></data>
+  <data name="Keys_NumpadMultiply" xml:space="preserve"><value>Numpad*</value></data>
+  <data name="Keys_NumpadAdd" xml:space="preserve"><value>Numpad+</value></data>
+  <data name="Keys_NumpadSubtract" xml:space="preserve"><value>Numpad-</value></data>
+  <data name="Keys_NumpadDecimal" xml:space="preserve"><value>Numpad.</value></data>
+  <data name="Keys_NumpadDivide" xml:space="preserve"><value>Numpad/</value></data>
+  <data name="Keys_NumLock" xml:space="preserve"><value>NumLock</value></data>
+  <data name="Keys_ScrollLock" xml:space="preserve"><value>ScrollLock</value></data>
+  <data name="Keys_LeftShift" xml:space="preserve"><value>Shift stânga</value></data>
+  <data name="Keys_RightShift" xml:space="preserve"><value>Shift dreapta</value></data>
+  <data name="Keys_LeftCtrl" xml:space="preserve"><value>Ctrl stânga</value></data>
+  <data name="Keys_RightCtrl" xml:space="preserve"><value>Ctrl dreapta</value></data>
+  <data name="Keys_LeftAlt" xml:space="preserve"><value>Alt stânga</value></data>
+  <data name="Keys_RightAlt" xml:space="preserve"><value>Alt dreapta</value></data>
+  <data name="Keys_EitherCtrl" xml:space="preserve"><value>Ctrl stânga sau dreapta</value></data>
+  <data name="Keys_EitherAlt" xml:space="preserve"><value>Alt stânga sau dreapta</value></data>
+  <data name="Keys_EitherShift" xml:space="preserve"><value>Shift stânga sau dreapta</value></data>
+  <data name="Keys_EitherWin" xml:space="preserve"><value>Win stânga sau dreapta</value></data>
+  <data name="Keys_Unknown" xml:space="preserve"><value>Tasta 0x{0:X2}</value></data>
+  <data name="Hotkey_ClickNeedsModifier" xml:space="preserve"><value>Clicul stânga și dreapta necesită Ctrl, Alt, Shift sau Win: singure ar bloca mouse-ul.</value></data>
+  <data name="Hotkey_WheelNeedsModifier" xml:space="preserve"><value>Rotița de defilare necesită Ctrl, Alt, Shift sau Win: singură ar bloca defilarea.</value></data>
+  <data name="Hotkey_EscNeedsModifier" xml:space="preserve"><value>Esc necesită Ctrl, Alt, Shift sau Win.</value></data>
+  <data name="Hotkey_WheelCantHold" xml:space="preserve"><value>Rotița de defilare nu poate fi ținută apăsată. Treceți la Comutare sau alegeți altă tastă rapidă.</value></data>
+  <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} este deja utilizată de „Opriți tot”.</value></data>
+  <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} este deja utilizată de Mod suprapunere.</value></data>
+  <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} este deja utilizată de Înregistrare.</value></data>
+  <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} este deja utilizată de bucla „{1}”.</value></data>
+  <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} este deja utilizată de bucla „{1}” în {2}.</value></data>
+  <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} este deja utilizată de macrocomanda „{1}”.</value></data>
+  <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} este deja utilizată de macrocomanda „{1}” în {2}.</value></data>
+  <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Tastele rapide au prioritate față de remapări.</value></data>
+  <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} este deja remapată pentru toate aplicațiile.</value></data>
+  <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} este deja remapată pentru {1}.</value></data>
+  <data name="Sound_Chime" xml:space="preserve"><value>Clopoțel</value></data>
+  <data name="Sound_Blip" xml:space="preserve"><value>Blip</value></data>
+  <data name="Sound_Pop" xml:space="preserve"><value>Pocnet</value></data>
+  <data name="Sound_Bell" xml:space="preserve"><value>Clopot</value></data>
+  <data name="Sound_Arcade" xml:space="preserve"><value>Arcade</value></data>
+  <data name="Sound_Soft" xml:space="preserve"><value>Delicat</value></data>
+  <data name="Sound_Marimba" xml:space="preserve"><value>Marimba</value></data>
+  <data name="Sound_Pluck" xml:space="preserve"><value>Ciupit</value></data>
+  <data name="Sound_Harp" xml:space="preserve"><value>Harpă</value></data>
+  <data name="Sound_Kalimba" xml:space="preserve"><value>Kalimba</value></data>
+  <data name="Sound_Xylophone" xml:space="preserve"><value>Xilofon</value></data>
+  <data name="Sound_Glock" xml:space="preserve"><value>Glockenspiel</value></data>
+  <data name="Sound_Organ" xml:space="preserve"><value>Orgă</value></data>
+  <data name="Sound_Flute" xml:space="preserve"><value>Flaut</value></data>
+  <data name="Sound_Synth" xml:space="preserve"><value>Sintetizator</value></data>
+  <data name="Sound_Pad" xml:space="preserve"><value>Pad</value></data>
+  <data name="Sound_Brass" xml:space="preserve"><value>Alămuri</value></data>
+  <data name="Sound_Bass" xml:space="preserve"><value>Bas</value></data>
+  <data name="Sound_Click" xml:space="preserve"><value>Clic</value></data>
+  <data name="Sound_Tick" xml:space="preserve"><value>Tic</value></data>
+  <data name="Sound_Knock" xml:space="preserve"><value>Ciocănit</value></data>
+  <data name="Sound_Switch" xml:space="preserve"><value>Comutator</value></data>
+  <data name="Sound_Tom" xml:space="preserve"><value>Tobă tom</value></data>
+  <data name="Sound_Conga" xml:space="preserve"><value>Conga</value></data>
+  <data name="Sound_Cowbell" xml:space="preserve"><value>Talangă</value></data>
+  <data name="Sound_Triangle" xml:space="preserve"><value>Triunghi</value></data>
+  <data name="Sound_Gong" xml:space="preserve"><value>Gong</value></data>
+  <data name="Sound_Coin" xml:space="preserve"><value>Monedă</value></data>
+  <data name="Sound_Jump" xml:space="preserve"><value>Salt</value></data>
+  <data name="Sound_Laser" xml:space="preserve"><value>Laser</value></data>
+  <data name="Sound_Zap" xml:space="preserve"><value>Zap</value></data>
+  <data name="Sound_Powerup" xml:space="preserve"><value>Power-up</value></data>
+  <data name="Sound_Retro" xml:space="preserve"><value>Retro</value></data>
+  <data name="Sound_Fanfare" xml:space="preserve"><value>Fanfară</value></data>
+  <data name="Sound_Twinkle" xml:space="preserve"><value>Licărire</value></data>
+  <data name="Sound_Sparkle" xml:space="preserve"><value>Scânteie</value></data>
+  <data name="Sound_Bubble" xml:space="preserve"><value>Bulă</value></data>
+  <data name="Sound_Drop" xml:space="preserve"><value>Picătură</value></data>
+  <data name="Sound_Whoosh" xml:space="preserve"><value>Vâjâit</value></data>
+  <data name="Sound_Whistle" xml:space="preserve"><value>Fluier</value></data>
+  <data name="Sound_Chirp" xml:space="preserve"><value>Ciripit</value></data>
+  <data name="Sound_Cricket" xml:space="preserve"><value>Greier</value></data>
+  <data name="Sound_Doorbell" xml:space="preserve"><value>Sonerie</value></data>
+  <data name="Sound_Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Sound_Alarm" xml:space="preserve"><value>Alarmă</value></data>
+  <data name="Sound_Modem" xml:space="preserve"><value>Modem</value></data>
+  <data name="Sound_Radar" xml:space="preserve"><value>Radar</value></data>
+  <data name="Sound_Sonar" xml:space="preserve"><value>Sonar</value></data>
+  <data name="Sound_Echo" xml:space="preserve"><value>Ecou</value></data>
+  <data name="Sound_Robot" xml:space="preserve"><value>Robot</value></data>
+  <data name="Sound_Siren" xml:space="preserve"><value>Sirenă</value></data>
+  <data name="Sound_Hum" xml:space="preserve"><value>Zumzet</value></data>
+  <data name="Sound_Ripple" xml:space="preserve"><value>Undă</value></data>
+  <data name="Sound_Wobble" xml:space="preserve"><value>Oscilație</value></data>
+  <data name="Sound_Warp" xml:space="preserve"><value>Distorsiune</value></data>
+  <data name="Sound_Ufo" xml:space="preserve"><value>OZN</value></data>
+
+  <data name="Code_MustBeObject" xml:space="preserve"><value>Acesta trebuie să fie un obiect JSON.</value></data>
+  <data name="Code_Between" xml:space="preserve"><value>Trebuie să fie între {0} și {1}.</value></data>
+  <data name="Code_IdCannotChange" xml:space="preserve"><value>Id nu poate fi modificat. Utilizați "{0}" (Ctrl+Space îl sugerează).</value></data>
+  <data name="Code_UnknownSound" xml:space="preserve"><value>Sunet necunoscut. Utilizați unul dintre: {0}.</value></data>
+  <data name="Code_HoldNeedsHotkey" xml:space="preserve"><value>Menținere necesită o tastă rapidă. Setați una sau utilizați "Toggle".</value></data>
+  <data name="Code_HotkeyNotAKey" xml:space="preserve"><value>Nu este o tastă: utilizați un cod de tastă virtuală între 1 și 254 sau un cod de rotiță de defilare (256 sus, 257 jos, 258 stânga, 259 dreapta).</value></data>
+  <data name="Code_HotkeyModifierAlone" xml:space="preserve"><value>Ctrl, Alt, Shift și Win singure nu pot fi tasta: setați-le cu "Ctrl", "Alt", "Shift" și "Win".</value></data>
+  <data name="Code_RemapChooseKey" xml:space="preserve"><value>Alegeți o tastă sau un buton al mouse-ului: un cod de tastă virtuală între 1 și 254.</value></data>
+  <data name="Code_RemapModifierSide" xml:space="preserve"><value>Ctrl, Alt, Shift sau Win singure: utilizați codul tastei din stânga sau din dreapta (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_RemapModifierNoOthers" xml:space="preserve"><value>Ctrl, Alt, Shift sau Win singure nu acceptă alt modificator: setați "Ctrl", "Alt", "Shift" și "Win" la false.</value></data>
+  <data name="Code_OnlyWithModifier" xml:space="preserve"><value>Doar cu "{0}": true. Eliminați-l sau setați "{0}" la true.</value></data>
+  <data name="Code_AppExeEmpty" xml:space="preserve"><value>Scrieți numele fișierului aplicației, cum ar fi "notepad.exe", sau null pentru toate aplicațiile.</value></data>
+  <data name="Code_AppExeNotExe" xml:space="preserve"><value>Scrieți numele fișierului aplicației, terminat cu ".exe".</value></data>
+  <data name="Code_AtMostCharacters_one" xml:space="preserve"><value>Cel mult {0} caracter.</value></data>
+  <data name="Code_AtMostCharacters_few" xml:space="preserve"><value>Cel mult {0} caractere.</value></data>
+  <data name="Code_AtMostCharacters_other" xml:space="preserve"><value>Cel mult {0} de caractere.</value></data>
+  <data name="Code_SetBothXY" xml:space="preserve"><value>Setați atât X, cât și Y, sau niciunul (null: mijlocul ecranului principal).</value></data>
+  <data name="Code_FloatingNeedsToggle" xml:space="preserve"><value>Necesită "Toggle": un clic poate porni și opri, dar nu poate menține.</value></data>
+  <data name="Code_MustBeOneOf" xml:space="preserve"><value>Trebuie să fie unul dintre: {0}.</value></data>
+  <data name="Code_AtPath" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Code_InvalidJsonDetail" xml:space="preserve"><value>JSON nevalid: {0}</value></data>
+  <data name="Code_UnknownProperty" xml:space="preserve"><value>Proprietate necunoscută "{0}".</value></data>
+  <data name="Code_WrongType" xml:space="preserve"><value>Această valoare are un tip greșit sau nu este una dintre valorile permise.</value></data>
+  <data name="Code_NeedsValue" xml:space="preserve"><value>Aici este necesară o valoare, nu null.</value></data>
+  <data name="Code_InvalidJson" xml:space="preserve"><value>JSON nevalid.</value></data>
+  <data name="Code_EnterName" xml:space="preserve"><value>Introduceți un nume.</value></data>
+  <data name="Code_AddAction" xml:space="preserve"><value>Adăugați cel puțin o acțiune.</value></data>
+  <data name="Code_KeyVkOld" xml:space="preserve"><value>Nu se mai utilizează: tastele se pun în "Actions". Eliminați-l.</value></data>
+  <data name="Code_IntervalMsOld" xml:space="preserve"><value>Nu se mai utilizează: intervalele se pun în "Actions". Eliminați-l.</value></data>
+  <data name="Code_HotkeyVkOld" xml:space="preserve"><value>Nu se mai utilizează: utilizați "Hotkey". Eliminați-l.</value></data>
+  <data name="Code_LoopChooseKey" xml:space="preserve"><value>Alegeți tasta sau butonul mouse-ului: un cod de tastă virtuală între 1 și 254.</value></data>
+  <data name="Code_EnterText" xml:space="preserve"><value>Introduceți textul.</value></data>
+  <data name="Code_TextNoHold" xml:space="preserve"><value>Doar Apăsare tastă și Clic pot fi menținute apăsate.</value></data>
+  <data name="Code_IntervalRange" xml:space="preserve"><value>Intervalul trebuie să fie între 10 ms și 24 h.</value></data>
+  <data name="Code_HotkeyPressed" xml:space="preserve"><value>Tasta rapidă nu poate fi una dintre tastele pe care le apasă această buclă.</value></data>
+  <data name="Code_LoopOnlyPressKeyModifiers" xml:space="preserve"><value>Doar Apăsare tastă are Ctrl, Alt, Shift sau Win. Eliminați-l.</value></data>
+  <data name="Code_ClickNoModifiers" xml:space="preserve"><value>Un clic nu are Ctrl, Alt, Shift sau Win. Eliminați-l.</value></data>
+  <data name="Code_HoldDownSingleKey" xml:space="preserve"><value>Menținere apăsată funcționează cu o singură tastă. Pentru o combinație, utilizați Repeat.</value></data>
+  <data name="Code_OnlyPressKeyAndClick" xml:space="preserve"><value>Doar Apăsare tastă și Clic îl au. Eliminați-l.</value></data>
+  <data name="Code_OnlyClick" xml:space="preserve"><value>Doar Clic îl are. Eliminați-l.</value></data>
+  <data name="Code_ClickCountOrNull" xml:space="preserve"><value>Trebuie să fie 1 (clic simplu), 2 (dublu clic) sau null.</value></data>
+  <data name="Code_SetBothXYFixed" xml:space="preserve"><value>Setați atât X, cât și Y pentru un punct fix, sau niciunul (null: unde se află indicatorul).</value></data>
+  <data name="Code_SourceVkOld" xml:space="preserve"><value>Nu se mai utilizează: utilizați "Source", cum ar fi {"Vk": 65} pentru A. Eliminați-l.</value></data>
+  <data name="Code_ChooseSource" xml:space="preserve"><value>Alegeți tasta, butonul mouse-ului sau combinația de remapat.</value></data>
+  <data name="Code_ChooseTarget" xml:space="preserve"><value>Alegeți ce se trimite în schimb.</value></data>
+  <data name="Code_TargetDifferent" xml:space="preserve"><value>Trimiteți altceva decât ceea ce apăsați.</value></data>
+  <data name="Code_PrimaryMouseNeedsApp" xml:space="preserve"><value>Clicul stânga și dreapta pot fi remapate doar într-o aplicație specifică, pentru a funcționa în continuare peste tot în rest.</value></data>
+  <data name="Code_GroupNotAllowed" xml:space="preserve"><value>Această acțiune poate fi doar în: {0}. Acțiunile unui grup trebuie să fie una lângă alta.</value></data>
+  <data name="Code_SpeedSteps" xml:space="preserve"><value>Trebuie să fie 0.25, 0.5, 1, 2 sau 4.</value></data>
+  <data name="Code_GroupIdTwice" xml:space="preserve"><value>Două grupuri au acest Id.</value></data>
+  <data name="Code_EnterGroupName" xml:space="preserve"><value>Introduceți un nume de grup.</value></data>
+  <data name="Code_NoSuchGroup" xml:space="preserve"><value>Niciun grup din "Groups" nu are acest Id.</value></data>
+  <data name="Code_GroupApart" xml:space="preserve"><value>Acțiunile unui grup trebuie să fie una lângă alta.</value></data>
+  <data name="Code_GroupNoActions" xml:space="preserve"><value>Acest grup nu are acțiuni: adăugați-i câteva ("GroupId") sau eliminați-l.</value></data>
+  <data name="Code_MacroChooseKey" xml:space="preserve"><value>Alegeți o tastă: un cod de tastă virtuală între 1 și 254.</value></data>
+  <data name="Code_UseMouseAction" xml:space="preserve"><value>Pentru butoanele mouse-ului, utilizați o acțiune Clic, Buton mouse apăsat sau Buton mouse eliberat.</value></data>
+  <data name="Code_ChooseMouseButton" xml:space="preserve"><value>Alegeți un buton al mouse-ului: 1 stânga, 2 dreapta, 4 mijloc, 5 înapoi (X1), 6 înainte (X2).</value></data>
+  <data name="Code_KeyDownOneKey" xml:space="preserve"><value>Tastă apăsată și Tastă eliberată acceptă o singură tastă: pentru Ctrl, Alt, Shift sau Win singure, utilizați codul tastei în "Vk" (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_MacroOnlyPressKeyModifiers" xml:space="preserve"><value>Doar o acțiune Apăsare tastă are Ctrl, Alt, Shift sau Win. Eliminați-l.</value></data>
+  <data name="Code_ClickCount" xml:space="preserve"><value>Trebuie să fie 1 (clic simplu) sau 2 (dublu clic).</value></data>
+  <data name="Code_PathEmpty" xml:space="preserve"><value>Un traseu necesită cel puțin un punct.</value></data>
+  <data name="Code_PathTimes" xml:space="preserve"><value>Timpii trebuie să înceapă de la 0 sau mai mult și să nu scadă niciodată.</value></data>
+  <data name="Code_EnterPasteText" xml:space="preserve"><value>Introduceți textul de lipit.</value></data>
+  <data name="Overlay_WindowTitle" xml:space="preserve"><value>Panou de suprapunere PuppyMacro</value></data>
+  <data name="Overlay_MovePanel" xml:space="preserve"><value>Mutare panou</value></data>
+  <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Glisați pentru a muta panoul</value></data>
+  <data name="Overlay_Exit" xml:space="preserve"><value>Ieșire din modul suprapunere</value></data>
+  <data name="Overlay_ExitTip" xml:space="preserve"><value>Ieșire din modul suprapunere ({0})</value></data>
+  <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Ieșire și deschidere PuppyMacro</value></data>
+  <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Ieșire din modul suprapunere și deschidere PuppyMacro</value></data>
+  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Nimic de afișat.</value></data>
+  <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Totul este pe butoane flotante.</value></data>
+  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Nimic pentru această aplicație.</value></data>
+  <data name="Overlay_Macros" xml:space="preserve"><value>Macrocomenzi</value></data>
+  <data name="Overlay_StopAll" xml:space="preserve"><value>Opriți tot</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Clic pentru pornire sau oprire · Clic dreapta pentru activare sau dezactivare</value></data>
+  <data name="Floating_WindowTitle" xml:space="preserve"><value>Buton flotant PuppyMacro</value></data>
+  <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Buton flotant PuppyMacro: {0}</value></data>
+  <data name="Recording_Title" xml:space="preserve"><value>Înregistrare</value></data>
+  <data name="Recording_StartsIn" xml:space="preserve"><value>Înregistrarea începe în {0}</value></data>
+  <data name="Recording_SwitchHint" xml:space="preserve"><value>Treceți la fereastra de înregistrat. Clicurile nu sunt încă înregistrate.</value></data>
+  <data name="Recording_Cancel" xml:space="preserve"><value>Anulare</value></data>
+  <data name="Recording_Stop" xml:space="preserve"><value>Oprire</value></data>
+  <data name="Recording_Events_one" xml:space="preserve"><value>{0} eveniment</value></data>
+  <data name="Recording_Events_few" xml:space="preserve"><value>{0} evenimente</value></data>
+  <data name="Recording_Events_other" xml:space="preserve"><value>{0} de evenimente</value></data>
+  <data name="Recording_PressToStop" xml:space="preserve"><value>Apăsați {0} pentru a opri</value></data>
+  <data name="Recording_ReadyTitle" xml:space="preserve"><value>Gata de înregistrare</value></data>
+  <data name="Recording_PressOrSelect" xml:space="preserve"><value>Apăsați {0} sau selectați {1}</value></data>
+  <data name="Recording_StartRecording" xml:space="preserve"><value>Pornire înregistrare</value></data>
+  <data name="Recording_RecordMouseMovement" xml:space="preserve"><value>Înregistrare mișcări mouse</value></data>
+  <data name="Recording_PromptDescription" xml:space="preserve"><value>Aveți 3 secunde pentru a trece la fereastra pe care doriți să o înregistrați. Tot ce apăsați, faceți clic și mutați este înregistrat până când apăsați {0} sau selectați Oprire.</value></data>
+  <data name="Countdown_Title" xml:space="preserve"><value>Numărătoare inversă înregistrare</value></data>
+  <data name="Countdown_Starts" xml:space="preserve"><value>Înregistrarea începe…</value></data>
+  <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Tastatura nu a putut fi citită.</value></data>
+  <data name="Input_CannotReadMouse" xml:space="preserve"><value>Mouse-ul nu a putut fi citit.</value></data>
+</root>

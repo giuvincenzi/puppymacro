@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ListSeparator" xml:space="preserve"><value>, </value></data>
+  <data name="Day_Today" xml:space="preserve"><value>오늘</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>어제</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>시스템</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>밝게</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>어둡게</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>언어</value></data>
+  <data name="Settings_LanguageDescription" xml:space="preserve"><value>변경하려면 PuppyMacro가 다시 시작됩니다</value></data>
+  <data name="Settings_LanguageSystem" xml:space="preserve"><value>시스템 언어 사용</value></data>
+  <data name="LanguageRestart_Title" xml:space="preserve"><value>PuppyMacro를 다시 시작할까요?</value></data>
+  <data name="LanguageRestart_Content" xml:space="preserve"><value>{0}(으)로 표시하기 위해 PuppyMacro가 다시 시작됩니다. 실행 중인 루프와 매크로가 중지됩니다.</value></data>
+  <data name="LanguageRestart_Restart" xml:space="preserve"><value>지금 다시 시작</value></data>
+  <data name="LanguageRestart_Later" xml:space="preserve"><value>나중에</value></data>
+  <data name="History_BeforeHistory" xml:space="preserve"><value>기록이 시작되기 전</value></data>
+  <data name="History_Created" xml:space="preserve"><value>만듦</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>저장됨</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>삭제됨</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>복원됨</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0}개 변경</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>동작 {0} 추가함</value></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>동작 {0}({1}) 추가함</value></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>동작 {0} 제거함</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>동작 {0}({1}) 제거함</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>동작 {0}: {1} {2} → {3}</value></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>동작 {0}({1}): {2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>없음</value></data>
+  <data name="History_On" xml:space="preserve"><value>켬</value></data>
+  <data name="History_Off" xml:space="preserve"><value>끔</value></data>
+  <data name="History_Path_other" xml:space="preserve"><value>점 {0}개의 경로{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0}(현재)</value></data>
+  <data name="History_You" xml:space="preserve"><value>나</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>현재 버전입니다.</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>복원하면 이 버전이 편집기에 표시됩니다. 유지하려면 저장을 선택하세요. 현재 버전은 기록에 남아 있습니다.</value></data>
+  <data name="Ai_Connected" xml:space="preserve"><value>연결됨</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>AI 액세스가 꺼져 있는 동안 연결을 시도함</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>AI 액세스가 꺼져 있는 동안 {0} 호출함</value></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>루프, 매크로 및 다시 매핑 읽음</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>설정 읽음</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>열려 있는 앱 목록 확인함</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>가이드 읽음: {0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>루프 {0} 읽음</value></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>매크로 {0} 읽음</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>다시 매핑 {0} 읽음</value></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>새 루프</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>새 매크로</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>새 다시 매핑</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>루프 변경</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>매크로 변경</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>다시 매핑 변경</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>새 루프 {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>새 매크로 {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>새 다시 매핑 {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>루프 {0} 변경함: {1}</value></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>매크로 {0} 변경함: {1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>다시 매핑 {0} 변경함: {1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>루프 {0} 삭제함</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>매크로 {0} 삭제함</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>다시 매핑 {0} 삭제함</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>루프 {0} 사용함</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>매크로 {0} 사용함</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>다시 매핑 {0} 사용함</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>루프 {0} 사용 안 함</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>매크로 {0} 사용 안 함</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>다시 매핑 {0} 사용 안 함</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>루프 {0}의 플로팅 단추 배치함</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>매크로 {0}의 플로팅 단추 배치함</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>루프 {0} 열었음</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>매크로 {0} 열었음</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>다시 매핑 {0} 열었음</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>설정 변경함: {0}</value></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>지점 요청함: {0}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>지점 {0}개 요청함: {1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>앱 요청함: {0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>키 요청함: {0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>모든 루프와 매크로 중지함</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{2}에서 {0} → {1}</value></data>
+  <data name="Ai_Item_loop" xml:space="preserve"><value>루프 {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>매크로 {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>다시 매핑 {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>이 새 루프를 저장할까요?</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>이 새 매크로를 저장할까요?</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>이 새 다시 매핑을 저장할까요?</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>루프의 변경 내용을 저장할까요?</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>매크로의 변경 내용을 저장할까요?</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>다시 매핑의 변경 내용을 저장할까요?</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>이 루프를 삭제할까요?</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>이 매크로를 삭제할까요?</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>이 다시 매핑을 삭제할까요?</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>이 루프를 사용할까요?</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>이 매크로를 사용할까요?</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>이 다시 매핑을 사용할까요?</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>이 루프를 사용하지 않을까요?</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>이 매크로를 사용하지 않을까요?</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>이 다시 매핑을 사용하지 않을까요?</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>이 설정을 변경할까요?</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>저장</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>삭제</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>사용</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>사용 안 함</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>적용</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>없음</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>다음 설정은 복원할 수 없습니다: {0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>테마</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>닫을 때 시스템 트레이로 이동</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>오버레이 패널</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>패널의 항목 클릭</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>오버레이 패널 불투명도</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>소리 볼륨</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>모두 중지 바로 가기 키</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>오버레이 모드 바로 가기 키</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>녹화 바로 가기 키</value></data>
+  <data name="AiKind_Read" xml:space="preserve"><value>읽기</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>저장</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>상호 작용</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>변경</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>연결</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>복원됨</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>저장됨</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>변경 후 저장됨</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>완료</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>취소됨</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>응답 없음</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>거부됨</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>오류</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>복원: {0}</value></data>
+  <data name="Main_EnterOverlayMode" xml:space="preserve"><value>오버레이 모드 시작</value></data>
+  <data name="Main_StopAll" xml:space="preserve"><value>모두 중지</value></data>
+  <data name="Main_DevelopmentBuild" xml:space="preserve"><value>개발 빌드</value></data>
+  <data name="Main_FilterEnabled" xml:space="preserve"><value>사용</value></data>
+  <data name="Main_FilterDisabled" xml:space="preserve"><value>사용 안 함</value></data>
+  <data name="Main_FilterRunning" xml:space="preserve"><value>실행 중</value></data>
+  <data name="Loops_Title" xml:space="preserve"><value>루프</value></data>
+  <data name="Loops_Add" xml:space="preserve"><value>루프 추가</value></data>
+  <data name="Loops_Search" xml:space="preserve"><value>루프 검색</value></data>
+  <data name="Loops_FilterAll" xml:space="preserve"><value>모든 루프</value></data>
+  <data name="Macros_Title" xml:space="preserve"><value>매크로</value></data>
+  <data name="Macros_Add" xml:space="preserve"><value>매크로 추가</value></data>
+  <data name="Macros_Record" xml:space="preserve"><value>매크로 녹화</value></data>
+  <data name="Macros_Search" xml:space="preserve"><value>매크로 검색</value></data>
+  <data name="Macros_FilterAll" xml:space="preserve"><value>모든 매크로</value></data>
+  <data name="Remaps_Title" xml:space="preserve"><value>다시 매핑</value></data>
+  <data name="Remaps_Add" xml:space="preserve"><value>다시 매핑 추가</value></data>
+  <data name="Remaps_Search" xml:space="preserve"><value>다시 매핑 검색</value></data>
+  <data name="Remaps_FilterAll" xml:space="preserve"><value>모든 다시 매핑</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>설정</value></data>
+  <data name="Settings_General" xml:space="preserve"><value>일반</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>테마</value></data>
+  <data name="Settings_ThemeDescription" xml:space="preserve"><value>시스템은 Windows 설정을 따릅니다</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>닫을 때 시스템 트레이로 이동</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>창을 닫아도 시스템 트레이에서 계속 실행됩니다</value></data>
+  <data name="Settings_StartWithWindows" xml:space="preserve"><value>Windows 시작 시 실행</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>로그인하면 시스템 트레이에서 시작됩니다</value></data>
+  <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>바로 가기 키 및 오버레이</value></data>
+  <data name="Settings_Hotkeys" xml:space="preserve"><value>바로 가기 키</value></data>
+  <data name="Settings_StopAllDescription" xml:space="preserve"><value>모든 루프와 매크로 중지</value></data>
+  <data name="Settings_OverlayMode" xml:space="preserve"><value>오버레이 모드</value></data>
+  <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>오버레이 모드 켜기/끄기</value></data>
+  <data name="Settings_Record" xml:space="preserve"><value>녹화</value></data>
+  <data name="Settings_RecordDescription" xml:space="preserve"><value>매크로 녹화 시작 및 중지</value></data>
+  <data name="Settings_OverlayPanel" xml:space="preserve"><value>오버레이 패널</value></data>
+  <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>루프 및 매크로 목록</value></data>
+  <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>오버레이 패널 표시</value></data>
+  <data name="Settings_Opacity" xml:space="preserve"><value>불투명도</value></data>
+  <data name="Settings_OverlayPanelOpacity" xml:space="preserve"><value>오버레이 패널 불투명도</value></data>
+  <data name="Settings_OpacityPreviewItem" xml:space="preserve"><value>왼쪽 연타</value></data>
+  <data name="Settings_PositionOnScreen" xml:space="preserve"><value>화면상의 위치</value></data>
+  <data name="Settings_PositionOnScreenDescription" xml:space="preserve"><value>패널과 플로팅 단추를 끌어서 이동</value></data>
+  <data name="Settings_ClickInPanel" xml:space="preserve"><value>패널의 항목을 클릭하여 시작 또는 중지</value></data>
+  <data name="Settings_ClickInPanelDescription" xml:space="preserve"><value>일부 전체 화면 앱은 클릭에 반응할 수 있습니다. 이 경우 이 옵션을 끄고 바로 가기 키만 사용하세요.</value></data>
+  <data name="Settings_Sound" xml:space="preserve"><value>소리</value></data>
+  <data name="Settings_SoundDescription" xml:space="preserve"><value>루프와 매크로의 시작 및 중지 소리</value></data>
+  <data name="Settings_SoundVolume" xml:space="preserve"><value>소리 볼륨</value></data>
+  <data name="Settings_DataAndUpdates" xml:space="preserve"><value>데이터 및 업데이트</value></data>
+  <data name="Settings_Backup" xml:space="preserve"><value>백업</value></data>
+  <data name="Settings_ExportOrImport" xml:space="preserve"><value>내보내기 또는 가져오기</value></data>
+  <data name="Settings_ExportOrImportDescription" xml:space="preserve"><value>데이터를 파일 하나에 저장하여 사본을 보관하거나 PuppyMacro를 다른 PC로 옮깁니다</value></data>
+  <data name="Settings_ExportButton" xml:space="preserve"><value>내보내기…</value></data>
+  <data name="Settings_ImportButton" xml:space="preserve"><value>가져오기…</value></data>
+  <data name="Settings_OpenDataFolder" xml:space="preserve"><value>데이터 폴더 열기</value></data>
+  <data name="Settings_Updates" xml:space="preserve"><value>업데이트</value></data>
+  <data name="Settings_WhatsNew" xml:space="preserve"><value>새로운 기능</value></data>
+  <data name="Settings_CheckForUpdates" xml:space="preserve"><value>자동으로 업데이트 확인</value></data>
+  <data name="Settings_CheckForUpdatesDescription" xml:space="preserve"><value>PuppyMacro가 시작될 때와 12시간마다</value></data>
+  <data name="Settings_About" xml:space="preserve"><value>정보</value></data>
+  <data name="Settings_UserGuide" xml:space="preserve"><value>사용자 가이드</value></data>
+  <data name="Settings_NotInDevBuild" xml:space="preserve"><value>개발 빌드에서는 사용할 수 없음</value></data>
+  <data name="Settings_DataSavedIn" xml:space="preserve"><value>데이터 저장 위치: {0}</value></data>
+  <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>지금은 바로 가기 키가 작동하지 않습니다.
+{0}</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro가 시스템 트레이에서 계속 실행 중입니다. 종료하려면 아이콘을 마우스 오른쪽 단추로 클릭하세요.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>PuppyMacro 열기</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>종료</value></data>
+  <data name="Main_RunningCount_other" xml:space="preserve"><value>{0}개 실행 중</value></data>
+  <data name="Loops_Count_other" xml:space="preserve"><value>루프 {0}개</value></data>
+  <data name="Loops_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Loops_Empty" xml:space="preserve"><value>아직 루프가 없습니다. 루프 추가를 선택하여 만드세요.</value></data>
+  <data name="Loops_NoMatch" xml:space="preserve"><value>검색 또는 필터와 일치하는 루프가 없습니다.</value></data>
+  <data name="Main_StopRunningFirst" xml:space="preserve"><value>먼저 실행 중인 루프와 매크로를 중지하세요</value></data>
+  <data name="Card_Delete" xml:space="preserve"><value>삭제</value></data>
+  <data name="Card_MoveUp" xml:space="preserve"><value>위로 이동</value></data>
+  <data name="Card_MoveDown" xml:space="preserve"><value>아래로 이동</value></data>
+  <data name="Card_Duplicate" xml:space="preserve"><value>복제</value></data>
+  <data name="Main_Cancel" xml:space="preserve"><value>취소</value></data>
+  <data name="Main_DeleteNamedConfirm" xml:space="preserve"><value>"{0}"을(를) 삭제할까요? 이 작업은 실행 취소할 수 없습니다.</value></data>
+  <data name="Loops_DeleteTitle" xml:space="preserve"><value>루프 삭제</value></data>
+  <data name="Macros_Count_other" xml:space="preserve"><value>매크로 {0}개</value></data>
+  <data name="Macros_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Macros_Empty" xml:space="preserve"><value>아직 매크로가 없습니다. 녹화하거나 매크로 추가를 선택하여 단계별로 만드세요.</value></data>
+  <data name="Macros_NoMatch" xml:space="preserve"><value>검색 또는 필터와 일치하는 매크로가 없습니다.</value></data>
+  <data name="Macros_DeleteTitle" xml:space="preserve"><value>매크로 삭제</value></data>
+  <data name="Macros_SaveFailed" xml:space="preserve"><value>매크로 "{0}"을(를) 저장할 수 없습니다: {1}</value></data>
+  <data name="Settings_NothingToPlace" xml:space="preserve"><value>배치할 항목이 없습니다. 오버레이 패널을 켜거나 플로팅 단추를 추가하세요.</value></data>
+  <data name="Main_StopAllTooltip" xml:space="preserve"><value>모두 중지({0})</value></data>
+  <data name="Main_EnterOverlayModeTooltip" xml:space="preserve"><value>오버레이 모드 시작({0})</value></data>
+  <data name="Settings_SaveFailed" xml:space="preserve"><value>설정을 저장할 수 없습니다: {0}</value></data>
+  <data name="Remaps_Count_other" xml:space="preserve"><value>다시 매핑 {0}개</value></data>
+  <data name="Remaps_EnabledCount_other" xml:space="preserve"><value>{0}개 사용</value></data>
+  <data name="Remaps_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Remaps_Empty" xml:space="preserve"><value>아직 다시 매핑이 없습니다. 다시 매핑 추가를 선택하여 키나 단추를 다른 것으로 바꾸세요.</value></data>
+  <data name="Remaps_NoMatch" xml:space="preserve"><value>검색 또는 필터와 일치하는 다시 매핑이 없습니다.</value></data>
+  <data name="Remaps_DeleteTitle" xml:space="preserve"><value>다시 매핑 삭제</value></data>
+  <data name="Remaps_DeleteConfirm" xml:space="preserve"><value>다시 매핑 {0} → {1}을(를) 삭제할까요? 이 작업은 실행 취소할 수 없습니다.</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>내보내기</value></data>
+  <data name="Export_FileDialogTitle" xml:space="preserve"><value>PuppyMacro 데이터 내보내기</value></data>
+  <data name="Backup_FileFilter" xml:space="preserve"><value>PuppyMacro 백업 (*{0})|*{0}</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>내보내기 실패: {0}</value></data>
+  <data name="Backup_ImportFileDialogTitle" xml:space="preserve"><value>PuppyMacro 데이터 가져오기</value></data>
+  <data name="Backup_ImportFailed" xml:space="preserve"><value>가져오기 실패: {0}</value></data>
+  <data name="Backup_ImportTitle" xml:space="preserve"><value>가져오기</value></data>
+  <data name="Backup_ImportConfirm" xml:space="preserve"><value>이 파일에는 {0}이(가) 있습니다. 현재 데이터를 이 파일의 데이터로 바꿀까요?
+파일에 없는 항목은 그대로 유지됩니다. 현재 데이터는 먼저 데이터 폴더에 백업되며, 그런 다음 PuppyMacro가 다시 시작됩니다.</value></data>
+  <data name="Backup_ImportAndRestart" xml:space="preserve"><value>가져오기 및 다시 시작</value></data>
+  <data name="Backup_PartData" xml:space="preserve"><value>루프, 매크로, 다시 매핑 및 설정</value></data>
+  <data name="Backup_PartHistory" xml:space="preserve"><value>기록</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>AI 활동</value></data>
+  <data name="Backup_PartLogs" xml:space="preserve"><value>로그</value></data>
+  <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} 및 {1}</value></data>
+  <data name="Update_CheckFailed" xml:space="preserve"><value>업데이트를 확인할 수 없습니다. {0}</value></data>
+  <data name="Update_DownloadFailed" xml:space="preserve"><value>업데이트를 다운로드할 수 없습니다. {0}</value></data>
+  <data name="Update_NotInstalled" xml:space="preserve"><value>업데이트를 받으려면 설치 프로그램으로 PuppyMacro를 설치하세요</value></data>
+  <data name="Update_DownloadingVersion" xml:space="preserve"><value>버전 {0} 다운로드 중… {1}%</value></data>
+  <data name="Update_TryAgain" xml:space="preserve"><value>다시 시도</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>버전 {0}을(를) 사용할 수 있습니다(현재 버전: {1})</value></data>
+  <data name="Update_UpdateAndRestart" xml:space="preserve"><value>업데이트 및 다시 시작</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>업데이트 확인 중…</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>PuppyMacro {0}은(는) 최신 버전입니다. 확인 시각: {1}</value></data>
+  <data name="Update_CurrentVersion" xml:space="preserve"><value>PuppyMacro {0}</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>지금 확인</value></data>
+  <data name="Update_BarTitle" xml:space="preserve"><value>버전 {0} 사용 가능</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>다운로드 중… {0}%</value></data>
+  <data name="Rail_Pages" xml:space="preserve"><value>페이지</value></data>
+  <data name="Rail_SettingsAndHelp" xml:space="preserve"><value>설정 및 도움말</value></data>
+  <data name="Rail_Loops" xml:space="preserve"><value>루프</value></data>
+  <data name="Rail_Macros" xml:space="preserve"><value>매크로</value></data>
+  <data name="Rail_Remap" xml:space="preserve"><value>다시 매핑</value></data>
+  <data name="Rail_Ai" xml:space="preserve"><value>AI</value></data>
+  <data name="Rail_Settings" xml:space="preserve"><value>설정</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>편집</value></data>
+  <data name="Card_Enabled" xml:space="preserve"><value>사용</value></data>
+  <data name="Card_MoreOptions" xml:space="preserve"><value>추가 옵션</value></data>
+  <data name="Card_Play" xml:space="preserve"><value>재생</value></data>
+  <data name="Card_Stop" xml:space="preserve"><value>중지</value></data>
+  <data name="Export_WhatToExport" xml:space="preserve"><value>내보낼 항목</value></data>
+  <data name="Export_Everything" xml:space="preserve"><value>모두</value></data>
+  <data name="Export_Choose" xml:space="preserve"><value>내보낼 항목 선택</value></data>
+  <data name="Export_PartData" xml:space="preserve"><value>루프, 매크로, 다시 매핑 및 설정</value></data>
+  <data name="Export_PartHistory" xml:space="preserve"><value>기록</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>AI 활동</value></data>
+  <data name="Export_PartLogs" xml:space="preserve"><value>로그</value></data>
+  <data name="Export_EverythingDescription" xml:space="preserve"><value>PuppyMacro를 다른 PC로 옮기기 위한 동일한 사본 · {0}</value></data>
+  <data name="Export_PartDataDescription" xml:space="preserve"><value>항상 포함됨 · {0}</value></data>
+  <data name="Export_PartHistoryDescription" xml:space="preserve"><value>각 루프, 매크로 및 다시 매핑의 이전 버전 · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>AI 앱의 요청 내역(복원 가능) · {0}</value></data>
+  <data name="Export_PartLogsDescription" xml:space="preserve"><value>문제 해결용 · {0}</value></data>
+  <data name="Export_SizeB" xml:space="preserve"><value>{0}바이트</value></data>
+  <data name="Export_SizeKB" xml:space="preserve"><value>{0}KB</value></data>
+  <data name="Export_SizeMB" xml:space="preserve"><value>{0}MB</value></data>
+  <data name="Export_SizeGB" xml:space="preserve"><value>{0}GB</value></data>
+  <data name="Card_ToggleWith" xml:space="preserve"><value>토글:</value></data>
+  <data name="Card_HoldWith" xml:space="preserve"><value>누르고 있기:</value></data>
+  <data name="Card_ToggleNoHotkey" xml:space="preserve"><value>토글, 바로 가기 키 없음</value></data>
+  <data name="Card_HoldNoHotkey" xml:space="preserve"><value>누르고 있기, 바로 가기 키 없음</value></data>
+  <data name="Card_StatusRunning" xml:space="preserve"><value>실행 중</value></data>
+  <data name="Card_StatusIdle" xml:space="preserve"><value>대기 중</value></data>
+  <data name="Card_StatusDisabled" xml:space="preserve"><value>사용 안 함</value></data>
+  <data name="Card_StatusEnabled" xml:space="preserve"><value>사용</value></data>
+  <data name="Loops_NoActions" xml:space="preserve"><value>동작 없음</value></data>
+  <data name="Loops_ActionsSummary_other" xml:space="preserve"><value>동작 {0}개: {1}</value></data>
+  <data name="Loops_IntervalMilliseconds" xml:space="preserve"><value>{0}ms</value></data>
+  <data name="Loops_IntervalSeconds" xml:space="preserve"><value>{0}초</value></data>
+  <data name="Loops_IntervalMinutes" xml:space="preserve"><value>{0}분</value></data>
+  <data name="Loops_IntervalHours" xml:space="preserve"><value>{0}시간</value></data>
+  <data name="Loops_HeldDown" xml:space="preserve"><value>{0} 누르고 있기</value></data>
+  <data name="Loops_KeyEvery" xml:space="preserve"><value>{1}마다 {0}</value></data>
+  <data name="Loops_KeyTimesEvery_other" xml:space="preserve"><value>{2}마다 {1} {0}회</value></data>
+  <data name="Loops_PastesEvery" xml:space="preserve"><value>{1}마다 "{0}" 붙여넣기</value></data>
+  <data name="Macros_RepeatLoop" xml:space="preserve"><value>계속</value></data>
+  <data name="Macros_RepeatOnce" xml:space="preserve"><value>1회</value></data>
+  <data name="Macros_RepeatTimes_other" xml:space="preserve"><value>{0}회</value></data>
+  <data name="Macros_Summary_other" xml:space="preserve"><value>동작 {0}개, {1}, {2} 반복</value></data>
+  <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>동작 {0}개, {1}, {2} 반복, 속도 ×{3}</value></data>
+  <data name="Remaps_AllApps" xml:space="preserve"><value>모든 앱</value></data>
+  <data name="App_MigrationFailed" xml:space="preserve"><value>루프와 매크로를 {0}에 복사할 수 없습니다.
+세부 정보: {1}</value></data>
+  <data name="App_MacrosNotUpdated" xml:space="preserve"><value>일부 매크로 파일을 이 버전으로 업데이트할 수 없습니다.</value></data>
+  <data name="App_UnexpectedError" xml:space="preserve"><value>예기치 않은 오류:
+{0}</value></data>
+  <data name="App_SettingsReset" xml:space="preserve"><value>설정을 읽을 수 없어 초기화했습니다.
+이전 파일은 {0}(으)로 저장되었습니다.
+세부 정보: {1}</value></data>
+  <data name="App_MacroFilesSkipped" xml:space="preserve"><value>일부 매크로 파일을 읽을 수 없어 건너뛰었습니다(예: {0}).</value></data>
+  <data name="Backup_NotABackup" xml:space="preserve"><value>이 파일은 PuppyMacro 백업이 아닙니다.</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>연결된 AI 앱: AI 페이지를 열려면 선택하세요</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>연결된 AI 앱</value></data>
+  <data name="AiPage_Title" xml:space="preserve"><value>AI</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Claude Desktop이나 Visual Studio Code 같은 이 PC의 AI 앱에서 PuppyMacro를 사용하세요. 평소 말로 요청하면 AI가 루프, 매크로, 다시 매핑을 만들고 바로 사용해 볼 수 있습니다.</value></data>
+  <data name="AiPage_Beta" xml:space="preserve"><value>베타</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>PuppyMacro의 AI 앱 기능은 새로운 기능입니다. 작동하지만 변경될 수 있으며, AI가 요청을 잘못 이해할 수 있습니다. 모든 변경 내용은 항목의 기록에 보관되므로 언제든지 되돌릴 수 있습니다.</value></data>
+  <data name="AiPage_Access" xml:space="preserve"><value>액세스</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>AI 액세스 허용</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>이 PC의 AI 앱이 루프, 매크로, 다시 매핑 및 설정을 읽고 변경할 수 있습니다. 모든 변경 내용은 항목의 기록에 보관됩니다.</value></data>
+  <data name="AiPage_AskDelete" xml:space="preserve"><value>루프, 매크로 또는 다시 매핑을 삭제하기 전에 확인</value></data>
+  <data name="AiPage_AskDeleteName" xml:space="preserve"><value>삭제하기 전에 확인</value></data>
+  <data name="AiPage_AskChange" xml:space="preserve"><value>루프, 매크로 또는 다시 매핑을 변경하기 전에 확인</value></data>
+  <data name="AiPage_AskChangeName" xml:space="preserve"><value>변경하기 전에 확인</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>끄면 AI가 만들거나 변경한 항목이 바로 저장되어 사용해 볼 수 있습니다.</value></data>
+  <data name="AiPage_AskSettings" xml:space="preserve"><value>설정을 변경하기 전에 확인</value></data>
+  <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>테마, 전역 바로 가기 키, 오버레이 패널, 소리</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>AI 앱에 필요할 때 PuppyMacro 시작</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>끄면 PuppyMacro가 닫혀 있는 동안 AI 앱이 사용할 수 없으며 PuppyMacro를 열라고 안내합니다.</value></data>
+  <data name="AiPage_Apps" xml:space="preserve"><value>앱</value></data>
+  <data name="AiPage_RecentActivity" xml:space="preserve"><value>최근 활동</value></data>
+  <data name="AiPage_ViewAll" xml:space="preserve"><value>모두 보기</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>아직 요청이 없습니다. 위에서 AI 앱을 연결한 다음 루프, 매크로 또는 다시 매핑을 만들어 달라고 요청하세요.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>PuppyMacro에서 AI를 사용하는 방법</value></data>
+  <data name="AiApps_ConnectedSince" xml:space="preserve"><value>{0}부터 연결됨</value></data>
+  <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>추가되었습니다. 연결하려면 Claude Desktop을 다시 시작하세요.</value></data>
+  <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>추가되었습니다. 연결하려면 Agent 모드에서 Copilot Chat을 여세요.</value></data>
+  <data name="AiApps_CodexAdded" xml:space="preserve"><value>추가되었습니다. 연결하려면 Codex를 다시 시작하세요.</value></data>
+  <data name="AiApps_InstalledNotConnected" xml:space="preserve"><value>설치됨, 연결되지 않음</value></data>
+  <data name="AiApps_VsCodeInstalled" xml:space="preserve"><value>설치되었습니다. GitHub Copilot과 Copilot에서 선택한 모델을 사용합니다.</value></data>
+  <data name="AiApps_NotInstalled" xml:space="preserve"><value>설치되지 않음</value></data>
+  <data name="AiApps_Connect" xml:space="preserve"><value>연결</value></data>
+  <data name="AiApps_Remove" xml:space="preserve"><value>제거</value></data>
+  <data name="AiApps_CopyConfiguration" xml:space="preserve"><value>구성 복사</value></data>
+  <data name="AiApps_ActionName" xml:space="preserve"><value>{1} {0}</value></data>
+  <data name="AiApps_GetClaude" xml:space="preserve"><value>Claude Desktop 받기</value></data>
+  <data name="AiApps_GetVsCode" xml:space="preserve"><value>Visual Studio Code 받기</value></data>
+  <data name="AiApps_GetCodex" xml:space="preserve"><value>Codex 받기</value></data>
+  <data name="AiApps_OtherApps" xml:space="preserve"><value>기타 앱</value></data>
+  <data name="AiApps_OthersConnected" xml:space="preserve"><value>연결됨: {0}</value></data>
+  <data name="AiApps_OthersHint" xml:space="preserve"><value>로컬 MCP 서버를 지원하는 모든 앱: 앱의 MCP 설정에 구성을 붙여넣으세요.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>구성을 복사했습니다. AI 앱의 MCP 설정에 붙여넣은 다음 앱을 다시 시작하세요.</value></data>
+  <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code가 열리지 않았습니다: {0}</value></data>
+  <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Visual Studio Code에서 직접 제거하세요. "MCP: Open User Configuration"을 실행하고 "{0}"을(를) 삭제하세요.</value></data>
+  <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>PuppyMacro 폴더 경로에 Codex 설정에서 사용할 수 없는 문자가 있습니다.</value></data>
+  <data name="AiApps_SettingsNotChanged" xml:space="preserve"><value>{0}의 설정을 변경할 수 없습니다: {1}</value></data>
+  <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>{0}의 설정 파일이 JSON 개체가 아니므로 PuppyMacro가 변경하지 않았습니다({1}).</value></data>
+  <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>{0}의 설정 파일에서 "{1}"이(가) 개체가 아니므로 PuppyMacro가 변경하지 않았습니다({2}).</value></data>
+  <data name="AiApps_SettingsFileError" xml:space="preserve"><value>{0}의 설정 파일에 오류가 있어 PuppyMacro가 변경하지 않았습니다: {1}({2})</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>다른 프로그램이 PuppyMacro의 AI 연결을 사용하고 있어 AI 앱이 연결할 수 없습니다. 해당 프로그램을 닫거나 Windows를 다시 시작하세요.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>AI 앱이 연결할 수 없습니다: {0}</value></data>
+  <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>이 설정은 복원할 수 없습니다.</value></data>
+  <data name="AiActivity_CantRestore" xml:space="preserve"><value>이 변경 내용은 복원할 수 없습니다.</value></data>
+  <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>이 변경 내용은 복원할 수 없습니다: {0}</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>AI 활동</value></data>
+  <data name="AiActivity_KeptNote" xml:space="preserve"><value>이 PC에 보관됨: 최근 요청, 최대 20MB</value></data>
+  <data name="AiActivity_ClearHistory" xml:space="preserve"><value>기록 지우기</value></data>
+  <data name="AiActivity_Close" xml:space="preserve"><value>닫기</value></data>
+  <data name="AiActivity_Period" xml:space="preserve"><value>기간</value></data>
+  <data name="AiActivity_Last7Days" xml:space="preserve"><value>지난 7일</value></data>
+  <data name="AiActivity_Last30Days" xml:space="preserve"><value>지난 30일</value></data>
+  <data name="AiActivity_All" xml:space="preserve"><value>전체</value></data>
+  <data name="AiActivity_App" xml:space="preserve"><value>앱</value></data>
+  <data name="AiActivity_Type" xml:space="preserve"><value>유형</value></data>
+  <data name="AiActivity_Result" xml:space="preserve"><value>결과</value></data>
+  <data name="AiActivity_Search" xml:space="preserve"><value>검색</value></data>
+  <data name="AiActivity_SearchPlaceholder" xml:space="preserve"><value>활동 검색</value></data>
+  <data name="AiActivity_AllApps" xml:space="preserve"><value>모든 앱</value></data>
+  <data name="AiActivity_AllTypes" xml:space="preserve"><value>모든 유형</value></data>
+  <data name="AiActivity_AllResults" xml:space="preserve"><value>모든 결과</value></data>
+  <data name="AiActivity_Restore" xml:space="preserve"><value>복원</value></data>
+  <data name="AiActivity_Details" xml:space="preserve"><value>세부 정보</value></data>
+  <data name="AiActivity_NoRequests" xml:space="preserve"><value>아직 요청이 없습니다.</value></data>
+  <data name="AiActivity_NoMatch" xml:space="preserve"><value>필터와 일치하는 요청이 없습니다.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>AI 요청 기록을 삭제할까요? 이 작업은 실행 취소할 수 없습니다.</value></data>
+  <data name="AiActivity_Clear" xml:space="preserve"><value>지우기</value></data>
+  <data name="AiActivity_Cancel" xml:space="preserve"><value>취소</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>AI 요청</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>AI 요청 - {0}</value></data>
+  <data name="AiRequest_AskedBy" xml:space="preserve"><value>요청한 앱: {0}</value></data>
+  <data name="AiRequest_Instructions" xml:space="preserve"><value>지침</value></data>
+  <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>
+  <data name="AiRequest_KeyHeader" xml:space="preserve"><value>키 또는 조합</value></data>
+  <data name="AiRequest_KeyDescription" xml:space="preserve"><value>조합을 입력하려면 먼저 Ctrl, Alt, Shift 또는 Win을 누르고 있으세요. Ctrl, Alt, Shift 또는 Win만 사용하려면 눌렀다가 놓으세요.</value></data>
+  <data name="AiRequest_KeyPrompt" xml:space="preserve"><value>키 또는 조합을 누르세요(Esc를 누르면 취소)</value></data>
+  <data name="AiRequest_Ok" xml:space="preserve"><value>확인</value></data>
+  <data name="AiRequest_Cancel" xml:space="preserve"><value>취소</value></data>
+  <data name="AiRequest_NoticeWithDescription" xml:space="preserve"><value>{0}({1}의 요청)</value></data>
+  <data name="AiRequest_NoticeAskedBy" xml:space="preserve"><value>{0}의 요청입니다.</value></data>
+  <data name="AiReady_AppAsks" xml:space="preserve"><value>{0}의 요청</value></data>
+  <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
+  <data name="AiReady_Hint" xml:space="preserve"><value>준비되면 {0} 키를 누르세요 · {1} 키를 누르면 취소</value></data>
+  <data name="AiReady_Start" xml:space="preserve"><value>시작</value></data>
+  <data name="Pick_Title" xml:space="preserve"><value>지점 선택</value></data>
+  <data name="Pick_ClickPoint" xml:space="preserve"><value>커서를 이동할 지점을 클릭하세요</value></data>
+  <data name="Pick_Cancel" xml:space="preserve"><value>취소</value></data>
+  <data name="Pick_AppTitle" xml:space="preserve"><value>앱 선택</value></data>
+  <data name="Pick_ClickApp" xml:space="preserve"><value>앱의 창을 클릭하세요</value></data>
+  <data name="Pick_AskedBy" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Pick_Counter" xml:space="preserve"><value>{0} / {1}   {2}</value></data>
+  <data name="Pick_CantReadName" xml:space="preserve"><value>이 앱의 이름을 읽을 수 없습니다</value></data>
+  <data name="Placement_Title" xml:space="preserve"><value>오버레이 위치 지정</value></data>
+  <data name="Placement_DragPanel" xml:space="preserve"><value>패널을 원하는 위치로 끄세요</value></data>
+  <data name="Placement_DragPanelAndButtons" xml:space="preserve"><value>패널과 단추를 원하는 위치로 끄세요</value></data>
+  <data name="Placement_DragButton" xml:space="preserve"><value>단추를 원하는 위치로 끄세요</value></data>
+  <data name="Placement_DragButtons" xml:space="preserve"><value>단추를 원하는 위치로 끄세요</value></data>
+  <data name="Placement_Save" xml:space="preserve"><value>저장</value></data>
+  <data name="Placement_Cancel" xml:space="preserve"><value>취소</value></data>
+  <data name="Placement_Arrows" xml:space="preserve"><value>화살표</value></data>
+  <data name="Placement_Nudge" xml:space="preserve"><value>1픽셀씩 이동(Shift: 10)</value></data>
+  <data name="Placement_NudgeSelected" xml:space="preserve"><value>선택한 항목을 1픽셀씩 이동(Shift: 10)</value></data>
+  <data name="Placement_Selection" xml:space="preserve"><value>{0}   X {1}   Y {2}</value></data>
+  <data name="MacroEditor_EditTitle" xml:space="preserve"><value>매크로 편집</value></data>
+  <data name="Editor_Name" xml:space="preserve"><value>이름</value></data>
+  <data name="MacroEditor_NamePlaceholder" xml:space="preserve"><value>예: 제작 및 분해</value></data>
+  <data name="Editor_Actions" xml:space="preserve"><value>동작</value></data>
+  <data name="MacroEditor_AddAction" xml:space="preserve"><value>동작 추가</value></data>
+  <data name="MacroEditor_Record" xml:space="preserve"><value>녹화</value></data>
+  <data name="MacroEditor_RecordActions" xml:space="preserve"><value>동작 녹화</value></data>
+  <data name="Editor_Test" xml:space="preserve"><value>테스트</value></data>
+  <data name="MacroEditor_TestAction" xml:space="preserve"><value>동작 테스트</value></data>
+  <data name="MacroEditor_TestTooltip" xml:space="preserve"><value>선택한 동작을 뒤에 있는 창에서 한 번 재생합니다</value></data>
+  <data name="MacroEditor_Edit" xml:space="preserve"><value>편집</value></data>
+  <data name="MacroEditor_EditAction" xml:space="preserve"><value>동작 편집</value></data>
+  <data name="MacroEditor_Copy" xml:space="preserve"><value>복사</value></data>
+  <data name="MacroEditor_CopyTooltip" xml:space="preserve"><value>선택한 동작을 복사하여 여기나 다른 매크로에 붙여넣습니다(Ctrl+C)</value></data>
+  <data name="MacroEditor_Paste" xml:space="preserve"><value>붙여넣기</value></data>
+  <data name="MacroEditor_PasteTooltip" xml:space="preserve"><value>복사한 동작을 새 동작이 들어갈 위치에 붙여넣습니다(Ctrl+V)</value></data>
+  <data name="MacroEditor_Duplicate" xml:space="preserve"><value>복제</value></data>
+  <data name="MacroEditor_DuplicateTooltip" xml:space="preserve"><value>선택한 동작을 복제합니다(Ctrl+D)</value></data>
+  <data name="MacroEditor_Group" xml:space="preserve"><value>그룹</value></data>
+  <data name="MacroEditor_GroupTooltip" xml:space="preserve"><value>선택한 동작을 그룹으로 묶습니다(Ctrl+G)</value></data>
+  <data name="MacroEditor_Delete" xml:space="preserve"><value>삭제</value></data>
+  <data name="MacroEditor_DeleteTooltip" xml:space="preserve"><value>선택한 동작을 삭제합니다(Delete)</value></data>
+  <data name="MacroEditor_RenameGroup" xml:space="preserve"><value>그룹 이름 바꾸기</value></data>
+  <data name="MacroEditor_Ungroup" xml:space="preserve"><value>그룹 해제</value></data>
+  <data name="MacroEditor_UngroupTooltip" xml:space="preserve"><value>그룹 해제(동작은 유지)</value></data>
+  <data name="MacroEditor_ExpandAllGroups" xml:space="preserve"><value>모든 그룹 확장</value></data>
+  <data name="MacroEditor_CollapseAllGroups" xml:space="preserve"><value>모든 그룹 축소</value></data>
+  <data name="MacroEditor_Shortcuts" xml:space="preserve"><value>바로 가기</value></data>
+  <data name="MacroEditor_CompactList" xml:space="preserve"><value>간단한 목록</value></data>
+  <data name="MacroEditor_CompactListTooltip" xml:space="preserve"><value>간단한 목록: 더 작은 행</value></data>
+  <data name="MacroEditor_DensityNormal" xml:space="preserve"><value>보통</value></data>
+  <data name="MacroEditor_DensityCompact" xml:space="preserve"><value>간단히</value></data>
+  <data name="MacroEditor_DelayTooltip" xml:space="preserve"><value>이 동작 전의 지연 시간</value></data>
+  <data name="MacroEditor_NoActions" xml:space="preserve"><value>아직 동작이 없습니다. 동작을 녹화하거나 하나씩 추가하세요.</value></data>
+  <data name="Editor_Enabled" xml:space="preserve"><value>사용</value></data>
+  <data name="MacroEditor_Repeat" xml:space="preserve"><value>반복</value></data>
+  <data name="MacroEditor_Once" xml:space="preserve"><value>1회</value></data>
+  <data name="MacroEditor_Loop" xml:space="preserve"><value>계속</value></data>
+  <data name="MacroEditor_NTimes" xml:space="preserve"><value>N회</value></data>
+  <data name="MacroEditor_Times" xml:space="preserve"><value>횟수</value></data>
+  <data name="MacroEditor_Speed" xml:space="preserve"><value>속도</value></data>
+  <data name="Editor_Activation" xml:space="preserve"><value>활성화</value></data>
+  <data name="Editor_Toggle" xml:space="preserve"><value>토글</value></data>
+  <data name="Editor_Hold" xml:space="preserve"><value>누르고 있기</value></data>
+  <data name="Editor_Hotkey" xml:space="preserve"><value>바로 가기 키</value></data>
+  <data name="Editor_HotkeyHelp" xml:space="preserve"><value>F2나 A 같은 아무 키 또는 마우스 단추입니다. 조합을 입력하려면 먼저 Ctrl, Alt, Shift 또는 Win을 누르고 있으세요. 왼쪽 및 오른쪽 클릭, 스크롤 휠, Esc에는 조합이 필요합니다. 누르고 있기에는 바로 가기 키가 필요합니다.</value></data>
+  <data name="Editor_Sound" xml:space="preserve"><value>소리</value></data>
+  <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>매크로가 시작되고 중지될 때 재생됩니다</value></data>
+  <data name="Editor_SoundChoose" xml:space="preserve"><value>소리를 클릭하여 선택하고 시작 및 중지 소리를 들어 보세요</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>저장</value></data>
+  <data name="Editor_Cancel" xml:space="preserve"><value>취소</value></data>
+  <data name="LoopEditor_AddTitle" xml:space="preserve"><value>루프 추가</value></data>
+  <data name="LoopEditor_NamePlaceholder" xml:space="preserve"><value>예: 왼쪽 연타</value></data>
+  <data name="LoopEditor_PressKey" xml:space="preserve"><value>키 입력</value></data>
+  <data name="LoopEditor_Click" xml:space="preserve"><value>클릭</value></data>
+  <data name="LoopEditor_PasteText" xml:space="preserve"><value>텍스트 붙여넣기</value></data>
+  <data name="LoopEditor_SoundDescription" xml:space="preserve"><value>루프가 시작되고 중지될 때 재생됩니다</value></data>
+  <data name="RemapEditor_AddTitle" xml:space="preserve"><value>다시 매핑 추가</value></data>
+  <data name="RemapEditor_WhenIPress" xml:space="preserve"><value>누를 키</value></data>
+  <data name="RemapEditor_SendInstead" xml:space="preserve"><value>대신 보낼 키</value></data>
+  <data name="RemapEditor_KeyDescription" xml:space="preserve"><value>키, 마우스 단추 또는 조합입니다(먼저 Ctrl, Alt, Shift 또는 Win을 누르고 있으세요). Ctrl, Alt, Shift 또는 Win만 사용하려면 눌렀다가 놓으세요.</value></data>
+  <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>키 또는 조합을 누르세요(Esc를 누르면 취소)</value></data>
+  <data name="RemapEditor_Note" xml:space="preserve"><value>메모(선택 사항)</value></data>
+  <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>예: 측면 단추로 새로 고침</value></data>
+  <data name="ActionWindow_Title" xml:space="preserve"><value>동작</value></data>
+  <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>이 동작을 뒤에 있는 창에서 한 번 재생합니다</value></data>
+  <data name="ActionWindow_Name" xml:space="preserve"><value>이름(선택 사항)</value></data>
+  <data name="ActionWindow_NameDescription" xml:space="preserve"><value>목록에 굵게 표시됩니다</value></data>
+  <data name="ActionWindow_NamePlaceholder" xml:space="preserve"><value>예: 인벤토리 열기</value></data>
+  <data name="ActionWindow_Delay" xml:space="preserve"><value>지연</value></data>
+  <data name="ActionWindow_DelayDescription" xml:space="preserve"><value>이 동작 전에 대기</value></data>
+  <data name="Editor_Ms" xml:space="preserve"><value>ms</value></data>
+  <data name="Group_Title" xml:space="preserve"><value>동작 그룹화</value></data>
+  <data name="Group_Name" xml:space="preserve"><value>그룹 이름</value></data>
+  <data name="Group_NamePlaceholder" xml:space="preserve"><value>예: 제작대 열기</value></data>
+  <data name="Group_Ok" xml:space="preserve"><value>그룹화</value></data>
+  <data name="MacroEditor_AddTitle" xml:space="preserve"><value>매크로 추가</value></data>
+  <data name="MacroEditor_EditNamedTitle" xml:space="preserve"><value>매크로 편집 - {0}</value></data>
+  <data name="MacroEditor_SpeedValue" xml:space="preserve"><value>×{0}</value></data>
+  <data name="MacroEditor_ActionNumber" xml:space="preserve"><value>#{0}</value></data>
+  <data name="MacroEditor_ActionRange" xml:space="preserve"><value>#{0}–{1}</value></data>
+  <data name="MacroEditor_GroupInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="MacroEditor_Total" xml:space="preserve"><value>{0}, ×1 속도로 {1}</value></data>
+  <data name="MacroEditor_TotalInGroups" xml:space="preserve"><value>{1}에 {0}, ×1 속도로 {2}</value></data>
+  <data name="MacroEditor_ActionCount_other" xml:space="preserve"><value>동작 {0}개</value></data>
+  <data name="MacroEditor_GroupCount_other" xml:space="preserve"><value>그룹 {0}개</value></data>
+  <data name="MacroEditor_InsertAfterGroup" xml:space="preserve"><value>새 동작은 그룹 "{0}" 뒤에 들어갑니다</value></data>
+  <data name="MacroEditor_InsertAfterInGroup" xml:space="preserve"><value>새 동작은 "{1}"의 #{0} 뒤에 들어갑니다</value></data>
+  <data name="MacroEditor_InsertAfter" xml:space="preserve"><value>새 동작은 #{0} 뒤에 들어갑니다</value></data>
+  <data name="MacroEditor_InsertAtEnd" xml:space="preserve"><value>새 동작은 끝에 들어갑니다</value></data>
+  <data name="MacroEditor_Selected_other" xml:space="preserve"><value>동작 {0}개 선택됨 · {1}</value></data>
+  <data name="MacroEditor_NoneSelected" xml:space="preserve"><value>편집, 그룹화, 복사 등을 하려면 동작을 선택하세요 · {0}</value></data>
+  <data name="MacroEditor_DelayHeader" xml:space="preserve"><value>이 동작 전의 지연 시간(ms)</value></data>
+  <data name="Editor_Close" xml:space="preserve"><value>닫기</value></data>
+  <data name="MacroEditor_NewGroupName" xml:space="preserve"><value>그룹 {0}</value></data>
+  <data name="MacroEditor_HoldHint" xml:space="preserve"><value>바로 가기 키를 누르고 있는 동안에만 재생됩니다.</value></data>
+  <data name="Editor_ToggleHint" xml:space="preserve"><value>바로 가기 키를 누르면 시작하고, 다시 누르면 중지합니다.</value></data>
+  <data name="Editor_EnterName" xml:space="preserve"><value>이름을 입력하세요.</value></data>
+  <data name="MacroEditor_NoActionsError" xml:space="preserve"><value>동작을 하나 이상 추가하거나 녹화하세요.</value></data>
+  <data name="Editor_HoldNeedsHotkey" xml:space="preserve"><value>누르고 있기에는 바로 가기 키가 필요합니다. 바로 가기 키를 선택하거나 토글로 전환하세요.</value></data>
+  <data name="LoopEditor_EditNamedTitle" xml:space="preserve"><value>루프 편집 - {0}</value></data>
+  <data name="LoopEditor_HoldHint" xml:space="preserve"><value>바로 가기 키를 누르고 있는 동안에만 실행됩니다.</value></data>
+  <data name="LoopEditor_NoActionsError" xml:space="preserve"><value>동작을 하나 이상 추가하세요.</value></data>
+  <data name="LoopEditor_IntervalError" xml:space="preserve"><value>모든 간격은 10ms에서 24시간 사이여야 합니다.</value></data>
+  <data name="LoopEditor_HotkeyIsPressed" xml:space="preserve"><value>바로 가기 키는 이 루프가 누르는 키 중 하나일 수 없습니다.</value></data>
+  <data name="RemapEditor_EditNamedTitle" xml:space="preserve"><value>다시 매핑 편집 - {0}</value></data>
+  <data name="RemapEditor_EditKeysTitle" xml:space="preserve"><value>다시 매핑 편집 - {0} → {1}</value></data>
+  <data name="RemapEditor_NoSourceError" xml:space="preserve"><value>다시 매핑할 키, 마우스 단추 또는 조합을 선택하세요.</value></data>
+  <data name="RemapEditor_NoTargetError" xml:space="preserve"><value>대신 보낼 항목을 선택하세요.</value></data>
+  <data name="RemapEditor_SameKeysError" xml:space="preserve"><value>누르는 것과 다른 것을 보내세요.</value></data>
+  <data name="RemapEditor_PrimaryMouseError" xml:space="preserve"><value>왼쪽 및 오른쪽 클릭은 특정 앱에서만 다시 매핑할 수 있으므로 다른 모든 곳에서는 계속 작동합니다.</value></data>
+  <data name="ActionWindow_Type_PressKey" xml:space="preserve"><value>키 입력</value></data>
+  <data name="ActionWindow_Type_KeyDown" xml:space="preserve"><value>키 누름</value></data>
+  <data name="ActionWindow_Type_KeyUp" xml:space="preserve"><value>키 놓음</value></data>
+  <data name="ActionWindow_Type_Click" xml:space="preserve"><value>클릭</value></data>
+  <data name="ActionWindow_Type_MouseDown" xml:space="preserve"><value>마우스 단추 누름</value></data>
+  <data name="ActionWindow_Type_MouseUp" xml:space="preserve"><value>마우스 단추 놓음</value></data>
+  <data name="ActionWindow_Type_MoveTo" xml:space="preserve"><value>이동</value></data>
+  <data name="ActionWindow_Type_MovePath" xml:space="preserve"><value>경로 이동</value></data>
+  <data name="ActionWindow_Type_Scroll" xml:space="preserve"><value>스크롤</value></data>
+  <data name="ActionWindow_Type_PasteText" xml:space="preserve"><value>텍스트 붙여넣기</value></data>
+  <data name="ActionWindow_Add_PressKey" xml:space="preserve"><value>키 입력 추가</value></data>
+  <data name="ActionWindow_Add_KeyDown" xml:space="preserve"><value>키 누름 추가</value></data>
+  <data name="ActionWindow_Add_KeyUp" xml:space="preserve"><value>키 놓음 추가</value></data>
+  <data name="ActionWindow_Add_Click" xml:space="preserve"><value>클릭 추가</value></data>
+  <data name="ActionWindow_Add_MouseDown" xml:space="preserve"><value>마우스 단추 누름 추가</value></data>
+  <data name="ActionWindow_Add_MouseUp" xml:space="preserve"><value>마우스 단추 놓음 추가</value></data>
+  <data name="ActionWindow_Add_MoveTo" xml:space="preserve"><value>이동 추가</value></data>
+  <data name="ActionWindow_Add_MovePath" xml:space="preserve"><value>경로 이동 추가</value></data>
+  <data name="ActionWindow_Add_Scroll" xml:space="preserve"><value>스크롤 추가</value></data>
+  <data name="ActionWindow_Add_PasteText" xml:space="preserve"><value>텍스트 붙여넣기 추가</value></data>
+  <data name="ActionWindow_Edit_PressKey" xml:space="preserve"><value>키 입력 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyDown" xml:space="preserve"><value>키 누름 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyUp" xml:space="preserve"><value>키 놓음 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_Click" xml:space="preserve"><value>클릭 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseDown" xml:space="preserve"><value>마우스 단추 누름 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseUp" xml:space="preserve"><value>마우스 단추 놓음 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_MoveTo" xml:space="preserve"><value>이동 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_MovePath" xml:space="preserve"><value>경로 이동 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_Scroll" xml:space="preserve"><value>스크롤 편집 - {0}</value></data>
+  <data name="ActionWindow_Edit_PasteText" xml:space="preserve"><value>텍스트 붙여넣기 편집 - {0}</value></data>
+  <data name="Shortcuts_Select" xml:space="preserve"><value>선택</value></data>
+  <data name="Shortcuts_Click" xml:space="preserve"><value>클릭</value></data>
+  <data name="Shortcuts_CtrlClick" xml:space="preserve"><value>동작을 선택 항목에 추가하거나 제거</value></data>
+  <data name="Shortcuts_ShiftClick" xml:space="preserve"><value>이 동작까지의 모든 동작 선택</value></data>
+  <data name="Shortcuts_Move" xml:space="preserve"><value>이동</value></data>
+  <data name="Shortcuts_Drag" xml:space="preserve"><value>끌기</value></data>
+  <data name="Shortcuts_DragWhat" xml:space="preserve"><value>선택한 동작 이동(그룹 안팎으로도 이동 가능)</value></data>
+  <data name="Shortcuts_MoveUpDown" xml:space="preserve"><value>선택한 동작을 위나 아래로 이동</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>편집</value></data>
+  <data name="Shortcuts_DoubleClick" xml:space="preserve"><value>두 번 클릭</value></data>
+  <data name="Shortcuts_DoubleClickWhat" xml:space="preserve"><value>동작 편집, 그룹 열기 또는 닫기</value></data>
+  <data name="Shortcuts_RightClick" xml:space="preserve"><value>마우스 오른쪽 단추 클릭</value></data>
+  <data name="Shortcuts_RightClickWhat" xml:space="preserve"><value>선택한 동작의 명령 표시</value></data>
+  <data name="Shortcuts_Group" xml:space="preserve"><value>선택한 동작을 그룹으로 묶기</value></data>
+  <data name="Shortcuts_Duplicate" xml:space="preserve"><value>선택한 동작 복제</value></data>
+  <data name="Shortcuts_Copy" xml:space="preserve"><value>선택한 동작을 복사하여 여기나 다른 매크로에 붙여넣기</value></data>
+  <data name="Shortcuts_Paste" xml:space="preserve"><value>복사한 동작을 새 동작이 들어갈 위치에 붙여넣기</value></data>
+  <data name="Shortcuts_Delete" xml:space="preserve"><value>선택한 동작 삭제</value></data>
+  <data name="Shortcuts_Note" xml:space="preserve"><value>새 동작은 선택한 동작이나 그룹 뒤에, 또는 끝에 들어갑니다. 테스트는 선택한 동작을 PuppyMacro 뒤에 있는 창에서 한 번 재생합니다.</value></data>
+  <data name="Editor_FormView" xml:space="preserve"><value>양식 보기</value></data>
+  <data name="Editor_CodeView" xml:space="preserve"><value>코드 보기</value></data>
+  <data name="Editor_CodeViewTooltip" xml:space="preserve"><value>JSON으로 편집합니다. Ctrl+Space를 누르면 제안이 표시됩니다</value></data>
+  <data name="Editor_History" xml:space="preserve"><value>기록</value></data>
+  <data name="Editor_HistoryTooltip" xml:space="preserve"><value>저장된 버전: 누가 무엇을 변경했는지 확인하고 복원</value></data>
+  <data name="CodeView_Format" xml:space="preserve"><value>서식</value></data>
+  <data name="CodeView_FormatTooltip" xml:space="preserve"><value>코드 서식 지정(Shift+Alt+F)</value></data>
+  <data name="CodeView_Loading" xml:space="preserve"><value>코드 편집기 로드 중…</value></data>
+  <data name="CodeView_EditorName" xml:space="preserve"><value>코드 편집기</value></data>
+  <data name="CodeView_Stopped" xml:space="preserve"><value>코드 편집기가 중지되었습니다. 이 창을 닫았다가 다시 여세요.</value></data>
+  <data name="CodeView_NeedsWebView2" xml:space="preserve"><value>코드 보기에는 Microsoft Edge WebView2 런타임이 필요합니다. Microsoft에서 설치한 다음 이 창을 다시 여세요.</value></data>
+  <data name="CodeView_CouldNotStart" xml:space="preserve"><value>코드 편집기를 시작할 수 없습니다: {0}</value></data>
+  <data name="CodeView_Checking" xml:space="preserve"><value>확인 중…</value></data>
+  <data name="CodeView_NoProblems" xml:space="preserve"><value>문제가 없습니다.</value></data>
+  <data name="CodeView_CheckerFailed" xml:space="preserve"><value>코드 검사기를 시작할 수 없습니다: {0}</value></data>
+  <data name="CodeView_Problems" xml:space="preserve"><value>문제</value></data>
+  <data name="CodeView_ProblemsTitle" xml:space="preserve"><value>문제</value></data>
+  <data name="CodeView_Position" xml:space="preserve"><value>줄 {0}, 열 {1}</value></data>
+  <data name="CodeView_FixProblems_other" xml:space="preserve"><value>문제 {0}개를 해결하거나 변경 내용을 취소하세요.</value></data>
+  <data name="CodeView_DiscardChanges" xml:space="preserve"><value>변경 내용 취소</value></data>
+  <data name="CodeView_DiscardChangesTooltip" xml:space="preserve"><value>코드 변경 내용을 실행 취소하고 양식 보기로 돌아갑니다</value></data>
+  <data name="HistoryView_Empty" xml:space="preserve"><value>아직 버전이 없습니다. 저장할 때마다 버전이 여기에 보관됩니다.</value></data>
+  <data name="HistoryView_Versions" xml:space="preserve"><value>버전</value></data>
+  <data name="HistoryView_ChangesTitle" xml:space="preserve"><value>이전 버전에서 변경된 내용:</value></data>
+  <data name="HistoryView_Restore" xml:space="preserve"><value>이 버전 복원</value></data>
+  <data name="HistoryView_RestoredTitle" xml:space="preserve"><value>{0:g} 버전이 편집기에 있습니다.</value></data>
+  <data name="HistoryView_RestoredMessage" xml:space="preserve"><value>유지하려면 저장을, 그대로 두려면 취소를 선택하세요.</value></data>
+  <data name="AppScope_Header" xml:space="preserve"><value>특정 앱</value></data>
+  <data name="AppScope_AllApps" xml:space="preserve"><value>모든 앱에서 작동</value></data>
+  <data name="AppScope_App" xml:space="preserve"><value>앱</value></data>
+  <data name="AppScope_AppTooltip" xml:space="preserve"><value>앱의 .exe 이름(예: Diablo IV.exe)</value></data>
+  <data name="AppScope_Pick" xml:space="preserve"><value>고르기</value></data>
+  <data name="AppScope_PickTooltip" xml:space="preserve"><value>앱의 창을 클릭하세요</value></data>
+  <data name="AppScope_Browse" xml:space="preserve"><value>찾아보기…</value></data>
+  <data name="AppScope_NoAppError" xml:space="preserve"><value>작동할 앱을 선택하거나 특정 앱을 끄세요.</value></data>
+  <data name="AppScope_ChooseApp" xml:space="preserve"><value>작동할 앱 선택</value></data>
+  <data name="AppScope_OnlyApp" xml:space="preserve"><value>{0}이(가) 앞에 있을 때만 작동</value></data>
+  <data name="AppScope_Help" xml:space="preserve"><value>실행 중인 앱을 선택하거나, 앱의 창을 고르거나, .exe 파일을 찾아보세요. 해당 앱이 앞에 있을 때만 작동합니다.</value></data>
+  <data name="AppScope_HelpStops" xml:space="preserve"><value>실행 중인 앱을 선택하거나, 앱의 창을 고르거나, .exe 파일을 찾아보세요. 해당 앱이 앞에 있을 때만 작동하며, 다른 앱으로 전환하면 중지됩니다.</value></data>
+  <data name="AppScope_BrowseTitle" xml:space="preserve"><value>앱 선택</value></data>
+  <data name="AppScope_BrowseFilter" xml:space="preserve"><value>프로그램 (*.exe)|*.exe</value></data>
+  <data name="OverlayOptions_Show" xml:space="preserve"><value>오버레이에 표시</value></data>
+  <data name="OverlayOptions_ShowDescription" xml:space="preserve"><value>오버레이 패널에 또는 플로팅 단추로 표시</value></data>
+  <data name="OverlayOptions_HideWhenDisabled" xml:space="preserve"><value>사용 안 함일 때 숨기기</value></data>
+  <data name="OverlayOptions_HideWhenDisabledDescription" xml:space="preserve"><value>사용하지 않는 동안 오버레이에서 숨겨집니다</value></data>
+  <data name="OverlayOptions_PassThrough" xml:space="preserve"><value>클릭이 뒤에 있는 앱에도 전달됨</value></data>
+  <data name="OverlayOptions_PassThroughDescription" xml:space="preserve"><value>오버레이에서 클릭하면 아래에 있는 창도 클릭됩니다</value></data>
+  <data name="FloatingButton_Header" xml:space="preserve"><value>플로팅 단추</value></data>
+  <data name="FloatingButton_Description" xml:space="preserve"><value>오버레이 모드에서 패널의 행 대신 시작 및 중지하는 둥근 단추</value></data>
+  <data name="FloatingButton_NeedsToggle" xml:space="preserve"><value>토글이 필요합니다. 클릭으로 시작하고 중지할 수는 있지만 누르고 있을 수는 없습니다</value></data>
+  <data name="FloatingButton_Label" xml:space="preserve"><value>레이블</value></data>
+  <data name="FloatingButton_Size" xml:space="preserve"><value>크기</value></data>
+  <data name="FloatingButton_Small" xml:space="preserve"><value>작게</value></data>
+  <data name="FloatingButton_Medium" xml:space="preserve"><value>보통</value></data>
+  <data name="FloatingButton_Large" xml:space="preserve"><value>크게</value></data>
+  <data name="FloatingButton_PositionOnScreen" xml:space="preserve"><value>화면상의 위치</value></data>
+  <data name="FloatingButton_Position" xml:space="preserve"><value>위치</value></data>
+  <data name="FloatingButton_Opacity" xml:space="preserve"><value>불투명도</value></data>
+  <data name="FloatingButton_OpacityLabel" xml:space="preserve"><value>플로팅 단추 불투명도</value></data>
+  <data name="MacroEditor_ExpandGroup" xml:space="preserve"><value>그룹 확장</value></data>
+  <data name="MacroEditor_CollapseGroup" xml:space="preserve"><value>그룹 축소</value></data>
+  <data name="MacroEditor_GroupAccessibleName" xml:space="preserve"><value>그룹 {0}, {1}</value></data>
+  <data name="MacroEditor_DelayMs" xml:space="preserve"><value>{0:0.##}ms</value></data>
+  <data name="MacroEditor_RowPress" xml:space="preserve"><value>{0} 입력</value></data>
+  <data name="MacroEditor_RowKeyDown" xml:space="preserve"><value>키 누름 {0}</value></data>
+  <data name="MacroEditor_RowKeyUp" xml:space="preserve"><value>키 놓음 {0}</value></data>
+  <data name="MacroEditor_RowButtonDown" xml:space="preserve"><value>{0} 단추 누름</value></data>
+  <data name="MacroEditor_RowButtonUp" xml:space="preserve"><value>{0} 단추 놓음</value></data>
+  <data name="MacroEditor_RowMoveSmoothly" xml:space="preserve"><value>부드럽게 이동</value></data>
+  <data name="MacroEditor_RowScrollUp" xml:space="preserve"><value>위로 스크롤</value></data>
+  <data name="MacroEditor_RowScrollDown" xml:space="preserve"><value>아래로 스크롤</value></data>
+  <data name="MacroEditor_RowScrollLeft" xml:space="preserve"><value>왼쪽으로 스크롤</value></data>
+  <data name="MacroEditor_RowScrollRight" xml:space="preserve"><value>오른쪽으로 스크롤</value></data>
+  <data name="MacroEditor_RowTimes_other" xml:space="preserve"><value>{1} {0}회</value></data>
+  <data name="MacroEditor_RowHeld" xml:space="preserve"><value>{0}ms 누름</value></data>
+  <data name="MacroEditor_RowAt" xml:space="preserve"><value>위치 {0}, {1}</value></data>
+  <data name="MacroEditor_RowPath_other" xml:space="preserve"><value>점 {0}개, {1}</value></data>
+  <data name="MacroEditor_RowScrollSteps_other" xml:space="preserve"><value>{0}칸</value></data>
+  <data name="MacroEditor_RowQuoted" xml:space="preserve"><value>"{0}"</value></data>
+  <data name="Action_Direction" xml:space="preserve"><value>방향</value></data>
+  <data name="Action_DirectionUp" xml:space="preserve"><value>위</value></data>
+  <data name="Action_DirectionDown" xml:space="preserve"><value>아래</value></data>
+  <data name="Action_DirectionLeft" xml:space="preserve"><value>왼쪽</value></data>
+  <data name="Action_DirectionRight" xml:space="preserve"><value>오른쪽</value></data>
+  <data name="Action_Remove" xml:space="preserve"><value>제거</value></data>
+  <data name="Action_WhileLoopRuns" xml:space="preserve"><value>루프가 실행되는 동안</value></data>
+  <data name="Action_Repeat" xml:space="preserve"><value>반복</value></data>
+  <data name="Action_HoldDown" xml:space="preserve"><value>누르고 있기</value></data>
+  <data name="Action_Every" xml:space="preserve"><value>간격</value></data>
+  <data name="Action_Interval" xml:space="preserve"><value>간격</value></data>
+  <data name="Action_Unit" xml:space="preserve"><value>단위</value></data>
+  <data name="Action_UnitMs" xml:space="preserve"><value>ms</value></data>
+  <data name="Action_UnitS" xml:space="preserve"><value>초</value></data>
+  <data name="Action_UnitMin" xml:space="preserve"><value>분</value></data>
+  <data name="Action_UnitH" xml:space="preserve"><value>시간</value></data>
+  <data name="Action_Position" xml:space="preserve"><value>위치</value></data>
+  <data name="Action_Mode" xml:space="preserve"><value>모드</value></data>
+  <data name="Action_Single" xml:space="preserve"><value>한 번</value></data>
+  <data name="Action_Double" xml:space="preserve"><value>두 번</value></data>
+  <data name="Action_HoldFor" xml:space="preserve"><value>누르는 시간</value></data>
+  <data name="Action_Times" xml:space="preserve"><value>횟수</value></data>
+  <data name="Action_PauseBetween" xml:space="preserve"><value>사이 일시 중지</value></data>
+  <data name="Action_PauseBetweenDescription" xml:space="preserve"><value>횟수가 1보다 클 때 한 번 누르고 다음에 누를 때까지의 시간</value></data>
+  <data name="Action_FixedPoint" xml:space="preserve"><value>고정 지점</value></data>
+  <data name="Action_Text" xml:space="preserve"><value>텍스트</value></data>
+  <data name="Action_TextToPaste" xml:space="preserve"><value>붙여넣을 텍스트</value></data>
+  <data name="Action_EnterBefore" xml:space="preserve"><value>붙여넣기 전에 Enter 누르기</value></data>
+  <data name="Action_EnterAfter" xml:space="preserve"><value>붙여넣은 후 Enter 누르기</value></data>
+  <data name="Action_Movement" xml:space="preserve"><value>이동 방식</value></data>
+  <data name="Action_Instantly" xml:space="preserve"><value>즉시</value></data>
+  <data name="Action_Smoothly" xml:space="preserve"><value>부드럽게</value></data>
+  <data name="Action_Speed" xml:space="preserve"><value>속도</value></data>
+  <data name="Action_MovementSpeed" xml:space="preserve"><value>이동 속도</value></data>
+  <data name="Action_Steps" xml:space="preserve"><value>칸 수</value></data>
+  <data name="Action_UseClick" xml:space="preserve"><value>마우스 단추에는 클릭을 사용하세요.</value></data>
+  <data name="Action_UseMouseAction" xml:space="preserve"><value>마우스 단추에는 클릭 또는 마우스 단추 동작을 사용하세요.</value></data>
+  <data name="Action_TitlePressKey" xml:space="preserve"><value>키 입력</value></data>
+  <data name="Action_TitleKeyDown" xml:space="preserve"><value>키 누름</value></data>
+  <data name="Action_TitleKeyUp" xml:space="preserve"><value>키 놓음</value></data>
+  <data name="Action_TitleClick" xml:space="preserve"><value>클릭</value></data>
+  <data name="Action_TitleMouseDown" xml:space="preserve"><value>마우스 단추 누름</value></data>
+  <data name="Action_TitleMouseUp" xml:space="preserve"><value>마우스 단추 놓음</value></data>
+  <data name="Action_TitleMoveTo" xml:space="preserve"><value>이동</value></data>
+  <data name="Action_TitleScroll" xml:space="preserve"><value>스크롤</value></data>
+  <data name="Action_TitlePasteText" xml:space="preserve"><value>텍스트 붙여넣기</value></data>
+  <data name="Action_HoldButtonDescription" xml:space="preserve"><value>단추를 놓기 전에 누르고 있는 시간</value></data>
+  <data name="Action_HoldKeyDescription" xml:space="preserve"><value>키를 놓기 전에 누르고 있는 시간</value></data>
+  <data name="Action_AFixedPoint" xml:space="preserve"><value>고정 지점</value></data>
+  <data name="Action_WherePointerIs" xml:space="preserve"><value>포인터 위치</value></data>
+  <data name="Action_SpeedVerySlow" xml:space="preserve"><value>매우 느림</value></data>
+  <data name="Action_SpeedSlow" xml:space="preserve"><value>느림</value></data>
+  <data name="Action_SpeedNormal" xml:space="preserve"><value>보통</value></data>
+  <data name="Action_SpeedFast" xml:space="preserve"><value>빠름</value></data>
+  <data name="Action_SpeedVeryFast" xml:space="preserve"><value>매우 빠름</value></data>
+  <data name="Action_SpeedText" xml:space="preserve"><value>속도: {0}, 약 {1}초</value></data>
+  <data name="Action_SummaryEvery" xml:space="preserve"><value>{0}{1}마다</value></data>
+  <data name="Action_SummaryTimes_other" xml:space="preserve"><value>{1} {0}회</value></data>
+  <data name="Action_SummaryAt" xml:space="preserve"><value>위치 {0}, {1}</value></data>
+  <data name="Action_SummaryWherePointerIs" xml:space="preserve"><value>포인터 위치</value></data>
+  <data name="Action_SummaryNoKey" xml:space="preserve"><value>아직 키 없음</value></data>
+  <data name="Action_SummaryNoText" xml:space="preserve"><value>아직 텍스트 없음</value></data>
+  <data name="Action_SummaryUntilKeyUp" xml:space="preserve"><value>{0}, 키 놓음까지</value></data>
+  <data name="Action_SummarySteps_other" xml:space="preserve"><value>{0}칸</value></data>
+  <data name="Action_SummaryText" xml:space="preserve"><value>"{0}"</value></data>
+  <data name="Action_SummaryTextThenEnter" xml:space="preserve"><value>"{0}", 다음에 Enter</value></data>
+  <data name="Action_SummaryHeldDown" xml:space="preserve"><value>{0}, 루프가 실행되는 동안 누르고 있음</value></data>
+  <data name="Action_ChooseKeyEach" xml:space="preserve"><value>각 키 입력의 키를 선택하세요.</value></data>
+  <data name="Action_ChooseKey" xml:space="preserve"><value>키를 선택하세요.</value></data>
+  <data name="Action_SetFixedPoint" xml:space="preserve"><value>고정 지점의 각 클릭 위치를 설정하세요.</value></data>
+  <data name="Action_EnterTextEach" xml:space="preserve"><value>각 텍스트 붙여넣기의 텍스트를 입력하세요.</value></data>
+  <data name="Action_EnterText" xml:space="preserve"><value>붙여넣을 텍스트를 입력하세요.</value></data>
+  <data name="Action_HoldNeedsSingleKey" xml:space="preserve"><value>누르고 있기는 단일 키에서만 작동합니다. 조합에는 반복을 사용하세요.</value></data>
+  <data name="KeyField_PromptHotkey" xml:space="preserve"><value>바로 가기 키를 누르세요(Esc를 누르면 취소)</value></data>
+  <data name="KeyField_PromptCombination" xml:space="preserve"><value>키 또는 조합을 누르세요(Esc를 누르면 취소)</value></data>
+  <data name="KeyField_PromptKeyOrModifier" xml:space="preserve"><value>키 또는 Ctrl, Alt, Shift, Win 중 하나만 누르세요(Esc를 누르면 취소)</value></data>
+  <data name="KeyField_SetHotkey" xml:space="preserve"><value>바로 가기 키 설정</value></data>
+  <data name="KeyField_SetKey" xml:space="preserve"><value>키 설정</value></data>
+  <data name="KeyField_ChangeHotkey" xml:space="preserve"><value>바로 가기 키 변경</value></data>
+  <data name="KeyField_ChangeKey" xml:space="preserve"><value>키 변경</value></data>
+  <data name="KeyField_ClearHotkey" xml:space="preserve"><value>바로 가기 키 지우기</value></data>
+  <data name="KeyField_ClearKey" xml:space="preserve"><value>키 지우기</value></data>
+  <data name="KeyField_Change" xml:space="preserve"><value>변경</value></data>
+  <data name="KeyField_Clear" xml:space="preserve"><value>지우기</value></data>
+  <data name="Mouse_Button" xml:space="preserve"><value>마우스 단추</value></data>
+  <data name="Mouse_Left" xml:space="preserve"><value>왼쪽</value></data>
+  <data name="Mouse_Right" xml:space="preserve"><value>오른쪽</value></data>
+  <data name="Mouse_Middle" xml:space="preserve"><value>가운데</value></data>
+  <data name="Mouse_Back" xml:space="preserve"><value>뒤로(X1)</value></data>
+  <data name="Mouse_Forward" xml:space="preserve"><value>앞으로(X2)</value></data>
+  <data name="Mouse_ClickLeft" xml:space="preserve"><value>왼쪽 클릭</value></data>
+  <data name="Mouse_ClickRight" xml:space="preserve"><value>오른쪽 클릭</value></data>
+  <data name="Mouse_ClickMiddle" xml:space="preserve"><value>가운데 클릭</value></data>
+  <data name="Mouse_ClickBack" xml:space="preserve"><value>뒤로(X1) 클릭</value></data>
+  <data name="Mouse_ClickForward" xml:space="preserve"><value>앞으로(X2) 클릭</value></data>
+  <data name="Mouse_DoubleClickLeft" xml:space="preserve"><value>왼쪽 두 번 클릭</value></data>
+  <data name="Mouse_DoubleClickRight" xml:space="preserve"><value>오른쪽 두 번 클릭</value></data>
+  <data name="Mouse_DoubleClickMiddle" xml:space="preserve"><value>가운데 두 번 클릭</value></data>
+  <data name="Mouse_DoubleClickBack" xml:space="preserve"><value>뒤로(X1) 두 번 클릭</value></data>
+  <data name="Mouse_DoubleClickForward" xml:space="preserve"><value>앞으로(X2) 두 번 클릭</value></data>
+  <data name="Mouse_DetectTooltip" xml:space="preserve"><value>마우스 단추를 눌러 감지합니다</value></data>
+  <data name="Mouse_Detect" xml:space="preserve"><value>마우스 단추 감지</value></data>
+  <data name="Mouse_Prompt" xml:space="preserve"><value>마우스 단추를 누르세요(Esc를 누르면 취소)</value></data>
+  <data name="Mouse_UsePressKey" xml:space="preserve"><value>키에는 키 입력을 사용하세요.</value></data>
+  <data name="Position_X" xml:space="preserve"><value>X</value></data>
+  <data name="Position_Y" xml:space="preserve"><value>Y</value></data>
+  <data name="Position_PickOnScreen" xml:space="preserve"><value>화면에서 고르기</value></data>
+  <data name="Slider_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Keys_NoHotkey" xml:space="preserve"><value>바로 가기 키 없음</value></data>
+  <data name="Keys_Join" xml:space="preserve"><value> + </value></data>
+  <data name="Keys_None" xml:space="preserve"><value>없음</value></data>
+  <data name="Keys_WheelUp" xml:space="preserve"><value>휠 위로</value></data>
+  <data name="Keys_WheelDown" xml:space="preserve"><value>휠 아래로</value></data>
+  <data name="Keys_WheelLeft" xml:space="preserve"><value>휠 왼쪽으로</value></data>
+  <data name="Keys_WheelRight" xml:space="preserve"><value>휠 오른쪽으로</value></data>
+  <data name="Keys_LButton" xml:space="preserve"><value>LButton</value></data>
+  <data name="Keys_RButton" xml:space="preserve"><value>RButton</value></data>
+  <data name="Keys_MButton" xml:space="preserve"><value>MButton</value></data>
+  <data name="Keys_XButton1" xml:space="preserve"><value>XButton1</value></data>
+  <data name="Keys_XButton2" xml:space="preserve"><value>XButton2</value></data>
+  <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
+  <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>
+  <data name="Keys_Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="Keys_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Keys_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Keys_Win" xml:space="preserve"><value>Win</value></data>
+  <data name="Keys_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Keys_CapsLock" xml:space="preserve"><value>CapsLock</value></data>
+  <data name="Keys_Esc" xml:space="preserve"><value>Esc</value></data>
+  <data name="Keys_Space" xml:space="preserve"><value>Space</value></data>
+  <data name="Keys_PageUp" xml:space="preserve"><value>PageUp</value></data>
+  <data name="Keys_PageDown" xml:space="preserve"><value>PageDown</value></data>
+  <data name="Keys_End" xml:space="preserve"><value>End</value></data>
+  <data name="Keys_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Keys_Left" xml:space="preserve"><value>왼쪽 화살표</value></data>
+  <data name="Keys_Up" xml:space="preserve"><value>위쪽 화살표</value></data>
+  <data name="Keys_Right" xml:space="preserve"><value>오른쪽 화살표</value></data>
+  <data name="Keys_Down" xml:space="preserve"><value>아래쪽 화살표</value></data>
+  <data name="Keys_PrintScreen" xml:space="preserve"><value>PrintScreen</value></data>
+  <data name="Keys_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Keys_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Keys_LeftWin" xml:space="preserve"><value>왼쪽 Win</value></data>
+  <data name="Keys_RightWin" xml:space="preserve"><value>오른쪽 Win</value></data>
+  <data name="Keys_NumpadDigit" xml:space="preserve"><value>Numpad{0}</value></data>
+  <data name="Keys_NumpadMultiply" xml:space="preserve"><value>Numpad*</value></data>
+  <data name="Keys_NumpadAdd" xml:space="preserve"><value>Numpad+</value></data>
+  <data name="Keys_NumpadSubtract" xml:space="preserve"><value>Numpad-</value></data>
+  <data name="Keys_NumpadDecimal" xml:space="preserve"><value>Numpad.</value></data>
+  <data name="Keys_NumpadDivide" xml:space="preserve"><value>Numpad/</value></data>
+  <data name="Keys_NumLock" xml:space="preserve"><value>NumLock</value></data>
+  <data name="Keys_ScrollLock" xml:space="preserve"><value>ScrollLock</value></data>
+  <data name="Keys_LeftShift" xml:space="preserve"><value>왼쪽 Shift</value></data>
+  <data name="Keys_RightShift" xml:space="preserve"><value>오른쪽 Shift</value></data>
+  <data name="Keys_LeftCtrl" xml:space="preserve"><value>왼쪽 Ctrl</value></data>
+  <data name="Keys_RightCtrl" xml:space="preserve"><value>오른쪽 Ctrl</value></data>
+  <data name="Keys_LeftAlt" xml:space="preserve"><value>왼쪽 Alt</value></data>
+  <data name="Keys_RightAlt" xml:space="preserve"><value>오른쪽 Alt</value></data>
+  <data name="Keys_EitherCtrl" xml:space="preserve"><value>왼쪽 또는 오른쪽 Ctrl</value></data>
+  <data name="Keys_EitherAlt" xml:space="preserve"><value>왼쪽 또는 오른쪽 Alt</value></data>
+  <data name="Keys_EitherShift" xml:space="preserve"><value>왼쪽 또는 오른쪽 Shift</value></data>
+  <data name="Keys_EitherWin" xml:space="preserve"><value>왼쪽 또는 오른쪽 Win</value></data>
+  <data name="Keys_Unknown" xml:space="preserve"><value>키 0x{0:X2}</value></data>
+  <data name="Hotkey_ClickNeedsModifier" xml:space="preserve"><value>왼쪽 및 오른쪽 클릭에는 Ctrl, Alt, Shift 또는 Win이 필요합니다. 단독으로 사용하면 마우스가 차단됩니다.</value></data>
+  <data name="Hotkey_WheelNeedsModifier" xml:space="preserve"><value>스크롤 휠에는 Ctrl, Alt, Shift 또는 Win이 필요합니다. 단독으로 사용하면 스크롤이 차단됩니다.</value></data>
+  <data name="Hotkey_EscNeedsModifier" xml:space="preserve"><value>Esc에는 Ctrl, Alt, Shift 또는 Win이 필요합니다.</value></data>
+  <data name="Hotkey_WheelCantHold" xml:space="preserve"><value>스크롤 휠은 누르고 있을 수 없습니다. 토글로 전환하거나 다른 바로 가기 키를 선택하세요.</value></data>
+  <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0}은(는) 이미 모두 중지에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0}은(는) 이미 오버레이 모드에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0}은(는) 이미 녹화에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0}은(는) 이미 루프 "{1}"에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0}은(는) 이미 {2}의 루프 "{1}"에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0}은(는) 이미 매크로 "{1}"에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0}은(는) 이미 {2}의 매크로 "{1}"에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} 바로 가기 키가 다시 매핑보다 우선합니다.</value></data>
+  <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0}은(는) 이미 모든 앱에서 다시 매핑되어 있습니다.</value></data>
+  <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0}은(는) 이미 {1}에서 다시 매핑되어 있습니다.</value></data>
+  <data name="Sound_Chime" xml:space="preserve"><value>차임</value></data>
+  <data name="Sound_Blip" xml:space="preserve"><value>블립</value></data>
+  <data name="Sound_Pop" xml:space="preserve"><value>팝</value></data>
+  <data name="Sound_Bell" xml:space="preserve"><value>벨</value></data>
+  <data name="Sound_Arcade" xml:space="preserve"><value>아케이드</value></data>
+  <data name="Sound_Soft" xml:space="preserve"><value>부드러운 소리</value></data>
+  <data name="Sound_Marimba" xml:space="preserve"><value>마림바</value></data>
+  <data name="Sound_Pluck" xml:space="preserve"><value>플럭</value></data>
+  <data name="Sound_Harp" xml:space="preserve"><value>하프</value></data>
+  <data name="Sound_Kalimba" xml:space="preserve"><value>칼림바</value></data>
+  <data name="Sound_Xylophone" xml:space="preserve"><value>실로폰</value></data>
+  <data name="Sound_Glock" xml:space="preserve"><value>글로켄슈필</value></data>
+  <data name="Sound_Organ" xml:space="preserve"><value>오르간</value></data>
+  <data name="Sound_Flute" xml:space="preserve"><value>플루트</value></data>
+  <data name="Sound_Synth" xml:space="preserve"><value>신스</value></data>
+  <data name="Sound_Pad" xml:space="preserve"><value>패드</value></data>
+  <data name="Sound_Brass" xml:space="preserve"><value>브라스</value></data>
+  <data name="Sound_Bass" xml:space="preserve"><value>베이스</value></data>
+  <data name="Sound_Click" xml:space="preserve"><value>클릭</value></data>
+  <data name="Sound_Tick" xml:space="preserve"><value>틱</value></data>
+  <data name="Sound_Knock" xml:space="preserve"><value>노크</value></data>
+  <data name="Sound_Switch" xml:space="preserve"><value>스위치</value></data>
+  <data name="Sound_Tom" xml:space="preserve"><value>탐탐</value></data>
+  <data name="Sound_Conga" xml:space="preserve"><value>콩가</value></data>
+  <data name="Sound_Cowbell" xml:space="preserve"><value>카우벨</value></data>
+  <data name="Sound_Triangle" xml:space="preserve"><value>트라이앵글</value></data>
+  <data name="Sound_Gong" xml:space="preserve"><value>징</value></data>
+  <data name="Sound_Coin" xml:space="preserve"><value>동전</value></data>
+  <data name="Sound_Jump" xml:space="preserve"><value>점프</value></data>
+  <data name="Sound_Laser" xml:space="preserve"><value>레이저</value></data>
+  <data name="Sound_Zap" xml:space="preserve"><value>잽</value></data>
+  <data name="Sound_Powerup" xml:space="preserve"><value>파워업</value></data>
+  <data name="Sound_Retro" xml:space="preserve"><value>레트로</value></data>
+  <data name="Sound_Fanfare" xml:space="preserve"><value>팡파르</value></data>
+  <data name="Sound_Twinkle" xml:space="preserve"><value>반짝</value></data>
+  <data name="Sound_Sparkle" xml:space="preserve"><value>반짝반짝</value></data>
+  <data name="Sound_Bubble" xml:space="preserve"><value>거품</value></data>
+  <data name="Sound_Drop" xml:space="preserve"><value>물방울</value></data>
+  <data name="Sound_Whoosh" xml:space="preserve"><value>휙</value></data>
+  <data name="Sound_Whistle" xml:space="preserve"><value>휘파람</value></data>
+  <data name="Sound_Chirp" xml:space="preserve"><value>짹짹</value></data>
+  <data name="Sound_Cricket" xml:space="preserve"><value>귀뚜라미</value></data>
+  <data name="Sound_Doorbell" xml:space="preserve"><value>초인종</value></data>
+  <data name="Sound_Phone" xml:space="preserve"><value>전화</value></data>
+  <data name="Sound_Alarm" xml:space="preserve"><value>알람</value></data>
+  <data name="Sound_Modem" xml:space="preserve"><value>모뎀</value></data>
+  <data name="Sound_Radar" xml:space="preserve"><value>레이더</value></data>
+  <data name="Sound_Sonar" xml:space="preserve"><value>소나</value></data>
+  <data name="Sound_Echo" xml:space="preserve"><value>메아리</value></data>
+  <data name="Sound_Robot" xml:space="preserve"><value>로봇</value></data>
+  <data name="Sound_Siren" xml:space="preserve"><value>사이렌</value></data>
+  <data name="Sound_Hum" xml:space="preserve"><value>웅웅</value></data>
+  <data name="Sound_Ripple" xml:space="preserve"><value>잔물결</value></data>
+  <data name="Sound_Wobble" xml:space="preserve"><value>워블</value></data>
+  <data name="Sound_Warp" xml:space="preserve"><value>워프</value></data>
+  <data name="Sound_Ufo" xml:space="preserve"><value>UFO</value></data>
+  <data name="Code_MustBeObject" xml:space="preserve"><value>JSON 개체여야 합니다.</value></data>
+  <data name="Code_Between" xml:space="preserve"><value>{0}에서 {1} 사이여야 합니다.</value></data>
+  <data name="Code_IdCannotChange" xml:space="preserve"><value>Id는 변경할 수 없습니다. "{0}"을(를) 사용하세요(Ctrl+Space를 누르면 제안됨).</value></data>
+  <data name="Code_UnknownSound" xml:space="preserve"><value>알 수 없는 소리입니다. 다음 중 하나를 사용하세요: {0}.</value></data>
+  <data name="Code_HoldNeedsHotkey" xml:space="preserve"><value>누르고 있기에는 바로 가기 키가 필요합니다. 바로 가기 키를 설정하거나 "Toggle"을 사용하세요.</value></data>
+  <data name="Code_HotkeyNotAKey" xml:space="preserve"><value>키가 아닙니다. 1에서 254 사이의 가상 키 코드나 스크롤 휠 코드(256 위, 257 아래, 258 왼쪽, 259 오른쪽)를 사용하세요.</value></data>
+  <data name="Code_HotkeyModifierAlone" xml:space="preserve"><value>Ctrl, Alt, Shift, Win은 단독으로 키가 될 수 없습니다. "Ctrl", "Alt", "Shift", "Win"으로 설정하세요.</value></data>
+  <data name="Code_RemapChooseKey" xml:space="preserve"><value>키 또는 마우스 단추를 선택하세요: 1에서 254 사이의 가상 키 코드입니다.</value></data>
+  <data name="Code_RemapModifierSide" xml:space="preserve"><value>Ctrl, Alt, Shift 또는 Win 단독: 왼쪽 또는 오른쪽 키의 코드를 사용하세요(160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_RemapModifierNoOthers" xml:space="preserve"><value>Ctrl, Alt, Shift 또는 Win 단독에는 다른 한정자를 사용할 수 없습니다. "Ctrl", "Alt", "Shift", "Win"을 false로 설정하세요.</value></data>
+  <data name="Code_OnlyWithModifier" xml:space="preserve"><value>"{0}": true일 때만 사용할 수 있습니다. 제거하거나 "{0}"을(를) true로 설정하세요.</value></data>
+  <data name="Code_AppExeEmpty" xml:space="preserve"><value>앱의 파일 이름(예: "notepad.exe")을 입력하거나, 모든 앱에 적용하려면 null을 입력하세요.</value></data>
+  <data name="Code_AppExeNotExe" xml:space="preserve"><value>".exe"로 끝나는 앱의 파일 이름을 입력하세요.</value></data>
+  <data name="Code_AtMostCharacters_other" xml:space="preserve"><value>최대 {0}자입니다.</value></data>
+  <data name="Code_SetBothXY" xml:space="preserve"><value>X와 Y를 모두 설정하거나 둘 다 설정하지 마세요(null: 주 화면의 가운데).</value></data>
+  <data name="Code_FloatingNeedsToggle" xml:space="preserve"><value>"Toggle"이 필요합니다. 클릭으로 시작하고 중지할 수는 있지만 누르고 있을 수는 없습니다.</value></data>
+  <data name="Code_MustBeOneOf" xml:space="preserve"><value>다음 중 하나여야 합니다: {0}.</value></data>
+  <data name="Code_AtPath" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Code_InvalidJsonDetail" xml:space="preserve"><value>잘못된 JSON: {0}</value></data>
+  <data name="Code_UnknownProperty" xml:space="preserve"><value>알 수 없는 속성 "{0}"입니다.</value></data>
+  <data name="Code_WrongType" xml:space="preserve"><value>이 값의 형식이 잘못되었거나 허용되는 값이 아닙니다.</value></data>
+  <data name="Code_NeedsValue" xml:space="preserve"><value>여기에는 null이 아닌 값이 필요합니다.</value></data>
+  <data name="Code_InvalidJson" xml:space="preserve"><value>잘못된 JSON입니다.</value></data>
+  <data name="Code_EnterName" xml:space="preserve"><value>이름을 입력하세요.</value></data>
+  <data name="Code_AddAction" xml:space="preserve"><value>동작을 하나 이상 추가하세요.</value></data>
+  <data name="Code_KeyVkOld" xml:space="preserve"><value>더 이상 사용되지 않습니다. 키는 "Actions"에 들어갑니다. 제거하세요.</value></data>
+  <data name="Code_IntervalMsOld" xml:space="preserve"><value>더 이상 사용되지 않습니다. 간격은 "Actions"에 들어갑니다. 제거하세요.</value></data>
+  <data name="Code_HotkeyVkOld" xml:space="preserve"><value>더 이상 사용되지 않습니다. "Hotkey"를 사용하세요. 제거하세요.</value></data>
+  <data name="Code_LoopChooseKey" xml:space="preserve"><value>키 또는 마우스 단추를 선택하세요: 1에서 254 사이의 가상 키 코드입니다.</value></data>
+  <data name="Code_EnterText" xml:space="preserve"><value>텍스트를 입력하세요.</value></data>
+  <data name="Code_TextNoHold" xml:space="preserve"><value>키 입력과 클릭만 누르고 있을 수 있습니다.</value></data>
+  <data name="Code_IntervalRange" xml:space="preserve"><value>간격은 10ms에서 24시간 사이여야 합니다.</value></data>
+  <data name="Code_HotkeyPressed" xml:space="preserve"><value>바로 가기 키는 이 루프가 누르는 키 중 하나일 수 없습니다.</value></data>
+  <data name="Code_LoopOnlyPressKeyModifiers" xml:space="preserve"><value>키 입력에만 Ctrl, Alt, Shift 또는 Win이 있습니다. 제거하세요.</value></data>
+  <data name="Code_ClickNoModifiers" xml:space="preserve"><value>클릭에는 Ctrl, Alt, Shift 또는 Win이 없습니다. 제거하세요.</value></data>
+  <data name="Code_HoldDownSingleKey" xml:space="preserve"><value>누르고 있기는 단일 키에서만 작동합니다. 조합에는 "Repeat"를 사용하세요.</value></data>
+  <data name="Code_OnlyPressKeyAndClick" xml:space="preserve"><value>키 입력과 클릭에만 있습니다. 제거하세요.</value></data>
+  <data name="Code_OnlyClick" xml:space="preserve"><value>클릭에만 있습니다. 제거하세요.</value></data>
+  <data name="Code_ClickCountOrNull" xml:space="preserve"><value>1(한 번 클릭), 2(두 번 클릭) 또는 null이어야 합니다.</value></data>
+  <data name="Code_SetBothXYFixed" xml:space="preserve"><value>고정 지점의 X와 Y를 모두 설정하거나 둘 다 설정하지 마세요(null: 포인터 위치).</value></data>
+  <data name="Code_SourceVkOld" xml:space="preserve"><value>더 이상 사용되지 않습니다. A의 경우 {"Vk": 65}처럼 "Source"를 사용하세요. 제거하세요.</value></data>
+  <data name="Code_ChooseSource" xml:space="preserve"><value>다시 매핑할 키, 마우스 단추 또는 조합을 선택하세요.</value></data>
+  <data name="Code_ChooseTarget" xml:space="preserve"><value>대신 보낼 항목을 선택하세요.</value></data>
+  <data name="Code_TargetDifferent" xml:space="preserve"><value>누르는 것과 다른 것을 보내세요.</value></data>
+  <data name="Code_PrimaryMouseNeedsApp" xml:space="preserve"><value>왼쪽 및 오른쪽 클릭은 특정 앱에서만 다시 매핑할 수 있으므로 다른 모든 곳에서는 계속 작동합니다.</value></data>
+  <data name="Code_GroupNotAllowed" xml:space="preserve"><value>이 동작은 다음에만 있을 수 있습니다: {0}. 그룹의 동작은 서로 붙어 있어야 합니다.</value></data>
+  <data name="Code_SpeedSteps" xml:space="preserve"><value>0.25, 0.5, 1, 2 또는 4여야 합니다.</value></data>
+  <data name="Code_GroupIdTwice" xml:space="preserve"><value>두 그룹이 이 Id를 사용합니다.</value></data>
+  <data name="Code_EnterGroupName" xml:space="preserve"><value>그룹 이름을 입력하세요.</value></data>
+  <data name="Code_NoSuchGroup" xml:space="preserve"><value>"Groups"에 이 Id를 가진 그룹이 없습니다.</value></data>
+  <data name="Code_GroupApart" xml:space="preserve"><value>그룹의 동작은 서로 붙어 있어야 합니다.</value></data>
+  <data name="Code_GroupNoActions" xml:space="preserve"><value>이 그룹에는 동작이 없습니다. 동작을 넣거나("GroupId") 그룹을 제거하세요.</value></data>
+  <data name="Code_MacroChooseKey" xml:space="preserve"><value>키를 선택하세요: 1에서 254 사이의 가상 키 코드입니다.</value></data>
+  <data name="Code_UseMouseAction" xml:space="preserve"><value>마우스 단추에는 클릭, 마우스 단추 누름 또는 마우스 단추 놓음 동작을 사용하세요.</value></data>
+  <data name="Code_ChooseMouseButton" xml:space="preserve"><value>마우스 단추를 선택하세요: 1 왼쪽, 2 오른쪽, 4 가운데, 5 뒤로(X1), 6 앞으로(X2).</value></data>
+  <data name="Code_KeyDownOneKey" xml:space="preserve"><value>키 누름과 키 놓음은 키 하나만 사용합니다. Ctrl, Alt, Shift 또는 Win 단독에는 "Vk"에 해당 키 코드를 사용하세요(160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_MacroOnlyPressKeyModifiers" xml:space="preserve"><value>키 입력 동작에만 Ctrl, Alt, Shift 또는 Win이 있습니다. 제거하세요.</value></data>
+  <data name="Code_ClickCount" xml:space="preserve"><value>1(한 번 클릭) 또는 2(두 번 클릭)여야 합니다.</value></data>
+  <data name="Code_PathEmpty" xml:space="preserve"><value>경로에는 점이 하나 이상 필요합니다.</value></data>
+  <data name="Code_PathTimes" xml:space="preserve"><value>시간은 0 이상에서 시작해야 하며 뒤로 갈 수 없습니다.</value></data>
+  <data name="Code_EnterPasteText" xml:space="preserve"><value>붙여넣을 텍스트를 입력하세요.</value></data>
+  <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro 오버레이 패널</value></data>
+  <data name="Overlay_MovePanel" xml:space="preserve"><value>패널 이동</value></data>
+  <data name="Overlay_MovePanelTip" xml:space="preserve"><value>끌어서 패널 이동</value></data>
+  <data name="Overlay_Exit" xml:space="preserve"><value>오버레이 모드 종료</value></data>
+  <data name="Overlay_ExitTip" xml:space="preserve"><value>오버레이 모드 종료({0})</value></data>
+  <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>종료하고 PuppyMacro 열기</value></data>
+  <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>오버레이 모드를 종료하고 PuppyMacro 열기</value></data>
+  <data name="Overlay_NothingToShow" xml:space="preserve"><value>표시할 항목이 없습니다.</value></data>
+  <data name="Overlay_AllOnButtons" xml:space="preserve"><value>모든 항목이 플로팅 단추에 있습니다.</value></data>
+  <data name="Overlay_NothingForApp" xml:space="preserve"><value>이 앱에 해당하는 항목이 없습니다.</value></data>
+  <data name="Overlay_Macros" xml:space="preserve"><value>매크로</value></data>
+  <data name="Overlay_StopAll" xml:space="preserve"><value>모두 중지</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>클릭하여 시작 또는 중지 · 마우스 오른쪽 단추를 클릭하여 사용 또는 사용 안 함</value></data>
+  <data name="Floating_WindowTitle" xml:space="preserve"><value>PuppyMacro 플로팅 단추</value></data>
+  <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>PuppyMacro 플로팅 단추: {0}</value></data>
+  <data name="Recording_Title" xml:space="preserve"><value>녹화</value></data>
+  <data name="Recording_StartsIn" xml:space="preserve"><value>{0}초 후 녹화 시작</value></data>
+  <data name="Recording_SwitchHint" xml:space="preserve"><value>녹화할 창으로 전환하세요. 아직 클릭은 녹화되지 않습니다.</value></data>
+  <data name="Recording_Cancel" xml:space="preserve"><value>취소</value></data>
+  <data name="Recording_Stop" xml:space="preserve"><value>중지</value></data>
+  <data name="Recording_Events_other" xml:space="preserve"><value>이벤트 {0}개</value></data>
+  <data name="Recording_PressToStop" xml:space="preserve"><value>중지하려면 {0} 누르기</value></data>
+  <data name="Recording_ReadyTitle" xml:space="preserve"><value>녹화 준비 완료</value></data>
+  <data name="Recording_PressOrSelect" xml:space="preserve"><value>{0} 키를 누르거나 {1}을(를) 선택하세요</value></data>
+  <data name="Recording_StartRecording" xml:space="preserve"><value>녹화 시작</value></data>
+  <data name="Recording_RecordMouseMovement" xml:space="preserve"><value>마우스 움직임 녹화</value></data>
+  <data name="Recording_PromptDescription" xml:space="preserve"><value>녹화할 창으로 전환할 시간이 3초 주어집니다. {0}을(를) 누르거나 중지를 선택할 때까지 누르고, 클릭하고, 이동하는 모든 것이 녹화됩니다.</value></data>
+  <data name="Countdown_Title" xml:space="preserve"><value>녹화 카운트다운</value></data>
+  <data name="Countdown_Starts" xml:space="preserve"><value>녹화를 시작합니다…</value></data>
+  <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>키보드를 읽을 수 없습니다.</value></data>
+  <data name="Input_CannotReadMouse" xml:space="preserve"><value>마우스를 읽을 수 없습니다.</value></data>
+</root>
