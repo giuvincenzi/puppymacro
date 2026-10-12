@@ -591,7 +591,8 @@ public class AiToolsTests : IDisposable
     [Fact]
     public async Task The_user_sees_their_language_and_the_AI_app_gets_English()
     {
-        object broken = new { item = new { Source = new { Vk = 0x58, Ctrl = true } } };
+        // No target; Ctrl+Y, so the remap saved meanwhile (Ctrl+X) does not add a clash the first answer did not have.
+        object broken = new { item = new { Source = new { Vk = 0x59, Ctrl = true } } };
         AiToolResult refusedInEnglish = await Call("save_remap", broken);
         CultureInfo italian = CultureInfo.GetCultureInfo("it");
         CultureInfo.CurrentUICulture = italian;
