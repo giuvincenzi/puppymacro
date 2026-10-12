@@ -42,11 +42,61 @@
   samples when empty (`Services/DevSampleData.cs`, Debug only), enable the Code view's DevTools,
   never touch the Start with Windows Run entry and skip the pre-1.6 data migration.
   Release builds never do any of this. Keep the samples working when models change.
-- Smart App Control (Windows 11) blocks unsigned files it has no reputation for, with no "Run
-  anyway". Every build is a new file, so `make dev` builds can be blocked ("Part of this app
-  has been blocked"): development needs it off (Settings > Privacy & security > Windows
-  Security > App & browser control > Smart App Control settings). On Windows 11 updated to
+- **Smart App Control** (Windows 11) blocks every exe and dll that is unsigned and unknown, with no
+  "Run anyway" and **no exceptions** for apps or folders (Microsoft: there is no way to bypass it for
+  individual apps). On a development PC it blocks `make dev`, `make test` (`PuppyMacro.Tests.exe`),
+  `make e2e` and `make build` (`vpk`): **development needs it off** (Settings > Privacy & security >
+  Windows Security > App & browser control > Smart App Control settings). On Windows 11 updated to
   April 2026 or later it can be turned back on without reinstalling Windows.
+- Signing development builds does not solve it: tests and tools include other people's unsigned
+  files, and the release certificate must not sign them. A PC that must keep application control on
+  needs an App Control for Business policy with its own rules, not Smart App Control.
+- Released versions are signed (Code signing below), so the installed PuppyMacro runs with Smart
+  App Control on.
+
+## Code signing
+
+- Releases are signed with a **Certum Open Source Code Signing** certificate (SimplySign cloud, no
+  hardware token) issued to Giuseppe Vincenzi as a private person, valid at most 459 days: renew it
+  on Certum before it expires. The user guide's install page (`site/guide/install.html`) says releases
+  are signed; the site has no code signing policy page (only SignPath asked for one).
+- **The Open Source certificate is for non-commercial open source only**: Certum revokes it if it
+  signs software distributed commercially. Never ship ads, paid features or paid versions signed
+  with it; that needs a commercial certificate first. Voluntary donations that unlock nothing are fine.
+- `scripts/build.ps1` signs through Velopack (`vpk pack --signTemplate`) with
+  [ssign](https://github.com/Le-Syl21/ssign), a client of Certum's SimplySign cloud API, when
+  `CERTUM_EMAIL` and `CERTUM_OTP` (or `CERTUM_TOKEN`) are set. Velopack skips files already signed
+  and trusted (Microsoft's) and signs the rest: PuppyMacro's exe and dlls, `Update.exe` and Setup,
+  with a timestamp from `time.certum.pl`. Then the script checks every exe and dll of the full
+  package and Setup with `Get-AuthenticodeSignature` and fails on any invalid signature, on our
+  files without a timestamp, or when `PuppyMacro.exe` or Setup are not signed by the publisher.
+  It deletes ssign's session file afterwards. Without the variables it builds unsigned (a warning);
+  with `-RequireSigning` it fails instead.
+- ssign receives the signing secrets, so it is **pinned** (`$SsignVersion`, `$SsignSha256`) and
+  downloaded from its GitHub release only when the SHA-256 matches. Updating it: review the new
+  version's source (network calls, what it does with the seed), then change both values.
+- Secrets: the GitHub environment **`signing`** (repository Settings > Environments) holds
+  `CERTUM_EMAIL` (the SimplySign account) and `CERTUM_OTP` (the TOTP seed of SimplySign: the
+  `secret` of the `otpauth://` QR code shown when SimplySign is activated). The seed signs as the
+  certificate owner until the QR code is reissued: never put it anywhere else. To replace it,
+  reissue the QR code in SimplySign and update the secret.
+- Signing happens only in the Release workflow, on `main`, when a release is published: its
+  release job uses the `signing` environment and `-RequireSigning`, so a release is never published
+  unsigned. The environment allows only the `main` branch (Settings > Environments > `signing` >
+  Deployment branches and tags), so no other branch or pull request can use the secrets. To try a
+  change to signing before a release, build signed locally (below).
+- Code merged into `main` runs in the Release workflow with the certificate. Before merging a pull
+  request from someone else, check above all what it changes in `scripts/` and `.github/workflows/`.
+  Pull requests from forks never get the secrets, and their workflows wait for approval the first
+  time a contributor opens one.
+- **The repository is public: never publish secrets anywhere in it**, on any branch, in any commit,
+  pull request, issue, comment or workflow log: passwords, tokens, keys, the SimplySign seed, codes
+  or links, certificate files, personal documents. Secrets go only in GitHub's encrypted secrets.
+- Locally (`make build`): set `CERTUM_EMAIL` and `CERTUM_TOKEN` (a 6-digit code from the SimplySign
+  app) in the shell to try a signed build; the code is used once to log in. In WSL the Makefile
+  passes them to Windows PowerShell through `WSLENV`.
+- A new certificate starts with no reputation: SmartScreen can still warn on Setup until enough
+  people download signed releases.
 
 ## Releases
 

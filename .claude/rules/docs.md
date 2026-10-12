@@ -3,7 +3,7 @@
 Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built by
 `scripts/site.ps1`, published to GitHub Pages by `.github/workflows/site.yml`.
 
-- `site/index.html`: home (features, install, code signing policy). `{{VERSION}}` is the latest
+- `site/index.html`: home (features, privacy). `{{VERSION}}` is the latest
   released version.
 - `site/_header.html`, `site/_footer.html`: shared header and footer (`{{ROOT}}` is the path
   to the site root).

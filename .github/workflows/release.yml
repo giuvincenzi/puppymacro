@@ -43,6 +43,7 @@ jobs:
     needs: [check, e2e]
     if: needs.check.outputs.publish == 'true'
     runs-on: windows-latest
+    environment: signing   # CERTUM_EMAIL and CERTUM_OTP: the code signing secrets (build-and-release.md)
     steps:
       - uses: actions/checkout@v7
         with:
@@ -61,13 +62,18 @@ jobs:
         run: dotnet test --project tests/PuppyMacro.Tests/PuppyMacro.Tests.csproj -c Release
 
       # Same script as `make build`; also downloads the previous release for the delta package.
-      - name: Build the distribution
+      # A release is always signed: without the secrets the build fails.
+      - name: Build and sign the distribution
         shell: pwsh
+        env:
+          CERTUM_EMAIL: ${{ secrets.CERTUM_EMAIL }}
+          CERTUM_OTP: ${{ secrets.CERTUM_OTP }}
         run: >
           ./scripts/build.ps1
           -ReleaseNotes "$env:RUNNER_TEMP/notes.md"
           -PreviousReleaseRepo "${{ github.server_url }}/${{ github.repository }}"
           -Token "${{ secrets.GITHUB_TOKEN }}"
+          -RequireSigning
 
       - name: Create GitHub Release
         run: >
