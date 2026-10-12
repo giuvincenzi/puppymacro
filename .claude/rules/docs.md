@@ -44,11 +44,23 @@ or UI text:
 - update the feature cards in `site/index.html` when the feature list changes;
 - add a line under `## Unreleased` in `CHANGELOG.md`, in the right subsection (see
   `build-and-release.md`);
-- replace screenshots that no longer match the app.
+- replace screenshots that no longer match the app;
+- update the AI tools (`PuppyMacro/Services/Ai/`, `architecture.md`), so AI apps can use the
+  change too. New fields of loops, macros and remaps reach them through the Code views' checks and
+  `CodeSchema` (`data.md`), and `get_help` reads the guide; the rest is not automatic:
+  - a new or changed setting: `AiSettingsValues` (`get_settings` / `update_settings` give only
+    the settings listed there), or the reason it stays out;
+  - the `Instructions` and the tools' descriptions and schemas in `AiTools` when what the model
+    must know or do changes;
+  - a new tool when the feature adds something an AI app cannot do with the existing ones (a new
+    kind of item, a new interaction with the user), or the reason it is left out (for example,
+    starting loops and macros is not a tool on purpose);
+  - `AiToolsTests` for every change above (`testing.md`).
 
 The plan given to the user before implementing (`working-rules.md`) lists every item of this
 checklist, each marked as needed or not needed with the reason: the guide file, the feature
-cards in `site/index.html`, the `CHANGELOG.md` line and each screenshot by file name.
+cards in `site/index.html`, the `CHANGELOG.md` line, each screenshot by file name and the AI
+tools (settings, instructions and descriptions, new tools, tests).
 Screenshots need the app running on the contributor's PC, so the plan names them and asks
 before capturing (`testing.md`).
 
