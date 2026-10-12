@@ -18,8 +18,8 @@ public sealed class ResourcesTests
     private static readonly string[] Forms = { Plurals.Zero, Plurals.One, Plurals.Two, Plurals.Few, Plurals.Many, Plurals.Other };
 
     /// <summary>
-    /// Global texts (i18n.md): the same in every language, so no translation has them and every language shows the
-    /// English one. "AI" as the side rail's item and the AI page's title (the user's choice).
+    /// Labels that are only a global word (i18n.md: the user decides which words are global): the same in every
+    /// language, so no translation has them and every language shows the text of Strings.resx.
     /// </summary>
     public static readonly string[] Global = { "Rail_Ai", "AiPage_Title" };
 
@@ -126,7 +126,7 @@ public sealed class ResourcesTests
     }
 
     [Fact]
-    public void Global_texts_are_the_english_ones_in_every_language()
+    public void Global_words_are_the_same_in_every_language()
     {
         foreach (string code in AppLanguages.All.Select(l => l.Code))
         {

@@ -288,7 +288,7 @@ What the file does not have stays as it is. Your current data is backed up to th
   <data name="Rail_Loops" xml:space="preserve"><value>Loops</value><comment>A page in the side rail: keep it short.</comment></data>
   <data name="Rail_Macros" xml:space="preserve"><value>Macros</value><comment>A page in the side rail: keep it short.</comment></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Remap</value><comment>A page in the side rail: keep it short.</comment></data>
-  <data name="Rail_Ai" xml:space="preserve"><value>AI</value><comment>GLOBAL: the same in every language, never translated (i18n.md, ResourcesTests.Global).</comment></data>
+  <data name="Rail_Ai" xml:space="preserve"><value>AI</value><comment>GLOBAL: a global word, the same in every language (i18n.md, ResourcesTests.Global).</comment></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Settings</value><comment>A page in the side rail: keep it short.</comment></data>
   <!-- ===== Views/ItemCardActions ===== -->
   <data name="Card_Edit" xml:space="preserve"><value>Edit</value></data>
@@ -359,7 +359,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="AiStatus_ToolTip" xml:space="preserve"><value>Connected AI apps: select to open the AI page</value></data>
   <data name="AiStatus_Name" xml:space="preserve"><value>Connected AI apps</value></data>
   <!-- ===== MainWindow.xaml: AI page ===== -->
-  <data name="AiPage_Title" xml:space="preserve"><value>AI</value><comment>GLOBAL: the same in every language, never translated (i18n.md, ResourcesTests.Global).</comment></data>
+  <data name="AiPage_Title" xml:space="preserve"><value>AI</value><comment>GLOBAL: a global word, the same in every language (i18n.md, ResourcesTests.Global).</comment></data>
   <data name="AiPage_Description" xml:space="preserve"><value>Use PuppyMacro from an AI app on this PC, like Claude Desktop or Visual Studio Code. Ask in your own words: the AI makes loops, macros and remaps, and you try them right away.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
   <data name="AiPage_BetaMessage" xml:space="preserve"><value>AI apps in PuppyMacro are new: they work, but they may change, and an AI can get a request wrong. Every change is kept in the item's History, so you can always go back.</value></data>
