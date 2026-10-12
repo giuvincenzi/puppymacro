@@ -10,6 +10,13 @@
 - They run on GitHub on every pull request and every push to `main`
   (`.github/workflows/test.yml`), and the Release workflow stops when they fail. The push of a
   release commit ("Release X.Y.Z (#N)") skips them: the Release workflow runs them on it.
+- **Changes that do not need tests.** On a pull request or a push to `main`, the `test` and `e2e`
+  jobs still start but skip their steps when only `.claude/`, `site/`, `LICENSE` or Markdown files
+  in the repository root changed (their "Changed files" step); the check passes. Any other file
+  runs them. Called by the Release workflow or started by hand they always run. Do not filter
+  these workflows with `paths` / `paths-ignore`: `test` and `e2e` are required checks, and a
+  workflow that does not start leaves them pending and blocks the merge (GitHub: a job or step
+  skipped by `if` counts as passing, a workflow skipped by a filter does not).
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
