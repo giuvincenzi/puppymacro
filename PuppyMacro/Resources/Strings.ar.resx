@@ -49,8 +49,8 @@
   <data name="History_ThisIsCurrent" xml:space="preserve"><value>هذا هو الإصدار الحالي.</value></data>
   <data name="History_RestoreHint" xml:space="preserve"><value>تضع الاستعادة هذا الإصدار في المحرر: حدد "حفظ" للاحتفاظ به. يبقى الإصدار الحالي في المحفوظات.</value></data>
   <data name="Ai_Connected" xml:space="preserve"><value>متصل</value></data>
-  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>حاول الاتصال أثناء إيقاف تشغيل وصول الذكاء الاصطناعي</value></data>
-  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>استدعى {0} أثناء إيقاف تشغيل وصول الذكاء الاصطناعي</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>حاول الاتصال أثناء إيقاف تشغيل وصول AI</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>استدعى {0} أثناء إيقاف تشغيل وصول AI</value></data>
   <data name="Ai_ReadOverview" xml:space="preserve"><value>قرأ الحلقات ووحدات الماكرو وعمليات إعادة التعيين</value></data>
   <data name="Ai_ReadSettings" xml:space="preserve"><value>قرأ الإعدادات</value></data>
   <data name="Ai_ListedApps" xml:space="preserve"><value>سرد التطبيقات المفتوحة</value></data>
@@ -282,7 +282,7 @@
   <data name="Backup_ImportAndRestart" xml:space="preserve"><value>استيراد وإعادة تشغيل</value></data>
   <data name="Backup_PartData" xml:space="preserve"><value>الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات</value></data>
   <data name="Backup_PartHistory" xml:space="preserve"><value>المحفوظات</value></data>
-  <data name="Backup_PartAiActivity" xml:space="preserve"><value>نشاط الذكاء الاصطناعي</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>نشاط AI</value></data>
   <data name="Backup_PartLogs" xml:space="preserve"><value>السجلات</value></data>
   <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} و{1}</value></data>
   <data name="Update_CheckFailed" xml:space="preserve"><value>تعذر التحقق من وجود تحديثات. {0}</value></data>
@@ -314,12 +314,12 @@
   <data name="Export_Choose" xml:space="preserve"><value>اختيار ما يتم تصديره</value></data>
   <data name="Export_PartData" xml:space="preserve"><value>الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات</value></data>
   <data name="Export_PartHistory" xml:space="preserve"><value>المحفوظات</value></data>
-  <data name="Export_PartAiActivity" xml:space="preserve"><value>نشاط الذكاء الاصطناعي</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>نشاط AI</value></data>
   <data name="Export_PartLogs" xml:space="preserve"><value>السجلات</value></data>
   <data name="Export_EverythingDescription" xml:space="preserve"><value>نسخة مطابقة، لنقل PuppyMacro إلى كمبيوتر آخر · {0}</value></data>
   <data name="Export_PartDataDescription" xml:space="preserve"><value>مضمّنة دائمًا · {0}</value></data>
   <data name="Export_PartHistoryDescription" xml:space="preserve"><value>الإصدارات السابقة لكل حلقة وماكرو وإعادة تعيين · {0}</value></data>
-  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>ما طلبته تطبيقات الذكاء الاصطناعي، مع الاستعادة · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>ما طلبته تطبيقات AI، مع الاستعادة · {0}</value></data>
   <data name="Export_PartLogsDescription" xml:space="preserve"><value>لاستكشاف الأخطاء وإصلاحها · {0}</value></data>
   <data name="Export_SizeB" xml:space="preserve"><value>{0} بايت</value></data>
   <data name="Export_SizeKB" xml:space="preserve"><value>{0} كيلوبايت</value></data>
@@ -384,28 +384,28 @@
 التفاصيل: {1}</value></data>
   <data name="App_MacroFilesSkipped" xml:space="preserve"><value>تعذرت قراءة بعض ملفات الماكرو وتم تخطيها (مثل {0}).</value></data>
   <data name="Backup_NotABackup" xml:space="preserve"><value>هذا الملف ليس نسخة احتياطية من PuppyMacro.</value></data>
-  <data name="AiStatus_ToolTip" xml:space="preserve"><value>تطبيقات الذكاء الاصطناعي المتصلة: حدد لفتح صفحة الذكاء الاصطناعي</value></data>
-  <data name="AiStatus_Name" xml:space="preserve"><value>تطبيقات الذكاء الاصطناعي المتصلة</value></data>
-  <data name="AiPage_Description" xml:space="preserve"><value>استخدم PuppyMacro من تطبيق ذكاء اصطناعي على هذا الكمبيوتر، مثل Claude Desktop أو Visual Studio Code. اطلب بكلماتك الخاصة: ينشئ الذكاء الاصطناعي الحلقات ووحدات الماكرو وعمليات إعادة التعيين، وتجربها على الفور.</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>تطبيقات AI المتصلة: حدد لفتح صفحة AI</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>تطبيقات AI المتصلة</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>استخدم PuppyMacro من تطبيق AI على هذا الكمبيوتر، مثل Claude Desktop أو Visual Studio Code. اطلب بكلماتك الخاصة: ينشئ AI الحلقات ووحدات الماكرو وعمليات إعادة التعيين، وتجربها على الفور.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>إصدار تجريبي</value></data>
-  <data name="AiPage_BetaMessage" xml:space="preserve"><value>تطبيقات الذكاء الاصطناعي في PuppyMacro جديدة: إنها تعمل، لكنها قد تتغير، وقد يخطئ الذكاء الاصطناعي في فهم طلب. يتم الاحتفاظ بكل تغيير في محفوظات العنصر، لذا يمكنك دائمًا الرجوع.</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>تطبيقات AI في PuppyMacro جديدة: إنها تعمل، لكنها قد تتغير، وقد يخطئ AI في فهم طلب. يتم الاحتفاظ بكل تغيير في محفوظات العنصر، لذا يمكنك دائمًا الرجوع.</value></data>
   <data name="AiPage_Access" xml:space="preserve"><value>الوصول</value></data>
-  <data name="AiPage_AllowAccess" xml:space="preserve"><value>السماح بوصول الذكاء الاصطناعي</value></data>
-  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>يمكن لتطبيقات الذكاء الاصطناعي على هذا الكمبيوتر قراءة الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات وتغييرها. يتم الاحتفاظ بكل تغيير في محفوظات العنصر.</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>السماح بوصول AI</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>يمكن لتطبيقات AI على هذا الكمبيوتر قراءة الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات وتغييرها. يتم الاحتفاظ بكل تغيير في محفوظات العنصر.</value></data>
   <data name="AiPage_AskDelete" xml:space="preserve"><value>السؤال قبل حذف حلقة أو ماكرو أو إعادة تعيين</value></data>
   <data name="AiPage_AskDeleteName" xml:space="preserve"><value>السؤال قبل الحذف</value></data>
   <data name="AiPage_AskChange" xml:space="preserve"><value>السؤال قبل تغيير حلقة أو ماكرو أو إعادة تعيين</value></data>
   <data name="AiPage_AskChangeName" xml:space="preserve"><value>السؤال قبل التغيير</value></data>
-  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>عند إيقاف التشغيل: يتم حفظ العناصر الجديدة والمتغيرة من الذكاء الاصطناعي على الفور، جاهزة للتجربة.</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>عند إيقاف التشغيل: يتم حفظ العناصر الجديدة والمتغيرة من AI على الفور، جاهزة للتجربة.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>السؤال قبل تغيير الإعدادات</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>السمة، ومفاتيح التشغيل السريع العامة، ولوحة التراكب، والصوت</value></data>
-  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>بدء PuppyMacro عندما يحتاج إليه تطبيق ذكاء اصطناعي</value></data>
-  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>عند إيقاف التشغيل: أثناء إغلاق PuppyMacro، لا يمكن لتطبيقات الذكاء الاصطناعي استخدامه وتطلب منك فتحه.</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>بدء PuppyMacro عندما يحتاج إليه تطبيق AI</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>عند إيقاف التشغيل: أثناء إغلاق PuppyMacro، لا يمكن لتطبيقات AI استخدامه وتطلب منك فتحه.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>التطبيقات</value></data>
   <data name="AiPage_RecentActivity" xml:space="preserve"><value>النشاط الأخير</value></data>
   <data name="AiPage_ViewAll" xml:space="preserve"><value>عرض الكل</value></data>
-  <data name="AiPage_NoActivity" xml:space="preserve"><value>لا توجد طلبات بعد. قم بتوصيل تطبيق ذكاء اصطناعي أعلاه، ثم اطلب منه إنشاء حلقة أو ماكرو أو إعادة تعيين.</value></data>
-  <data name="AiPage_HowToUse" xml:space="preserve"><value>كيفية استخدام الذكاء الاصطناعي مع PuppyMacro</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>لا توجد طلبات بعد. قم بتوصيل تطبيق AI أعلاه، ثم اطلب منه إنشاء حلقة أو ماكرو أو إعادة تعيين.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>كيفية استخدام AI مع PuppyMacro</value></data>
   <data name="AiApps_ConnectedSince" xml:space="preserve"><value>متصل منذ {0}</value></data>
   <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>تمت الإضافة. أعد تشغيل Claude Desktop للاتصال.</value></data>
   <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>تمت الإضافة. افتح Copilot Chat في Agent mode للاتصال.</value></data>
@@ -423,7 +423,7 @@
   <data name="AiApps_OtherApps" xml:space="preserve"><value>تطبيقات أخرى</value></data>
   <data name="AiApps_OthersConnected" xml:space="preserve"><value>متصل: {0}</value></data>
   <data name="AiApps_OthersHint" xml:space="preserve"><value>أي تطبيق يدعم خوادم MCP المحلية: الصق التكوين في إعدادات MCP الخاصة به.</value></data>
-  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>تم نسخ التكوين. الصقه في إعدادات MCP لتطبيق الذكاء الاصطناعي، ثم أعد تشغيل التطبيق.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>تم نسخ التكوين. الصقه في إعدادات MCP لتطبيق AI، ثم أعد تشغيل التطبيق.</value></data>
   <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>لم يتم فتح Visual Studio Code: {0}</value></data>
   <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>قم بإزالته في Visual Studio Code: شغّل "MCP: Open User Configuration" واحذف "{0}".</value></data>
   <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>يحتوي مجلد PuppyMacro على حرف لا يمكن لإعدادات Codex احتواؤه.</value></data>
@@ -431,12 +431,12 @@
   <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>ملف إعدادات {0} ليس كائن JSON، لذا لم يغيّره PuppyMacro ({1}).</value></data>
   <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>في ملف إعدادات {0}، "{1}" ليس كائنًا، لذا لم يغيّره PuppyMacro ({2}).</value></data>
   <data name="AiApps_SettingsFileError" xml:space="preserve"><value>يحتوي ملف إعدادات {0} على خطأ، لذا لم يغيّره PuppyMacro: {1} ({2})</value></data>
-  <data name="AiApps_PipeInUse" xml:space="preserve"><value>يستخدم برنامج آخر اتصال الذكاء الاصطناعي الخاص بـ PuppyMacro، لذا لا يمكن لتطبيقات الذكاء الاصطناعي الاتصال. أغلقه، أو أعد تشغيل Windows.</value></data>
-  <data name="AiApps_CantConnect" xml:space="preserve"><value>لا يمكن لتطبيقات الذكاء الاصطناعي الاتصال: {0}</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>يستخدم برنامج آخر اتصال AI الخاص بـ PuppyMacro، لذا لا يمكن لتطبيقات AI الاتصال. أغلقه، أو أعد تشغيل Windows.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>لا يمكن لتطبيقات AI الاتصال: {0}</value></data>
   <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>يتعذر استعادة هذه الإعدادات.</value></data>
   <data name="AiActivity_CantRestore" xml:space="preserve"><value>يتعذر استعادة هذا التغيير.</value></data>
   <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>يتعذر استعادة هذا التغيير: {0}</value></data>
-  <data name="AiActivity_Title" xml:space="preserve"><value>نشاط الذكاء الاصطناعي</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>نشاط AI</value></data>
   <data name="AiActivity_KeptNote" xml:space="preserve"><value>محفوظة على هذا الكمبيوتر: أحدث الطلبات، حتى 20 ميغابايت.</value></data>
   <data name="AiActivity_ClearHistory" xml:space="preserve"><value>مسح المحفوظات</value></data>
   <data name="AiActivity_Close" xml:space="preserve"><value>إغلاق</value></data>
@@ -456,11 +456,11 @@
   <data name="AiActivity_Details" xml:space="preserve"><value>التفاصيل</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>لا توجد طلبات بعد.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>لا توجد طلبات تطابق عوامل التصفية.</value></data>
-  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>هل تريد حذف محفوظات طلبات الذكاء الاصطناعي؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>هل تريد حذف محفوظات طلبات AI؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
   <data name="AiActivity_Clear" xml:space="preserve"><value>مسح</value></data>
   <data name="AiActivity_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
-  <data name="AiRequest_Title" xml:space="preserve"><value>طلب ذكاء اصطناعي</value></data>
-  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>طلب ذكاء اصطناعي - {0}</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>طلب AI</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>طلب AI - {0}</value></data>
   <data name="AiRequest_AskedBy" xml:space="preserve"><value>طلبه {0}</value></data>
   <data name="AiRequest_Instructions" xml:space="preserve"><value>الإرشادات</value></data>
   <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>

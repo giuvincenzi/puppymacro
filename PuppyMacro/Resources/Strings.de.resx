@@ -41,8 +41,8 @@
   <data name="History_ThisIsCurrent" xml:space="preserve"><value>Dies ist die aktuelle Version.</value></data>
   <data name="History_RestoreHint" xml:space="preserve"><value>„Wiederherstellen“ lädt diese Version in den Editor: Wählen Sie „Speichern“, um sie zu behalten. Die aktuelle Version bleibt im Verlauf.</value></data>
   <data name="Ai_Connected" xml:space="preserve"><value>Verbunden</value></data>
-  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Verbindungsversuch bei deaktiviertem KI-Zugriff</value></data>
-  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>{0} bei deaktiviertem KI-Zugriff aufgerufen</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Verbindungsversuch bei deaktiviertem AI-Zugriff</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>{0} bei deaktiviertem AI-Zugriff aufgerufen</value></data>
   <data name="Ai_ReadOverview" xml:space="preserve"><value>Ihre Schleifen, Makros und Neuzuordnungen gelesen</value></data>
   <data name="Ai_ReadSettings" xml:space="preserve"><value>Ihre Einstellungen gelesen</value></data>
   <data name="Ai_ListedApps" xml:space="preserve"><value>Geöffnete Apps aufgelistet</value></data>
@@ -250,7 +250,7 @@ Was die Datei nicht enthält, bleibt unverändert. Ihre aktuellen Daten werden z
   <data name="Backup_ImportAndRestart" xml:space="preserve"><value>Importieren und neu starten</value></data>
   <data name="Backup_PartData" xml:space="preserve"><value>Schleifen, Makros, Neuzuordnungen und Einstellungen</value></data>
   <data name="Backup_PartHistory" xml:space="preserve"><value>Verlauf</value></data>
-  <data name="Backup_PartAiActivity" xml:space="preserve"><value>KI-Aktivität</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>AI-Aktivität</value></data>
   <data name="Backup_PartLogs" xml:space="preserve"><value>Protokolle</value></data>
   <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} und {1}</value></data>
   <data name="Update_CheckFailed" xml:space="preserve"><value>Es konnte nicht nach Updates gesucht werden. {0}</value></data>
@@ -282,12 +282,12 @@ Was die Datei nicht enthält, bleibt unverändert. Ihre aktuellen Daten werden z
   <data name="Export_Choose" xml:space="preserve"><value>Auswählen, was exportiert werden soll</value></data>
   <data name="Export_PartData" xml:space="preserve"><value>Schleifen, Makros, Neuzuordnungen und Einstellungen</value></data>
   <data name="Export_PartHistory" xml:space="preserve"><value>Verlauf</value></data>
-  <data name="Export_PartAiActivity" xml:space="preserve"><value>KI-Aktivität</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>AI-Aktivität</value></data>
   <data name="Export_PartLogs" xml:space="preserve"><value>Protokolle</value></data>
   <data name="Export_EverythingDescription" xml:space="preserve"><value>Eine identische Kopie, um PuppyMacro auf einen anderen PC zu übertragen · {0}</value></data>
   <data name="Export_PartDataDescription" xml:space="preserve"><value>Immer enthalten · {0}</value></data>
   <data name="Export_PartHistoryDescription" xml:space="preserve"><value>Frühere Versionen jeder Schleife, jedes Makros und jeder Neuzuordnung · {0}</value></data>
-  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Anfragen von KI-Apps, mit „Wiederherstellen“ · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Anfragen von AI-Apps, mit „Wiederherstellen“ · {0}</value></data>
   <data name="Export_PartLogsDescription" xml:space="preserve"><value>Zur Problembehandlung · {0}</value></data>
   <data name="Export_SizeB" xml:space="preserve"><value>{0} Byte</value></data>
   <data name="Export_SizeKB" xml:space="preserve"><value>{0} KB</value></data>
@@ -332,28 +332,28 @@ Die alte Datei wurde als {0} gespeichert.
 Details: {1}</value></data>
   <data name="App_MacroFilesSkipped" xml:space="preserve"><value>Einige Makrodateien konnten nicht gelesen werden und wurden übersprungen (z. B. {0}).</value></data>
   <data name="Backup_NotABackup" xml:space="preserve"><value>Diese Datei ist keine PuppyMacro-Sicherung.</value></data>
-  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Verbundene KI-Apps: Auswählen, um die KI-Seite zu öffnen</value></data>
-  <data name="AiStatus_Name" xml:space="preserve"><value>Verbundene KI-Apps</value></data>
-  <data name="AiPage_Description" xml:space="preserve"><value>Verwenden Sie PuppyMacro aus einer KI-App auf diesem PC, z. B. Claude Desktop oder Visual Studio Code. Fragen Sie in Ihren eigenen Worten: Die KI erstellt Schleifen, Makros und Neuzuordnungen, und Sie probieren sie sofort aus.</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Verbundene AI-Apps: Auswählen, um die AI-Seite zu öffnen</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>Verbundene AI-Apps</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Verwenden Sie PuppyMacro aus einer AI-App auf diesem PC, z. B. Claude Desktop oder Visual Studio Code. Fragen Sie in Ihren eigenen Worten: Die AI erstellt Schleifen, Makros und Neuzuordnungen, und Sie probieren sie sofort aus.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
-  <data name="AiPage_BetaMessage" xml:space="preserve"><value>KI-Apps in PuppyMacro sind neu: Sie funktionieren, können sich aber noch ändern, und eine KI kann eine Anfrage falsch verstehen. Jede Änderung wird im Verlauf des Elements gespeichert, sodass Sie jederzeit zurückkehren können.</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>AI-Apps in PuppyMacro sind neu: Sie funktionieren, können sich aber noch ändern, und eine AI kann eine Anfrage falsch verstehen. Jede Änderung wird im Verlauf des Elements gespeichert, sodass Sie jederzeit zurückkehren können.</value></data>
   <data name="AiPage_Access" xml:space="preserve"><value>Zugriff</value></data>
-  <data name="AiPage_AllowAccess" xml:space="preserve"><value>KI-Zugriff erlauben</value></data>
-  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>KI-Apps auf diesem PC können Ihre Schleifen, Makros, Neuzuordnungen und Einstellungen lesen und ändern. Jede Änderung wird im Verlauf des Elements gespeichert.</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>AI-Zugriff erlauben</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>AI-Apps auf diesem PC können Ihre Schleifen, Makros, Neuzuordnungen und Einstellungen lesen und ändern. Jede Änderung wird im Verlauf des Elements gespeichert.</value></data>
   <data name="AiPage_AskDelete" xml:space="preserve"><value>Vor dem Löschen einer Schleife, eines Makros oder einer Neuzuordnung fragen</value></data>
   <data name="AiPage_AskDeleteName" xml:space="preserve"><value>Vor dem Löschen fragen</value></data>
   <data name="AiPage_AskChange" xml:space="preserve"><value>Vor dem Ändern einer Schleife, eines Makros oder einer Neuzuordnung fragen</value></data>
   <data name="AiPage_AskChangeName" xml:space="preserve"><value>Vor dem Ändern fragen</value></data>
-  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Aus: Neue und geänderte Elemente der KI werden sofort gespeichert und können gleich ausprobiert werden.</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Aus: Neue und geänderte Elemente der AI werden sofort gespeichert und können gleich ausprobiert werden.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Vor dem Ändern von Einstellungen fragen</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Design, globale Hotkeys, Overlay-Panel, Sound</value></data>
-  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>PuppyMacro starten, wenn eine KI-App es benötigt</value></data>
-  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Aus: Solange PuppyMacro geschlossen ist, können KI-Apps es nicht verwenden und fordern Sie auf, es zu öffnen.</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>PuppyMacro starten, wenn eine AI-App es benötigt</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Aus: Solange PuppyMacro geschlossen ist, können AI-Apps es nicht verwenden und fordern Sie auf, es zu öffnen.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Apps</value></data>
   <data name="AiPage_RecentActivity" xml:space="preserve"><value>Letzte Aktivität</value></data>
   <data name="AiPage_ViewAll" xml:space="preserve"><value>Alle anzeigen</value></data>
-  <data name="AiPage_NoActivity" xml:space="preserve"><value>Noch keine Anfragen. Verbinden Sie oben eine KI-App, und bitten Sie sie dann, eine Schleife, ein Makro oder eine Neuzuordnung zu erstellen.</value></data>
-  <data name="AiPage_HowToUse" xml:space="preserve"><value>So verwenden Sie KI mit PuppyMacro</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>Noch keine Anfragen. Verbinden Sie oben eine AI-App, und bitten Sie sie dann, eine Schleife, ein Makro oder eine Neuzuordnung zu erstellen.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>So verwenden Sie AI mit PuppyMacro</value></data>
   <data name="AiApps_ConnectedSince" xml:space="preserve"><value>Verbunden seit {0}</value></data>
   <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>Hinzugefügt. Starten Sie Claude Desktop neu, um die Verbindung herzustellen.</value></data>
   <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>Hinzugefügt. Öffnen Sie Copilot Chat im Agent-Modus, um die Verbindung herzustellen.</value></data>
@@ -371,7 +371,7 @@ Details: {1}</value></data>
   <data name="AiApps_OtherApps" xml:space="preserve"><value>Andere Apps</value></data>
   <data name="AiApps_OthersConnected" xml:space="preserve"><value>Verbunden: {0}</value></data>
   <data name="AiApps_OthersHint" xml:space="preserve"><value>Jede App, die lokale MCP-Server unterstützt: Fügen Sie die Konfiguration in ihre MCP-Einstellungen ein.</value></data>
-  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Konfiguration kopiert. Fügen Sie sie in die MCP-Einstellungen Ihrer KI-App ein, und starten Sie die App dann neu.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Konfiguration kopiert. Fügen Sie sie in die MCP-Einstellungen Ihrer AI-App ein, und starten Sie die App dann neu.</value></data>
   <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code wurde nicht geöffnet: {0}</value></data>
   <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Entfernen Sie es in Visual Studio Code: Führen Sie „MCP: Open User Configuration“ aus, und löschen Sie „{0}“.</value></data>
   <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>Der Ordner von PuppyMacro enthält ein Zeichen, das die Einstellungen von Codex nicht speichern können.</value></data>
@@ -379,12 +379,12 @@ Details: {1}</value></data>
   <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>Die Einstellungsdatei von {0} ist kein JSON-Objekt, daher hat PuppyMacro sie nicht geändert ({1}).</value></data>
   <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>In der Einstellungsdatei von {0} ist „{1}“ kein Objekt, daher hat PuppyMacro sie nicht geändert ({2}).</value></data>
   <data name="AiApps_SettingsFileError" xml:space="preserve"><value>Die Einstellungsdatei von {0} enthält einen Fehler, daher hat PuppyMacro sie nicht geändert: {1} ({2})</value></data>
-  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Ein anderes Programm verwendet die KI-Verbindung von PuppyMacro, daher können sich KI-Apps nicht verbinden. Schließen Sie es, oder starten Sie Windows neu.</value></data>
-  <data name="AiApps_CantConnect" xml:space="preserve"><value>KI-Apps können sich nicht verbinden: {0}</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Ein anderes Programm verwendet die AI-Verbindung von PuppyMacro, daher können sich AI-Apps nicht verbinden. Schließen Sie es, oder starten Sie Windows neu.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>AI-Apps können sich nicht verbinden: {0}</value></data>
   <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>Diese Einstellungen können nicht wiederhergestellt werden.</value></data>
   <data name="AiActivity_CantRestore" xml:space="preserve"><value>Diese Änderung kann nicht wiederhergestellt werden.</value></data>
   <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>Diese Änderung kann nicht wiederhergestellt werden: {0}</value></data>
-  <data name="AiActivity_Title" xml:space="preserve"><value>KI-Aktivität</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>AI-Aktivität</value></data>
   <data name="AiActivity_KeptNote" xml:space="preserve"><value>Auf diesem PC gespeichert: die neuesten Anfragen, bis zu 20 MB.</value></data>
   <data name="AiActivity_ClearHistory" xml:space="preserve"><value>Verlauf löschen</value></data>
   <data name="AiActivity_Close" xml:space="preserve"><value>Schließen</value></data>
@@ -404,11 +404,11 @@ Details: {1}</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Details</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Noch keine Anfragen.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Keine Anfragen entsprechen den Filtern.</value></data>
-  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>Den Verlauf der KI-Anfragen löschen? Dies kann nicht rückgängig gemacht werden.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>Den Verlauf der AI-Anfragen löschen? Dies kann nicht rückgängig gemacht werden.</value></data>
   <data name="AiActivity_Clear" xml:space="preserve"><value>Löschen</value></data>
   <data name="AiActivity_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
-  <data name="AiRequest_Title" xml:space="preserve"><value>KI-Anfrage</value></data>
-  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>KI-Anfrage - {0}</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>AI-Anfrage</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>AI-Anfrage - {0}</value></data>
   <data name="AiRequest_AskedBy" xml:space="preserve"><value>Angefordert von {0}</value></data>
   <data name="AiRequest_Instructions" xml:space="preserve"><value>Anweisungen</value></data>
   <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>

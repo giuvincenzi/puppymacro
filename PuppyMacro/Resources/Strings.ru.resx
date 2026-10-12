@@ -47,8 +47,8 @@
   <data name="History_RestoreHint" xml:space="preserve"><value>«Восстановить» помещает эту версию в редактор: чтобы оставить ее, нажмите «Сохранить». Текущая версия останется в журнале.</value></data>
 
   <data name="Ai_Connected" xml:space="preserve"><value>Подключено</value></data>
-  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Попытка подключения при отключенном доступе для ИИ</value></data>
-  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>Вызов {0} при отключенном доступе для ИИ</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Попытка подключения при отключенном доступе для AI</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>Вызов {0} при отключенном доступе для AI</value></data>
   <data name="Ai_ReadOverview" xml:space="preserve"><value>Прочитаны ваши циклы, макросы и переназначения</value></data>
   <data name="Ai_ReadSettings" xml:space="preserve"><value>Прочитаны ваши параметры</value></data>
   <data name="Ai_ListedApps" xml:space="preserve"><value>Получен список открытых приложений</value></data>
@@ -265,7 +265,7 @@
   <data name="Backup_ImportAndRestart" xml:space="preserve"><value>Импортировать и перезапустить</value></data>
   <data name="Backup_PartData" xml:space="preserve"><value>циклы, макросы, переназначения и параметры</value></data>
   <data name="Backup_PartHistory" xml:space="preserve"><value>журнал</value></data>
-  <data name="Backup_PartAiActivity" xml:space="preserve"><value>действия ИИ</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>действия AI</value></data>
   <data name="Backup_PartLogs" xml:space="preserve"><value>журналы диагностики</value></data>
   <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} и {1}</value></data>
   <data name="Update_CheckFailed" xml:space="preserve"><value>Не удалось проверить наличие обновлений. {0}</value></data>
@@ -297,12 +297,12 @@
   <data name="Export_Choose" xml:space="preserve"><value>Выбрать, что экспортировать</value></data>
   <data name="Export_PartData" xml:space="preserve"><value>Циклы, макросы, переназначения и параметры</value></data>
   <data name="Export_PartHistory" xml:space="preserve"><value>Журнал</value></data>
-  <data name="Export_PartAiActivity" xml:space="preserve"><value>Действия ИИ</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>Действия AI</value></data>
   <data name="Export_PartLogs" xml:space="preserve"><value>Журналы диагностики</value></data>
   <data name="Export_EverythingDescription" xml:space="preserve"><value>Точная копия для переноса PuppyMacro на другой компьютер · {0}</value></data>
   <data name="Export_PartDataDescription" xml:space="preserve"><value>Всегда включаются · {0}</value></data>
   <data name="Export_PartHistoryDescription" xml:space="preserve"><value>Предыдущие версии каждого цикла, макроса и переназначения · {0}</value></data>
-  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Запросы приложений ИИ с возможностью восстановления · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Запросы приложений AI с возможностью восстановления · {0}</value></data>
   <data name="Export_PartLogsDescription" xml:space="preserve"><value>Для устранения неполадок · {0}</value></data>
   <data name="Export_SizeB" xml:space="preserve"><value>{0} байт</value></data>
   <data name="Export_SizeKB" xml:space="preserve"><value>{0} КБ</value></data>
@@ -353,28 +353,28 @@
   <data name="App_MacroFilesSkipped" xml:space="preserve"><value>Некоторые файлы макросов не удалось прочитать, и они были пропущены (например, {0}).</value></data>
   <data name="Backup_NotABackup" xml:space="preserve"><value>Этот файл не является резервной копией PuppyMacro.</value></data>
 
-  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Подключенные приложения ИИ: выберите, чтобы открыть страницу ИИ</value></data>
-  <data name="AiStatus_Name" xml:space="preserve"><value>Подключенные приложения ИИ</value></data>
-  <data name="AiPage_Description" xml:space="preserve"><value>Используйте PuppyMacro из приложения ИИ на этом компьютере, например Claude Desktop или Visual Studio Code. Просите своими словами: ИИ создает циклы, макросы и переназначения, а вы сразу их пробуете.</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Подключенные приложения AI: выберите, чтобы открыть страницу AI</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>Подключенные приложения AI</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Используйте PuppyMacro из приложения AI на этом компьютере, например Claude Desktop или Visual Studio Code. Просите своими словами: AI создает циклы, макросы и переназначения, а вы сразу их пробуете.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Бета-версия</value></data>
-  <data name="AiPage_BetaMessage" xml:space="preserve"><value>Приложения ИИ в PuppyMacro — новая функция: она работает, но может измениться, а ИИ может неправильно понять запрос. Каждое изменение сохраняется в журнале элемента, поэтому всегда можно вернуться назад.</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>Приложения AI в PuppyMacro — новая функция: она работает, но может измениться, а AI может неправильно понять запрос. Каждое изменение сохраняется в журнале элемента, поэтому всегда можно вернуться назад.</value></data>
   <data name="AiPage_Access" xml:space="preserve"><value>Доступ</value></data>
-  <data name="AiPage_AllowAccess" xml:space="preserve"><value>Разрешить доступ для ИИ</value></data>
-  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>Приложения ИИ на этом компьютере могут читать и изменять ваши циклы, макросы, переназначения и параметры. Каждое изменение сохраняется в журнале элемента.</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>Разрешить доступ для AI</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>Приложения AI на этом компьютере могут читать и изменять ваши циклы, макросы, переназначения и параметры. Каждое изменение сохраняется в журнале элемента.</value></data>
   <data name="AiPage_AskDelete" xml:space="preserve"><value>Спрашивать перед удалением цикла, макроса или переназначения</value></data>
   <data name="AiPage_AskDeleteName" xml:space="preserve"><value>Спрашивать перед удалением</value></data>
   <data name="AiPage_AskChange" xml:space="preserve"><value>Спрашивать перед изменением цикла, макроса или переназначения</value></data>
   <data name="AiPage_AskChangeName" xml:space="preserve"><value>Спрашивать перед изменением</value></data>
-  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Если выключено, новые и измененные ИИ элементы сохраняются сразу и готовы к проверке.</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Если выключено, новые и измененные AI элементы сохраняются сразу и готовы к проверке.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Спрашивать перед изменением параметров</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Тема, глобальные горячие клавиши, панель наложения, звук</value></data>
-  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Запускать PuppyMacro, когда он нужен приложению ИИ</value></data>
-  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Если выключено, пока PuppyMacro закрыт, приложения ИИ не могут его использовать и попросят вас его открыть.</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Запускать PuppyMacro, когда он нужен приложению AI</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Если выключено, пока PuppyMacro закрыт, приложения AI не могут его использовать и попросят вас его открыть.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Приложения</value></data>
   <data name="AiPage_RecentActivity" xml:space="preserve"><value>Последние действия</value></data>
   <data name="AiPage_ViewAll" xml:space="preserve"><value>Показать все</value></data>
-  <data name="AiPage_NoActivity" xml:space="preserve"><value>Запросов пока нет. Подключите приложение ИИ выше, а затем попросите его создать цикл, макрос или переназначение.</value></data>
-  <data name="AiPage_HowToUse" xml:space="preserve"><value>Как использовать ИИ с PuppyMacro</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>Запросов пока нет. Подключите приложение AI выше, а затем попросите его создать цикл, макрос или переназначение.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>Как использовать AI с PuppyMacro</value></data>
   <data name="AiApps_ConnectedSince" xml:space="preserve"><value>Подключено с {0}</value></data>
   <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>Добавлено. Перезапустите Claude Desktop для подключения.</value></data>
   <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>Добавлено. Для подключения откройте Copilot Chat в режиме Agent.</value></data>
@@ -392,7 +392,7 @@
   <data name="AiApps_OtherApps" xml:space="preserve"><value>Другие приложения</value></data>
   <data name="AiApps_OthersConnected" xml:space="preserve"><value>Подключено: {0}</value></data>
   <data name="AiApps_OthersHint" xml:space="preserve"><value>Любое приложение, поддерживающее локальные серверы MCP: вставьте конфигурацию в его параметры MCP.</value></data>
-  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Конфигурация скопирована. Вставьте ее в параметры MCP вашего приложения ИИ, а затем перезапустите приложение.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Конфигурация скопирована. Вставьте ее в параметры MCP вашего приложения AI, а затем перезапустите приложение.</value></data>
   <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Не удалось открыть Visual Studio Code: {0}</value></data>
   <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Удалите его в Visual Studio Code: выполните команду "MCP: Open User Configuration" и удалите «{0}».</value></data>
   <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>Путь к папке PuppyMacro содержит символ, который не поддерживается параметрами Codex.</value></data>
@@ -400,12 +400,12 @@
   <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>Файл параметров {0} не является объектом JSON, поэтому PuppyMacro не изменил его ({1}).</value></data>
   <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>В файле параметров {0} "{1}" не является объектом, поэтому PuppyMacro не изменил его ({2}).</value></data>
   <data name="AiApps_SettingsFileError" xml:space="preserve"><value>Файл параметров {0} содержит ошибку, поэтому PuppyMacro не изменил его: {1} ({2})</value></data>
-  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Другая программа использует подключение ИИ PuppyMacro, поэтому приложения ИИ не могут подключиться. Закройте ее или перезапустите Windows.</value></data>
-  <data name="AiApps_CantConnect" xml:space="preserve"><value>Приложения ИИ не могут подключиться: {0}</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Другая программа использует подключение AI PuppyMacro, поэтому приложения AI не могут подключиться. Закройте ее или перезапустите Windows.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>Приложения AI не могут подключиться: {0}</value></data>
   <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>Эти параметры нельзя восстановить.</value></data>
   <data name="AiActivity_CantRestore" xml:space="preserve"><value>Это изменение нельзя восстановить.</value></data>
   <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>Это изменение нельзя восстановить: {0}</value></data>
-  <data name="AiActivity_Title" xml:space="preserve"><value>Действия ИИ</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>Действия AI</value></data>
   <data name="AiActivity_KeptNote" xml:space="preserve"><value>Хранится на этом компьютере: последние запросы, до 20 МБ.</value></data>
   <data name="AiActivity_ClearHistory" xml:space="preserve"><value>Очистить журнал</value></data>
   <data name="AiActivity_Close" xml:space="preserve"><value>Закрыть</value></data>
@@ -425,11 +425,11 @@
   <data name="AiActivity_Details" xml:space="preserve"><value>Подробности</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Запросов пока нет.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Нет запросов, соответствующих фильтрам.</value></data>
-  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>Удалить журнал запросов ИИ? Это действие нельзя отменить.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>Удалить журнал запросов AI? Это действие нельзя отменить.</value></data>
   <data name="AiActivity_Clear" xml:space="preserve"><value>Очистить</value></data>
   <data name="AiActivity_Cancel" xml:space="preserve"><value>Отмена</value></data>
-  <data name="AiRequest_Title" xml:space="preserve"><value>Запрос ИИ</value></data>
-  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>Запрос ИИ - {0}</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>Запрос AI</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>Запрос AI - {0}</value></data>
   <data name="AiRequest_AskedBy" xml:space="preserve"><value>Запрос от {0}</value></data>
   <data name="AiRequest_Instructions" xml:space="preserve"><value>Инструкции</value></data>
   <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>

@@ -42,8 +42,8 @@
   <data name="History_ThisIsCurrent" xml:space="preserve"><value>Esta es la versión actual.</value></data>
   <data name="History_RestoreHint" xml:space="preserve"><value>Restaurar pone esta versión en el editor: selecciona Guardar para conservarla. La versión actual se queda en el Historial.</value></data>
   <data name="Ai_Connected" xml:space="preserve"><value>Se conectó</value></data>
-  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Intentó conectarse con el acceso de IA desactivado</value></data>
-  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>Llamó a {0} con el acceso de IA desactivado</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Intentó conectarse con el acceso de AI desactivado</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>Llamó a {0} con el acceso de AI desactivado</value></data>
   <data name="Ai_ReadOverview" xml:space="preserve"><value>Leyó tus bucles, macros y reasignaciones</value></data>
   <data name="Ai_ReadSettings" xml:space="preserve"><value>Leyó tu configuración</value></data>
   <data name="Ai_ListedApps" xml:space="preserve"><value>Enumeró las aplicaciones abiertas</value></data>
@@ -251,7 +251,7 @@ Lo que el archivo no contiene se queda como está. Primero se hace una copia de 
   <data name="Backup_ImportAndRestart" xml:space="preserve"><value>Importar y reiniciar</value></data>
   <data name="Backup_PartData" xml:space="preserve"><value>bucles, macros, reasignaciones y configuración</value></data>
   <data name="Backup_PartHistory" xml:space="preserve"><value>Historial</value></data>
-  <data name="Backup_PartAiActivity" xml:space="preserve"><value>actividad de IA</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>actividad de AI</value></data>
   <data name="Backup_PartLogs" xml:space="preserve"><value>registros</value></data>
   <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} y {1}</value></data>
   <data name="Update_CheckFailed" xml:space="preserve"><value>No se pudo buscar actualizaciones. {0}</value></data>
@@ -283,12 +283,12 @@ Lo que el archivo no contiene se queda como está. Primero se hace una copia de 
   <data name="Export_Choose" xml:space="preserve"><value>Elegir qué exportar</value></data>
   <data name="Export_PartData" xml:space="preserve"><value>Bucles, macros, reasignaciones y configuración</value></data>
   <data name="Export_PartHistory" xml:space="preserve"><value>Historial</value></data>
-  <data name="Export_PartAiActivity" xml:space="preserve"><value>Actividad de IA</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>Actividad de AI</value></data>
   <data name="Export_PartLogs" xml:space="preserve"><value>Registros</value></data>
   <data name="Export_EverythingDescription" xml:space="preserve"><value>Una copia idéntica, para mover PuppyMacro a otro equipo · {0}</value></data>
   <data name="Export_PartDataDescription" xml:space="preserve"><value>Siempre incluido · {0}</value></data>
   <data name="Export_PartHistoryDescription" xml:space="preserve"><value>Versiones anteriores de cada bucle, macro y reasignación · {0}</value></data>
-  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Lo que pidieron las aplicaciones de IA, con Restaurar · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Lo que pidieron las aplicaciones de AI, con Restaurar · {0}</value></data>
   <data name="Export_PartLogsDescription" xml:space="preserve"><value>Para solucionar problemas · {0}</value></data>
   <data name="Export_SizeB" xml:space="preserve"><value>{0} bytes</value></data>
   <data name="Export_SizeKB" xml:space="preserve"><value>{0} KB</value></data>
@@ -333,28 +333,28 @@ El archivo anterior se guardó como {0}.
 Detalles: {1}</value></data>
   <data name="App_MacroFilesSkipped" xml:space="preserve"><value>Algunos archivos de macro no se pudieron leer y se omitieron (por ejemplo, {0}).</value></data>
   <data name="Backup_NotABackup" xml:space="preserve"><value>Este archivo no es una copia de seguridad de PuppyMacro.</value></data>
-  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplicaciones de IA conectadas: selecciona para abrir la página IA</value></data>
-  <data name="AiStatus_Name" xml:space="preserve"><value>Aplicaciones de IA conectadas</value></data>
-  <data name="AiPage_Description" xml:space="preserve"><value>Usa PuppyMacro desde una aplicación de IA de este equipo, como Claude Desktop o Visual Studio Code. Pide con tus propias palabras: la IA crea bucles, macros y reasignaciones, y tú los pruebas al momento.</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplicaciones de AI conectadas: selecciona para abrir la página AI</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>Aplicaciones de AI conectadas</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Usa PuppyMacro desde una aplicación de AI de este equipo, como Claude Desktop o Visual Studio Code. Pide con tus propias palabras: la AI crea bucles, macros y reasignaciones, y tú los pruebas al momento.</value></data>
   <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
-  <data name="AiPage_BetaMessage" xml:space="preserve"><value>Las aplicaciones de IA en PuppyMacro son nuevas: funcionan, pero pueden cambiar, y una IA puede malinterpretar una petición. Cada cambio se guarda en el Historial del elemento, así que siempre puedes volver atrás.</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>Las aplicaciones de AI en PuppyMacro son nuevas: funcionan, pero pueden cambiar, y una AI puede malinterpretar una petición. Cada cambio se guarda en el Historial del elemento, así que siempre puedes volver atrás.</value></data>
   <data name="AiPage_Access" xml:space="preserve"><value>Acceso</value></data>
-  <data name="AiPage_AllowAccess" xml:space="preserve"><value>Permitir el acceso de IA</value></data>
-  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>Las aplicaciones de IA de este equipo pueden leer y cambiar tus bucles, macros, reasignaciones y configuración. Cada cambio se guarda en el Historial del elemento.</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>Permitir el acceso de AI</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>Las aplicaciones de AI de este equipo pueden leer y cambiar tus bucles, macros, reasignaciones y configuración. Cada cambio se guarda en el Historial del elemento.</value></data>
   <data name="AiPage_AskDelete" xml:space="preserve"><value>Preguntar antes de eliminar un bucle, una macro o una reasignación</value></data>
   <data name="AiPage_AskDeleteName" xml:space="preserve"><value>Preguntar antes de eliminar</value></data>
   <data name="AiPage_AskChange" xml:space="preserve"><value>Preguntar antes de cambiar un bucle, una macro o una reasignación</value></data>
   <data name="AiPage_AskChangeName" xml:space="preserve"><value>Preguntar antes de cambiar</value></data>
-  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Desactivado: los elementos nuevos y cambiados por la IA se guardan al momento, listos para probar.</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Desactivado: los elementos nuevos y cambiados por la AI se guardan al momento, listos para probar.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Preguntar antes de cambiar la configuración</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Tema, teclas de acceso rápido globales, panel de superposición, sonido</value></data>
-  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Iniciar PuppyMacro cuando una aplicación de IA lo necesite</value></data>
-  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Desactivado: mientras PuppyMacro está cerrado, las aplicaciones de IA no pueden usarlo y te piden que lo abras.</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Iniciar PuppyMacro cuando una aplicación de AI lo necesite</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Desactivado: mientras PuppyMacro está cerrado, las aplicaciones de AI no pueden usarlo y te piden que lo abras.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Aplicaciones</value></data>
   <data name="AiPage_RecentActivity" xml:space="preserve"><value>Actividad reciente</value></data>
   <data name="AiPage_ViewAll" xml:space="preserve"><value>Ver todo</value></data>
-  <data name="AiPage_NoActivity" xml:space="preserve"><value>Aún no hay peticiones. Conecta una aplicación de IA arriba y pídele que cree un bucle, una macro o una reasignación.</value></data>
-  <data name="AiPage_HowToUse" xml:space="preserve"><value>Cómo usar la IA con PuppyMacro</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>Aún no hay peticiones. Conecta una aplicación de AI arriba y pídele que cree un bucle, una macro o una reasignación.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>Cómo usar la AI con PuppyMacro</value></data>
   <data name="AiApps_ConnectedSince" xml:space="preserve"><value>Conectada desde las {0}</value></data>
   <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>Agregado. Reinicia Claude Desktop para conectarte.</value></data>
   <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>Agregado. Abre Copilot Chat en modo Agent para conectarte.</value></data>
@@ -372,7 +372,7 @@ Detalles: {1}</value></data>
   <data name="AiApps_OtherApps" xml:space="preserve"><value>Otras aplicaciones</value></data>
   <data name="AiApps_OthersConnected" xml:space="preserve"><value>Conectadas: {0}</value></data>
   <data name="AiApps_OthersHint" xml:space="preserve"><value>Cualquier aplicación compatible con servidores MCP locales: pega la configuración en su configuración de MCP.</value></data>
-  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Configuración copiada. Pégala en la configuración de MCP de tu aplicación de IA y reinicia la aplicación.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Configuración copiada. Pégala en la configuración de MCP de tu aplicación de AI y reinicia la aplicación.</value></data>
   <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code no se abrió: {0}</value></data>
   <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Quítalo en Visual Studio Code: ejecuta "MCP: Open User Configuration" y elimina "{0}".</value></data>
   <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>La carpeta de PuppyMacro tiene un carácter que la configuración de Codex no admite.</value></data>
@@ -380,12 +380,12 @@ Detalles: {1}</value></data>
   <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>El archivo de configuración de {0} no es un objeto JSON, así que PuppyMacro no lo cambió ({1}).</value></data>
   <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>En el archivo de configuración de {0}, "{1}" no es un objeto, así que PuppyMacro no lo cambió ({2}).</value></data>
   <data name="AiApps_SettingsFileError" xml:space="preserve"><value>El archivo de configuración de {0} tiene un error, así que PuppyMacro no lo cambió: {1} ({2})</value></data>
-  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Otro programa usa la conexión de IA de PuppyMacro, así que las aplicaciones de IA no pueden conectarse. Ciérralo o reinicia Windows.</value></data>
-  <data name="AiApps_CantConnect" xml:space="preserve"><value>Las aplicaciones de IA no pueden conectarse: {0}</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Otro programa usa la conexión de AI de PuppyMacro, así que las aplicaciones de AI no pueden conectarse. Ciérralo o reinicia Windows.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>Las aplicaciones de AI no pueden conectarse: {0}</value></data>
   <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>Esta configuración no se puede restaurar.</value></data>
   <data name="AiActivity_CantRestore" xml:space="preserve"><value>Este cambio no se puede restaurar.</value></data>
   <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>Este cambio no se puede restaurar: {0}</value></data>
-  <data name="AiActivity_Title" xml:space="preserve"><value>Actividad de IA</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>Actividad de AI</value></data>
   <data name="AiActivity_KeptNote" xml:space="preserve"><value>Se guarda en este equipo: las peticiones más recientes, hasta 20 MB.</value></data>
   <data name="AiActivity_ClearHistory" xml:space="preserve"><value>Borrar historial</value></data>
   <data name="AiActivity_Close" xml:space="preserve"><value>Cerrar</value></data>
@@ -405,11 +405,11 @@ Detalles: {1}</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Detalles</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Aún no hay peticiones.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Ninguna petición coincide con los filtros.</value></data>
-  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>¿Eliminar el historial de peticiones de IA? Esta acción no se puede deshacer.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>¿Eliminar el historial de peticiones de AI? Esta acción no se puede deshacer.</value></data>
   <data name="AiActivity_Clear" xml:space="preserve"><value>Borrar</value></data>
   <data name="AiActivity_Cancel" xml:space="preserve"><value>Cancelar</value></data>
-  <data name="AiRequest_Title" xml:space="preserve"><value>Petición de IA</value></data>
-  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>Petición de IA - {0}</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>Petición de AI</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>Petición de AI - {0}</value></data>
   <data name="AiRequest_AskedBy" xml:space="preserve"><value>Pedido por {0}</value></data>
   <data name="AiRequest_Instructions" xml:space="preserve"><value>Instrucciones</value></data>
   <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>

@@ -23,6 +23,10 @@ public sealed class ResourcesTests
     /// </summary>
     public static readonly string[] Global = { "Rail_Ai", "AiPage_Title" };
 
+    /// <summary>Global words (i18n.md): written exactly as they are inside every translated sentence that has them.</summary>
+    public static readonly string[] GlobalWords =
+        { "AI", "PuppyMacro", "MCP", "JSON", "Claude", "Codex", "Copilot", "GitHub", "Windows" };
+
     private static string ResourcesFolder =>
         Path.Combine(Path.GetDirectoryName(ThisFile())!, "..", "..", "PuppyMacro", "Resources");
 
@@ -33,6 +37,10 @@ public sealed class ResourcesTests
     /// <summary>"Loops_Count" for "Loops_Count_one"; null for a text with no plural forms.</summary>
     private static string? PluralBase(string key) =>
         Forms.FirstOrDefault(f => key.EndsWith("_" + f, StringComparison.Ordinal)) is string form ? key[..^(form.Length + 1)] : null;
+
+    /// <summary>The word on its own (not inside a longer Latin word: "AI" in "AI-Apps", not in "MAIL").</summary>
+    private static bool HasWord(string text, string word) =>
+        Regex.IsMatch(text, $"(?<![A-Za-z]){Regex.Escape(word)}(?![a-z])");
 
     private static HashSet<string> Placeholders(string text) =>
         Regex.Matches(text, @"\{(\d+)(?:[,:][^}]*)?\}").Select(m => m.Groups[1].Value).ToHashSet();
@@ -80,6 +88,15 @@ public sealed class ResourcesTests
 
         foreach (string key in texts.Keys.Where(k => PluralBase(k) == null && !english.ContainsKey(k)))
             problems.Add($"{key}: not in Strings.resx");
+        // A global word in the English text is in the translation too, as it is (never "IA", "KI", "ИИ"…).
+        foreach (var (key, translated) in texts)
+        {
+            string englishKey = english.ContainsKey(key) ? key : $"{PluralBase(key)}_{Plurals.Other}";
+            if (!english.TryGetValue(englishKey, out string? source))
+                continue;
+            foreach (string word in GlobalWords.Where(w => HasWord(source, w) && !HasWord(translated, w)))
+                problems.Add($"{key}: the global word \"{word}\" is missing");
+        }
         // The editors find a sound by the name they show (SoundService.IdOf).
         foreach (var same in texts.Where(t => t.Key.StartsWith("Sound_", StringComparison.Ordinal)).GroupBy(t => t.Value).Where(g => g.Count() > 1))
             problems.Add($"{string.Join(", ", same.Select(s => s.Key))}: the same name");
