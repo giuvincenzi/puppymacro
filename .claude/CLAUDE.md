@@ -13,7 +13,7 @@ the others load when matching files are read or edited:
 | `git-workflow.md` | always | A worktree per change, pull requests, protected `main` |
 | `build-and-release.md` | always | `make` commands, dev and prod builds, releases |
 | `testing.md` | always | Unit tests (`make test`) and end-to-end tests (`make e2e`) |
-| `docs.md` | always | Website and user guide in `site/`, kept in sync with every change |
+| `docs.md` | always | Website, user guide in `site/` and AI tools, kept in sync with every change |
 | `architecture.md` | `PuppyMacro/**` | Threads, engine snapshot, feature map |
 | `input.md` | input pipeline files | Hooks, modifiers, injected input, routing order |
 | `data.md` | models and storage | Data folders, settings migrations, compatibility |
