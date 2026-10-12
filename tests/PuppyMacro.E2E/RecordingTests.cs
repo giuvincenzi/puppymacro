@@ -12,7 +12,7 @@ using static PuppyMacro.E2E.Playback;
 
 namespace PuppyMacro.E2E;
 
-/// <summary>Recording a macro on the target window and playing it back. make e2e CATEGORY=Recording</summary>
+/// <summary>Recording a macro on the target window and playing it back. make e2e category=Recording</summary>
 [Trait("Category", "Recording")]
 public class RecordingTests
 {

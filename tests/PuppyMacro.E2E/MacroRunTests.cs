@@ -6,7 +6,7 @@ using static PuppyMacro.E2E.Playback;
 
 namespace PuppyMacro.E2E;
 
-/// <summary>How macros run: repeat, speed, Toggle and Hold, the ways to stop them. make e2e CATEGORY=Macros</summary>
+/// <summary>How macros run: repeat, speed, Toggle and Hold, the ways to stop them. make e2e category=Macros</summary>
 [Trait("Category", "Macros")]
 public class MacroRunTests
 {

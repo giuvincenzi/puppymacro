@@ -30,7 +30,7 @@ paths:
 ```
 PuppyMacro.sln, Makefile, global.json
 scripts/                        PowerShell scripts run by the Makefile
-.github/workflows/              test.yml, e2e.yml, release.yml, site.yml
+.github/workflows/              test.yml, create_release_pr.yml, publish_release.yml (build-and-release.md)
 site/                           website and user guide sources (docs.md)
 tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end tests (testing.md)
 PuppyMacro/

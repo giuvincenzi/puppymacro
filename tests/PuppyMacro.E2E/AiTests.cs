@@ -18,7 +18,7 @@ namespace PuppyMacro.E2E;
 
 /// <summary>
 /// The AI page and the MCP server: the test is the AI app. It starts PuppyMacro.exe --mcp (the bridge) as an AI app does,
-/// calls the tools, and answers in PuppyMacro's windows as the user would. make e2e CATEGORY=AI
+/// calls the tools, and answers in PuppyMacro's windows as the user would. make e2e category=AI
 /// </summary>
 [Trait("Category", "AI")]
 public class AiTests

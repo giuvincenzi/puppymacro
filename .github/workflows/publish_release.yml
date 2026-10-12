@@ -1,0 +1,107 @@
+# Publishes a release: the tests, the signed installer with the GitHub Release and its tag vX.Y.Z, then the website.
+# Starts on a push to main that changes PuppyMacro/Version.props: GitHub compares the files of the pushed commit with
+# `paths`, so only the merge of the release pull request (create_release_pr) starts it; no other pull request can change
+# that file (the test workflow's block_version_change). A failed job is retried with "Re-run failed jobs" on its run.
+name: publish_release
+
+on:
+  push:
+    branches: [main]
+    paths: [PuppyMacro/Version.props]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish_release
+
+jobs:
+  # A release never ships with failing tests.
+  run_tests:
+    uses: ./.github/workflows/test.yml
+
+  publish_app:
+    needs: run_tests
+    runs-on: windows-latest
+    environment: signing   # CERTUM_EMAIL and CERTUM_OTP: the code signing secrets, for main only (build-and-release.md)
+    permissions:
+      contents: write   # the GitHub Release and its tag
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+
+      - name: install_dotnet
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: read_version_and_notes
+        id: version
+        shell: pwsh
+        run: |
+          . ./scripts/release.ps1
+          $version = Get-ProjectVersion .
+          Set-Content -Path "$env:RUNNER_TEMP/notes.md" -Value (Get-ReleaseNotes . $version) -Encoding utf8
+          Set-StepOutput 'version' $version
+
+      # Same script as `make build`; also downloads the previous release for the delta package. A release is always
+      # signed: without the secrets the build fails.
+      - name: build_signed_installer
+        shell: pwsh
+        env:
+          CERTUM_EMAIL: ${{ secrets.CERTUM_EMAIL }}
+          CERTUM_OTP: ${{ secrets.CERTUM_OTP }}
+        run: >
+          ./scripts/build.ps1
+          -ReleaseNotes "$env:RUNNER_TEMP/notes.md"
+          -PreviousReleaseRepo "${{ github.server_url }}/${{ github.repository }}"
+          -Token "${{ secrets.GITHUB_TOKEN }}"
+          -RequireSigning
+
+      # The GitHub Release with the installer and the update packages; GitHub creates the tag vX.Y.Z on this commit.
+      - name: publish_github_release
+        run: >
+          ./.tools/vpk.exe upload github
+          --repoUrl ${{ github.server_url }}/${{ github.repository }}
+          --token ${{ secrets.GITHUB_TOKEN }}
+          --publish
+          --releaseName "PuppyMacro ${{ steps.version.outputs.version }}"
+          --tag v${{ steps.version.outputs.version }}
+          --targetCommitish ${{ github.sha }}
+          --outputDir dist
+
+  # The website: the home page and one user guide per released version, each built from its tag (scripts/site.ps1).
+  publish_site:
+    needs: publish_app
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # every tag, the new one too: each guide version is built from its tag
+
+      - name: build_site
+        shell: pwsh
+        run: ./scripts/site.ps1
+
+      - name: configure_pages
+        uses: actions/configure-pages@v6
+
+      - name: upload_site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: deploy_to_github_pages
+        id: deploy
+        uses: actions/deploy-pages@v5
