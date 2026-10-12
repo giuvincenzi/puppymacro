@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -57,7 +59,7 @@ internal static class KeyNames
         var parts = new List<string>();
         if (hotkey == null || !hotkey.IsSet)
         {
-            parts.Add("No hotkey");
+            parts.Add(Strings.Keys_NoHotkey);
             return parts;
         }
         if (hotkey.Ctrl) parts.Add(Modifier("Ctrl", hotkey.CtrlSide));
@@ -68,15 +70,35 @@ internal static class KeyNames
         return parts;
     }
 
-    /// <summary>"Ctrl", "Left Ctrl" or "Right Ctrl".</summary>
-    public static string Modifier(string name, ModifierSide side) => side switch
+    /// <summary>"Ctrl", "Left Ctrl" or "Right Ctrl" (<paramref name="name"/>: "Ctrl", "Alt", "Shift" or "Win").</summary>
+    public static string Modifier(string name, ModifierSide side) => (name, side) switch
     {
-        ModifierSide.Left => "Left " + name,
-        ModifierSide.Right => "Right " + name,
+        ("Ctrl", ModifierSide.Left) => Strings.Keys_LeftCtrl,
+        ("Ctrl", ModifierSide.Right) => Strings.Keys_RightCtrl,
+        ("Ctrl", _) => Strings.Keys_Ctrl,
+        ("Alt", ModifierSide.Left) => Strings.Keys_LeftAlt,
+        ("Alt", ModifierSide.Right) => Strings.Keys_RightAlt,
+        ("Alt", _) => Strings.Keys_Alt,
+        ("Shift", ModifierSide.Left) => Strings.Keys_LeftShift,
+        ("Shift", ModifierSide.Right) => Strings.Keys_RightShift,
+        ("Shift", _) => Strings.Keys_Shift,
+        ("Win", ModifierSide.Left) => Strings.Keys_LeftWin,
+        ("Win", ModifierSide.Right) => Strings.Keys_RightWin,
+        ("Win", _) => Strings.Keys_Win,
         _ => name,
     };
 
-    public static string Format(HotkeyBinding? hotkey) => string.Join(" + ", Parts(hotkey));
+    /// <summary>"Left or right Ctrl" (<paramref name="name"/>: "Ctrl", "Alt", "Shift" or "Win").</summary>
+    public static string EitherSide(string name) => name switch
+    {
+        "Ctrl" => Strings.Keys_EitherCtrl,
+        "Alt" => Strings.Keys_EitherAlt,
+        "Shift" => Strings.Keys_EitherShift,
+        "Win" => Strings.Keys_EitherWin,
+        _ => name,
+    };
+
+    public static string Format(HotkeyBinding? hotkey) => string.Join(Strings.Keys_Join, Parts(hotkey));
 
     public static bool IsMouse(int vk) =>
         vk is VK_LBUTTON or VK_RBUTTON or VK_MBUTTON or VK_XBUTTON1 or VK_XBUTTON2;
@@ -86,59 +108,60 @@ internal static class KeyNames
 
     public static string Get(int vk) => vk switch
     {
-        0 => "None",
-        VK_WHEEL_UP => "Wheel up",
-        VK_WHEEL_DOWN => "Wheel down",
-        VK_WHEEL_LEFT => "Wheel left",
-        VK_WHEEL_RIGHT => "Wheel right",
-        VK_LBUTTON => "LButton",
-        VK_RBUTTON => "RButton",
-        VK_MBUTTON => "MButton",
-        VK_XBUTTON1 => "XButton1",
-        VK_XBUTTON2 => "XButton2",
-        0x08 => "Backspace",
-        0x09 => "Tab",
-        0x0D => "Enter",
-        0x10 => "Shift",
-        0x11 => "Ctrl",
-        0x12 => "Alt",
-        0x13 => "Pause",
-        0x14 => "CapsLock",
-        VK_ESCAPE => "Esc",
-        0x20 => "Space",
-        0x21 => "PageUp",
-        0x22 => "PageDown",
-        0x23 => "End",
-        0x24 => "Home",
-        0x25 => "Left",
-        0x26 => "Up",
-        0x27 => "Right",
-        0x28 => "Down",
-        0x2C => "PrintScreen",
-        0x2D => "Insert",
-        0x2E => "Delete",
+        0 => Strings.Keys_None,
+        VK_WHEEL_UP => Strings.Keys_WheelUp,
+        VK_WHEEL_DOWN => Strings.Keys_WheelDown,
+        VK_WHEEL_LEFT => Strings.Keys_WheelLeft,
+        VK_WHEEL_RIGHT => Strings.Keys_WheelRight,
+        VK_LBUTTON => Strings.Keys_LButton,
+        VK_RBUTTON => Strings.Keys_RButton,
+        VK_MBUTTON => Strings.Keys_MButton,
+        VK_XBUTTON1 => Strings.Keys_XButton1,
+        VK_XBUTTON2 => Strings.Keys_XButton2,
+        0x08 => Strings.Keys_Backspace,
+        0x09 => Strings.Keys_Tab,
+        0x0D => Strings.Keys_Enter,
+        0x10 => Strings.Keys_Shift,
+        0x11 => Strings.Keys_Ctrl,
+        0x12 => Strings.Keys_Alt,
+        0x13 => Strings.Keys_Pause,
+        0x14 => Strings.Keys_CapsLock,
+        VK_ESCAPE => Strings.Keys_Esc,
+        0x20 => Strings.Keys_Space,
+        0x21 => Strings.Keys_PageUp,
+        0x22 => Strings.Keys_PageDown,
+        0x23 => Strings.Keys_End,
+        0x24 => Strings.Keys_Home,
+        0x25 => Strings.Keys_Left,
+        0x26 => Strings.Keys_Up,
+        0x27 => Strings.Keys_Right,
+        0x28 => Strings.Keys_Down,
+        0x2C => Strings.Keys_PrintScreen,
+        0x2D => Strings.Keys_Insert,
+        0x2E => Strings.Keys_Delete,
         >= 0x30 and <= 0x39 => ((char)vk).ToString(),
         >= 0x41 and <= 0x5A => ((char)vk).ToString(),
-        0x5B => "Left Win",
-        0x5C => "Right Win",
-        >= 0x60 and <= 0x69 => "Numpad" + (vk - 0x60),
-        0x6A => "Numpad*",
-        0x6B => "Numpad+",
-        0x6D => "Numpad-",
-        0x6E => "Numpad.",
-        0x6F => "Numpad/",
+        0x5B => Strings.Keys_LeftWin,
+        0x5C => Strings.Keys_RightWin,
+        >= 0x60 and <= 0x69 => string.Format(CultureInfo.CurrentCulture, Strings.Keys_NumpadDigit, vk - 0x60),
+        0x6A => Strings.Keys_NumpadMultiply,
+        0x6B => Strings.Keys_NumpadAdd,
+        0x6D => Strings.Keys_NumpadSubtract,
+        0x6E => Strings.Keys_NumpadDecimal,
+        0x6F => Strings.Keys_NumpadDivide,
         >= 0x70 and <= 0x87 => "F" + (vk - 0x6F),
-        0x90 => "NumLock",
-        0x91 => "ScrollLock",
-        0xA0 => "Left Shift",
-        0xA1 => "Right Shift",
-        0xA2 => "Left Ctrl",
-        0xA3 => "Right Ctrl",
-        0xA4 => "Left Alt",
-        0xA5 => "Right Alt",
+        0x90 => Strings.Keys_NumLock,
+        0x91 => Strings.Keys_ScrollLock,
+        0xA0 => Strings.Keys_LeftShift,
+        0xA1 => Strings.Keys_RightShift,
+        0xA2 => Strings.Keys_LeftCtrl,
+        0xA3 => Strings.Keys_RightCtrl,
+        0xA4 => Strings.Keys_LeftAlt,
+        0xA5 => Strings.Keys_RightAlt,
         _ => FromSystem(vk),
     };
 
+    /// <summary>The name Windows gives the key (the keyboard layout's own, as it is).</summary>
     private static string FromSystem(int vk)
     {
         uint scanCode = NativeMethods.MapVirtualKey((uint)vk, NativeMethods.MAPVK_VK_TO_VSC);
@@ -149,6 +172,6 @@ internal static class KeyNames
             if (length > 0)
                 return new string(buffer, 0, length);
         }
-        return $"Key 0x{vk:X2}";
+        return string.Format(CultureInfo.CurrentCulture, Strings.Keys_Unknown, vk);
     }
 }

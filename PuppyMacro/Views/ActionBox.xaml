@@ -5,7 +5,8 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:local="clr-namespace:PuppyMacro"
-    xmlns:views="clr-namespace:PuppyMacro.Views">
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    xmlns:r="clr-namespace:PuppyMacro.Resources">
 
     <!-- One action, the same box in a loop row and in the macro's action window (DataContext: ActionBoxViewModel).
          The header has the action's main field (key, mouse button, direction or point). Opened, the rows in this order,
@@ -26,16 +27,16 @@
                 <views:MouseButtonBox VerticalAlignment="Center" Vk="{Binding MouseVk}" Rejected="OnMouseRejected"
                                       Visibility="{Binding IsMouseKind, Converter={StaticResource BoolToVisibility}}" />
                 <ComboBox VerticalAlignment="Center" MinWidth="120" SelectedIndex="{Binding DirectionIndex, Mode=TwoWay}"
-                          AutomationProperties.Name="Direction"
+                          AutomationProperties.Name="{x:Static r:Strings.Action_Direction}"
                           Visibility="{Binding IsScroll, Converter={StaticResource BoolToVisibility}}">
-                    <ComboBoxItem Content="Up" />
-                    <ComboBoxItem Content="Down" />
-                    <ComboBoxItem Content="Left" />
-                    <ComboBoxItem Content="Right" />
+                    <ComboBoxItem Content="{x:Static r:Strings.Action_DirectionUp}" />
+                    <ComboBoxItem Content="{x:Static r:Strings.Action_DirectionDown}" />
+                    <ComboBoxItem Content="{x:Static r:Strings.Action_DirectionLeft}" />
+                    <ComboBoxItem Content="{x:Static r:Strings.Action_DirectionRight}" />
                 </ComboBox>
                 <views:PositionPicker VerticalAlignment="Center" X="{Binding X}" Y="{Binding Y}"
                                       Visibility="{Binding IsMoveTo, Converter={StaticResource BoolToVisibility}}" />
-                <Button VerticalAlignment="Center" ToolTip="Remove" AutomationProperties.Name="Remove" Click="OnRemoveClick"
+                <Button VerticalAlignment="Center" ToolTip="{x:Static r:Strings.Action_Remove}" AutomationProperties.Name="{x:Static r:Strings.Action_Remove}" Click="OnRemoveClick"
                         Visibility="{Binding InLoop, Converter={StaticResource BoolToVisibility}}">
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
                 </Button>
@@ -67,116 +68,116 @@
 
             <ui:SettingsExpander.Items>
                 <!-- Loop: kept held down, or repeated -->
-                <ui:SettingsCard Header="While the loop runs" Visibility="{Binding ShowRun, Converter={StaticResource BoolToVisibility}}">
-                    <ComboBox MinWidth="140" SelectedIndex="{Binding RunIndex, Mode=TwoWay}" AutomationProperties.Name="While the loop runs">
-                        <ComboBoxItem Content="Repeat" />
-                        <ComboBoxItem Content="Hold down" />
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_WhileLoopRuns}" Visibility="{Binding ShowRun, Converter={StaticResource BoolToVisibility}}">
+                    <ComboBox MinWidth="140" SelectedIndex="{Binding RunIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_WhileLoopRuns}">
+                        <ComboBoxItem Content="{x:Static r:Strings.Action_Repeat}" />
+                        <ComboBoxItem Content="{x:Static r:Strings.Action_HoldDown}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
                 <!-- Loop: how often -->
-                <ui:SettingsCard Header="Every" Visibility="{Binding ShowEvery, Converter={StaticResource BoolToVisibility}}">
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Every}" Visibility="{Binding ShowEvery, Converter={StaticResource BoolToVisibility}}">
                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
                                       SpinButtonPlacementMode="Inline"
                                       SmallChange="{Binding UnitIndex, Converter={StaticResource IntervalStep}}"
-                                      Value="{Binding IntervalValue, Mode=TwoWay}" AutomationProperties.Name="Interval" />
-                        <ComboBox SelectedIndex="{Binding UnitIndex, Mode=TwoWay}" AutomationProperties.Name="Unit">
-                            <ComboBoxItem Content="ms" />
-                            <ComboBoxItem Content="s" />
-                            <ComboBoxItem Content="min" />
-                            <ComboBoxItem Content="h" />
+                                      Value="{Binding IntervalValue, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Interval}" />
+                        <ComboBox SelectedIndex="{Binding UnitIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Unit}">
+                            <ComboBoxItem Content="{x:Static r:Strings.Action_UnitMs}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Action_UnitS}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Action_UnitMin}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Action_UnitH}" />
                         </ComboBox>
                     </ikw:SimpleStackPanel>
                 </ui:SettingsCard>
 
                 <!-- Macro: where the button is pressed, first -->
-                <ui:SettingsCard Header="Position" Visibility="{Binding ShowPositionFirst, Converter={StaticResource BoolToVisibility}}">
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Position}" Visibility="{Binding ShowPositionFirst, Converter={StaticResource BoolToVisibility}}">
                     <views:PositionPicker X="{Binding X}" Y="{Binding Y}" />
                 </ui:SettingsCard>
 
                 <!-- Macro: single or double click, before Hold for -->
-                <ui:SettingsCard Header="Mode" Visibility="{Binding ShowModeFirst, Converter={StaticResource BoolToVisibility}}">
-                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding ClickModeIndex, Mode=TwoWay}" AutomationProperties.Name="Mode">
-                        <RadioButton Content="Single" />
-                        <RadioButton Content="Double" />
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Mode}" Visibility="{Binding ShowModeFirst, Converter={StaticResource BoolToVisibility}}">
+                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding ClickModeIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Mode}">
+                        <RadioButton Content="{x:Static r:Strings.Action_Single}" />
+                        <RadioButton Content="{x:Static r:Strings.Action_Double}" />
                     </ui:RadioButtons>
                 </ui:SettingsCard>
 
-                <ui:SettingsCard Header="Hold for" Description="{Binding HoldDescription}"
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_HoldFor}" Description="{Binding HoldDescription}"
                                  Visibility="{Binding ShowHoldFor, Converter={StaticResource BoolToVisibility}}">
                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ui:NumberBox x:Name="HoldBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="60000"
-                                      Value="{Binding HoldMs, Mode=TwoWay}" AutomationProperties.Name="Hold for" />
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
+                                      Value="{Binding HoldMs, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_HoldFor}" />
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Action_UnitMs}" />
                     </ikw:SimpleStackPanel>
                 </ui:SettingsCard>
 
                 <!-- Loop: single or double click, after Hold for -->
-                <ui:SettingsCard Header="Mode" Visibility="{Binding ShowModeAfterHold, Converter={StaticResource BoolToVisibility}}">
-                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding ClickModeIndex, Mode=TwoWay}" AutomationProperties.Name="Mode">
-                        <RadioButton Content="Single" />
-                        <RadioButton Content="Double" />
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Mode}" Visibility="{Binding ShowModeAfterHold, Converter={StaticResource BoolToVisibility}}">
+                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding ClickModeIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Mode}">
+                        <RadioButton Content="{x:Static r:Strings.Action_Single}" />
+                        <RadioButton Content="{x:Static r:Strings.Action_Double}" />
                     </ui:RadioButtons>
                 </ui:SettingsCard>
 
-                <ui:SettingsCard Header="Times" Visibility="{Binding ShowTimes, Converter={StaticResource BoolToVisibility}}">
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Times}" Visibility="{Binding ShowTimes, Converter={StaticResource BoolToVisibility}}">
                     <ui:NumberBox x:Name="TimesBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="100000"
-                                  Value="{Binding Times, Mode=TwoWay}" AutomationProperties.Name="Times" />
+                                  Value="{Binding Times, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Times}" />
                 </ui:SettingsCard>
 
-                <ui:SettingsCard Header="Pause between" Description="Between one press and the next, when Times is more than 1"
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_PauseBetween}" Description="{x:Static r:Strings.Action_PauseBetweenDescription}"
                                  IsEnabled="{Binding PauseEnabled}"
                                  Visibility="{Binding ShowTimes, Converter={StaticResource BoolToVisibility}}">
                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ui:NumberBox x:Name="PauseBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
-                                      Value="{Binding PauseMs, Mode=TwoWay}" AutomationProperties.Name="Pause between" />
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
+                                      Value="{Binding PauseMs, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_PauseBetween}" />
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Action_UnitMs}" />
                     </ikw:SimpleStackPanel>
                 </ui:SettingsCard>
 
                 <!-- Loop: where the pointer is, or a fixed point, last -->
-                <ui:SettingsCard Header="Position" Description="{Binding PointText}"
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Position}" Description="{Binding PointText}"
                                  Visibility="{Binding ShowPositionLast, Converter={StaticResource BoolToVisibility}}">
                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="16">
                         <views:PositionPicker X="{Binding X}" Y="{Binding Y}"
                                               Visibility="{Binding FixedPoint, Converter={StaticResource BoolToVisibility}}" />
-                        <ui:ToggleSwitch VerticalAlignment="Center" IsOn="{Binding FixedPoint, Mode=TwoWay}" AutomationProperties.Name="Fixed point" />
+                        <ui:ToggleSwitch VerticalAlignment="Center" IsOn="{Binding FixedPoint, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_FixedPoint}" />
                     </ikw:SimpleStackPanel>
                 </ui:SettingsCard>
 
                 <!-- Paste text -->
-                <ui:SettingsCard Header="Text" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch"
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Text}" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch"
                                  Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
                     <TextBox x:Name="PasteTextBox" MinHeight="64" MaxHeight="140" AcceptsReturn="True" TextWrapping="Wrap"
-                             VerticalScrollBarVisibility="Auto" ui:ControlHelper.PlaceholderText="Text to paste"
-                             AutomationProperties.Name="Text to paste"
+                             VerticalScrollBarVisibility="Auto" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Action_TextToPaste}"
+                             AutomationProperties.Name="{x:Static r:Strings.Action_TextToPaste}"
                              Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="Press Enter before pasting" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
-                    <ui:ToggleSwitch IsOn="{Binding EnterBefore, Mode=TwoWay}" AutomationProperties.Name="Press Enter before pasting" />
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_EnterBefore}" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                    <ui:ToggleSwitch IsOn="{Binding EnterBefore, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_EnterBefore}" />
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="Press Enter after pasting" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
-                    <ui:ToggleSwitch IsOn="{Binding EnterAfter, Mode=TwoWay}" AutomationProperties.Name="Press Enter after pasting" />
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_EnterAfter}" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                    <ui:ToggleSwitch IsOn="{Binding EnterAfter, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_EnterAfter}" />
                 </ui:SettingsCard>
 
                 <!-- Move to -->
-                <ui:SettingsCard Header="Movement" Visibility="{Binding ShowMovement, Converter={StaticResource BoolToVisibility}}">
-                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding MovementIndex, Mode=TwoWay}" AutomationProperties.Name="Movement">
-                        <RadioButton Content="Instantly" />
-                        <RadioButton Content="Smoothly" />
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Movement}" Visibility="{Binding ShowMovement, Converter={StaticResource BoolToVisibility}}">
+                    <ui:RadioButtons MaxColumns="2" SelectedIndex="{Binding MovementIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Movement}">
+                        <RadioButton Content="{x:Static r:Strings.Action_Instantly}" />
+                        <RadioButton Content="{x:Static r:Strings.Action_Smoothly}" />
                     </ui:RadioButtons>
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="Speed" Description="{Binding SpeedText}"
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Speed}" Description="{Binding SpeedText}"
                                  Visibility="{Binding ShowSpeed, Converter={StaticResource BoolToVisibility}}">
                     <Slider Width="200" Minimum="1" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True"
-                            Value="{Binding SmoothSpeed, Mode=TwoWay}" AutomationProperties.Name="Movement speed" />
+                            Value="{Binding SmoothSpeed, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_MovementSpeed}" />
                 </ui:SettingsCard>
 
                 <!-- Scroll -->
-                <ui:SettingsCard Header="Steps" Visibility="{Binding ShowSteps, Converter={StaticResource BoolToVisibility}}">
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Steps}" Visibility="{Binding ShowSteps, Converter={StaticResource BoolToVisibility}}">
                     <ui:NumberBox x:Name="StepsBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="1000"
-                                  Value="{Binding Steps, Mode=TwoWay}" AutomationProperties.Name="Steps" />
+                                  Value="{Binding Steps, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Steps}" />
                 </ui:SettingsCard>
             </ui:SettingsExpander.Items>
         </ui:SettingsExpander>

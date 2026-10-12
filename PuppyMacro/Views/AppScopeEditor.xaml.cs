@@ -1,10 +1,12 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -64,7 +66,7 @@ public partial class AppScopeEditor
 
     /// <summary>Why the card cannot be saved as it is, or null.</summary>
     internal string? ValidationError =>
-        AppExe == "" ? "Choose the app it works in, or turn off Specific app." : null;
+        AppExe == "" ? Strings.AppScope_NoAppError : null;
 
     private void OnSwitchToggled(object sender, RoutedEventArgs e)
     {
@@ -85,17 +87,16 @@ public partial class AppScopeEditor
         string? app = AppExe;
         AppExpander.Description = app switch
         {
-            null => "Works in all apps",
-            "" => "Choose the app it works in",
-            _ => $"Works only while {app} is in front",
+            null => Strings.AppScope_AllApps,
+            "" => Strings.AppScope_ChooseApp,
+            _ => string.Format(CultureInfo.CurrentCulture, Strings.AppScope_OnlyApp, app),
         };
         UpdateHelp();
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
     private void UpdateHelp() =>
-        HelpText.Text = "Choose a running app, pick its window, or browse for its .exe. It works only while that app is in front"
-            + (StopsWhenAppChanges ? ", and stops when you switch to another app." : ".");
+        HelpText.Text = StopsWhenAppChanges ? Strings.AppScope_HelpStops : Strings.AppScope_Help;
 
     /// <summary>Lists the .exe names of the apps that have a window open.</summary>
     private void OnAppDropDownOpened(object? sender, EventArgs e)
@@ -132,8 +133,8 @@ public partial class AppScopeEditor
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Choose the app",
-            Filter = "Programs (*.exe)|*.exe",
+            Title = Strings.AppScope_BrowseTitle,
+            Filter = Strings.AppScope_BrowseFilter,
         };
         if (dialog.ShowDialog(Window.GetWindow(this)) == true)
             AppBox.Text = Path.GetFileName(dialog.FileName);

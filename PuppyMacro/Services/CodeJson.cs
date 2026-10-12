@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -75,7 +77,7 @@ internal static class CodeJson
         }
         if (value == null)
         {
-            problems.Add(new CodeProblem(1, 1, "This must be a JSON object."));
+            problems.Add(new CodeProblem(1, 1, Strings.Code_MustBeObject));
             return null;
         }
 
@@ -100,20 +102,22 @@ internal static class CodeJson
         public void Range(string path, double value, (double Min, double Max) range)
         {
             if (double.IsNaN(value) || value < range.Min || value > range.Max)
-                Add(path, $"Must be between {range.Min:0.##} and {range.Max:0.##}.");
+                Add(path, string.Format(CultureInfo.CurrentCulture, Strings.Code_Between,
+                    range.Min.ToString("0.##", CultureInfo.CurrentCulture), range.Max.ToString("0.##", CultureInfo.CurrentCulture)));
         }
 
         /// <summary>The Id cannot change: it names the file or the item.</summary>
         public void SameId(Guid id, Guid expected)
         {
             if (id != expected)
-                Add("Id", $"The Id cannot be changed. Use \"{expected}\" (Ctrl+Space suggests it).");
+                Add("Id", string.Format(CultureInfo.CurrentCulture, Strings.Code_IdCannotChange, expected));
         }
 
         public void KnownSound(string name)
         {
             if (!SoundService.Names.Contains(name))
-                Add("SoundName", $"Unknown sound. Use one of: {string.Join(", ", SoundService.Names.Select(n => $"\"{n}\""))}.");
+                Add("SoundName", string.Format(CultureInfo.CurrentCulture, Strings.Code_UnknownSound,
+                    string.Join(", ", SoundService.Names.Select(n => $"\"{n}\""))));
         }
 
         /// <summary>The checks of the hotkey field of the loop and macro editors.</summary>
@@ -123,17 +127,17 @@ internal static class CodeJson
             if (hotkey is not { IsSet: true })
             {
                 if (hold)
-                    Add(hotkey == null ? "Mode" : "Hotkey.Vk", "Hold needs a hotkey. Set one or use \"Toggle\".");
+                    Add(hotkey == null ? "Mode" : "Hotkey.Vk", Strings.Code_HoldNeedsHotkey);
                 return;
             }
             if (!IsKeyCode(hotkey.Vk) && !KeyNames.IsWheel(hotkey.Vk))
             {
-                Add("Hotkey.Vk", "Not a key: use a virtual-key code from 1 to 254, or a scroll wheel code (256 up, 257 down, 258 left, 259 right).");
+                Add("Hotkey.Vk", Strings.Code_HotkeyNotAKey);
                 return;
             }
             if (KeyNames.IsModifier(hotkey.Vk))
             {
-                Add("Hotkey.Vk", "Ctrl, Alt, Shift and Win alone cannot be the key: set them with \"Ctrl\", \"Alt\", \"Shift\" and \"Win\".");
+                Add("Hotkey.Vk", Strings.Code_HotkeyModifierAlone);
                 return;
             }
             if (!ModifierSides("Hotkey", hotkey))
@@ -152,19 +156,19 @@ internal static class CodeJson
         {
             if (!IsKeyCode(binding.Vk))
             {
-                Add($"{path}.Vk", "Choose a key or mouse button: a virtual-key code from 1 to 254.");
+                Add($"{path}.Vk", Strings.Code_RemapChooseKey);
                 return false;
             }
             if (KeyNames.IsModifier(binding.Vk))
             {
                 if (!KeyNames.IsSidedModifier(binding.Vk))
                 {
-                    Add($"{path}.Vk", "Ctrl, Alt, Shift or Win alone: use the code of its left or right key (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).");
+                    Add($"{path}.Vk", Strings.Code_RemapModifierSide);
                     return false;
                 }
                 if (binding.HasModifiers)
                 {
-                    Add(path, "Ctrl, Alt, Shift or Win alone takes no other modifier: set \"Ctrl\", \"Alt\", \"Shift\" and \"Win\" to false.");
+                    Add(path, Strings.Code_RemapModifierNoOthers);
                     return false;
                 }
             }
@@ -183,7 +187,7 @@ internal static class CodeJson
             {
                 if (!held && side != ModifierSide.Any)
                 {
-                    Add($"{path}.{name}Side", $"Only with \"{name}\": true. Remove it, or set \"{name}\" to true.");
+                    Add($"{path}.{name}Side", string.Format(CultureInfo.CurrentCulture, Strings.Code_OnlyWithModifier, name));
                     valid = false;
                 }
             }
@@ -209,7 +213,7 @@ internal static class CodeJson
                 }
                 else if (!held && side != ModifierSide.Any)
                 {
-                    Add($"{prefix}{name}Side", $"Only with \"{name}\": true. Remove it, or set \"{name}\" to true.");
+                    Add($"{prefix}{name}Side", string.Format(CultureInfo.CurrentCulture, Strings.Code_OnlyWithModifier, name));
                     valid = false;
                 }
             }
@@ -222,22 +226,22 @@ internal static class CodeJson
             if (appExe == null)
                 return;
             if (string.IsNullOrWhiteSpace(appExe))
-                Add("AppExe", "Write the app's file name, like \"notepad.exe\", or null for all apps.");
+                Add("AppExe", Strings.Code_AppExeEmpty);
             else if (!appExe.Trim().EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                Add("AppExe", "Write the app's file name, ending in \".exe\".");
+                Add("AppExe", Strings.Code_AppExeNotExe);
         }
 
         /// <summary>The checks of the Floating button card.</summary>
         public void FloatingButton(FloatingButton b, ActivationMode mode)
         {
             if (b.Label.Trim().Length > Models.FloatingButton.MaxLabelLength)
-                Add("FloatingButton.Label", $"At most {Models.FloatingButton.MaxLabelLength} characters.");
+                Add("FloatingButton.Label", Plurals.Format("Code_AtMostCharacters", Models.FloatingButton.MaxLabelLength));
             if (b.Opacity is int opacity && (opacity < AppSettings.MinOpacity || opacity > AppSettings.MaxOpacity))
-                Add("FloatingButton.Opacity", $"Must be between {AppSettings.MinOpacity} and {AppSettings.MaxOpacity}.");
+                Add("FloatingButton.Opacity", string.Format(CultureInfo.CurrentCulture, Strings.Code_Between, AppSettings.MinOpacity, AppSettings.MaxOpacity));
             if ((b.X == null) != (b.Y == null))
-                Add(b.X == null ? "FloatingButton.Y" : "FloatingButton.X", "Set both X and Y, or neither (null: the middle of the main screen).");
+                Add(b.X == null ? "FloatingButton.Y" : "FloatingButton.X", Strings.Code_SetBothXY);
             if (b.Enabled && mode == ActivationMode.Hold)
-                Add("FloatingButton.Enabled", "Needs \"Toggle\": a click can start and stop, but not hold.");
+                Add("FloatingButton.Enabled", Strings.Code_FloatingNeedsToggle);
         }
     }
 
@@ -262,7 +266,8 @@ internal static class CodeJson
                 if (reader.TokenType == JsonTokenType.String && reader.GetString() is string name
                     && Enum.GetNames<T>().Contains(name, StringComparer.Ordinal))
                     return Enum.Parse<T>(name);
-                throw new JsonException($"Must be one of: {string.Join(", ", Enum.GetNames<T>().Select(n => $"\"{n}\""))}.");
+                throw new JsonException(string.Format(CultureInfo.CurrentCulture, Strings.Code_MustBeOneOf,
+                    string.Join(", ", Enum.GetNames<T>().Select(n => $"\"{n}\""))));
             }
 
             public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options) =>
@@ -348,11 +353,11 @@ internal static class CodeJson
                 if (_offsets.TryGetValue(search, out int offset))
                 {
                     var (line, column) = Position(offset);
-                    return new CodeProblem(line, column, $"{path}: {message}");
+                    return new CodeProblem(line, column, AtPath(path, message));
                 }
                 search = ParentOf(search);
             }
-            return new CodeProblem(1, 1, $"{path}: {message}");
+            return new CodeProblem(1, 1, AtPath(path, message));
         }
 
         public CodeProblem SyntaxProblem(JsonException ex)
@@ -362,7 +367,7 @@ internal static class CodeJson
             int position = message.IndexOf(" LineNumber:", StringComparison.Ordinal);
             if (position > 0)
                 message = message[..position];
-            message = $"Invalid JSON: {message.Trim()}";
+            message = string.Format(CultureInfo.CurrentCulture, Strings.Code_InvalidJsonDetail, message.Trim());
             if (ex.LineNumber is long line && ex.BytePositionInLine is long bytes)
                 return new CodeProblem((int)line + 1, ColumnOf((int)line, (int)bytes), message);
             return new CodeProblem(1, 1, message);
@@ -375,24 +380,28 @@ internal static class CodeJson
             {
                 string name = UnknownProperty(ex.Message);
                 string unknown = path.Length == 0 ? name : path.EndsWith(name) ? path : $"{path}.{name}";
-                return ProblemAt(unknown, $"Unknown property \"{name}\".");
+                return ProblemAt(unknown, string.Format(CultureInfo.CurrentCulture, Strings.Code_UnknownProperty, name));
             }
             // Messages without .NET's position suffix are this file's own (ExactEnumConverter): shown as they are.
             bool own = !ex.Message.Contains("Path:") && !ex.Message.Contains("LineNumber:");
             string message = own ? ex.Message
                 : ex.InnerException is FormatException or InvalidOperationException || ex.Message.Contains("could not be converted")
-                    ? "This value has the wrong type or is not one of the allowed values."
+                    ? Strings.Code_WrongType
                     : ex.Message.Contains("null")
-                        ? "A value is needed here, not null."
-                        : "Invalid JSON.";
+                        ? Strings.Code_NeedsValue
+                        : Strings.Code_InvalidJson;
 
             // The reader's position is where it stopped; for a known path, point at the property.
             if (path.Length > 0 && _offsets.ContainsKey(path))
                 return ProblemAt(path, message);
             if (ex.LineNumber is long line && ex.BytePositionInLine is long bytes)
-                return new CodeProblem((int)line + 1, ColumnOf((int)line, (int)bytes), path.Length > 0 ? $"{path}: {message}" : message);
+                return new CodeProblem((int)line + 1, ColumnOf((int)line, (int)bytes), path.Length > 0 ? AtPath(path, message) : message);
             return new CodeProblem(1, 1, message);
         }
+
+        /// <summary>A message at a path: "Actions[2].Vk: Choose a key…".</summary>
+        private static string AtPath(string path, string message) =>
+            string.Format(CultureInfo.CurrentCulture, Strings.Code_AtPath, path, message);
 
         private static string UnknownProperty(string message)
         {

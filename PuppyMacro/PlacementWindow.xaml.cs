@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Views;
 
 namespace PuppyMacro;
@@ -70,7 +72,7 @@ public partial class PlacementWindow
             GhostPanel.Bind(loops, macros);
             GhostPanel.SetBackgroundOpacity(opacity);
             GhostPanel.SetHotkeyLabels(exitHotkey, stopAllHotkey);
-            first = AddGhost(new Draggable { Element = Ghost, Outline = GhostOutline, Name = "Overlay panel" });
+            first = AddGhost(new Draggable { Element = Ghost, Outline = GhostOutline, Name = Strings.AiSetting_OverlayPanel });
             _selected = first;
             MoveTo(first, start);
         }
@@ -119,9 +121,9 @@ public partial class PlacementWindow
         if (buttons.Count > 0)
         {
             InstructionsText.Text = showPanel
-                ? "Drag the panel and the buttons where you want them"
-                : buttons.Count == 1 ? "Drag the button where you want it" : "Drag the buttons where you want them";
-            NudgeText.Text = "Move the selected one by 1 pixel (Shift: 10)";
+                ? Strings.Placement_DragPanelAndButtons
+                : buttons.Count == 1 ? Strings.Placement_DragButton : Strings.Placement_DragButtons;
+            NudgeText.Text = Strings.Placement_NudgeSelected;
         }
         Select(_selected ?? first ?? throw new InvalidOperationException("Nothing to position."));
 
@@ -160,7 +162,7 @@ public partial class PlacementWindow
         if (_selected is not Draggable selected)
             return;
         Point p = PositionOf(selected);
-        SelectionText.Text = $"{selected.Name}   X {p.X}   Y {p.Y}";
+        SelectionText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Placement_Selection, selected.Name, p.X, p.Y);
         Canvas.SetLeft(SelectionTag, Canvas.GetLeft(selected.Element));
         Canvas.SetTop(SelectionTag, Canvas.GetTop(selected.Element) - 28);
     }

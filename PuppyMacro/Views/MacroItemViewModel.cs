@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -27,12 +28,11 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
 
     public Guid Id => Definition.Id;
     public string Name => Definition.Name;
-    public string ModeText => Definition.Mode.ToString();
     public string HotkeyText => KeyNames.Format(Definition.Hotkey);
     public bool HasHotkey => Definition.Hotkey is { IsSet: true };
 
     /// <summary>The card's second line before the hotkey's keys: "Toggle with", or "Toggle, no hotkey".</summary>
-    public string ActivationLead => HasHotkey ? $"{ModeText} with" : $"{ModeText}, no hotkey";
+    public string ActivationLead => CardTexts.ActivationLead(Definition.Mode, HasHotkey);
 
     /// <summary>The hotkey's keys on the card, in the accent color (none without a hotkey).</summary>
     public List<string> HotkeyParts => HasHotkey ? KeyNames.Parts(Definition.Hotkey) : new List<string>();
@@ -65,12 +65,14 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
             int count = Definition.Actions.Count;
             string repeat = Definition.Repeat switch
             {
-                RepeatMode.Loop => "loop",
-                RepeatMode.Times => $"{Definition.RepeatCount} times",
-                _ => "once",
+                RepeatMode.Loop => Strings.Macros_RepeatLoop,
+                RepeatMode.Times => Plurals.Format("Macros_RepeatTimes", Definition.RepeatCount),
+                _ => Strings.Macros_RepeatOnce,
             };
-            string speed = Definition.Speed == 1 ? "" : $", speed ×{Definition.Speed.ToString(CultureInfo.CurrentCulture)}";
-            return $"{count} {(count == 1 ? "action" : "actions")}, {FormatDuration(Definition.TotalMs)}, repeat {repeat}{speed}";
+            string duration = FormatDuration(Definition.TotalMs);
+            return Definition.Speed == 1
+                ? Plurals.Format("Macros_Summary", count, duration, repeat)
+                : Plurals.Format("Macros_SummaryWithSpeed", count, duration, repeat, Definition.Speed.ToString(CultureInfo.CurrentCulture));
         }
     }
 
@@ -108,7 +110,7 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     public bool IsNotRunning => !_isRunning;
 
     private bool _canEdit = true;
-    public string Status => IsRunning ? "Running" : (Definition.Enabled ? "Idle" : "Disabled");
+    public string Status => CardTexts.Status(IsRunning, Definition.Enabled);
 
     /// <summary>Start works only when enabled; a running one can always be stopped.</summary>
     public bool CanStartStop => Definition.Enabled || IsRunning;
@@ -136,10 +138,10 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     public static string FormatDuration(double ms)
     {
         if (ms < 1000)
-            return $"{Math.Round(ms)} ms";
+            return string.Format(CultureInfo.CurrentCulture, Strings.Loops_IntervalMilliseconds, Math.Round(ms));
         if (ms < 60_000)
-            return $"{(ms / 1000).ToString("0.#", CultureInfo.CurrentCulture)} s";
-        return $"{(ms / 60_000).ToString("0.#", CultureInfo.CurrentCulture)} min";
+            return string.Format(CultureInfo.CurrentCulture, Strings.Loops_IntervalSeconds, (ms / 1000).ToString("0.#", CultureInfo.CurrentCulture));
+        return string.Format(CultureInfo.CurrentCulture, Strings.Loops_IntervalMinutes, (ms / 60_000).ToString("0.#", CultureInfo.CurrentCulture));
     }
 
     private void OnPropertyChanged([CallerMemberName] string? name = null) =>

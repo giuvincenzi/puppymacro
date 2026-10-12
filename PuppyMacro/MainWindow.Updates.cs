@@ -1,8 +1,10 @@
 using System;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using Velopack;
 using InfoBar = iNKORE.UI.WPF.Modern.Controls.InfoBar;
@@ -56,7 +58,7 @@ public partial class MainWindow
         catch (Exception ex)
         {
             // Network, GitHub or release feed errors: shown in the card, never fatal.
-            _updateError = $"Could not check for updates. {ex.Message}";
+            _updateError = string.Format(CultureInfo.CurrentCulture, Strings.Update_CheckFailed, ex.Message);
         }
         finally
         {
@@ -91,7 +93,7 @@ public partial class MainWindow
         }
         catch (Exception ex)
         {
-            _updateError = $"Could not download the update. {ex.Message}";
+            _updateError = string.Format(CultureInfo.CurrentCulture, Strings.Update_DownloadFailed, ex.Message);
             return;
         }
         finally
@@ -111,7 +113,7 @@ public partial class MainWindow
             UpdateBar.IsOpen = false;
             UpdateBar.Visibility = Visibility.Collapsed;
             ShowSettingsBadge(false);
-            UpdateStatusText.Text = "Install PuppyMacro with Setup to get updates";
+            UpdateStatusText.Text = Strings.Update_NotInstalled;
             UpdateWhatsNew.Visibility = Visibility.Collapsed;
             UpdateCardProgress.Visibility = Visibility.Collapsed;
             UpdateCardButton.Visibility = Visibility.Collapsed;
@@ -131,30 +133,31 @@ public partial class MainWindow
         string action;
         if (downloading)
         {
-            status = $"Downloading version {version}… {_downloadPercent}%";
+            status = string.Format(CultureInfo.CurrentCulture, Strings.Update_DownloadingVersion, version, _downloadPercent);
             action = ""; // no button while downloading
         }
         else if (_updateError != null)
         {
             status = _updateError;
-            action = "Try again";
+            action = Strings.Update_TryAgain;
         }
         else if (version != null)
         {
-            status = $"Version {version} is available (you have {_updates.CurrentVersion})";
-            action = "Update and restart";
+            status = string.Format(CultureInfo.CurrentCulture, Strings.Update_Available, version, _updates.CurrentVersion);
+            action = Strings.Update_UpdateAndRestart;
         }
         else if (_checkingForUpdates)
         {
-            status = "Checking for updates…";
-            action = "Check now";
+            status = Strings.Update_Checking;
+            action = Strings.Update_CheckNow;
         }
         else
         {
             status = _lastUpdateCheck is DateTime checkedAt
-                ? $"PuppyMacro {_updates.CurrentVersion} is up to date. Checked at {checkedAt:t}"
-                : $"PuppyMacro {_updates.CurrentVersion}";
-            action = "Check now";
+                ? string.Format(CultureInfo.CurrentCulture, Strings.Update_UpToDate, _updates.CurrentVersion,
+                    checkedAt.ToString("t", CultureInfo.CurrentCulture))
+                : string.Format(CultureInfo.CurrentCulture, Strings.Update_CurrentVersion, _updates.CurrentVersion);
+            action = Strings.Update_CheckNow;
         }
 
         UpdateStatusText.Text = status;
@@ -168,8 +171,8 @@ public partial class MainWindow
             UpdateWhatsNew.NavigateUri = new Uri(UpdateService.ReleaseUrl(version));
 
         // Only the title (bold); a message only while downloading or after an error
-        UpdateBar.Title = $"Version {version} available";
-        UpdateBar.Message = downloading ? $"Downloading… {_downloadPercent}%" : _updateError ?? "";
+        UpdateBar.Title = string.Format(CultureInfo.CurrentCulture, Strings.Update_BarTitle, version);
+        UpdateBar.Message = downloading ? string.Format(CultureInfo.CurrentCulture, Strings.Update_Downloading, _downloadPercent) : _updateError ?? "";
         UpdateBarProgress.Visibility = UpdateCardProgress.Visibility;
         UpdateBarProgress.Value = _downloadPercent;
         UpdateBarButton.Content = action;

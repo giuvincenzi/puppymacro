@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -41,7 +43,7 @@ internal sealed class MacroLibrary
                 }
                 catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
                 {
-                    warning = $"Some macro files could not be read and were skipped (e.g. {Path.GetFileName(file)}).";
+                    warning = string.Format(CultureInfo.CurrentCulture, Strings.App_MacroFilesSkipped, Path.GetFileName(file));
                 }
             }
         }

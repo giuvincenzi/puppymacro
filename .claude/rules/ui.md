@@ -11,6 +11,12 @@ paths:
 - Before a UI change, follow "UI changes" in `working-rules.md` (ask whether the user wants
   visual proposals as a Design artifact, wait for approval, then implement).
 
+## Texts
+
+Every text of the UI comes from `Resources/Strings.resx` (`{x:Static r:Strings.Key}`, `Strings.Key`) and is translated
+into every language in the same change (`i18n.md`). Layouts must hold longer texts (German, Russian) and right to left
+(Arabic): no fixed widths for text, let cards and buttons grow.
+
 ## Standard components only (strict)
 
 The app must look and behave exactly like Windows 11. It is built with

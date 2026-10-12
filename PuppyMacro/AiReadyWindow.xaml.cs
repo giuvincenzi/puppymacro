@@ -1,9 +1,14 @@
 using System;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 using PuppyMacro.Services.Ai;
 
 namespace PuppyMacro;
@@ -21,11 +26,14 @@ public partial class AiReadyWindow
     internal AiReadyWindow(string app, AiAsk ask)
     {
         InitializeComponent();
-        Title = $"AI request - {app}";
-        AskedByText.Text = $"{app} asks";
+        Title = string.Format(CultureInfo.CurrentCulture, Strings.AiRequest_TitleWithApp, app);
+        AskedByText.Text = string.Format(CultureInfo.CurrentCulture, Strings.AiReady_AppAsks, app);
         TitleText.Text = ask.Title;
         DescriptionText.Text = ask.Description;
-        StepsList.ItemsSource = ask.Steps.Select((text, index) => new { Number = $"{index + 1}.", Text = text }).ToList();
+        StepsList.ItemsSource = ask.Steps
+            .Select((text, index) => new { Number = string.Format(CultureInfo.CurrentCulture, Strings.AiReady_StepNumber, index + 1), Text = text })
+            .ToList();
+        BuildHint();
         SourceInitialized += OnSourceInitialized;
         // Closed some other way: cancelled, so the request does not wait.
         Closed += (_, _) => Answer(AiAnswer.Cancelled);
@@ -44,6 +52,33 @@ public partial class AiReadyWindow
     }
 
     private void OnStartClick(object sender, RoutedEventArgs e) => Answer(AiAnswer.Done);
+
+    private static readonly Brush HintBrush = MakeHintBrush();
+
+    private static Brush MakeHintBrush()
+    {
+        var brush = new SolidColorBrush(Color.FromRgb(0xC5, 0xC5, 0xC5));
+        brush.Freeze();
+        return brush;
+    }
+
+    /// <summary>
+    /// "Press [Enter] when you're ready · [Esc] cancels" in the language shown: the text of <c>AiReady_Hint</c> with the Enter
+    /// keycap at {0} and the Esc keycap at {1}, in the order the language puts them.
+    /// </summary>
+    private void BuildHint()
+    {
+        HintPanel.Children.Clear();
+        foreach (string part in Regex.Split(Strings.AiReady_Hint, @"(\{[01]\})"))
+        {
+            if (part == "{0}")
+                HintPanel.Children.Add(EnterCap);
+            else if (part == "{1}")
+                HintPanel.Children.Add(EscCap);
+            else if (part.Trim().Length > 0)
+                HintPanel.Children.Add(new TextBlock { FontSize = 13, Foreground = HintBrush, Text = part.Trim(), VerticalAlignment = VerticalAlignment.Center });
+        }
+    }
 
     /// <summary>Never takes the focus from the app the user prepares, even when clicked or dragged (as the recording bar).</summary>
     private void OnSourceInitialized(object? sender, EventArgs e)

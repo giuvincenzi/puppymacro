@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     Width="72">
 
     <!-- The main window's side rail, always closed, as in Microsoft Store (approved, ui.md): the pages on top and
@@ -101,8 +102,8 @@
 
         <!-- Two fixed icons per page: in 0.10.2 a FontIcon whose Icon changes after load can clear it (ui.md) -->
         <ListView x:Name="Pages" SelectionMode="Single" SelectionChanged="OnSelectionChanged"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Pages">
-            <ListViewItem x:Name="LoopsItem" Tag="Loops" Style="{StaticResource RailItem}" AutomationProperties.Name="Loops" ToolTip="Loops">
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{x:Static r:Strings.Rail_Pages}">
+            <ListViewItem x:Name="LoopsItem" Tag="Loops" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Loops}" ToolTip="{x:Static r:Strings.Rail_Loops}">
                 <StackPanel>
                     <Grid Style="{StaticResource IconSlide}">
                         <Grid.RenderTransform>
@@ -112,10 +113,10 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.ArrowClockwiseDashes_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="Loops" />
+                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Loops}" />
                 </StackPanel>
             </ListViewItem>
-            <ListViewItem x:Name="MacrosItem" Tag="Macros" Style="{StaticResource RailItem}" AutomationProperties.Name="Macros" ToolTip="Macros">
+            <ListViewItem x:Name="MacrosItem" Tag="Macros" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Macros}" ToolTip="{x:Static r:Strings.Rail_Macros}">
                 <StackPanel>
                     <Grid Style="{StaticResource IconSlide}">
                         <Grid.RenderTransform>
@@ -125,10 +126,10 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.Script_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="Macros" />
+                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Macros}" />
                 </StackPanel>
             </ListViewItem>
-            <ListViewItem x:Name="RemapItem" Tag="Remap" Style="{StaticResource RailItem}" AutomationProperties.Name="Remap" ToolTip="Remap">
+            <ListViewItem x:Name="RemapItem" Tag="Remap" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Remap}" ToolTip="{x:Static r:Strings.Rail_Remap}">
                 <StackPanel>
                     <Grid Style="{StaticResource IconSlide}">
                         <Grid.RenderTransform>
@@ -138,18 +139,18 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.ArrowRouting_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="Remap" />
+                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Remap}" />
                 </StackPanel>
             </ListViewItem>
         </ListView>
 
         <ListView x:Name="Footer" Grid.Row="1" SelectionMode="Single" SelectionChanged="OnSelectionChanged"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Settings and help">
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{x:Static r:Strings.Rail_SettingsAndHelp}">
             <!-- The library's 4 inset on every side, as Library in Microsoft Store (the rail's 4,0,4,4 is only for the top) -->
             <ListView.Resources>
                 <Thickness x:Key="ListViewItemCompactSelectedBorderThemeThickness">4</Thickness>
             </ListView.Resources>
-            <ListViewItem x:Name="AiItem" Tag="AI" Style="{StaticResource RailItem}" AutomationProperties.Name="AI" ToolTip="AI">
+            <ListViewItem x:Name="AiItem" Tag="AI" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Ai}" ToolTip="{x:Static r:Strings.Rail_Ai}">
                 <StackPanel>
                     <Grid Style="{StaticResource IconSlide}">
                         <Grid.RenderTransform>
@@ -159,10 +160,10 @@
                         <ui:FontIcon FontSize="20" Icon="{x:Static fsi:FluentSystemIcons.BotSparkle_20_Filled}" Style="{StaticResource WhenSelected}"
                                      Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                     </Grid>
-                    <TextBlock Style="{StaticResource Name}" Text="AI" />
+                    <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Ai}" />
                 </StackPanel>
             </ListViewItem>
-            <ListViewItem x:Name="SettingsItem" Tag="Settings" Style="{StaticResource RailItem}" AutomationProperties.Name="Settings" ToolTip="Settings">
+            <ListViewItem x:Name="SettingsItem" Tag="Settings" Style="{StaticResource RailItem}" AutomationProperties.Name="{x:Static r:Strings.Rail_Settings}" ToolTip="{x:Static r:Strings.Rail_Settings}">
                 <Grid>
                     <StackPanel>
                         <Grid Style="{StaticResource IconSlide}">
@@ -180,7 +181,7 @@
                                               Style="{StaticResource AttentionDotInfoBadgeStyle}" Visibility="Collapsed" />
                             </Grid>
                         </Grid>
-                        <TextBlock Style="{StaticResource Name}" Text="Settings" />
+                        <TextBlock Style="{StaticResource Name}" Text="{x:Static r:Strings.Rail_Settings}" />
                     </StackPanel>
                 </Grid>
             </ListViewItem>

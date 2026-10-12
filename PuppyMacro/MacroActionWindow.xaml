@@ -2,11 +2,12 @@
     x:Class="PuppyMacro.MacroActionWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:views="clr-namespace:PuppyMacro.Views"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
-    Title="Action"
+    Title="{x:Static r:Strings.ActionWindow_Title}"
     Width="760"
     Height="660"
     MinWidth="520"
@@ -33,16 +34,16 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="110" />
                 </Grid.ColumnDefinitions>
-                <Button x:Name="TestButton" Grid.Column="0" Click="OnTestClick" AutomationProperties.Name="Test"
-                        ToolTip="Play this action once in the window behind">
+                <Button x:Name="TestButton" Grid.Column="0" Click="OnTestClick" AutomationProperties.Name="{x:Static r:Strings.Editor_Test}"
+                        ToolTip="{x:Static r:Strings.ActionWindow_TestTooltip}">
                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ui:FontIcon FontSize="14" Icon="{x:Static fsi:FluentSystemIcons.Play_16_Filled}" />
-                        <TextBlock Text="Test" />
+                        <TextBlock Text="{x:Static r:Strings.Editor_Test}" />
                     </ikw:SimpleStackPanel>
                 </Button>
                 <Button x:Name="SaveButton" Grid.Column="2" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
-                        Content="Save" Click="OnSaveClick" />
-                <Button x:Name="CancelButton" Grid.Column="4" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                        Content="{x:Static r:Strings.Editor_Save}" Click="OnSaveClick" />
+                <Button x:Name="CancelButton" Grid.Column="4" HorizontalAlignment="Stretch" Content="{x:Static r:Strings.Editor_Cancel}" Click="OnCancelClick" />
             </Grid>
         </Border>
 
@@ -56,15 +57,15 @@
                  loop row (Views/ActionBox) -->
             <ScrollViewer x:Name="FormBody" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="24,4,24,12" Spacing="4">
-                    <ui:SettingsCard Header="Name (optional)" Description="Shown in bold in the list">
-                        <TextBox x:Name="ActionNameBox" Width="260" MaxLength="100" AutomationProperties.Name="Name"
-                                 ui:ControlHelper.PlaceholderText="e.g. Open inventory" />
+                    <ui:SettingsCard Header="{x:Static r:Strings.ActionWindow_Name}" Description="{x:Static r:Strings.ActionWindow_NameDescription}">
+                        <TextBox x:Name="ActionNameBox" Width="260" MaxLength="100" AutomationProperties.Name="{x:Static r:Strings.Editor_Name}"
+                                 ui:ControlHelper.PlaceholderText="{x:Static r:Strings.ActionWindow_NamePlaceholder}" />
                     </ui:SettingsCard>
-                    <ui:SettingsCard Header="Delay" Description="Wait before this action">
+                    <ui:SettingsCard Header="{x:Static r:Strings.ActionWindow_Delay}" Description="{x:Static r:Strings.ActionWindow_DelayDescription}">
                         <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                             <ui:NumberBox x:Name="DelayBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
-                                          AutomationProperties.Name="Delay" />
-                            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms" />
+                                          AutomationProperties.Name="{x:Static r:Strings.ActionWindow_Delay}" />
+                            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Editor_Ms}" />
                         </ikw:SimpleStackPanel>
                     </ui:SettingsCard>
                     <views:ActionBox x:Name="Box" Margin="0,12,0,0" Rejected="ShowError" />

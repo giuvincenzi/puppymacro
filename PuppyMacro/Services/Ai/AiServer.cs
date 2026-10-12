@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services.Ai;
 
@@ -89,8 +91,8 @@ internal sealed class AiServer : IDisposable
             {
                 pipe?.Dispose();
                 SetListenError(ex is IOException && first
-                    ? "Another program uses PuppyMacro's AI connection, so AI apps can't connect. Close it, or restart Windows."
-                    : $"AI apps can't connect: {ex.Message}");
+                    ? Strings.AiApps_PipeInUse
+                    : string.Format(CultureInfo.CurrentCulture, Strings.AiApps_CantConnect, ex.Message));
                 try
                 {
                     await Task.Delay(TimeSpan.FromSeconds(5), _stop.Token).ConfigureAwait(false);

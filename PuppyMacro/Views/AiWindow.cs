@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Views;
 
@@ -22,7 +24,9 @@ internal static class AiWindow
     public static void Notice(InfoBar bar, string app, string title, string description)
     {
         bar.Title = title;
-        bar.Message = description.Length > 0 ? $"{description} (asked by {app})" : $"Asked by {app}.";
+        bar.Message = description.Length > 0
+            ? string.Format(CultureInfo.CurrentCulture, Strings.AiRequest_NoticeWithDescription, description, app)
+            : string.Format(CultureInfo.CurrentCulture, Strings.AiRequest_NoticeAskedBy, app);
         // The InfoBar does not expose its texts to UI Automation: its name carries the title for screen readers.
         System.Windows.Automation.AutomationProperties.SetName(bar, title);
         bar.IsOpen = true;

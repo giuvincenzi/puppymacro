@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -86,7 +88,7 @@ public partial class CodeView
                 // The editor's own background, so nothing flashes while it loads.
                 DefaultBackgroundColor = IsDark ? System.Drawing.Color.FromArgb(0x1E, 0x1E, 0x1E) : System.Drawing.Color.White,
             };
-            System.Windows.Automation.AutomationProperties.SetName(_webView, "Code editor");
+            System.Windows.Automation.AutomationProperties.SetName(_webView, Strings.CodeView_EditorName);
             EditorHost.Children.Add(_webView);
             await _webView.EnsureCoreWebView2Async(environment);
 
@@ -105,7 +107,7 @@ public partial class CodeView
             };
             core.NewWindowRequested += (_, e) => e.Handled = true;
             core.WebMessageReceived += OnWebMessage;
-            core.ProcessFailed += (_, _) => ShowStatus("The code editor stopped. Close this window and open it again.");
+            core.ProcessFailed += (_, _) => ShowStatus(Strings.CodeView_Stopped);
             core.Navigate(PageUrl);
             return null;
         }
@@ -113,8 +115,8 @@ public partial class CodeView
         {
             Close();
             return ex is WebView2RuntimeNotFoundException
-                ? "Code view needs the Microsoft Edge WebView2 Runtime. Install it from Microsoft, then open this window again."
-                : $"The code editor could not start: {ex.Message}";
+                ? Strings.CodeView_NeedsWebView2
+                : string.Format(CultureInfo.CurrentCulture, Strings.CodeView_CouldNotStart, ex.Message);
         }
     }
 
@@ -150,6 +152,16 @@ public partial class CodeView
                     ["generation"] = _generation,
                     ["schema"] = JsonNode.Parse(Schema),
                     ["dark"] = IsDark,
+                    // The page's own texts, in the app's language (the page keeps the English ones as defaults).
+                    ["texts"] = new JsonObject
+                    {
+                        ["checking"] = Strings.CodeView_Checking,
+                        ["noProblems"] = Strings.CodeView_NoProblems,
+                        ["checkerFailed"] = Strings.CodeView_CheckerFailed,
+                        ["problems"] = Strings.CodeView_Problems,
+                        ["problemsTitle"] = Strings.CodeView_ProblemsTitle,
+                        ["position"] = Strings.CodeView_Position,
+                    },
                 });
                 break;
 

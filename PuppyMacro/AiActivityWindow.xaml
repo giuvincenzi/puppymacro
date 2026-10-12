@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
-    Title="AI activity"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    Title="{x:Static r:Strings.AiActivity_Title}"
     Width="1000"
     Height="720"
     MinWidth="720"
@@ -28,24 +29,24 @@
                     <ColumnDefinition Width="160" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Kept on this PC: the newest requests, up to 20 MB." />
-                <Button x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Stretch" Content="Clear history" Click="OnClearClick" />
-                <Button Grid.Column="3" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="Close"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.AiActivity_KeptNote}" />
+                <Button x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Stretch" Content="{x:Static r:Strings.AiActivity_ClearHistory}" Click="OnClearClick" />
+                <Button Grid.Column="3" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.AiActivity_Close}"
                         IsCancel="True" Click="OnCloseClick" />
             </Grid>
         </Border>
 
         <ikw:SimpleStackPanel DockPanel.Dock="Top" Margin="24,4,24,12" Orientation="Horizontal" Spacing="8">
-            <ComboBox x:Name="PeriodBox" MinWidth="140" ui:ControlHelper.Header="Period" SelectionChanged="OnFilterChanged">
-                <ComboBoxItem Content="Today" />
-                <ComboBoxItem Content="Last 7 days" />
-                <ComboBoxItem Content="Last 30 days" />
-                <ComboBoxItem Content="All" />
+            <ComboBox x:Name="PeriodBox" MinWidth="140" ui:ControlHelper.Header="{x:Static r:Strings.AiActivity_Period}" SelectionChanged="OnFilterChanged">
+                <ComboBoxItem Content="{x:Static r:Strings.Day_Today}" />
+                <ComboBoxItem Content="{x:Static r:Strings.AiActivity_Last7Days}" />
+                <ComboBoxItem Content="{x:Static r:Strings.AiActivity_Last30Days}" />
+                <ComboBoxItem Content="{x:Static r:Strings.AiActivity_All}" />
             </ComboBox>
-            <ComboBox x:Name="AppBox" MinWidth="160" ui:ControlHelper.Header="App" SelectionChanged="OnFilterChanged" />
-            <ComboBox x:Name="KindBox" MinWidth="140" ui:ControlHelper.Header="Type" SelectionChanged="OnFilterChanged" />
-            <ComboBox x:Name="ResultBox" MinWidth="140" ui:ControlHelper.Header="Result" SelectionChanged="OnFilterChanged" />
-            <TextBox x:Name="SearchBox" MinWidth="220" ui:ControlHelper.Header="Search" ui:ControlHelper.PlaceholderText="Search activity"
+            <ComboBox x:Name="AppBox" MinWidth="160" ui:ControlHelper.Header="{x:Static r:Strings.AiActivity_App}" SelectionChanged="OnFilterChanged" />
+            <ComboBox x:Name="KindBox" MinWidth="140" ui:ControlHelper.Header="{x:Static r:Strings.AiActivity_Type}" SelectionChanged="OnFilterChanged" />
+            <ComboBox x:Name="ResultBox" MinWidth="140" ui:ControlHelper.Header="{x:Static r:Strings.AiActivity_Result}" SelectionChanged="OnFilterChanged" />
+            <TextBox x:Name="SearchBox" MinWidth="220" ui:ControlHelper.Header="{x:Static r:Strings.AiActivity_Search}" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.AiActivity_SearchPlaceholder}"
                      TextChanged="OnSearchChanged" />
         </ikw:SimpleStackPanel>
 
@@ -55,19 +56,19 @@
                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
             <DockPanel>
                 <!-- What an AI app changed or deleted comes back as it was -->
-                <Button x:Name="RestoreButton" DockPanel.Dock="Right" Margin="12,0,0,0" VerticalAlignment="Top" Content="Restore"
+                <Button x:Name="RestoreButton" DockPanel.Dock="Right" Margin="12,0,0,0" VerticalAlignment="Top" Content="{x:Static r:Strings.AiActivity_Restore}"
                         Visibility="Collapsed" Click="OnRestoreClick" />
                 <ui:ScrollViewerEx VerticalScrollBarVisibility="Auto">
                     <TextBox x:Name="DetailText" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"
-                             AutomationProperties.Name="Details" />
+                             AutomationProperties.Name="{x:Static r:Strings.AiActivity_Details}" />
                 </ui:ScrollViewerEx>
             </DockPanel>
         </Border>
 
         <Grid Margin="24,0,24,12">
             <TextBlock x:Name="EmptyText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       Text="No requests match the filters." Visibility="Collapsed" />
-            <ListView x:Name="ActivityList" SelectionMode="Single" SelectionChanged="OnSelectionChanged" AutomationProperties.Name="AI activity">
+                       Text="{x:Static r:Strings.AiActivity_NoMatch}" Visibility="Collapsed" />
+            <ListView x:Name="ActivityList" SelectionMode="Single" SelectionChanged="OnSelectionChanged" AutomationProperties.Name="{x:Static r:Strings.AiActivity_Title}">
                 <ListView.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>

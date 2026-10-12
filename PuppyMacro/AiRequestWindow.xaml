@@ -6,7 +6,8 @@
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
     xmlns:views="clr-namespace:PuppyMacro.Views"
-    Title="AI request"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    Title="{x:Static r:Strings.AiRequest_Title}"
     Width="480"
     SizeToContent="Height"
     ResizeMode="NoResize"
@@ -30,7 +31,7 @@
             <TextBlock x:Name="HeadingText" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
             <!-- A key request: why the AI asks (its description), then its steps, numbered, under Instructions -->
             <TextBlock x:Name="ContextText" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Visibility="Collapsed" />
-            <TextBlock x:Name="InstructionsTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Instructions" Visibility="Collapsed" />
+            <TextBlock x:Name="InstructionsTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.AiRequest_Instructions}" Visibility="Collapsed" />
 
             <!-- Confirmation: what changes, one line each; a key request: its steps -->
             <ItemsControl x:Name="Lines" Visibility="Collapsed">
@@ -42,11 +43,11 @@
             </ItemsControl>
 
             <!-- Key: the same field as the editors -->
-            <ui:SettingsCard x:Name="KeyCard" Header="Key or combination" Visibility="Collapsed"
-                             Description="Hold Ctrl, Alt, Shift or Win first for a combination. For Ctrl, Alt, Shift or Win alone, press and release it."
+            <ui:SettingsCard x:Name="KeyCard" Header="{x:Static r:Strings.AiRequest_KeyHeader}" Visibility="Collapsed"
+                             Description="{x:Static r:Strings.AiRequest_KeyDescription}"
                              ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
                 <views:KeyCaptureField x:Name="KeyField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
-                                       ItemName="key" Prompt="Press the key or combination (Esc cancels)"
+                                       ItemName="key" Prompt="{x:Static r:Strings.AiRequest_KeyPrompt}"
                                        ValueChanged="OnKeyChanged" />
             </ui:SettingsCard>
         </ikw:SimpleStackPanel>
@@ -60,8 +61,8 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button x:Name="OkButton" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
-                        Content="OK" Click="OnOkClick" />
-                <Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" IsCancel="True" Click="OnCancelClick" />
+                        Content="{x:Static r:Strings.AiRequest_Ok}" Click="OnOkClick" />
+                <Button Grid.Column="2" HorizontalAlignment="Stretch" Content="{x:Static r:Strings.AiRequest_Cancel}" IsCancel="True" Click="OnCancelClick" />
             </Grid>
         </Border>
     </StackPanel>

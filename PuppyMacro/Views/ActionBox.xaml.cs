@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -35,7 +36,7 @@ public partial class ActionBox : UserControl
             return;
         // Mouse buttons are Click and Mouse button down / up actions (middle and back / forward reach the field).
         field.Validate = binding => KeyNames.IsMouse(binding.Vk)
-            ? (Action?.InLoop == true ? "Use Click for mouse buttons." : "Use a Click or Mouse button action for mouse buttons.")
+            ? (Action?.InLoop == true ? Strings.Action_UseClick : Strings.Action_UseMouseAction)
             : null;
         field.Rejected += reason => Rejected?.Invoke(reason);
     }

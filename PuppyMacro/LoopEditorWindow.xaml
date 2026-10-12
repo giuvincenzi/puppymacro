@@ -2,6 +2,7 @@
     x:Class="PuppyMacro.LoopEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:local="clr-namespace:PuppyMacro"
@@ -10,7 +11,7 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:TitleBar.MinimizeButtonAvailability="Collapsed"
     ui:TitleBar.MaximizeButtonAvailability="Collapsed"
-    Title="Add loop"
+    Title="{x:Static r:Strings.LoopEditor_AddTitle}"
     Width="1360"
     Height="780"
     MinWidth="1020"
@@ -50,25 +51,25 @@
             </Grid.ColumnDefinitions>
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="24,8,24,12" Spacing="4">
-                    <TextBox x:Name="NameBox" ui:ControlHelper.Header="Name" ui:ControlHelper.PlaceholderText="e.g. Left click spam"
+                    <TextBox x:Name="NameBox" ui:ControlHelper.Header="{x:Static r:Strings.Editor_Name}" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.LoopEditor_NamePlaceholder}"
                              TextChanged="OnNameChanged" />
 
-                    <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Actions" />
+                    <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Editor_Actions}" />
 
                     <!-- One button per action (approved, ui.md): label under the icon, as the macro editor's bar -->
                     <ui:CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Bottom" VerticalContentAlignment="Center"
                                    IsDynamicOverflowEnabled="False" OverflowButtonVisibility="Collapsed">
-                        <ui:AppBarButton x:Name="AddPressKeyButton" VerticalAlignment="Center" Label="Press key" Click="OnAddPressKeyClick">
+                        <ui:AppBarButton x:Name="AddPressKeyButton" VerticalAlignment="Center" Label="{x:Static r:Strings.LoopEditor_PressKey}" Click="OnAddPressKeyClick">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
                             </ui:AppBarButton.Icon>
                         </ui:AppBarButton>
-                        <ui:AppBarButton x:Name="AddClickButton" VerticalAlignment="Center" Label="Click" Click="OnAddClickClick">
+                        <ui:AppBarButton x:Name="AddClickButton" VerticalAlignment="Center" Label="{x:Static r:Strings.LoopEditor_Click}" Click="OnAddClickClick">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}" />
                             </ui:AppBarButton.Icon>
                         </ui:AppBarButton>
-                        <ui:AppBarButton x:Name="AddPasteTextButton" VerticalAlignment="Center" Label="Paste text" Click="OnAddPasteTextClick">
+                        <ui:AppBarButton x:Name="AddPasteTextButton" VerticalAlignment="Center" Label="{x:Static r:Strings.LoopEditor_PasteText}" Click="OnAddPasteTextClick">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}" />
                             </ui:AppBarButton.Icon>
@@ -93,27 +94,27 @@
 
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="0,8,24,12" Spacing="4">
-                    <ui:SettingsCard Header="Enabled">
-                        <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="Enabled" />
+                    <ui:SettingsCard Header="{x:Static r:Strings.Editor_Enabled}">
+                        <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="{x:Static r:Strings.Editor_Enabled}" />
                     </ui:SettingsCard>
 
-                    <ui:SettingsCard Header="Activation" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
+                    <ui:SettingsCard Header="{x:Static r:Strings.Editor_Activation}" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
                         <ui:SettingsCard.Description>
                             <TextBlock x:Name="ActivationHint" />
                         </ui:SettingsCard.Description>
                         <StackPanel Orientation="Horizontal">
-                            <RadioButton x:Name="ToggleRadio" Content="Toggle" GroupName="Activation" Checked="OnActivationChanged" />
-                            <RadioButton x:Name="HoldRadio" Content="Hold" GroupName="Activation" Checked="OnActivationChanged" />
+                            <RadioButton x:Name="ToggleRadio" Content="{x:Static r:Strings.Editor_Toggle}" GroupName="Activation" Checked="OnActivationChanged" />
+                            <RadioButton x:Name="HoldRadio" Content="{x:Static r:Strings.Editor_Hold}" GroupName="Activation" Checked="OnActivationChanged" />
                         </StackPanel>
                     </ui:SettingsCard>
 
-                    <ui:SettingsCard Header="Hotkey" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                    <ui:SettingsCard Header="{x:Static r:Strings.Editor_Hotkey}" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
                         <StackPanel>
                             <views:KeyCaptureField x:Name="HotkeyField" IsHotkey="True" ValueChanged="OnHotkeyFieldChanged" />
                             <!-- The help, under all the options -->
                             <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       Text="Any key or mouse button, like F2 or A. For a combination, hold Ctrl, Alt, Shift or Win first; left and right click, the scroll wheel and Esc need one. Hold needs a hotkey." />
+                                       Text="{x:Static r:Strings.Editor_HotkeyHelp}" />
                         </StackPanel>
                     </ui:SettingsCard>
 
@@ -123,11 +124,11 @@
 
                     <views:FloatingButtonEditor x:Name="FloatingEditor" />
 
-                    <views:SwitchSettingsExpander x:Name="SoundExpander" CanExpand="{Binding IsOn, ElementName=SoundSwitch}" Header="Sound" Description="Plays when the loop starts and stops">
+                    <views:SwitchSettingsExpander x:Name="SoundExpander" CanExpand="{Binding IsOn, ElementName=SoundSwitch}" Header="{x:Static r:Strings.Editor_Sound}" Description="{x:Static r:Strings.LoopEditor_SoundDescription}">
                         <ui:ToggleSwitch x:Name="SoundSwitch" Toggled="OnSoundSwitchChanged" />
                         <ui:SettingsExpander.Items>
                             <ui:SettingsCard x:Name="SoundCard" ContentAlignment="Vertical" HorizontalContentAlignment="Left"
-                                             Description="Click a sound to choose it and hear how it starts and stops">
+                                             Description="{x:Static r:Strings.Editor_SoundChoose}">
                                 <!-- Scrolls on its own so the long list does not make the editor scroll (approved, ui.md). -->
                                 <ScrollViewer x:Name="SoundScroll" MaxHeight="200" VerticalScrollBarVisibility="Auto">
                                     <ui:RadioButtons x:Name="SoundChoices" MaxColumns="3"
@@ -155,8 +156,8 @@
                            Style="{StaticResource CaptionTextBlockStyle}"
                            Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
                 <Button x:Name="SaveButton" Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
-                        Content="Save" Click="OnSaveClick" />
-                <Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                        Content="{x:Static r:Strings.Editor_Save}" Click="OnSaveClick" />
+                <Button x:Name="CancelButton" Grid.Column="3" HorizontalAlignment="Stretch" Content="{x:Static r:Strings.Editor_Cancel}" Click="OnCancelClick" />
             </Grid>
         </Border>
     </Grid>

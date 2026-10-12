@@ -587,6 +587,17 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
+    public async Task The_language_is_left_to_the_user()
+    {
+        // It applies only after a restart, which would end the AI app's connection (AiSettingsValues).
+        AiToolResult result = await Call("update_settings", new { settings = new { Language = "it" } });
+
+        Assert.True(result.IsError);
+        Assert.Empty(_host.Applied);
+        Assert.DoesNotContain("Language", (await Call("get_settings", new { })).Text);
+    }
+
+    [Fact]
     public async Task Check_hotkey_follows_the_hotkey_rules_and_conflicts()
     {
         _settings.Loops.Add(new LoopDefinition { Name = "Spam", Hotkey = HotkeyBinding.FromKey(0x70) });

@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Interop;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
 
@@ -20,7 +22,7 @@ public partial class FloatingButtonWindow
     {
         InitializeComponent();
         _item = item;
-        Title = $"PuppyMacro floating button: {item.Name}";
+        Title = string.Format(CultureInfo.CurrentCulture, Strings.Floating_WindowTitleNamed, item.Name);
         ButtonView.Show(LabelOf(item), item.HasHotkey ? item.HotkeyText : "", item.FloatingButton.Size);
         ButtonView.SetBackgroundOpacity(opacity);
         ButtonView.IsRunning = item.IsRunning;

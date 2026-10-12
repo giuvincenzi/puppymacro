@@ -1,9 +1,11 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -46,7 +48,8 @@ internal sealed class SettingsStore
         {
             string backup = Path.ChangeExtension(_path, ".invalid.json");
             try { File.Copy(_path, backup, overwrite: true); } catch { /* best effort */ }
-            warning = $"Your settings could not be read, so they were reset.\nThe old file was saved as {Path.GetFileName(backup)}.\n\nDetails: {ex.Message}";
+            // Read before the language is set (it is a setting): the defaults follow Windows' language, as this text does.
+            warning = string.Format(CultureInfo.CurrentCulture, Strings.App_SettingsReset, Path.GetFileName(backup), ex.Message);
             var defaults = AppSettings.CreateDefault();
             TrySave(defaults, out _);
             return defaults;

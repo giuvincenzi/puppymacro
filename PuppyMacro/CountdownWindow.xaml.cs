@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -26,7 +27,7 @@ public partial class CountdownWindow
     /// <summary>Shows <paramref name="number"/> and empties the ring in one second.</summary>
     public void SetNumber(int number)
     {
-        NumberText.Text = number.ToString();
+        NumberText.Text = number.ToString(CultureInfo.CurrentCulture);
         var empty = new DoubleAnimation(0, Ring.StrokeDashArray[0], TimeSpan.FromSeconds(1));
         Ring.BeginAnimation(Shape.StrokeDashOffsetProperty, empty);
     }

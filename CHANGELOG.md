@@ -9,6 +9,10 @@
   gets a number, a hotkey already used is left out, nothing of yours is replaced. AI apps can export and import
   them too, and open these windows.
 - `.puppyitems` and `.puppymacro` (backup) files have their own icons in File Explorer.
+- PuppyMacro in 13 languages: English, Italiano, Français, Español, Deutsch, Português (Brasil), Română, Shqip,
+  Русский, العربية (right to left), 日本語, 한국어 and 中文（简体）. Settings › General › **Language**: **Use system
+  language** (the default) or a language; numbers and dates follow it too. The History and the AI activity show
+  their texts in the language in use.
 
 ### Changed
 - Export saves everything by default, History, AI activity and logs too, so importing the file on another PC

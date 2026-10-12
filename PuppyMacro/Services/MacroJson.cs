@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -57,7 +59,7 @@ internal static class MacroJson
             {
                 string allowed = string.Join(", ", allowedGroups.Select(g => g is Guid id && groupNames.TryGetValue(id, out string? name)
                     ? $"\"{id}\" ({name})" : "null"));
-                Add(check, "GroupId", $"This action can only be in: {allowed}. A group's actions must be next to each other.");
+                Add(check, "GroupId", string.Format(CultureInfo.CurrentCulture, Strings.Code_GroupNotAllowed, allowed));
             }
         }, out problems);
         if (action != null)
@@ -115,12 +117,12 @@ internal static class MacroJson
     {
         check.SameId(m.Id, id);
         if (string.IsNullOrWhiteSpace(m.Name))
-            check.Add("Name", "Enter a name.");
+            check.Add("Name", Strings.Code_EnterName);
         if (m.Actions.Count == 0)
-            check.Add("Actions", "Add at least one action.");
+            check.Add("Actions", Strings.Code_AddAction);
         check.Range("RepeatCount", m.RepeatCount, RepeatCount);
         if (!MacroDefinition.SpeedSteps.Contains(m.Speed))
-            check.Add("Speed", "Must be 0.25, 0.5, 1, 2 or 4.");
+            check.Add("Speed", Strings.Code_SpeedSteps);
         check.KnownSound(m.SoundName);
         check.AppExe(m.AppExe);
         check.Hotkey(m.Hotkey, m.Mode, binding => conflict(binding, AppScope.Normalize(m.AppExe)));
@@ -137,9 +139,9 @@ internal static class MacroJson
         {
             MacroGroup group = m.Groups[j];
             if (!index.TryAdd(group.Id, j))
-                check.Add($"Groups[{j}].Id", "Two groups have this Id.");
+                check.Add($"Groups[{j}].Id", Strings.Code_GroupIdTwice);
             if (string.IsNullOrWhiteSpace(group.Name))
-                check.Add($"Groups[{j}].Name", "Enter a group name.");
+                check.Add($"Groups[{j}].Name", Strings.Code_EnterGroupName);
         }
 
         var finished = new HashSet<Guid>();
@@ -153,9 +155,9 @@ internal static class MacroJson
             if (groupId is Guid id)
             {
                 if (!index.ContainsKey(id))
-                    check.Add($"Actions[{i}].GroupId", "No group in \"Groups\" has this Id.");
+                    check.Add($"Actions[{i}].GroupId", Strings.Code_NoSuchGroup);
                 else if (finished.Contains(id))
-                    check.Add($"Actions[{i}].GroupId", "A group's actions must be next to each other.");
+                    check.Add($"Actions[{i}].GroupId", Strings.Code_GroupApart);
                 used.Add(id);
             }
             previous = groupId;
@@ -163,7 +165,7 @@ internal static class MacroJson
         for (int j = 0; j < m.Groups.Count; j++)
         {
             if (!used.Contains(m.Groups[j].Id))
-                check.Add($"Groups[{j}]", "This group has no actions: give it some (\"GroupId\") or remove it.");
+                check.Add($"Groups[{j}]", Strings.Code_GroupNoActions);
         }
     }
 
@@ -177,23 +179,23 @@ internal static class MacroJson
             case MacroActionType.KeyDown:
             case MacroActionType.KeyUp:
                 if (!CodeJson.IsKeyCode(a.Vk))
-                    check.Add($"{prefix}Vk", "Choose a key: a virtual-key code from 1 to 254.");
+                    check.Add($"{prefix}Vk", Strings.Code_MacroChooseKey);
                 else if (KeyNames.IsMouse(a.Vk))
-                    check.Add($"{prefix}Vk", "Use a Click, Mouse down or Mouse up action for mouse buttons.");
+                    check.Add($"{prefix}Vk", Strings.Code_UseMouseAction);
                 break;
             case MacroActionType.Click:
             case MacroActionType.MouseDown:
             case MacroActionType.MouseUp:
                 if (!KeyNames.IsMouse(a.Vk))
-                    check.Add($"{prefix}Vk", "Choose a mouse button: 1 left, 2 right, 4 middle, 5 back (X1), 6 forward (X2).");
+                    check.Add($"{prefix}Vk", Strings.Code_ChooseMouseButton);
                 break;
         }
         check.KeyModifiers(prefix, a, a.Type switch
         {
             MacroActionType.PressKey => null,
             MacroActionType.KeyDown or MacroActionType.KeyUp =>
-                "Key down and Key up take one key: for Ctrl, Alt, Shift or Win alone use its key code in \"Vk\" (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).",
-            _ => "Only a Press key action has Ctrl, Alt, Shift or Win. Remove it.",
+                Strings.Code_KeyDownOneKey,
+            _ => Strings.Code_MacroOnlyPressKeyModifiers,
         });
         if (a.Type is MacroActionType.PressKey or MacroActionType.Click)
         {
@@ -202,7 +204,7 @@ internal static class MacroJson
             check.Range($"{prefix}RepeatPauseMs", a.RepeatPauseMs, RepeatPauseMs);
         }
         if (a.Type == MacroActionType.Click && a.ClickCount is not (1 or 2))
-            check.Add($"{prefix}ClickCount", "Must be 1 (single click) or 2 (double click).");
+            check.Add($"{prefix}ClickCount", Strings.Code_ClickCount);
         if (a.Type is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo)
         {
             check.Range($"{prefix}X", a.X, Coordinate);
@@ -213,16 +215,16 @@ internal static class MacroJson
         if (a.Type == MacroActionType.MovePath)
         {
             if (a.Path.Count == 0)
-                check.Add($"{prefix}Path", "A path needs at least one point.");
+                check.Add($"{prefix}Path", Strings.Code_PathEmpty);
             for (int p = 0; p < a.Path.Count; p++)
             {
                 if (double.IsNaN(a.Path[p].T) || a.Path[p].T < 0 || (p > 0 && a.Path[p].T < a.Path[p - 1].T))
-                    check.Add($"{prefix}Path[{p}].T", "Times must start at 0 or more and never go back.");
+                    check.Add($"{prefix}Path[{p}].T", Strings.Code_PathTimes);
             }
         }
         if (a.Type == MacroActionType.Scroll)
             check.Range($"{prefix}ScrollSteps", a.ScrollSteps, ScrollSteps);
         if (a.Type == MacroActionType.PasteText && string.IsNullOrEmpty(a.Text))
-            check.Add($"{prefix}Text", "Enter the text to paste.");
+            check.Add($"{prefix}Text", Strings.Code_EnterPasteText);
     }
 }

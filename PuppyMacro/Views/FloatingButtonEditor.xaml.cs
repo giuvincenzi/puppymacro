@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Views;
 
@@ -134,8 +135,8 @@ public partial class FloatingButtonEditor
             return;
         FloatingSwitch.IsEnabled = !_holdMode;
         FloatingExpander.Description = _holdMode
-            ? "Needs Toggle: a click can start and stop, but not hold"
-            : "A round button that starts and stops it in overlay mode, in place of its row in the panel";
+            ? Strings.FloatingButton_NeedsToggle
+            : Strings.FloatingButton_Description;
         // Its options open only for a button that is on (not for Hold items).
         FloatingExpander.CanExpand = _button.Enabled && !_holdMode;
         // The details apply only to a button that is on.

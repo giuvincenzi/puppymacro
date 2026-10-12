@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -27,12 +28,11 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
     public bool IsItemEnabled => Definition.Enabled;
 
     public string Name => Definition.Name;
-    public string ModeText => Definition.Mode.ToString();
     public string HotkeyText => KeyNames.Format(Definition.Hotkey);
     public bool HasHotkey => Definition.Hotkey is { IsSet: true };
 
     /// <summary>The card's second line before the hotkey's keys: "Toggle with", or "Toggle, no hotkey".</summary>
-    public string ActivationLead => HasHotkey ? $"{ModeText} with" : $"{ModeText}, no hotkey";
+    public string ActivationLead => CardTexts.ActivationLead(Definition.Mode, HasHotkey);
 
     /// <summary>The hotkey's keys on the card, in the accent color (none without a hotkey).</summary>
     public List<string> HotkeyParts => HasHotkey ? KeyNames.Parts(Definition.Hotkey) : new List<string>();
@@ -69,13 +69,13 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
         {
             var actions = Definition.Actions;
             if (actions.Count == 0)
-                return "No actions";
+                return Strings.Loops_NoActions;
             if (actions.Count == 1)
             {
                 string single = Describe(actions[0]);
                 return char.ToUpper(single[0], CultureInfo.CurrentCulture) + single[1..];
             }
-            return $"{actions.Count} actions: " + string.Join(", ", actions.Select(Describe));
+            return Plurals.Format("Loops_ActionsSummary", actions.Count, string.Join(Strings.ListSeparator, actions.Select(Describe)));
         }
     }
 
@@ -139,7 +139,7 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
         get => _isDragging;
         set { if (_isDragging != value) { _isDragging = value; OnPropertyChanged(); } }
     }
-    public string Status => IsRunning ? "Running" : (Definition.Enabled ? "Idle" : "Disabled");
+    public string Status => CardTexts.Status(IsRunning, Definition.Enabled);
 
     /// <summary>Start works only when enabled; a running one can always be stopped.</summary>
     public bool CanStartStop => Definition.Enabled || IsRunning;
@@ -149,35 +149,54 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
 
     public static string FormatInterval(LoopAction action)
     {
-        string unit = action.IntervalUnit switch
+        string format = action.IntervalUnit switch
         {
-            IntervalUnit.Seconds => "s",
-            IntervalUnit.Minutes => "min",
-            IntervalUnit.Hours => "h",
-            _ => "ms",
+            IntervalUnit.Seconds => Strings.Loops_IntervalSeconds,
+            IntervalUnit.Minutes => Strings.Loops_IntervalMinutes,
+            IntervalUnit.Hours => Strings.Loops_IntervalHours,
+            _ => Strings.Loops_IntervalMilliseconds,
         };
-        return $"{action.IntervalValue.ToString("0.##", CultureInfo.CurrentCulture)} {unit}";
+        return string.Format(CultureInfo.CurrentCulture, format, action.IntervalValue.ToString("0.##", CultureInfo.CurrentCulture));
     }
 
     private static string Describe(LoopAction action)
     {
         // Press key: the key or combination ("Left Ctrl + C"); Click: the button ("Left click", "Left double click").
         string what = action.IsClick
-            ? $"{MacroActionRowViewModel.ButtonName(action.KeyVk)} {(action.IsDoubleClick ? "double click" : "click")}"
+            ? action.IsDoubleClick ? MouseButtonBox.DoubleClickName(action.KeyVk) : MouseButtonBox.ClickName(action.KeyVk)
             : KeyNames.Format(action.Key);
         if (action.Type == ActionType.Key && action.HoldDown)
-            return $"{what} held down";
+            return string.Format(CultureInfo.CurrentCulture, Strings.Loops_HeldDown, what);
 
-        string every = "every " + FormatInterval(action);
+        string interval = FormatInterval(action);
         if (action.Type == ActionType.Key)
-            return $"{what}{(action.Times > 1 ? $" {action.Times} times" : "")} {every}";
+            return action.Times > 1
+                ? Plurals.Format("Loops_KeyTimesEvery", action.Times, what, interval)
+                : string.Format(CultureInfo.CurrentCulture, Strings.Loops_KeyEvery, what, interval);
 
         string text = action.Text.Replace("\r", " ").Replace("\n", " ").Trim();
         if (text.Length > 28)
             text = text[..28] + "…";
-        return $"pastes \"{text}\" {every}";
+        return string.Format(CultureInfo.CurrentCulture, Strings.Loops_PastesEvery, text, interval);
     }
 
     private void OnPropertyChanged([CallerMemberName] string? name = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+
+/// <summary>The texts shared by the loop and macro cards.</summary>
+internal static class CardTexts
+{
+    /// <summary>The second line before the hotkey's keys: "Toggle with", or "Toggle, no hotkey".</summary>
+    public static string ActivationLead(ActivationMode mode, bool hasHotkey) => (mode, hasHotkey) switch
+    {
+        (ActivationMode.Hold, true) => Strings.Card_HoldWith,
+        (ActivationMode.Hold, false) => Strings.Card_HoldNoHotkey,
+        (_, true) => Strings.Card_ToggleWith,
+        _ => Strings.Card_ToggleNoHotkey,
+    };
+
+    /// <summary>The status next to the name: Running, Idle or Disabled.</summary>
+    public static string Status(bool running, bool enabled) =>
+        running ? Strings.Card_StatusRunning : enabled ? Strings.Card_StatusIdle : Strings.Card_StatusDisabled;
 }

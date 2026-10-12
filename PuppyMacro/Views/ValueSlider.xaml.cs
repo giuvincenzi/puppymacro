@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Views;
 
@@ -11,7 +13,7 @@ namespace PuppyMacro.Views;
 /// </summary>
 public partial class ValueSlider
 {
-    private Func<double, string> _format = v => $"{(int)Math.Round(v)}%";
+    private Func<double, string> _format = v => string.Format(CultureInfo.CurrentCulture, Strings.Slider_Percent, (int)Math.Round(v));
 
     public ValueSlider()
     {

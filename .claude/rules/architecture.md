@@ -52,6 +52,7 @@ PuppyMacro/
                                 buttons, Code view (CodeView, ViewSwitchBar, CodeViewSwitch),
                                 MacroShortcutsView, ExportOptionsView, ImportItemsView, ExportItemsView (+ ItemFileRows),
                                 SoundChoicesScroll, ValueSlider, WindowFit
+  Resources/                    Strings.resx (English texts) and Strings.<code>.resx (translations, i18n.md)
   Native/                       Win32 interop
   Assets/                       app icon, built-in sounds, Code view page (CodeEditor) and Monaco, file icons (FileIcons)
   Properties/PublishProfiles/   Folder.pubxml (used by scripts/build.ps1)
@@ -166,6 +167,9 @@ Rules:
   `Views/FloatingButtonView` (the round button), `Views/FloatingButtonEditor` (editor card:
   label, size, opacity, Position…). A button without a saved position is in the middle of the
   main screen (`MainWindow.ButtonPositions`).
+- Languages (`i18n.md`): `Services/AppLanguages.cs` (the languages, which one and which format at start),
+  `Services/Plurals.cs` (CLDR plural forms), `Services/Phrase.cs` (`Phrase`, texts kept in files and shown in the language
+  of the moment; `Loc`, English for AI apps), `App.ApplyLanguage`, Settings › Language in `MainWindow`.
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`); Release builds set it
   from `StartWithWindows` at every start, so it follows the setting after an import or a reinstall.

@@ -1,6 +1,8 @@
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using FontIconData = iNKORE.UI.WPF.Modern.Common.IconKeys.FontIconData;
 using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
@@ -81,7 +83,7 @@ public sealed class MacroGroupViewModel : MacroEditorItem
 
     public bool IsExpanded => !IsCollapsed;
 
-    public string ToggleText => IsCollapsed ? "Expand group" : "Collapse group";
+    public string ToggleText => IsCollapsed ? Strings.MacroEditor_ExpandGroup : Strings.MacroEditor_CollapseGroup;
 
     /// <summary>Range, count and duration, e.g. "#4–8 · 5 actions · 2.1 s".</summary>
     public string Info
@@ -90,7 +92,7 @@ public sealed class MacroGroupViewModel : MacroEditorItem
         set { if (_info != value) { _info = value; OnPropertyChanged(); OnPropertyChanged(nameof(AccessibleName)); } }
     }
 
-    public override string AccessibleName => $"Group {Name}, {Info}";
+    public override string AccessibleName => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_GroupAccessibleName, Name, Info);
 }
 
 /// <summary>One action row of the macro editor.</summary>
@@ -133,7 +135,7 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
     }
 
     /// <summary>The delay shown on the row, e.g. "50 ms".</summary>
-    public string DelayText => $"{Action.DelayMs:0.##} ms";
+    public string DelayText => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_DelayMs, Action.DelayMs);
 
     public bool IsKeyIcon => Action.Type is MacroActionType.PressKey or MacroActionType.KeyDown or MacroActionType.KeyUp;
     public bool IsMouseIcon => Action.Type is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp;
@@ -167,31 +169,42 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
 
     private string Description => Action.Type switch
     {
-        MacroActionType.PressKey => $"Press {KeyNames.Format(Action.Key)}{Times}",
-        MacroActionType.KeyDown => $"Key down {KeyNames.Get(Action.Vk)}",
-        MacroActionType.KeyUp => $"Key up {KeyNames.Get(Action.Vk)}",
-        MacroActionType.Click => $"{ButtonName(Action.Vk)} {(Action.ClickCount == 2 ? "double click" : "click")}{Times}",
-        MacroActionType.MouseDown => $"{ButtonName(Action.Vk)} button down",
-        MacroActionType.MouseUp => $"{ButtonName(Action.Vk)} button up",
-        MacroActionType.MoveTo => Action.Smooth ? "Move smoothly" : "Move to",
-        MacroActionType.MovePath => "Move path",
-        MacroActionType.Scroll => $"Scroll {Action.ScrollDirection.ToString().ToLowerInvariant()}",
-        MacroActionType.PasteText => "Paste text",
+        MacroActionType.PressKey => WithTimes(Fill(Strings.MacroEditor_RowPress, KeyNames.Format(Action.Key))),
+        MacroActionType.KeyDown => Fill(Strings.MacroEditor_RowKeyDown, KeyNames.Get(Action.Vk)),
+        MacroActionType.KeyUp => Fill(Strings.MacroEditor_RowKeyUp, KeyNames.Get(Action.Vk)),
+        MacroActionType.Click => WithTimes(Action.ClickCount == 2
+            ? MouseButtonBox.DoubleClickName(Action.Vk)
+            : MouseButtonBox.ClickName(Action.Vk)),
+        MacroActionType.MouseDown => Fill(Strings.MacroEditor_RowButtonDown, ButtonName(Action.Vk)),
+        MacroActionType.MouseUp => Fill(Strings.MacroEditor_RowButtonUp, ButtonName(Action.Vk)),
+        MacroActionType.MoveTo => Action.Smooth ? Strings.MacroEditor_RowMoveSmoothly : Strings.ActionWindow_Type_MoveTo,
+        MacroActionType.MovePath => Strings.ActionWindow_Type_MovePath,
+        MacroActionType.Scroll => Action.ScrollDirection switch
+        {
+            ScrollDirection.Up => Strings.MacroEditor_RowScrollUp,
+            ScrollDirection.Left => Strings.MacroEditor_RowScrollLeft,
+            ScrollDirection.Right => Strings.MacroEditor_RowScrollRight,
+            _ => Strings.MacroEditor_RowScrollDown,
+        },
+        MacroActionType.PasteText => Strings.ActionWindow_Type_PasteText,
         _ => Action.Type.ToString(),
     };
 
     private string DescriptionDetail => Action.Type switch
     {
-        MacroActionType.PressKey => $"held {System.Math.Round(Action.HoldMs)} ms",
+        MacroActionType.PressKey => Fill(Strings.MacroEditor_RowHeld, System.Math.Round(Action.HoldMs)),
         MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp
-            or MacroActionType.MoveTo => $"at {Action.X}, {Action.Y}",
-        MacroActionType.MovePath => $"{Action.Path.Count} points, {MacroItemViewModel.FormatDuration(Action.DurationMs)}",
-        MacroActionType.Scroll => $"{Action.ScrollSteps} {(Action.ScrollSteps == 1 ? "step" : "steps")}",
-        MacroActionType.PasteText => "\"" + Shorten(Action.Text) + "\"",
+            or MacroActionType.MoveTo => Fill(Strings.MacroEditor_RowAt, Action.X, Action.Y),
+        MacroActionType.MovePath => Plurals.Format("MacroEditor_RowPath", Action.Path.Count, MacroItemViewModel.FormatDuration(Action.DurationMs)),
+        MacroActionType.Scroll => Plurals.Format("MacroEditor_RowScrollSteps", Action.ScrollSteps),
+        MacroActionType.PasteText => Fill(Strings.MacroEditor_RowQuoted, Shorten(Action.Text)),
         _ => "",
     };
 
-    private string Times => Action.Repeat > 1 ? $" {Action.Repeat} times" : "";
+    /// <summary>"Press A 3 times": the action repeated, when it is.</summary>
+    private string WithTimes(string what) => Action.Repeat > 1 ? Plurals.Format("MacroEditor_RowTimes", Action.Repeat, what) : what;
+
+    private static string Fill(string text, params object[] values) => string.Format(CultureInfo.CurrentCulture, text, values);
 
     public void Replace(MacroAction action)
     {
@@ -199,14 +212,8 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
         OnPropertyChanged(string.Empty);
     }
 
-    public static string ButtonName(int vk) => vk switch
-    {
-        KeyNames.VK_RBUTTON => "Right",
-        KeyNames.VK_MBUTTON => "Middle",
-        KeyNames.VK_XBUTTON1 => "Back (X1)",
-        KeyNames.VK_XBUTTON2 => "Forward (X2)",
-        _ => "Left",
-    };
+    /// <summary>The button's name ("Left", "Back (X1)"), as in the mouse button list.</summary>
+    public static string ButtonName(int vk) => MouseButtonBox.ButtonName(vk);
 
     private static string Shorten(string text)
     {

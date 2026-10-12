@@ -2,7 +2,8 @@
     x:Class="PuppyMacro.RecordingBarWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Recording"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    Title="{x:Static r:Strings.Recording_Title}"
     WindowStyle="None"
     AllowsTransparency="True"
     Background="Transparent"
@@ -19,13 +20,13 @@
         <Grid>
         <StackPanel x:Name="CountdownPanel" Orientation="Horizontal" Visibility="Collapsed">
             <Ellipse Width="10" Height="10" Fill="#FCE100" VerticalAlignment="Center" />
-            <TextBlock x:Name="CountdownText" Margin="8,0,0,0" FontSize="13" FontWeight="SemiBold" Text="Recording starts in 3" VerticalAlignment="Center" />
-            <TextBlock Margin="14,0,14,0" FontSize="13" Foreground="#C5C5C5" Text="Switch to the window to record. Clicks aren't recorded yet." VerticalAlignment="Center" />
+            <TextBlock x:Name="CountdownText" Margin="8,0,0,0" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+            <TextBlock Margin="14,0,14,0" FontSize="13" Foreground="#C5C5C5" Text="{x:Static r:Strings.Recording_SwitchHint}" VerticalAlignment="Center" />
             <Button Click="OnCancelCountdownClick" Focusable="False">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Back" Height="30" Padding="12,0" CornerRadius="4" Background="#373737" BorderBrush="#5A5A5A" BorderThickness="1">
-                            <TextBlock FontSize="13" Foreground="White" Text="Cancel" VerticalAlignment="Center" />
+                            <TextBlock FontSize="13" Foreground="White" Text="{x:Static r:Strings.Recording_Cancel}" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -38,21 +39,22 @@
         </StackPanel>
         <StackPanel x:Name="RecordingPanel" Orientation="Horizontal">
             <Ellipse Width="10" Height="10" Fill="#FF4B4B" VerticalAlignment="Center" />
-            <TextBlock Margin="8,0,0,0" FontSize="13" FontWeight="SemiBold" Text="Recording" VerticalAlignment="Center" />
+            <TextBlock Margin="8,0,0,0" FontSize="13" FontWeight="SemiBold" Text="{x:Static r:Strings.Recording_Title}" VerticalAlignment="Center" />
             <TextBlock x:Name="TimeText" Margin="6,0,0,0" FontSize="13" Text="00:00" VerticalAlignment="Center" />
-            <TextBlock x:Name="CountText" Margin="14,0,0,0" FontSize="13" Foreground="#C5C5C5" Text="0 events" VerticalAlignment="Center" />
-            <TextBlock Margin="14,0,6,0" FontSize="13" Foreground="#C5C5C5" Text="Press" VerticalAlignment="Center" />
+            <TextBlock x:Name="CountText" Margin="14,0,0,0" FontSize="13" Foreground="#C5C5C5" VerticalAlignment="Center" />
+            <!-- "Press {0} to stop" (Recording_PressToStop): the text before and after the key cap -->
+            <TextBlock x:Name="PressText" Margin="14,0,6,0" FontSize="13" Foreground="#C5C5C5" VerticalAlignment="Center" />
             <Border Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737" VerticalAlignment="Center">
                 <TextBlock x:Name="HotkeyText" FontSize="12" />
             </Border>
-            <TextBlock Margin="6,0,14,0" FontSize="13" Foreground="#C5C5C5" Text="to stop" VerticalAlignment="Center" />
+            <TextBlock x:Name="ToStopText" Margin="6,0,14,0" FontSize="13" Foreground="#C5C5C5" VerticalAlignment="Center" />
             <Button Click="OnStopClick" Focusable="False">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Back" Height="30" Padding="12,0" CornerRadius="4" Background="#C42B1C">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="White" VerticalAlignment="Center" />
-                                <TextBlock Margin="6,0,0,0" FontSize="13" FontWeight="SemiBold" Foreground="White" Text="Stop" />
+                                <TextBlock Margin="6,0,0,0" FontSize="13" FontWeight="SemiBold" Foreground="White" Text="{x:Static r:Strings.Recording_Stop}" />
                             </StackPanel>
                         </Border>
                         <ControlTemplate.Triggers>

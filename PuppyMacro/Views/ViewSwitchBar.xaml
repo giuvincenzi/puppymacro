@@ -2,6 +2,7 @@
     x:Class="PuppyMacro.Views.ViewSwitchBar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
 
     <!-- Form view: the editor's fields. Code view: the item's JSON in a code editor. History: its saved versions.
@@ -14,15 +15,15 @@
         IsPaneToggleButtonVisible="False"
         SelectionChanged="OnSelectionChanged">
         <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItem x:Name="FormViewButton" Content="Form view" IsSelected="True" />
-            <ui:NavigationViewItem x:Name="CodeViewButton" Content="Code view"
-                                   ToolTip="Edit it as JSON. Ctrl+Space shows suggestions" />
-            <ui:NavigationViewItem x:Name="HistoryViewButton" Content="History" Visibility="Collapsed"
-                                   ToolTip="Its saved versions: who changed what, and Restore" />
+            <ui:NavigationViewItem x:Name="FormViewButton" Content="{x:Static r:Strings.Editor_FormView}" IsSelected="True" />
+            <ui:NavigationViewItem x:Name="CodeViewButton" Content="{x:Static r:Strings.Editor_CodeView}"
+                                   ToolTip="{x:Static r:Strings.Editor_CodeViewTooltip}" />
+            <ui:NavigationViewItem x:Name="HistoryViewButton" Content="{x:Static r:Strings.Editor_History}" Visibility="Collapsed"
+                                   ToolTip="{x:Static r:Strings.Editor_HistoryTooltip}" />
         </ui:NavigationView.MenuItems>
         <ui:NavigationView.PaneFooter>
-            <Button x:Name="FormatButton" Margin="0,0,8,0" VerticalAlignment="Center" Content="Format"
-                    ToolTip="Format the code (Shift+Alt+F)" Visibility="Collapsed" Click="OnFormatClick" />
+            <Button x:Name="FormatButton" Margin="0,0,8,0" VerticalAlignment="Center" Content="{x:Static r:Strings.CodeView_Format}"
+                    ToolTip="{x:Static r:Strings.CodeView_FormatTooltip}" Visibility="Collapsed" Click="OnFormatClick" />
         </ui:NavigationView.PaneFooter>
     </ui:NavigationView>
 </UserControl>

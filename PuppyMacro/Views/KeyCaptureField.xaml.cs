@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using SplitButton = iNKORE.UI.WPF.Modern.Controls.SplitButton;
 using SplitButtonClickEventArgs = iNKORE.UI.WPF.Modern.Controls.SplitButtonClickEventArgs;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -33,7 +34,7 @@ public partial class KeyCaptureField : UserControl
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, _) => ((KeyCaptureField)d).ShowValue()));
 
     public static readonly DependencyProperty PromptProperty = DependencyProperty.Register(
-        nameof(Prompt), typeof(string), typeof(KeyCaptureField), new PropertyMetadata("Press the hotkey (Esc cancels)"));
+        nameof(Prompt), typeof(string), typeof(KeyCaptureField), new PropertyMetadata(Strings.KeyField_PromptHotkey));
 
     public static readonly DependencyProperty ItemNameProperty = DependencyProperty.Register(
         nameof(ItemName), typeof(string), typeof(KeyCaptureField), new PropertyMetadata("hotkey", (d, _) => ((KeyCaptureField)d).UpdateNames()));
@@ -194,7 +195,7 @@ public partial class KeyCaptureField : UserControl
             {
                 new(name, ModifierSide.Left, KeyNames.Modifier(name, ModifierSide.Left), current == ModifierSide.Left),
                 new(name, ModifierSide.Right, KeyNames.Modifier(name, ModifierSide.Right), current == ModifierSide.Right),
-                new(name, ModifierSide.Any, $"Left or right {name}", current == ModifierSide.Any),
+                new(name, ModifierSide.Any, KeyNames.EitherSide(name), current == ModifierSide.Any),
             });
         }
         return groups;
@@ -318,16 +319,19 @@ public partial class KeyCaptureField : UserControl
         ValuePanel.Visibility = !_waiting && set ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    /// <summary>The buttons' texts for <see cref="ItemName"/>: "key", or "hotkey" (the default).</summary>
     private void UpdateNames()
     {
-        SetText.Text = "Set " + ItemName;
-        AutomationProperties.SetName(SetButton, "Set " + ItemName);
-        string change = "Change " + ItemName;
+        bool key = ItemName == "key";
+        string set = key ? Strings.KeyField_SetKey : Strings.KeyField_SetHotkey;
+        SetText.Text = set;
+        AutomationProperties.SetName(SetButton, set);
+        string change = key ? Strings.KeyField_ChangeKey : Strings.KeyField_ChangeHotkey;
         AutomationProperties.SetName(ValueSplit, change);
         ValueSplit.ToolTip = change;
-        ChangeItem.Header = "Change";
-        ClearItem.Header = "Clear";
+        ChangeItem.Header = Strings.KeyField_Change;
+        ClearItem.Header = Strings.KeyField_Clear;
         AutomationProperties.SetName(ChangeItem, change);
-        AutomationProperties.SetName(ClearItem, "Clear " + ItemName);
+        AutomationProperties.SetName(ClearItem, key ? Strings.KeyField_ClearKey : Strings.KeyField_ClearHotkey);
     }
 }

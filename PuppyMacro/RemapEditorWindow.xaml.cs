@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
 
@@ -36,8 +38,11 @@ public partial class RemapEditorWindow
         source.Id = _itemId;
 
         // "Edit remap - Caps Lock to Esc": its note, or its keys when it has none.
-        string title = existing == null ? "Add remap"
-            : $"Edit remap - {(string.IsNullOrWhiteSpace(existing.Note) ? $"{KeyNames.Format(existing.Source)} → {KeyNames.Format(existing.Target)}" : existing.Note)}";
+        string title = existing == null ? Strings.RemapEditor_AddTitle
+            : string.IsNullOrWhiteSpace(existing.Note)
+                ? string.Format(CultureInfo.CurrentCulture, Strings.RemapEditor_EditKeysTitle,
+                    KeyNames.Format(existing.Source), KeyNames.Format(existing.Target))
+                : string.Format(CultureInfo.CurrentCulture, Strings.RemapEditor_EditNamedTitle, existing.Note);
         Title = title;
 
         LoadRemap(source);
@@ -132,17 +137,17 @@ public partial class RemapEditorWindow
     private string? GetValidationError()
     {
         if (_source is not { IsSet: true } source)
-            return "Choose the key, mouse button or combination to remap.";
+            return Strings.RemapEditor_NoSourceError;
         if (_target is not { IsSet: true })
-            return "Choose what to send instead.";
+            return Strings.RemapEditor_NoTargetError;
         if (_target.SameAs(source))
-            return "Send something different from what you press.";
+            return Strings.RemapEditor_SameKeysError;
 
         if (AppScopeCard.ValidationError is string appError)
             return appError;
         string? app = AppScopeCard.AppExe;
         if (KeyNames.IsPrimaryMouse(source.Vk) && !source.HasModifiers && app == null)
-            return "Left and right click can be remapped only in a specific app, so they keep working everywhere else.";
+            return Strings.RemapEditor_PrimaryMouseError;
 
         return SourceClash(source, app);
     }

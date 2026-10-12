@@ -9,6 +9,7 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
 using iNKORE.UI.WPF.Modern;
@@ -143,7 +144,8 @@ public partial class App : Application
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
 
-        string? warning = null;
+        // The migration runs before the settings say the language: its warning is written once the language is set.
+        Exception? migrationError = null;
 #if DEBUG
         DevSampleData.WriteIfEmpty();
 #else
@@ -153,22 +155,24 @@ public partial class App : Application
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            warning = $"Your loops and macros could not be copied to {AppPaths.DataFolder}.\n\nDetails: {ex.Message}";
+            migrationError = ex;
         }
 #endif
 
         var store = new SettingsStore(AppPaths.SettingsFile);
         AppSettings settings = store.Load(out string? loadWarning);
-        warning ??= loadWarning;
         // Before any window: x:Static texts are read when a window is built, and a binding formats with the
         // FrameworkElement.Language it has then.
         ApplyLanguage(settings.Language);
+        string? warning = migrationError != null
+            ? string.Format(CultureInfo.CurrentCulture, Strings.App_MigrationFailed, AppPaths.DataFolder, migrationError.Message)
+            : loadWarning;
 
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
         macros.Load(settings.MacroOrder, out string? macroWarning);
         warning ??= macroWarning;
         if (settings.LoadedSchemaVersion < 6 && !macros.FillButtonOpacity(settings.OverlayPanelOpacity))
-            warning ??= "Some macro files could not be updated to this version.";
+            warning ??= Strings.App_MacrosNotUpdated;
 
         // Keep the Run entry pointing at this exe (new versions live in new folders).
         // The development build never touches it: the entry belongs to the installed app.
@@ -268,7 +272,8 @@ public partial class App : Application
         _showingError = true;
         try
         {
-            MessageBox.Show($"Unexpected error:\n\n{e.Exception.Message}", "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, Strings.App_UnexpectedError, e.Exception.Message), "PuppyMacro",
+                MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {

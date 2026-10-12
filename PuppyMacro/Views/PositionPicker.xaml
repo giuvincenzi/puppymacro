@@ -4,18 +4,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
-    xmlns:local="clr-namespace:PuppyMacro.Views">
+    xmlns:local="clr-namespace:PuppyMacro.Views"
+    xmlns:r="clr-namespace:PuppyMacro.Resources">
 
     <!-- A point on the screen, everywhere one is chosen (Click, Mouse button down / up, Move to, a loop's Click):
          on one line, X and Y each before its box (as "ms" after a number), and Pick on screen (click the point).
          Physical pixels. -->
     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="X" />
-        <ui:NumberBox x:Name="XBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" AutomationProperties.Name="X"
+        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_X}" />
+        <ui:NumberBox x:Name="XBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" AutomationProperties.Name="{x:Static r:Strings.Position_X}"
                       Minimum="-100000" Maximum="100000" ValueChanged="OnBoxChanged" />
-        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Y" />
-        <ui:NumberBox x:Name="YBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" AutomationProperties.Name="Y"
+        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_Y}" />
+        <ui:NumberBox x:Name="YBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" AutomationProperties.Name="{x:Static r:Strings.Position_Y}"
                       Minimum="-100000" Maximum="100000" ValueChanged="OnBoxChanged" />
-        <local:PlaceButton Margin="8,0,0,0" VerticalAlignment="Center" Text="Pick on screen" Click="OnPickClick" />
+        <local:PlaceButton Margin="8,0,0,0" VerticalAlignment="Center" Text="{x:Static r:Strings.Position_PickOnScreen}" Click="OnPickClick" />
     </ikw:SimpleStackPanel>
 </UserControl>

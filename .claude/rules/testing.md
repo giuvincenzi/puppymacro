@@ -30,15 +30,20 @@
   restored, actions added and removed), the AI tools (`AiToolsTests`, with `FakeAiHost` as the app and the user: access
   off, reads, saves checked like the editors and saved at once, each permission, Restore data, "waiting" and
   `wait_for_user`, the ready window before picks, settings, help, the message while PuppyMacro is closed;
-  `AiTools.WaitStep` is short there; `AiJsonTests`: compact JSON read back as the same item, every JSON Patch operation and
+  `AiTools.WaitStep` is short there; the language is left to the user; `AiJsonTests`: compact JSON read back as the same item, every JSON Patch operation and
   its errors, `SetWhere`; `AiCallLogTests`; the size limits of the activity and the History), the AI apps'
   settings files (`AiAppsTests`: Claude Desktop with its Microsoft Store copy, VS Code's link and `mcp.json`, Codex's
-  `config.toml`, never replacing a file with an error), `AiActivityLog` and `AllowAiAccess` in older files, `.puppyitems`
+  `config.toml`, never replacing a file with an error), `AiActivityLog` (requests as phrases, older files) and `AllowAiAccess` in older files, `.puppyitems`
   files (`ItemFileTests`: written and read back as new disabled items, refused files, a newer format or version, an item with
   problems, names with a number, hotkeys left out also between the file's items, remap clashes, the chosen items only, file
   names; the AI tools `export_items`, `import_items`, `open_import_window`, `open_export_window` in `AiToolsTests`), the file
-  types' registry keys (`FileTypesTests`, under a test key in `HKCU\Software\PuppyMacroTests`, deleted after), and the XAML files
-  (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`).
+  types' registry keys (`FileTypesTests`, under a test key in `HKCU\Software\PuppyMacroTests`, deleted after), the XAML files
+  (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`), the languages (`LanguageTests`:
+  the menu's order, which language and format each setting and Windows give, Gregorian dates in Arabic, every plural rule;
+  `ResourcesTests`: every `Strings.<code>.resx` has every text with the same placeholders and its plural forms, distinct sound
+  names, and every key the code names exists, `i18n.md`) and the History's phrases and older files (`ItemHistoryTests`).
+- The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a
+  test of another language sets it itself.
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
   and put the test class in `[Collection(nameof(ModifierTracker))]` so they never run at the
   same time. A unit test that starts a loop makes it press F24 only.
@@ -47,7 +52,8 @@
 
 - `tests/PuppyMacro.E2E`: xUnit v3 + FlaUI (UIA3). `AppSession` closes any running PuppyMacro,
   deletes `%AppData%\PuppyMacro Dev` and starts the development build
-  (`PuppyMacro/bin/Debug/...`), so every test starts from the sample data. `new AppSession(seed => ...)`
+  (`PuppyMacro/bin/Debug/...`) in English (`PUPPYMACRO_LANGUAGE`, `new AppSession(language: "ar")` for another one),
+  so every test starts from the sample data and finds controls by their English texts on any PC. `new AppSession(seed => ...)`
   starts it from the data the test writes instead (`Seed`: the app's models, referenced by the
   project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18).
 - They run on GitHub in the `test` workflow, split over several machines at once (`e2e_group_1`, `e2e_group_2`, …;
