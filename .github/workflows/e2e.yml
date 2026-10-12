@@ -5,6 +5,10 @@
 # Not on the push of a release commit ("Release X.Y.Z (#N)", from `make release-pr`): the Release
 # workflow runs them on that commit before publishing. Called by Release, github.workflow is
 # "Release" (a called workflow gets its caller's github context), so they run there.
+# The job always runs, as `e2e` is a required check (a workflow skipped by `paths` would leave it
+# pending and block the merge), but on pull requests and pushes to main it runs the tests only when
+# a changed file can change their result (the list and why: testing.md). Called by Release or
+# started by hand, they always run.
 name: E2E
 
 on:
@@ -23,19 +27,49 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Changed files
+        id: changes
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          WORKFLOW: ${{ github.workflow }}
+        run: |
+          range=""
+          if [ "$WORKFLOW" = E2E ]; then
+            case "$EVENT" in
+              pull_request) range="HEAD^1 HEAD" ;;
+              push) range="$BEFORE $GITHUB_SHA" ;;
+            esac
+          fi
+          run=true
+          if [ -n "$range" ] && files=$(git diff --name-only $range); then
+            run=false
+            if grep -E '^(PuppyMacro/|tests/PuppyMacro\.E2E/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|PuppyMacro\.sln$|\.gitattributes$|\.github/workflows/e2e\.yml$)' <<< "$files" \
+              | grep -qvx 'site/guide/_page\.html'; then run=true; fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          if [ "$run" = false ]; then echo "Tests skipped: no changed file can change their result (testing.md)." >> "$GITHUB_STEP_SUMMARY"; fi
 
       - uses: actions/setup-dotnet@v6
+        if: steps.changes.outputs.run == 'true'
         with:
           dotnet-version: 10.0.x
 
       - name: Screen
+        if: steps.changes.outputs.run == 'true'
         shell: pwsh
         run: |
           Add-Type -AssemblyName System.Windows.Forms
           [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
 
       - name: Development build
+        if: steps.changes.outputs.run == 'true'
         run: dotnet build PuppyMacro/PuppyMacro.csproj -c Debug
 
       - name: End-to-end tests
+        if: steps.changes.outputs.run == 'true'
         run: dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj

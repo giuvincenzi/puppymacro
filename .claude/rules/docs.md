@@ -62,7 +62,7 @@ checklist, each marked as needed or not needed with the reason: the guide file, 
 cards in `site/index.html`, the `CHANGELOG.md` line, each screenshot by file name and the AI
 tools (settings, instructions and descriptions, new tools, tests).
 Screenshots need the app running on the contributor's PC, so the plan names them and asks
-before capturing (`testing.md`).
+before capturing (`testing.md`). The plan also lists the rule changes (`working-rules.md`).
 
 ## Accuracy
 

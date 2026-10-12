@@ -1,6 +1,9 @@
 # Unit tests on every push and pull request (same command as `make test`). Not on the push of a
 # release commit ("Release X.Y.Z (#N)", from `make release-pr`): the Release workflow runs them on
 # that commit before publishing.
+# The job always runs, as `test` is a required check (a workflow skipped by `paths` would leave it
+# pending and block the merge), but on pull requests and pushes to main it runs the tests only when
+# a changed file can change their result (the list and why: testing.md).
 name: Test
 
 on:
@@ -18,10 +21,35 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Changed files
+        id: changes
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          case "$EVENT" in
+            pull_request) range="HEAD^1 HEAD" ;;
+            push) range="$BEFORE $GITHUB_SHA" ;;
+            *) range="" ;;
+          esac
+          run=true
+          if [ -n "$range" ] && files=$(git diff --name-only $range); then
+            run=false
+            if grep -E '^(PuppyMacro/|tests/PuppyMacro\.Tests/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|\.gitattributes$|\.github/workflows/test\.yml$)' <<< "$files" \
+              | grep -qvx 'site/guide/_page\.html'; then run=true; fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          if [ "$run" = false ]; then echo "Tests skipped: no changed file can change their result (testing.md)." >> "$GITHUB_STEP_SUMMARY"; fi
 
       - uses: actions/setup-dotnet@v6
+        if: steps.changes.outputs.run == 'true'
         with:
           dotnet-version: 10.0.x
 
       - name: Unit tests
+        if: steps.changes.outputs.run == 'true'
         run: dotnet test --project tests/PuppyMacro.Tests/PuppyMacro.Tests.csproj -c Release
