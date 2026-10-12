@@ -7,6 +7,8 @@ using FlaUI.Core.Definitions;
 using FlaUI.Core.Input;
 using FlaUI.Core.Tools;
 using FlaUI.Core.WindowsAPI;
+using System.Text.Json;
+using PuppyMacro.Models;
 using Xunit;
 
 namespace PuppyMacro.E2E;
@@ -693,5 +695,81 @@ public class AppTests
         ComboBox list = app.Find(window, "Mouse button").AsComboBox();
         Assert.True(Retry.WhileFalse(() => list.SelectedItem?.Text == expected, AppSession.Timeout).Success,
             $"the mouse button field shows \"{list.SelectedItem?.Text}\", not \"{expected}\"");
+    }
+    /// <summary>A check box of Import's or Export's list, by the item it shows.</summary>
+    private static CheckBox ItemBox(AppSession app, string title) =>
+        Retry.WhileNull(() => app.MainWindow.FindFirstDescendant(cf => cf.ByName(title).And(cf.ByControlType(ControlType.CheckBox))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: $"check box \"{title}\" not found").Result!.AsCheckBox();
+
+    [Fact]
+    public void Export_lists_every_item_to_choose_with_search_and_each_card_menu_has_Export()
+    {
+        using var app = new AppSession();
+
+        // The card menu's Export… opens the file dialog at once: only looked at here (Move down closes the menu, no keys).
+        app.CardButton("Sample: click every second", "More options").AsButton().Invoke();
+        Assert.NotNull(app.MenuItem("Export…"));
+        app.MenuItem("Move down").AsMenuItem().Invoke();
+
+        // The title bar's Export: the choice first; the file dialog comes only after its own Export…, never pressed here.
+        app.FindById(app.MainWindow, "ExportItemsButton").AsButton().Invoke();
+        CheckBox loop = ItemBox(app, "Sample: click every second");
+        Assert.True(app.Has(app.MainWindow, "Sample: type and confirm"));
+        Assert.False(loop.IsChecked);
+        Assert.False(app.FindButton(app.MainWindow, "Export 0 items…").IsEnabled);
+
+        loop.Toggle();
+        Assert.True(app.FindButton(app.MainWindow, "Export 1 item…").IsEnabled);
+
+        app.FindById(app.MainWindow, "SearchBox").AsTextBox().Text = "hold";
+        Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf =>
+            cf.ByName("Sample: click every second").And(cf.ByControlType(ControlType.CheckBox))) == null, AppSession.Timeout).Success);
+        Assert.False(ItemBox(app, "Sample: hold W").IsChecked);
+        Assert.Equal("1 shown · 1 selected", app.FindById(app.MainWindow, "CountText").Name);
+
+        app.FindButton(app.MainWindow, "Cancel").Invoke();
+        Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf => cf.ByAutomationId("CountText")) == null,
+            AppSession.Timeout).Success);
+    }
+
+    [Fact]
+    public void A_file_opened_from_File_Explorer_shows_Import_and_adds_the_checked_items_disabled()
+    {
+        using var app = new AppSession();
+        // A loop that presses F24 with the hotkey F6, already taken by the first sample, and a macro with a sample's name.
+        string file = Path.Combine(Path.GetTempPath(), $"E2E shared {Guid.NewGuid():N}.puppyitems");
+        File.WriteAllText(file, """
+            { "Format": 1, "App": "1.16.0", "Items": [
+              { "Kind": "Loop", "Item": { "Name": "E2E shared loop", "Hotkey": { "Vk": 117 },
+                "Actions": [ { "Type": "Key", "KeyVk": 135, "IntervalValue": 1, "IntervalUnit": "Seconds" } ] } },
+              { "Kind": "Macro", "Item": { "Name": "Sample: type and confirm", "Actions": [ { "Type": "PressKey", "Vk": 135 } ] } } ] }
+            """);
+        try
+        {
+            // File Explorer starts PuppyMacro with the file: this second one hands it to the running one and exits.
+            using Process second = Process.Start(AppSession.ExePath, $"\"{file}\"")!;
+            Assert.True(second.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the second PuppyMacro did not exit");
+
+            Button import = app.FindButton(app.MainWindow, "Import 2 items");
+            Assert.True(app.Has(app.MainWindow, "A macro has this name: imported as \"Sample: type and confirm (2)\"."));
+            Assert.True(app.Has(app.MainWindow,
+                "F6 is already used by the loop \"Sample: click every second\": imported without a hotkey."));
+            Assert.True(ItemBox(app, "E2E shared loop").IsChecked);
+            import.Invoke();
+
+            Assert.True(app.Has(app.MainWindow, "E2E shared loop"));
+            Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("E2E shared loop"), AppSession.Timeout).Success);
+            LoopDefinition loop = Retry.WhileNull(() => JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSession.SettingsFile),
+                Seed.JsonOptions)!.Loops.FirstOrDefault(l => l.Name == "E2E shared loop"), AppSession.Timeout).Result!;
+            Assert.False(loop.Enabled);
+            Assert.Null(loop.Hotkey);
+            MacroDefinition macro = Retry.WhileNull(() => AppSession.SavedMacros().FirstOrDefault(m => m.Name == "Sample: type and confirm (2)"),
+                AppSession.Timeout).Result!;
+            Assert.False(macro.Enabled);
+        }
+        finally
+        {
+            File.Delete(file);
+        }
     }
 }

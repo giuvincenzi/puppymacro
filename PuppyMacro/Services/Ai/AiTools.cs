@@ -42,7 +42,7 @@ internal sealed class AiTools
         "(recorded or built step by step) and remaps (a key or combination sends another one). These tools read and change " +
         "the user's loops, macros, remaps and settings.\n\n" +
         "How requests work:\n" +
-        "- Read tools (get_overview, get_item, get_schema, get_settings, check_hotkey, get_status, list_apps, get_help) answer at once.\n" +
+        "- Read tools (get_overview, get_item, get_schema, get_settings, check_hotkey, get_status, list_apps, get_help, export_items) answer at once.\n" +
         "- save_loop, save_macro and save_remap create or change an item; delete_item, set_enabled and update_settings do " +
         "what they say. They are saved at once and kept in the item's History in PuppyMacro, where the user can restore " +
         "any version. Some may wait for the user's OK in PuppyMacro, as the user chose in PuppyMacro's AI settings: the " +
@@ -59,6 +59,10 @@ internal sealed class AiTools
         "- place_floating_button gives a Toggle loop or macro a floating button for overlay mode and opens the screen where " +
         "the user places it, with your title, description and steps. open_item opens an item in PuppyMacro's editor, for the " +
         "user to look at or change it themselves.\n" +
+        "- Loops, macros and remaps are shared as .puppyitems files (JSON text). export_items gives a file's text, for the user " +
+        "to save or send; import_items adds the items of a file's text the user gives you (new Ids, disabled, nothing replaced). " +
+        "When there are several items, ask the user which ones (or all) first. open_import_window and open_export_window show " +
+        "PuppyMacro's own Import and Export windows instead: offer them when the user would rather choose there.\n" +
         "- A request that waits for the user answers after about 40 seconds at most. If the user has not answered yet, the " +
         "answer says so with a request_id: call wait_for_user with it (again if needed) until the user answers. Only one " +
         "such request at a time.\n\n" +
@@ -266,6 +270,28 @@ internal sealed class AiTools
             new("update_settings", "Changes settings. Give only the values to change, in get_settings' format.",
                 """{"type":"object","properties":{"settings":{"type":"object","description":"Values to change, e.g. {\"Theme\": \"Dark\", \"StopAllHotkey\": {\"Vk\": 123}}."}},"required":["settings"],"additionalProperties":false}""",
                 false, false, (a, app, c) => UpdateSettings(a, app, c)),
+            new("export_items",
+                "Gives loops, macros and remaps as the text of a .puppyitems file, PuppyMacro's file to share them: the user saves " +
+                "it as a .puppyitems file and opens it in PuppyMacro, also on another PC (Import), or gives it to an AI app " +
+                "(import_items). When the user did not say which items, ask first (or all). open_export_window lets the user choose " +
+                "and save the file in PuppyMacro instead.",
+                """
+                {"type":"object","properties":{
+                  "ids":{"type":"array","items":{"type":"string"},"description":"The Ids of the loops, macros and remaps (get_overview lists them). Leave out for all of them."}},
+                 "additionalProperties":false}
+                """, true, false, (a, app, _) => ExportItems(a, app)),
+            new("import_items",
+                "Adds the loops, macros and remaps of a .puppyitems file's text (for example pasted by the user). Nothing is replaced: " +
+                "each gets a new Id and comes disabled (the user turns it on), a name already used gets \" (2)\", a hotkey already " +
+                "used is left out (a Hold item becomes Toggle), and a remap of a key already taken is skipped. When the file has " +
+                "several items and the user did not say which, ask first (or all) and give their indexes in only. The user may be " +
+                "asked to confirm in PuppyMacro. open_import_window lets the user choose in PuppyMacro instead.",
+                """
+                {"type":"object","properties":{
+                  "content":{"description":"The file's text, as a string, or its JSON object."},
+                  "only":{"type":"array","items":{"type":"integer","minimum":0},"description":"The indexes, from 0, of the items to import in the file's Items. Leave out for all of them."}},
+                 "required":["content"],"additionalProperties":false}
+                """, false, false, (a, app, c) => ImportItems(a, app, c)),
 
             new("pick_point", "Shows the user your title, description and steps, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y)." + NewItemRule + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + confirmed + "\"label\":{\"type\":\"string\",\"description\":\"What this point is, shown next to the cursor while the user picks, e.g. \\\"The Salvage button\\\".\"}," + asking + "},\"required\":[\"confirmed_steps\",\"label\"," + askingRequired + "],\"additionalProperties\":false}",
@@ -289,6 +315,16 @@ internal sealed class AiTools
                 "and waits until the user saves or cancels (the user's own changes)." + UserWindow,
                 """{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string","description":"Short, e.g. \"Check the salvage macro\"."},"description":{"type":"string","description":"One or two short sentences: what to look at or change."}},"required":["id","title","description"],"additionalProperties":false}""",
                 false, false, (a, app, c) => OpenItem(a, app, c)),
+            new("open_import_window",
+                "Opens PuppyMacro's Import window on the user's screen, with a .puppyitems file's text, or for the user to pick a " +
+                "file, and waits until the user imports the items they check or cancels. The answer lists the items added." + UserWindow,
+                """{"type":"object","properties":{"content":{"description":"The file's text, as a string, or its JSON object. Leave out for the user to pick a file."}},"additionalProperties":false}""",
+                false, false, (a, app, c) => OpenImport(a, app, c)),
+            new("open_export_window",
+                "Opens PuppyMacro's Export window on the user's screen, with these items checked, and waits until the user saves " +
+                "the .puppyitems file or cancels." + UserWindow,
+                """{"type":"object","properties":{"ids":{"type":"array","items":{"type":"string"},"description":"The Ids of the items to check at first. Leave out for none."}},"additionalProperties":false}""",
+                false, false, (a, app, c) => OpenExport(a, app, c)),
             new("wait_for_user", "Waits again for the user's answer to a request that answered \"waiting\" with this request_id.",
                 """{"type":"object","properties":{"request_id":{"type":"string"}},"required":["request_id"],"additionalProperties":false}""",
                 true, false, (a, app, c) => WaitAgain(a, app, c)),
@@ -917,6 +953,154 @@ internal sealed class AiTools
         }).ConfigureAwait(false);
         _log.Add(app, AiActivityKind.Interaction, "Stopped all loops and macros", AiActivityResult.Applied);
         return new AiToolResult("Stopped every running loop and macro.");
+    }
+
+    // ================= Sharing (.puppyitems files) =================
+
+    /// <summary>The items with these Ids, in the lists' order (all when <paramref name="ids"/> is null); the first unknown Id otherwise.</summary>
+    private (List<object> Items, string? Unknown) ItemsByIds(List<Guid>? ids)
+    {
+        var all = _host.Settings.Loops.Cast<object>().Concat(_host.Macros.Macros).Concat(_host.Settings.Remaps).ToList();
+        if (ids == null)
+            return (all, null);
+        if (ids.FirstOrDefault(id => Find(id) == null) is var unknown && unknown != Guid.Empty)
+            return (new List<object>(), unknown.ToString());
+        return (all.Where(i => ids.Contains(Id(i))).ToList(), null);
+    }
+
+    private static List<Guid>? IdsArg(JsonElement args)
+    {
+        if (args.ValueKind != JsonValueKind.Object || !args.TryGetProperty("ids", out JsonElement list) || list.ValueKind == JsonValueKind.Null)
+            return null;
+        if (list.ValueKind != JsonValueKind.Array)
+            throw new FormatException("\"ids\" must be a list of Ids (get_overview lists them).");
+        return list.EnumerateArray().Select(e => Guid.TryParse(e.GetString(), out Guid id) ? id
+            : throw new FormatException("\"ids\" must be a list of Ids (get_overview lists them).")).ToList();
+    }
+
+    /// <summary>A .puppyitems file's text: a string, or its JSON object.</summary>
+    private static string? ContentArg(JsonElement args, bool required)
+    {
+        if (args.ValueKind != JsonValueKind.Object || !args.TryGetProperty("content", out JsonElement content) || content.ValueKind == JsonValueKind.Null)
+            return required ? throw new FormatException("Give the file's text in \"content\".") : null;
+        return content.ValueKind switch
+        {
+            JsonValueKind.String => content.GetString(),
+            JsonValueKind.Object => content.GetRawText(),
+            _ => throw new FormatException("\"content\" must be the file's text, or its JSON object."),
+        };
+    }
+
+    private async Task<AiToolResult> ExportItems(JsonElement args, string app)
+    {
+        List<Guid>? ids = IdsArg(args);
+        if (ids is { Count: 0 })
+            return AiToolResult.Error("Give at least one Id in \"ids\", or leave \"ids\" out for every item.");
+        (string? text, string? unknown, int count) = await _host.Ui(() =>
+        {
+            (List<object> items, string? missing) = ItemsByIds(ids);
+            return Task.FromResult(missing != null ? (null, missing, 0) : ((string?)ItemFile.Write(items, ItemFile.AppVersion), (string?)null, items.Count));
+        }).ConfigureAwait(false);
+        if (unknown != null)
+            return AiToolResult.Error($"No loop, macro or remap has the Id {unknown}. get_overview lists them.");
+        if (count == 0)
+            return AiToolResult.Error("There is nothing to export: the user has no loops, macros or remaps.");
+        _log.Add(app, AiActivityKind.Read, count == 1 ? "Exported 1 item" : $"Exported {count} items");
+        return new AiToolResult(text!);
+    }
+
+    private async Task<AiToolResult> ImportItems(JsonElement args, string app, CancellationToken cancel)
+    {
+        string text = ContentArg(args, required: true)!;
+        List<int>? only = null;
+        if (args.TryGetProperty("only", out JsonElement list) && list.ValueKind == JsonValueKind.Array)
+            only = list.EnumerateArray().Select(e => e.TryGetInt32(out int i) ? i : throw new FormatException("\"only\" must be a list of indexes, from 0.")).ToList();
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+
+        ItemFileContent content = await _host.Ui(() => Task.FromResult(ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only)))
+            .ConfigureAwait(false);
+        if (content.Error != null)
+            return AiToolResult.Error(content.Error);
+        if (only?.Where(i => i < 0 || i >= content.Entries.Count).Select(i => (int?)i).FirstOrDefault() is int wrong)
+            return AiToolResult.Error($"The file has no item {wrong}: its Items go from 0 to {content.Entries.Count - 1}.");
+        List<ItemFileEntry> chosen = content.Entries.Where(e => e.Selected).ToList();
+        string skipped = string.Join("", content.Entries.Where(e => e.Problem != null && (only == null || only.Contains(e.Index)))
+            .Select(e => $"\n- Not imported, {e.Kind} {e.Index} \"{e.Title}\": {e.Problem}"));
+        if (chosen.Count == 0)
+            return AiToolResult.Error("Nothing was imported." + skipped);
+
+        AiToolResult Apply()
+        {
+            if (BusyNow() is AiToolResult busyNow)
+                return busyNow;
+            // Read again: meanwhile the user may have taken a name or a hotkey.
+            ItemFileContent now = ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only);
+            var lines = new List<string>();
+            foreach (ItemFileEntry entry in now.Entries.Where(e => e.Selected))
+            {
+                object item = entry.Item!;
+                _host.Save(item, app);
+                _log.Add(app, AiActivityKind.Proposal, $"Imported {Describe(item)}", AiActivityResult.Saved, "", Serialize(item), Id(item), Kind(item));
+                lines.Add($"- {Capital(Describe(item))}, Id {Id(item)}" + string.Concat(entry.Notes.Select(n => " " + n)));
+            }
+            return new AiToolResult($"Imported {lines.Count} item{(lines.Count == 1 ? "" : "s")}, all disabled: the user turns them on " +
+                                    $"(set_enabled, or the switch on their card).\n{string.Join("\n", lines)}{skipped}");
+        }
+
+        if (!_host.Settings.AiAskBeforeChanging)
+            return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
+
+        string title = chosen.Count == 1 ? "Import this item?" : $"Import these {chosen.Count} items?";
+        var shown = chosen.Select(e => $"{Capital(e.Kind)} {(e.Item is RemapDefinition ? e.Title : $"\"{e.Title}\"")}"
+                                       + string.Concat(e.Notes.Select(n => " " + n))).ToList();
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer answer = await _host.Confirm(app, title, shown, "Import");
+            if (answer == AiAnswer.Done)
+                return Apply();
+            Log(app, AiActivityKind.Proposal, chosen.Count == 1 ? "Import 1 item" : $"Import {chosen.Count} items", answer, "");
+            return Answered(answer, "");
+        }, cancel).ConfigureAwait(false);
+    }
+
+    private async Task<AiToolResult> OpenImport(JsonElement args, string app, CancellationToken cancel)
+    {
+        string? text = ContentArg(args, required: false);
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+        return await StartForUser(app, async () =>
+        {
+            (AiAnswer answer, List<object> items) = await _host.ShowImport(app, text);
+            if (answer == AiAnswer.Done)
+            {
+                foreach (object item in items)
+                    _log.Add(app, AiActivityKind.Proposal, $"Imported {Describe(item)}", AiActivityResult.Saved, "", Serialize(item), Id(item), Kind(item));
+                return new AiToolResult(items.Count == 0 ? "The user imported nothing."
+                    : $"The user imported {items.Count} item{(items.Count == 1 ? "" : "s")}, all disabled:\n" +
+                      string.Join("\n", items.Select(i => $"- {Capital(Describe(i))}, Id {Id(i)}")));
+            }
+            Log(app, AiActivityKind.Interaction, "Opened Import", answer, "");
+            return Answered(answer, "");
+        }, cancel).ConfigureAwait(false);
+    }
+
+    private async Task<AiToolResult> OpenExport(JsonElement args, string app, CancellationToken cancel)
+    {
+        List<Guid> ids = IdsArg(args) ?? new List<Guid>();
+        string? unknown = await _host.Ui(() => Task.FromResult(ItemsByIds(ids).Unknown)).ConfigureAwait(false);
+        if (unknown != null)
+            return AiToolResult.Error($"No loop, macro or remap has the Id {unknown}. get_overview lists them.");
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+        return await StartForUser(app, async () =>
+        {
+            (AiAnswer answer, List<object> items, string? file) = await _host.ShowExport(app, ids);
+            Log(app, AiActivityKind.Interaction, "Opened Export", answer, "");
+            return answer == AiAnswer.Done
+                ? new AiToolResult($"The user exported {items.Count} item{(items.Count == 1 ? "" : "s")} to {System.IO.Path.GetFileName(file)}.")
+                : Answered(answer, "");
+        }, cancel).ConfigureAwait(false);
     }
 
     // ================= Waiting for the user =================

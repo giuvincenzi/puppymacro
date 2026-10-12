@@ -21,6 +21,9 @@
   - `make screenshots`: `make dev` started with `PUPPYMACRO_SCREENSHOTS=1` (no strip, no DEV), then retakes the guide's editor screenshots and the home
     page's screenshot (drives the UI, see `docs.md`), then closes PuppyMacro (the process, also
     after an error).
+  - `make file-icons`: draws the icons of `.puppyitems` and `.puppymacro` files again into
+    `PuppyMacro/Assets/FileIcons` (`scripts/file-icons.ps1`, WPF shapes; `PREVIEW=<folder>` also writes each size as a
+    PNG). Run it after changing their shapes and commit the `.ico` files.
   - `make release-pr`, `make release`: see Releases below.
   - `make clean`.
 - From WSL the Makefile calls Windows PowerShell (`powershell.exe`), so builds use the Windows
@@ -40,7 +43,8 @@
   "DEV" in the title and tray tooltip (not when started with `PUPPYMACRO_SCREENSHOTS=1`), use their own data folder `%AppData%\PuppyMacro Dev`
   (`AppPaths`; WebView2 data in `%LocalAppData%\PuppyMacro Dev`) and fill it with disabled
   samples when empty (`Services/DevSampleData.cs`, Debug only), enable the Code view's DevTools,
-  never touch the Start with Windows Run entry and skip the pre-1.6 data migration.
+  never touch the Start with Windows Run entry nor the file types (`Services/FileTypes.cs`) and skip the pre-1.6 data
+  migration. A `.puppyitems` path on the command line opens Import in both.
   Release builds never do any of this. Keep the samples working when models change.
 - **Smart App Control** (Windows 11) blocks every exe and dll that is unsigned and unknown, with no
   "Run anyway" and **no exceptions** for apps or folders (Microsoft: there is no way to bypass it for

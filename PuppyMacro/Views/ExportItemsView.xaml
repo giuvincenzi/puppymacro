@@ -1,0 +1,75 @@
+<UserControl
+    x:Class="PuppyMacro.Views.ExportItemsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
+
+    <!-- Export's content, in its ContentDialog (approved design: the Design canvas "PuppyMacro Import and Export", A3): search,
+         kind, then the user's loops, macros and remaps by kind, each with a check box -->
+    <UserControl.Resources>
+        <Style x:Key="Description" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Choose the loops, macros and remaps to save to one file, to share them or use them on another PC." />
+        <Grid Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="SearchBox" ui:ControlHelper.PlaceholderText="Search" AutomationProperties.Name="Search"
+                     TextChanged="OnFilterChanged" />
+            <ComboBox x:Name="KindBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectedIndex="0"
+                      AutomationProperties.Name="Kind" SelectionChanged="OnFilterChanged">
+                <ComboBoxItem Content="All kinds" />
+                <ComboBoxItem Content="Loops" />
+                <ComboBoxItem Content="Macros" />
+                <ComboBoxItem Content="Remaps" />
+            </ComboBox>
+        </Grid>
+        <Grid Margin="0,12,0,8">
+            <CheckBox x:Name="SelectAllBox" Content="Select all shown" IsThreeState="True" Click="OnSelectAllClick" />
+            <TextBlock x:Name="CountText" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource Description}" />
+        </Grid>
+        <Border BorderThickness="1" CornerRadius="4" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+            <Grid>
+                <TextBlock x:Name="EmptyText" Margin="12" Style="{StaticResource Description}" Visibility="Collapsed" />
+                <ScrollViewer Height="300" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="ItemList" Margin="12,0,12,8" Focusable="False">
+                        <ItemsControl.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="0,12,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ItemsControl.GroupStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Margin="0,4" IsChecked="{Binding IsChecked}" AutomationProperties.Name="{Binding Title}">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                                        <WrapPanel Visibility="{Binding HasSummary, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Style="{StaticResource Description}"
+                                                       Text="{Binding Summary}" />
+                                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Style="{StaticResource Description}"
+                                                       Text="{Binding Lead}" />
+                                            <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding HotkeyParts}"
+                                                          ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </StackPanel>
+</UserControl>

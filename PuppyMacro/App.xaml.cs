@@ -75,7 +75,11 @@ public partial class App : Application
         // Handles install, update and uninstall hooks (it exits the process for those),
         // and applies an update that was downloaded but not applied yet.
         VelopackApp.Build()
-            .OnBeforeUninstallFastCallback(_ => StartupService.Apply(false))
+            .OnBeforeUninstallFastCallback(_ =>
+            {
+                StartupService.Apply(false);
+                FileTypes.Unregister();
+            })
             .Run();
 
         var app = new App();
@@ -88,6 +92,10 @@ public partial class App : Application
         base.OnStartup(e);
         bool startInTray = e.Args.Contains(StartupService.TrayArgument);
         bool restarting = e.Args.Contains(RestartArgument);
+        // A .puppyitems file opened from File Explorer (FileTypes): Import shows it.
+        string? itemsFile = e.Args.FirstOrDefault(a => a.EndsWith(ItemFile.Extension, StringComparison.OrdinalIgnoreCase) && File.Exists(a));
+        if (itemsFile != null)
+            itemsFile = Path.GetFullPath(itemsFile);
 
         _singleInstance = new Mutex(initiallyOwned: true, SingleInstanceName, out _ownsMutex);
         if (!_ownsMutex && restarting)
@@ -107,6 +115,8 @@ public partial class App : Application
             // Started with Windows while already running: nothing to do.
             if (!startInTray)
                 ShowRunningInstance();
+            if (itemsFile != null)
+                OpenFileChannel.Send(itemsFile);
             Shutdown();
             return;
         }
@@ -115,6 +125,8 @@ public partial class App : Application
         _showWindowWait = ThreadPool.RegisterWaitForSingleObject(_showWindowRequest,
             (_, _) => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.ShowFromTray()),
             null, Timeout.Infinite, executeOnlyOnce: false);
+
+        OpenFileChannel.Listen(path => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.OpenItemsFile(path)));
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
 
@@ -146,14 +158,19 @@ public partial class App : Application
         // The development build never touches it: the entry belongs to the installed app.
         if (settings.StartWithWindows && !IsDevBuild)
             StartupService.Apply(true);
+        // The same for the icons and the open command of PuppyMacro's files: they belong to the installed app.
+        if (!IsDevBuild)
+            FileTypes.Register();
 
         var window = new MainWindow(store, settings, macros);
         MainWindow = window;
         ApplyTheme(settings.Theme);
-        if (startInTray)
+        if (startInTray && itemsFile == null)
             window.StartInTray();
         else
             window.Show();
+        if (itemsFile != null)
+            window.OpenItemsFile(itemsFile);
 
         if (warning != null)
             MessageBox.Show(warning, "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Warning);

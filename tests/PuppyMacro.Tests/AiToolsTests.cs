@@ -136,6 +136,34 @@ internal sealed class FakeAiHost : IAiHost
         return Task.FromResult(OpenAnswer);
     }
 
+    public AiAnswer ImportAnswer { get; set; } = AiAnswer.Done;
+    public List<string?> ImportShown { get; } = new();
+
+    /// <summary>As Import with every item checked: they are added.</summary>
+    public Task<(AiAnswer Answer, List<object> Items)> ShowImport(string app, string? text)
+    {
+        ImportShown.Add(text);
+        if (ImportAnswer != AiAnswer.Done || text == null)
+            return Task.FromResult((ImportAnswer, new List<object>()));
+        List<object> items = ItemFile.Read(text, Settings, Macros, ItemFile.AppVersion).SelectedItems.ToList();
+        foreach (object item in items)
+            Save(item, app);
+        return Task.FromResult((AiAnswer.Done, items));
+    }
+
+    public AiAnswer ExportAnswer { get; set; } = AiAnswer.Done;
+    public List<IReadOnlyCollection<Guid>> ExportShown { get; } = new();
+
+    /// <summary>As Export: the user saves the checked items.</summary>
+    public Task<(AiAnswer Answer, List<object> Items, string? File)> ShowExport(string app, IReadOnlyCollection<Guid> ids)
+    {
+        ExportShown.Add(ids);
+        List<object> items = Settings.Loops.Where(l => ids.Contains(l.Id)).Cast<object>().ToList();
+        return Task.FromResult<(AiAnswer, List<object>, string?)>(ExportAnswer == AiAnswer.Done
+            ? (AiAnswer.Done, items, @"C:\Users\Someone\Documents\Farm.puppyitems")
+            : (ExportAnswer, new List<object>(), null));
+    }
+
     public void StopAll() => StoppedAll = true;
     public IReadOnlyList<string> RunningApps() => new[] { "notepad.exe" };
 }
@@ -828,5 +856,144 @@ public class AiToolsTests : IDisposable
         Assert.DoesNotContain("Start with Windows", allOn);
         Assert.DoesNotContain("Close to system tray", allOn);
         Assert.Contains("Start PuppyMacro when an AI app needs it", allOn);
+    }
+    // ================= Sharing (.puppyitems) =================
+
+    private static LoopDefinition Farm() => new()
+    {
+        Name = "Farm",
+        Hotkey = HotkeyBinding.FromKey(0x75),
+        Actions = { new LoopAction { Type = ActionType.Key, KeyVk = 0x01, IntervalValue = 1, IntervalUnit = IntervalUnit.Seconds } },
+    };
+
+    private static MacroDefinition Craft() => new()
+    {
+        Name = "Craft",
+        Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 0x41 } },
+    };
+
+    private static string FileWith(params object[] items) => ItemFile.Write(items, ItemFile.AppVersion);
+
+    [Fact]
+    public async Task Export_items_gives_a_file_with_the_items_asked_or_all()
+    {
+        LoopDefinition farm = Farm();
+        _settings.Loops.Add(farm);
+        _host.Macros.Macros.Add(Craft());
+        var remap = new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) };
+        _settings.Remaps.Add(remap);
+
+        AiToolResult some = await Call("export_items", new { ids = new[] { farm.Id.ToString(), remap.Id.ToString() } });
+        AiToolResult all = await Call("export_items");
+        AiToolResult unknown = await Call("export_items", new { ids = new[] { Guid.NewGuid().ToString() } });
+
+        var empty = new AppSettings();
+        var macros = new MacroLibrary(_folder.File("other"));
+        Assert.Equal(new[] { "loop", "remap" }, ItemFile.Read(some.Text, empty, macros, ItemFile.AppVersion).Entries.Select(e => e.Kind));
+        Assert.Equal(3, ItemFile.Read(all.Text, empty, macros, ItemFile.AppVersion).Entries.Count);
+        Assert.True(unknown.IsError);
+        Assert.Contains(_log.Entries(), e => e.Kind == AiActivityKind.Read && e.Request == "Exported 2 items");
+    }
+
+    [Fact]
+    public async Task Import_items_adds_new_disabled_items_without_replacing_any()
+    {
+        LoopDefinition farm = Farm();
+        _settings.Loops.Add(farm);
+        string text = FileWith(Farm(), Craft());
+
+        AiToolResult result = await Call("import_items", new { content = text });
+
+        Assert.False(result.IsError, result.Text);
+        Assert.StartsWith("Imported 2 items, all disabled", result.Text);
+        Assert.Contains("A loop has this name: imported as \"Farm (2)\".", result.Text);
+        Assert.Contains("F6 is already used by the loop \"Farm\": imported without a hotkey.", result.Text);
+        Assert.Equal(2, _host.Saved.Count);
+        Assert.All(_host.Saved, s => Assert.Equal(App, s.App));
+        var imported = Assert.IsType<LoopDefinition>(_host.Saved[0].Item);
+        Assert.NotEqual(farm.Id, imported.Id);
+        Assert.False(imported.Enabled);
+        Assert.Null(imported.Hotkey);
+        Assert.Equal(2, _settings.Loops.Count); // the user's Farm is still there
+        Assert.Equal(2, _log.Entries().Count(e => e.Result == AiActivityResult.Saved && e.Request.StartsWith("Imported")));
+    }
+
+    [Fact]
+    public async Task Import_items_takes_only_the_chosen_items_and_the_file_as_a_json_object()
+    {
+        JsonElement file = JsonSerializer.Deserialize<JsonElement>(FileWith(Farm(), Craft()));
+
+        AiToolResult result = await Call("import_items", new { content = file, only = new[] { 1 } });
+        AiToolResult wrong = await Call("import_items", new { content = file, only = new[] { 5 } });
+
+        Assert.False(result.IsError, result.Text);
+        Assert.IsType<MacroDefinition>(Assert.Single(_host.Saved).Item);
+        Assert.True(wrong.IsError);
+        Assert.Equal("The file has no item 5: its Items go from 0 to 1.", wrong.Text);
+    }
+
+    [Fact]
+    public async Task Import_items_refuses_a_file_that_is_not_an_items_file_and_says_what_was_skipped()
+    {
+        _settings.Remaps.Add(new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) });
+
+        AiToolResult notAFile = await Call("import_items", new { content = "hello" });
+        AiToolResult taken = await Call("import_items", new
+        {
+            content = FileWith(new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x42) }),
+        });
+
+        Assert.True(notAFile.IsError);
+        Assert.Equal("This is not a PuppyMacro items file.", notAFile.Text);
+        Assert.True(taken.IsError);
+        Assert.StartsWith("Nothing was imported.\n- Not imported, remap 0", taken.Text);
+        Assert.Contains("is already remapped for all apps.", taken.Text);
+        Assert.Empty(_host.Saved);
+    }
+
+    [Fact]
+    public async Task Import_items_asks_first_with_Ask_before_changing_and_a_cancel_imports_nothing()
+    {
+        _settings.AiAskBeforeChanging = true;
+        _host.ConfirmAnswer = AiAnswer.Cancelled;
+
+        AiToolResult cancelled = await Call("import_items", new { content = FileWith(Farm(), Craft()) });
+        _host.ConfirmAnswer = AiAnswer.Done;
+        AiToolResult confirmed = await Call("import_items", new { content = FileWith(Craft()) });
+
+        Assert.Equal("The user cancelled: nothing changed.", cancelled.Text);
+        Assert.Equal("Import these 2 items?", _host.Confirmed[0].Title);
+        Assert.Equal(new[] { "Loop \"Farm\"", "Macro \"Craft\"" }, _host.Confirmed[0].Lines);
+        Assert.Equal("Import this item?", _host.Confirmed[1].Title);
+        Assert.StartsWith("Imported 1 item", confirmed.Text);
+        Assert.IsType<MacroDefinition>(Assert.Single(_host.Saved).Item);
+    }
+
+    [Fact]
+    public async Task The_Import_window_opens_with_the_file_and_answers_what_the_user_imported()
+    {
+        string text = FileWith(Craft());
+
+        AiToolResult imported = await Call("open_import_window", new { content = text });
+        _host.ImportAnswer = AiAnswer.Cancelled;
+        AiToolResult cancelled = await Call("open_import_window");
+
+        Assert.Equal(new[] { text, null }, _host.ImportShown);
+        Assert.StartsWith("The user imported 1 item, all disabled:\n- Macro \"Craft\", Id ", imported.Text);
+        Assert.Equal("The user cancelled: nothing changed.", cancelled.Text);
+    }
+
+    [Fact]
+    public async Task The_Export_window_opens_with_the_items_checked_and_answers_the_file_name()
+    {
+        LoopDefinition farm = Farm();
+        _settings.Loops.Add(farm);
+
+        AiToolResult exported = await Call("open_export_window", new { ids = new[] { farm.Id.ToString() } });
+        AiToolResult unknown = await Call("open_export_window", new { ids = new[] { Guid.NewGuid().ToString() } });
+
+        Assert.Equal(farm.Id, Assert.Single(Assert.Single(_host.ExportShown)));
+        Assert.Equal("The user exported 1 item to Farm.puppyitems.", exported.Text);
+        Assert.True(unknown.IsError);
     }
 }

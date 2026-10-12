@@ -33,8 +33,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Enter overlay
-             mode and Stop all on the right before the window buttons drawn by the library (as its
+        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Import, Export,
+             Enter overlay mode and Stop all on the right before the window buttons drawn by the library (as its
              ButtonsOnTitlebar sample) ================= -->
         <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}">
             <Grid.ColumnDefinitions>
@@ -54,10 +54,25 @@
             </StackPanel>
 
 
-            <!-- On the right: Enter overlay mode, Stop all, the window buttons. The buttons sit 9 px from the top: the window's
+            <!-- On the right: Import, Export, Enter overlay mode, Stop all, the window buttons. The buttons sit 9 px from the top: the window's
                  1 px border, then 8, so they look 8 px from the top and from the bottom (their bottom line is almost the bar's
                  color), as Microsoft Store's search box -->
             <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
+                <!-- Loops, macros and remaps shared as .puppyitems files (MainWindow.Share.cs); not the backup -->
+                <Button x:Name="ImportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="Import" ToolTip="Add loops, macros and remaps from a file" Click="OnImportItemsClick">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Download}" />
+                        <TextBlock VerticalAlignment="Center" Text="Import" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="ExportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="Export" ToolTip="Save loops, macros and remaps to a file, to share them" Click="OnExportItemsClick">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Share}" />
+                        <TextBlock VerticalAlignment="Center" Text="Export" />
+                    </StackPanel>
+                </Button>
                 <Button x:Name="OverlayModeButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
                         AutomationProperties.Name="Enter overlay mode" Click="OnOverlayModeClick">
                     <StackPanel Orientation="Horizontal">

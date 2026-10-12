@@ -478,11 +478,15 @@ public partial class MainWindow
         };
         moveDown.Click += (_, _) => MoveItem(item, index + 1);
 
+        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        export.Click += (_, _) => ExportOne(item.Definition);
         var menu = new ContextMenu
         {
             PlacementTarget = button,
             Placement = PlacementMode.Bottom,
         };
+        menu.Items.Add(export);
+        menu.Items.Add(new Separator());
         menu.Items.Add(moveUp);
         menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
@@ -695,8 +699,12 @@ public partial class MainWindow
         moveDown.Click += (_, _) => MoveMacro(item, index + 1);
         var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteMacro(item);
+        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        export.Click += (_, _) => ExportOne(item.Definition);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
+        menu.Items.Add(export);
+        menu.Items.Add(new Separator());
         menu.Items.Add(moveUp);
         menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
@@ -1597,9 +1605,12 @@ public partial class MainWindow
         duplicate.Click += (_, _) => DuplicateRemap(item);
         var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteRemap(item);
+        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        export.Click += (_, _) => ExportOne(item.Definition);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
         menu.Items.Add(duplicate);
+        menu.Items.Add(export);
         menu.Items.Add(new Separator());
         menu.Items.Add(delete);
         menu.IsOpen = true;

@@ -6,6 +6,14 @@ namespace PuppyMacro.Native;
 /// <summary>Win32 declarations used by PuppyMacro.</summary>
 internal static class NativeMethods
 {
+    // ---------------- Shell ----------------
+    public const int SHCNE_ASSOCCHANGED = 0x08000000;
+    public const uint SHCNF_IDLIST = 0x0000;
+
+    /// <summary>Tells File Explorer that file types changed (their icons and open commands).</summary>
+    [DllImport("shell32.dll")]
+    public static extern void SHChangeNotify(int wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
     // ---------------- Low-level hooks ----------------
     public const int WH_KEYBOARD_LL = 13;
     public const int WH_MOUSE_LL = 14;

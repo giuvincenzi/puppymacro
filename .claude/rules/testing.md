@@ -32,7 +32,11 @@
   `AiTools.WaitStep` is short there; `AiJsonTests`: compact JSON read back as the same item, every JSON Patch operation and
   its errors, `SetWhere`; `AiCallLogTests`; the size limits of the activity and the History), the AI apps'
   settings files (`AiAppsTests`: Claude Desktop with its Microsoft Store copy, VS Code's link and `mcp.json`, Codex's
-  `config.toml`, never replacing a file with an error), `AiActivityLog` and `AllowAiAccess` in older files, and the XAML files
+  `config.toml`, never replacing a file with an error), `AiActivityLog` and `AllowAiAccess` in older files, `.puppyitems`
+  files (`ItemFileTests`: written and read back as new disabled items, refused files, a newer format or version, an item with
+  problems, names with a number, hotkeys left out also between the file's items, remap clashes, the chosen items only, file
+  names; the AI tools `export_items`, `import_items`, `open_import_window`, `open_export_window` in `AiToolsTests`), the file
+  types' registry keys (`FileTypesTests`, under a test key in `HKCU\Software\PuppyMacroTests`, deleted after), and the XAML files
   (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`).
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
   and put the test class in `[Collection(nameof(ModifierTracker))]` so they never run at the
@@ -55,10 +59,11 @@
 - `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one
   PuppyMacro at a time).
 - Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages,
-  editors, Export's choices), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
+  editors, Export's choices, Export of items with search, a `.puppyitems` file opened while PuppyMacro runs (a second
+  `PuppyMacro.exe` with its path, as File Explorer starts it; the file dialogs are never opened)), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
   `Overlay`, `AI` (`AiTests`: the test is the AI app, it starts `PuppyMacro.exe --mcp` with the MCP SDK's
   `StdioClientTransport` as "E2E test client", calls the tools and answers in PuppyMacro's windows (the ready window with
-  Start, never Enter); its remaps use F22 and F23, the key it presses is F22, the points it clicks are on the picker, which
+  Start, never Enter; `import_items`, `export_items` and the Import window opened by `open_import_window`); its remaps use F22 and F23, the key it presses is F22, the points it clicks are on the picker, which
   covers the screen).
   `make e2e CATEGORY=Macros` runs only one category: use it while working on that
   feature; before pushing, and on GitHub, all of them run.

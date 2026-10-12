@@ -46,3 +46,6 @@ loop, macro, remap, setting, History, AI activity and log. So, for every change 
   claude.ai, ChatGPT and other apps on the web cannot reach a program on the PC without a relay on the internet,
   which the project would have to host and secure. Not planned. PuppyMacro has no AI of its own and no API keys.
 - AI apps cannot start or test loops and macros: the input would go to the window in front, usually the AI chat.
+- Sharing loops, macros and remaps (`.puppyitems` files: Import and Export in the title bar) and the backup
+  (Settings > Backup) stay two separate features: sharing only adds items, the backup replaces the data. A backup
+  opens only from Settings, never with a double-click in File Explorer.
