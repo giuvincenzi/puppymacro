@@ -702,7 +702,7 @@
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard Header="Export or import"
-                                                 Description="Save your loops, macros, remaps and settings to one file, to keep a copy or move them to another PC">
+                                                 Description="Save your data to one file, to keep a copy or move PuppyMacro to another PC">
                                     <StackPanel Orientation="Horizontal">
                                         <Button Content="Export…" Click="OnExportClick" />
                                         <Button Margin="8,0,0,0" Content="Import…" Click="OnImportClick" />

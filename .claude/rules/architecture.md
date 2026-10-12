@@ -49,7 +49,7 @@ PuppyMacro/
   Views/                        view models, SideRail, ItemCardActions (+ SubtleButtons.xaml),
                                 KeyCaptureField, SwitchSettingsExpander, overlay panel, floating
                                 buttons, Code view (CodeView, ViewSwitchBar, CodeViewSwitch),
-                                MacroShortcutsView, SoundChoicesScroll, ValueSlider, WindowFit
+                                MacroShortcutsView, ExportOptionsView, SoundChoicesScroll, ValueSlider, WindowFit
   Native/                       Win32 interop
   Assets/                       app icon, built-in sounds, Code view page (CodeEditor) and Monaco
   Properties/PublishProfiles/   Folder.pubxml (used by scripts/build.ps1)
@@ -165,7 +165,10 @@ Rules:
   label, size, opacity, Position…). A button without a saved position is in the middle of the
   main screen (`MainWindow.ButtonPositions`).
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
-  (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`).
+  (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`); Release builds set it
+  from `StartWithWindows` at every start, so it follows the setting after an import or a reinstall.
+- Backup: `Services/BackupService.cs` (export and import of the data folder, `data.md`), `Views/ExportOptionsView`
+  (Export's choices, in a `ContentDialog`); the Import confirmation names the file's parts.
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version in
   `history\{id}.json` (the newest up to 10 MB per item; none for a save that changes nothing), with who saved it (`MainWindow._savedBy`: "You",

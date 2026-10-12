@@ -50,8 +50,19 @@ paths:
 - `AppExe` (Specific app) on loops, macros and remaps: an .exe file name or null (all apps). Files
   without it work in all apps; an empty value is saved as null (`AppScope.Normalize`, in
   `SettingsStore`, `MacroLibrary.Sanitize` and the Code views).
-- Export / Import: `.puppymacro` zip (`BackupService`); Import keeps a backup and restarts
-  the app (`--restart`).
+- Export / Import (`BackupService`, `CLAUDE.md`: a backup is an identical copy): a `.puppymacro` zip of the data
+  folder, paths relative to it, with `puppymacro-backup.json` listing its parts (`BackupParts`: Data, History,
+  AiActivity, Logs; `PartOf` decides by path: `history\` History, `ai-activity.json` AI activity, `logs\` Logs,
+  everything else Data, so a new file is Data). Export takes Data always and the parts chosen in
+  `Views/ExportOptionsView` (Everything by default). Import refuses a file without `settings.json` or with a path
+  outside the data folder, keeps the whole folder as `backup-before-import-{time}.puppymacro`, then for each part the
+  file lists deletes that part's files and extracts the file's (a listed part with no files ends empty); the other
+  parts stay. It restarts the app (`--restart`). Files from before 1.17 have no list: settings.json and macros, read
+  as Data. Older versions import a new file too: they take only `settings.json` and `macros\*.json`.
+- Not in the backup: `backup-before-import-*.puppymacro` (copies of earlier data; inside a backup they would
+  grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data). The
+  Start with Windows Run entry is outside the data folder: Release builds set it from `StartWithWindows` at every
+  start (`MainWindow`), so an import, a reinstall or another PC gets it back.
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
   loop is enabled). Keep
   the samples working when models change.
@@ -67,6 +78,5 @@ paths:
   Not user data: a missing or unreadable file or line is skipped. `logs\` is for debugging logs only.
 - History: `history\{id}.json` in the data folder, one per loop, macro or remap, the newest versions up to 10 MB per item (`ItemHistory.MaxBytes`): time,
   who, summary, changes, the item's JSON, `Deleted`. Not user data: a missing or unreadable file is an empty history.
-  Export / Import leave `ai-activity.json`, `history` and `logs` out (`BackupService` takes only settings.json and macros).
   PuppyMacro's entry in the AI apps' own settings is named `puppymacro` (`puppymacro-dev` for the development build, so
   it never replaces the installed one's) and starts `AppPaths.ExecutablePath` (Velopack's `current` folder) with `--mcp`.

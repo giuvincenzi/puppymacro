@@ -10,7 +10,8 @@
 - They run on GitHub on every pull request and every push to `main`
   (`.github/workflows/test.yml`), and the Release workflow stops when they fail. The push of a
   release commit ("Release X.Y.Z (#N)") skips them: the Release workflow runs them on it.
-- Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
+- Covered: settings loading and migrations (`SettingsStore`), Export and Import (`BackupServiceTests`: every part, the
+  identical copy, partial files, older files, refused files), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
   the options shared by loop and macro actions (`ActionOptionsTests`: combinations, Hold for, Times, double click, fixed point, older files, Code view checks), `HotkeyConflicts` (also per app, for remap sources and for modifier sides), `HotkeyRules`, which items the overlay shows
@@ -54,7 +55,7 @@
 - `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one
   PuppyMacro at a time).
 - Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages,
-  editors), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
+  editors, Export's choices), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
   `Overlay`, `AI` (`AiTests`: the test is the AI app, it starts `PuppyMacro.exe --mcp` with the MCP SDK's
   `StdioClientTransport` as "E2E test client", calls the tools and answers in PuppyMacro's windows (the ready window with
   Start, never Enter); its remaps use F22 and F23, the key it presses is F22, the points it clicks are on the picker, which
