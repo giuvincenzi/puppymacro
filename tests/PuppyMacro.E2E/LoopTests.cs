@@ -8,7 +8,7 @@ using static PuppyMacro.E2E.Playback;
 
 namespace PuppyMacro.E2E;
 
-/// <summary>Loops playing on the target window. make e2e CATEGORY=Loops</summary>
+/// <summary>Loops playing on the target window. make e2e category=Loops</summary>
 [Trait("Category", "Loops")]
 public class LoopTests
 {

@@ -1,8 +1,8 @@
 # make dev: closes a running PuppyMacro, deletes the development build's data (so it starts
 # again from the sample loops, macros and remaps), builds the current code (Debug) and starts it.
-# make dev-keep (-Keep) keeps the data, to check that something stays saved.
-# make screenshots (-Screenshots) starts it with PUPPYMACRO_SCREENSHOTS=1: no development build marks (strip, DEV), so the
-# screenshots look like a release.
+# make dev keep=1 (-Keep) keeps the data, to check that something stays saved.
+# -Screenshots (the create_release_pr workflow, before scripts/screenshots.ps1) starts it with PUPPYMACRO_SCREENSHOTS=1:
+# no development build marks (strip, DEV), so the screenshots look like a release.
 param([switch]$Keep, [switch]$Screenshots)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -26,7 +26,7 @@ if (-not $Keep -and (Test-Path $dataFolder)) {
 dotnet build $project -c Debug
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-# make screenshots: PUPPYMACRO_SCREENSHOTS=1, inherited by PuppyMacro (no development build marks).
+# -Screenshots: PUPPYMACRO_SCREENSHOTS=1, inherited by PuppyMacro (no development build marks).
 if ($Screenshots) { $env:PUPPYMACRO_SCREENSHOTS = '1' }
 Start-Process -FilePath $exe
 Write-Host "Started $exe"

@@ -1,4 +1,4 @@
-# make docs-serve: builds the website preview (like make docs) and serves it at
+# make docs serve=1: builds the website preview (like make docs) and serves it at
 # http://localhost:<Port>/ until Ctrl+C. Uses .NET's HttpListener: nothing to install.
 param(
     [int]$Port = 8080,

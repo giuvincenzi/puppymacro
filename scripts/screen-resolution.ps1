@@ -1,4 +1,4 @@
-# Sets the main screen's resolution (Windows' ChangeDisplaySettings), then checks it. Used by the Screenshots workflow:
+# Sets the main screen's resolution (Windows' ChangeDisplaySettings), then checks it. Used by the create_release_pr workflow:
 # a GitHub runner's screen is 1024 x 768, smaller than the editors the guide shows (up to 1420 x 820), and a window that
 # does not fit is made smaller (WindowFit), so its screenshot would not look like on a contributor's PC.
 param([int]$Width = 1920, [int]$Height = 1080)

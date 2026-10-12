@@ -8,7 +8,7 @@ using static PuppyMacro.E2E.Playback;
 
 namespace PuppyMacro.E2E;
 
-/// <summary>Remaps on the target window. make e2e CATEGORY=Remaps</summary>
+/// <summary>Remaps on the target window. make e2e category=Remaps</summary>
 [Trait("Category", "Remaps")]
 public class RemapTests
 {

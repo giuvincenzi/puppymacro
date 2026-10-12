@@ -1,0 +1,106 @@
+# Creates the release pull request, on a GitHub Windows machine: the next version, the CHANGELOG section, the version
+# in PuppyMacro/Version.props and the guide's and the home page's screenshots, on the branch release/X.Y.Z, then the
+# pull request "Release X.Y.Z" with the tests started on it. Merging that pull request publishes the release
+# (publish_release). Started only by hand: Actions > create_release_pr > Run workflow on main, or
+# `gh workflow run create_release_pr.yml --ref main` (what Claude runs when asked to prepare the release pull request).
+# Needs the repository setting "Allow GitHub Actions to create and approve pull requests" (build-and-release.md).
+name: create_release_pr
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write        # the branch release/X.Y.Z
+  pull-requests: write   # the pull request
+  actions: write         # the test workflow started on it
+
+concurrency:
+  group: create_release_pr
+
+jobs:
+  prepare_and_open_pr:
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # the tags: the next version comes from the latest one
+
+      - name: stop_if_nothing_to_release
+        shell: pwsh
+        run: |
+          . ./scripts/release.ps1
+          Get-UnreleasedSection (Read-Changelog .) | Out-Null   # fails when "## Unreleased" has no entries
+          $open = gh pr list --state open --json url,headRefName --jq '.[] | select(.headRefName | startswith("release/")) | .url'
+          if ($open) { throw "A release pull request is already open: $open. Merge or close it first." }
+
+      - name: compute_next_version
+        id: next
+        shell: pwsh
+        run: |
+          . ./scripts/release.ps1
+          $latest = Get-LatestVersion @(git tag --list 'v*')
+          if (-not $latest) { throw 'No release tag vX.Y.Z found.' }
+          $version = Get-NextVersion $latest (Get-UnreleasedSection (Read-Changelog .))
+          if (git ls-remote --heads origin "release/$version") { throw "The branch release/$version already exists (an earlier release pull request): delete it first." }
+          Write-Host "Previous: v$latest"
+          Set-StepOutput 'version' $version
+
+      - name: write_changelog_section
+        shell: pwsh
+        run: |
+          . ./scripts/release.ps1
+          $entries = Move-UnreleasedEntries . '${{ steps.next.outputs.version }}'
+          Set-Content -Path "$env:RUNNER_TEMP/entries.md" -Value $entries -Encoding utf8
+
+      - name: write_version_file
+        shell: pwsh
+        run: |
+          . ./scripts/release.ps1
+          Set-ProjectVersion . '${{ steps.next.outputs.version }}'
+
+      - name: install_dotnet
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      # The runner's screen is 1024 x 768, smaller than the editors the guide shows (up to 1420 x 820).
+      - name: set_screen_to_1920x1080
+        shell: powershell
+        run: ./scripts/screen-resolution.ps1 -Width 1920 -Height 1080
+
+      - name: take_screenshots
+        shell: powershell
+        run: |
+          ./scripts/dev.ps1 -Screenshots
+          ./scripts/screenshots.ps1
+
+      - name: commit_and_open_pr
+        shell: bash
+        env:
+          VERSION: ${{ steps.next.outputs.version }}
+        run: |
+          branch="release/$VERSION"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git add CHANGELOG.md PuppyMacro/Version.props site/guide/img site/assets/loops.png
+          {
+            echo "Release $VERSION"
+            echo
+            echo "Merging this pull request publishes PuppyMacro $VERSION (publish_release): the signed installer, the GitHub"
+            echo "Release, the tag v$VERSION and the website. The guide's and the home page's screenshots are retaken."
+            echo
+            cat "$RUNNER_TEMP/entries.md"
+          } > "$RUNNER_TEMP/message.md"
+          git commit --quiet --file "$RUNNER_TEMP/message.md"
+          git push --quiet origin "$branch"
+          gh pr create --base main --head "$branch" --title "Release $VERSION" --body-file "$RUNNER_TEMP/message.md"
+
+      # A pull request opened with the workflow's token starts no workflow: the tests are started on its branch.
+      - name: start_tests_on_pr
+        shell: bash
+        run: gh workflow run test.yml --ref "release/${{ steps.next.outputs.version }}"

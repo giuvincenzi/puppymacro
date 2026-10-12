@@ -34,11 +34,11 @@ public partial class App : Application
         false;
 #endif
 
-    /// <summary>Set by make screenshots: a development build that looks like a release (no strip, no DEV). An environment
+    /// <summary>Set by the create_release_pr workflow (scripts/dev.ps1 -Screenshots): a development build that looks like a release (no strip, no DEV). An environment
     /// variable, not an argument: the script starts PuppyMacro with Start-Process, which waits for nothing.</summary>
     public const string ScreenshotsVariable = "PUPPYMACRO_SCREENSHOTS";
 
-    /// <summary>A Debug build started with <see cref="ScreenshotsVariable"/> set to 1 (make screenshots).</summary>
+    /// <summary>A Debug build started with <see cref="ScreenshotsVariable"/> set to 1 (scripts/dev.ps1 -Screenshots).</summary>
     /// <remarks>Declared before <see cref="DisplayTitle"/>: static initializers run in declaration order.</remarks>
     public static bool IsScreenshotMode { get; } =
         IsDevBuild && Environment.GetEnvironmentVariable(ScreenshotsVariable) == "1";

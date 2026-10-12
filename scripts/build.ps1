@@ -1,6 +1,6 @@
-# make build: the distribution of the version in PuppyMacro.csproj, in dist/:
+# make build: the distribution of the version in PuppyMacro/Version.props, in dist/:
 # PuppyMacro-win-Setup.exe (installer) and the packages the installed app downloads to update.
-# The Release workflow runs this same script, then uploads dist/ to GitHub.
+# The publish_release workflow runs this same script (job publish_app), then uploads dist/ to GitHub.
 # Code signing (Certum, through ssign): on when CERTUM_EMAIL and CERTUM_OTP (the SimplySign TOTP
 # seed) or CERTUM_TOKEN (a 6-digit code from the SimplySign app) are set; see build-and-release.md.
 param(
@@ -9,7 +9,7 @@ param(
     # Repository to download the previous release from, to build the delta update package.
     [string]$PreviousReleaseRepo,
     [string]$Token,
-    # Fail instead of building unsigned files (the Release workflow).
+    # Fail instead of building unsigned files (the publish_release workflow).
     [switch]$RequireSigning
 )
 $ErrorActionPreference = 'Stop'
@@ -23,9 +23,8 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 $vpk = Join-Path $root '.tools/vpk.exe'
 
-$version = ([xml](Get-Content PuppyMacro/PuppyMacro.csproj)).Project.PropertyGroup.Version |
-    Where-Object { $_ } | Select-Object -First 1
-if (-not $version) { throw "No <Version> in PuppyMacro/PuppyMacro.csproj." }
+. (Join-Path $PSScriptRoot 'release.ps1')
+$version = Get-ProjectVersion $root
 Write-Host "Building the distribution of PuppyMacro $version"
 
 $sign = [bool]($env:CERTUM_EMAIL -and ($env:CERTUM_OTP -or $env:CERTUM_TOKEN))

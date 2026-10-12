@@ -12,7 +12,7 @@ namespace PuppyMacro.E2E;
 /// <summary>
 /// Clicks in overlay mode over the target window: panel rows, the panel's Stop all, exit and open buttons, floating buttons.
 /// The panel and the button are placed over the target window, so a click that is not taken by
-/// PuppyMacro lands on it. make e2e CATEGORY=Overlay
+/// PuppyMacro lands on it. make e2e category=Overlay
 /// </summary>
 [Trait("Category", "Overlay")]
 public class OverlayTests

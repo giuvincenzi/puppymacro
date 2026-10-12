@@ -1,7 +1,7 @@
 # Documentation and website
 
 Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built by
-`scripts/site.ps1`, published to GitHub Pages by `.github/workflows/site.yml`.
+`scripts/site.ps1`, published to GitHub Pages by the `publish_release` workflow (job `publish_site`).
 
 - `site/index.html`: home (features, privacy). `{{VERSION}}` is the latest
   released version.
@@ -14,14 +14,14 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
 
 ## Versions and publishing
 
-- GitHub Pages is set to "GitHub Actions". The site is published only by releases, which run
-  only on `main`: the Release workflow runs the Site workflow after the GitHub Release. Pushing
-  to `main` does not change the published site.
+- GitHub Pages is set to "GitHub Actions". The site is published only by releases: `publish_release` runs its job
+  `publish_site` after the GitHub Release (`build-and-release.md`). Pushing to `main` does not change the published
+  site.
 - Each guide version is built from `site/guide/` at the tag `vX.Y.Z` of that release, so a
   released guide never changes. Home, template and style come from the latest release.
   `guide/latest/` redirects to the newest version.
 - `make docs` builds a preview in `site-preview/` with the guide of the current code as
-  version "next". `make docs-serve` builds it and serves it at `http://localhost:8080/`
+  version "next". `make docs serve=1` builds it and serves it at `http://localhost:8080/`
   (`scripts/site-serve.ps1`, .NET `HttpListener`), so links work as on the real site.
   Released versions are added only when git is available to Windows PowerShell (in WSL it
   usually is not).
@@ -44,7 +44,8 @@ or UI text:
 - update the feature cards in `site/index.html` when the feature list changes;
 - add a line under `## Unreleased` in `CHANGELOG.md`, in the right subsection (see
   `build-and-release.md`);
-- replace screenshots that no longer match the app;
+- screenshots: every release retakes all of them (below); a **new** screenshot is added to `scripts/screenshots.ps1`
+  in the same change, so the next release takes it;
 - update the AI tools (`PuppyMacro/Services/Ai/`, `architecture.md`), so AI apps can use the
   change too. New fields of loops, macros and remaps reach them through the Code views' checks and
   `CodeSchema` (`data.md`), and `get_help` reads the guide; the rest is not automatic:
@@ -59,26 +60,24 @@ or UI text:
 
 The plan given to the user before implementing (`working-rules.md`) lists every item of this
 checklist, each marked as needed or not needed with the reason: the guide file, the feature
-cards in `site/index.html`, the `CHANGELOG.md` line, each screenshot by file name and the AI
-tools (settings, instructions and descriptions, new tools, tests).
-Screenshots need the app running on the contributor's PC, so the plan names them and asks
-before capturing (`testing.md`). The plan also lists the rule changes (`working-rules.md`).
+cards in `site/index.html`, the `CHANGELOG.md` line, a new screenshot by file name and the AI
+tools (settings, instructions and descriptions, new tools, tests). The plan also lists the rule changes
+(`working-rules.md`).
 
 ## Accuracy
 
 - Describe only what the code does. Check the code before writing a sentence about
   behavior, defaults or limits.
 - Use the exact UI texts from the XAML (button, setting and window names).
-- Screenshots: from the development build with the sample data (`make dev`), capturing only
-  PuppyMacro's window. Never show personal data, user names or other windows.
-  `make screenshots` retakes this way the guide's editor screenshots (`site/guide/img/`:
-  `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`) and the home
-  page's `site/assets/loops.png`, the whole main window with its title bar (`scripts/screenshots.ps1`). It starts
-  the development build with `PUPPYMACRO_SCREENSHOTS=1` (`App.ShowsDevMarks`): the sample data, but no strip and no DEV, and the first sample loop
-  enabled, so every screenshot looks like a release; new screenshots are taken the same way. Then it closes PuppyMacro (the process,
-  not only to the tray; also after an error), so the PC is free when it returns. It drives the UI: ask
-  the contributor before running it, like `make e2e`, and where: locally (`make screenshots`) or on GitHub
-  (`make screenshots-remote`, the same screenshots from a GitHub machine, the PC stays free; `build-and-release.md`). `make dev` closes a running PuppyMacro first,
-  the installed one too.
+- Screenshots: taken only by the `create_release_pr` workflow, for every release, on a GitHub Windows machine with
+  its screen at 1920 x 1080 (`build-and-release.md`), and checked by the user in the release pull request: no
+  pull request retakes them and there is no `make` for them. `scripts/screenshots.ps1` takes the guide's editor
+  screenshots (`site/guide/img/`: `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`)
+  and the home page's `site/assets/loops.png`, the whole main window with its title bar, from the development build
+  started with `PUPPYMACRO_SCREENSHOTS=1` (`scripts/dev.ps1 -Screenshots`, `App.ShowsDevMarks`): the sample data, but no
+  strip and no DEV, and the first sample loop enabled, so every screenshot looks like a release. Each window is
+  captured alone (`PrintWindow`: nothing behind it shows), with its rounded corners transparent, at 100% scale, in
+  Windows' default accent color. Never show personal data, user names or other windows. A new screenshot is added
+  there, taken the same way.
 - The download link is `https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe`:
   keep the Setup file name stable.

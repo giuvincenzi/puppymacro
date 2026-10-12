@@ -1,0 +1,8 @@
+<!-- PuppyMacro's version. Only the create_release_pr workflow changes it, in the release pull request: merging that pull
+     request changes this file on main, which starts the publish_release workflow (build-and-release.md). The test
+     workflow fails any other pull request that changes it. -->
+<Project>
+  <PropertyGroup>
+    <Version>1.16.0</Version>
+  </PropertyGroup>
+</Project>

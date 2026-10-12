@@ -8,7 +8,7 @@ using static PuppyMacro.E2E.Playback;
 
 namespace PuppyMacro.E2E;
 
-/// <summary>Every kind of macro action, played on the target window. make e2e CATEGORY=Macros</summary>
+/// <summary>Every kind of macro action, played on the target window. make e2e category=Macros</summary>
 [Trait("Category", "Macros")]
 public class MacroActionTests
 {

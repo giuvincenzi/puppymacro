@@ -1,7 +1,7 @@
-# make screenshots: retakes the editor screenshots of the user guide (site/guide/img: loop-editor.png,
-# macro-editor.png, macro-editor-code.png, remap-editor.png) and the home page's (site/assets/loops.png) from the
-# running development build (make screenshots starts it with make dev's script and PUPPYMACRO_SCREENSHOTS=1, so it shows
-# the sample data and no development build marks).
+# The create_release_pr workflow's take_screenshots: retakes the editor screenshots of the user guide (site/guide/img:
+# loop-editor.png, macro-editor.png, macro-editor-code.png, remap-editor.png) and the home page's (site/assets/loops.png)
+# from the running development build (started before with scripts/dev.ps1 -Screenshots: PUPPYMACRO_SCREENSHOTS=1, so it
+# shows the sample data and no development build marks), on a screen of 1920 x 1080 (scripts/screen-resolution.ps1).
 # It drives the UI with UI Automation: do not use the mouse or keyboard while it runs. At the end (also after an
 # error) it closes that PuppyMacro, so the PC is free again when it returns.
 # Each window is captured alone (its own image, PrintWindow: nothing behind it shows), at its visible edges, with its
