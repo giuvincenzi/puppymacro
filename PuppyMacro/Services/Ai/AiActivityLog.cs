@@ -40,8 +40,16 @@ public sealed class AiActivity
 
     public AiActivityKind Kind { get; set; }
 
-    /// <summary>What it asked, in a few words ("New remap: Ctrl + X → A").</summary>
+    /// <summary>What it asked, in a few words, in English ("New remap: Ctrl + X → A"). Kept for older versions; shown
+    /// when there is no <see cref="RequestPhrase"/> (requests saved before 1.17).</summary>
     public string Request { get; set; } = "";
+
+    /// <summary><see cref="Request"/> in the language of the moment (i18n.md).</summary>
+    public Phrase? RequestPhrase { get; set; }
+
+    /// <summary>The request to show: in the user's language, or as an older version saved it.</summary>
+    [JsonIgnore]
+    public string ShownRequest => RequestPhrase?.TryRender(System.Globalization.CultureInfo.CurrentUICulture) ?? Request;
 
     public AiActivityResult Result { get; set; }
 
@@ -122,7 +130,7 @@ internal sealed class AiActivityLog
     }
 
     /// <summary>Adds an entry with the current time and saves the file.</summary>
-    public AiActivity Add(string app, AiActivityKind kind, string request, AiActivityResult result = AiActivityResult.None,
+    public AiActivity Add(string app, AiActivityKind kind, Phrase request, AiActivityResult result = AiActivityResult.None,
         string detail = "", string? data = null, Guid? itemId = null, string? itemKind = null, string? before = null)
     {
         var entry = new AiActivity
@@ -130,7 +138,8 @@ internal sealed class AiActivityLog
             Time = _now(),
             App = app,
             Kind = kind,
-            Request = request,
+            Request = request.English,
+            RequestPhrase = request,
             Result = result,
             Detail = detail,
             Data = data,

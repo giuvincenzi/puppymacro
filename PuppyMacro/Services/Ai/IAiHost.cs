@@ -17,7 +17,17 @@ public enum AiAnswer
 }
 
 /// <summary>A setting an AI app asks to change, as the confirmation shows it ("Stop all hotkey", "Alt + Shift + S", "F12").</summary>
-internal sealed record AiSettingChange(string Label, string From, string To);
+internal sealed record AiSettingChange(Phrase Name, PhraseArg From, PhraseArg To)
+{
+    /// <summary>The setting's name in English, for the AI app.</summary>
+    public string Label => Name.English;
+
+    /// <summary>"Theme: Dark → Light", shown and kept in the language of the moment.</summary>
+    public Phrase Line => Phrase.Of("Ai_SettingChange", Name, From, To);
+
+    /// <summary>The new value in English, for the AI app.</summary>
+    public string ToEnglish => To.TryRender(System.Globalization.CultureInfo.InvariantCulture) ?? "";
+}
 
 /// <summary>
 /// What the AI tools need from the app: its data, the changes it makes as the user's own Save would (recorded in the

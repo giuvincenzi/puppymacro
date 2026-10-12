@@ -246,9 +246,9 @@ public class AiActivityLogTests : IDisposable
         var log = new AiActivityLog(path, () => now);
 
         now = now.AddDays(-400);
-        log.Add("Claude Desktop", AiActivityKind.Read, "Old");
+        log.Add("Claude Desktop", AiActivityKind.Read, Phrase.Literal("Old"));
         now = now.AddDays(400);
-        log.Add("Claude Desktop", AiActivityKind.Proposal, "New remap: Ctrl + X → A", AiActivityResult.Saved, data: "{}");
+        log.Add("Claude Desktop", AiActivityKind.Proposal, Phrase.Literal("New remap: Ctrl + X → A"), AiActivityResult.Saved, data: "{}");
 
         var reloaded = new AiActivityLog(path, () => now);
         reloaded.Load();
@@ -267,7 +267,7 @@ public class AiActivityLogTests : IDisposable
         string bigMacro = new('x', 3000);
 
         for (int i = 0; i < 50; i++)
-            log.Add("Claude Desktop", AiActivityKind.Proposal, $"Change {i}", AiActivityResult.Saved, data: bigMacro, before: bigMacro);
+            log.Add("Claude Desktop", AiActivityKind.Proposal, Phrase.Literal($"Change {i}"), AiActivityResult.Saved, data: bigMacro, before: bigMacro);
 
         List<AiActivity> entries = log.Entries();
         Assert.InRange(entries.Count, 2, 49);
@@ -283,14 +283,34 @@ public class AiActivityLogTests : IDisposable
         int changes = 0;
         log.Changed += () => changes++;
 
-        log.Add("A", AiActivityKind.Read, "First");
+        log.Add("A", AiActivityKind.Read, Phrase.Literal("First"));
         now = now.AddMinutes(1);
-        log.Add("A", AiActivityKind.Read, "Second");
+        log.Add("A", AiActivityKind.Read, Phrase.Literal("Second"));
 
         Assert.Equal(new[] { "Second", "First" }, log.Entries().Select(e => e.Request));
         log.Clear();
         Assert.Empty(log.Entries());
         Assert.Equal(3, changes);
+    }
+
+    [Fact]
+    public void Requests_are_kept_as_phrases_and_in_english_and_older_ones_show_their_text()
+    {
+        string path = _folder.File("ai-activity.json");
+        var log = new AiActivityLog(path);
+        log.Add("A", AiActivityKind.Confirmation, Phrase.Of("Ai_Deleted_loop", "\"Spam\""), AiActivityResult.Applied);
+        File.WriteAllText(_folder.File("old.json"), """[ { "Time": "2026-10-01T10:00:00", "App": "A", "Kind": "Read", "Request": "Read your settings" } ]""");
+
+        var reloaded = new AiActivityLog(path);
+        reloaded.Load();
+        AiActivity entry = reloaded.Entries()[0];
+        Assert.Equal("Deleted loop \"Spam\"", entry.Request);
+        Assert.Equal("Ai_Deleted_loop", entry.RequestPhrase!.Key);
+        Assert.Equal("Deleted loop \"Spam\"", entry.ShownRequest);
+
+        var old = new AiActivityLog(_folder.File("old.json"));
+        old.Load();
+        Assert.Equal("Read your settings", old.Entries()[0].ShownRequest);
     }
 
     [Fact]

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services.Ai;
 
@@ -154,7 +156,7 @@ internal sealed class AiTools
             return AiToolResult.Error($"Unknown tool \"{name}\".");
         if (!_host.Settings.AllowAiAccess)
         {
-            _log.Add(app, AiActivityKind.Connection, $"Called {name} while AI access was off", AiActivityResult.Refused);
+            _log.Add(app, AiActivityKind.Connection, Phrase.Of("Ai_CalledWhileOff", name), AiActivityResult.Refused);
             return AiToolResult.Error("AI access is off in PuppyMacro. Ask the user to turn on Allow AI access on PuppyMacro's AI page.");
         }
         try
@@ -193,7 +195,7 @@ internal sealed class AiTools
         {
             new("get_overview",
                 "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running) and the global hotkeys.",
-                none, true, false, (_, app, _) => Read(app, "Read your loops, macros and remaps", Overview)),
+                none, true, false, (_, app, _) => Read(app, Phrase.Of("Ai_ReadOverview"), Overview)),
             new("get_item",
                 "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out " +
                 "(get_schema gives the defaults). save_* takes it as it is; patch_item's paths point into it.",
@@ -204,7 +206,7 @@ internal sealed class AiTools
                 true, false, (a, app, _) => Task.FromResult(Schema(a))),
             new("get_settings",
                 "Gives the settings an AI app can change with update_settings (theme, global hotkeys, overlay panel, sound volume).",
-                none, true, false, (_, app, _) => Read(app, "Read your settings",
+                none, true, false, (_, app, _) => Read(app, Phrase.Of("Ai_ReadSettings"),
                     () => JsonSerializer.Serialize(AiSettingsValues.From(_host.Settings), AnswerOptions))),
             new("check_hotkey",
                 "Checks whether a key or combination can be the hotkey of a loop or macro, or the key of a remap, without clashing with what exists.",
@@ -222,7 +224,7 @@ internal sealed class AiTools
                 none, true, false, (_, app, _) => Read(app, null, Status)),
             new("list_apps",
                 "Lists the .exe names of the apps with a window open, for an item that works only in one app (AppExe).",
-                none, true, false, (_, app, _) => Read(app, "Listed the open apps", () => JsonSerializer.Serialize(_host.RunningApps(), AnswerOptions))),
+                none, true, false, (_, app, _) => Read(app, Phrase.Of("Ai_ListedApps"), () => JsonSerializer.Serialize(_host.RunningApps(), AnswerOptions))),
             new("get_help",
                 "Reads PuppyMacro's user guide. Without a topic: the list of topics.",
                 """{"type":"object","properties":{"topic":{"type":"string","description":"A topic from the list, e.g. \"macros\"."}},"additionalProperties":false}""",
@@ -336,9 +338,10 @@ internal sealed class AiTools
 
     // ================= Reads =================
 
-    private async Task<AiToolResult> Read(string app, string? logText, Func<string> read)
+    private async Task<AiToolResult> Read(string app, Phrase? logText, Func<string> read)
     {
-        string text = await _host.Ui(() => Task.FromResult(read())).ConfigureAwait(false);
+        // Key names in the answer in English (i18n.md): the AI app's texts.
+        string text = await _host.Ui(() => Task.FromResult(Loc.English(read))).ConfigureAwait(false);
         if (logText != null)
             _log.Add(app, AiActivityKind.Read, logText);
         return new AiToolResult(text);
@@ -373,6 +376,10 @@ internal sealed class AiTools
 
     private static string? Keys(HotkeyBinding? binding) => binding is { IsSet: true } ? KeyNames.Format(binding) : null;
 
+    /// <summary>Keys named in the language of the moment, or "none".</summary>
+    private static PhraseArg KeyArg(HotkeyBinding? binding) =>
+        binding is { IsSet: true } ? PhraseArg.Of(binding.Clone()) : Phrase.Of("History_None");
+
     private string Status()
     {
         var status = new
@@ -394,8 +401,8 @@ internal sealed class AiTools
             object? item = Find(id);
             if (item == null)
                 return Task.FromResult(AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them."));
-            _log.Add(app, AiActivityKind.Read, $"Read {Describe(item)}");
-            return Task.FromResult(new AiToolResult(AiJson.Compact(item)));
+            _log.Add(app, AiActivityKind.Read, About("Ai_Read", item));
+            return Task.FromResult(new AiToolResult(Loc.English(() => AiJson.Compact(item))));
         }).ConfigureAwait(false);
     }
 
@@ -425,7 +432,8 @@ internal sealed class AiTools
         string? text = AiHelp.Text(topic);
         if (text == null)
             return AiToolResult.Error($"Unknown topic \"{topic}\".\n\n{AiHelp.Index()}");
-        _log.Add(app, AiActivityKind.Read, $"Read the guide: {AiHelp.Sections.First(s => s.Id.Equals(topic.Trim(), StringComparison.OrdinalIgnoreCase)).Title}");
+        _log.Add(app, AiActivityKind.Read, Phrase.Of("Ai_ReadGuide",
+            AiHelp.Sections.First(s => s.Id.Equals(topic.Trim(), StringComparison.OrdinalIgnoreCase)).Title));
         return new AiToolResult(text);
     }
 
@@ -439,11 +447,12 @@ internal sealed class AiTools
         if (!binding.IsSet)
             return AiToolResult.Error("Set Vk: the key's virtual-key code.");
 
-        string? problem = await _host.Ui(() => Task.FromResult(remap
+        string? problem = await _host.Ui(() => Task.FromResult(Loc.English(() => remap
             ? HotkeyConflicts.RemapClash(binding, appExe, _host.Settings, _host.Macros, ignore ?? Guid.Empty)
-            : HotkeyRules.Problem(binding, hold) ?? HotkeyConflicts.Find(binding, _host.Settings, _host.Macros, ignore, appExe: appExe)))
+            : HotkeyRules.Problem(binding, hold) ?? HotkeyConflicts.Find(binding, _host.Settings, _host.Macros, ignore, appExe: appExe))))
             .ConfigureAwait(false);
-        return new AiToolResult(problem == null ? $"{KeyNames.Format(binding)} is free." : $"{KeyNames.Format(binding)} can't be used: {problem}");
+        string keys = Loc.English(() => KeyNames.Format(binding));
+        return new AiToolResult(problem == null ? $"{keys} is free." : $"{keys} can't be used: {problem}");
     }
 
     // ================= Changes =================
@@ -457,19 +466,21 @@ internal sealed class AiTools
             return AiToolResult.Error(busy);
 
         // The checks of the editor's Code view, with the Id the item has (a new one for a new item).
-        (T? parsed, string? problems, string? before) = await _host.Ui(() => Task.FromResult(ParseItem<T>(item, editId)))
+        // The checks' problems in English: they are the AI app's answer (and the activity's detail).
+        (T? parsed, string? problems, string? before) = await _host.Ui(() => Task.FromResult(Loc.English(() => ParseItem<T>(item, editId))))
             .ConfigureAwait(false);
         if (parsed == null)
         {
-            _log.Add(app, AiActivityKind.Proposal, $"{(editId == null ? "New" : "Change to")} {kind}", AiActivityResult.Error,
-                problems ?? "", item.GetRawText());
+            _log.Add(app, AiActivityKind.Proposal, Phrase.Of($"Ai_{(editId == null ? "NewProposal" : "ChangeProposal")}_{kind}"),
+                AiActivityResult.Error, problems ?? "", item.GetRawText());
             return AiToolResult.Error($"The {kind} has problems, nothing was saved:\n{problems}");
         }
 
         string json = Serialize(parsed);
-        List<string> changes = before == null ? new List<string>() : ItemHistory.Changes(before, json);
-        string label = before == null ? $"New {kind} {Title(parsed)}"
-            : $"Changed {kind} {Title(parsed)}: {(changes.Count == 1 ? changes[0] : $"{changes.Count} changes")}";
+        List<Phrase> diff = before == null ? new List<Phrase>() : ItemHistory.Diff(before, json);
+        List<string> changes = diff.Select(c => c.English).ToList();
+        Phrase label = before == null ? About("Ai_New", parsed)
+            : Phrase.Of($"Ai_Changed_{kind}", TitleArg(parsed), diff.Count == 1 ? diff[0] : Phrase.Plural("History_Changes", diff.Count));
         if (before != null && changes.Count == 0)
             return new AiToolResult($"Nothing to change: the {kind} is already like this.");
         Guid id = Id(parsed);
@@ -493,8 +504,10 @@ internal sealed class AiTools
 
         return await StartForUser(app, async () =>
         {
-            AiAnswer answer = await _host.Confirm(app, before == null ? $"Save this new {kind}?" : $"Save these changes to the {kind}?",
-                before == null ? new List<string> { $"{Capital(kind)} {Title(parsed)}" } : changes, "Save");
+            // The user's window, in the user's language.
+            AiAnswer answer = await _host.Confirm(app, Loc.Text($"Ai_Confirm{(before == null ? "New" : "Changes")}_{kind}"),
+                before == null ? new List<string> { About("Ai_Item", parsed).ToString() } : diff.Select(c => c.ToString()).ToList(),
+                Strings.Ai_Save);
             if (answer == AiAnswer.Done)
                 return Apply();
             Log(app, AiActivityKind.Proposal, label, answer, "", json);
@@ -576,13 +589,13 @@ internal sealed class AiTools
         Guid id = IdArg(args, "id");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        (string? what, string? kind, string? before) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
-            ? ((string?)Describe(item), (string?)Kind(item), (string?)Serialize(item))
-            : (null, null, null))).ConfigureAwait(false);
-        if (what == null)
+        (string? what, string? kind, string? before, object? found) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
+            ? ((string?)Loc.English(() => Describe(item)), (string?)Kind(item), (string?)Serialize(item), (object?)item)
+            : (null, null, null, null))).ConfigureAwait(false);
+        if (what == null || found == null)
             return AiToolResult.Error($"No loop, macro or remap has the Id {id}.");
 
-        string label = $"Deleted {what}";
+        Phrase label = About("Ai_Deleted", found);
         AiToolResult Apply()
         {
             if (BusyNow() is AiToolResult busy)
@@ -598,7 +611,8 @@ internal sealed class AiTools
             return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
         return await StartForUser(app, async () =>
         {
-            AiAnswer answer = await _host.Confirm(app, $"Delete this {kind}?", new[] { Capital(what) }, "Delete");
+            AiAnswer answer = await _host.Confirm(app, Loc.Text($"Ai_ConfirmDelete_{kind}"),
+                new[] { About("Ai_Item", found).ToString() }, Strings.Ai_Delete);
             if (answer == AiAnswer.Done)
                 return Apply();
             Log(app, AiActivityKind.Confirmation, label, answer, "");
@@ -612,16 +626,16 @@ internal sealed class AiTools
         bool enabled = args.TryGetProperty("enabled", out JsonElement e) && e.ValueKind == JsonValueKind.True;
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        (string? what, string? kind, string? before, bool already) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
-            ? ((string?)Describe(item), (string?)Kind(item), (string?)Serialize(item), IsEnabled(item) == enabled)
-            : (null, null, null, false))).ConfigureAwait(false);
-        if (what == null)
+        (string? what, string? kind, string? before, bool already, object? found) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
+            ? ((string?)Loc.English(() => Describe(item)), (string?)Kind(item), (string?)Serialize(item), IsEnabled(item) == enabled, (object?)item)
+            : (null, null, null, false, null))).ConfigureAwait(false);
+        if (what == null || found == null)
             return AiToolResult.Error($"No loop, macro or remap has the Id {id}.");
         if (already)
             return new AiToolResult($"{Capital(what)} is already {(enabled ? "enabled" : "disabled")}.");
 
         string verb = enabled ? "Enable" : "Disable";
-        string label = $"{(enabled ? "Enabled" : "Disabled")} {what}";
+        Phrase label = About(enabled ? "Ai_Enabled" : "Ai_Disabled", found);
         AiToolResult Apply()
         {
             if (BusyNow() is AiToolResult busy)
@@ -637,7 +651,8 @@ internal sealed class AiTools
             return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
         return await StartForUser(app, async () =>
         {
-            AiAnswer answer = await _host.Confirm(app, $"{verb} this {kind}?", new[] { Capital(what) }, verb);
+            AiAnswer answer = await _host.Confirm(app, Loc.Text($"Ai_Confirm{verb}_{kind}"),
+                new[] { About("Ai_Item", found).ToString() }, Loc.Text($"Ai_{verb}"));
             if (answer == AiAnswer.Done && Find(id) != null)
                 return Apply();
             Log(app, AiActivityKind.Confirmation, label, answer, "");
@@ -654,17 +669,19 @@ internal sealed class AiTools
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
-        (List<AiSettingChange> changes, string? problem) = await _host.Ui(() => Task.FromResult(SettingChanges(wanted))).ConfigureAwait(false);
+        // The problems in English: the AI app's answer.
+        (List<AiSettingChange> changes, string? problem) = await _host.Ui(() => Task.FromResult(Loc.English(() => SettingChanges(wanted))))
+            .ConfigureAwait(false);
         if (problem != null)
             return AiToolResult.Error(problem);
         if (changes.Count == 0)
             return new AiToolResult("Nothing to change: the settings already have these values.");
 
-        string label = "Changed settings: " + string.Join(", ", changes.Select(c => c.Label));
+        Phrase label = Phrase.Of("Ai_ChangedSettings", Phrase.List(changes.Select(c => (PhraseArg)c.Name)));
         AiToolResult Apply()
         {
             // Checked again: the user may have changed something meanwhile.
-            (_, string? stillProblem) = SettingChanges(wanted);
+            (_, string? stillProblem) = Loc.English(() => SettingChanges(wanted));
             if (stillProblem != null)
             {
                 _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Error, stillProblem);
@@ -674,16 +691,16 @@ internal sealed class AiTools
             string before = JsonSerializer.Serialize(Previous(wanted), CodeJson.Options);
             _host.ApplySettings(wanted);
             _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied,
-                string.Join("; ", changes.Select(c => $"{c.Label}: {c.From} → {c.To}")), null, null, "settings", before);
-            return new AiToolResult("Settings changed: " + string.Join("; ", changes.Select(c => $"{c.Label} {c.To}")) + ".");
+                string.Join("; ", changes.Select(c => c.Line.ToString())), null, null, "settings", before);
+            return new AiToolResult("Settings changed: " + string.Join("; ", changes.Select(c => $"{c.Label} {c.ToEnglish}")) + ".");
         }
 
         if (!_host.Settings.AiAskBeforeSettings)
             return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
         return await StartForUser(app, async () =>
         {
-            AiAnswer answer = await _host.Confirm(app, "Change these settings?",
-                changes.Select(c => $"{c.Label}: {c.From} → {c.To}").ToList(), "Apply");
+            AiAnswer answer = await _host.Confirm(app, Strings.Ai_ConfirmSettings,
+                changes.Select(c => c.Line.ToString()).ToList(), Strings.Ai_Apply);
             if (answer == AiAnswer.Done)
                 return Apply();
             Log(app, AiActivityKind.Confirmation, label, answer, "");
@@ -715,9 +732,10 @@ internal sealed class AiTools
     /// </summary>
     public string? RestoreSettings(AiSettingsValues values)
     {
+        // Shown to the user (Restore on the AI page): in the user's language.
         (_, string? problem) = SettingChanges(values);
         if (problem != null)
-            return "These settings can't be restored: " + problem;
+            return string.Format(CultureInfo.CurrentCulture, Strings.Ai_CantRestoreSettings, problem);
         _host.ApplySettings(values);
         return null;
     }
@@ -732,50 +750,55 @@ internal sealed class AiTools
     {
         AppSettings s = _host.Settings;
         var changes = new List<AiSettingChange>();
-        static string OnOff(bool value) => value ? "On" : "Off";
+        static PhraseArg OnOff(bool value) => Phrase.Of(value ? "History_On" : "History_Off");
+        static PhraseArg Percent(int value) => Phrase.Of("Ai_Percent", value.ToString(CultureInfo.InvariantCulture));
+        static PhraseArg Theme(AppTheme value) => Phrase.Of($"Theme_{value}");
 
         if (wanted.Theme is AppTheme theme && theme != s.Theme)
-            changes.Add(new("Theme", s.Theme.ToString(), theme.ToString()));
+            changes.Add(new(Phrase.Of("AiSetting_Theme"), Theme(s.Theme), Theme(theme)));
         if (wanted.CloseToTray is bool tray && tray != s.CloseToTray)
-            changes.Add(new("Close to system tray", OnOff(s.CloseToTray), OnOff(tray)));
+            changes.Add(new(Phrase.Of("AiSetting_CloseToTray"), OnOff(s.CloseToTray), OnOff(tray)));
         if (wanted.ShowOverlayPanel is bool panel && panel != s.ShowOverlayPanel)
-            changes.Add(new("Overlay panel", OnOff(s.ShowOverlayPanel), OnOff(panel)));
+            changes.Add(new(Phrase.Of("AiSetting_OverlayPanel"), OnOff(s.ShowOverlayPanel), OnOff(panel)));
         if (wanted.ClickItemsInPanel is bool click && click != s.ClickItemsInPanel)
-            changes.Add(new("Click items in the panel", OnOff(s.ClickItemsInPanel), OnOff(click)));
+            changes.Add(new(Phrase.Of("AiSetting_ClickItemsInPanel"), OnOff(s.ClickItemsInPanel), OnOff(click)));
         if (wanted.OverlayPanelOpacity is int opacity)
         {
             if (opacity is < AppSettings.MinOpacity or > AppSettings.MaxOpacity)
                 return (changes, $"OverlayPanelOpacity must be between {AppSettings.MinOpacity} and {AppSettings.MaxOpacity}.");
             if (opacity != s.OverlayPanelOpacity)
-                changes.Add(new("Overlay panel opacity", $"{s.OverlayPanelOpacity}%", $"{opacity}%"));
+                changes.Add(new(Phrase.Of("AiSetting_OverlayPanelOpacity"), Percent(s.OverlayPanelOpacity), Percent(opacity)));
         }
         if (wanted.SoundVolume is int volume)
         {
             if (volume is < 0 or > 100)
                 return (changes, "SoundVolume must be between 0 and 100.");
             if (volume != s.SoundVolume)
-                changes.Add(new("Sound volume", $"{s.SoundVolume}%", $"{volume}%"));
+                changes.Add(new(Phrase.Of("AiSetting_SoundVolume"), Percent(s.SoundVolume), Percent(volume)));
         }
 
-        var newHotkeys = new List<(string Label, HotkeyBinding Value)>();
-        foreach (var (label, which, value, current) in new[]
+        var newHotkeys = new List<(Phrase Name, HotkeyBinding Value)>();
+        foreach (var (name, which, value, current) in new[]
                  {
-                     ("Stop all hotkey", "StopAll", wanted.StopAllHotkey, s.StopAllHotkey),
-                     ("Overlay mode hotkey", "OverlayMode", wanted.OverlayModeHotkey, s.OverlayModeHotkey),
-                     ("Record hotkey", "Record", wanted.RecordHotkey, s.RecordHotkey),
+                     (Phrase.Of("AiSetting_StopAllHotkey"), "StopAll", wanted.StopAllHotkey, s.StopAllHotkey),
+                     (Phrase.Of("AiSetting_OverlayModeHotkey"), "OverlayMode", wanted.OverlayModeHotkey, s.OverlayModeHotkey),
+                     (Phrase.Of("AiSetting_RecordHotkey"), "Record", wanted.RecordHotkey, s.RecordHotkey),
                  })
         {
             if (value == null || value.SameAs(current))
                 continue;
+            // In this thread's language: English for the AI app (update_settings), the user's for Restore.
+            string label = name.ToString();
             if (!value.IsSet)
                 return (changes, $"{label}: set Vk, the key's virtual-key code.");
             if ((HotkeyRules.Problem(value, hold: false) ?? HotkeyConflicts.Find(value, s, _host.Macros, ignoreGlobal: which)) is string problem)
                 return (changes, $"{label}: {problem}");
             // Two of the new global hotkeys must differ too (each was checked only against the current ones).
-            if (newHotkeys.FirstOrDefault(n => n.Value.Overlaps(value)) is { Label: not null } same)
-                return (changes, $"{label}: {KeyNames.Format(value)} would also be the {same.Label}.");
-            newHotkeys.Add((label, value));
-            changes.Add(new(label, Keys(current) ?? "None", KeyNames.Format(value)));
+            if (newHotkeys.FirstOrDefault(n => n.Value.Overlaps(value)) is { Name: not null } same)
+                return (changes, $"{label}: {KeyNames.Format(value)} would also be the {same.Name}.");
+            newHotkeys.Add((name, value));
+            changes.Add(new(name, current is { IsSet: true } ? PhraseArg.Of(current.Clone()) : Phrase.Of("Ai_NoneValue"),
+                PhraseArg.Of(value.Clone())));
         }
         return (changes, null);
     }
@@ -804,7 +827,7 @@ internal sealed class AiTools
             return AiToolResult.Error($"Give one label per point: {points} points, {labels.Count} labels.");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string label = (points == 1 ? "Asked for a point: " : $"Asked for {points} points: ") + ask.Title;
+        Phrase label = points == 1 ? Phrase.Of("Ai_AskedPoint", ask.Title) : Phrase.Plural("Ai_AskedPoints", points, ask.Title);
         return await StartForUser(app, async () =>
         {
             AiAnswer ready = await _host.Ready(app, ask);
@@ -829,7 +852,7 @@ internal sealed class AiTools
         AiAsk ask = Asking(args);
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string label = "Asked for an app: " + ask.Title;
+        Phrase label = Phrase.Of("Ai_AskedApp", ask.Title);
         return await StartForUser(app, async () =>
         {
             AiAnswer ready = await _host.Ready(app, ask);
@@ -852,13 +875,13 @@ internal sealed class AiTools
         AiAsk ask = Asking(args);
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        string label = "Asked for a key: " + ask.Title;
+        Phrase label = Phrase.Of("Ai_AskedKey", ask.Title);
         return await StartForUser(app, async () =>
         {
             var (answer, keys) = await _host.CaptureKeys(app, ask);
             Log(app, AiActivityKind.Interaction, label, answer, Keys(keys) ?? "");
             return Answered(answer, keys == null ? "" :
-                $"{KeyNames.Format(keys)}: {JsonSerializer.Serialize(keys, AnswerOptions)}");
+                $"{Loc.English(() => KeyNames.Format(keys))}: {JsonSerializer.Serialize(keys, AnswerOptions)}");
         }, cancel).ConfigureAwait(false);
     }
 
@@ -869,18 +892,18 @@ internal sealed class AiTools
         AiAsk ask = Asking(args);
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        (string? what, string? problem) = await _host.Ui(() => Task.FromResult(Find(id) switch
+        (string? what, string? problem, object? found) = await _host.Ui(() => Task.FromResult(Find(id) switch
         {
             LoopDefinition { Mode: ActivationMode.Hold } or MacroDefinition { Mode: ActivationMode.Hold } =>
-                (null, "Floating buttons work only for Toggle items: change its Mode to Toggle first (save_loop or save_macro)."),
-            { } item when item is LoopDefinition or MacroDefinition => ((string?)Describe(item), (string?)null),
-            null => (null, $"No loop or macro has the Id {id}."),
-            _ => (null, "Only loops and macros have floating buttons."),
+                (null, "Floating buttons work only for Toggle items: change its Mode to Toggle first (save_loop or save_macro).", null),
+            { } item when item is LoopDefinition or MacroDefinition => ((string?)Loc.English(() => Describe(item)), (string?)null, (object?)item),
+            null => (null, $"No loop or macro has the Id {id}.", null),
+            _ => (null, "Only loops and macros have floating buttons.", null),
         })).ConfigureAwait(false);
-        if (problem != null || what == null)
+        if (problem != null || what == null || found == null)
             return AiToolResult.Error(problem ?? "");
 
-        string label = $"Placed the floating button of {what}";
+        Phrase label = About("Ai_PlacedButton", found);
         return await StartForUser(app, async () =>
         {
             AiAnswer ready = await _host.Ready(app, ask);
@@ -915,17 +938,17 @@ internal sealed class AiTools
             throw new FormatException("Give a short \"title\": it is shown to the user.");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
-        (string? what, string? problem) = await _host.Ui(() => Task.FromResult(Find(id) switch
+        (string? what, string? problem, object? found) = await _host.Ui(() => Task.FromResult(Find(id) switch
         {
-            null => (null, $"No loop, macro or remap has the Id {id}."),
+            null => (null, $"No loop, macro or remap has the Id {id}.", null),
             LoopDefinition or MacroDefinition when _host.AnyRunning =>
-                (null, "Loops or macros are running: their editors open only when nothing runs. Ask the user to stop them (or call stop_all)."),
-            { } item => ((string?)Describe(item), (string?)null),
+                (null, "Loops or macros are running: their editors open only when nothing runs. Ask the user to stop them (or call stop_all).", null),
+            { } item => ((string?)Loc.English(() => Describe(item)), (string?)null, (object?)item),
         })).ConfigureAwait(false);
-        if (problem != null || what == null)
+        if (problem != null || what == null || found == null)
             return AiToolResult.Error(problem ?? "");
 
-        string label = $"Opened {what}";
+        Phrase label = About("Ai_Opened", found);
         return await StartForUser(app, async () =>
         {
             AiAnswer answer = await _host.OpenItem(id, app, title, description);
@@ -937,7 +960,7 @@ internal sealed class AiTools
             });
             return answer switch
             {
-                AiAnswer.Done => new AiToolResult($"The user saved {what}:\n{(Find(id) is { } saved ? Serialize(saved) : "")}"),
+                AiAnswer.Done => new AiToolResult($"The user saved {what}:\n{(Find(id) is { } saved ? Serialize(saved) : "")}"), // JSON: no texts
                 AiAnswer.TimedOut => new AiToolResult("Nobody used PuppyMacro for a while: the editor closed without saving."),
                 _ => new AiToolResult("The user closed the editor without saving."),
             };
@@ -951,7 +974,7 @@ internal sealed class AiTools
             _host.StopAll();
             return Task.FromResult(true);
         }).ConfigureAwait(false);
-        _log.Add(app, AiActivityKind.Interaction, "Stopped all loops and macros", AiActivityResult.Applied);
+        _log.Add(app, AiActivityKind.Interaction, Phrase.Of("Ai_StoppedAll"), AiActivityResult.Applied);
         return new AiToolResult("Stopped every running loop and macro.");
     }
 
@@ -1212,7 +1235,7 @@ internal sealed class AiTools
         _ => new AiToolResult("The user cancelled: nothing changed."),
     };
 
-    private void Log(string app, AiActivityKind kind, string label, AiAnswer answer, string detail, string? data = null) =>
+    private void Log(string app, AiActivityKind kind, Phrase label, AiAnswer answer, string detail, string? data = null) =>
         _log.Add(app, kind, label, answer switch
         {
             AiAnswer.Done => kind == AiActivityKind.Proposal ? AiActivityResult.Saved : AiActivityResult.Applied,
@@ -1251,8 +1274,24 @@ internal sealed class AiTools
         _ => false,
     };
 
-    /// <summary>"loop \"Spam\"", "remap Ctrl + X → A".</summary>
+    /// <summary>"loop \"Spam\"", "remap Ctrl + X → A": for the AI app (made in English with <see cref="Loc.English{T}"/>).</summary>
     private static string Describe(object item) => $"{Kind(item)} {Title(item)}";
+
+    /// <summary>A text about an item, kept in the activity and shown in the language of the moment: the key's
+    /// "_loop", "_macro" or "_remap" text (each language says "deleted loop" and "deleted macro" its own way) with the
+    /// item's title as {0}.</summary>
+    private static Phrase About(string key, object item) => Phrase.Of($"{key}_{Kind(item)}", TitleArg(item));
+
+    /// <summary>A loop's or macro's name in quotes, or a remap's keys, named in the language of the moment.</summary>
+    private static PhraseArg TitleArg(object item) => item switch
+    {
+        LoopDefinition loop => $"\"{loop.Name}\"",
+        MacroDefinition macro => $"\"{macro.Name}\"",
+        RemapDefinition remap => remap.AppExe == null
+            ? Phrase.Of("Ai_RemapTitle", KeyArg(remap.Source), KeyArg(remap.Target))
+            : Phrase.Of("Ai_RemapTitleInApp", KeyArg(remap.Source), KeyArg(remap.Target), remap.AppExe),
+        _ => "",
+    };
 
     private static string Title(object item) => item switch
     {

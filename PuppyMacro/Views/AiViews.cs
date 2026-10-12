@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 using PuppyMacro.Services.Ai;
 
 namespace PuppyMacro.Views;
@@ -17,11 +19,10 @@ internal sealed class AiActivityRow
     public AiActivityRow(AiActivity entry)
     {
         Entry = entry;
-        TimeText = entry.Time.ToString("HH:mm");
-        DayText = entry.Time.Date == DateTime.Today ? "Today"
-            : entry.Time.Date == DateTime.Today.AddDays(-1) ? "Yesterday"
-            : entry.Time.ToString("D");
-        ResultText = entry.Restored ? "Restored"
+        TimeText = entry.Time.ToString("t", CultureInfo.CurrentCulture);
+        DayText = HistoryRow.DayName(entry.Time);
+        Request = entry.ShownRequest;
+        ResultText = entry.Restored ? Strings.AiResult_Restored
             : ResultName(entry.Result) is { Length: > 0 } result ? result : entry.Detail;
         KindText = KindName(entry.Kind);
         DetailText = string.Join("\n", new[]
@@ -35,7 +36,9 @@ internal sealed class AiActivityRow
     public string TimeText { get; }
     public string DayText { get; }
     public string App => Entry.App;
-    public string Request => Entry.Request;
+
+    /// <summary>What the AI app asked, in the user's language (or as an older version saved it).</summary>
+    public string Request { get; }
     public string KindText { get; }
     public string ResultText { get; }
 
@@ -48,26 +51,26 @@ internal sealed class AiActivityRow
 
     public Visibility RestoreVisibility => CanRestore ? Visibility.Visible : Visibility.Collapsed;
 
-    public string RestoreName => $"Restore: {Entry.Request}";
+    public string RestoreName => string.Format(CultureInfo.CurrentCulture, Strings.AiActivity_RestoreName, Request);
 
     public static string KindName(AiActivityKind kind) => kind switch
     {
-        AiActivityKind.Read => "Read",
-        AiActivityKind.Proposal => "Save",
-        AiActivityKind.Interaction => "Interaction",
-        AiActivityKind.Confirmation => "Change",
-        _ => "Connection",
+        AiActivityKind.Read => Strings.AiKind_Read,
+        AiActivityKind.Proposal => Strings.AiKind_Save,
+        AiActivityKind.Interaction => Strings.AiKind_Interaction,
+        AiActivityKind.Confirmation => Strings.AiKind_Change,
+        _ => Strings.AiKind_Connection,
     };
 
     public static string ResultName(AiActivityResult result) => result switch
     {
-        AiActivityResult.Saved => "Saved",
-        AiActivityResult.SavedWithChanges => "Saved with changes",
-        AiActivityResult.Applied => "Done",
-        AiActivityResult.Cancelled => "Cancelled",
-        AiActivityResult.TimedOut => "No answer",
-        AiActivityResult.Refused => "Refused",
-        AiActivityResult.Error => "Error",
+        AiActivityResult.Saved => Strings.AiResult_Saved,
+        AiActivityResult.SavedWithChanges => Strings.AiResult_SavedWithChanges,
+        AiActivityResult.Applied => Strings.AiResult_Done,
+        AiActivityResult.Cancelled => Strings.AiResult_Cancelled,
+        AiActivityResult.TimedOut => Strings.AiResult_NoAnswer,
+        AiActivityResult.Refused => Strings.AiResult_Refused,
+        AiActivityResult.Error => Strings.AiResult_Error,
         _ => "",
     };
 }

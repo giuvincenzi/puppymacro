@@ -166,4 +166,41 @@ public class ItemHistoryTests : IDisposable
 
         Assert.Empty(_history.Versions(id));
     }
+
+    [Fact]
+    public void Versions_keep_their_texts_as_phrases_and_in_english_for_older_versions()
+    {
+        Guid id = Guid.NewGuid();
+        _history.Record(id, LoopJson.Serialize(Loop(id, "Spam")), ItemHistory.You);
+        _history.Record(id, LoopJson.Serialize(Loop(id, "Spam", hotkey: HotkeyBinding.FromKey(0x75))), ItemHistory.You);
+
+        HistoryVersion version = new ItemHistory(_folder.File("history")).Versions(id)[0];
+        Assert.Equal("Hotkey: none → F6", version.Summary);
+        Assert.Equal("History_FieldChanged", version.SummaryPhrase!.Key);
+        Assert.Equal("Hotkey: none → F6", version.ShownSummary);
+        Assert.Equal(new[] { "Hotkey: none → F6" }, version.ShownChanges);
+    }
+
+    [Fact]
+    public void Versions_saved_before_1_17_show_their_english_texts()
+    {
+        Guid id = Guid.NewGuid();
+        Directory.CreateDirectory(_folder.File("history"));
+        File.WriteAllText(Path.Combine(_folder.File("history"), id + ".json"), """
+            [ { "Time": "2026-10-01T10:00:00", "By": "You", "Summary": "2 changes", "Changes": [ "Name: \"A\" → \"B\"", "Hotkey: F6 → F7" ], "Json": "{}" } ]
+            """);
+
+        HistoryVersion version = _history.Versions(id)[0];
+        Assert.Null(version.SummaryPhrase);
+        Assert.Equal("2 changes", version.ShownSummary);
+        Assert.Equal(new[] { "Name: \"A\" → \"B\"", "Hotkey: F6 → F7" }, version.ShownChanges);
+    }
+
+    [Fact]
+    public void A_phrase_from_a_newer_version_shows_the_english_text_kept_with_it()
+    {
+        var version = new HistoryVersion { Summary = "Moved", SummaryPhrase = Phrase.Of("History_NotInThisVersion") };
+
+        Assert.Equal("Moved", version.ShownSummary);
+    }
 }

@@ -161,9 +161,9 @@ internal sealed class AiServer : IDisposable
             _clients.Add(new AiClient(session, name, DateTime.Now));
         }
         if (_allowed())
-            _log.Add(name, AiActivityKind.Connection, "Connected");
+            _log.Add(name, AiActivityKind.Connection, Phrase.Of("Ai_Connected"));
         else
-            _log.Add(name, AiActivityKind.Connection, "Tried to connect while AI access was off", AiActivityResult.Refused);
+            _log.Add(name, AiActivityKind.Connection, Phrase.Of("Ai_ConnectedWhileOff"), AiActivityResult.Refused);
         ClientsChanged?.Invoke();
     }
 

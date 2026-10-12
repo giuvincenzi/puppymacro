@@ -4,6 +4,16 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ================= Common ================= -->
+  <data name="ListSeparator" xml:space="preserve"><value>, </value><comment>Between the items of a list ("Theme, Sound volume").</comment></data>
+  <data name="Day_Today" xml:space="preserve"><value>Today</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>Yesterday</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>System</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Light</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Dark</value></data>
+
+  <!-- ================= Settings: Language ================= -->
   <data name="Settings_Language" xml:space="preserve"><value>Language</value></data>
   <data name="Settings_LanguageDescription" xml:space="preserve"><value>PuppyMacro restarts to change it</value></data>
   <data name="Settings_LanguageSystem" xml:space="preserve"><value>Use system language</value></data>
@@ -11,4 +21,131 @@
   <data name="LanguageRestart_Content" xml:space="preserve"><value>PuppyMacro restarts to show {0}. Running loops and macros stop.</value><comment>{0}: the language's own name, "Italiano".</comment></data>
   <data name="LanguageRestart_Restart" xml:space="preserve"><value>Restart now</value></data>
   <data name="LanguageRestart_Later" xml:space="preserve"><value>Later</value></data>
+
+  <!-- ================= History ================= -->
+  <data name="History_BeforeHistory" xml:space="preserve"><value>Before the history started</value></data>
+  <data name="History_Created" xml:space="preserve"><value>Created</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>Deleted</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>Restored</value></data>
+  <data name="History_Changes_one" xml:space="preserve"><value>{0} change</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0} changes</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>Added action {0}</value><comment>{0}: its number.</comment></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>Added action {0} ({1})</value><comment>{1}: its name or type.</comment></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>Removed action {0}</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>Removed action {0} ({1})</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>Action {0}: {1} {2} → {3}</value><comment>{1}: the field (its Code view name), {2} before, {3} after.</comment></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>Action {0} ({1}): {2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>none</value><comment>A value that is not set.</comment></data>
+  <data name="History_On" xml:space="preserve"><value>On</value></data>
+  <data name="History_Off" xml:space="preserve"><value>Off</value></data>
+  <data name="History_Path_one" xml:space="preserve"><value>a path of {0} point{1}</value><comment>{1}: " (a1b2)", a fingerprint, or nothing.</comment></data>
+  <data name="History_Path_other" xml:space="preserve"><value>a path of {0} points{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0} (current)</value></data>
+  <data name="History_You" xml:space="preserve"><value>You</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>This is the current version.</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>Restore puts this version in the editor: select Save to keep it. The current version stays in the History.</value></data>
+
+  <!-- ================= AI activity: what an AI app asked ================= -->
+  <data name="Ai_Connected" xml:space="preserve"><value>Connected</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Tried to connect while AI access was off</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>Called {0} while AI access was off</value><comment>{0}: a tool's name.</comment></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>Read your loops, macros and remaps</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>Read your settings</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>Listed the open apps</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>Read the guide: {0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>Read loop {0}</value><comment>{0}: its name in quotes.</comment></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>Read macro {0}</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>Read remap {0}</value><comment>{0}: its keys, "Ctrl + X → A".</comment></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>New loop</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>New macro</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>New remap</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>Change to loop</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>Change to macro</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>Change to remap</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>New loop {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>New macro {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>New remap {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>Changed loop {0}: {1}</value><comment>{1}: the change, or "3 changes".</comment></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>Changed macro {0}: {1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>Changed remap {0}: {1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>Deleted loop {0}</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>Deleted macro {0}</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>Deleted remap {0}</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>Enabled loop {0}</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>Enabled macro {0}</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>Enabled remap {0}</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>Disabled loop {0}</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>Disabled macro {0}</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>Disabled remap {0}</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>Placed the floating button of loop {0}</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>Placed the floating button of macro {0}</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>Opened loop {0}</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>Opened macro {0}</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>Opened remap {0}</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>Changed settings: {0}</value><comment>{0}: the settings' names.</comment></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>Asked for a point: {0}</value><comment>{0}: the title the AI app wrote.</comment></data>
+  <data name="Ai_AskedPoints_one" xml:space="preserve"><value>Asked for {0} point: {1}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>Asked for {0} points: {1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>Asked for an app: {0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>Asked for a key: {0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>Stopped all loops and macros</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value><comment>A remap's keys: from → to.</comment></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{0} → {1} in {2}</value><comment>{2}: an app's .exe name.</comment></data>
+
+  <!-- ================= AI apps' confirmations ================= -->
+  <data name="Ai_Item_loop" xml:space="preserve"><value>Loop {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>Macro {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>Remap {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>Save this new loop?</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>Save this new macro?</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>Save this new remap?</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>Save these changes to the loop?</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>Save these changes to the macro?</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>Save these changes to the remap?</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>Delete this loop?</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>Delete this macro?</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>Delete this remap?</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>Enable this loop?</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>Enable this macro?</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>Enable this remap?</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>Disable this loop?</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>Disable this macro?</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>Disable this remap?</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>Change these settings?</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>Enable</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>Disable</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>Apply</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>None</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>These settings can't be restored: {0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Close to system tray</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Overlay panel</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Click items in the panel</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Overlay panel opacity</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>Sound volume</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Stop all hotkey</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Overlay mode hotkey</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Record hotkey</value></data>
+
+  <!-- ================= AI activity: kinds and results ================= -->
+  <data name="AiKind_Read" xml:space="preserve"><value>Read</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>Interaction</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>Change</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>Connection</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>Restored</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>Saved with changes</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>Done</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>No answer</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>Refused</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>Error</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>Restore: {0}</value></data>
 </root>
