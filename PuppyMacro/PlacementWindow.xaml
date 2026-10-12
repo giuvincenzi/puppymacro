@@ -16,7 +16,8 @@
     Foreground="White"
     PreviewKeyDown="OnKeyDown">
 
-    <Canvas x:Name="Surface">
+    <!-- Left to right in every language: its children sit at the screen's coordinates (i18n.md) -->
+    <Canvas x:Name="Surface" FlowDirection="LeftToRight">
         <!-- Instructions, centered at the top of the main screen -->
         <Border x:Name="Instructions" Padding="16,10" CornerRadius="8" BorderThickness="1"
                 Background="#F2202020" BorderBrush="#1FFFFFFF">

@@ -72,6 +72,9 @@ public sealed class ResourcesTests
 
         foreach (string key in texts.Keys.Where(k => PluralBase(k) == null && !english.ContainsKey(k)))
             problems.Add($"{key}: not in Strings.resx");
+        // The editors find a sound by the name they show (SoundService.IdOf).
+        foreach (var same in texts.Where(t => t.Key.StartsWith("Sound_", StringComparison.Ordinal)).GroupBy(t => t.Value).Where(g => g.Count() > 1))
+            problems.Add($"{string.Join(", ", same.Select(s => s.Key))}: the same name");
         Assert.Empty(problems);
     }
 

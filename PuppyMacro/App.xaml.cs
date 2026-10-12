@@ -14,6 +14,7 @@ using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
 using iNKORE.UI.WPF.Modern;
 using Velopack;
+using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
 
 namespace PuppyMacro;
 
@@ -193,7 +194,7 @@ public partial class App : Application
             window.OpenItemsFile(itemsFile);
 
         if (warning != null)
-            MessageBox.Show(warning, "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(warning, "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions);
     }
 
     /// <summary>
@@ -245,6 +246,31 @@ public partial class App : Application
         CultureInfo.CurrentCulture = format;
         FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
             new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(format.IetfLanguageTag)));
+
+        IsRightToLeft = texts.TextInfo.IsRightToLeft;
+        if (IsRightToLeft)
+        {
+            // Arabic: each window's content and each dialog right to left, before they are drawn. The window frame stays
+            // the library's (its buttons on the right); what must stay left to right says so itself (i18n.md).
+            EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler((sender, _) => RightToLeft((sender as Window)?.Content as FrameworkElement)));
+            EventManager.RegisterClassHandler(typeof(ContentDialog), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler((sender, _) => RightToLeft(sender as FrameworkElement)));
+        }
+    }
+
+    /// <summary>The texts' language reads right to left (Arabic).</summary>
+    public static bool IsRightToLeft { get; private set; }
+
+    /// <summary>Message boxes read right to left in Arabic.</summary>
+    public static MessageBoxOptions MessageBoxOptions =>
+        IsRightToLeft ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : MessageBoxOptions.None;
+
+    /// <summary>Right to left, unless the element sets its own direction (a canvas at the screen's coordinates).</summary>
+    private static void RightToLeft(FrameworkElement? element)
+    {
+        if (element != null && element.ReadLocalValue(FrameworkElement.FlowDirectionProperty) == DependencyProperty.UnsetValue)
+            element.FlowDirection = FlowDirection.RightToLeft;
     }
 
     /// <summary>Applies System, Light or Dark. System (no theme set) also follows later Windows theme changes.</summary>
@@ -273,7 +299,7 @@ public partial class App : Application
         try
         {
             MessageBox.Show(string.Format(CultureInfo.CurrentCulture, Strings.App_UnexpectedError, e.Exception.Message), "PuppyMacro",
-                MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions);
         }
         finally
         {

@@ -116,7 +116,8 @@ public partial class AiActivityWindow
         if (ActivityList.SelectedItem is not AiActivityRow { CanRestore: true } row)
             return;
         if (_restore(row.Entry) is string error)
-            System.Windows.MessageBox.Show(this, error, Strings.AiActivity_Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show(this, error, Strings.AiActivity_Title, MessageBoxButton.OK, MessageBoxImage.Warning,
+                MessageBoxResult.OK, App.MessageBoxOptions);
     }
 
     private async void OnClearClick(object sender, RoutedEventArgs e)

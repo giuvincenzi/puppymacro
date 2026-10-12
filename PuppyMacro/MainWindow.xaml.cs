@@ -174,7 +174,7 @@ public partial class MainWindow
         catch (Win32Exception ex)
         {
             MessageBox.Show(string.Format(CultureInfo.CurrentCulture, Strings.Main_HotkeysNotWorking, ex.Message), "PuppyMacro",
-                MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, App.MessageBoxOptions);
         }
     }
 

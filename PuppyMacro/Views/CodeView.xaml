@@ -4,8 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:r="clr-namespace:PuppyMacro.Resources">
 
-    <!-- The macro editor's Code view: Monaco and its Problems panel, in a WebView2 added in code (Assets/CodeEditor) -->
-    <Border CornerRadius="6" BorderThickness="1" ClipToBounds="True"
+    <!-- The macro editor's Code view: Monaco and its Problems panel, in a WebView2 added in code (Assets/CodeEditor).
+         Code reads left to right in every language (i18n.md). -->
+    <Border CornerRadius="6" BorderThickness="1" ClipToBounds="True" FlowDirection="LeftToRight"
             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
             Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
         <Grid>

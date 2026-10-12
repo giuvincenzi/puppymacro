@@ -18,7 +18,8 @@
     MouseMove="OnMouseMove"
     PreviewKeyDown="OnKeyDown">
 
-    <Canvas>
+    <!-- Left to right in every language: its children sit at the screen's coordinates (i18n.md) -->
+    <Canvas FlowDirection="LeftToRight">
         <!-- Pick an app: the window under the cursor, outlined, with its .exe name (approved, fixed dark look) -->
         <Border x:Name="Highlight" BorderThickness="2" CornerRadius="8" BorderBrush="#60CDFF"
                 IsHitTestVisible="False" Visibility="Collapsed" />
