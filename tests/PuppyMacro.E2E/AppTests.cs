@@ -88,7 +88,10 @@ public class AppTests
 
         app.GoTo(Text("Rail_Settings"));
         Assert.True(app.Has(app.MainWindow, Text("Settings_Language")));
-        Assert.True(app.Has(app.MainWindow, Text("Settings_LanguageSystem")));
+        var languages = app.FindById(app.MainWindow, "LanguageComboBox").AsComboBox();
+        languages.Expand();
+        Assert.Equal(Text("Settings_LanguageSystem"), languages.Items[0].Name);
+        languages.Collapse();
     }
 
     [Fact]
