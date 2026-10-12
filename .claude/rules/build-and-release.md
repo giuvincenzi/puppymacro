@@ -74,10 +74,11 @@
   `secret` of the `otpauth://` QR code shown when SimplySign is activated). The seed signs as the
   certificate owner until the QR code is reissued: never put it anywhere else. To replace it,
   reissue the QR code in SimplySign and update the secret.
-- The Release workflow's release job uses the `signing` environment and `-RequireSigning`: a
-  release is never published unsigned. `.github/workflows/signing.yml` builds and signs the same
-  way on pull requests that change `scripts/build.ps1`, `release.yml` or itself (and by hand), and
-  keeps the signed Setup as an artifact for 7 days.
+- Signing happens only in the Release workflow, on `main`, when a release is published: its
+  release job uses the `signing` environment and `-RequireSigning`, so a release is never published
+  unsigned. The environment allows only the `main` branch (Settings > Environments > `signing` >
+  Deployment branches and tags), so no other branch or pull request can use the secrets. To try a
+  change to signing before a release, build signed locally (below).
 - Locally (`make build`): set `CERTUM_EMAIL` and `CERTUM_TOKEN` (a 6-digit code from the SimplySign
   app) in the shell to try a signed build; the code is used once to log in. In WSL the Makefile
   passes them to Windows PowerShell through `WSLENV`.
