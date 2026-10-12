@@ -176,6 +176,8 @@ internal sealed class SettingsStore
             settings.MacroEditorWidth = macroWidth + 240;
 
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
+        // A language this version is not translated into (a newer version's, or written by hand) follows Windows.
+        settings.Language = AppLanguages.Normalize(settings.Language);
         settings.Remaps ??= new();
         // Schema 7: a remap's source is a key or a combination (Source); the single key of older files
         // (SourceVk) becomes a Source with no modifiers. Hotkeys without sides take either side (ModifierSide.Any).

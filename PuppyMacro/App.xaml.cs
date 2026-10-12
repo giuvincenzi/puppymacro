@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
@@ -46,6 +48,17 @@ public partial class App : Application
     /// <summary>The development build's marks (the strip, DEV in titles and in the overlay panel) are shown: not in
     /// <see cref="IsScreenshotMode"/>. Its data folder and samples stay a development build's (<see cref="IsDevBuild"/>).</summary>
     public static bool ShowsDevMarks { get; } = IsDevBuild && !IsScreenshotMode;
+
+    /// <summary>Set by the end-to-end tests and make screenshots: a development build in this language (a code of
+    /// <see cref="AppLanguages.All"/>, "en"), whatever the setting and Windows' language, so their texts are known.</summary>
+    public const string LanguageVariable = "PUPPYMACRO_LANGUAGE";
+
+    /// <summary>Windows' display language and regional format, as they were when PuppyMacro started.</summary>
+    private static readonly CultureInfo WindowsLanguage = CultureInfo.CurrentUICulture;
+    private static readonly CultureInfo WindowsFormat = CultureInfo.CurrentCulture;
+
+    /// <summary>The language of the texts since PuppyMacro started (a code of <see cref="AppLanguages.All"/>).</summary>
+    public static string LanguageInUse { get; private set; } = AppLanguages.English;
 
     public static string DisplayTitle { get; } = BuildDisplayTitle();
 
@@ -147,6 +160,9 @@ public partial class App : Application
         var store = new SettingsStore(AppPaths.SettingsFile);
         AppSettings settings = store.Load(out string? loadWarning);
         warning ??= loadWarning;
+        // Before any window: x:Static texts are read when a window is built, and a binding formats with the
+        // FrameworkElement.Language it has then.
+        ApplyLanguage(settings.Language);
 
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
         macros.Load(settings.MacroOrder, out string? macroWarning);
@@ -203,6 +219,28 @@ public partial class App : Application
             UseShellExecute = false,
         });
         Current.Shutdown();
+    }
+
+    /// <summary>The language of the texts with this Language setting (on this Windows).</summary>
+    public static string LanguageFor(string? setting) => AppLanguages.Resolve(setting, WindowsLanguage);
+
+    /// <summary>
+    /// Sets the language of the texts and the format of numbers and dates for every thread, once at start (changing the
+    /// Language setting restarts PuppyMacro). WPF formats bindings with FrameworkElement.Language, which is en-US unless set.
+    /// </summary>
+    private static void ApplyLanguage(string? setting)
+    {
+        string? forced = IsDevBuild ? AppLanguages.Normalize(Environment.GetEnvironmentVariable(LanguageVariable)) : null;
+        LanguageInUse = LanguageFor(forced ?? setting);
+
+        CultureInfo texts = CultureInfo.GetCultureInfo(LanguageInUse);
+        CultureInfo format = AppLanguages.FormatCulture(LanguageInUse, WindowsFormat);
+        CultureInfo.DefaultThreadCurrentUICulture = texts;
+        CultureInfo.DefaultThreadCurrentCulture = format;
+        CultureInfo.CurrentUICulture = texts;
+        CultureInfo.CurrentCulture = format;
+        FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(format.IetfLanguageTag)));
     }
 
     /// <summary>Applies System, Light or Dark. System (no theme set) also follows later Windows theme changes.</summary>

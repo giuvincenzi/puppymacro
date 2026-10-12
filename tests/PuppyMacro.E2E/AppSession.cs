@@ -31,7 +31,11 @@ public sealed class AppSession : IDisposable
     /// Fills the data the app starts from instead of the samples: <see cref="Seed"/> starts with no
     /// loops, macros or remaps and with F keys as global hotkeys.
     /// </param>
-    public AppSession(Action<Seed>? seed = null)
+    /// <param name="language">
+    /// The language of the app (PUPPYMACRO_LANGUAGE): English by default, whatever Windows' language, so the
+    /// tests find controls by their English text.
+    /// </param>
+    public AppSession(Action<Seed>? seed = null, string language = "en")
     {
         foreach (Process running in Process.GetProcessesByName("PuppyMacro"))
         {
@@ -47,14 +51,16 @@ public sealed class AppSession : IDisposable
             data.Write();
         }
 
-        _app = Application.Launch(ExePath);
+        var start = new ProcessStartInfo(ExePath) { UseShellExecute = false };
+        start.Environment["PUPPYMACRO_LANGUAGE"] = language;
+        _app = Application.Launch(start);
         Automation = new UIA3Automation();
         // The window exists before its content, and an element taken that early can keep showing
-        // no content: take it again until it shows the side rail.
+        // no content: take it again until it shows the first page (its Add loop button, by name in every language).
         MainWindow = Retry.WhileNull(() =>
             {
                 Window? window = _app.GetMainWindow(Automation, TimeSpan.FromSeconds(1));
-                return window?.FindFirstDescendant(cf => cf.ByName("Loops")) != null ? window : null;
+                return window?.FindFirstDescendant(cf => cf.ByAutomationId("AddLoopButton")) != null ? window : null;
             }, TimeSpan.FromSeconds(30), throwOnTimeout: true, ignoreException: true,
             timeoutMessage: "the main window did not show its content").Result!;
     }

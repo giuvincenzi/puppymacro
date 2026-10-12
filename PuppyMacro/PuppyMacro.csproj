@@ -34,6 +34,26 @@
     <PackageReference Include="ModelContextProtocol.Core" Version="2.2.0" />
   </ItemGroup>
 
+  <!-- The app's texts (i18n.md): Strings.resx in English, Strings.<language>.resx the translations. The Strings class
+       (public, so XAML can use {x:Static r:Strings.Key}) is written from Strings.resx before the XAML is compiled: WPF
+       compiles the XAML in a temporary project that runs before the usual resource step, so the class must exist
+       earlier, and it is a plain Compile item so that project sees it too. -->
+  <PropertyGroup>
+    <!-- Under obj\ (BaseIntermediateOutputPath is set before this file; IntermediateOutputPath only after it). -->
+    <StringsClassFile>$(BaseIntermediateOutputPath)generated\Strings.Designer.cs</StringsClassFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(StringsClassFile)" />
+  </ItemGroup>
+  <Target Name="GenerateStringsClass" BeforeTargets="MarkupCompilePass1;CoreCompile"
+          Inputs="Resources\Strings.resx" Outputs="$(StringsClassFile)">
+    <MakeDir Directories="$(BaseIntermediateOutputPath)generated" />
+    <GenerateResource Sources="Resources\Strings.resx" OutputResources="$(BaseIntermediateOutputPath)generated\Strings.resources"
+                      StronglyTypedLanguage="CSharp" StronglyTypedNamespace="PuppyMacro.Resources"
+                      StronglyTypedClassName="Strings" StronglyTypedManifestPrefix="PuppyMacro.Resources"
+                      StronglyTypedFileName="$(StringsClassFile)" PublicClass="true" ExecuteAsTool="false" />
+  </Target>
+
   <ItemGroup>
     <InternalsVisibleTo Include="PuppyMacro.Tests" />
   </ItemGroup>

@@ -51,6 +51,29 @@ public class AppTests
     }
 
     [Fact]
+    public void A_new_language_is_saved_and_asks_to_restart()
+    {
+        using var app = new AppSession();
+        app.GoTo("Settings");
+
+        var languages = app.FindById(app.MainWindow, "LanguageComboBox").AsComboBox();
+        languages.Expand();
+        string[] names = languages.Items.Select(i => i.Name).ToArray();
+        Assert.Equal("Use system language", names[0]);
+        Assert.Equal("Deutsch", names[1]);
+        Assert.Contains("العربية", names);
+
+        // Later keeps PuppyMacro open in English: the language is used from the next start.
+        languages.Select("Italiano");
+        languages.Collapse();
+        Assert.True(app.Has(app.MainWindow, "PuppyMacro restarts to show Italiano. Running loops and macros stop."));
+        app.FindButton(app.MainWindow, "Later").Invoke();
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"Language\": \"it\""),
+            AppSession.Timeout).Success);
+        Assert.True(app.Has(app.MainWindow, "Settings"));
+    }
+
+    [Fact]
     public void Export_offers_everything_or_the_chosen_parts()
     {
         using var app = new AppSession();

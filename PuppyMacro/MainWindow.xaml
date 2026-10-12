@@ -6,6 +6,7 @@
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
     xmlns:views="clr-namespace:PuppyMacro.Views"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     Title="PuppyMacro"
     Icon="pack://application:,,,/Assets/PuppyMacro.ico"
     Width="800"
@@ -618,6 +619,13 @@
                                 <ComboBoxItem Content="Light" />
                                 <ComboBoxItem Content="Dark" />
                             </ComboBox>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_Language}" Description="{x:Static r:Strings.Settings_LanguageDescription}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <!-- Use system language, then the languages by their own name (MainWindow.FillLanguages). -->
+                            <ComboBox x:Name="LanguageComboBox" SelectionChanged="OnLanguageChanged" />
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="Close to system tray"
                                          Description="Keep running in the system tray when you close the window">

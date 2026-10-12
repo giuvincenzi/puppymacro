@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
 using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
@@ -143,6 +145,7 @@ public partial class MainWindow
         FilterBox.SelectedIndex = (int)settings.Filter;
         MacroFilterBox.SelectedIndex = 0;
         ThemeComboBox.SelectedIndex = (int)settings.Theme;
+        FillLanguages();
         UpdateHotkeyLabels();
         UpdateLoopState();
         RestorePlacement();
@@ -1080,6 +1083,52 @@ public partial class MainWindow
         _settings.Theme = (AppTheme)ThemeComboBox.SelectedIndex;
         App.ApplyTheme(_settings.Theme);
         Save();
+    }
+
+    /// <summary>The Language list: Use system language, then every language by its own name, alphabetical. Each item's
+    /// Tag is its code (null for the system language).</summary>
+    private void FillLanguages()
+    {
+        LanguageComboBox.Items.Add(new ComboBoxItem { Content = Strings.Settings_LanguageSystem, Tag = null });
+        foreach (AppLanguages.Language language in AppLanguages.ForMenu())
+            LanguageComboBox.Items.Add(new ComboBoxItem { Content = language.NativeName, Tag = language.Code });
+        LanguageComboBox.SelectedItem = LanguageComboBox.Items.Cast<ComboBoxItem>()
+            .First(item => (string?)item.Tag == _settings.Language);
+    }
+
+    private async void OnLanguageChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_initializing || LanguageComboBox.SelectedItem is not ComboBoxItem item)
+            return;
+        _settings.Language = (string?)item.Tag;
+        Save();
+
+        // The texts are read once at start: a restart shows the new language. Nothing to restart when the choice gives
+        // the language in use (Italiano on an Italian Windows).
+        string language = App.LanguageFor(_settings.Language);
+        if (language == App.LanguageInUse)
+            return;
+        var restart = new ContentDialog
+        {
+            Title = Strings.LanguageRestart_Title,
+            Content = string.Format(CultureInfo.CurrentCulture, Strings.LanguageRestart_Content,
+                AppLanguages.All.First(l => l.Code == language).NativeName),
+            PrimaryButtonText = Strings.LanguageRestart_Restart,
+            CloseButtonText = Strings.LanguageRestart_Later,
+            DefaultButton = ContentDialogButton.Primary,
+        };
+        ContentDialogResult result;
+        _engine.HotkeysSuspended = true;
+        try
+        {
+            result = await restart.ShowAsync(this);
+        }
+        finally
+        {
+            _engine.HotkeysSuspended = false;
+        }
+        if (result == ContentDialogResult.Primary)
+            App.Restart();
     }
 
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -143,6 +143,20 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Files_without_a_language_follow_windows_and_unknown_languages_too()
+    {
+        Assert.Null(LoadJson($$"""{ "SchemaVersion": 7 }""", out _).Language);
+        Assert.Null(LoadJson("""{ "SchemaVersion": 7, "Language": "tlh" }""", out _).Language);
+        Assert.Equal("pt-BR", LoadJson("""{ "SchemaVersion": 7, "Language": "PT-br" }""", out _).Language);
+
+        var store = new SettingsStore(SettingsPath);
+        AppSettings settings = AppSettings.CreateDefault();
+        settings.Language = "ru";
+        Assert.True(store.TrySave(settings, out _));
+        Assert.Equal("ru", store.Load(out _).Language);
+    }
+
+    [Fact]
     public void The_macro_editor_size_is_kept_and_invalid_sizes_are_dropped()
     {
         AppSettings kept = LoadJson("""{ "MacroEditorWidth": 800, "MacroEditorHeight": 1000 }""", out _);
