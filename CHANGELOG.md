@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.16.0
+
 ### Added
 - Setup and PuppyMacro are code-signed (Certum Open Source certificate), so Windows shows who
   published them.
