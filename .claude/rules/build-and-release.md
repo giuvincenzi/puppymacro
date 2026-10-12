@@ -42,11 +42,17 @@
   samples when empty (`Services/DevSampleData.cs`, Debug only), enable the Code view's DevTools,
   never touch the Start with Windows Run entry and skip the pre-1.6 data migration.
   Release builds never do any of this. Keep the samples working when models change.
-- Smart App Control (Windows 11) blocks unsigned files it has no reputation for, with no "Run
-  anyway". Every build is a new file, so `make dev` builds can be blocked ("Part of this app
-  has been blocked"): development needs it off (Settings > Privacy & security > Windows
-  Security > App & browser control > Smart App Control settings). On Windows 11 updated to
+- **Smart App Control** (Windows 11) blocks every exe and dll that is unsigned and unknown, with no
+  "Run anyway" and **no exceptions** for apps or folders (Microsoft: there is no way to bypass it for
+  individual apps). On a development PC it blocks `make dev`, `make test` (`PuppyMacro.Tests.exe`),
+  `make e2e` and `make build` (`vpk`): **development needs it off** (Settings > Privacy & security >
+  Windows Security > App & browser control > Smart App Control settings). On Windows 11 updated to
   April 2026 or later it can be turned back on without reinstalling Windows.
+- Signing development builds does not solve it: tests and tools include other people's unsigned
+  files, and the release certificate must not sign them. A PC that must keep application control on
+  needs an App Control for Business policy with its own rules, not Smart App Control.
+- Released versions are signed (Code signing below), so the installed PuppyMacro runs with Smart
+  App Control on.
 
 ## Code signing
 
