@@ -180,6 +180,11 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     versions in a standard `ListView` grouped by day (time, who, summary, "(current)" on the newest), the chosen one's
     changes in a card on the right with **Restore this version** (`AccentButtonStyle`); the editor's `NoticeBar`, a standard
     `InfoBar`, says that the restored version waits for Save.
+  - Export's choices (approved design: the Design canvas "PuppyMacro Export dialog", option B): a standard `ContentDialog`
+    "Export" with `Views/ExportOptionsView`: `RadioButtons` Everything (its description and the total size under it) and
+    Choose what to export; under them, indented 28 px (the radio button's circle and its gap, so the boxes line up with
+    the labels), a `CheckBox` per part with its description and size in caption style, enabled only with Choose; Loops,
+    macros, remaps and settings always checked and disabled. Export… is the default button, then the file dialog.
   - Sound in the loop and macro editors: the `RadioButtons` with the sounds sit in a standard
     `ScrollViewer` with `MaxHeight="200"`, so the long list scrolls on its own instead of making the
     whole editor scroll. `Views/SoundChoicesScroll` scrolls it to the chosen sound each time it is

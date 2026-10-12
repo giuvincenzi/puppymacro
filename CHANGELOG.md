@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Changed
+- Export saves everything by default, History, AI activity and logs too, so importing the file on another PC
+  gives the same PuppyMacro. **Choose what to export** leaves History, AI activity or logs out. Import replaces
+  the parts the file has and keeps the others.
+
+### Fixed
+- Start with Windows stayed off in Windows after an import, a reinstall or on another PC while the setting
+  showed it on.
+
 ## 1.16.0
 
 ### Added
