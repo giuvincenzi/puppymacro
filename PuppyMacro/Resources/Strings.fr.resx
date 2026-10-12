@@ -805,11 +805,6 @@ Détails : {1}</value></data>
   <data name="Keys_WheelDown" xml:space="preserve"><value>Roulette vers le bas</value></data>
   <data name="Keys_WheelLeft" xml:space="preserve"><value>Roulette vers la gauche</value></data>
   <data name="Keys_WheelRight" xml:space="preserve"><value>Roulette vers la droite</value></data>
-  <data name="Keys_LButton" xml:space="preserve"><value>Bouton gauche</value></data>
-  <data name="Keys_RButton" xml:space="preserve"><value>Bouton droit</value></data>
-  <data name="Keys_MButton" xml:space="preserve"><value>Bouton du milieu</value></data>
-  <data name="Keys_XButton1" xml:space="preserve"><value>Bouton X1</value></data>
-  <data name="Keys_XButton2" xml:space="preserve"><value>Bouton X2</value></data>
   <data name="Keys_Backspace" xml:space="preserve"><value>Retour arrière</value></data>
   <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
   <data name="Keys_Enter" xml:space="preserve"><value>Entrée</value></data>

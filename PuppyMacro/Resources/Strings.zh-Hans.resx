@@ -783,11 +783,6 @@
   <data name="Keys_WheelDown" xml:space="preserve"><value>滚轮向下</value></data>
   <data name="Keys_WheelLeft" xml:space="preserve"><value>滚轮向左</value></data>
   <data name="Keys_WheelRight" xml:space="preserve"><value>滚轮向右</value></data>
-  <data name="Keys_LButton" xml:space="preserve"><value>鼠标左键</value></data>
-  <data name="Keys_RButton" xml:space="preserve"><value>鼠标右键</value></data>
-  <data name="Keys_MButton" xml:space="preserve"><value>鼠标中键</value></data>
-  <data name="Keys_XButton1" xml:space="preserve"><value>鼠标 X1</value></data>
-  <data name="Keys_XButton2" xml:space="preserve"><value>鼠标 X2</value></data>
   <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
   <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
   <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>

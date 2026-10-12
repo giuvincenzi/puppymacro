@@ -837,11 +837,6 @@
   <data name="Keys_WheelDown" xml:space="preserve"><value>Колесико вниз</value></data>
   <data name="Keys_WheelLeft" xml:space="preserve"><value>Колесико влево</value></data>
   <data name="Keys_WheelRight" xml:space="preserve"><value>Колесико вправо</value></data>
-  <data name="Keys_LButton" xml:space="preserve"><value>Левая кнопка мыши</value></data>
-  <data name="Keys_RButton" xml:space="preserve"><value>Правая кнопка мыши</value></data>
-  <data name="Keys_MButton" xml:space="preserve"><value>Средняя кнопка мыши</value></data>
-  <data name="Keys_XButton1" xml:space="preserve"><value>Кнопка мыши «Назад» (X1)</value></data>
-  <data name="Keys_XButton2" xml:space="preserve"><value>Кнопка мыши «Вперед» (X2)</value></data>
   <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
   <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
   <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>

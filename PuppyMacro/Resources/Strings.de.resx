@@ -805,11 +805,6 @@ Details: {1}</value></data>
   <data name="Keys_WheelDown" xml:space="preserve"><value>Mausrad nach unten</value></data>
   <data name="Keys_WheelLeft" xml:space="preserve"><value>Mausrad nach links</value></data>
   <data name="Keys_WheelRight" xml:space="preserve"><value>Mausrad nach rechts</value></data>
-  <data name="Keys_LButton" xml:space="preserve"><value>LButton</value></data>
-  <data name="Keys_RButton" xml:space="preserve"><value>RButton</value></data>
-  <data name="Keys_MButton" xml:space="preserve"><value>MButton</value></data>
-  <data name="Keys_XButton1" xml:space="preserve"><value>XButton1</value></data>
-  <data name="Keys_XButton2" xml:space="preserve"><value>XButton2</value></data>
   <data name="Keys_Backspace" xml:space="preserve"><value>Rücktaste</value></data>
   <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
   <data name="Keys_Enter" xml:space="preserve"><value>Eingabe</value></data>

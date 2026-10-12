@@ -15,6 +15,8 @@
   their texts in the language in use.
 
 ### Changed
+- Mouse buttons in hotkeys and remaps are named as you read them: **Ctrl + Left click**, **Back (X1) click**,
+  instead of LButton or XButton1.
 - Export saves everything by default, History, AI activity and logs too, so importing the file on another PC
   gives the same PuppyMacro. **Choose what to export** leaves History, AI activity or logs out. Import replaces
   the parts the file has and keeps the others.

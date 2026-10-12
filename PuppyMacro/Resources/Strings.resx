@@ -869,11 +869,6 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Keys_WheelDown" xml:space="preserve"><value>Wheel down</value></data>
   <data name="Keys_WheelLeft" xml:space="preserve"><value>Wheel left</value></data>
   <data name="Keys_WheelRight" xml:space="preserve"><value>Wheel right</value></data>
-  <data name="Keys_LButton" xml:space="preserve"><value>LButton</value><comment>Left mouse button as a key.</comment></data>
-  <data name="Keys_RButton" xml:space="preserve"><value>RButton</value><comment>Right mouse button as a key.</comment></data>
-  <data name="Keys_MButton" xml:space="preserve"><value>MButton</value><comment>Middle mouse button as a key.</comment></data>
-  <data name="Keys_XButton1" xml:space="preserve"><value>XButton1</value><comment>Back mouse button as a key.</comment></data>
-  <data name="Keys_XButton2" xml:space="preserve"><value>XButton2</value><comment>Forward mouse button as a key.</comment></data>
   <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
   <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
   <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>
