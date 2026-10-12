@@ -37,10 +37,12 @@
              Enter overlay mode and Stop all on the right before the window buttons drawn by the library (as its
              ButtonsOnTitlebar sample) ================= -->
         <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}">
+            <!-- The buttons' column is as wide as they are: two * columns would give it half the window, too little for
+                 Import, Export and Enter overlay mode at the default 800 px -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Margin="12,0,0,0" Orientation="Horizontal">
                 <!-- 24 px: 12 px above and below it in the 48 px bar -->
