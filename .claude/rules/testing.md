@@ -10,13 +10,6 @@
 - They run on GitHub on every pull request and every push to `main`
   (`.github/workflows/test.yml`), and the Release workflow stops when they fail. The push of a
   release commit ("Release X.Y.Z (#N)") skips them: the Release workflow runs them on it.
-- **Changes that do not need tests.** On a pull request or a push to `main`, the `test` and `e2e`
-  jobs still start but skip their steps when only `.claude/`, `site/`, `LICENSE` or Markdown files
-  in the repository root changed (their "Changed files" step); the check passes. Any other file
-  runs them. Called by the Release workflow or started by hand they always run. Do not filter
-  these workflows with `paths` / `paths-ignore`: `test` and `e2e` are required checks, and a
-  workflow that does not start leaves them pending and blocks the merge (GitHub: a job or step
-  skipped by `if` counts as passing, a workflow skipped by a filter does not).
 - Covered: settings loading and migrations (`SettingsStore`), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
@@ -104,6 +97,34 @@
   first (for example `SetOverlayModeHotkeyToF24` in `AppTests`), as the default ones have modifiers.
 - `AppSession` takes the main window again until it shows its content: an element taken right
   after the window appears can keep showing no children.
+
+## Which changes run the tests on GitHub
+
+On a pull request or a push to `main`, the `test` and `e2e` jobs always start (they are required
+checks), and their "Changed files" step runs the tests only when a changed file can change their
+result: a file the build of the projects reads, a file the tests read while running, or the
+workflow itself. Otherwise the steps are skipped and the check passes. Called by the Release
+workflow or started by hand, they always run.
+
+| Changed file | `test` | `e2e` | Why |
+|---|---|---|---|
+| `PuppyMacro/**` | yes | yes | Both test projects reference the app; `ControlResourcesTests` reads its XAML files |
+| `site/guide/*.html` (not `_page.html`), `site/guide/sections.txt` | yes | yes | Embedded in the app (`PuppyMacro.csproj`), checked through `get_help` (`AiToolsTests`, E2E `AiTests`) |
+| `tests/PuppyMacro.Tests/**` | yes | no | The unit tests |
+| `tests/PuppyMacro.E2E/**` | no | yes | The end-to-end tests |
+| `global.json` | yes | yes | The `dotnet test` runner |
+| `PuppyMacro.sln` | no | yes | `AppSession` finds the repository root by it |
+| `.gitattributes` | yes | yes | Line endings of `.cs`, `.xaml`, `.csproj` at checkout |
+| `.github/workflows/test.yml` / `e2e.yml` | its own | its own | The workflow |
+
+Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, Markdown files,
+`LICENSE`, `Makefile`, `scripts/`, the other workflows). When the app, a test project or a test
+starts reading another file or folder, add it to this table and to the pattern in the workflow's
+"Changed files" step in the same pull request.
+
+Do not filter these workflows with `paths` / `paths-ignore`: a workflow that does not start leaves
+its required check pending and blocks the merge (GitHub docs, "Troubleshooting required status
+checks"), while a job or step skipped by `if` counts as passing.
 
 ## When to add and run tests
 

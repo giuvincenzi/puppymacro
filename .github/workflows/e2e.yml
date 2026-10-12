@@ -6,9 +6,9 @@
 # workflow runs them on that commit before publishing. Called by Release, github.workflow is
 # "Release" (a called workflow gets its caller's github context), so they run there.
 # The job always runs, as `e2e` is a required check (a workflow skipped by `paths` would leave it
-# pending and block the merge), but on pull requests and pushes to main it skips the tests when
-# only `.claude/`, `site/`, `LICENSE` or Markdown files in the repository root changed. Called by
-# Release or started by hand, they always run.
+# pending and block the merge), but on pull requests and pushes to main it runs the tests only when
+# a changed file can change their result (the list and why: testing.md). Called by Release or
+# started by hand, they always run.
 name: E2E
 
 on:
@@ -47,10 +47,12 @@ jobs:
           fi
           run=true
           if [ -n "$range" ] && files=$(git diff --name-only $range); then
-            if ! grep -qvE '^(\.claude/|site/|LICENSE$|[^/]+\.md$)' <<< "$files"; then run=false; fi
+            run=false
+            if grep -E '^(PuppyMacro/|tests/PuppyMacro\.E2E/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|PuppyMacro\.sln$|\.gitattributes$|\.github/workflows/e2e\.yml$)' <<< "$files" \
+              | grep -qvx 'site/guide/_page\.html'; then run=true; fi
           fi
           echo "run=$run" >> "$GITHUB_OUTPUT"
-          if [ "$run" = false ]; then echo "Tests skipped: only rules, site or Markdown files changed." >> "$GITHUB_STEP_SUMMARY"; fi
+          if [ "$run" = false ]; then echo "Tests skipped: no changed file can change their result (testing.md)." >> "$GITHUB_STEP_SUMMARY"; fi
 
       - uses: actions/setup-dotnet@v6
         if: steps.changes.outputs.run == 'true'

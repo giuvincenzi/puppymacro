@@ -2,8 +2,8 @@
 # release commit ("Release X.Y.Z (#N)", from `make release-pr`): the Release workflow runs them on
 # that commit before publishing.
 # The job always runs, as `test` is a required check (a workflow skipped by `paths` would leave it
-# pending and block the merge), but it skips the tests when only `.claude/`, `site/`, `LICENSE` or
-# Markdown files in the repository root changed.
+# pending and block the merge), but on pull requests and pushes to main it runs the tests only when
+# a changed file can change their result (the list and why: testing.md).
 name: Test
 
 on:
@@ -38,10 +38,12 @@ jobs:
           esac
           run=true
           if [ -n "$range" ] && files=$(git diff --name-only $range); then
-            if ! grep -qvE '^(\.claude/|site/|LICENSE$|[^/]+\.md$)' <<< "$files"; then run=false; fi
+            run=false
+            if grep -E '^(PuppyMacro/|tests/PuppyMacro\.Tests/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|\.gitattributes$|\.github/workflows/test\.yml$)' <<< "$files" \
+              | grep -qvx 'site/guide/_page\.html'; then run=true; fi
           fi
           echo "run=$run" >> "$GITHUB_OUTPUT"
-          if [ "$run" = false ]; then echo "Tests skipped: only rules, site or Markdown files changed." >> "$GITHUB_STEP_SUMMARY"; fi
+          if [ "$run" = false ]; then echo "Tests skipped: no changed file can change their result (testing.md)." >> "$GITHUB_STEP_SUMMARY"; fi
 
       - uses: actions/setup-dotnet@v6
         if: steps.changes.outputs.run == 'true'
