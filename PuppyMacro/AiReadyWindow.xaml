@@ -62,10 +62,10 @@
                          the two keycaps put in its order in code (BuildHint) -->
                     <StackPanel x:Name="HintPanel" Orientation="Horizontal" VerticalAlignment="Center">
                         <Border x:Name="EnterCap" Margin="6,0" Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737" VerticalAlignment="Center">
-                            <TextBlock FontSize="12" Text="Enter" />
+                            <TextBlock FontSize="12" Text="{x:Static r:Strings.Keys_Enter}" />
                         </Border>
                         <Border x:Name="EscCap" Margin="6,0" Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737" VerticalAlignment="Center">
-                            <TextBlock FontSize="12" Text="Esc" />
+                            <TextBlock FontSize="12" Text="{x:Static r:Strings.Keys_Esc}" />
                         </Border>
                     </StackPanel>
                 </DockPanel>

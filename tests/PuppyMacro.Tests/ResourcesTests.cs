@@ -142,6 +142,47 @@ public sealed class ResourcesTests
         Assert.Empty(missing);
     }
 
+    /// <summary>The XAML attributes and elements that show a text to the user.</summary>
+    private static readonly HashSet<string> TextAttributes = new()
+    {
+        "Text", "Content", "Header", "Description", "ToolTip", "Title", "Label", "PlaceholderText", "OnContent", "OffContent",
+        "PrimaryButtonText", "SecondaryButtonText", "CloseButtonText", "Message",
+        "AutomationProperties.Name", // the name a screen reader says (x:Name is an identifier: not here)
+    };
+
+    [Fact]
+    public void Every_text_of_the_xaml_comes_from_the_resources()
+    {
+        // A text written in the XAML stays the same in every language (i18n.md). Allowed as it is: a markup extension
+        // ({x:Static r:Strings.…}, {Binding …}), a global word, a single letter or digit, or F1 to F24 (as on every keyboard).
+        string appFolder = Path.Combine(ResourcesFolder, "..");
+        var written = new List<string>();
+        foreach (string file in Directory.EnumerateFiles(appFolder, "*.xaml", SearchOption.AllDirectories)
+                     .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
+                                 && !f.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}")))
+        {
+            foreach (XElement element in XDocument.Load(file).Descendants())
+            {
+                // "ui:ControlHelper.PlaceholderText" counts as PlaceholderText; "AutomationProperties.Name" as itself.
+                var texts = element.Attributes()
+                    .Where(a => TextAttributes.Contains(a.Name.LocalName) || TextAttributes.Contains(a.Name.LocalName.Split('.').Last()))
+                    .Select(a => (a.Name.LocalName, a.Value)).ToList();
+                if (element.Name.LocalName is "TextBlock" or "Run" && !element.HasElements && element.Value.Trim().Length > 0)
+                    texts.Add(("(text)", element.Value.Trim()));
+                foreach (var (attribute, value) in texts.Distinct())
+                    if (!Allowed(value))
+                        written.Add($"{Path.GetFileName(file)}: {element.Name.LocalName} {attribute}=\"{value}\": use Strings");
+            }
+        }
+        Assert.Empty(written);
+    }
+
+    /// <summary>A text that may be written in the XAML: no letters, a markup extension, a global word, a single letter or
+    /// digit, or a function key.</summary>
+    private static bool Allowed(string value) =>
+        !value.Any(char.IsLetter) || value.StartsWith('{') || GlobalWords.Contains(value)
+        || Regex.IsMatch(value, "^([A-Z0-9]|F([1-9]|1[0-9]|2[0-4]))$");
+
     [Fact]
     public void Global_words_are_the_same_in_every_language()
     {

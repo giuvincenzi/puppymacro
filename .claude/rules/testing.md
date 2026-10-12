@@ -40,7 +40,7 @@
   types' registry keys (`FileTypesTests`, under a test key in `HKCU\Software\PuppyMacroTests`, deleted after), the XAML files
   (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`), the languages (`LanguageTests`:
   the menu's order, which language and format each setting and Windows give, Gregorian dates in Arabic, every plural rule;
-  `ResourcesTests`: every `Strings.<code>.resx` has every text with the same placeholders and its plural forms, the global words as they are (none of the global labels), distinct sound
+  `ResourcesTests`: every `Strings.<code>.resx` has every text with the same placeholders and its plural forms, the global words as they are (none of the global labels), no text written in the XAML (only resources, global words, single letters or digits, F keys), distinct sound
   names, and every key the code names exists, `i18n.md`) and the History's phrases and older files (`ItemHistoryTests`).
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a
   test of another language sets it itself.

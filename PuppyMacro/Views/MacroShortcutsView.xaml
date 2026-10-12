@@ -39,13 +39,13 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <StackPanel Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Ctrl}" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Shortcuts_Click}" />
             </StackPanel>
             <TextBlock Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_CtrlClick}" />
             <StackPanel Grid.Row="1" Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Shift" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Shift}" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Shortcuts_Click}" />
             </StackPanel>
@@ -67,7 +67,7 @@
             </StackPanel>
             <TextBlock Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_DragWhat}" />
             <StackPanel Grid.Row="1" Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Alt}" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="↑" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="/" />
@@ -100,31 +100,31 @@
             </StackPanel>
             <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_RightClickWhat}" />
             <StackPanel Grid.Row="2" Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Ctrl}" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="G" /></Border>
             </StackPanel>
             <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_Group}" />
             <StackPanel Grid.Row="3" Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Ctrl}" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="D" /></Border>
             </StackPanel>
             <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_Duplicate}" />
             <StackPanel Grid.Row="4" Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Ctrl}" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="C" /></Border>
             </StackPanel>
             <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_Copy}" />
             <StackPanel Grid.Row="5" Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Ctrl}" /></Border>
                 <TextBlock Style="{StaticResource Plus}" Text="+" />
                 <Border Style="{StaticResource KeyCap}"><TextBlock Text="V" /></Border>
             </StackPanel>
             <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_Paste}" />
             <StackPanel Grid.Row="6" Style="{StaticResource Keys}">
-                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Delete" /></Border>
+                <Border Style="{StaticResource KeyCap}"><TextBlock Text="{x:Static r:Strings.Keys_Delete}" /></Border>
             </StackPanel>
             <TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource What}" Text="{x:Static r:Strings.Shortcuts_Delete}" />
         </Grid>

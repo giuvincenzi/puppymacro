@@ -528,16 +528,16 @@ public partial class MacroEditorWindow
         var menu = new ContextMenu { Placement = PlacementMode.MousePoint };
         menu.Items.Add(MenuCommand(Strings.Editor_Test, SegoeFluentIcons.Play, TestActionButton.IsEnabled, OnTestActionClick, ""));
         menu.Items.Add(MenuCommand(Strings.MacroEditor_Edit, SegoeFluentIcons.Edit, EditActionButton.IsEnabled, OnEditActionClick, ""));
-        menu.Items.Add(MenuCommand(Strings.MacroEditor_Duplicate, SegoeFluentIcons.Copy, DuplicateButton.IsEnabled, OnDuplicateSelectedClick, "Ctrl+D"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Duplicate, SegoeFluentIcons.Copy, DuplicateButton.IsEnabled, OnDuplicateSelectedClick, Strings.Keys_Ctrl + "+D"));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MenuCommand(Strings.MacroEditor_Group, SegoeFluentIcons.GroupList, GroupButton.IsEnabled, OnGroupSelectedClick, "Ctrl+G"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Group, SegoeFluentIcons.GroupList, GroupButton.IsEnabled, OnGroupSelectedClick, Strings.Keys_Ctrl + "+G"));
         menu.Items.Add(MenuCommand(Strings.MacroEditor_Ungroup, SegoeFluentIcons.RemoveFrom, UngroupButton.IsEnabled, OnUngroupClick, ""));
         menu.Items.Add(MenuCommand(Strings.MacroEditor_RenameGroup, SegoeFluentIcons.Rename, RenameGroupButton.IsEnabled, OnRenameGroupClick, ""));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MenuCommand(Strings.MacroEditor_Copy, SegoeFluentIcons.Copy, CopyButton.IsEnabled, OnCopySelectedClick, "Ctrl+C"));
-        menu.Items.Add(MenuCommand(Strings.MacroEditor_Paste, SegoeFluentIcons.Paste, PasteButton.IsEnabled, OnPasteClick, "Ctrl+V"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Copy, SegoeFluentIcons.Copy, CopyButton.IsEnabled, OnCopySelectedClick, Strings.Keys_Ctrl + "+C"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Paste, SegoeFluentIcons.Paste, PasteButton.IsEnabled, OnPasteClick, Strings.Keys_Ctrl + "+V"));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MenuCommand(Strings.MacroEditor_Delete, SegoeFluentIcons.Delete, DeleteButton.IsEnabled, OnDeleteSelectedClick, "Delete"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Delete, SegoeFluentIcons.Delete, DeleteButton.IsEnabled, OnDeleteSelectedClick, Strings.Keys_Delete));
         menu.IsOpen = true;
     }
 
