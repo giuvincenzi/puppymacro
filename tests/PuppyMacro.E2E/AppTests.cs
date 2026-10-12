@@ -73,6 +73,24 @@ public class AppTests
         Assert.True(app.Has(app.MainWindow, "Settings"));
     }
 
+    [Theory]
+    [InlineData("it")]
+    [InlineData("ar")]
+    public void The_app_starts_in_the_language_it_is_given(string language)
+    {
+        using var app = new AppSession(language: language);
+        var culture = System.Globalization.CultureInfo.GetCultureInfo(language);
+        string Text(string key) => PuppyMacro.Resources.Strings.ResourceManager.GetString(key, culture)!;
+
+        Assert.Equal(Text("Loops_Add"), app.FindById(app.MainWindow, "AddLoopButton").Name);
+        // Data stays as it is: the samples' names are not translated.
+        Assert.True(app.Has(app.MainWindow, "Sample: click every second"));
+
+        app.GoTo(Text("Rail_Settings"));
+        Assert.True(app.Has(app.MainWindow, Text("Settings_Language")));
+        Assert.True(app.Has(app.MainWindow, Text("Settings_LanguageSystem")));
+    }
+
     [Fact]
     public void Export_offers_everything_or_the_chosen_parts()
     {
