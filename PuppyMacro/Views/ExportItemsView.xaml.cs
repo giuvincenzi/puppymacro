@@ -27,7 +27,7 @@ public partial class ExportItemsView : UserControl
         }
         _view = new ListCollectionView(_rows) { Filter = row => Shown((ExportItemRow)row) };
         _view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ItemFileRow.Group)));
-        ItemList.ItemsSource = _view;
+        ExportItemList.ItemsSource = _view;
         Refresh();
     }
 
@@ -41,14 +41,14 @@ public partial class ExportItemsView : UserControl
 
     private bool Shown(ExportItemRow row)
     {
-        string group = KindBox.SelectedIndex switch
+        string group = ExportKindBox.SelectedIndex switch
         {
             1 => "Loops",
             2 => "Macros",
             3 => "Remaps",
             _ => "",
         };
-        string search = SearchBox.Text.Trim();
+        string search = ExportSearchBox.Text.Trim();
         return (group.Length == 0 || row.Group == group)
                && (search.Length == 0 || row.SearchText.Contains(search, StringComparison.OrdinalIgnoreCase));
     }
@@ -76,11 +76,11 @@ public partial class ExportItemsView : UserControl
     {
         List<ExportItemRow> shown = ShownRows();
         int shownChecked = shown.Count(r => r.IsChecked);
-        SelectAllBox.IsEnabled = shown.Count > 0;
-        SelectAllBox.IsChecked = shownChecked == 0 ? false : shownChecked == shown.Count ? true : null;
-        CountText.Text = $"{shown.Count} shown · {ChosenCount} selected";
-        EmptyText.Text = _rows.Count == 0 ? "You have no loops, macros or remaps yet." : "Nothing matches the search.";
-        EmptyText.Visibility = shown.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        ExportSelectAllBox.IsEnabled = shown.Count > 0;
+        ExportSelectAllBox.IsChecked = shownChecked == 0 ? false : shownChecked == shown.Count ? true : null;
+        ExportCountText.Text = $"{shown.Count} shown · {ChosenCount} selected";
+        ExportEmptyText.Text = _rows.Count == 0 ? "You have no loops, macros or remaps yet." : "Nothing matches the search.";
+        ExportEmptyText.Visibility = shown.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ChoiceChanged?.Invoke();
     }
 }

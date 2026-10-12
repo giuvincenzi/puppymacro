@@ -22,22 +22,22 @@
             </Grid.ColumnDefinitions>
             <ui:FontIcon VerticalAlignment="Center" FontSize="24" Icon="{x:Static ui:SegoeFluentIcons.Page}" />
             <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
-                <TextBlock x:Name="FileText" TextTrimming="CharacterEllipsis" />
-                <TextBlock x:Name="FromText" Style="{StaticResource Description}" />
+                <TextBlock x:Name="ImportFileText" TextTrimming="CharacterEllipsis" />
+                <TextBlock x:Name="ImportFromText" Style="{StaticResource Description}" />
             </StackPanel>
             <Button x:Name="OtherFileButton" Grid.Column="2" VerticalAlignment="Center" Content="Choose another file…"
                     Click="OnOtherFileClick" />
         </Grid>
 
-        <TextBlock x:Name="ErrorText" Margin="0,12,0,0" TextWrapping="Wrap" Visibility="Collapsed"
+        <TextBlock x:Name="ImportErrorText" Margin="0,12,0,0" TextWrapping="Wrap" Visibility="Collapsed"
                    Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
 
-        <StackPanel x:Name="ListPanel">
-            <CheckBox x:Name="SelectAllBox" Margin="0,12,0,8" Content="Select all" IsThreeState="True" Click="OnSelectAllClick" />
+        <StackPanel x:Name="ImportListPanel">
+            <CheckBox x:Name="ImportSelectAllBox" Margin="0,12,0,8" Content="Select all" IsThreeState="True" Click="OnSelectAllClick" />
             <Border BorderThickness="1" CornerRadius="4" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
                 <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl x:Name="ItemList" Margin="12,0,12,8" Focusable="False">
+                    <ItemsControl x:Name="ImportItemList" Margin="12,0,12,8" Focusable="False">
                         <ItemsControl.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>

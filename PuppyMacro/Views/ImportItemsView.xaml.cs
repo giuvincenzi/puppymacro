@@ -41,12 +41,12 @@ public partial class ImportItemsView : UserControl
     {
         _read = read;
         ItemFileContent content = read(null);
-        FileText.Text = fileName;
+        ImportFileText.Text = fileName;
         Error = content.Error;
-        ErrorText.Text = content.Error ?? "";
-        ErrorText.Visibility = content.Error == null ? Visibility.Collapsed : Visibility.Visible;
-        ListPanel.Visibility = content.Error == null ? Visibility.Visible : Visibility.Collapsed;
-        FromText.Text = content.Error != null ? "" : Counts(content);
+        ImportErrorText.Text = content.Error ?? "";
+        ImportErrorText.Visibility = content.Error == null ? Visibility.Collapsed : Visibility.Visible;
+        ImportListPanel.Visibility = content.Error == null ? Visibility.Visible : Visibility.Collapsed;
+        ImportFromText.Text = content.Error != null ? "" : Counts(content);
 
         foreach (ImportItemRow old in _rows)
             old.CheckedChanged -= OnRowChanged;
@@ -55,7 +55,7 @@ public partial class ImportItemsView : UserControl
             row.CheckedChanged += OnRowChanged;
         var view = new ListCollectionView(_rows);
         view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ItemFileRow.Group)));
-        ItemList.ItemsSource = view;
+        ImportItemList.ItemsSource = view;
         RefreshSelectAll();
         ChoiceChanged?.Invoke();
     }
@@ -107,9 +107,9 @@ public partial class ImportItemsView : UserControl
     private void RefreshSelectAll()
     {
         List<ImportItemRow> usable = _rows.Where(r => r.CanImport).ToList();
-        SelectAllBox.IsEnabled = usable.Count > 0;
+        ImportSelectAllBox.IsEnabled = usable.Count > 0;
         int checkedCount = usable.Count(r => r.IsChecked);
-        SelectAllBox.IsChecked = checkedCount == 0 ? false : checkedCount == usable.Count ? true : null;
+        ImportSelectAllBox.IsChecked = checkedCount == 0 ? false : checkedCount == usable.Count ? true : null;
     }
 
     private void OnOtherFileClick(object sender, RoutedEventArgs e) => OtherFileRequested?.Invoke();

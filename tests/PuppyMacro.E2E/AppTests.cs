@@ -721,14 +721,14 @@ public class AppTests
         loop.Toggle();
         Assert.True(app.FindButton(app.MainWindow, "Export 1 item…").IsEnabled);
 
-        app.FindById(app.MainWindow, "SearchBox").AsTextBox().Text = "hold";
+        app.FindById(app.MainWindow, "ExportSearchBox").AsTextBox().Text = "hold";
         Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf =>
             cf.ByName("Sample: click every second").And(cf.ByControlType(ControlType.CheckBox))) == null, AppSession.Timeout).Success);
         Assert.False(ItemBox(app, "Sample: hold W").IsChecked);
-        Assert.Equal("1 shown · 1 selected", app.FindById(app.MainWindow, "CountText").Name);
+        Assert.Equal("1 shown · 1 selected", app.FindById(app.MainWindow, "ExportCountText").Name);
 
         app.FindButton(app.MainWindow, "Cancel").Invoke();
-        Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf => cf.ByAutomationId("CountText")) == null,
+        Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf => cf.ByAutomationId("ExportCountText")) == null,
             AppSession.Timeout).Success);
     }
 

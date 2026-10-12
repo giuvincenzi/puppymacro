@@ -21,9 +21,9 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="SearchBox" ui:ControlHelper.PlaceholderText="Search" AutomationProperties.Name="Search"
+            <TextBox x:Name="ExportSearchBox" ui:ControlHelper.PlaceholderText="Search" AutomationProperties.Name="Search"
                      TextChanged="OnFilterChanged" />
-            <ComboBox x:Name="KindBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectedIndex="0"
+            <ComboBox x:Name="ExportKindBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectedIndex="0"
                       AutomationProperties.Name="Kind" SelectionChanged="OnFilterChanged">
                 <ComboBoxItem Content="All kinds" />
                 <ComboBoxItem Content="Loops" />
@@ -32,15 +32,15 @@
             </ComboBox>
         </Grid>
         <Grid Margin="0,12,0,8">
-            <CheckBox x:Name="SelectAllBox" Content="Select all shown" IsThreeState="True" Click="OnSelectAllClick" />
-            <TextBlock x:Name="CountText" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource Description}" />
+            <CheckBox x:Name="ExportSelectAllBox" Content="Select all shown" IsThreeState="True" Click="OnSelectAllClick" />
+            <TextBlock x:Name="ExportCountText" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource Description}" />
         </Grid>
         <Border BorderThickness="1" CornerRadius="4" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
             <Grid>
-                <TextBlock x:Name="EmptyText" Margin="12" Style="{StaticResource Description}" Visibility="Collapsed" />
+                <TextBlock x:Name="ExportEmptyText" Margin="12" Style="{StaticResource Description}" Visibility="Collapsed" />
                 <ScrollViewer Height="300" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl x:Name="ItemList" Margin="12,0,12,8" Focusable="False">
+                    <ItemsControl x:Name="ExportItemList" Margin="12,0,12,8" Focusable="False">
                         <ItemsControl.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>
