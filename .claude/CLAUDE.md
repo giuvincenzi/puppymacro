@@ -20,6 +20,20 @@ the others load when matching files are read or edited:
 | `ui.md` | XAML and views | Standard iNKORE.UI.WPF.Modern components only (strict) |
 | `updates.md` | updater and packaging | Velopack, update flow |
 
+## A backup is an identical copy (always)
+
+A user who exports with **Everything** and imports on another PC must get the same PuppyMacro: every
+loop, macro, remap, setting, History, AI activity and log. So, for every change that adds or moves data:
+
+- All user data and state lives in the data folder (`AppPaths.DataFolder`). `BackupService` exports
+  the whole folder, so a new file there is in the backup with no code change: put it in the right
+  part (`BackupService.PartOf`: Data, unless it is History, AI activity or logs; a new kind of
+  data that users may want to leave out gets a new part and a checkbox in `Views/ExportOptionsView`).
+- Anything kept outside the data folder (registry, `%LocalAppData%`, other apps' files) must be
+  rebuilt from the data on start or after an import (as the Start with Windows Run entry is), or be
+  listed in `data.md` under "Not in the backup" with the reason (only caches and copies).
+- Add a case to `BackupServiceTests` for every new file or folder.
+
 ## Known limits and decisions
 
 - No overlay inside exclusive-fullscreen apps (would need DLL injection): overlay mode needs

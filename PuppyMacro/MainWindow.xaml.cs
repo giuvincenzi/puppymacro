@@ -126,6 +126,12 @@ public partial class MainWindow
             StartWithWindowsSwitch.IsEnabled = false;
             StartWithWindowsText.Text = "Not available in the development build";
         }
+        else
+        {
+            // The Run entry follows the setting: after an import, a reinstall or on another PC the setting may be on
+            // with no entry (uninstalling removes it).
+            StartupService.Apply(settings.StartWithWindows);
+        }
         InitializeUpdates();
         Rail.PageChanged += OnPageChanged;
         RefreshUpdateUi();
@@ -1691,9 +1697,31 @@ public partial class MainWindow
         Save();
     }
 
-    private void OnExportClick(object sender, RoutedEventArgs e)
+    private async void OnExportClick(object sender, RoutedEventArgs e)
     {
         Save();
+        var options = new Views.ExportOptionsView(BackupService.Sizes(AppPaths.DataFolder));
+        var choose = new ContentDialog
+        {
+            Title = "Export",
+            Content = options,
+            PrimaryButtonText = "Export…",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+        };
+        ContentDialogResult answer;
+        _userDialogs++;
+        try
+        {
+            answer = await choose.ShowAsync(this);
+        }
+        finally
+        {
+            _userDialogs--;
+        }
+        if (answer != ContentDialogResult.Primary)
+            return;
+
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
             Title = "Export PuppyMacro data",
@@ -1705,7 +1733,7 @@ public partial class MainWindow
             return;
         try
         {
-            BackupService.Export(dialog.FileName);
+            BackupService.Export(AppPaths.DataFolder, dialog.FileName, options.Parts);
             HideSettingsError();
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
@@ -1724,10 +1752,22 @@ public partial class MainWindow
         if (ShowUserDialog(() => dialog.ShowDialog(this)) != true)
             return;
 
+        BackupParts parts;
+        try
+        {
+            parts = BackupService.ReadParts(dialog.FileName);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.IO.InvalidDataException)
+        {
+            ShowSettingsError($"Import failed: {ex.Message}");
+            return;
+        }
+
         var confirm = new ContentDialog
         {
             Title = "Import",
-            Content = "Replace all your loops, macros, remaps and settings with this file? " +
+            Content = $"This file has {PartNames(parts)}. Replace yours with them?\n\n" +
+                      "What the file does not have stays as it is. " +
                       "Your current data is backed up to the data folder first, then PuppyMacro restarts.",
             PrimaryButtonText = "Import and restart",
             CloseButtonText = "Cancel",
@@ -1750,7 +1790,7 @@ public partial class MainWindow
         {
             _engine.StopAll();
             Save();
-            BackupService.Import(dialog.FileName);
+            BackupService.Import(AppPaths.DataFolder, dialog.FileName);
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.IO.InvalidDataException)
         {
@@ -1760,6 +1800,19 @@ public partial class MainWindow
         _exiting = true;
         _importing = true;
         App.Restart();
+    }
+
+    /// <summary>"loops, macros, remaps and settings, History and AI activity".</summary>
+    private static string PartNames(BackupParts parts)
+    {
+        var names = new List<string> { "loops, macros, remaps and settings" };
+        if (parts.HasFlag(BackupParts.History))
+            names.Add("History");
+        if (parts.HasFlag(BackupParts.AiActivity))
+            names.Add("AI activity");
+        if (parts.HasFlag(BackupParts.Logs))
+            names.Add("logs");
+        return names.Count == 1 ? names[0] : string.Join(", ", names.Take(names.Count - 1)) + " and " + names[^1];
     }
 
     private void OnOpenDataFolderClick(object sender, RoutedEventArgs e)

@@ -1,6 +1,12 @@
-<p>Loops, macros, remaps and settings are kept in <code>%AppData%\PuppyMacro</code>, so every new version finds them. In <strong>Settings &gt; Backup</strong>:</p>
+<p>Everything PuppyMacro keeps (loops, macros, remaps, settings, History, AI activity and logs) is in <code>%AppData%\PuppyMacro</code>, so every new version finds it. In <strong>Settings &gt; Backup</strong>:</p>
 <ul>
-  <li><strong>Export…</strong> saves everything to one <code>.puppymacro</code> file, to move it to another PC or keep a copy.</li>
-  <li><strong>Import…</strong> replaces your loops, macros, remaps and settings with the ones in a file, after you confirm with <strong>Import and restart</strong>. Your current data is backed up to the data folder first, then PuppyMacro restarts.</li>
+  <li><strong>Export…</strong> asks what to save in one <code>.puppymacro</code> file:
+    <ul>
+      <li><strong>Everything</strong> (chosen at first): an identical copy. Import it on another PC and you get the same PuppyMacro, with its <a href="macros.html#history">History</a> and <a href="ai.html#activity">AI activity</a>.</li>
+      <li><strong>Choose what to export</strong>: <strong>Loops, macros, remaps and settings</strong> are always in the file; <strong>History</strong>, <strong>AI activity</strong> and <strong>Logs</strong> can be left out, for a smaller file. Each shows its size.</li>
+    </ul>
+    Then <strong>Export…</strong> asks where to save the file.</li>
+  <li><strong>Import…</strong> says what the file has and replaces those parts of your data with it, after you confirm with <strong>Import and restart</strong>. What the file does not have stays as it is: a file without History keeps your History. Your current data is backed up to the data folder first, then PuppyMacro restarts. Files exported by older versions have loops, macros, remaps and settings.</li>
   <li><strong>Open data folder</strong> opens <code>%AppData%\PuppyMacro</code>.</li>
 </ul>
+<p>If <strong>Start with Windows</strong> is on in the imported settings, PuppyMacro turns it on in Windows the next time it starts.</p>

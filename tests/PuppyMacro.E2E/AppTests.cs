@@ -49,6 +49,31 @@ public class AppTests
     }
 
     [Fact]
+    public void Export_offers_everything_or_the_chosen_parts()
+    {
+        using var app = new AppSession();
+        app.GoTo("Settings");
+        app.Expand("BackupGroup");
+
+        // Export… opens the choice first; the file dialog comes only after its own Export…, never pressed here.
+        app.FindButton(app.MainWindow, "Export…").Invoke();
+        var everything = app.FindById(app.MainWindow, "EverythingButton").AsRadioButton();
+        var history = app.FindById(app.MainWindow, "HistoryBox").AsCheckBox();
+        Assert.True(everything.IsChecked);
+        Assert.False(history.IsEnabled);
+        Assert.True(history.IsChecked);
+
+        app.FindById(app.MainWindow, "ChooseButton").Patterns.SelectionItem.Pattern.Select();
+        Assert.True(Retry.WhileFalse(() => history.IsEnabled, AppSession.Timeout).Success);
+        history.Toggle();
+        Assert.False(history.IsChecked);
+
+        app.FindButton(app.MainWindow, "Cancel").Invoke();
+        Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf => cf.ByAutomationId("ChooseButton")) == null,
+            AppSession.Timeout).Success);
+    }
+
+    [Fact]
     public void A_new_loop_is_saved_starts_and_stops()
     {
         using var app = new AppSession();
