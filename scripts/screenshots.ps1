@@ -4,7 +4,8 @@
 # the sample data and no development build marks).
 # It drives the UI with UI Automation: do not use the mouse or keyboard while it runs. At the end (also after an
 # error) it closes that PuppyMacro, so the PC is free again when it returns.
-# Each window is captured alone, at its visible edges, and saved at 100% scale.
+# Each window is captured alone (its own image, PrintWindow: nothing behind it shows), at its visible edges, with its
+# rounded corners transparent, and saved at 100% scale.
 param([string]$OutDir = (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/guide/img'))
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes, System.Drawing
@@ -15,6 +16,8 @@ public static class W {
   [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
   [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr hdc, uint flags);
   [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L, T, R, B; }
   [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr h, int a, out RECT r, int s);
 }
@@ -68,8 +71,7 @@ function Capture($window, $file) {
   $h = [IntPtr]$window.Current.NativeWindowHandle
   [W]::SetForegroundWindow($h) | Out-Null
   Start-Sleep -Milliseconds 1200
-  $r = Bounds $h
-  SaveRegion $h $r.L $r.T $r.R $r.B $file
+  SaveWindow $h $file
   # Cancel closes the editor; in the Code view the same button is "Discard changes" and goes back to
   # the Form view first, so it is pressed again while the editor is still open.
   for ($i = 0; $i -lt 2; $i++) {
@@ -80,17 +82,43 @@ function Capture($window, $file) {
   }
 }
 
-function SaveRegion($h, [int]$left, [int]$top, [int]$right, [int]$bottom, $file) {
-  $w = $right - $left; $hgt = $bottom - $top
-  $bmp = New-Object System.Drawing.Bitmap $w, $hgt
-  $g = [System.Drawing.Graphics]::FromImage($bmp)
-  $g.CopyFromScreen($left, $top, 0, 0, (New-Object System.Drawing.Size $w, $hgt))
+# The window's own image (PrintWindow with PW_RENDERFULLCONTENT, as DWM draws it), not the screen's pixels:
+# nothing behind the window shows, at its rounded corners or through its border. Cut to its visible edges
+# (DWMWA_EXTENDED_FRAME_BOUNDS, without the invisible resize borders), the corners outside Windows 11's 8 px rounding
+# transparent, then scaled to 100%.
+function SaveWindow($h, $file) {
+  $wr = New-Object W+RECT
+  [W]::GetWindowRect($h, [ref]$wr) | Out-Null
+  $full = New-Object System.Drawing.Bitmap ($wr.R - $wr.L), ($wr.B - $wr.T), ([System.Drawing.Imaging.PixelFormat]::Format32bppRgb)
+  $g = [System.Drawing.Graphics]::FromImage($full)
+  $hdc = $g.GetHdc()
+  $printed = [W]::PrintWindow($h, $hdc, 2)   # PW_RENDERFULLCONTENT
+  $g.ReleaseHdc($hdc)
   $g.Dispose()
+  if (-not $printed) { throw "PrintWindow failed for $file" }
+
+  $r = Bounds $h
+  $w = $r.R - $r.L; $hgt = $r.B - $r.T
   $scale = [W]::GetDpiForWindow($h) / 96.0
+  $radius = 8 * $scale
+  $shape = New-Object System.Drawing.Drawing2D.GraphicsPath
+  $shape.AddArc(0, 0, 2 * $radius, 2 * $radius, 180, 90)
+  $shape.AddArc($w - 2 * $radius, 0, 2 * $radius, 2 * $radius, 270, 90)
+  $shape.AddArc($w - 2 * $radius, $hgt - 2 * $radius, 2 * $radius, 2 * $radius, 0, 90)
+  $shape.AddArc(0, $hgt - 2 * $radius, 2 * $radius, 2 * $radius, 90, 90)
+  $shape.CloseFigure()
+  $bmp = New-Object System.Drawing.Bitmap $w, $hgt, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+  $g = [System.Drawing.Graphics]::FromImage($bmp)
+  $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+  $brush = New-Object System.Drawing.TextureBrush $full
+  $brush.TranslateTransform(-($r.L - $wr.L), -($r.T - $wr.T))
+  $g.FillPath($brush, $shape)
+  $brush.Dispose(); $shape.Dispose(); $g.Dispose(); $full.Dispose()
+
   if ($scale -ne 1) {
     # Same scale as the other guide screenshots (100%).
     $sw = [int][Math]::Round($w / $scale); $sh = [int][Math]::Round($hgt / $scale)
-    $small = New-Object System.Drawing.Bitmap $sw, $sh
+    $small = New-Object System.Drawing.Bitmap $sw, $sh, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
     $g2 = [System.Drawing.Graphics]::FromImage($small)
     $g2.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
     $g2.DrawImage($bmp, 0, 0, $sw, $sh)
@@ -154,8 +182,7 @@ for ($pass = 0; $pass -lt 3; $pass++) {
 # the window takes it back, with no frame.
 $main.SetFocus()
 Start-Sleep -Milliseconds 800
-$r = Bounds $h
-SaveRegion $h $r.L $r.T $r.R $r.B (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/assets/loops.png')
+SaveWindow $h (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/assets/loops.png')
 $transform.Resize($restoreWidth, $restoreHeight)
 
 ClosePuppyMacro

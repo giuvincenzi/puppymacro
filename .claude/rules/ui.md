@@ -93,10 +93,11 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     where that layer starts; the Settings list keeps the library's 4 (no extra margin), as Library in Microsoft Store.
   - The main window's title bar: `TitleBar.ExtendViewIntoTitleBar` with `TitleBar.Height` 48, as Microsoft Store
     and the library's ButtonsOnTitlebar sample: on the left the app icon at 24 px (12 px above and below) and "PuppyMacro"
-    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build); on the right Enter
+    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build); on the right Import
+    (the `Download` icon) and Export (the `Share` icon), standard buttons with their text, then Enter
     overlay mode (a standard button with the `MapLayers` icon) and Stop all, then the window buttons
-    (`TitleBar.SystemOverlayRightInset`). Both have their hotkey in the tooltip and `WindowChrome.IsHitTestVisibleInChrome`,
-    and show on every page. They sit 9 px from the top (the window's 1 px border, then 8), so they look 8 px from the top
+    (`TitleBar.SystemOverlayRightInset`). Enter overlay mode and Stop all have their hotkey in the tooltip; all of them have
+    `WindowChrome.IsHitTestVisibleInChrome` and show on every page. They sit 9 px from the top (the window's 1 px border, then 8), so they look 8 px from the top
     and the bottom, as Microsoft Store's search box (measured). Minimize and close are the library's, as tall as the bar;
     16 px between our last button and them.
   - The main window's Stop all, in that title bar: the filled `Stop_16_Filled` icon and its text, `AccentButtonStyle` with
@@ -185,6 +186,22 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     Choose what to export; under them, indented 28 px (the radio button's circle and its gap, so the boxes line up with
     the labels), a `CheckBox` per part with its description and size in caption style, enabled only with Choose; Loops,
     macros, remaps and settings always checked and disabled. Export… is the default button, then the file dialog.
+  - Import and Export of loops, macros and remaps (approved design: the Design canvas "PuppyMacro Import and Export", A1 to
+    A3): the title bar's Import and Export open a standard `ContentDialog` each, with `Views/ImportItemsView` /
+    `Views/ExportItemsView`: the items in an `ItemsControl` grouped by kind (Loops, Macros, Remaps: a
+    `BodyStrongTextBlockStyle` header per group) inside a bordered card (`CardStrokeColorDefaultBrush`,
+    `CardBackgroundFillColorDefaultBrush`, 4 px corners) that scrolls, one `CheckBox` per item whose content is its name, the
+    card's summary in caption style and its hotkey as accent `KeyCap`s. Import: the file (the `Page` icon, its name, "From
+    PuppyMacro 1.17.0 · 2 loops, 1 macro" in caption style) and **Choose another file…**; a three-state **Select all**; under
+    an item, what changes on import in caption style in `SystemFillColorCautionBrush` and why it can't be imported in
+    `SystemFillColorCriticalBrush` (its box disabled); the `InfoBar` "Imported items start disabled." (Informational, not
+    closable); the button **Import N items**, or **Check for updates** for a file of a newer version. Export: a description,
+    Search (`TextBox`) and the kind (`ComboBox`: All kinds, Loops, Macros, Remaps), a three-state **Select all shown** with
+    "N shown · M selected" on the right, the button **Export N items…**, then the file dialog. Each card's More options menu
+    starts with **Export…** (the `Share` icon; for remaps after Duplicate), which opens the file dialog at once.
+  - File icons in File Explorer (approved: the same canvas, Icons B), drawn by `scripts/file-icons.ps1`
+    (`Assets/FileIcons`): `.puppyitems`, a white page with a folded corner and the paw in `#0F6CBD`, centered; `.puppymacro`
+    (backup), a dark archive box with the paw in `#60CDFF`.
   - Sound in the loop and macro editors: the `RadioButtons` with the sounds sit in a standard
     `ScrollViewer` with `MaxHeight="200"`, so the long list scrolls on its own instead of making the
     whole editor scroll. `Views/SoundChoicesScroll` scrolls it to the chosen sound each time it is

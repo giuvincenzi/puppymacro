@@ -60,4 +60,9 @@
     <Content Include="Assets\Monaco\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- The icons File Explorer shows for .puppyitems and .puppymacro files (Services/FileTypes, scripts/file-icons.ps1). -->
+  <ItemGroup>
+    <Content Include="Assets\FileIcons\*.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

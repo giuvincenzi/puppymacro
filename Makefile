@@ -13,6 +13,8 @@
 #                   then close PuppyMacro
 #   make screenshots-remote  the same screenshots taken on GitHub (the Screenshots workflow on the current branch, pushed),
 #                   put in site/ when it ends: the PC stays free
+#   make file-icons draw the icons of .puppyitems and .puppymacro files again (PuppyMacro/Assets/FileIcons);
+#                   make file-icons PREVIEW=<folder> also writes each size as a PNG there
 #   make release-pr open the release pull request (next version from the latest tag and CHANGELOG);
 #                   merging it publishes the release
 #   make release    retry the Release workflow on main (it never republishes an existing tag)
@@ -28,7 +30,7 @@ endif
 
 RUN_SCRIPT = $(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/$(1).ps1
 
-.PHONY: dev dev-keep test e2e build docs docs-serve screenshots screenshots-remote release-pr release clean
+.PHONY: dev dev-keep test e2e build docs docs-serve screenshots screenshots-remote file-icons release-pr release clean
 
 dev:
 	$(call RUN_SCRIPT,dev)
@@ -48,6 +50,9 @@ build:
 screenshots:
 	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 -Screenshots
 	$(call RUN_SCRIPT,screenshots)
+
+file-icons:
+	$(call RUN_SCRIPT,file-icons) $(if $(PREVIEW),-Preview '$(PREVIEW)')
 
 docs:
 	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/site.ps1 -Preview

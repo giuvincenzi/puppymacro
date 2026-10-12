@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Added
+- **Share** loops, macros and remaps as a `.puppyitems` file: **Export** at the top of the window lists them, with
+  search, to check the ones to save, and **Export…** in a card's menu saves one at once. **Import**, or a
+  double-click on the file, shows what it has and adds the checked items as new and disabled: a name already used
+  gets a number, a hotkey already used is left out, nothing of yours is replaced. AI apps can export and import
+  them too, and open these windows.
+- `.puppyitems` and `.puppymacro` (backup) files have their own icons in File Explorer.
+
 ### Changed
 - Export saves everything by default, History, AI activity and logs too, so importing the file on another PC
   gives the same PuppyMacro. **Choose what to export** leaves History, AI activity or logs out. Import replaces

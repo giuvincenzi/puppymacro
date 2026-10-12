@@ -424,4 +424,51 @@ public class AiTests
         Assert.True(app.Has(activity, "Read the guide: Remap"));
         activity.Close();
     }
+    private const string SharedFile = """
+        { "Format": 1, "App": "1.16.0", "Items": [
+          { "Kind": "Loop", "Item": { "Name": "E2E shared loop",
+            "Actions": [ { "Type": "Key", "KeyVk": 135, "IntervalValue": 1, "IntervalUnit": "Seconds" } ] } } ] }
+        """;
+
+    private static async Task<McpClient> ConnectWithAccess(AppSession app)
+    {
+        app.GoTo("AI");
+        app.FindById(app.MainWindow, "AiAccessSwitch").AsToggleButton().Toggle();
+        Assert.True(Retry.WhileFalse(() => SavedSettings().AllowAiAccess, AppSession.Timeout).Success);
+        return await Connect();
+    }
+
+    [Fact]
+    public async Task An_AI_app_imports_a_file_s_items_disabled_and_exports_them()
+    {
+        using var app = new AppSession();
+        await using McpClient client = await ConnectWithAccess(app);
+
+        var (imported, importError) = await Call(client, "import_items", new { content = SharedFile });
+        var (exported, exportError) = await Call(client, "export_items");
+
+        Assert.False(importError, imported);
+        Assert.StartsWith("Imported 1 item, all disabled", imported);
+        app.GoTo("Loops");
+        Assert.True(app.Has(app.MainWindow, "E2E shared loop"));
+        Assert.False(SavedSettings().Loops.Single(l => l.Name == "E2E shared loop").Enabled);
+        Assert.False(exportError, exported);
+        Assert.Contains("\"E2E shared loop\"", exported);
+        Assert.Contains("\"Sample: click every second\"", exported);
+    }
+
+    [Fact]
+    public async Task An_AI_app_opens_Import_with_a_file_and_the_user_imports_there()
+    {
+        using var app = new AppSession();
+        await using McpClient client = await ConnectWithAccess(app);
+
+        Task<(string Text, bool IsError)> call = Call(client, "open_import_window", new { content = SharedFile });
+        app.FindButton(app.MainWindow, "Import 1 item").Invoke();
+        var (text, isError) = await call;
+
+        Assert.False(isError, text);
+        Assert.StartsWith("The user imported 1 item, all disabled:", text);
+        Assert.True(app.Has(app.MainWindow, "E2E shared loop"));
+    }
 }

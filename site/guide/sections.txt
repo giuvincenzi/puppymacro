@@ -8,4 +8,5 @@ overlay-mode|Overlay mode
 hotkeys|Hotkeys
 tray|System tray and startup
 backup|Backup and your data
+share|Share loops, macros and remaps
 good-to-know|Good to know

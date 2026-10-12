@@ -36,5 +36,5 @@ Add-Type -AssemblyName System.Windows.Forms
 $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
 Write-Host "ChangeDisplaySettings: $result. Screen: $($bounds.Width) x $($bounds.Height)"
 if ($bounds.Width -lt $Width -or $bounds.Height -lt $Height) {
-    throw "The screen is $($bounds.Width) x $($bounds.Height), not $Width x $Height: the screenshots would not match the guide's."
+    throw "The screen is $($bounds.Width) x $($bounds.Height), not ${Width} x ${Height}: the screenshots would not match the guide's."
 }

@@ -83,6 +83,15 @@ internal interface IAiHost
     /// <summary>Opens the item's editor with the AI's <paramref name="title"/> and <paramref name="description"/> on top: Done when the user saved.</summary>
     Task<AiAnswer> OpenItem(Guid id, string app, string title, string description);
 
+    /// <summary>
+    /// Opens Import (in front of the other apps) with <paramref name="text"/>, a .puppyitems file's text, or for the user to
+    /// pick a file when null; Done with the items the user added (new Ids, disabled), recorded as <paramref name="app"/>'s.
+    /// </summary>
+    Task<(AiAnswer Answer, List<object> Items)> ShowImport(string app, string? text);
+
+    /// <summary>Opens Export (in front of the other apps) with <paramref name="ids"/> checked; Done with what the user saved and where.</summary>
+    Task<(AiAnswer Answer, List<object> Items, string? File)> ShowExport(string app, IReadOnlyCollection<Guid> ids);
+
     void StopAll();
 
     IReadOnlyList<string> RunningApps();
