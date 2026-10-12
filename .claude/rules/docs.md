@@ -77,7 +77,8 @@ before capturing (`testing.md`). The plan also lists the rule changes (`working-
   the development build with `PUPPYMACRO_SCREENSHOTS=1` (`App.ShowsDevMarks`): the sample data, but no strip and no DEV, and the first sample loop
   enabled, so every screenshot looks like a release; new screenshots are taken the same way. Then it closes PuppyMacro (the process,
   not only to the tray; also after an error), so the PC is free when it returns. It drives the UI: ask
-  the contributor before running it, like `make e2e`. `make dev` closes a running PuppyMacro first,
+  the contributor before running it, like `make e2e`, and where: locally (`make screenshots`) or on GitHub
+  (`make screenshots-remote`, the same screenshots from a GitHub machine, the PC stays free; `build-and-release.md`). `make dev` closes a running PuppyMacro first,
   the installed one too.
 - The download link is `https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe`:
   keep the Setup file name stable.

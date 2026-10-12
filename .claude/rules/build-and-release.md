@@ -21,6 +21,14 @@
   - `make screenshots`: `make dev` started with `PUPPYMACRO_SCREENSHOTS=1` (no strip, no DEV), then retakes the guide's editor screenshots and the home
     page's screenshot (drives the UI, see `docs.md`), then closes PuppyMacro (the process, also
     after an error).
+  - `make screenshots-remote`: the same screenshots taken on GitHub, so the PC stays free. It starts the
+    Screenshots workflow (`.github/workflows/screenshots.yml`, by hand only, contents read only) on the current
+    branch, which must be pushed: the dispatch API answers with the run's Id (`return_run_details`), then `gh run watch`
+    waits and `gh run download` puts the artifact's PNGs in `site/` to check with `git diff` and commit. The workflow
+    sets the runner's screen to 1920 x 1080 first (`scripts/screen-resolution.ps1`; it stops when the screen stays
+    smaller, as the editors would be made smaller to fit), then runs `scripts/dev.ps1 -Screenshots` and
+    `scripts/screenshots.ps1`. On Windows the steps are in `scripts/screenshots-remote.ps1`; in WSL the Makefile runs them in
+    its shell (git and gh are Linux's there). GitHub starts a `workflow_dispatch` workflow only once its file is on `main`.
   - `make file-icons`: draws the icons of `.puppyitems` and `.puppymacro` files again into
     `PuppyMacro/Assets/FileIcons` (`scripts/file-icons.ps1`, WPF shapes; `PREVIEW=<folder>` also writes each size as a
     PNG). Run it after changing their shapes and commit the `.ico` files.
