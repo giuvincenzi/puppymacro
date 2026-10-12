@@ -52,7 +52,8 @@
 
 - Releases are signed with a **Certum Open Source Code Signing** certificate (SimplySign cloud, no
   hardware token) issued to Giuseppe Vincenzi as a private person, valid at most 459 days: renew it
-  on Certum before it expires. The site's "Code signing policy" (`site/index.html`) says so.
+  on Certum before it expires. The user guide's install page (`site/guide/install.html`) says releases
+  are signed; the site has no code signing policy page (only SignPath asked for one).
 - **The Open Source certificate is for non-commercial open source only**: Certum revokes it if it
   signs software distributed commercially. Never ship ads, paid features or paid versions signed
   with it; that needs a commercial certificate first. Voluntary donations that unlock nothing are fine.

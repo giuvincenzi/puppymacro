@@ -124,14 +124,6 @@ kbd {
   color: var(--accent-text); border: 1px solid #2b4a5c; border-radius: 999px; padding: 2px 8px;
 }
 
-.steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-.steps li { display: flex; gap: 14px; }
-.step-number {
-  flex: 0 0 34px; height: 34px; border-radius: 999px;
-  background: var(--step); color: var(--accent-text); font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-}
-
 .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
 .panel h2 { margin: 0 0 12px; font-size: 26px; }
 .panel h3 { margin: 20px 0 8px; font-size: 18px; font-family: var(--body); }
