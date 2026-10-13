@@ -5,9 +5,9 @@
 #   - workflow_dispatch: create_release_pr starts it on the release pull request's branch (a pull request opened by a
 #     workflow starts no workflow by itself); also `gh workflow run test.yml --ref <branch>`;
 #   - workflow_call: publish_release runs it before publishing (job run_tests).
-# A job always runs (a required check that does not run would block the merge), but decide_if_tests_run skips its tests
-# when no changed file can change their result (the list and why: testing.md). Called by publish_release or started by
-# hand, the tests always run.
+# decide_which_tests_run looks once at the changed files and tells which tests can change their result (the lists and why:
+# testing.md); a test job that is not needed is skipped, and a skipped job counts as passing for a required check.
+# Called by publish_release or started by hand, every test runs.
 name: test
 
 on:
@@ -21,16 +21,61 @@ permissions:
   contents: read
 
 jobs:
-  unit_test:
-    runs-on: windows-latest
+  decide_which_tests_run:
+    runs-on: ubuntu-latest
+    outputs:
+      unit: ${{ steps.decide.outputs.unit }}
+      e2e: ${{ steps.decide.outputs.e2e }}
     steps:
       - name: checkout_code
         uses: actions/checkout@v7
         with:
           fetch-depth: 0   # the changed files: the diff of the pull request or of the push
 
+      - name: choose_tests_from_changed_files
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          WORKFLOW: ${{ github.workflow }}
+        run: |
+          # Called by publish_release, github.workflow is the caller's: every test runs there; started by hand too.
+          range=()
+          if [ "$WORKFLOW" = test ]; then
+            case "$EVENT" in
+              pull_request) range=(HEAD^1 HEAD) ;;
+              push) range=("$BEFORE" "$GITHUB_SHA") ;;
+            esac
+          fi
+          unit=true
+          e2e=true
+          if [ ${#range[@]} -gt 0 ] && files=$(git diff --name-only "${range[@]}"); then
+            # The files each test project builds or reads (testing.md, "Which changes run the tests on GitHub").
+            shared='^(PuppyMacro/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|\.gitattributes$|\.github/workflows/test\.yml$)'
+            unit=false
+            e2e=false
+            if grep -E "$shared|^tests/PuppyMacro\.Tests/" <<< "$files" | grep -qvx 'site/guide/_page\.html'; then unit=true; fi
+            if grep -E "$shared|^tests/PuppyMacro\.E2E/|^PuppyMacro\.sln$" <<< "$files" | grep -qvx 'site/guide/_page\.html'; then e2e=true; fi
+            # The merge of a release pull request: publish_release runs the tests on this commit.
+            if [ "$EVENT" = push ] && grep -qx 'PuppyMacro/Version.props' <<< "$files"; then unit=false; e2e=false; fi
+          fi
+          echo "unit=$unit" >> "$GITHUB_OUTPUT"
+          echo "e2e=$e2e" >> "$GITHUB_OUTPUT"
+          echo "Unit tests: $unit. End-to-end tests: $e2e (testing.md)." >> "$GITHUB_STEP_SUMMARY"
+
+  unit_test:
+    needs: decide_which_tests_run
+    if: needs.decide_which_tests_run.outputs.unit == 'true'
+    runs-on: windows-latest
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # block_version_change compares with the pull request's base
+
       # Only a release pull request (branch release/X.Y.Z, opened by create_release_pr) changes the version: merging it
-      # publishes the release (publish_release starts when Version.props changes on main).
+      # publishes the release (publish_release starts when Version.props changes on main). Version.props is under
+      # PuppyMacro/, so a pull request that changes it always runs this job.
       - name: block_version_change
         if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release/')
         shell: bash
@@ -40,86 +85,29 @@ jobs:
             exit 1
           fi
 
-      - name: decide_if_tests_run
-        id: decide
-        shell: bash
-        env:
-          EVENT: ${{ github.event_name }}
-          BEFORE: ${{ github.event.before }}
-          WORKFLOW: ${{ github.workflow }}
-        run: |
-          # Called by publish_release, github.workflow is the caller's: the tests always run there.
-          range=()
-          if [ "$WORKFLOW" = test ]; then
-            case "$EVENT" in
-              pull_request) range=(HEAD^1 HEAD) ;;
-              push) range=("$BEFORE" "$GITHUB_SHA") ;;
-            esac
-          fi
-          run=true
-          if [ ${#range[@]} -gt 0 ] && files=$(git diff --name-only "${range[@]}"); then
-            run=false
-            if grep -E '^(PuppyMacro/|tests/PuppyMacro\.Tests/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|\.gitattributes$|\.github/workflows/test\.yml$)' <<< "$files" \
-              | grep -qvx 'site/guide/_page\.html'; then run=true; fi
-            # The merge of a release pull request: publish_release runs the tests on this commit.
-            if [ "$EVENT" = push ] && grep -qx 'PuppyMacro/Version.props' <<< "$files"; then run=false; fi
-          fi
-          echo "run=$run" >> "$GITHUB_OUTPUT"
-          if [ "$run" = false ]; then echo "Unit tests skipped: no changed file can change their result, or publish_release runs them (testing.md)." >> "$GITHUB_STEP_SUMMARY"; fi
-
       - name: install_dotnet
-        if: steps.decide.outputs.run == 'true'
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
       - name: run_unit_tests
-        if: steps.decide.outputs.run == 'true'
         run: dotnet test --project tests/PuppyMacro.Tests/PuppyMacro.Tests.csproj -c Release
 
   e2e_test:
+    needs: decide_which_tests_run
+    if: needs.decide_which_tests_run.outputs.e2e == 'true'
     runs-on: windows-latest   # its screen is 1024 x 768 (testing.md)
     steps:
       - name: checkout_code
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: decide_if_tests_run
-        id: decide
-        shell: bash
-        env:
-          EVENT: ${{ github.event_name }}
-          BEFORE: ${{ github.event.before }}
-          WORKFLOW: ${{ github.workflow }}
-        run: |
-          range=()
-          if [ "$WORKFLOW" = test ]; then
-            case "$EVENT" in
-              pull_request) range=(HEAD^1 HEAD) ;;
-              push) range=("$BEFORE" "$GITHUB_SHA") ;;
-            esac
-          fi
-          run=true
-          if [ ${#range[@]} -gt 0 ] && files=$(git diff --name-only "${range[@]}"); then
-            run=false
-            if grep -E '^(PuppyMacro/|tests/PuppyMacro\.E2E/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|PuppyMacro\.sln$|\.gitattributes$|\.github/workflows/test\.yml$)' <<< "$files" \
-              | grep -qvx 'site/guide/_page\.html'; then run=true; fi
-            if [ "$EVENT" = push ] && grep -qx 'PuppyMacro/Version.props' <<< "$files"; then run=false; fi
-          fi
-          echo "run=$run" >> "$GITHUB_OUTPUT"
-          if [ "$run" = false ]; then echo "End-to-end tests skipped: no changed file can change their result, or publish_release runs them (testing.md)." >> "$GITHUB_STEP_SUMMARY"; fi
 
       - name: install_dotnet
-        if: steps.decide.outputs.run == 'true'
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
       - name: build_dev_app
-        if: steps.decide.outputs.run == 'true'
         run: dotnet build PuppyMacro/PuppyMacro.csproj -c Debug
 
       - name: run_e2e_tests
-        if: steps.decide.outputs.run == 'true'
         run: dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj

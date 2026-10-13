@@ -52,9 +52,9 @@
   project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18).
 - They run on GitHub in the `test` workflow, job `e2e_test`: on every pull request (a required check for
   merging into `main`), on every push to `main` and in `publish_release` before every release (it stops when they
-  fail). The push of a release merge skips them, as `publish_release` runs them on that commit: `decide_if_tests_run`
-  skips only when `github.workflow` is `test` (called by `publish_release` it is `publish_release`, the caller's github
-  context). The runner's screen is 1024x768: do not click controls that may be off
+  fail). The push of a release merge skips them, as `publish_release` runs them on that commit: the job
+  `decide_which_tests_run` skips only when `github.workflow` is `test` (called by `publish_release` it is
+  `publish_release`, the caller's github context). The runner's screen is 1024x768: do not click controls that may be off
   screen there (for example the title bar of a tall window); use UI Automation patterns
   instead (`Window.Close()`, `Invoke`).
 - `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one
@@ -107,13 +107,15 @@
 
 ## Which changes run the tests on GitHub
 
-On a pull request or a push to `main`, the `test` workflow's jobs `unit_test` and `e2e_test` always start (they are
-required checks), and their step `decide_if_tests_run` runs the tests only when a changed file can change their
-result: a file the build of the projects reads, a file the tests read while running, or the
-workflow itself. Otherwise the steps are skipped and the check passes. Called by `publish_release` or started by
-hand (`workflow_dispatch`: `create_release_pr` on the release pull request, `gh workflow run test.yml --ref <branch>`),
-they always run. Before it, `unit_test`'s `block_version_change` fails a pull request whose branch is not `release/…`
-when it changes `PuppyMacro/Version.props` (`build-and-release.md`).
+On a pull request or a push to `main`, the `test` workflow's first job, `decide_which_tests_run` (on Linux, quick),
+looks once at the changed files and tells which tests can change their result: a file the build of the projects reads,
+a file the tests read while running, or the workflow itself. `unit_test` and `e2e_test` run only when needed;
+otherwise they are skipped (their Windows machine never starts), and a job skipped by its `if` counts as passing for a
+required check. Called by `publish_release` or started by hand (`workflow_dispatch`: `create_release_pr` on the
+release pull request, `gh workflow run test.yml --ref <branch>`), every test runs. `unit_test`'s first step,
+`block_version_change`, fails a pull request whose branch is not `release/…` when it changes
+`PuppyMacro/Version.props` (`build-and-release.md`): that file is under `PuppyMacro/`, so such a pull request always
+runs `unit_test`.
 
 | Changed file | `unit_test` | `e2e_test` | Why |
 |---|---|---|---|
@@ -128,8 +130,8 @@ when it changes `PuppyMacro/Version.props` (`build-and-release.md`).
 
 Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, Markdown files,
 `LICENSE`, `Makefile`, `scripts/`, the other workflows). When the app, a test project or a test
-starts reading another file or folder, add it to this table and to the pattern of the job's
-`decide_if_tests_run` step in the same pull request.
+starts reading another file or folder, add it to this table and to the patterns of `decide_which_tests_run` in the
+same pull request.
 
 Do not filter the `test` workflow with `paths` / `paths-ignore`: a workflow that does not start leaves
 its required check pending and blocks the merge (GitHub docs, "Troubleshooting required status
