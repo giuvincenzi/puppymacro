@@ -10,6 +10,9 @@ paths:
 
 - Before a UI change, follow "UI changes" in `working-rules.md` (ask whether the user wants
   visual proposals as a Design artifact, wait for approval, then implement).
+- The rows of a list of loops, macros or remaps have an accessible name (`AutomationProperties.Name` in the
+  `ItemsControl`'s `ItemContainerStyle`), never the view model's class name that screen readers get otherwise: the
+  item's name (a remap: its note, or its keys, `RowName`); in the overlay panel the name and its state ("Spam, Disabled").
 
 ## Texts
 
