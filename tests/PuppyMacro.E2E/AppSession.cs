@@ -227,8 +227,8 @@ public sealed class AppSession : IDisposable
 
     /// <summary>
     /// On GitHub (the test workflow sets E2E_SCREENSHOTS to a folder): the whole screen as the test leaves it, before
-    /// PuppyMacro closes, as Class.Method.png. The test does not know yet whether it failed (this runs at the end of its
-    /// `using`), so it is saved for every test and the workflow keeps only the failed tests' ones (testing.md).
+    /// PuppyMacro closes, as Class.Method.png, for every test: the workflow puts all of them in the group's artifact and
+    /// the failed tests' ones also apart (its README.txt, written by test.yml's describe_group_result).
     /// </summary>
     private static void SaveScreenshot()
     {
