@@ -161,23 +161,26 @@ into, and a new test needs nothing.
   - `pick_group_tests`: test n goes to the group of n's remainder divided by N, the remainder 0 to group N. A number has
     one remainder, so every test is in exactly one group, and the groups differ by at most one test;
   - `minimize_other_windows`: the runner's own windows (its agent's console) can stay in front of PuppyMacro and take
-    a real mouse click (a test's "Add loop" click landed on it); they are minimized first, and the windows still shown
-    are written to the log. Press buttons with UI Automation (`Invoke`) unless the test needs a real click;
-  - `run_group_tests`: `dotnet test --filter-method` with the group's tests, and a CTRF (JSON) report of what ran;
-  - `keep_screenshots_of_failed_tests`: `AppSession` saves the whole screen at the end of every test, before
-    PuppyMacro closes, when `E2E_SCREENSHOTS` is set (only `run_group_tests` sets it; never locally); this step keeps the
-    failed tests' ones (`screenshots/Class.Method.png`): look at them first when a test fails on GitHub;
-  - `save_group_result`: the full list, the group's list, the report and those screenshots, also when tests failed
-    (artifact `e2e_group_<n>`, kept 7 days: the run's page, Artifacts).
-- **`e2e_test` (the required check):** green when the end-to-end tests were not needed, or when (1) every group saw the
-  same list, (2) every test ran exactly once (none missing, none in two groups), (3) every test and every group passed.
-  Otherwise red, with the missing, doubled or failed tests in the run's summary.
+    a real mouse click (a test's "Add loop" click landed on it), so they are minimized first. Press buttons with UI
+    Automation (`Invoke`) unless the test needs a real click;
+  - `log_machine_state`: the machine before the tests (memory, CPU, windows still shown);
+  - `run_group_tests`: `dotnet test --filter-method` with the group's tests and a CTRF report; with `E2E_SCREENSHOTS` set
+    (only here, never locally), `AppSession` saves at the end of every test the screen, the machine's state and what UI
+    Automation sees (`SaveScreenshot`, `SaveUiaTree`, `MachineState`);
+  - `keep_tests_details`: those files of every test in the artifact, the failed tests' ones also apart;
+  - `describe_group_result`: the artifact's `README.txt`;
+  - `save_group_result`: the artifact **`e2e_group_<n>_attempt_<a>`** (`<a>`: the run's attempt, so a "Re-run failed jobs"
+    does not mix with the failed one), also when tests failed, kept 7 days.
+- **`e2e_test` (the required check):** takes each group's newest attempt, then is green when the end-to-end tests were
+  not needed, or when (1) every group saw the same list, (2) every test ran exactly once (none missing, none in two
+  groups), (3) every test and every group passed. Otherwise red, with the missing, doubled or failed tests in the run's
+  summary.
 
-**When an end-to-end test fails on GitHub, look at its screenshot first**: on the run's page (the pull request's
-`e2e_test` check > Summary), Artifacts, `e2e_group_<n>` (the group `e2e_test`'s summary names) >
-`screenshots/Class.Method.png`, the whole screen as the test left it, before PuppyMacro closed; or
-`gh run download <run> --name e2e_group_<n>`. It shows what an error like "not found" cannot: a window of the runner in
-front, a dialog still open, content that was there but not seen. Then fix the cause, not the timeout.
+**When an end-to-end test fails on GitHub**, start from the test's code and the line that failed. Each group's artifact
+(the run's page > Artifacts, or `gh run download <run> --name e2e_group_<n>_attempt_<a>`) holds what helps understand
+why: screenshots, the UI Automation tree and the machine's state of every test, the failed ones apart, and the report.
+**Its `README.txt` says what each file and folder is and how it can help**; it is written by the step
+`describe_group_result` of `test.yml`, the one description of the artifact (change it there when the artifact changes).
 
 **Changing the number of machines:** change only `E2E_GROUPS`. Nothing else: not the ruleset (it requires `e2e_test`,
 not the groups), not the tests. Each group costs about a minute of its own (machine, checkout, build) on top of its

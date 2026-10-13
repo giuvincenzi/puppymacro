@@ -218,6 +218,7 @@ public sealed class AppSession : IDisposable
     public void Dispose()
     {
         SaveScreenshot();
+        SaveUiaTree();
         Automation.Dispose();
         if (!_app.HasExited)
             _app.Kill();
@@ -226,8 +227,8 @@ public sealed class AppSession : IDisposable
 
     /// <summary>
     /// On GitHub (the test workflow sets E2E_SCREENSHOTS to a folder): the whole screen as the test leaves it, before
-    /// PuppyMacro closes, as Class.Method.png. The test does not know yet whether it failed (this runs at the end of its
-    /// `using`), so it is saved for every test and the workflow keeps only the failed tests' ones (testing.md).
+    /// PuppyMacro closes, as Class.Method.png, for every test: the workflow puts all of them in the group's artifact and
+    /// the failed tests' ones also apart (its README.txt, written by test.yml's describe_group_result).
     /// </summary>
     private static void SaveScreenshot()
     {
@@ -249,6 +250,82 @@ public sealed class AppSession : IDisposable
         {
             Console.Error.WriteLine($"Screenshot not saved: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// With <see cref="SaveScreenshot"/>: what UI Automation sees of every window of this PuppyMacro, as Class.Method.uia.txt,
+    /// one element per line (control type, "name", [AutomationId], offscreen), indented by depth. It tells what a screenshot
+    /// cannot: whether an element the test looked for was there, with another name, or not yet.
+    /// </summary>
+    private void SaveUiaTree()
+    {
+        string? folder = Environment.GetEnvironmentVariable("E2E_SCREENSHOTS");
+        string? type = TestContext.Current.TestClass?.TestClassName;
+        string? method = TestContext.Current.TestMethod?.MethodName;
+        if (string.IsNullOrEmpty(folder) || type == null || method == null)
+            return;
+        const int maxLines = 5000;
+        var lines = new List<string>(MachineState()) { "" };
+        void Write(AutomationElement element, int depth)
+        {
+            if (lines.Count >= maxLines)
+                return;
+            try
+            {
+                var p = element.Properties;
+                lines.Add($"{new string(' ', depth * 2)}{p.ControlType.ValueOrDefault} \"{p.Name.ValueOrDefault}\"" +
+                          $" [{p.AutomationId.ValueOrDefault}]{(p.IsOffscreen.ValueOrDefault ? " offscreen" : "")}");
+                foreach (AutomationElement child in element.FindAllChildren())
+                    Write(child, depth + 1);
+            }
+            catch (Exception ex) when (ex is FlaUI.Core.Exceptions.ElementNotAvailableException
+                                           or System.Runtime.InteropServices.COMException or TimeoutException)
+            {
+                lines.Add($"{new string(' ', depth * 2)}(not readable: {ex.Message})");
+            }
+        }
+        try
+        {
+            Directory.CreateDirectory(folder);
+            foreach (AutomationElement window in Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId)))
+                Write(window, 0);
+            if (lines.Count >= maxLines)
+                lines.Add($"(cut at {maxLines} lines)");
+            File.WriteAllLines(Path.Combine(folder, $"{type}.{method}.uia.txt"), lines);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                       or System.Runtime.InteropServices.COMException or FlaUI.Core.Exceptions.ElementNotAvailableException)
+        {
+            Console.Error.WriteLine($"UI Automation tree not saved: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// The first lines of Class.Method.uia.txt: when, the machine's memory, and whether PuppyMacro was responding (its UI
+    /// thread handles window messages) and how much memory it used. A slow or short-of-memory runner, or a PuppyMacro that
+    /// hangs, shows here.
+    /// </summary>
+    private List<string> MachineState()
+    {
+        const double mb = 1024 * 1024;
+        var lines = new List<string> { $"Time (UTC): {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff}" };
+        var memory = new Native.MEMORYSTATUSEX { dwLength = (uint)System.Runtime.InteropServices.Marshal.SizeOf<Native.MEMORYSTATUSEX>() };
+        lines.Add(Native.GlobalMemoryStatusEx(ref memory)
+            ? $"Machine memory: {memory.dwMemoryLoad}% in use, {memory.ullAvailPhys / mb:0} MB free of {memory.ullTotalPhys / mb:0} MB; " +
+              $"paging file {memory.ullAvailPageFile / mb:0} MB free of {memory.ullTotalPageFile / mb:0} MB"
+            : "Machine memory: not readable");
+        try
+        {
+            using Process app = Process.GetProcessById(ProcessId);
+            lines.Add($"PuppyMacro (process {ProcessId}): {(app.Responding ? "responding" : "NOT RESPONDING")}, " +
+                      $"{app.WorkingSet64 / mb:0} MB in use, {app.Threads.Count} threads, " +
+                      $"{app.TotalProcessorTime.TotalSeconds:0.0} s of CPU since it started");
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            lines.Add($"PuppyMacro (process {ProcessId}): not running ({ex.Message})");
+        }
+        return lines;
     }
 }
 

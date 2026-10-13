@@ -168,9 +168,32 @@ jobs:
               -not [Win32.Window]::IsIconic($_.MainWindowHandle) } |
             ForEach-Object { Write-Host "Window still shown: $($_.ProcessName): $($_.MainWindowTitle)" }
 
+      # The runner's state before the tests (a slow or short-of-memory runner makes the tests fail), in the log and in
+      # machine_state.txt of the artifact.
+      - name: log_machine_state
+        shell: pwsh
+        run: |
+          $os = Get-CimInstance Win32_OperatingSystem
+          $cpu = Get-CimInstance Win32_Processor
+          $state = @(
+            "Time (UTC): $((Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss'))"
+            "Memory: $([math]::Round($os.FreePhysicalMemory / 1KB)) MB free of $([math]::Round($os.TotalVisibleMemorySize / 1KB)) MB"
+            "Paging file: $([math]::Round($os.FreeSpaceInPagingFiles / 1KB)) MB free of $([math]::Round($os.SizeStoredInPagingFiles / 1KB)) MB"
+            "CPU: $(($cpu | Measure-Object -Property LoadPercentage -Average).Average)% load, $(($cpu | Measure-Object -Property NumberOfLogicalProcessors -Sum).Sum) logical processors"
+          )
+          # Only the windows still shown (visible, not minimized), as minimize_other_windows lists them.
+          Add-Type -Namespace Win32 -Name Window -MemberDefinition '
+            [DllImport("user32.dll")] public static extern bool IsWindowVisible(System.IntPtr hWnd);
+            [DllImport("user32.dll")] public static extern bool IsIconic(System.IntPtr hWnd);'
+          $state += Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle -and
+              [Win32.Window]::IsWindowVisible($_.MainWindowHandle) -and -not [Win32.Window]::IsIconic($_.MainWindowHandle) } |
+            ForEach-Object { "Window still shown: $($_.ProcessName): $($_.MainWindowTitle)" }
+          $state | ForEach-Object { Write-Host $_ }
+          $state | Set-Content -Path e2e_results/machine_state.txt -Encoding utf8
+
       - name: run_group_tests
         env:
-          E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots   # AppSession saves the screen at the end of every test
+          E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots   # AppSession saves the screen and the UI tree at the end of every test
         run: |
           mapfile -t tests < e2e_results/group_tests.txt
           if [ ${#tests[@]} -eq 0 ]; then echo "No tests in this group."; exit 0; fi
@@ -178,29 +201,122 @@ jobs:
             --results-directory "$PWD/e2e_results" --report-xunit-ctrf --report-xunit-ctrf-filename "group_$GROUP.json" \
             --filter-method "${tests[@]}"
 
-      # The screen as each failed test left it (Class.Method.png), to see why it failed; the passed tests' are dropped.
-      - name: keep_screenshots_of_failed_tests
+      # Each test's screen and UI Automation tree as it left PuppyMacro (AppSession saves them for every test): all of
+      # them in tests/, the failed tests' ones also in failed_tests/.
+      - name: keep_tests_details
         if: always()
         shell: pwsh
         run: |
+          $saved = "$env:RUNNER_TEMP/e2e_screenshots"
+          if (Test-Path $saved) {
+            New-Item -ItemType Directory -Force e2e_results/tests | Out-Null
+            Copy-Item "$saved/*" e2e_results/tests/
+            Write-Host "Saved for every test: $((Get-ChildItem e2e_results/tests).Count) files in tests/"
+          }
           $report = "e2e_results/group_$env:GROUP.json"
           if (-not (Test-Path $report)) { exit 0 }
           $failed = (Get-Content $report -Raw | ConvertFrom-Json).results.tests | Where-Object status -ne 'passed'
           foreach ($test in $failed) {
-            $png = Join-Path "$env:RUNNER_TEMP/e2e_screenshots" "$($test.extra.type).$($test.extra.method).png"
-            if (Test-Path $png) {
-              New-Item -ItemType Directory -Force e2e_results/screenshots | Out-Null
-              Copy-Item $png e2e_results/screenshots/
-              Write-Host "Screenshot of the failed test: screenshots/$(Split-Path $png -Leaf)"
+            foreach ($kind in 'png', 'uia.txt') {
+              $file = "e2e_results/tests/$($test.extra.type).$($test.extra.method).$kind"
+              if (Test-Path $file) {
+                New-Item -ItemType Directory -Force e2e_results/failed_tests | Out-Null
+                Copy-Item $file e2e_results/failed_tests/
+                Write-Host "Failed test: failed_tests/$(Split-Path $file -Leaf)"
+              }
             }
           }
 
-      # Also when tests failed: e2e_test needs every group's lists and report.
+      # README.txt: what each file of the artifact is and how it helps investigate a failed test. The one description
+      # of the artifact: testing.md points here.
+      - name: describe_group_result
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force e2e_results | Out-Null
+          @'
+          PuppyMacro end-to-end tests: one group's results
+          ================================================
+
+          This artifact holds what one group of the end-to-end tests did on one GitHub machine (a "runner").
+          The test workflow (.github/workflows/test.yml) splits the end-to-end tests into E2E_GROUPS groups that run at the
+          same time on different machines. This README is written by the step describe_group_result of that workflow.
+
+          Artifact name: e2e_group_<n>_attempt_<a>
+            <n>  the group's number, from 1 to E2E_GROUPS.
+            <a>  the run's attempt (github.run_attempt): 1 for the first run; "Re-run failed jobs" runs the failed groups
+                 again as attempt 2, 3, ..., each with an artifact of its own next to the older ones. The job e2e_test checks
+                 each group's newest attempt.
+
+          Files
+          -----
+          all_tests.txt
+            Every end-to-end test of the project, by full name (PuppyMacro.E2E.Class.Method), one per line, sorted the same way
+            on every machine (ordinal sort). Line n is test n. Every group writes the same file; e2e_test checks they are equal.
+
+          group_tests.txt
+            The tests of this group, one per line: test n of all_tests.txt belongs to the group whose number is the remainder
+            of n divided by E2E_GROUPS (remainder 0: the last group). With 7 groups, group 1 has tests 1, 8, 15, ...
+            An empty file: this group had no tests (more groups than tests).
+
+          group_<n>.json
+            The test report of this group (CTRF format, JSON), written by dotnet test. Under results.tests, one entry per test
+            that ran: name, status (passed, failed, skipped, ...), duration in milliseconds, and extra.type + extra.method (the
+            full name, as in all_tests.txt). Missing: the tests did not run (for example the build failed).
+
+          machine_state.txt
+            The machine ONCE, BEFORE this group's tests started (after the other windows were minimized). One line each:
+              Time (UTC):           when it was written.
+              Memory:               free and total physical memory, in MB.
+              Paging file:          free and total paging file, in MB.
+              CPU:                  average load in percent at that moment, and the number of logical processors.
+              Window still shown:   one line per window that is still visible and not minimized (process: title). Normally
+                                    none. A window listed here can cover PuppyMacro or take a real mouse click.
+            The machine's state at the end of each test is at the top of that test's .uia.txt (below).
+
+          tests/
+            For EVERY test of this group, passed or failed, saved at the end of the test, just before PuppyMacro closed:
+              <Class>.<Method>.png
+                The whole screen (1024 x 768).
+              <Class>.<Method>.uia.txt
+                First lines, the state at that moment:
+                  Time (UTC):        when it was saved.
+                  Machine memory:    percent in use, free and total physical memory, free and total paging file, in MB.
+                  PuppyMacro (process <id>):  "responding" or "NOT RESPONDING" (its UI thread did not handle window messages:
+                                     it hung), the memory it used, its threads, and its CPU time since it started.
+                Then an empty line and what UI Automation saw of every PuppyMacro window, one element per line, indented by two
+                spaces per level:
+                  <ControlType> "<Name>" [<AutomationId>]          (and "offscreen" when it is not on the screen)
+                "(not readable: ...)": that element disappeared while it was read. "(cut at 5000 lines)": the tree was longer.
+            A test that failed before starting PuppyMacro has no files.
+
+          failed_tests/
+            The same two files, only for the tests that failed (a copy of theirs from tests/), so they are found at once.
+            Missing: no test of this group failed.
+
+          Investigating a failed test
+          ---------------------------
+          Start from the test itself: its code (tests/PuppyMacro.E2E/<Class>.cs), what it does and what it expects, and the
+          line that failed (in the job's log, step run_group_tests, or in e2e_test's summary). The files of this artifact can
+          then help understand why that line failed; use the ones that fit the case:
+            - failed_tests/<Class>.<Method>.png: what was on the screen, for example a window of the runner in front, a dialog
+              still open, content that is on the screen although the test did not find it.
+            - failed_tests/<Class>.<Method>.uia.txt: whether the element the test looked for existed, with which name, whether
+              it was offscreen, whether a window had no children (read too early); whether PuppyMacro was responding; how much
+              memory was free.
+            - The same test when it passed (tests/ of a green run: another attempt of this run, or a recent run on main): the
+              difference between its .uia.txt and the failed one can show what changed.
+            - machine_state.txt: whether the machine was short of memory or had a window in front before the tests.
+          These are aids, not steps to follow in order. Fix the cause, not the timeout.
+          '@ | Set-Content -Path e2e_results/README.txt -Encoding utf8
+
+      # Also when tests failed: e2e_test needs every group's lists and report. The name has the run's attempt: after a
+      # "Re-run failed jobs" the group's new artifact does not mix with the failed one (e2e_test reads the newest).
       - name: save_group_result
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: e2e_group_${{ matrix.group }}
+          name: e2e_group_${{ matrix.group }}_attempt_${{ github.run_attempt }}
           path: e2e_results/
           retention-days: 7
 
@@ -225,8 +341,9 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: e2e_group_*
-          path: e2e_results
+          path: e2e_results   # one folder per artifact: e2e_group_<n>_attempt_<a>
 
+      # For each group its newest attempt (a re-run group has a newer one, a passed group keeps its first), then:
       # (1) every group saw the same list, (2) every test ran exactly once (none missing, none twice), (3) every test
       # and every group passed.
       - name: check_every_test_ran_once
@@ -240,7 +357,10 @@ jobs:
           root = pathlib.Path("e2e_results")
           problems, ran, failed, lists = [], {}, [], set()
           for g in range(1, groups + 1):
-              folder = root / f"e2e_group_{g}"
+              attempts = sorted(root.glob(f"e2e_group_{g}_attempt_*"), key=lambda p: int(p.name.rsplit("_", 1)[1]))
+              folder = attempts[-1] if attempts else root / f"e2e_group_{g}_attempt_none"
+              if attempts:
+                  print(f"e2e_group_{g}: {folder.name}")
               if not (folder / "all_tests.txt").exists():
                   problems.append(f"e2e_group_{g}: no results (it did not get as far as listing the tests).")
                   continue
