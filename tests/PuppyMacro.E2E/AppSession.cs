@@ -179,9 +179,22 @@ public sealed class AppSession : IDisposable
             Timeout, throwOnTimeout: true, timeoutMessage: $"menu item \"{name}\" not found").Result!;
 
     /// <summary>A top-level window of this PuppyMacro (overlay panel, floating buttons), or null after a timeout.</summary>
-    public AutomationElement? TopWindow(string title) =>
-        Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId))),
-            Timeout).Result;
+    /// <remarks>
+    /// Taken again until it shows its content, as <see cref="MainWindow"/>: an element taken right after its window appears
+    /// can keep showing no children (a test then did not find the overlay panel's rows that were on the screen). A window
+    /// that exists but shows no children until the timeout is returned as it is.
+    /// </remarks>
+    public AutomationElement? TopWindow(string title)
+    {
+        AutomationElement? found = null;
+        AutomationElement? withContent = Retry.WhileNull(() =>
+        {
+            AutomationElement? window = Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId)));
+            found = window ?? found;
+            return window?.FindFirstChild() != null ? window : null;
+        }, Timeout, ignoreException: true).Result;
+        return withContent ?? found;
+    }
 
     /// <summary>
     /// After leaving overlay mode with its hotkey or the panel's exit button: waits until
@@ -198,10 +211,38 @@ public sealed class AppSession : IDisposable
 
     public void Dispose()
     {
+        SaveScreenshot();
         Automation.Dispose();
         if (!_app.HasExited)
             _app.Kill();
         _app.Dispose();
+    }
+
+    /// <summary>
+    /// On GitHub (the test workflow sets E2E_SCREENSHOTS to a folder): the whole screen as the test leaves it, before
+    /// PuppyMacro closes, as Class.Method.png. The test does not know yet whether it failed (this runs at the end of its
+    /// `using`), so it is saved for every test and the workflow keeps only the failed tests' ones (testing.md).
+    /// </summary>
+    private static void SaveScreenshot()
+    {
+        string? folder = Environment.GetEnvironmentVariable("E2E_SCREENSHOTS");
+        string? type = TestContext.Current.TestClass?.TestClassName;
+        string? method = TestContext.Current.TestMethod?.MethodName;
+        if (string.IsNullOrEmpty(folder) || type == null || method == null)
+            return;
+        try
+        {
+            Directory.CreateDirectory(folder);
+            System.Drawing.Rectangle screen = System.Windows.Forms.Screen.PrimaryScreen!.Bounds;
+            using var image = new System.Drawing.Bitmap(screen.Width, screen.Height);
+            using (var graphics = System.Drawing.Graphics.FromImage(image))
+                graphics.CopyFromScreen(screen.Location, System.Drawing.Point.Empty, screen.Size);
+            image.Save(Path.Combine(folder, $"{type}.{method}.png"), System.Drawing.Imaging.ImageFormat.Png);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.ExternalException or ArgumentException)
+        {
+            Console.Error.WriteLine($"Screenshot not saved: {ex.Message}");
+        }
     }
 }
 

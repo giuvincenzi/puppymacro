@@ -108,7 +108,7 @@ it does (the workflow the phase, the job the action).
 
 | Workflow | Starts | Jobs |
 |---|---|---|
-| `test` | every pull request and push to `main`; `workflow_dispatch` (`create_release_pr`, or `gh workflow run test.yml --ref <branch>`); `workflow_call` (`publish_release`) | `decide_which_tests_run`, then `unit_test` and `e2e_test` when needed (`testing.md`) |
+| `test` | every pull request and push to `main`; `workflow_dispatch` (`create_release_pr`, or `gh workflow run test.yml --ref <branch>`); `workflow_call` (`publish_release`) | `decide_which_tests_run`, then when needed `unit_test` and `e2e_group_1` … `e2e_group_N` (`E2E_GROUPS` machines at once), then `e2e_test`, which checks every end-to-end test ran once and passed (`testing.md`) |
 | `create_release_pr` | only by hand (`workflow_dispatch`) on `main` | `prepare_and_open_pr` |
 | `publish_release` | a push to `main` that changes `PuppyMacro/Version.props` | `run_tests` (calls `test`), `publish_app`, `publish_site` |
 

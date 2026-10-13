@@ -81,7 +81,7 @@ public class AppTests
         using var app = new AppSession();
 
         // Add a loop that presses F24, a key no keyboard has: running it is harmless.
-        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        app.Find(app.MainWindow, "Add loop").AsButton().Invoke(); // UI Automation: not a click, which a window in front could take
         Window editor = app.Dialog("Add loop");
         app.FindById(editor, "NameBox").AsTextBox().Text = "E2E F24 loop";
         app.FindById(editor, "AddPressKeyButton").AsButton().Invoke(); // a Press key that waits for the key right away
@@ -345,7 +345,7 @@ public class AppTests
     /// <summary>A loop that presses F24 (harmless), with its floating button on. Returns its editor still open.</summary>
     private static Window AddF24LoopWithButton(AppSession app)
     {
-        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        app.Find(app.MainWindow, "Add loop").AsButton().Invoke(); // UI Automation: not a click, which a window in front could take
         Window editor = app.Dialog("Add loop");
         app.FindById(editor, "NameBox").AsTextBox().Text = "E2E F24 loop";
         app.FindById(editor, "AddPressKeyButton").AsButton().Invoke();
@@ -529,7 +529,7 @@ public class AppTests
 
         // A new loop: the code shows what is missing, Form view stays off, Discard changes goes back.
         // The window keeps its place and size in both views.
-        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        app.Find(app.MainWindow, "Add loop").AsButton().Invoke(); // UI Automation: not a click, which a window in front could take
         Window loop = app.Dialog("Add loop");
         System.Drawing.Rectangle formPlace = loop.BoundingRectangle;
         OpenCodeView(app, loop, "Name: Enter a name.");
@@ -572,7 +572,7 @@ public class AppTests
     public void Specific_app_is_saved_shown_on_the_card_and_needs_an_app()
     {
         using var app = new AppSession();
-        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        app.Find(app.MainWindow, "Add loop").AsButton().Invoke(); // UI Automation: not a click, which a window in front could take
         Window editor = app.Dialog("Add loop");
         app.FindById(editor, "NameBox").AsTextBox().Text = "E2E app loop";
         app.FindById(editor, "AddPressKeyButton").AsButton().Invoke();
@@ -623,7 +623,7 @@ public class AppTests
     public void The_loop_editor_adds_each_action_from_its_bar_with_its_options_and_Enabled_is_saved()
     {
         using var app = new AppSession();
-        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        app.Find(app.MainWindow, "Add loop").AsButton().Invoke(); // UI Automation: not a click, which a window in front could take
         Window editor = app.Dialog("Add loop");
         app.FindById(editor, "NameBox").AsTextBox().Text = "E2E bar loop";
 
@@ -667,7 +667,7 @@ public class AppTests
         using var app = new AppSession();
 
         // A loop's new Click: Detect, then the middle button (inside the editor; the press is taken, not clicked).
-        app.Find(app.MainWindow, "Add loop").AsButton().Click();
+        app.Find(app.MainWindow, "Add loop").AsButton().Invoke(); // UI Automation: not a click, which a window in front could take
         Window loop = app.Dialog("Add loop");
         app.FindById(loop, "AddClickButton").AsButton().Invoke();
         DetectWith(app, loop, MouseButton.Middle, "Middle");
