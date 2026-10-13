@@ -53,6 +53,12 @@ internal sealed class AiActivityRow
 
     public string RestoreName => string.Format(CultureInfo.CurrentCulture, Strings.AiActivity_RestoreName, Request);
 
+    /// <summary>The row's accessible name in Recent activity: what the row shows.</summary>
+    public string RecentAccessibleName => AccessibleNames.Join(TimeText, App, Request, ResultText);
+
+    /// <summary>The row's accessible name in the AI activity window: what the row shows.</summary>
+    public string AccessibleName => AccessibleNames.Join(TimeText, App, KindText, Request, ResultText);
+
     public static string KindName(AiActivityKind kind) => kind switch
     {
         AiActivityKind.Read => Strings.AiKind_Read,
@@ -123,6 +129,9 @@ internal sealed class AiStatusItem
     public AiStatusItem(string name) => Name = name;
 
     public string Name { get; }
+
+    /// <summary>The row's accessible name: the app's name.</summary>
+    public string AccessibleName => Name;
 
     /// <summary>The pulsing halo, only while Windows' animations are on.</summary>
     public Visibility HaloVisibility => SystemParameters.ClientAreaAnimation ? Visibility.Visible : Visibility.Collapsed;

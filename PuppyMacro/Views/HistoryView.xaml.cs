@@ -40,6 +40,9 @@ internal sealed class HistoryRow
     public string DayText { get; }
     public string By { get; }
     public string SummaryText { get; }
+
+    /// <summary>The row's accessible name: what the row shows.</summary>
+    public string AccessibleName => AccessibleNames.Join(TimeText, By, SummaryText);
 }
 
 /// <summary>

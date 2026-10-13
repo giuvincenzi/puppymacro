@@ -17,6 +17,11 @@
         <TextBlock x:Name="EmptyText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
                    Text="{x:Static r:Strings.HistoryView_Empty}" Visibility="Collapsed" />
         <ListView x:Name="VersionList" SelectionMode="Single" SelectionChanged="OnSelectionChanged" AutomationProperties.Name="{x:Static r:Strings.HistoryView_Versions}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                    <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>

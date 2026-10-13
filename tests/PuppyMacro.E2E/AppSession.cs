@@ -14,6 +14,8 @@ using Xunit;
 
 // One PuppyMacro at a time: the tests share the app and its data folder.
 [assembly: Xunit.v3.Parallelization(Mode = Xunit.Sdk.ParallelMode.None)]
+// Windows Forms prepared once before the tests, so a test's wait for its target window is only the window (TargetWindow).
+[assembly: AssemblyFixture(typeof(PuppyMacro.E2E.WindowsFormsReady))]
 
 namespace PuppyMacro.E2E;
 
@@ -37,6 +39,7 @@ public sealed class AppSession : IDisposable
     /// </param>
     public AppSession(Action<Seed>? seed = null, string language = "en")
     {
+        TargetWindow.LastOpening = null; // this test's own, in its .uia.txt
         foreach (Process running in Process.GetProcessesByName("PuppyMacro"))
         {
             running.Kill();
@@ -142,6 +145,16 @@ public sealed class AppSession : IDisposable
     /// <summary>Waits until the overlay panel row of <paramref name="item"/> shows <paramref name="state"/> ("Disabled", "Idle").</summary>
     public bool PanelRowIs(AutomationElement panel, string item, string state) =>
         Retry.WhileFalse(() => FindPanelRow(panel, item)?.Name == $"{item}, {state}", Timeout, ignoreException: true).Success;
+
+    /// <summary>
+    /// Whether <paramref name="root"/> has a list row (a DataItem, or a ListItem in a ListView) whose accessible name holds
+    /// every one of <paramref name="texts"/>: rows are named by what they show (ui.md), never by their item's class.
+    /// </summary>
+    public bool HasRow(AutomationElement root, params string[] texts) =>
+        Retry.WhileNull(() => root.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.DataItem)
+                .Or(cf.ByControlType(FlaUI.Core.Definitions.ControlType.ListItem)))
+            .FirstOrDefault(row => texts.All(text => row.Name.Contains(text, StringComparison.Ordinal))), Timeout,
+            ignoreException: true).Result != null;
 
     private static AutomationElement? FindPanelRow(AutomationElement panel, string item) =>
         panel.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.DataItem))
@@ -330,6 +343,7 @@ public sealed class AppSession : IDisposable
             ? $"Machine memory: {memory.dwMemoryLoad}% in use, {memory.ullAvailPhys / mb:0} MB free of {memory.ullTotalPhys / mb:0} MB; " +
               $"paging file {memory.ullAvailPageFile / mb:0} MB free of {memory.ullTotalPageFile / mb:0} MB"
             : "Machine memory: not readable");
+        lines.Add($"Target window: {TargetWindow.LastOpening ?? "not opened in this test"}");
         try
         {
             using Process app = Process.GetProcessById(ProcessId);

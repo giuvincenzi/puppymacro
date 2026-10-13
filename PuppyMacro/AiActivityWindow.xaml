@@ -69,6 +69,11 @@
             <TextBlock x:Name="EmptyText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                        Text="{x:Static r:Strings.AiActivity_NoMatch}" Visibility="Collapsed" />
             <ListView x:Name="ActivityList" SelectionMode="Single" SelectionChanged="OnSelectionChanged" AutomationProperties.Name="{x:Static r:Strings.AiActivity_Title}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>

@@ -42,6 +42,11 @@
                 <TextBlock x:Name="ExportEmptyText" Margin="12" Style="{StaticResource Description}" Visibility="Collapsed" />
                 <ScrollViewer Height="300" VerticalScrollBarVisibility="Auto">
                     <ItemsControl x:Name="ExportItemList" Margin="12,0,12,8" Focusable="False">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
                         <ItemsControl.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>

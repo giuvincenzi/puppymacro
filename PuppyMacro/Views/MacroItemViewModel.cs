@@ -87,6 +87,7 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsItemEnabled));
             OnPropertyChanged(nameof(Status));
+            OnPropertyChanged(nameof(PanelAccessibleName));
             OnPropertyChanged(nameof(CanStartStop));
             EnabledChanged?.Invoke(this);
         }
@@ -103,6 +104,7 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsNotRunning));
             OnPropertyChanged(nameof(Status));
+            OnPropertyChanged(nameof(PanelAccessibleName));
             OnPropertyChanged(nameof(CanStartStop));
         }
     }
@@ -111,6 +113,9 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
 
     private bool _canEdit = true;
     public string Status => CardTexts.Status(IsRunning, Definition.Enabled);
+
+    /// <summary>The overlay panel row's accessible name: the name and the state ("Spam, Disabled").</summary>
+    public string PanelAccessibleName => AccessibleNames.Join(Name, Status);
 
     /// <summary>Start works only when enabled; a running one can always be stopped.</summary>
     public bool CanStartStop => Definition.Enabled || IsRunning;

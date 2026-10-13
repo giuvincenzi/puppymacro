@@ -39,6 +39,11 @@
                     Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
                 <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
                     <ItemsControl x:Name="ImportItemList" Margin="12,0,12,8" Focusable="False">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
                         <ItemsControl.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>

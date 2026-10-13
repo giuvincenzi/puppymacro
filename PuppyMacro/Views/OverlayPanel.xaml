@@ -64,14 +64,7 @@
                     </DataTemplate>
         <!-- The row's accessible name: the item's name and its state ("Spam, Disabled"), never the view model's class -->
         <Style x:Key="PanelRowContainer" TargetType="ContentPresenter">
-            <Setter Property="AutomationProperties.Name">
-                <Setter.Value>
-                    <MultiBinding StringFormat="{}{0}, {1}">
-                        <Binding Path="Name" />
-                        <Binding Path="Status" />
-                    </MultiBinding>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="AutomationProperties.Name" Value="{Binding PanelAccessibleName}" />
         </Style>
     </UserControl.Resources>
 

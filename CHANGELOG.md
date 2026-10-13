@@ -3,8 +3,9 @@
 ## Unreleased
 
 ### Fixed
-- Screen readers read the loops, macros and remaps in the lists and in the overlay panel by their name (and the
-  panel's ones with their state), not by an internal name.
+- Screen readers read the rows of every list by what they show, not by an internal name: loops, macros and remaps
+  (in the overlay panel with their state), Recent activity and the AI activity, the History, Import and Export, a loop's
+  actions, the steps of an AI app's request and the connected AI apps.
 
 ## 1.17.0
 

@@ -414,6 +414,9 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     private string Point => Fill(Strings.Action_SummaryAt,
         Number(X, 0).ToString("0", CultureInfo.CurrentCulture), Number(Y, 0).ToString("0", CultureInfo.CurrentCulture));
 
+    /// <summary>The loop editor row's accessible name: the title and the summary.</summary>
+    public string AccessibleName => AccessibleNames.Join(Title, Summary);
+
     /// <summary>Under the title: what the action does (and, in a loop, how often).</summary>
     public string Summary
     {
@@ -563,6 +566,10 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     /// <summary>The whole number in a number field, or <paramref name="empty"/> when it is empty.</summary>
     private static double Number(double value, double empty) => double.IsNaN(value) ? empty : Math.Round(value);
 
-    private void Changed([CallerMemberName] string? name = null) =>
+    private void Changed([CallerMemberName] string? name = null)
+    {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        if (name == nameof(Summary))
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AccessibleName)));
+    }
 }
