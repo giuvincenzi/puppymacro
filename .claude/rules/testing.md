@@ -127,7 +127,7 @@ On a pull request or a push to `main`, the `test` workflow's first job, `decide_
 looks once at the changed files and tells which tests can change their result: a file the build of the projects reads,
 a file the tests read while running, or the workflow itself. `unit_test` and the end-to-end groups run only when
 needed; otherwise they are skipped (their Windows machine never starts): a job skipped by its `if` counts as passing
-for a required check, and `e2e_test` passes when the end-to-end tests were not needed. Called by `publish_release` or started by hand (`workflow_dispatch`:
+for a required check, and `e2e_test` passes when the end-to-end tests were not needed. Called by `publish_release` (except `screenshots_test`) or started by hand (`workflow_dispatch`:
 `gh workflow run test.yml --ref <branch>`), every test runs. `unit_test`'s first step,
 `block_version_change`, fails a pull request whose branch is not `release/…` when it changes
 `PuppyMacro/Version.props` (`build-and-release.md`): that file is under `PuppyMacro/`, so such a pull request always
@@ -147,7 +147,8 @@ runs `unit_test`.
 `screenshots_test` takes the release's screenshots as `create_release_pr` does (`scripts/dev.ps1 -Screenshots`, then
 `scripts/screenshots.ps1`, at 1920 x 1080; saved only as an artifact) when `PuppyMacro/**`, `test.yml` or one of
 `scripts/dev.ps1`, `screenshots.ps1`, `screen-resolution.ps1` changes: a change that breaks them fails the pull request
-(`e2e_test` checks its result) instead of the release.
+(`e2e_test` checks its result) instead of the release. Not when `publish_release` calls the tests: the release's screenshots
+were taken by `create_release_pr`, and a machine problem there would block the release for nothing in the app.
 
 Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, Markdown files,
 `LICENSE`, `Makefile`, the other `scripts/`, the other workflows). When the app, a test project or a test
