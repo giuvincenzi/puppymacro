@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.18.0
+
 ### Added
 - Drag a `.puppyitems` file onto PuppyMacro's window to import it: the window shows **Drop to import** and the file's
   name. A backup dragged there only reminds you that it opens from Settings › Backup.
