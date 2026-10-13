@@ -72,6 +72,42 @@ internal static class AiApps
         || (Directory.Exists(Path.Combine(localAppData, "Packages"))
             && Directory.GetDirectories(Path.Combine(localAppData, "Packages"), "Claude_*").Length > 0);
 
+    /// <summary>
+    /// claude.exe, from Claude's own installer (%LocalAppData%\AnthropicClaude) or from the Microsoft Store (app\claude.exe
+    /// in the package's folder, <paramref name="storeFolder"/>); null when not found.
+    /// </summary>
+    public static string? ClaudeExe(string localAppData, string? storeFolder) =>
+        new[]
+        {
+            Path.Combine(localAppData, "AnthropicClaude", "claude.exe"),
+            storeFolder == null ? null : Path.Combine(storeFolder, "app", "claude.exe"),
+        }.FirstOrDefault(File.Exists);
+
+    /// <summary>
+    /// The folder of Claude's Microsoft Store package (under Program Files\WindowsApps, which cannot be listed), asked to
+    /// Windows by the package family name of its data folder (%LocalAppData%\Packages\Claude_…); null when there is none.
+    /// </summary>
+    public static string? ClaudeStoreFolder(string localAppData)
+    {
+        string packages = Path.Combine(localAppData, "Packages");
+        if (!Directory.Exists(packages))
+            return null;
+        var manager = new Windows.Management.Deployment.PackageManager();
+        foreach (string data in Directory.GetDirectories(packages, "Claude_*"))
+        {
+            try
+            {
+                foreach (Windows.ApplicationModel.Package package in manager.FindPackagesForUser(string.Empty, Path.GetFileName(data)))
+                    return package.InstalledLocation.Path;
+            }
+            catch (Exception)
+            {
+                // Windows could not tell (the package is being updated or removed): no folder, as when it is not there.
+            }
+        }
+        return null;
+    }
+
     /// <summary>The file has PuppyMacro's entry with this exe.</summary>
     public static bool ClaudeHas(string configPath, string exe) => HasEntry(configPath, "mcpServers", exe);
 
