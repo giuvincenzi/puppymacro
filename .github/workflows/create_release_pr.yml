@@ -1,9 +1,11 @@
 # Creates the release pull request, on a GitHub Windows machine: the next version, the CHANGELOG section, the version
 # in PuppyMacro/Version.props and the guide's and the home page's screenshots, on the branch release/X.Y.Z, then the
-# pull request "Release X.Y.Z" with the tests started on it. Merging that pull request publishes the release
-# (publish_release). Started only by hand: Actions > create_release_pr > Run workflow on main, or
-# `gh workflow run create_release_pr.yml --ref main` (what Claude runs when asked to prepare the release pull request).
+# pull request "Release X.Y.Z". Merging that pull request publishes the release (publish_release). Started only by
+# hand: Actions > create_release_pr > Run workflow on main, or `gh workflow run create_release_pr.yml --ref main` (what
+# Claude runs when asked to prepare the release pull request).
 # Needs the repository setting "Allow GitHub Actions to create and approve pull requests" (build-and-release.md).
+# The pull request is opened by github-actions[bot], so GitHub holds its test workflow until a maintainer approves it
+# ("Approve workflows to run", or Claude through the API when the user asked it for the release pull request).
 name: create_release_pr
 
 on:
@@ -12,7 +14,6 @@ on:
 permissions:
   contents: write        # the branch release/X.Y.Z
   pull-requests: write   # the pull request
-  actions: write         # the test workflow started on it
 
 concurrency:
   group: create_release_pr
@@ -94,13 +95,11 @@ jobs:
             echo "Merging this pull request publishes PuppyMacro $VERSION (publish_release): the signed installer, the GitHub"
             echo "Release, the tag v$VERSION and the website. The guide's and the home page's screenshots are retaken."
             echo
+            echo "The tests wait for a maintainer: this pull request was opened by github-actions[bot], so press"
+            echo "\"Approve workflows to run\" below (or ask Claude, which approves them through the API)."
+            echo
             cat "$RUNNER_TEMP/entries.md"
           } > "$RUNNER_TEMP/message.md"
           git commit --quiet --file "$RUNNER_TEMP/message.md"
           git push --quiet origin "$branch"
           gh pr create --base main --head "$branch" --title "Release $VERSION" --body-file "$RUNNER_TEMP/message.md"
-
-      # A pull request opened with the workflow's token starts no workflow: the tests are started on its branch.
-      - name: start_tests_on_pr
-        shell: bash
-        run: gh workflow run test.yml --ref "release/${{ steps.next.outputs.version }}"

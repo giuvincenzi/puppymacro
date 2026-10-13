@@ -48,8 +48,10 @@ loop, macro, remap, setting, History, AI activity and log. So, for every change 
   which the project would have to host and secure. Not planned. PuppyMacro has no AI of its own and no API keys.
 - AI apps cannot start or test loops and macros: the input would go to the window in front, usually the AI chat.
 - Releases are made only on GitHub: "prepare the release pull request" means starting the `create_release_pr`
-  workflow (`gh workflow run create_release_pr.yml --ref main`), waiting for it and giving the pull request's link;
-  merging that pull request publishes the release (`build-and-release.md`). No release step runs on a contributor's PC.
+  workflow, waiting for it, approving the release pull request's tests as the user (its workflows wait for a
+  maintainer, as `github-actions[bot]` opened it), waiting for them and giving the pull request's link
+  (`build-and-release.md`, "When the user asks Claude for the release pull request"). Merging it publishes the release:
+  only with the user's OK. No release step runs on a contributor's PC.
 - Sharing loops, macros and remaps (`.puppyitems` files: Import and Export in the title bar) and the backup
   (Settings > Backup) stay two separate features: sharing only adds items, the backup replaces the data. A backup
   opens only from Settings, never with a double-click in File Explorer.

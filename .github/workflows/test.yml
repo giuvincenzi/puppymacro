@@ -2,8 +2,7 @@
 # never take over a contributor's desktop. The required checks for merging into main are unit_test and e2e_test.
 # Starts on:
 #   - every pull request (each push to its branch) and every push to main;
-#   - workflow_dispatch: create_release_pr starts it on the release pull request's branch (a pull request opened by a
-#     workflow starts no workflow by itself); also `gh workflow run test.yml --ref <branch>`;
+#   - workflow_dispatch: `gh workflow run test.yml --ref <branch>`, to run the tests on a branch;
 #   - workflow_call: publish_release runs it before publishing (job run_tests).
 # decide_which_tests_run looks once at the changed files and tells which tests can change their result (the lists and why:
 # testing.md); a test job that is not needed is skipped, and a skipped job counts as passing for a required check.
