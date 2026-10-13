@@ -831,7 +831,7 @@ public class AppTests
     public void A_remap_whose_hotkey_is_taken_comes_in_without_one_and_its_card_says_so()
     {
         using var app = new AppSession();
-        // Caps Lock is the source of a sample remap: this one, to F24, comes in without it.
+        // CapsLock is the source of a sample remap: this one, to F24, comes in without it.
         string file = Path.Combine(Path.GetTempPath(), $"E2E remap {Guid.NewGuid():N}.puppyitems");
         File.WriteAllText(file, """
             { "Format": 1, "App": "1.17.0", "Items": [
@@ -842,7 +842,7 @@ public class AppTests
             OpenFromFileExplorer(file);
 
             Button import = app.FindButton(app.MainWindow, "Import 1 item");
-            Assert.True(app.Has(app.MainWindow, "Caps Lock is already remapped for all apps, so this comes in without a hotkey."));
+            Assert.True(app.Has(app.MainWindow, "CapsLock is already remapped for all apps, so this comes in without a hotkey."));
             import.Invoke();
 
             // The Remap page opens on it: no hotkey, what to do, its switch off.
