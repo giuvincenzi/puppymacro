@@ -84,7 +84,8 @@
   use the PC meanwhile, and their input can make the tests fail. Unit tests (`make test`) run
   in the background and can be run any time.
 - Find controls by their UI text (`Find`) or by `x:Name` (`FindById`). Wait with `Retry` and
-  check `.Success`, never fixed sleeps. Other `AppSession` helpers: `GoTo` (a side rail page),
+  check `.Success`, never fixed sleeps. A UI Automation timeout ("Operation timed out", PuppyMacro's UI thread busy) is
+  one more try, not a failure (`AppSession.NotYet`, in the helpers that look for an element or a window). Other `AppSession` helpers: `GoTo` (a side rail page),
   `Expand` (a Settings `SettingsExpander` by `x:Name`, through its `ExpanderToggleButton`: it has
   no ExpandCollapse pattern), `CardButton` / `EditItem` (a list card's buttons), `Dialog` (an
   editor or dialog: while an editor is open the main window is hidden, so it is searched among

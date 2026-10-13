@@ -103,9 +103,30 @@ public sealed class AppSession : IDisposable
 
     public int ProcessId => _app.ProcessId;
 
+    /// <summary>UIA_E_TIMEOUT: UI Automation got no answer from the window in time.</summary>
+    private const int UiaTimeout = unchecked((int)0x80131505);
+
+    /// <summary>
+    /// <paramref name="find"/>, or null when UI Automation timed out (<see cref="UiaTimeout"/>): PuppyMacro's UI thread was
+    /// busy, for example building a window, so the helpers below look again at their next try, until their own timeout. A
+    /// test failed with "Operation timed out" while the editor it waited for was already on the screen. Any other error
+    /// still fails the test.
+    /// </summary>
+    private static T? NotYet<T>(Func<T?> find) where T : class
+    {
+        try
+        {
+            return find();
+        }
+        catch (System.Runtime.InteropServices.COMException ex) when (ex.HResult == UiaTimeout)
+        {
+            return null;
+        }
+    }
+
     public AutomationElement Find(AutomationElement root, string name)
     {
-        AutomationElement? found = Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name)), Timeout).Result;
+        AutomationElement? found = Retry.WhileNull(() => NotYet(() => root.FindFirstDescendant(cf => cf.ByName(name))), Timeout).Result;
         return found ?? throw new TimeoutException($"\"{name}\" not found. {Describe(root)}");
     }
 
@@ -125,15 +146,15 @@ public sealed class AppSession : IDisposable
 
     /// <summary>A button by its name (a text with the same words is skipped).</summary>
     public Button FindButton(AutomationElement root, string name) =>
-        Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))),
+        Retry.WhileNull(() => NotYet(() => root.FindFirstDescendant(cf => cf.ByName(name).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button)))),
             Timeout, throwOnTimeout: true, timeoutMessage: $"button \"{name}\" not found").Result!.AsButton();
 
     public AutomationElement FindById(AutomationElement root, string automationId) =>
-        Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByAutomationId(automationId)), Timeout, throwOnTimeout: true,
+        Retry.WhileNull(() => NotYet(() => root.FindFirstDescendant(cf => cf.ByAutomationId(automationId))), Timeout, throwOnTimeout: true,
             timeoutMessage: $"\"{automationId}\" not found").Result!;
 
     public bool Has(AutomationElement root, string name) =>
-        Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name)), TimeSpan.FromSeconds(3)).Result != null;
+        Retry.WhileNull(() => NotYet(() => root.FindFirstDescendant(cf => cf.ByName(name))), TimeSpan.FromSeconds(3)).Result != null;
 
     /// <summary>
     /// An overlay panel row by its item's name, or null after <paramref name="seconds"/>. The row's accessible name is
@@ -198,8 +219,8 @@ public sealed class AppSession : IDisposable
     /// editors are looked for among this PuppyMacro's top-level windows, not as children of the main window.
     /// </summary>
     public Window Dialog(string title) =>
-        Retry.WhileNull(() => Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId))
-                .FirstOrDefault(w => HasTitle(w.Name, title))?.AsWindow(),
+        Retry.WhileNull(() => NotYet(() => Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId))
+                .FirstOrDefault(w => HasTitle(w.Name, title))?.AsWindow()),
             Timeout, throwOnTimeout: true, timeoutMessage: $"window \"{title}\" not found").Result!;
 
     /// <summary>The window title is <paramref name="title"/>, or it followed by " - " and what the window edits.</summary>
@@ -208,9 +229,9 @@ public sealed class AppSession : IDisposable
 
     /// <summary>An item of an open menu (a menu is a top-level window of its own) of this PuppyMacro.</summary>
     public AutomationElement MenuItem(string name) =>
-        Retry.WhileNull(() => Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId))
+        Retry.WhileNull(() => NotYet(() => Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId))
                 .Select(w => w.FindFirstDescendant(cf => cf.ByName(name).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.MenuItem))))
-                .FirstOrDefault(i => i != null),
+                .FirstOrDefault(i => i != null)),
             Timeout, throwOnTimeout: true, timeoutMessage: $"menu item \"{name}\" not found").Result!;
 
     /// <summary>A top-level window of this PuppyMacro (overlay panel, floating buttons), or null after a timeout.</summary>
