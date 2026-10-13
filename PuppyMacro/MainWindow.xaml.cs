@@ -24,6 +24,7 @@ using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
 using NumberBoxValueChangedEventArgs = iNKORE.UI.WPF.Modern.Controls.NumberBoxValueChangedEventArgs;
 using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
 using SettingsExpander = iNKORE.UI.WPF.Modern.Controls.SettingsExpander;
+using ToggleSwitch = iNKORE.UI.WPF.Modern.Controls.ToggleSwitch;
 
 namespace PuppyMacro;
 
@@ -484,6 +485,8 @@ public partial class MainWindow
         };
         moveDown.Click += (_, _) => MoveItem(item, index + 1);
 
+        var duplicate = new MenuItem { Header = Strings.Card_Duplicate, Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
+        duplicate.Click += (_, _) => DuplicateLoop(item);
         var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload } };
         export.Click += (_, _) => ExportOne(item.Definition);
         var menu = new ContextMenu
@@ -491,6 +494,9 @@ public partial class MainWindow
             PlacementTarget = button,
             Placement = PlacementMode.Bottom,
         };
+        menu.Items.Add(EditMenuItem(item));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(duplicate);
         menu.Items.Add(export);
         menu.Items.Add(new Separator());
         menu.Items.Add(moveUp);
@@ -703,7 +709,12 @@ public partial class MainWindow
         var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
+        var duplicate = new MenuItem { Header = Strings.Card_Duplicate, Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
+        duplicate.Click += (_, _) => DuplicateMacro(item);
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
+        menu.Items.Add(EditMenuItem(item));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(duplicate);
         menu.Items.Add(export);
         menu.Items.Add(new Separator());
         menu.Items.Add(moveUp);
@@ -902,7 +913,7 @@ public partial class MainWindow
     {
         while (source != null && !ReferenceEquals(source, card))
         {
-            if (source is ButtonBase or TextBox or ComboBox or Slider)
+            if (source is ButtonBase or TextBox or ComboBox or Slider or ToggleSwitch)
                 return true;
             source = source is Visual or System.Windows.Media.Media3D.Visual3D
                 ? VisualTreeHelper.GetParent(source)
@@ -1656,9 +1667,20 @@ public partial class MainWindow
         var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
+        int index = _remapItems.IndexOf(item);
+        var moveUp = new MenuItem { Header = Strings.Card_MoveUp, Icon = new FontIcon { Icon = SegoeFluentIcons.Up }, IsEnabled = index > 0 };
+        moveUp.Click += (_, _) => MoveRemap(item, index - 1);
+        var moveDown = new MenuItem { Header = Strings.Card_MoveDown, Icon = new FontIcon { Icon = SegoeFluentIcons.Down }, IsEnabled = index < _remapItems.Count - 1 };
+        moveDown.Click += (_, _) => MoveRemap(item, index + 1);
+
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
+        menu.Items.Add(EditMenuItem(item));
+        menu.Items.Add(new Separator());
         menu.Items.Add(duplicate);
         menu.Items.Add(export);
+        menu.Items.Add(new Separator());
+        menu.Items.Add(moveUp);
+        menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
         menu.Items.Add(delete);
         menu.IsOpen = true;
@@ -1686,6 +1708,76 @@ public partial class MainWindow
     {
         item.Definition.CopyFrom(result);
         item.Refresh();
+        RefreshRemaps();
+        Save();
+    }
+
+    /// <summary>
+    /// More options › Edit, its first command: the item's editor, as a click on it (loops and macros not while one runs).
+    /// </summary>
+    private MenuItem EditMenuItem(object item)
+    {
+        var edit = new MenuItem
+        {
+            Header = Strings.Card_Edit,
+            Icon = new FontIcon { Icon = SegoeFluentIcons.Edit },
+            IsEnabled = item is RemapItemViewModel || !_engine.AnyRunning,
+        };
+        edit.Click += (_, _) => OpenItem(item);
+        return edit;
+    }
+
+    /// <summary>
+    /// More options › Duplicate of a loop: a copy right under it, "Name (2)", disabled and without a hotkey (two loops cannot
+    /// have the same one; a Hold copy becomes Toggle, as Hold needs a hotkey), ready to be edited.
+    /// </summary>
+    private void DuplicateLoop(LoopItemViewModel item)
+    {
+        if (_engine.AnyRunning)
+            return;
+        var copy = item.Definition.Clone();
+        copy.Id = Guid.NewGuid();
+        copy.Name = ItemNames.Copy(copy.Name, _settings.Loops.Select(l => l.Name));
+        copy.Enabled = false;
+        copy.Hotkey = null;
+        if (copy.Mode == ActivationMode.Hold)
+            copy.Mode = ActivationMode.Toggle;
+        _settings.Loops.Insert(_settings.Loops.IndexOf(item.Definition) + 1, copy);
+        _items.Insert(_items.IndexOf(item) + 1, CreateItem(copy));
+        RefreshList();
+        _overlayPanelWindow.RefreshList();
+        Save();
+    }
+
+    /// <summary>More options › Duplicate of a macro: as a loop's (<see cref="DuplicateLoop"/>).</summary>
+    private void DuplicateMacro(MacroItemViewModel item)
+    {
+        if (_engine.AnyRunning)
+            return;
+        var copy = item.Definition.Clone();
+        copy.Id = Guid.NewGuid();
+        copy.Name = ItemNames.Copy(copy.Name, _macros.Macros.Select(m => m.Name));
+        copy.Enabled = false;
+        copy.Hotkey = null;
+        if (copy.Mode == ActivationMode.Hold)
+            copy.Mode = ActivationMode.Toggle;
+        _macros.Macros.Insert(_macros.Macros.IndexOf(item.Definition) + 1, copy);
+        _macroItems.Insert(_macroItems.IndexOf(item) + 1, CreateMacroItem(copy));
+        SaveMacro(copy);
+        SaveMacroOrder();
+        RefreshMacros();
+        _overlayPanelWindow.RefreshList();
+    }
+
+    /// <summary>More options › Move up / Move down of a remap, as a loop's (<see cref="MoveItem"/>).</summary>
+    private void MoveRemap(RemapItemViewModel item, int newIndex)
+    {
+        int oldIndex = _remapItems.IndexOf(item);
+        newIndex = Math.Clamp(newIndex, 0, _remapItems.Count - 1);
+        if (oldIndex < 0 || oldIndex == newIndex)
+            return;
+        _remapItems.Move(oldIndex, newIndex);
+        _settings.Remaps = _remapItems.Select(r => r.Definition).ToList();
         RefreshRemaps();
         Save();
     }

@@ -2,18 +2,19 @@
     x:Class="PuppyMacro.Views.KeyCaptureField"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PuppyMacro.Views"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern">
 
     <!-- The one field that asks the user for a key or a hotkey, on one line in three states:
          nothing set: "Set hotkey"; waiting: a turning ring and "Press … (Esc cancels)";
-         set: the keys in the accent color (AccentKeyCapItem, App.xaml) in a SplitButton (click: change; its menu:
+         set: the keys in the accent color (KeyCaps with Accent) in a SplitButton (click: change; its menu:
          Change, Clear where the key can be removed, and the side of each Ctrl, Alt, Shift and Win it holds). -->
     <Grid>
         <!-- Always the same height, whichever state it shows (Set, waiting, the keys), so nothing around it moves:
              an invisible standard button holding an accent key (the tallest state), 0 wide, sets the height -->
         <Button Width="0" Visibility="Hidden" Focusable="False" IsTabStop="False">
-            <ItemsControl ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" ItemsSource="A" />
+            <local:KeyCaps Keys="A" Accent="True" />
         </Button>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <!-- Set hotkey / Set key: the Bullseye icon, as every button that waits for something you press or picks something -->
@@ -31,8 +32,7 @@
 
             <Grid x:Name="ValuePanel" VerticalAlignment="Center" Visibility="Collapsed">
                 <ui:SplitButton x:Name="ValueSplit" Click="OnValueSplitClick">
-                    <ItemsControl x:Name="SplitCaps" Focusable="False"
-                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+                    <local:KeyCaps x:Name="SplitCaps" Accent="True" />
                     <ui:SplitButton.Flyout>
                         <ui:MenuFlyout x:Name="ValueMenu" Placement="Bottom">
                             <MenuItem x:Name="ChangeItem" Click="OnSetClick">

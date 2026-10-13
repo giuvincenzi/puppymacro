@@ -1153,17 +1153,17 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>فتح "استيراد"</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>فتح "تصدير"</value></data>
   <data name="Share_Import" xml:space="preserve"><value>استيراد</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>استيراد…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>استيراد</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>إضافة حلقات ووحدات ماكرو وعمليات إعادة تعيين من ملف</value></data>
   <data name="Share_Export" xml:space="preserve"><value>تصدير</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>تصدير…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>تصدير</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>أفلِت للاستيراد</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>استعد هذه النسخة الاحتياطية من الإعدادات</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>تؤدي استعادة نسخة احتياطية إلى استبدال كل الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات لديك. يمكنك القيام بذلك من {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>فتح الإعدادات</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>إغلاق</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>حفظ الحلقات ووحدات الماكرو وعمليات إعادة التعيين في ملف لمشاركتها</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>تصدير…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>تصدير</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>عناصر PuppyMacro (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>استيراد الحلقات ووحدات الماكرو وعمليات إعادة التعيين</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>تصدير الحلقات ووحدات الماكرو وعمليات إعادة التعيين</value></data>
@@ -1217,7 +1217,6 @@
   <data name="Table_WhatItDoes" xml:space="preserve"><value>ما يفعله</value></data>
   <data name="Table_Hotkey" xml:space="preserve"><value>مفتاح التشغيل السريع</value></data>
   <data name="Table_WorksIn" xml:space="preserve"><value>يعمل في</value></data>
-  <data name="Table_State" xml:space="preserve"><value>الحالة</value></data>
   <data name="Table_Note" xml:space="preserve"><value>ملاحظة</value></data>
   <data name="Table_From" xml:space="preserve"><value>من</value></data>
   <data name="Table_To" xml:space="preserve"><value>إلى</value></data>
@@ -1225,4 +1224,6 @@
   <data name="Main_ViewList" xml:space="preserve"><value>قائمة</value></data>
   <data name="Main_ViewTable" xml:space="preserve"><value>جدول</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>شبكة</value></data>
+  <data name="Table_State" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>تحرير</value></data>
 </root>

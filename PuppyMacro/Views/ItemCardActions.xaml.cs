@@ -19,6 +19,7 @@ public partial class ItemCardActions : UserControl
     public static readonly DependencyProperty CanPlayProperty = Register(nameof(CanPlay), true);
     public static readonly DependencyProperty CanMoreProperty = Register(nameof(CanMore), true);
     public static readonly DependencyProperty CanSwitchProperty = Register(nameof(CanSwitch), true);
+    public static readonly DependencyProperty ShowSwitchProperty = Register(nameof(ShowSwitch), true);
 
     public static readonly DependencyProperty IsOnProperty = DependencyProperty.Register(
         nameof(IsOn), typeof(bool), typeof(ItemCardActions),
@@ -48,6 +49,9 @@ public partial class ItemCardActions : UserControl
     /// <summary>The Enabled switch can be used (not on a remap without a hotkey: it can't be turned on).</summary>
     public bool CanSwitch { get => (bool)GetValue(CanSwitchProperty); set => SetValue(CanSwitchProperty, value); }
 
+    /// <summary>The Enabled switch is here (a grid tile has it at its top right instead).</summary>
+    public bool ShowSwitch { get => (bool)GetValue(ShowSwitchProperty); set => SetValue(ShowSwitchProperty, value); }
+
     /// <summary>The Enabled switch.</summary>
     public bool IsOn { get => (bool)GetValue(IsOnProperty); set => SetValue(IsOnProperty, value); }
 
@@ -71,6 +75,7 @@ public partial class ItemCardActions : UserControl
         PlayButton.IsEnabled = CanPlay;
         MoreButton.IsEnabled = CanMore;
         EnabledSwitch.IsEnabled = CanSwitch;
+        EnabledSwitch.Visibility = ShowSwitch ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void OnPlayClick(object sender, RoutedEventArgs e) => PlayClick?.Invoke(sender, e);

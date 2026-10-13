@@ -41,8 +41,24 @@
             <WrapPanel ItemWidth="{Binding Tag, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
         </ItemsPanelTemplate>
 
-        <!-- List and Grid: a title per app (All apps first), as the sections of Windows Settings; only when the page has more than one -->
+        <!-- List and Grid: a title per app (All apps first), as the sections of Windows Settings; only when the page has more than
+             one. Only the title and the items: the library's GroupItem puts the title in a ListViewHeaderItem, which draws a
+             line under it (not in the approved design; the user's choice). -->
         <GroupStyle x:Key="AppGroups" x:Shared="False">
+            <GroupStyle.ContainerStyle>
+                <Style TargetType="GroupItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="GroupItem">
+                                <StackPanel>
+                                    <ContentPresenter />
+                                    <ItemsPresenter />
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </GroupStyle.ContainerStyle>
             <GroupStyle.HeaderTemplate>
                 <DataTemplate>
                     <StackPanel Margin="0,12,0,8" Orientation="Horizontal">
@@ -60,6 +76,14 @@
         </Style>
         <Style x:Key="TableRow" TargetType="ListViewItem" BasedOn="{StaticResource {x:Static GridView.GridViewItemContainerStyleKey}}">
             <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+            <!-- A GridView's cells follow these: stretched, every cell has the row's height and centers its content in it -->
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <!-- A table (approved design B): the rows touch (the library's GridView rows are 4 px apart) and are square, from one
+                 side of the card to the other; the card clips them at its rounded corners -->
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="ui:ControlHelper.CornerRadius" Value="0" />
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnTableRowPress" />
             <EventSetter Event="MouseLeftButtonUp" Handler="OnTableRowClick" />
             <EventSetter Event="KeyDown" Handler="OnTableRowKeyDown" />
             <Style.Triggers>
@@ -83,10 +107,9 @@
         <!-- A loop's or macro's hotkey as key caps, or "No hotkey" -->
         <DataTemplate x:Key="ItemKeys">
             <StackPanel Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Static r:Strings.Card_NoHotkey}"
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap" Text="{x:Static r:Strings.Card_NoHotkey}"
                            Visibility="{Binding HasNoHotkey, Converter={StaticResource BoolToVisibility}}" />
-                <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding HotkeyParts}"
-                              ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+                <views:KeyCaps VerticalAlignment="Center" Keys="{Binding HotkeyParts}" Size="Small" />
             </StackPanel>
         </DataTemplate>
 
@@ -94,9 +117,7 @@
              without one (data.md), the reason in its tooltip -->
         <DataTemplate x:Key="RemapSourceKeys">
             <Grid>
-                <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding SourceParts}"
-                              ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}"
-                              Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" />
+                <views:KeyCaps VerticalAlignment="Center" Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" Keys="{Binding SourceParts}" Size="Small" />
                 <StackPanel Orientation="Horizontal" Background="Transparent" ToolTip="{x:Static r:Strings.Remaps_NoHotkeyHint}"
                             Visibility="{Binding HasNoSource, Converter={StaticResource BoolToVisibility}}">
                     <ui:FontIcon Margin="0,0,6,0" VerticalAlignment="Center" FontSize="12" Icon="{x:Static ui:SegoeFluentIcons.Warning}"
@@ -107,8 +128,7 @@
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="RemapTargetKeys">
-            <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding TargetParts}"
-                          ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+            <views:KeyCaps VerticalAlignment="Center" Keys="{Binding TargetParts}" Size="Small" />
         </DataTemplate>
         <DataTemplate x:Key="RemapKeys">
             <StackPanel Orientation="Horizontal">
@@ -133,7 +153,7 @@
         <DataTemplate x:Key="ItemStatus">
             <StackPanel Orientation="Horizontal">
                 <ContentPresenter Margin="0,0,8,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatusDot}" />
-                <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding Status}" />
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding Status}" TextWrapping="NoWrap" />
             </StackPanel>
         </DataTemplate>
 
@@ -177,30 +197,47 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <!-- Grid: a loop or a macro as a tile; the name on up to two lines, its state under it, the keys and buttons at the
-             bottom. The accent line where a dragged tile goes is on its left or right side. -->
+        <!-- Grid: a loop or a macro as a tile (approved design C): the icon in the accent color, the name on up to two lines
+             (always two lines high, so every tile is as tall) and the switch on top; the keys, the state, Play / Stop and More
+             options at the bottom. A SettingsCard with only its content: the card's background, border, hover and click are the
+             library's. The accent line where a dragged tile goes is on its left or right side. -->
         <DataTemplate x:Key="ItemTile">
             <Grid Margin="0,0,8,8">
                 <ui:SettingsCard x:Name="Card" AllowDrop="True" Tag="{Binding}" IsClickEnabled="{Binding CanEdit}" IsActionIconVisible="False"
                                  ContentAlignment="Vertical" AutomationProperties.Name="{Binding AccessibleName}" Click="OnItemClick"
                                  PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
                                  DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ContentControl x:Name="TypeIcon" Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource ItemTypeIcon}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:SettingsCard.Header>
-                        <!-- Always two lines high, so every tile is as tall -->
-                        <TextBlock x:Name="NameText" Height="40" LineHeight="20" LineStackingStrategy="BlockLineHeight" TextWrapping="Wrap"
-                                   TextTrimming="CharacterEllipsis" Text="{Binding Name}" ToolTip="{Binding Name}" />
-                    </ui:SettingsCard.Header>
-                    <ui:SettingsCard.Description>
-                        <ContentPresenter x:Name="StatusPart" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
-                    </ui:SettingsCard.Description>
-                    <DockPanel>
-                        <views:ItemCardActions DockPanel.Dock="Right" IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}" CanPlay="{Binding CanStartStop}"
-                                               CanMore="{Binding IsNotRunning}" IsOn="{Binding IsLoopEnabled}" PlayClick="OnItemPlayClick" MoreClick="OnItemMoreClick" />
-                        <ContentPresenter x:Name="KeysPart" Margin="0,0,8,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemKeys}" />
-                    </DockPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- The icon, 20 px, centered on the name's first line (22 px high) -->
+                        <Grid Height="22" Margin="0,0,14,0" VerticalAlignment="Top">
+                            <Viewbox Width="20" Height="20" VerticalAlignment="Center">
+                                <ContentControl x:Name="TypeIcon" Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource ItemTypeIcon}"
+                                                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                            </Viewbox>
+                        </Grid>
+                        <TextBlock x:Name="NameText" Grid.Column="1" Height="44" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="16" LineHeight="22"
+                                   LineStackingStrategy="BlockLineHeight" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                                   Text="{Binding Name}" ToolTip="{Binding Name}" />
+                        <ui:ToggleSwitch Grid.Column="2" Margin="12,0,0,0" MinWidth="0" VerticalAlignment="Top" OnContent="" OffContent=""
+                                         AutomationProperties.Name="{x:Static r:Strings.Card_Enabled}" IsOn="{Binding IsLoopEnabled, Mode=TwoWay}" />
+                        <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,20,0,0">
+                            <views:ItemCardActions DockPanel.Dock="Right" ShowSwitch="False" IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}"
+                                                   CanPlay="{Binding CanStartStop}" CanMore="{Binding IsNotRunning}" PlayClick="OnItemPlayClick" MoreClick="OnItemMoreClick" />
+                            <StackPanel x:Name="KeysPart" VerticalAlignment="Center" Orientation="Horizontal">
+                                <ContentPresenter Margin="0,0,12,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemKeys}" />
+                                <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Grid>
                 </ui:SettingsCard>
                 <Border Width="3" Margin="-6,0,0,0" HorizontalAlignment="Left" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
                         Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
@@ -209,9 +246,8 @@
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
-                    <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                     <Setter TargetName="NameText" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                    <Setter TargetName="StatusPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                     <Setter TargetName="KeysPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsDragging}" Value="True">
@@ -246,77 +282,96 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <!-- Grid: a remap as a tile -->
+        <!-- Grid: a remap as a tile, as a loop's: its note (or its keys) and the switch on top; its keys from → to, its state
+             and More options at the bottom -->
         <DataTemplate x:Key="RemapTile">
             <ui:SettingsCard Margin="0,0,8,8" Tag="{Binding}" IsClickEnabled="True" IsActionIconVisible="False" ContentAlignment="Vertical"
                              AutomationProperties.Name="{Binding AccessibleName}" Click="OnItemClick">
-                <ui:SettingsCard.HeaderIcon>
-                    <ui:FontIcon x:Name="TypeIcon" Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
-                </ui:SettingsCard.HeaderIcon>
-                <ui:SettingsCard.Header>
-                    <TextBlock x:Name="NameText" Height="40" LineHeight="20" LineStackingStrategy="BlockLineHeight" TextWrapping="Wrap"
-                               TextTrimming="CharacterEllipsis" Text="{Binding Title}" ToolTip="{Binding Title}" />
-                </ui:SettingsCard.Header>
-                <ui:SettingsCard.Description>
-                    <ContentPresenter x:Name="StatusPart" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
-                </ui:SettingsCard.Description>
-                <DockPanel>
-                    <views:ItemCardActions DockPanel.Dock="Right" ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}" MoreClick="OnItemMoreClick" />
-                    <ContentPresenter x:Name="KeysPart" Margin="0,0,8,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapKeys}" />
-                </DockPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Height="22" Margin="0,0,14,0" VerticalAlignment="Top">
+                        <ui:FontIcon x:Name="TypeIcon" VerticalAlignment="Center" FontSize="20" Icon="{x:Static ui:SegoeFluentIcons.Switch}"
+                                     Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                    </Grid>
+                    <TextBlock x:Name="NameText" Grid.Column="1" Height="44" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="16" LineHeight="22"
+                               LineStackingStrategy="BlockLineHeight" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                               Text="{Binding Title}" ToolTip="{Binding Title}" />
+                    <ui:ToggleSwitch Grid.Column="2" Margin="12,0,0,0" MinWidth="0" VerticalAlignment="Top" OnContent="" OffContent=""
+                                     IsEnabled="{Binding HasSource}" AutomationProperties.Name="{x:Static r:Strings.Card_Enabled}"
+                                     IsOn="{Binding IsLoopEnabled, Mode=TwoWay}" />
+                    <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,20,0,0">
+                        <views:ItemCardActions DockPanel.Dock="Right" ShowPlay="False" ShowSwitch="False" MoreClick="OnItemMoreClick" />
+                        <StackPanel x:Name="KeysPart" VerticalAlignment="Center" Orientation="Horizontal">
+                            <ContentPresenter Margin="0,0,12,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapKeys}" />
+                            <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                        </StackPanel>
+                    </DockPanel>
+                </Grid>
             </ui:SettingsCard>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
-                    <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                     <Setter TargetName="NameText" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                    <Setter TargetName="StatusPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                     <Setter TargetName="KeysPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <!-- Table: the columns of loops and macros (each ListView its own copy). MainWindow.Lists.cs sizes them: the keys and
-             State as wide as their longest content, Works in up to two lines, Name and What it does the rest. -->
-        <GridView x:Key="ItemColumns" x:Shared="False">
+        <Style x:Key="TableHeader" TargetType="GridViewColumnHeader" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+        </Style>
+
+        <!-- Table: the columns of loops and macros (each ListView its own copy): Name, Hotkey second (the user's choice), What
+             it does, Works in, State, the buttons. MainWindow.Lists.cs sizes them. -->
+        <GridView x:Key="ItemColumns" x:Shared="False" AllowsColumnReorder="False" ColumnHeaderContainerStyle="{StaticResource TableHeader}">
             <GridViewColumn Width="44">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <ContentControl Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource ItemTypeIcon}" />
+                        <ContentControl VerticalAlignment="Center" Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource ItemTypeIcon}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="{x:Static r:Strings.Table_Name}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
-                    </DataTemplate>
-                </GridViewColumn.CellTemplate>
-            </GridViewColumn>
-            <GridViewColumn Header="{x:Static r:Strings.Table_WhatItDoes}">
-                <GridViewColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding Summary}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Summary}" />
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="{x:Static r:Strings.Table_Hotkey}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding HotkeyParts}"
-                                          ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
-                            <TextBlock Margin="2,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Static r:Strings.Card_Hold}"
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <views:KeyCaps VerticalAlignment="Center" Keys="{Binding HotkeyParts}" Size="Small" />
+                            <TextBlock Margin="2,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap" Text="{x:Static r:Strings.Card_Hold}"
                                        Visibility="{Binding IsHoldWithHotkey, Converter={StaticResource BoolToVisibility}}" />
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Static r:Strings.Card_NoHotkey}"
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap" Text="{x:Static r:Strings.Card_NoHotkey}"
                                        Visibility="{Binding HasNoHotkey, Converter={StaticResource BoolToVisibility}}" />
                         </StackPanel>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_WhatItDoes}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding Summary}" TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding Summary}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="{x:Static r:Strings.Table_WorksIn}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <TextBlock MaxHeight="32" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding GroupName}" TextWrapping="Wrap"
+                        <TextBlock VerticalAlignment="Center" MaxHeight="32" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding GroupName}" TextWrapping="Wrap"
                                    TextTrimming="CharacterEllipsis" ToolTip="{Binding GroupName}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
@@ -324,14 +379,14 @@
             <GridViewColumn Header="{x:Static r:Strings.Table_State}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                        <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn>
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <views:ItemCardActions IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}" CanPlay="{Binding CanStartStop}"
+                        <views:ItemCardActions VerticalAlignment="Center" IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}" CanPlay="{Binding CanStartStop}"
                                                CanMore="{Binding IsNotRunning}" IsOn="{Binding IsLoopEnabled}" PlayClick="OnItemPlayClick" MoreClick="OnItemMoreClick" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
@@ -339,39 +394,39 @@
         </GridView>
 
         <!-- Table: the columns of remaps -->
-        <GridView x:Key="RemapColumns" x:Shared="False">
+        <GridView x:Key="RemapColumns" x:Shared="False" AllowsColumnReorder="False" ColumnHeaderContainerStyle="{StaticResource TableHeader}">
             <GridViewColumn Width="44">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
+                        <ui:FontIcon VerticalAlignment="Center" Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="{x:Static r:Strings.Table_Note}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Title}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="{x:Static r:Strings.Table_From}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource RemapSourceKeys}" />
+                        <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapSourceKeys}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="{x:Static r:Strings.Table_To}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource RemapTargetKeys}" />
+                        <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapTargetKeys}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="{x:Static r:Strings.Table_WorksIn}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <TextBlock MaxHeight="32" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding GroupName}" TextWrapping="Wrap"
+                        <TextBlock VerticalAlignment="Center" MaxHeight="32" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding GroupName}" TextWrapping="Wrap"
                                    TextTrimming="CharacterEllipsis" ToolTip="{Binding GroupName}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
@@ -379,14 +434,14 @@
             <GridViewColumn Header="{x:Static r:Strings.Table_State}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                        <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn>
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <views:ItemCardActions ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}" MoreClick="OnItemMoreClick" />
+                        <views:ItemCardActions VerticalAlignment="Center" ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}" MoreClick="OnItemMoreClick" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
@@ -400,8 +455,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon, name and More options (Import…,
-             Export…) on the left, Enter overlay mode and Stop all on the right before the window buttons drawn by the library (as
+        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon, name and More options (Import,
+             Export) on the left, Enter overlay mode and Stop all on the right before the window buttons drawn by the library (as
              its ButtonsOnTitlebar sample) ================= -->
         <!-- Left to right in every language: the window buttons the library draws stay on the right (i18n.md) -->
         <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}"
@@ -422,7 +477,7 @@
                     <Run Text="PuppyMacro" />
                     <Run x:Name="DevBuildRun" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                 </TextBlock>
-                <!-- More options: Import… and Export… of loops, macros and remaps as .puppyitems files (MainWindow.Share.cs; not
+                <!-- More options: Import and Export of loops, macros and remaps as .puppyitems files (MainWindow.Share.cs; not
                      the backup), in a menu (approved design B, the Design canvas "PuppyMacro Import, remap without key, title bar"),
                      16 px after the name (approved: the Design canvas "PuppyMacro title bar, Import, backup window", 1B). Its icon is
                      shorter than a line of text: it takes Enter overlay mode's height, so the two buttons line up -->
@@ -430,7 +485,10 @@
                         Height="{Binding ActualHeight, ElementName=OverlayModeButton}"
                         AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" ToolTip="{x:Static r:Strings.Card_MoreOptions}"
                         Click="OnTitleMoreClick">
-                    <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.More}" />
+                    <Button.Resources>
+                        <ResourceDictionary Source="Views/SubtleButtons.xaml" />
+                    </Button.Resources>
+                    <ui:FontIcon FontSize="20" Icon="{x:Static ui:SegoeFluentIcons.More}" />
                 </Button>
             </StackPanel>
 
@@ -578,15 +636,15 @@
                                 ToolTipService.ShowOnDisabled="True" Click="OnAddLoopClick" />
                     </Grid>
 
-                    <!-- Search, filter and the view (List, Table, Grid): the search box gives up the space -->
+                    <!-- The filter, the search and the view (List, Table, Grid): the search box takes what is left (the filter on the left: the user's choice) -->
                     <Grid Grid.Row="1" Margin="0,16,0,8">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="SearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Loops_Search}" TextChanged="OnSearchChanged" />
-                        <ComboBox x:Name="FilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnFilterChanged">
+                        <TextBox x:Name="SearchBox" Grid.Column="1" Margin="12,0,0,0" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Loops_Search}" TextChanged="OnSearchChanged" />
+                        <ComboBox x:Name="FilterBox" MinWidth="130" SelectionChanged="OnFilterChanged">
                             <ComboBoxItem Content="{x:Static r:Strings.Loops_FilterAll}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterEnabled}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
@@ -597,7 +655,7 @@
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TextBulletListLtr_16_Regular}" />
                             </ToggleButton>
                             <ToggleButton x:Name="LoopsTableButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewTable}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewTable}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
-                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableSimple_16_Regular}" />
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableFreezeRow_16_Regular}" />
                             </ToggleButton>
                             <ToggleButton x:Name="LoopsGridButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewGrid}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewGrid}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Grid_16_Regular}" />
@@ -629,8 +687,13 @@
                                     </ItemsControl>
                                 </StackPanel>
                             </ui:ScrollViewerEx>
-                            <ListView x:Name="LoopTable" Margin="0,0,0,16" SelectionMode="Single" View="{StaticResource ItemColumns}"
-                                      ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                            <Border x:Name="LoopTableCard" Margin="0,0,0,16" VerticalAlignment="Top" CornerRadius="{DynamicResource OverlayCornerRadius}"
+                                    SizeChanged="OnTableCardSizeChanged"
+                                    BorderThickness="1" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <ListView x:Name="LoopTable" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionMode="Single" SelectionChanged="OnTableSelectionChanged" View="{StaticResource ItemColumns}"
+                                          ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                            </Border>
                         </Grid>
                     </DockPanel>
                 </Grid>
@@ -663,12 +726,12 @@
 
                     <Grid Grid.Row="1" Margin="0,16,0,8">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="MacroSearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Macros_Search}" TextChanged="OnMacroSearchChanged" />
-                        <ComboBox x:Name="MacroFilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnMacroFilterChanged">
+                        <TextBox x:Name="MacroSearchBox" Grid.Column="1" Margin="12,0,0,0" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Macros_Search}" TextChanged="OnMacroSearchChanged" />
+                        <ComboBox x:Name="MacroFilterBox" MinWidth="130" SelectionChanged="OnMacroFilterChanged">
                             <ComboBoxItem Content="{x:Static r:Strings.Macros_FilterAll}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterEnabled}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
@@ -679,7 +742,7 @@
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TextBulletListLtr_16_Regular}" />
                             </ToggleButton>
                             <ToggleButton x:Name="MacrosTableButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewTable}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewTable}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
-                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableSimple_16_Regular}" />
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableFreezeRow_16_Regular}" />
                             </ToggleButton>
                             <ToggleButton x:Name="MacrosGridButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewGrid}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewGrid}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Grid_16_Regular}" />
@@ -710,8 +773,13 @@
                                     </ItemsControl>
                                 </StackPanel>
                             </ui:ScrollViewerEx>
-                            <ListView x:Name="MacroTable" Margin="0,0,0,16" SelectionMode="Single" View="{StaticResource ItemColumns}"
-                                      ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                            <Border x:Name="MacroTableCard" Margin="0,0,0,16" VerticalAlignment="Top" CornerRadius="{DynamicResource OverlayCornerRadius}"
+                                    SizeChanged="OnTableCardSizeChanged"
+                                    BorderThickness="1" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <ListView x:Name="MacroTable" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionMode="Single" SelectionChanged="OnTableSelectionChanged" View="{StaticResource ItemColumns}"
+                                          ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                            </Border>
                         </Grid>
                     </DockPanel>
                 </Grid>
@@ -731,12 +799,12 @@
                     </Grid>
                     <Grid Grid.Row="1" Margin="0,16,0,8">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="RemapSearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Remaps_Search}" TextChanged="OnRemapSearchChanged" />
-                        <ComboBox x:Name="RemapFilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnRemapFilterChanged">
+                        <TextBox x:Name="RemapSearchBox" Grid.Column="1" Margin="12,0,0,0" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Remaps_Search}" TextChanged="OnRemapSearchChanged" />
+                        <ComboBox x:Name="RemapFilterBox" MinWidth="130" SelectionChanged="OnRemapFilterChanged">
                             <ComboBoxItem Content="{x:Static r:Strings.Remaps_FilterAll}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterEnabled}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
@@ -746,7 +814,7 @@
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TextBulletListLtr_16_Regular}" />
                             </ToggleButton>
                             <ToggleButton x:Name="RemapsTableButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewTable}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewTable}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
-                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableSimple_16_Regular}" />
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableFreezeRow_16_Regular}" />
                             </ToggleButton>
                             <ToggleButton x:Name="RemapsGridButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewGrid}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewGrid}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Grid_16_Regular}" />
@@ -775,8 +843,13 @@
                                     </ItemsControl>
                                 </StackPanel>
                             </ui:ScrollViewerEx>
-                            <ListView x:Name="RemapTable" Margin="0,0,0,16" SelectionMode="Single" View="{StaticResource RemapColumns}"
-                                      ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                            <Border x:Name="RemapTableCard" Margin="0,0,0,16" VerticalAlignment="Top" CornerRadius="{DynamicResource OverlayCornerRadius}"
+                                    SizeChanged="OnTableCardSizeChanged"
+                                    BorderThickness="1" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <ListView x:Name="RemapTable" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionMode="Single" SelectionChanged="OnTableSelectionChanged" View="{StaticResource RemapColumns}"
+                                          ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                            </Border>
                         </Grid>
                     </DockPanel>
                 </Grid>

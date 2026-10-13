@@ -750,15 +750,15 @@ public class AppTests
     {
         using var app = new AppSession();
 
-        // The card menu's Export… opens the file dialog at once: only looked at here (Move down closes the menu, no keys).
+        // The card menu's Export opens the file dialog at once: only looked at here (Move down closes the menu, no keys).
         app.CardButton("Sample: click every second", "More options").AsButton().Invoke();
-        Assert.NotNull(app.MenuItem("Export…"));
+        Assert.NotNull(app.MenuItem("Export"));
         app.MenuItem("Move down").AsMenuItem().Invoke();
 
-        // The title bar's More options › Export…: the choice first; the file dialog comes only after the dialog's own
+        // The title bar's More options › Export: the choice first; the file dialog comes only after the dialog's own
         // Export…, never pressed here.
         app.FindById(app.MainWindow, "TitleMoreButton").AsButton().Invoke();
-        app.MenuItem("Export…").AsMenuItem().Invoke();
+        app.MenuItem("Export").AsMenuItem().Invoke();
         // A window of its own, as the editors: the main window is hidden meanwhile and comes back after.
         Window export = app.Dialog("Export");
         CheckBox loop = ItemBox(export, "Sample: click every second");
@@ -869,7 +869,7 @@ public class AppTests
     {
         using var app = new AppSession();
 
-        // The defaults (the user's choice): Loops List, Macros Table, Remap Grid.
+        // The defaults (the user's choice): Loops List, Macros Table, Remap List.
         app.GoTo("Loops");
         Assert.Equal(ToggleState.On, app.ViewButton("Loops", "List").ToggleState);
         Assert.True(app.HasRow(app.MainWindow, "Sample: click every second"));
@@ -897,7 +897,7 @@ public class AppTests
         app.EditItem("Sample: type and confirm");
         app.Dialog("Edit macro").Close();
         app.GoTo("Remap");
-        Assert.Equal(ToggleState.On, app.ViewButton("Remaps", "Grid").ToggleState);
+        Assert.Equal(ToggleState.On, app.ViewButton("Remaps", "List").ToggleState);
         app.EditItem("Sample: Caps Lock to Esc");
         app.Dialog("Edit remap").Close();
     }

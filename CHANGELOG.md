@@ -8,10 +8,15 @@
 - The title bar's **More options** (⋯) is on the left, next to PuppyMacro's name.
 - The window of a backup opened from File Explorer says **Restore this backup from Settings** and has
   **Open Settings**, which opens PuppyMacro on Settings › Backup.
-- Loops, macros and remaps can be shown as a **List**, a **Table** or a **Grid**, with the buttons next to the filter; each
-  page keeps its choice (at first Loops a list, Macros a table, Remap a grid). The list and the grid group the items by the
-  app they work in. Click an item to open its editor: the Edit button is gone, and the switch is now after **More options**.
-- Every item in the lists is as tall as the others, on one line, with its hotkey as plain keys.
+- Loops, macros and remaps can be shown as a **List**, a **Table** or a **Grid**, with the buttons at the end of the search box's row; each
+  page keeps its choice (at first Loops and Remap a list, Macros a table). The list and the grid group the items by the
+  app they work in. Click an item to open its editor, or use **Edit** in its **More options** menu (⋯); the switch is now after **More options**.
+- In the list every item is on one line and as tall as the others; in every view hotkeys show as small plain keys.
+- The title bar's **More options** (⋯) has a bigger icon and no background until the mouse is on it.
+- **Import** and **Export** in the **More options** menus (⋯) no longer end with "…".
+- Loops and macros have **Duplicate** in their **More options** menu, as remaps: a copy right under it, "Name (2)", disabled
+  and without a hotkey. Remaps have **Move up** and **Move down**, as loops and macros.
+- The filter is on the left of the search box.
 - **Record macro** has a bigger red dot, the one of the editor's **Record actions**.
 - PuppyMacro's window opens wider the first time (1300 × 900).
 

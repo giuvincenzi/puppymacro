@@ -89,7 +89,7 @@ paths:
   loop is enabled). Keep
   the samples working when models change.
 - `AppSettings.LoopsLayout`, `MacrosLayout`, `RemapsLayout` (`ItemsLayout`: List, Table, Grid): each list page's view.
-  Older files get the defaults, Loops List, Macros Table, Remap Grid (the user's choice; a new field, no migration). A name
+  Older files get the defaults, Loops List, Macros Table, Remap List (the user's choice; a new field, no migration). A name
   this version does not know (a newer version's view) or a number is read by `ItemsLayoutConverter` as a value outside the
   enum instead of failing the whole file, and `SettingsStore.Sanitize` gives that page its default.
 - `AppSettings.Language`: a code of `AppLanguages.All` or null, "Use system language" (also in older files, no

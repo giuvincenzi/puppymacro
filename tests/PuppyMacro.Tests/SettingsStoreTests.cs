@@ -163,7 +163,7 @@ public class SettingsStoreTests : IDisposable
         Assert.Null(warning);
         Assert.Equal(ItemsLayout.List, older.LoopsLayout);
         Assert.Equal(ItemsLayout.Table, older.MacrosLayout);
-        Assert.Equal(ItemsLayout.Grid, older.RemapsLayout);
+        Assert.Equal(ItemsLayout.List, older.RemapsLayout);
 
         // A newer version's view (unknown here) or a number written by hand: the page's default, the rest of the file read.
         AppSettings unknown = LoadJson("""{ "SchemaVersion": 7, "SoundVolume": 40, "LoopsLayout": "Cards", "MacrosLayout": 7, "RemapsLayout": "table" }""", out warning);

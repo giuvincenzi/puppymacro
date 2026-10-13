@@ -14,7 +14,9 @@
 - Covered: settings loading and migrations (`SettingsStore`), Export and Import (`BackupServiceTests`: every part, the
   identical copy, partial files, older files, refused files), macros from recorded events
   (`MacroBuilder`), `MacroLibrary`, the list pages' groups (`PageViewsTests`: when they show, All apps first then the apps by
-  name, the user's order inside, the table's own order, the search), macro groups and the editor's operations
+  name, the user's order inside, the table's own order, the search), each list page's view in the settings (`SettingsStoreTests`:
+  the defaults, a newer version's view), a copy's name (`ItemNamesTests`: "Name (2)", a numbered name counts on), macro groups
+  and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
   the options shared by loop and macro actions (`ActionOptionsTests`: combinations, Hold for, Times, double click, fixed point, older files, Code view checks), `HotkeyConflicts` (also per app, for remap sources and for modifier sides), `HotkeyRules`, which items the overlay shows
   (`OverlayItems`, `FloatingButtons`), `ModifierTracker`, `KeyNames`, `HotkeyBinding` (`Matches`, `Overlaps`, sides), what the key
@@ -68,7 +70,8 @@
   instead (`Window.Close()`, `Invoke`).
 - `make e2e` runs them locally; it builds the dev build first. On one machine tests run one at a time (one
   PuppyMacro at a time): they share its desktop, mouse, keyboard, window in front and PuppyMacro's data folder.
-- Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages,
+- Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages, each list page's view (its
+  default, the List, Table and Grid buttons, the view saved and kept, an item opened with a click in every view),
   editors, Export's choices, Export of items with search (from the title bar's More options), a `.puppyitems` file opened
   while PuppyMacro runs (a second `PuppyMacro.exe` with its path, as File Explorer starts it; the file dialogs are never
   opened), a remap imported without its hotkey and its card, two files opened one after the other (one Import, the last

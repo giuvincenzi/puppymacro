@@ -1083,17 +1083,17 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>Открыто окно «Импорт»</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>Открыто окно «Экспорт»</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Импорт</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Импорт…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Импорт</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Добавить циклы, макросы и переназначения из файла</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Экспорт</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Экспорт…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Экспорт</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Отпустите, чтобы импортировать</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Восстановите эту резервную копию в параметрах</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>При восстановлении резервной копии заменяются все ваши циклы, макросы, переназначения и параметры. Это можно сделать в разделе {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Открыть параметры</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Закрыть</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Сохранить циклы, макросы и переназначения в файл, чтобы поделиться ими</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Экспорт…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Экспорт</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Элементы PuppyMacro (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Импорт циклов, макросов и переназначений</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Экспорт циклов, макросов и переназначений</value></data>
@@ -1138,7 +1138,6 @@
   <data name="Table_WhatItDoes" xml:space="preserve"><value>Что делает</value></data>
   <data name="Table_Hotkey" xml:space="preserve"><value>Горячая клавиша</value></data>
   <data name="Table_WorksIn" xml:space="preserve"><value>Где работает</value></data>
-  <data name="Table_State" xml:space="preserve"><value>Состояние</value></data>
   <data name="Table_Note" xml:space="preserve"><value>Примечание</value></data>
   <data name="Table_From" xml:space="preserve"><value>Откуда</value></data>
   <data name="Table_To" xml:space="preserve"><value>Куда</value></data>
@@ -1146,4 +1145,6 @@
   <data name="Main_ViewList" xml:space="preserve"><value>Список</value></data>
   <data name="Main_ViewTable" xml:space="preserve"><value>Таблица</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Сетка</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Состояние</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Изменить</value></data>
 </root>

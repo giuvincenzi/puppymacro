@@ -4,9 +4,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
+using PuppyMacro.Services;
 using PuppyMacro.Views;
 
 namespace PuppyMacro;
@@ -17,32 +20,31 @@ namespace PuppyMacro;
 /// </summary>
 public partial class MainWindow
 {
-    /// <summary>The narrowest tile; a page's tiles grow together when a hotkey needs more.</summary>
-    private const double MinTileWidth = 260;
+    /// <summary>The narrowest tile (the user's choice); a page's tiles grow together when a hotkey needs more.</summary>
+    private const double MinTileWidth = 320;
     /// <summary>Works in: two lines of "Toutes les applications" (the longest All apps) fit.</summary>
     private const double WorksInWidth = 120;
-    /// <summary>The narrowest Name and What it does columns.</summary>
-    private const double MinNameWidth = 160, MinSummaryWidth = 100;
+    /// <summary>The narrowest Name (Note) and What it does columns; narrower than that, What it does, then Works in, go.</summary>
+    private const double MinNameWidth = 140, MinSummaryWidth = 100;
     /// <summary>The space of a table cell around its content (the library's cell padding and the column's gripper).</summary>
     private const double CellPadding = 16;
 
     private sealed record ListPage(
         Func<ItemsLayout> Get, Action<ItemsLayout> Set, PageViews Views, ItemsControl List, ItemsControl Tiles, ListView Table,
-        FrameworkElement Scroll, ToggleButton ListButton, ToggleButton TableButton, ToggleButton GridButton, bool IsRemaps);
+        FrameworkElement TableCard, FrameworkElement Scroll, ToggleButton ListButton, ToggleButton TableButton, ToggleButton GridButton, bool IsRemaps);
 
     private ListPage[]? _listPages;
     /// <summary>The view buttons are being set by <see cref="ApplyLayout"/>, not by the user.</summary>
     private bool _applyingLayout;
-    private double _actionsWidth = double.NaN, _remapActionsWidth = double.NaN;
 
     private ListPage[] ListPages => _listPages ??=
     [
         new(() => _settings.LoopsLayout, layout => _settings.LoopsLayout = layout, _view, LoopList, LoopTiles, LoopTable,
-            LoopsScroll, LoopsListButton, LoopsTableButton, LoopsGridButton, false),
+            LoopTableCard, LoopsScroll, LoopsListButton, LoopsTableButton, LoopsGridButton, false),
         new(() => _settings.MacrosLayout, layout => _settings.MacrosLayout = layout, _macroView, MacroList, MacroTiles, MacroTable,
-            MacrosScroll, MacrosListButton, MacrosTableButton, MacrosGridButton, false),
+            MacroTableCard, MacrosScroll, MacrosListButton, MacrosTableButton, MacrosGridButton, false),
         new(() => _settings.RemapsLayout, layout => _settings.RemapsLayout = layout, _remapView, RemapList, RemapTiles, RemapTable,
-            RemapsScroll, RemapsListButton, RemapsTableButton, RemapsGridButton, true),
+            RemapTableCard, RemapsScroll, RemapsListButton, RemapsTableButton, RemapsGridButton, true),
     ];
 
     private void InitializeLists()
@@ -63,7 +65,7 @@ public partial class MainWindow
         page.List.Visibility = layout == ItemsLayout.List ? Visibility.Visible : Visibility.Collapsed;
         page.Tiles.Visibility = layout == ItemsLayout.Grid ? Visibility.Visible : Visibility.Collapsed;
         page.Scroll.Visibility = layout == ItemsLayout.Table ? Visibility.Collapsed : Visibility.Visible;
-        page.Table.Visibility = layout == ItemsLayout.Table ? Visibility.Visible : Visibility.Collapsed;
+        page.TableCard.Visibility = layout == ItemsLayout.Table ? Visibility.Visible : Visibility.Collapsed;
         _applyingLayout = true;
         try
         {
@@ -124,20 +126,52 @@ public partial class MainWindow
             button.IsChecked = true;
     }
 
-    /// <summary>A click on a card or a tile (not on its buttons): its editor.</summary>
+    /// <summary>
+    /// A click on a card or a tile: its editor. Only the card's own click: the Click of its buttons (Play, More options)
+    /// bubbles up to it, as the card is a button too.
+    /// </summary>
     private void OnItemClick(object sender, RoutedEventArgs e)
     {
+        if (!ReferenceEquals(e.OriginalSource, sender))
+            return;
         if ((sender as FrameworkElement)?.Tag is { } item)
             OpenItem(item);
     }
 
-    /// <summary>A click on a table row, not on its buttons or switch: its editor.</summary>
-    private void OnTableRowClick(object sender, MouseButtonEventArgs e)
+    /// <summary>The table row pressed (not on its buttons or switch), until the mouse is released on it.</summary>
+    private ListViewItem? _pressedRow;
+
+    /// <summary>
+    /// A press on a table row, not on its buttons or switch: kept from the ListView, so the row is not selected (a click opens
+    /// the editor; nothing is selected in these lists).
+    /// </summary>
+    private void OnTableRowPress(object sender, MouseButtonEventArgs e)
     {
+        _pressedRow = null;
         if (sender is not ListViewItem row || IsInsideInteractiveControl(e.OriginalSource as DependencyObject, row))
             return;
         e.Handled = true;
+        _pressedRow = row;
+    }
+
+    /// <summary>A click on a table row (pressed and released on it, not on its buttons or switch): its editor.</summary>
+    private void OnTableRowClick(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListViewItem row || !ReferenceEquals(row, _pressedRow))
+            return;
+        _pressedRow = null;
+        e.Handled = true;
         OpenItem(row.Content);
+    }
+
+    /// <summary>
+    /// Nothing is selected in these lists (a click opens the editor): a row the ListView selects anyway (the focus coming back
+    /// after the editor, the keyboard) is let go at once, so its selection mark never shows.
+    /// </summary>
+    private void OnTableSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListView table && table.SelectedItem != null)
+            table.SelectedItem = null;
     }
 
     /// <summary>Enter on a table row: its editor, as a click.</summary>
@@ -226,19 +260,22 @@ public partial class MainWindow
         double available = page.Tiles.ActualWidth;
         if (available <= 0)
             return;
+        // The bottom row: the keys, 12, the state (its longest word in this language), then Play and More options.
         double keys = page.Views.Grouped.Cast<object>().Select(KeysWidth).DefaultIfEmpty(0).Max();
-        // The card's padding (16 + 16), its icon (20) and the icon's margin (2 + 20), the gap before the buttons (8), the
-        // card's border (2) and the gap after the tile (8): the library's SettingsCard values.
-        double needed = keys + ActionsWidth(page.IsRemaps) + 92;
+        double state = StatusWords.Select(CaptionWidth).Max() + 14; // the dot and its gap
+        // The card's padding (16 + 16) and border (2), and the gap after the tile (8): the library's SettingsCard values.
+        double needed = keys + 12 + state + 8 + ActionsWidth(page.IsRemaps, withSwitch: false) + 42;
         double tile = Math.Max(MinTileWidth, needed);
         int columns = Math.Max(1, (int)Math.Floor(available / tile));
         page.Tiles.Tag = Math.Floor(Math.Max(tile, available / columns));
     }
 
     /// <summary>
-    /// The table's columns: the icon, the keys, Works in, State and the buttons as wide as their content (State as its
-    /// longest word in this language, so it never changes with the items), Name and What it does the rest, 3 to 2.
-    /// A remap's Note takes the whole rest.
+    /// The table's columns, in the room there is (the table never scrolls sideways). Loops and macros: the icon, Name, Hotkey
+    /// (second, the user's choice), What it does, Works in, State, the buttons; remaps: the icon, Note, From, To, Works in,
+    /// State, the buttons. Always shown: the icon, Name (Note), the keys, State and the buttons, the keys at least as wide as a
+    /// long combination and wider when the page has a longer one, State as its longest word in this language. Then, while there is room, Works in and, the least important (the user's
+    /// choice), What it does: a third of what is left, the first to go when the window narrows, then Works in.
     /// </summary>
     private void FitColumns(ListPage page)
     {
@@ -246,38 +283,61 @@ public partial class MainWindow
             return;
         var columns = grid.Columns;
         var items = page.Views.Table.Cast<object>().ToList();
-        double state = new[] { Strings.Card_StatusRunning, Strings.Card_StatusIdle, Strings.Card_StatusDisabled, Strings.Card_StatusEnabled }
-            .Select(CaptionWidth).Max() + 14; // the dot and its gap
-        double header(int index) => columns[index].Header is string text ? CaptionWidth(text) + 6 : 0;
-        // The vertical scroll bar's place, so the last column never goes under it.
-        double available = page.Table.ActualWidth - SystemParameters.VerticalScrollBarWidth - 8;
+        double width(int index, double content) =>
+            Math.Ceiling(Math.Max(content, columns[index].Header is string text ? CaptionWidth(text) + 6 : 0) + CellPadding);
+        // The vertical scroll bar's place, so nothing goes under it.
+        double available = page.Table.ActualWidth - SystemParameters.VerticalScrollBarWidth;
 
-        double fixedWidth = columns[0].Width;
-        void Set(int index, double content)
+        const int name = 1, worksIn = 4, stateColumn = 5, buttons = 6;
+        double state = StatusWords.Select(CaptionWidth).Max() + 14; // the dot and its gap
+        int? summary = page.IsRemaps ? null : 3;
+        var always = page.IsRemaps
+            ? new Dictionary<int, double>
+            {
+                [2] = width(2, Math.Max(UsualKeysWidth, items.Cast<RemapItemViewModel>().Select(SourceWidth).DefaultIfEmpty(0).Max())),
+                [3] = width(3, Math.Max(UsualKeysWidth, items.Cast<RemapItemViewModel>().Select(remap => KeyCapsWidth(remap.TargetParts))
+                    .DefaultIfEmpty(0).Max())),
+                [stateColumn] = width(stateColumn, state),
+                [buttons] = width(buttons, ActionsWidth(true)),
+            }
+            : new Dictionary<int, double>
+            {
+                [2] = width(2, Math.Max(UsualKeysWidth, items.Select(KeysWidth).DefaultIfEmpty(0).Max())
+                    + (items.OfType<IListItem>().Any(item => item.IsHoldMode && item.HasHotkey) ? CaptionWidth(Strings.Card_Hold) + 2 : 0)),
+                [stateColumn] = width(stateColumn, state),
+                [buttons] = width(buttons, ActionsWidth(false)),
+            };
+        foreach (var (index, w) in always)
+            columns[index].Width = w;
+        double rest = available - columns[0].Width - always.Values.Sum();
+
+        double works = width(worksIn, WorksInWidth);
+        bool showWorksIn = rest - works >= MinNameWidth;
+        columns[worksIn].Width = showWorksIn ? works : 0;
+        if (showWorksIn)
+            rest -= works;
+
+        if (summary is int column)
         {
-            columns[index].Width = Math.Ceiling(Math.Max(content, header(index)) + CellPadding);
-            fixedWidth += columns[index].Width;
+            bool showSummary = rest - MinNameWidth >= MinSummaryWidth && rest / 3 >= MinSummaryWidth;
+            columns[column].Width = showSummary ? Math.Floor(rest / 3) : 0;
+            rest -= columns[column].Width;
         }
-        if (page.IsRemaps)
-        {
-            Set(2, items.Cast<RemapItemViewModel>().Select(SourceWidth).DefaultIfEmpty(0).Max());
-            Set(3, items.Cast<RemapItemViewModel>().Select(remap => KeyCapsWidth(remap.TargetParts)).DefaultIfEmpty(0).Max());
-            Set(4, WorksInWidth);
-            Set(5, state);
-            Set(6, ActionsWidth(true));
-            columns[1].Width = Math.Max(MinNameWidth, Math.Floor(available - fixedWidth));
-        }
-        else
-        {
-            Set(3, items.Select(KeysWidth).DefaultIfEmpty(0).Max() + (items.OfType<IListItem>().Any(item => item.IsHoldMode && item.HasHotkey)
-                ? CaptionWidth(Strings.Card_Hold) + 2 : 0));
-            Set(4, WorksInWidth);
-            Set(5, state);
-            Set(6, ActionsWidth(false));
-            double rest = Math.Max(MinNameWidth + MinSummaryWidth, available - fixedWidth);
-            columns[1].Width = Math.Floor(Math.Max(MinNameWidth, rest * 3 / 5));
-            columns[2].Width = Math.Floor(Math.Max(MinSummaryWidth, rest - columns[1].Width));
-        }
+        columns[name].Width = Math.Max(MinNameWidth, Math.Floor(rest));
+    }
+
+    /// <summary>
+    /// A long combination, Ctrl + Alt + Shift + Win + F12, as key caps with this language's key names: the least width of the
+    /// keys' columns (the hotkey matters most in the table: the user's choice), so they never jump with the items.
+    /// </summary>
+    private double UsualKeysWidth =>
+        KeyCapsWidth(KeyNames.Parts(new HotkeyBinding { Vk = 0x7B, Ctrl = true, Alt = true, Shift = true, Win = true }));
+
+    /// <summary>The table's card clips its rows at its rounded corners, so the hover of the first and last rows follows them.</summary>
+    private void OnTableCardSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (sender is Border card)
+            card.Clip = new RectangleGeometry(new Rect(card.RenderSize), card.CornerRadius.TopLeft, card.CornerRadius.TopLeft);
     }
 
     /// <summary>How wide an item's keys are in the list and the grid: its hotkey, or "No hotkey"; a remap's from → to.</summary>
@@ -292,40 +352,36 @@ public partial class MainWindow
     private double SourceWidth(RemapItemViewModel remap) =>
         remap.HasSource ? KeyCapsWidth(remap.SourceParts) : CaptionWidth(Strings.Remaps_NoHotkey) + 18; // the warning icon
 
-    /// <summary>Key caps as the lists draw them (App.xaml's KeyCapItem), measured.</summary>
-    private static double KeyCapsWidth(IEnumerable<string> keys)
-    {
-        var template = (DataTemplate)Application.Current.FindResource("KeyCapItem");
-        double width = 0;
-        foreach (string key in keys)
-        {
-            if (template.LoadContent() is not FrameworkElement cap)
-                continue;
-            cap.DataContext = key;
-            cap.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            width += cap.DesiredSize.Width;
-        }
-        return width;
-    }
+    /// <summary>
+    /// Keys as the lists draw them (KeyCaps, Small), measured with KeyCaps' own sizes and the window's font: never a key cap
+    /// made and measured out of the window, whose text comes through a binding that is not there yet.
+    /// </summary>
+    private double KeyCapsWidth(IEnumerable<string> keys) =>
+        KeyCaps.MeasureWidth(keys, KeyCapSize.Small, TextElement.GetFontFamily(this),
+            (double)Application.Current.FindResource("ControlContentThemeFontSize"), VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-    /// <summary>A caption text's width, measured with the library's caption style.</summary>
-    private static double CaptionWidth(string text)
+    /// <summary>A caption text's width, measured with the library's caption style and this window's font.</summary>
+    private double CaptionWidth(string text)
     {
-        var block = new TextBlock { Text = text, Style = (Style)Application.Current.FindResource("CaptionTextBlockStyle") };
+        var block = new TextBlock
+        {
+            Text = text, FontFamily = TextElement.GetFontFamily(this), Style = (Style)Application.Current.FindResource("CaptionTextBlockStyle"),
+        };
         block.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         return block.DesiredSize.Width;
     }
 
-    /// <summary>The buttons of an item (ItemCardActions), measured once: a remap's have no Play.</summary>
-    private double ActionsWidth(bool remap)
+    /// <summary>Every state a list shows.</summary>
+    private static string[] StatusWords =>
+        [Strings.Card_StatusRunning, Strings.Card_StatusIdle, Strings.Card_StatusDisabled, Strings.Card_StatusEnabled];
+
+    /// <summary>
+    /// The buttons of an item (ItemCardActions), measured: a remap's have no Play, a tile's switch is at its top instead.
+    /// </summary>
+    private static double ActionsWidth(bool remap, bool withSwitch = true)
     {
-        ref double width = ref remap ? ref _remapActionsWidth : ref _actionsWidth;
-        if (double.IsNaN(width))
-        {
-            var actions = new ItemCardActions { ShowPlay = !remap };
-            actions.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            width = actions.DesiredSize.Width;
-        }
-        return width;
+        var actions = new ItemCardActions { ShowPlay = !remap, ShowSwitch = withSwitch };
+        actions.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        return actions.DesiredSize.Width;
     }
 }

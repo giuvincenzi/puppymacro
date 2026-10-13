@@ -572,7 +572,7 @@ public sealed class AppSettings
 
     /// <summary>
     /// The view of each list page, kept between sessions; older files get these defaults (the user's choice: Loops
-    /// List, Macros Table, Remap Grid). A value this version does not know (a newer version's) is read as the default
+    /// List, Macros Table, Remap List). A value this version does not know (a newer version's) is read as the default
     /// (<see cref="ItemsLayoutConverter"/>, <c>SettingsStore.Sanitize</c>).
     /// </summary>
     [JsonConverter(typeof(ItemsLayoutConverter))]
@@ -580,7 +580,7 @@ public sealed class AppSettings
     [JsonConverter(typeof(ItemsLayoutConverter))]
     public ItemsLayout MacrosLayout { get; set; } = ItemsLayout.Table;
     [JsonConverter(typeof(ItemsLayoutConverter))]
-    public ItemsLayout RemapsLayout { get; set; } = ItemsLayout.Grid;
+    public ItemsLayout RemapsLayout { get; set; } = ItemsLayout.List;
 
     /// <summary>Opacity range of the overlay panel and of the floating buttons, in percent.</summary>
     public const int MinOpacity = 20;

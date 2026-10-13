@@ -1045,17 +1045,17 @@ Details: {1}</value></data>
   <data name="Ai_OpenedImport" xml:space="preserve"><value>„Importieren“ geöffnet</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>„Exportieren“ geöffnet</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Importieren</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Importieren…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Importieren</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen aus einer Datei hinzufügen</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Exportieren</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Exportieren…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Exportieren</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Zum Importieren loslassen</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Diese Sicherung in den Einstellungen wiederherstellen</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Beim Wiederherstellen einer Sicherung werden alle Ihre Schleifen, Makros, Neuzuordnungen und Einstellungen ersetzt. Das geht unter {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Einstellungen öffnen</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Schließen</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen in einer Datei speichern, um sie zu teilen</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Exportieren…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Exportieren</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro-Elemente (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen importieren</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen exportieren</value></data>
@@ -1097,7 +1097,6 @@ Details: {1}</value></data>
   <data name="Table_WhatItDoes" xml:space="preserve"><value>Aktion</value></data>
   <data name="Table_Hotkey" xml:space="preserve"><value>Hotkey</value></data>
   <data name="Table_WorksIn" xml:space="preserve"><value>Gilt für</value></data>
-  <data name="Table_State" xml:space="preserve"><value>Status</value></data>
   <data name="Table_Note" xml:space="preserve"><value>Notiz</value></data>
   <data name="Table_From" xml:space="preserve"><value>Von</value></data>
   <data name="Table_To" xml:space="preserve"><value>Nach</value></data>
@@ -1105,4 +1104,6 @@ Details: {1}</value></data>
   <data name="Main_ViewList" xml:space="preserve"><value>Liste</value></data>
   <data name="Main_ViewTable" xml:space="preserve"><value>Tabelle</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Raster</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Status</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Bearbeiten</value></data>
 </root>

@@ -1,0 +1,34 @@
+<UserControl
+    x:Class="PuppyMacro.Views.KeyCaps"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    Focusable="False"
+    IsTabStop="False">
+
+    <!-- Keys as key caps (App.xaml's KeyCap style), left to right in every language (KeyCapRow): the one way the app shows a
+         key or a hotkey (ui.md). Size Default as before, Small in the Loops, Macros and Remap lists; Accent for a key the user
+         chooses (the key field, Import, Export). The sizes are KeyCaps' static values, also used to measure them (MeasureWidth). -->
+    <ItemsControl x:Name="Caps" Focusable="False" IsTabStop="False" ItemsPanel="{StaticResource KeyCapRow}"
+                  ItemsSource="{Binding Keys, RelativeSource={RelativeSource AncestorType=views:KeyCaps}}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border x:Name="Cap" Style="{StaticResource KeyCap}" Padding="{x:Static views:KeyCaps.DefaultPadding}"
+                        Margin="{x:Static views:KeyCaps.DefaultGap}">
+                    <TextBlock x:Name="Label" Text="{Binding}" />
+                </Border>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Size, RelativeSource={RelativeSource AncestorType=views:KeyCaps}}" Value="Small">
+                        <Setter TargetName="Cap" Property="Padding" Value="{x:Static views:KeyCaps.SmallPadding}" />
+                        <Setter TargetName="Cap" Property="Margin" Value="{x:Static views:KeyCaps.SmallGap}" />
+                        <Setter TargetName="Label" Property="FontSize" Value="{x:Static views:KeyCaps.SmallFontSize}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Accent, RelativeSource={RelativeSource AncestorType=views:KeyCaps}}" Value="True">
+                        <Setter TargetName="Cap" Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                        <Setter TargetName="Label" Property="Foreground" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

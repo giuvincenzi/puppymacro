@@ -1045,17 +1045,17 @@ Détails : {1}</value></data>
   <data name="Ai_OpenedImport" xml:space="preserve"><value>Importer ouvert</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>Exporter ouvert</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Importer</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Importer…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Importer</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Ajouter des boucles, macros et remappages depuis un fichier</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Exporter</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Exporter…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Exporter</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Déposez pour importer</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Restaurer cette sauvegarde depuis les Paramètres</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Restaurer une sauvegarde remplace toutes vos boucles, macros, remappages et paramètres. Vous pouvez le faire dans {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Ouvrir les Paramètres</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Fermer</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Enregistrer des boucles, macros et remappages dans un fichier, pour les partager</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Exporter…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Exporter</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Éléments PuppyMacro (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importer des boucles, macros et remappages</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Exporter des boucles, macros et remappages</value></data>
@@ -1097,7 +1097,6 @@ Détails : {1}</value></data>
   <data name="Table_WhatItDoes" xml:space="preserve"><value>Action</value></data>
   <data name="Table_Hotkey" xml:space="preserve"><value>Raccourci</value></data>
   <data name="Table_WorksIn" xml:space="preserve"><value>Fonctionne dans</value></data>
-  <data name="Table_State" xml:space="preserve"><value>État</value></data>
   <data name="Table_Note" xml:space="preserve"><value>Note</value></data>
   <data name="Table_From" xml:space="preserve"><value>De</value></data>
   <data name="Table_To" xml:space="preserve"><value>Vers</value></data>
@@ -1105,4 +1104,6 @@ Détails : {1}</value></data>
   <data name="Main_ViewList" xml:space="preserve"><value>Liste</value></data>
   <data name="Main_ViewTable" xml:space="preserve"><value>Tableau</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Grille</value></data>
+  <data name="Table_State" xml:space="preserve"><value>État</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Modifier</value></data>
 </root>

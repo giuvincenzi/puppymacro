@@ -29,7 +29,8 @@
                 AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" Click="OnMoreClick">
             <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.MoreHorizontal_16_Filled}" />
         </Button>
-        <ui:ToggleSwitch x:Name="EnabledSwitch" Margin="16,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{x:Static r:Strings.Card_Enabled}"
-                         IsOn="{Binding IsOn, ElementName=Root, Mode=TwoWay}" />
+        <!-- Without the library's On / Off text (English only, and not in the approved design): no text, so no MinWidth for it -->
+        <ui:ToggleSwitch x:Name="EnabledSwitch" Margin="16,0,0,0" MinWidth="0" VerticalAlignment="Center" OnContent="" OffContent=""
+                         AutomationProperties.Name="{x:Static r:Strings.Card_Enabled}" IsOn="{Binding IsOn, ElementName=Root, Mode=TwoWay}" />
     </StackPanel>
 </UserControl>

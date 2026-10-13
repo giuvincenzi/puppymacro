@@ -1018,17 +1018,17 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>가져오기 열었음</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>내보내기 열었음</value></data>
   <data name="Share_Import" xml:space="preserve"><value>가져오기</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>가져오기…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>가져오기</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>파일에서 루프, 매크로 및 다시 매핑 추가</value></data>
   <data name="Share_Export" xml:space="preserve"><value>내보내기</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>내보내기…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>내보내기</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>놓아서 가져오기</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>이 백업은 설정에서 복원하세요</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>백업을 복원하면 모든 루프, 매크로, 다시 매핑 및 설정이 바뀝니다. {0} › {1}에서 복원할 수 있습니다.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>설정 열기</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>닫기</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>루프, 매크로 및 다시 매핑을 파일에 저장하여 공유</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>내보내기…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>내보내기</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 항목 (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>루프, 매크로 및 다시 매핑 가져오기</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>루프, 매크로 및 다시 매핑 내보내기</value></data>
@@ -1067,7 +1067,6 @@
   <data name="Table_WhatItDoes" xml:space="preserve"><value>동작</value></data>
   <data name="Table_Hotkey" xml:space="preserve"><value>바로 가기 키</value></data>
   <data name="Table_WorksIn" xml:space="preserve"><value>적용 대상</value></data>
-  <data name="Table_State" xml:space="preserve"><value>상태</value></data>
   <data name="Table_Note" xml:space="preserve"><value>메모</value></data>
   <data name="Table_From" xml:space="preserve"><value>원본</value></data>
   <data name="Table_To" xml:space="preserve"><value>대상</value></data>
@@ -1075,4 +1074,6 @@
   <data name="Main_ViewList" xml:space="preserve"><value>목록</value></data>
   <data name="Main_ViewTable" xml:space="preserve"><value>표</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>그리드</value></data>
+  <data name="Table_State" xml:space="preserve"><value>상태</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>편집</value></data>
 </root>

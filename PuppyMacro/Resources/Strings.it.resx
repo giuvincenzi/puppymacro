@@ -1056,17 +1056,17 @@ Dettagli: {1}</value></data>
   <data name="Ai_OpenedImport" xml:space="preserve"><value>Ha aperto Importa</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>Ha aperto Esporta</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Importa</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Importa…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Importa</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Aggiungi loop, macro e rimappature da un file</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Esporta</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Esporta…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Esporta</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Rilascia per importare</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Ripristina questo backup da Impostazioni</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Ripristinare un backup sostituisce tutti i tuoi loop, macro, rimappature e impostazioni. Puoi farlo da {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Apri Impostazioni</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Chiudi</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Salva loop, macro e rimappature in un file, per condividerli</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Esporta…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Esporta</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Elementi di PuppyMacro (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importa loop, macro e rimappature</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Esporta loop, macro e rimappature</value></data>
@@ -1108,7 +1108,6 @@ Dettagli: {1}</value></data>
   <data name="Table_WhatItDoes" xml:space="preserve"><value>Cosa fa</value></data>
   <data name="Table_Hotkey" xml:space="preserve"><value>Tasto di scelta rapida</value></data>
   <data name="Table_WorksIn" xml:space="preserve"><value>Funziona in</value></data>
-  <data name="Table_State" xml:space="preserve"><value>Stato</value></data>
   <data name="Table_Note" xml:space="preserve"><value>Nota</value></data>
   <data name="Table_From" xml:space="preserve"><value>Da</value></data>
   <data name="Table_To" xml:space="preserve"><value>A</value></data>
@@ -1116,4 +1115,6 @@ Dettagli: {1}</value></data>
   <data name="Main_ViewList" xml:space="preserve"><value>Elenco</value></data>
   <data name="Main_ViewTable" xml:space="preserve"><value>Tabella</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Griglia</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Stato</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Modifica</value></data>
 </root>
