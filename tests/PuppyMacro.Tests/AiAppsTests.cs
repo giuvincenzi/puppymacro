@@ -124,6 +124,36 @@ public class AiAppsTests : IDisposable
     }
 
     [Fact]
+    public void Claude_Desktops_exe_is_found_from_its_installer_or_from_the_Microsoft_Store()
+    {
+        string localAppData = Path.Combine(_folder.Path, "Local");
+        string storeFolder = Path.Combine(_folder.Path, "WindowsApps", "Claude_1.0.0.0_x64__pzs8sxrjxfjjc");
+        string storeExe = Path.Combine(storeFolder, "app", "claude.exe");
+        string installerExe = Path.Combine(localAppData, "AnthropicClaude", "claude.exe");
+
+        Assert.Null(AiApps.ClaudeExe(localAppData, null));
+        Assert.Null(AiApps.ClaudeExe(localAppData, storeFolder));
+
+        Directory.CreateDirectory(Path.GetDirectoryName(storeExe)!);
+        File.WriteAllText(storeExe, "");
+        Assert.Equal(storeExe, AiApps.ClaudeExe(localAppData, storeFolder));
+
+        Directory.CreateDirectory(Path.GetDirectoryName(installerExe)!);
+        File.WriteAllText(installerExe, "");
+        Assert.Equal(installerExe, AiApps.ClaudeExe(localAppData, storeFolder));
+    }
+
+    [Fact]
+    public void A_Claude_data_folder_without_its_package_has_no_Microsoft_Store_folder()
+    {
+        string localAppData = Path.Combine(_folder.Path, "Local");
+        Assert.Null(AiApps.ClaudeStoreFolder(localAppData));
+
+        Directory.CreateDirectory(Path.Combine(localAppData, "Packages", "Claude_puppymacrotest0"));
+        Assert.Null(AiApps.ClaudeStoreFolder(localAppData));
+    }
+
+    [Fact]
     public void Visual_Studio_Code_installs_through_its_link_and_reads_mcp_json_with_comments()
     {
         string uri = AiApps.VsCodeInstallUri(Exe);

@@ -12,6 +12,7 @@
 ### Fixed
 - The title bar's **More options** (⋯) was a little shorter than **Enter overlay mode**.
 - In Import, the window's close button covered the top of the dialog, and the note at the bottom was cut off.
+- On the AI page, Claude Desktop installed from the Microsoft Store now shows its icon.
 
 ## 1.18.0
 

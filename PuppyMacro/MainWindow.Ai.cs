@@ -38,6 +38,8 @@ public partial class MainWindow : IAiHost
     private string? _aiRecentShown;
     private string? _aiStatusShown;
     private readonly Dictionary<string, ImageSource?> _exeIcons = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>Claude's Microsoft Store folder, asked to Windows again only when claude.exe is no longer there (an update).</summary>
+    private string? _claudeStoreFolder;
 
     /// <summary>The paths of the AI apps' settings (the user's folders).</summary>
     private static readonly string AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -170,6 +172,12 @@ public partial class MainWindow : IAiHost
         bool claudeInstalled = AiApps.ClaudeInstalled(AppDataFolder, LocalAppDataFolder);
         bool claudeAdded = AiApps.ClaudeHas(claudeConfig, exe);
         AiClient? claude = Live("Claude Desktop");
+        string? claudeExe = AiApps.ClaudeExe(LocalAppDataFolder, _claudeStoreFolder);
+        if (claudeExe == null && claudeInstalled)
+        {
+            _claudeStoreFolder = AiApps.ClaudeStoreFolder(LocalAppDataFolder);
+            claudeExe = AiApps.ClaudeExe(LocalAppDataFolder, _claudeStoreFolder);
+        }
 
         string? codeExe = AiApps.VsCodeExe(LocalAppDataFolder, ProgramFilesFolder);
         bool codeAdded = AiApps.VsCodeHas(AiApps.VsCodeConfigPath(AppDataFolder), exe);
@@ -185,7 +193,7 @@ public partial class MainWindow : IAiHost
             new()
             {
                 Id = "claude", Name = "Claude Desktop",
-                Icon = ExeIcon(Path.Combine(LocalAppDataFolder, "AnthropicClaude", "claude.exe")),
+                Icon = ExeIcon(claudeExe),
                 Status = claude != null ? Since(claude)
                     : claudeAdded ? Strings.AiApps_ClaudeAdded
                     : claudeInstalled ? Strings.AiApps_InstalledNotConnected : Strings.AiApps_NotInstalled,
