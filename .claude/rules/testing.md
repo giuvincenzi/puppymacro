@@ -118,8 +118,8 @@ On a pull request or a push to `main`, the `test` workflow's first job, `decide_
 looks once at the changed files and tells which tests can change their result: a file the build of the projects reads,
 a file the tests read while running, or the workflow itself. `unit_test` and the end-to-end groups run only when
 needed; otherwise they are skipped (their Windows machine never starts): a job skipped by its `if` counts as passing
-for a required check, and `e2e_test` passes when the end-to-end tests were not needed. Called by `publish_release` or started by hand (`workflow_dispatch`: `create_release_pr` on the
-release pull request, `gh workflow run test.yml --ref <branch>`), every test runs. `unit_test`'s first step,
+for a required check, and `e2e_test` passes when the end-to-end tests were not needed. Called by `publish_release` or started by hand (`workflow_dispatch`:
+`gh workflow run test.yml --ref <branch>`), every test runs. `unit_test`'s first step,
 `block_version_change`, fails a pull request whose branch is not `release/…` when it changes
 `PuppyMacro/Version.props` (`build-and-release.md`): that file is under `PuppyMacro/`, so such a pull request always
 runs `unit_test`.
