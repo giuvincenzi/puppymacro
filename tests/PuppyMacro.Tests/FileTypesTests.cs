@@ -1,4 +1,6 @@
 using System;
+using System.Buffers.Binary;
+using System.IO;
 using Microsoft.Win32;
 using PuppyMacro.Services;
 using Xunit;
@@ -61,5 +63,36 @@ public class FileTypesTests : IDisposable
         Assert.Null(_classes.OpenSubKey("PuppyMacro.Backup"));
         Assert.Null(_classes.OpenSubKey(".puppyitems"));
         Assert.Equal("Other.App", Value(".puppymacro"));
+    }
+
+    [Theory]
+    [InlineData("PuppyMacroItems.ico")]
+    [InlineData("PuppyMacroBackup.ico")]
+    public void Every_image_of_the_file_icons_is_a_png_of_its_size(string name)
+    {
+        // scripts/file-icons.ps1 once wrote one byte for each image (PowerShell turned the bytes into an array of objects, which
+        // BinaryWriter wrote as a bool): File Explorer then showed its generic icon.
+        byte[] ico = File.ReadAllBytes(Path.Combine(FileTypes.IconsFolder, name));
+        Assert.Equal(0, BitConverter.ToUInt16(ico, 0));
+        Assert.Equal(1, BitConverter.ToUInt16(ico, 2));
+        int count = BitConverter.ToUInt16(ico, 4);
+        Assert.Equal(10, count);
+        byte[] png = { 0x89, (byte)'P', (byte)'N', (byte)'G', 0x0D, 0x0A, 0x1A, 0x0A };
+        int end = 6 + 16 * count;
+        for (int i = 0; i < count; i++)
+        {
+            int entry = 6 + 16 * i;
+            int side = ico[entry] == 0 ? 256 : ico[entry];
+            int length = BitConverter.ToInt32(ico, entry + 8);
+            int offset = BitConverter.ToInt32(ico, entry + 12);
+            Assert.Equal(end, offset);
+            Assert.True(length > png.Length + 24, $"{name}: the {side} px image has {length} bytes");
+            Assert.Equal(png, ico.AsSpan(offset, png.Length).ToArray());
+            // The PNG's IHDR: width and height, big-endian, right after the signature and the chunk's length and type.
+            Assert.Equal(side, BinaryPrimitives.ReadInt32BigEndian(ico.AsSpan(offset + 16, 4)));
+            Assert.Equal(side, BinaryPrimitives.ReadInt32BigEndian(ico.AsSpan(offset + 20, 4)));
+            end = offset + length;
+        }
+        Assert.Equal(ico.Length, end);
     }
 }

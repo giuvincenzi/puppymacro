@@ -40,7 +40,12 @@ internal static class HotkeyConflicts
         string? conflict = FindForRemap(source, appExe, settings, macros);
         if (conflict != null)
             return Text(Strings.Hotkey_TakesPriorityOverRemaps, conflict);
+        return AlreadyRemapped(source, appExe, settings, editingId);
+    }
 
+    /// <summary>Another remap of <paramref name="source"/> in the same apps (<paramref name="appExe"/>, null: all apps), or null.</summary>
+    public static string? AlreadyRemapped(HotkeyBinding source, string? appExe, AppSettings settings, Guid editingId)
+    {
         var same = settings.Remaps.FirstOrDefault(r => r.Id != editingId && source.Overlaps(r.Source)
             && string.Equals(r.AppExe, appExe, StringComparison.OrdinalIgnoreCase));
         if (same == null)

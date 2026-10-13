@@ -5,7 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
@@ -15,6 +18,9 @@ using PuppyMacro.Views;
 using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
 using ContentDialogButton = iNKORE.UI.WPF.Modern.Controls.ContentDialogButton;
 using ContentDialogResult = iNKORE.UI.WPF.Modern.Controls.ContentDialogResult;
+using FontIcon = iNKORE.UI.WPF.Modern.Controls.FontIcon;
+using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
+using Shape = System.Windows.Shapes.Shape;
 
 namespace PuppyMacro;
 
@@ -26,13 +32,32 @@ public partial class MainWindow
 {
     private static string ItemsFilter => string.Format(CultureInfo.CurrentCulture, Strings.Share_FileFilter, ItemFile.Extension);
 
-    /// <summary>Files opened from File Explorer, waiting until PuppyMacro has no editor or dialog open.</summary>
-    private readonly Queue<string> _filesToOpen = new();
-    private DispatcherTimer? _filesToOpenTimer;
+    /// <summary>The last file opened from File Explorer or dropped on the window, waiting until PuppyMacro has no editor or
+    /// dialog open: a newer one takes its place (the last file opened wins).</summary>
+    private string? _fileToOpen;
+    private DispatcherTimer? _fileToOpenTimer;
 
-    private async void OnImportItemsClick(object sender, RoutedEventArgs e) => await ImportItems(null, null, null);
+    /// <summary>While the user's Import window is open: shows another file in it.</summary>
+    private Action<string>? _importShowFile;
 
-    private async void OnExportItemsClick(object sender, RoutedEventArgs e) => await ExportItems(Array.Empty<Guid>(), null);
+    /// <summary>The title bar's More options: Import… and Export…, each with its tooltip.</summary>
+    private void OnTitleMoreClick(object sender, RoutedEventArgs e)
+    {
+        var import = new MenuItem
+        {
+            Header = Strings.Share_ImportMenu, ToolTip = Strings.Share_ImportTooltip, Icon = new FontIcon { Icon = SegoeFluentIcons.Download },
+        };
+        import.Click += async (_, _) => await ImportItems(null, null, null);
+        var export = new MenuItem
+        {
+            Header = Strings.Share_ExportMenu, ToolTip = Strings.Share_ExportTooltip, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload },
+        };
+        export.Click += async (_, _) => await ExportItems(Array.Empty<Guid>(), null);
+        var menu = new ContextMenu { PlacementTarget = (UIElement)sender, Placement = PlacementMode.Bottom };
+        menu.Items.Add(import);
+        menu.Items.Add(export);
+        menu.IsOpen = true;
+    }
 
     /// <summary>The card menu's Export…: the file dialog at once, for this item alone.</summary>
     private void ExportOne(object item) => SaveItemsFile(new List<object> { item }, out _);
@@ -66,6 +91,7 @@ public partial class MainWindow
             CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Primary,
         };
+        DialogFill.Apply(dialog, this, view);
         void Load(string? file, string? given)
         {
             string name = file != null ? Path.GetFileName(file) : string.Format(CultureInfo.CurrentCulture, Strings.ImportItems_FromApp, app);
@@ -108,7 +134,12 @@ public partial class MainWindow
         };
         Load(path, text);
 
+        // A file opened or dropped meanwhile replaces this one, as Choose another file… does (only in the user's own Import).
+        if (app == null)
+            _importShowFile = file => Load(file, null);
         (ContentDialogResult result, bool timedOut) = await ShowItemsDialog(dialog, app != null);
+        if (app == null)
+            _importShowFile = null;
         if (timedOut)
             return (AiAnswer.TimedOut, new List<object>());
         if (result != ContentDialogResult.Primary)
@@ -153,6 +184,7 @@ public partial class MainWindow
             CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Primary,
         };
+        DialogFill.Apply(dialog, this, view);
         void RefreshButton()
         {
             int count = view.ChosenCount;
@@ -275,44 +307,135 @@ public partial class MainWindow
     // ================= Files opened from File Explorer =================
 
     /// <summary>
-    /// A .puppyitems file opened from File Explorer (this process started with it, or another one passed it on): Import shows
-    /// it once PuppyMacro has no editor or dialog open.
+    /// A .puppyitems file opened from File Explorer (this process started with it, or another one passed it on) or dropped on
+    /// the window. The last one wins: with Import open it takes the place of its file; otherwise Import shows it once PuppyMacro
+    /// has no editor or dialog open, and a newer file waiting replaces an older one.
     /// </summary>
     internal void OpenItemsFile(string path)
     {
-        _filesToOpen.Enqueue(path);
+        if (_importShowFile != null)
+        {
+            _importShowFile(path);
+            ShowFromTray();
+            Activate();
+            return;
+        }
+        _fileToOpen = path;
         if (!IsLoaded)
         {
             void OnLoaded(object sender, RoutedEventArgs e)
             {
                 Loaded -= OnLoaded;
-                OpenWaitingFiles();
+                OpenWaitingFile();
             }
             Loaded += OnLoaded;
             return;
         }
-        OpenWaitingFiles();
+        OpenWaitingFile();
     }
 
-    private async void OpenWaitingFiles()
+    private async void OpenWaitingFile()
     {
         if (_engine.HotkeysSuspended || _userDialogs > 0)
         {
             // An editor or a dialog is open: try again in a moment.
-            _filesToOpenTimer ??= new DispatcherTimer(TimeSpan.FromMilliseconds(500), DispatcherPriority.Background, (_, _) =>
+            _fileToOpenTimer ??= new DispatcherTimer(TimeSpan.FromMilliseconds(500), DispatcherPriority.Background, (_, _) =>
             {
-                _filesToOpenTimer!.Stop();
-                OpenWaitingFiles();
+                _fileToOpenTimer!.Stop();
+                OpenWaitingFile();
             }, Dispatcher);
-            _filesToOpenTimer.Start();
+            _fileToOpenTimer.Start();
             return;
         }
-        if (!_filesToOpen.TryDequeue(out string? path))
+        if (_fileToOpen is not string path)
             return;
+        _fileToOpen = null;
         ShowFromTray();
         await ImportItems(path, null, null);
-        if (_filesToOpen.Count > 0)
-            OpenWaitingFiles();
+        if (_fileToOpen != null)
+            OpenWaitingFile();
+    }
+
+    // ================= Files dragged onto the window =================
+
+    private enum DraggedKind { None, Items, Backup }
+
+    /// <summary>The .puppyitems file dragged (the first one), else a backup; anything else is None, as before.</summary>
+    private static (DraggedKind Kind, string? Path) DraggedFile(DragEventArgs e)
+    {
+        if (!e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetData(DataFormats.FileDrop) is not string[] { Length: > 0 } files)
+            return (DraggedKind.None, null);
+        bool Is(string file, string extension) => string.Equals(Path.GetExtension(file), extension, StringComparison.OrdinalIgnoreCase);
+        if (files.FirstOrDefault(f => Is(f, ItemFile.Extension)) is string items)
+            return (DraggedKind.Items, items);
+        if (files.FirstOrDefault(f => Is(f, BackupService.Extension)) is string backup)
+            return (DraggedKind.Backup, backup);
+        return (DraggedKind.None, null);
+    }
+
+    private void OnFileDragOver(object sender, DragEventArgs e)
+    {
+        (DraggedKind kind, string? path) = DraggedFile(e);
+        if (kind == DraggedKind.None)
+            return; // other files and the cards' own drags go on as before
+        e.Effects = kind == DraggedKind.Items ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Handled = true;
+        ShowDropOverlay(kind, path!);
+    }
+
+    /// <summary>
+    /// Leaving the window or cancelling the drag (Esc). Moving from one element to another inside it gives a Leave too, but
+    /// WPF raises the next element's Enter and Over in the same input event, before anything is drawn: the overlay shows again
+    /// without a flicker.
+    /// </summary>
+    private void OnFileDragLeave(object sender, DragEventArgs e) => HideDropOverlay();
+
+    private void OnFileDrop(object sender, DragEventArgs e)
+    {
+        (DraggedKind kind, string? path) = DraggedFile(e);
+        if (kind == DraggedKind.None)
+            return;
+        e.Handled = true;
+        HideDropOverlay();
+        if (kind != DraggedKind.Items)
+        {
+            e.Effects = DragDropEffects.None;
+            return; // a backup opens only from Settings › Backup
+        }
+        e.Effects = DragDropEffects.Copy;
+        OpenItemsFile(path!);
+    }
+
+    private void ShowDropOverlay(DraggedKind kind, string path)
+    {
+        bool items = kind == DraggedKind.Items;
+        DropImportIcon.Visibility = items ? Visibility.Visible : Visibility.Collapsed;
+        DropBackupIcon.Visibility = items ? Visibility.Collapsed : Visibility.Visible;
+        DropOverlayLine.SetResourceReference(Shape.StrokeProperty, items ? "AccentFillColorDefaultBrush" : "TextFillColorSecondaryBrush");
+        DropTitleText.Text = items ? Strings.Share_DropToImport : Strings.Share_DropBackupTitle;
+        DropDescriptionText.Text = items ? "" : BackupOpensFromSettings;
+        DropDescriptionText.Visibility = items ? Visibility.Collapsed : Visibility.Visible;
+        DropFileText.Text = Path.GetFileName(path);
+        if (DropOverlay.Visibility != Visibility.Visible)
+        {
+            DropOverlay.Visibility = Visibility.Visible;
+            foreach (UIElement child in RootGrid.Children)
+                if (child != DropOverlay)
+                    child.Effect = new BlurEffect { Radius = 6 };
+        }
+    }
+
+    /// <summary>"A backup replaces all your data, so you open it from Settings › Backup.", with the page's own names.</summary>
+    internal static string BackupOpensFromSettings =>
+        string.Format(CultureInfo.CurrentCulture, Strings.Share_DropBackupText, Strings.Settings_Title, Strings.Settings_Backup);
+
+    private void HideDropOverlay()
+    {
+        if (DropOverlay.Visibility != Visibility.Visible)
+            return;
+        DropOverlay.Visibility = Visibility.Collapsed;
+        foreach (UIElement child in RootGrid.Children)
+            child.Effect = null;
     }
 
     // ================= AI apps =================

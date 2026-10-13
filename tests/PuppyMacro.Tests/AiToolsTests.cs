@@ -947,8 +947,8 @@ public class AiToolsTests : IDisposable
 
         Assert.False(result.IsError, result.Text);
         Assert.StartsWith("Imported 2 items, all disabled", result.Text);
-        Assert.Contains("A loop has this name: imported as \"Farm (2)\".", result.Text);
-        Assert.Contains("F6 is already used by the loop \"Farm\": imported without a hotkey.", result.Text);
+        Assert.Contains("You already have a loop with this name, so this one is called \"Farm (2)\".", result.Text);
+        Assert.Contains("F6 is already used by the loop \"Farm\", so this comes in without a hotkey.", result.Text);
         Assert.Equal(2, _host.Saved.Count);
         Assert.All(_host.Saved, s => Assert.Equal(App, s.App));
         var imported = Assert.IsType<LoopDefinition>(_host.Saved[0].Item);
@@ -974,22 +974,36 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Import_items_refuses_a_file_that_is_not_an_items_file_and_says_what_was_skipped()
+    public async Task Import_items_refuses_a_file_that_is_not_an_items_file()
+    {
+        AiToolResult notAFile = await Call("import_items", new { content = "hello" });
+
+        Assert.True(notAFile.IsError);
+        Assert.Equal("This is not a PuppyMacro items file.", notAFile.Text);
+        Assert.Empty(_host.Saved);
+    }
+
+    [Fact]
+    public async Task A_remap_imported_without_its_hotkey_cannot_be_enabled()
     {
         _settings.Remaps.Add(new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x41) });
 
-        AiToolResult notAFile = await Call("import_items", new { content = "hello" });
         AiToolResult taken = await Call("import_items", new
         {
             content = FileWith(new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x42) }),
         });
 
-        Assert.True(notAFile.IsError);
-        Assert.Equal("This is not a PuppyMacro items file.", notAFile.Text);
-        Assert.True(taken.IsError);
-        Assert.StartsWith("Nothing was imported.\n- Not imported, remap 0", taken.Text);
-        Assert.Contains("is already remapped for all apps.", taken.Text);
-        Assert.Empty(_host.Saved);
+        Assert.False(taken.IsError);
+        Assert.Contains("is already remapped for all apps, so this comes in without a hotkey.", taken.Text);
+        var imported = (RemapDefinition)Assert.Single(_host.Saved).Item;
+        Assert.Null(imported.Source);
+        Assert.False(imported.Enabled);
+
+        AiToolResult enable = await Call("set_enabled", new { id = imported.Id.ToString(), enabled = true });
+
+        Assert.True(enable.IsError);
+        Assert.Contains("has no hotkey", enable.Text);
+        Assert.False(imported.Enabled);
     }
 
     [Fact]

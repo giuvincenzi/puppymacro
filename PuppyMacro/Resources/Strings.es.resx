@@ -323,6 +323,8 @@ Lo que el archivo no contiene se queda como está. Primero se hace una copia de 
   <data name="Macros_SummaryWithSpeed_one" xml:space="preserve"><value>{0} acción, {1}, repetir {2}, velocidad ×{3}</value></data>
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} acciones, {1}, repetir {2}, velocidad ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Todas las aplicaciones</value></data>
+  <data name="Remaps_NoHotkey" xml:space="preserve"><value>Sin tecla de acceso rápido</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Elige una tecla de acceso rápido con Editar para activarla.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>No se pudieron copiar tus bucles y macros en {0}.
 Detalles: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Algunos archivos de macro no se pudieron actualizar a esta versión.</value></data>
@@ -1021,14 +1023,13 @@ Detalles: {1}</value></data>
   <data name="ItemFile_Missing_loop" xml:space="preserve"><value>Falta el bucle.</value></data>
   <data name="ItemFile_Missing_macro" xml:space="preserve"><value>Falta la macro.</value></data>
   <data name="ItemFile_Missing_remap" xml:space="preserve"><value>Falta la reasignación.</value></data>
-  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Ya hay un bucle con este nombre: se importa como "{0}".</value></data>
-  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Ya hay una macro con este nombre: se importa como "{0}".</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Ya tienes un bucle con este nombre, así que este se llama "{0}".</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Ya tienes una macro con este nombre, así que esta se llama "{0}".</value></data>
   <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} ya se usa en el bucle "{1}" de este archivo.</value></data>
   <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} ya se usa en la macro "{1}" de este archivo.</value></data>
-  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: se importa sin tecla de acceso rápido.</value></data>
-  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: se importa sin tecla de acceso rápido, como Alternar (Mantener necesita una tecla de acceso rápido).</value></data>
-  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} ya se usa en el bucle "{1}" de este archivo. Las teclas de acceso rápido tienen prioridad sobre las reasignaciones.</value></data>
-  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} ya se usa en la macro "{1}" de este archivo. Las teclas de acceso rápido tienen prioridad sobre las reasignaciones.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}, así que su tecla de acceso rápido no se importa.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}, así que su tecla de acceso rápido no se importa y el modo pasa a Alternar.</value></data>
+  <data name="ItemFile_RemapWithoutHotkey" xml:space="preserve"><value>Esta reasignación todavía no tiene tecla de acceso rápido.</value></data>
   <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} ya está reasignada para todas las aplicaciones en este archivo.</value></data>
   <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} ya está reasignada para {1} en este archivo.</value></data>
   <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>Elementos de PuppyMacro</value></data>
@@ -1046,8 +1047,13 @@ Detalles: {1}</value></data>
   <data name="Ai_OpenedImport" xml:space="preserve"><value>Abrió Importar</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>Abrió Exportar</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Importar</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Importar…</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Agregar bucles, macros y reasignaciones desde un archivo</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Exportar</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Exportar…</value></data>
+  <data name="Share_DropToImport" xml:space="preserve"><value>Suelta para importar</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Las copias de seguridad se abren desde Configuración</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>Una copia de seguridad reemplaza todos tus datos, así que se abre desde {0} › {1}.</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Guardar bucles, macros y reasignaciones en un archivo para compartirlos</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Exportar…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Elementos de PuppyMacro (*{0})|*{0}</value></data>

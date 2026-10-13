@@ -309,6 +309,8 @@
   <data name="Macros_Summary_other" xml:space="preserve"><value>동작 {0}개, {1}, {2} 반복</value></data>
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>동작 {0}개, {1}, {2} 반복, 속도 ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>모든 앱</value></data>
+  <data name="Remaps_NoHotkey" xml:space="preserve"><value>아직 바로 가기 키 없음</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>[편집]에서 바로 가기 키를 선택하면 켤 수 있습니다.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>루프와 매크로를 {0}에 복사할 수 없습니다.
 세부 정보: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>일부 매크로 파일을 이 버전으로 업데이트할 수 없습니다.</value></data>
@@ -996,14 +998,13 @@
   <data name="ItemFile_Missing_loop" xml:space="preserve"><value>루프가 누락되었습니다.</value></data>
   <data name="ItemFile_Missing_macro" xml:space="preserve"><value>매크로가 누락되었습니다.</value></data>
   <data name="ItemFile_Missing_remap" xml:space="preserve"><value>다시 매핑이 누락되었습니다.</value></data>
-  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>이 이름의 루프가 이미 있습니다. "{0}"(으)로 가져왔습니다.</value></data>
-  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>이 이름의 매크로가 이미 있습니다. "{0}"(으)로 가져왔습니다.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>같은 이름의 루프가 이미 있어 이 루프의 이름은 "{0}"(으)로 바뀝니다.</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>같은 이름의 매크로가 이미 있어 이 매크로의 이름은 "{0}"(으)로 바뀝니다.</value></data>
   <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0}은(는) 이미 이 파일의 루프 "{1}"에 사용되고 있습니다.</value></data>
   <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0}은(는) 이미 이 파일의 매크로 "{1}"에 사용되고 있습니다.</value></data>
-  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: 바로 가기 키 없이 가져왔습니다.</value></data>
-  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: 바로 가기 키 없이 토글로 가져왔습니다(누르고 있기에는 바로 가기 키가 필요함).</value></data>
-  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0}은(는) 이미 이 파일의 루프 "{1}"에 사용되고 있습니다. 바로 가기 키가 다시 매핑보다 우선합니다.</value></data>
-  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0}은(는) 이미 이 파일의 매크로 "{1}"에 사용되고 있습니다. 바로 가기 키가 다시 매핑보다 우선합니다.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}. 따라서 바로 가기 키는 가져오지 않습니다.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}. 따라서 바로 가기 키는 가져오지 않고 모드는 토글로 바뀝니다.</value></data>
+  <data name="ItemFile_RemapWithoutHotkey" xml:space="preserve"><value>이 다시 매핑에는 아직 바로 가기 키가 없습니다.</value></data>
   <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0}은(는) 이 파일에서 이미 모든 앱용으로 다시 매핑되어 있습니다.</value></data>
   <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0}은(는) 이 파일에서 이미 {1}용으로 다시 매핑되어 있습니다.</value></data>
   <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro 항목</value></data>
@@ -1018,8 +1019,13 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>가져오기 열었음</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>내보내기 열었음</value></data>
   <data name="Share_Import" xml:space="preserve"><value>가져오기</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>가져오기…</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>파일에서 루프, 매크로 및 다시 매핑 추가</value></data>
   <data name="Share_Export" xml:space="preserve"><value>내보내기</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>내보내기…</value></data>
+  <data name="Share_DropToImport" xml:space="preserve"><value>놓아서 가져오기</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>백업은 설정에서 엽니다</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>백업은 모든 데이터를 바꾸므로 {0} › {1}에서 엽니다.</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>루프, 매크로 및 다시 매핑을 파일에 저장하여 공유</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>내보내기…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 항목 (*{0})|*{0}</value></data>

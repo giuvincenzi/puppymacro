@@ -2,7 +2,21 @@
 
 ## Unreleased
 
+### Added
+- Drag a `.puppyitems` file onto PuppyMacro's window to import it: the window shows **Drop to import** and the file's
+  name. A backup dragged there only reminds you that it opens from Settings › Backup.
+
+### Changed
+- A remap whose hotkey is already taken is now imported anyway, without it: its card shows **No hotkey yet** and its
+  switch stays off until you choose one with **Edit**.
+- **Import…** and **Export…** moved into a **More options** menu (⋯) next to **Enter overlay mode**; Export's icon is now
+  an up arrow, the opposite of Import's.
+- The Import and Export windows are bigger, with more room for the list, and Import's notes are shorter and clearer.
+
 ### Fixed
+- `.puppyitems` and `.puppymacro` files now show their own icons in File Explorer: the icon files were empty.
+- Opening a second `.puppyitems` file while Import was open showed both, one after the other: now the last file opened
+  takes the place of the one shown.
 - Screen readers read the rows of every list by what they show, not by an internal name: loops, macros and remaps
   (in the overlay panel with their state), Recent activity and the AI activity, the History, Import and Export, a loop's
   actions, the steps of an AI app's request and the connected AI apps.

@@ -374,6 +374,8 @@
   <data name="Macros_SummaryWithSpeed_many" xml:space="preserve"><value>{0} إجراءً، {1}، التكرار: {2}، السرعة ×{3}</value></data>
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} إجراء، {1}، التكرار: {2}، السرعة ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>كل التطبيقات</value></data>
+  <data name="Remaps_NoHotkey" xml:space="preserve"><value>لا يوجد مفتاح تشغيل سريع بعد</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>اختر مفتاح تشغيل سريع من "تحرير" لتشغيلها.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>تعذر نسخ الحلقات ووحدات الماكرو إلى {0}.
 التفاصيل: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>تعذر تحديث بعض ملفات الماكرو إلى هذا الإصدار.</value></data>
@@ -1116,14 +1118,13 @@
   <data name="ItemFile_Missing_loop" xml:space="preserve"><value>الحلقة مفقودة.</value></data>
   <data name="ItemFile_Missing_macro" xml:space="preserve"><value>الماكرو مفقود.</value></data>
   <data name="ItemFile_Missing_remap" xml:space="preserve"><value>إعادة التعيين مفقودة.</value></data>
-  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>توجد حلقة بهذا الاسم: تم استيرادها باسم "{0}".</value></data>
-  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>يوجد ماكرو بهذا الاسم: تم استيراده باسم "{0}".</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>لديك بالفعل حلقة بهذا الاسم، لذا تُسمّى هذه "{0}".</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>لديك بالفعل ماكرو بهذا الاسم، لذا يُسمّى هذا "{0}".</value></data>
   <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}" في هذا الملف.</value></data>
   <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}" في هذا الملف.</value></data>
-  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: تم الاستيراد بدون مفتاح تشغيل سريع.</value></data>
-  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: تم الاستيراد بدون مفتاح تشغيل سريع، بوضع "تبديل" (يحتاج الضغط المستمر إلى مفتاح تشغيل سريع).</value></data>
-  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}" في هذا الملف. لمفاتيح التشغيل السريع الأولوية على عمليات إعادة التعيين.</value></data>
-  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}" في هذا الملف. لمفاتيح التشغيل السريع الأولوية على عمليات إعادة التعيين.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}، لذا لا يتم استيراد مفتاح التشغيل السريع.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}، لذا لا يتم استيراد مفتاح التشغيل السريع ويصبح الوضع "تبديل".</value></data>
+  <data name="ItemFile_RemapWithoutHotkey" xml:space="preserve"><value>لا يوجد لإعادة التعيين هذه مفتاح تشغيل سريع بعد.</value></data>
   <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لكل التطبيقات في هذا الملف.</value></data>
   <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لـ {1} في هذا الملف.</value></data>
   <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>عناصر PuppyMacro</value></data>
@@ -1153,8 +1154,13 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>فتح "استيراد"</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>فتح "تصدير"</value></data>
   <data name="Share_Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>استيراد…</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>إضافة حلقات ووحدات ماكرو وعمليات إعادة تعيين من ملف</value></data>
   <data name="Share_Export" xml:space="preserve"><value>تصدير</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>تصدير…</value></data>
+  <data name="Share_DropToImport" xml:space="preserve"><value>أفلِت للاستيراد</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>تُفتح النسخ الاحتياطية من الإعدادات</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>تستبدل النسخة الاحتياطية كل بياناتك، لذا تُفتح من {0} › {1}.</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>حفظ الحلقات ووحدات الماكرو وعمليات إعادة التعيين في ملف لمشاركتها</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>تصدير…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>عناصر PuppyMacro (*{0})|*{0}</value></data>

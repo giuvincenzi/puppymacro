@@ -132,7 +132,7 @@ public sealed class ResourcesTests
         }
         foreach (string kind in new[] { "loop", "macro" })
         {
-            foreach (string key in new[] { "Ai_PlacedButton", "ItemFile_NameTaken", "ItemFile_HotkeyUsedInFile", "ItemFile_RemapUsedInFile" })
+            foreach (string key in new[] { "Ai_PlacedButton", "ItemFile_NameTaken", "ItemFile_HotkeyUsedInFile" })
                 if (!english.ContainsKey($"{key}_{kind}"))
                     missing.Add($"{key}_{kind}");
         }

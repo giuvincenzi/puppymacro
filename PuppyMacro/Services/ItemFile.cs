@@ -55,8 +55,9 @@ internal sealed class ItemFileContent
 /// <summary>
 /// A .puppyitems file: loops, macros and remaps to share, as one JSON file. Each item is its JSON as the Code view shows it.
 /// Import never replaces anything: every item gets a new Id and comes disabled; a name already used gets " (2)"; a hotkey
-/// already used is left out (a Hold item becomes Toggle, as Hold needs a hotkey); a remap whose key is already taken can't
-/// be imported. Not the backup (<see cref="BackupService"/>), which replaces the whole data folder.
+/// already used is left out (a Hold item becomes Toggle, as Hold needs a hotkey); so is a remap's hotkey (its source) when
+/// it is already taken: that remap stays off until the user gives it another one in the editor. Not the backup
+/// (<see cref="BackupService"/>), which replaces the whole data folder.
 /// </summary>
 internal static class ItemFile
 {
@@ -143,7 +144,7 @@ internal static class ItemFile
         {
             "loop" => LoopJson.Parse(json, id, (_, _) => null, out problems),
             "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems),
-            _ => RemapJson.Parse(json, id, (_, _) => null, out problems),
+            _ => RemapJson.Parse(json, id, (_, _) => null, out problems, withoutSource: true),
         };
         if (parsed is RemapDefinition remapTitle)
             title = Keys(remapTitle);
@@ -169,8 +170,13 @@ internal static class ItemFile
                 break;
             case RemapDefinition remap:
                 remap.Enabled = false;
-                if (taken.RemapClash(remap, chosen) is string clash)
-                    return Unusable(clash, title);
+                if (remap.Source is { IsSet: true } source)
+                    remap.Source = taken.RemapHotkey(source, remap.AppExe, notes, chosen);
+                else
+                {
+                    remap.Source = null;
+                    notes.Add(Strings.ItemFile_RemapWithoutHotkey);
+                }
                 break;
         }
         var result = new ItemFileEntry { Index = index, Kind = kind, Item = parsed, Title = title, Selected = chosen };
@@ -225,23 +231,30 @@ internal static class ItemFile
             return null;
         }
 
-        /// <summary>The remap editor's rule (<see cref="HotkeyConflicts.RemapClash"/>), also against the file's earlier items.</summary>
-        public string? RemapClash(RemapDefinition remap, bool chosen)
+        /// <summary>
+        /// A remap's hotkey (its source), or null when the remap editor would refuse it (<see cref="HotkeyConflicts.RemapClash"/>:
+        /// a hotkey takes it first, or another remap has it), also against the file's earlier items.
+        /// </summary>
+        public HotkeyBinding? RemapHotkey(HotkeyBinding source, string? app, List<string> notes, bool chosen)
         {
-            HotkeyBinding source = remap.Source!;
-            string? app = remap.AppExe;
-            string? clash = HotkeyConflicts.RemapClash(source, app, settings, macros, Guid.Empty)
+            string? conflict = HotkeyConflicts.FindForRemap(source, app, settings, macros)
                 ?? _hotkeys.Where(h => source.Overlaps(h.Keys) && (h.App == null || app == null || AppScope.Same(h.App, app)))
-                    .Select(h => string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_RemapUsedInFile_{h.Kind}"),
+                    .Select(h => string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_HotkeyUsedInFile_{h.Kind}"),
                         KeyNames.Format(source), h.Name))
                     .FirstOrDefault()
+                ?? HotkeyConflicts.AlreadyRemapped(source, app, settings, Guid.Empty)
                 ?? (_remaps.Any(r => source.Overlaps(r.Keys) && AppScope.Same(r.App, app))
                     ? string.Format(CultureInfo.CurrentCulture, app == null ? Strings.ItemFile_RemappedInFile : Strings.ItemFile_RemappedInFileForApp,
                         KeyNames.Format(source), app)
                     : null);
-            if (clash == null && chosen)
-                _remaps.Add((source, app));
-            return clash;
+            if (conflict == null)
+            {
+                if (chosen)
+                    _remaps.Add((source, app));
+                return source;
+            }
+            notes.Add(string.Format(CultureInfo.CurrentCulture, Strings.ItemFile_NoHotkey, conflict.TrimEnd('.', '\u3002', '\u061F')));
+            return null;
         }
     }
 

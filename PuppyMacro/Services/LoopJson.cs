@@ -124,9 +124,12 @@ internal static class RemapJson
 
     /// <summary>Checks a remap's text with the remap editor's rules and reads it. Null when there are problems.</summary>
     /// <param name="clash">For a source and app (null: all apps): why it cannot be remapped (a hotkey, another remap), or null.</param>
-    public static RemapDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?, string?> clash, out List<CodeProblem> problems)
+    /// <param name="withoutSource">A remap without a hotkey (Source) is read too: only Import, from a file exported with one
+    /// that Import had left without it (<see cref="ItemFile"/>).</param>
+    public static RemapDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?, string?> clash, out List<CodeProblem> problems,
+        bool withoutSource = false)
     {
-        RemapDefinition? remap = CodeJson.Read<RemapDefinition>(text, (r, check) => Check(r, id, clash, check), out problems);
+        RemapDefinition? remap = CodeJson.Read<RemapDefinition>(text, (r, check) => Check(r, id, clash, check, withoutSource), out problems);
         if (remap != null)
         {
             remap.Note = remap.Note.Trim();
@@ -135,7 +138,8 @@ internal static class RemapJson
         return remap;
     }
 
-    private static void Check(RemapDefinition r, Guid id, Func<HotkeyBinding, string?, string?> clash, CodeJson.Checker check)
+    private static void Check(RemapDefinition r, Guid id, Func<HotkeyBinding, string?, string?> clash, CodeJson.Checker check,
+        bool withoutSource)
     {
         check.SameId(r.Id, id);
 
@@ -145,7 +149,10 @@ internal static class RemapJson
 
         bool sourceValid = false;
         if (r.Source is not { IsSet: true } source)
-            check.Add("Source", Strings.Code_ChooseSource);
+        {
+            if (!withoutSource)
+                check.Add("Source", Strings.Code_ChooseSource);
+        }
         else
             sourceValid = check.RemapKey("Source", source);
 

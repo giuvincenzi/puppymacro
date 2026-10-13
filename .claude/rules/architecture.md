@@ -176,16 +176,21 @@ Rules:
 - Backup: `Services/BackupService.cs` (export and import of the data folder, `data.md`), `Views/ExportOptionsView`
   (Export's choices, in a `ContentDialog`); the Import confirmation names the file's parts.
 - Sharing (not the backup, the user's choice: two separate features): `.puppyitems` files (`Services/ItemFile.cs`, `data.md`),
-  `MainWindow.Share.cs`: the title bar's Import and Export (`ContentDialog`s with `Views/ImportItemsView` and
-  `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`), Export… in each card's menu (`ExportOne`, the file dialog at
+  `MainWindow.Share.cs`: Import… and Export… in the title bar's More options menu (`ContentDialog`s with
+  `Views/ImportItemsView` and `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`, sized by `Views/DialogFill`), Export… in each card's menu (`ExportOne`, the file dialog at
   once). Import reads the file again at each check box change (`ItemFile.Read` with the chosen indexes: a name or hotkey goes to
   the first chosen item that takes it) and adds the chosen items through `SaveItem`, so the History records them. File
   Explorer: `Services/FileTypes.cs` registers `.puppyitems` (icon, open command `"PuppyMacro.exe" "%1"`) and `.puppymacro`
   (icon only: a backup is imported from Settings) in `HKCU\Software\Classes`, Release builds only, at every start in `App`
   (`SHChangeNotify` when something changed), removed by the Velopack uninstall hook. A process started with a `.puppyitems`
   path while PuppyMacro runs hands it over on `Services/OpenFileChannel.cs` (a named pipe, current user only, one per build)
-  and exits; `MainWindow.OpenItemsFile` shows Import once no editor or dialog is open. When the running PuppyMacro does not
-  answer (it runs as administrator and the new process does not), the new process only shows its window.
+  and exits. A `.puppyitems` file dropped on the main window goes the same way (`OnFileDrop`; `OnFileDragOver` shows
+  `DropOverlay`, also for a backup, which is never imported there; other files and the cards' own drags pass as before;
+  Windows refuses drops from File Explorer while PuppyMacro runs as administrator). `MainWindow.OpenItemsFile`: **the last
+  file opened wins**: while the user's Import is open it shows the new file in it (`_importShowFile`, as Choose another
+  file…); otherwise it waits in `_fileToOpen` until no editor or dialog is open, and a newer file replaces an older one.
+  When the running PuppyMacro does not answer (it runs as administrator and the new process does not), the new process only
+  shows its window.
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version in
   `history\{id}.json` (the newest up to 10 MB per item; none for a save that changes nothing), with who saved it (`MainWindow._savedBy`: "You",

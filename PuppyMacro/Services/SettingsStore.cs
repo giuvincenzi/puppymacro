@@ -190,9 +190,16 @@ internal sealed class SettingsStore
                 remap.Source ??= HotkeyBinding.FromKey(sourceVk);
             remap.SourceVk = null;
         }
-        settings.Remaps.RemoveAll(r => r.Source is not { IsSet: true } || r.Target is not { IsSet: true });
+        // A remap without a hotkey comes only from Import (its hotkey was taken): it stays, always off, until the user
+        // gives it one in the editor.
+        settings.Remaps.RemoveAll(r => r.Target is not { IsSet: true });
         foreach (var remap in settings.Remaps)
         {
+            if (remap.Source is not { IsSet: true })
+            {
+                remap.Source = null;
+                remap.Enabled = false;
+            }
             if (remap.Id == Guid.Empty)
                 remap.Id = Guid.NewGuid();
             remap.Note ??= "";

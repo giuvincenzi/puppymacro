@@ -18,6 +18,7 @@ public partial class ItemCardActions : UserControl
     public static readonly DependencyProperty CanPlayProperty = Register(nameof(CanPlay), true);
     public static readonly DependencyProperty CanEditProperty = Register(nameof(CanEdit), true);
     public static readonly DependencyProperty CanMoreProperty = Register(nameof(CanMore), true);
+    public static readonly DependencyProperty CanSwitchProperty = Register(nameof(CanSwitch), true);
 
     public static readonly DependencyProperty EditBlockedTextProperty = DependencyProperty.Register(
         nameof(EditBlockedText), typeof(string), typeof(ItemCardActions),
@@ -51,6 +52,9 @@ public partial class ItemCardActions : UserControl
     /// <summary>More options can be used (not while the item runs).</summary>
     public bool CanMore { get => (bool)GetValue(CanMoreProperty); set => SetValue(CanMoreProperty, value); }
 
+    /// <summary>The Enabled switch can be used (not on a remap without a hotkey: it can't be turned on).</summary>
+    public bool CanSwitch { get => (bool)GetValue(CanSwitchProperty); set => SetValue(CanSwitchProperty, value); }
+
     /// <summary>Edit's tooltip while it cannot be used.</summary>
     public string EditBlockedText { get => (string)GetValue(EditBlockedTextProperty); set => SetValue(EditBlockedTextProperty, value); }
 
@@ -79,6 +83,7 @@ public partial class ItemCardActions : UserControl
         EditButton.IsEnabled = CanEdit;
         EditButton.ToolTip = CanEdit ? Strings.Card_Edit : EditBlockedText;
         MoreButton.IsEnabled = CanMore;
+        EnabledSwitch.IsEnabled = CanSwitch;
     }
 
     private void OnPlayClick(object sender, RoutedEventArgs e) => PlayClick?.Invoke(sender, e);
