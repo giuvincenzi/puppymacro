@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.19.0
+
 ### Changed
 - Import and Export of loops, macros and remaps open in a window of their own, taller, as the editors do: PuppyMacro's
   window is hidden meanwhile and comes back when you import, export or cancel.
