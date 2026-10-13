@@ -102,7 +102,8 @@
 - A test that sends input must be harmless: input goes only to a window of the test itself.
   The UI tests use F24 (no keyboard has it). The playback tests (`Macros`, `Loops`, `Remaps`,
   `Recording`, `Overlay`) really run loops, macros and remaps against `TargetWindow`: a topmost
-  window of the test process at a fixed place inside the 1024x768 screen, which logs every key,
+  window of the test process at a fixed place inside the 1024x768 screen (its `Activate` puts it on top before its click and
+  checks the click point is its own: PuppyMacro's main window covers that whole screen), which logs every key,
   button, wheel and move it receives with the time, and has a text box for pasted text. Its
   `Tap` / `Press` / `Click` check first that it is in front (`RequireForeground`), and every point
   a macro clicks or moves to is inside it (`TargetWindow.PointAt`, physical pixels). Hotkeys and
