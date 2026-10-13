@@ -23,7 +23,7 @@ permissions:
   contents: read
 
 env:
-  E2E_GROUPS: 6   # how many machines run the end-to-end tests at once: change only this (testing.md)
+  E2E_GROUPS: 7   # how many machines run the end-to-end tests at once: change only this (testing.md)
 
 jobs:
   decide_which_tests_run:
@@ -147,7 +147,7 @@ jobs:
           echo "$count end-to-end tests."
 
       # Test n (from 1) goes to the group of n's remainder divided by E2E_GROUPS, the remainder 0 to the last group:
-      # with 6 groups, group 1 takes tests 1, 7, 13, ..., group 6 takes 6, 12, 18, ...
+      # with 7 groups, group 1 takes tests 1, 8, 15, ..., group 7 takes 7, 14, 21, ...
       - name: pick_group_tests
         run: |
           awk -v g="$GROUP" -v n="$E2E_GROUPS" '{ r = NR % n; if (r == 0) r = n; if (r == g) print }' e2e_results/all_tests.txt > e2e_results/group_tests.txt
@@ -155,14 +155,19 @@ jobs:
           cat e2e_results/group_tests.txt
 
       # The runner's own windows (its agent's console) can stay in front of PuppyMacro and take a real click: the tests
-      # start from a clear desktop, as on a contributor's PC. The windows still shown are written to the log.
+      # start from a clear desktop, as on a contributor's PC. The windows still shown (visible, not minimized) are written
+      # to the log.
       - name: minimize_other_windows
         shell: pwsh
         run: |
+          Add-Type -Namespace Win32 -Name Window -MemberDefinition '
+            [DllImport("user32.dll")] public static extern bool IsWindowVisible(System.IntPtr hWnd);
+            [DllImport("user32.dll")] public static extern bool IsIconic(System.IntPtr hWnd);'
           (New-Object -ComObject Shell.Application).MinimizeAll()
           Start-Sleep -Seconds 2
-          Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle } |
-            ForEach-Object { Write-Host "Window still open: $($_.ProcessName): $($_.MainWindowTitle)" }
+          Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and [Win32.Window]::IsWindowVisible($_.MainWindowHandle) -and
+              -not [Win32.Window]::IsIconic($_.MainWindowHandle) } |
+            ForEach-Object { Write-Host "Window still shown: $($_.ProcessName): $($_.MainWindowTitle)" }
 
       - name: run_group_tests
         env:

@@ -179,9 +179,22 @@ public sealed class AppSession : IDisposable
             Timeout, throwOnTimeout: true, timeoutMessage: $"menu item \"{name}\" not found").Result!;
 
     /// <summary>A top-level window of this PuppyMacro (overlay panel, floating buttons), or null after a timeout.</summary>
-    public AutomationElement? TopWindow(string title) =>
-        Retry.WhileNull(() => Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId))),
-            Timeout).Result;
+    /// <remarks>
+    /// Taken again until it shows its content, as <see cref="MainWindow"/>: an element taken right after its window appears
+    /// can keep showing no children (a test then did not find the overlay panel's rows that were on the screen). A window
+    /// that exists but shows no children until the timeout is returned as it is.
+    /// </remarks>
+    public AutomationElement? TopWindow(string title)
+    {
+        AutomationElement? found = null;
+        AutomationElement? withContent = Retry.WhileNull(() =>
+        {
+            AutomationElement? window = Automation.GetDesktop().FindFirstChild(cf => cf.ByName(title).And(cf.ByProcessId(ProcessId)));
+            found = window ?? found;
+            return window?.FindFirstChild() != null ? window : null;
+        }, Timeout, ignoreException: true).Result;
+        return withContent ?? found;
+    }
 
     /// <summary>
     /// After leaving overlay mode with its hotkey or the panel's exit button: waits until

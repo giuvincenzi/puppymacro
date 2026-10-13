@@ -140,7 +140,7 @@ checks"), while a job or step skipped by `if` counts as passing.
 
 ## End-to-end tests in groups
 
-On GitHub the end-to-end tests run on **`E2E_GROUPS` Windows machines at once** (6 today), written once at the top of
+On GitHub the end-to-end tests run on **`E2E_GROUPS` Windows machines at once** (7 today), written once at the top of
 `.github/workflows/test.yml`. Every test runs in every pull request, exactly once; each machine runs its share one at a
 time, as on a contributor's PC. The groups do not follow the categories: they stay even whatever the categories grow
 into, and a new test needs nothing.
@@ -167,9 +167,16 @@ into, and a new test needs nothing.
   same list, (2) every test ran exactly once (none missing, none in two groups), (3) every test and every group passed.
   Otherwise red, with the missing, doubled or failed tests in the run's summary.
 
+**When an end-to-end test fails on GitHub, look at its screenshot first**: on the run's page (the pull request's
+`e2e_test` check > Summary), Artifacts, `e2e_group_<n>` (the group `e2e_test`'s summary names) >
+`screenshots/Class.Method.png`, the whole screen as the test left it, before PuppyMacro closed; or
+`gh run download <run> --name e2e_group_<n>`. It shows what an error like "not found" cannot: a window of the runner in
+front, a dialog still open, content that was there but not seen. Then fix the cause, not the timeout.
+
 **Changing the number of machines:** change only `E2E_GROUPS`. Nothing else: not the ruleset (it requires `e2e_test`,
 not the groups), not the tests. Each group costs about a minute of its own (machine, checkout, build) on top of its
-tests (about 7 s each), so more groups help less and less: with 66 tests, 6 groups take about 2.5 minutes, 10 about 2.
+tests (about 7 s each), so more groups help less and less: with 66 tests, 7 groups take about 2 to 2.5 minutes, 10
+about 2.
 GitHub runs at most 20 jobs at once for the whole account (all pull requests and workflows together): the jobs over it
 wait in a queue, they do not fail. Never rename `e2e_test` without changing the ruleset in the same moment
 (`build-and-release.md`).
