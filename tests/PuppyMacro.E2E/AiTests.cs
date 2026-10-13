@@ -469,7 +469,7 @@ public class AiTests
         await using McpClient client = await ConnectWithAccess(app);
 
         Task<(string Text, bool IsError)> call = Call(client, "open_import_window", new { content = SharedFile });
-        app.FindButton(app.MainWindow, "Import 1 item").Invoke();
+        app.FindButton(app.Dialog("Import"), "Import 1 item").Invoke();
         var (text, isError) = await call;
 
         Assert.False(isError, text);

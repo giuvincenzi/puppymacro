@@ -1125,8 +1125,9 @@ Detalhes: {1}</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Exportar</value></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>Exportar…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Solte para importar</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Backups são abertos nas Configurações</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>Um backup substitui todos os seus dados, por isso é aberto em {0} › {1}.</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Restaure este backup nas Configurações</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>Restaurar um backup substitui todos os seus loops, macros, remapeamentos e configurações. Você pode fazer isso em {0} › {1}.</value></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Abrir as Configurações</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Fechar</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Salvar loops, macros e remapeamentos em um arquivo, para compartilhá-los</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Exportar…</value></data>

@@ -1089,8 +1089,9 @@ Detalii: {1}</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Export</value></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>Export…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Plasați pentru a importa</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Copiile de rezervă se deschid din Setări</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>O copie de rezervă înlocuiește toate datele, așa că se deschide din {0} › {1}.</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Restaurați această copie de rezervă din Setări</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>Restaurarea unei copii de rezervă înlocuiește toate buclele, macrocomenzile, remapările și setările. O puteți face din {0} › {1}.</value></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Deschidere Setări</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Închidere</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Salvați bucle, macrocomenzi și remapări într-un fișier, pentru a le partaja</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Export…</value></data>

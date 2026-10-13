@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using PuppyMacro.Models;
@@ -17,7 +16,6 @@ using PuppyMacro.Services.Ai;
 using PuppyMacro.Views;
 using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
 using ContentDialogButton = iNKORE.UI.WPF.Modern.Controls.ContentDialogButton;
-using ContentDialogResult = iNKORE.UI.WPF.Modern.Controls.ContentDialogResult;
 using FontIcon = iNKORE.UI.WPF.Modern.Controls.FontIcon;
 using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
 using Shape = System.Windows.Shapes.Shape;
@@ -47,12 +45,12 @@ public partial class MainWindow
         {
             Header = Strings.Share_ImportMenu, ToolTip = Strings.Share_ImportTooltip, Icon = new FontIcon { Icon = SegoeFluentIcons.Download },
         };
-        import.Click += async (_, _) => await ImportItems(null, null, null);
+        import.Click += (_, _) => ImportItems(null, null, null);
         var export = new MenuItem
         {
             Header = Strings.Share_ExportMenu, ToolTip = Strings.Share_ExportTooltip, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload },
         };
-        export.Click += async (_, _) => await ExportItems(Array.Empty<Guid>(), null);
+        export.Click += (_, _) => ExportItems(Array.Empty<Guid>(), null);
         var menu = new ContextMenu { PlacementTarget = (UIElement)sender, Placement = PlacementMode.Bottom };
         menu.Items.Add(import);
         menu.Items.Add(export);
@@ -69,7 +67,7 @@ public partial class MainWindow
     /// <param name="text">The file's text, given by an AI app instead of a file.</param>
     /// <param name="app">The AI app that opened Import, or null for the user.</param>
     /// <returns>Done with the items added, or why nothing was (cancelled, timed out for an AI app).</returns>
-    private async Task<(AiAnswer Answer, List<object> Items)> ImportItems(string? path, string? text, string? app)
+    private (AiAnswer Answer, List<object> Items) ImportItems(string? path, string? text, string? app)
     {
         if (path == null && text == null)
         {
@@ -84,14 +82,7 @@ public partial class MainWindow
         }
 
         var view = new ImportItemsView();
-        var dialog = new ContentDialog
-        {
-            Title = Strings.Share_Import,
-            Content = view,
-            CloseButtonText = Strings.Main_Cancel,
-            DefaultButton = ContentDialogButton.Primary,
-        };
-        DialogFill.Apply(dialog, this, view);
+        var window = new ItemsWindow(Strings.Share_Import, view);
         void Load(string? file, string? given)
         {
             string name = file != null ? Path.GetFileName(file) : string.Format(CultureInfo.CurrentCulture, Strings.ImportItems_FromApp, app);
@@ -118,32 +109,32 @@ public partial class MainWindow
             {
                 // A file of a newer PuppyMacro: its button opens Updates.
                 bool newer = view.NeedsUpdate && _updates.IsInstalled;
-                dialog.PrimaryButtonText = newer ? Strings.ImportItems_CheckForUpdates : "";
-                dialog.IsPrimaryButtonEnabled = newer;
+                window.SetPrimary(newer ? Strings.ImportItems_CheckForUpdates : "", newer);
                 return;
             }
             int count = view.ChosenCount;
-            dialog.PrimaryButtonText = Plurals.Format("ImportItems_Button", count);
-            dialog.IsPrimaryButtonEnabled = count > 0;
+            window.SetPrimary(Plurals.Format("ImportItems_Button", count), count > 0);
         }
         view.ChoiceChanged += RefreshButton;
         view.OtherFileRequested += () =>
         {
-            if (PickItemsFile() is string other)
+            if (PickItemsFile(window) is string other)
                 Load(other, null);
         };
         Load(path, text);
 
         // A file opened or dropped meanwhile replaces this one, as Choose another file… does (only in the user's own Import).
         if (app == null)
-            _importShowFile = file => Load(file, null);
-        (ContentDialogResult result, bool timedOut) = await ShowItemsDialog(dialog, app != null);
+            _importShowFile = file =>
+            {
+                Load(file, null);
+                window.Activate();
+            };
+        AiAnswer answer = ShowItemsWindow(window, app != null);
         if (app == null)
             _importShowFile = null;
-        if (timedOut)
-            return (AiAnswer.TimedOut, new List<object>());
-        if (result != ContentDialogResult.Primary)
-            return (AiAnswer.Cancelled, new List<object>());
+        if (answer != AiAnswer.Done)
+            return (answer, new List<object>());
         if (view.Error != null)
         {
             Rail.Select("Settings");
@@ -171,34 +162,24 @@ public partial class MainWindow
     /// <summary>Export: the user chooses items, then where to save them.</summary>
     /// <param name="chosen">The items checked at first.</param>
     /// <param name="app">The AI app that opened Export, or null for the user.</param>
-    private async Task<(AiAnswer Answer, List<object> Items, string? File)> ExportItems(ICollection<Guid> chosen, string? app)
+    private (AiAnswer Answer, List<object> Items, string? File) ExportItems(ICollection<Guid> chosen, string? app)
     {
         var all = _items.Select(i => ((object)i.Definition, i.Definition.Id))
             .Concat(_macroItems.Select(m => ((object)m.Definition, m.Definition.Id)))
             .Concat(_remapItems.Select(r => ((object)r.Definition, r.Definition.Id)));
         var view = new ExportItemsView(all, chosen);
-        var dialog = new ContentDialog
-        {
-            Title = Strings.Share_Export,
-            Content = view,
-            CloseButtonText = Strings.Main_Cancel,
-            DefaultButton = ContentDialogButton.Primary,
-        };
-        DialogFill.Apply(dialog, this, view);
+        var window = new ItemsWindow(Strings.Share_Export, view);
         void RefreshButton()
         {
             int count = view.ChosenCount;
-            dialog.PrimaryButtonText = Plurals.Format("ExportItems_Button", count);
-            dialog.IsPrimaryButtonEnabled = count > 0;
+            window.SetPrimary(Plurals.Format("ExportItems_Button", count), count > 0);
         }
         view.ChoiceChanged += RefreshButton;
         RefreshButton();
 
-        (ContentDialogResult result, bool timedOut) = await ShowItemsDialog(dialog, app != null);
-        if (timedOut)
-            return (AiAnswer.TimedOut, new List<object>(), null);
-        if (result != ContentDialogResult.Primary)
-            return (AiAnswer.Cancelled, new List<object>(), null);
+        AiAnswer answer = ShowItemsWindow(window, app != null);
+        if (answer != AiAnswer.Done)
+            return (answer, new List<object>(), null);
         List<object> items = view.ChosenItems;
         return SaveItemsFile(items, out string? file)
             ? (AiAnswer.Done, items, file)
@@ -206,62 +187,27 @@ public partial class MainWindow
     }
 
     /// <summary>
-    /// Shows Import or Export. For an AI app, this window comes to the front first and the dialog closes by itself when nobody
-    /// used PuppyMacro for <see cref="AiTools.AnswerTimeout"/>, as the other windows of AI requests do.
+    /// Shows Import or Export as the editors open (hotkeys off, this window hidden meanwhile). For an AI app, as the other
+    /// windows of AI requests: centered on the screen, in front, closed when nobody used PuppyMacro for
+    /// <see cref="AiTools.AnswerTimeout"/>.
     /// </summary>
-    private async Task<(ContentDialogResult Result, bool TimedOut)> ShowItemsDialog(ContentDialog dialog, bool forAi)
+    private AiAnswer ShowItemsWindow(ItemsWindow window, bool forAi)
     {
-        DispatcherTimer? timer = null;
-        bool timedOut = false;
-        void OnInput(object sender, PreProcessInputEventArgs e)
-        {
-            if (e.StagingItem.Input is MouseEventArgs or KeyEventArgs && timer!.IsEnabled)
-            {
-                timer.Stop();
-                timer.Start();
-            }
-        }
         if (forAi)
-        {
-            ShowFromTray();
-            Topmost = true; // the AI app is in front, and Windows may not let PuppyMacro take the focus
-            Activate();
-            timer = new DispatcherTimer { Interval = AiTools.AnswerTimeout };
-            timer.Tick += (_, _) =>
-            {
-                timer.Stop();
-                timedOut = true;
-                dialog.Hide();
-            };
-            timer.Start();
-            InputManager.Current.PreProcessInput += OnInput;
-        }
-
-        _userDialogs++;
-        try
-        {
-            return (await dialog.ShowAsync(this), timedOut);
-        }
-        finally
-        {
-            _userDialogs--;
-            if (timer != null)
-            {
-                timer.Stop();
-                InputManager.Current.PreProcessInput -= OnInput;
-                Topmost = false;
-            }
-        }
+            return ShowForAi(window);
+        window.Owner = this;
+        return ShowDialogWithoutHotkeys(window) == true ? AiAnswer.Done : AiAnswer.Cancelled;
     }
 
-    private string? PickItemsFile()
+    /// <summary>The file dialog to choose a .puppyitems file, over <paramref name="owner"/> (this window when null).</summary>
+    private string? PickItemsFile(Window? owner = null)
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
             Title = Strings.Share_ImportFileTitle,
             Filter = ItemsFilter,
         };
-        return ShowUserDialog(() => dialog.ShowDialog(this)) == true ? dialog.FileName : null;
+        return ShowUserDialog(() => dialog.ShowDialog(owner ?? this)) == true ? dialog.FileName : null;
     }
 
     /// <summary>The file dialog, then the file. False when the user cancelled or it could not be written (said in a dialog).</summary>
@@ -316,8 +262,6 @@ public partial class MainWindow
         if (_importShowFile != null)
         {
             _importShowFile(path);
-            ShowFromTray();
-            Activate();
             return;
         }
         _fileToOpen = path;
@@ -334,7 +278,7 @@ public partial class MainWindow
         OpenWaitingFile();
     }
 
-    private async void OpenWaitingFile()
+    private void OpenWaitingFile()
     {
         if (_engine.HotkeysSuspended || _userDialogs > 0)
         {
@@ -351,7 +295,7 @@ public partial class MainWindow
             return;
         _fileToOpen = null;
         ShowFromTray();
-        await ImportItems(path, null, null);
+        ImportItems(path, null, null);
         if (_fileToOpen != null)
             OpenWaitingFile();
     }
@@ -436,8 +380,9 @@ public partial class MainWindow
 
     // ================= AI apps =================
 
-    Task<(AiAnswer Answer, List<object> Items)> IAiHost.ShowImport(string app, string? text) => ImportItems(null, text, app);
+    Task<(AiAnswer Answer, List<object> Items)> IAiHost.ShowImport(string app, string? text) =>
+        Task.FromResult(ImportItems(null, text, app));
 
     Task<(AiAnswer Answer, List<object> Items, string? File)> IAiHost.ShowExport(string app, IReadOnlyCollection<Guid> ids) =>
-        ExportItems(ids.ToList(), app);
+        Task.FromResult(ExportItems(ids.ToList(), app));
 }

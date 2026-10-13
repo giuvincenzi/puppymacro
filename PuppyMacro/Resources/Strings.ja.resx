@@ -1024,8 +1024,9 @@
   <data name="Share_Export" xml:space="preserve"><value>エクスポート</value></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>エクスポート…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>ドロップしてインポート</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>バックアップは設定から開きます</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>バックアップはすべてのデータを置き換えるため、{0} › {1} から開きます。</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>このバックアップは設定から復元します</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>バックアップを復元すると、ループ、マクロ、リマップ、設定がすべて置き換わります。{0} › {1} から復元できます。</value></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>設定を開く</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>閉じる</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>ループ、マクロ、リマップをファイルに保存して共有します</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>エクスポート…</value></data>

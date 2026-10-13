@@ -5,10 +5,10 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:r="clr-namespace:PuppyMacro.Resources">
 
-    <!-- Import's content, in its ContentDialog (approved design: the Design canvas "PuppyMacro Import and Export", A2; size and
+    <!-- Import's content, in its window (ItemsWindow; approved design: the Design canvas "PuppyMacro Import and Export", A2;
          spacing: the canvas "PuppyMacro Import, remap without key, title bar"): the file, then its loops, macros and remaps by
-         kind, each with a check box, what changes on import or why it can't. The dialog gives it its height (DialogFill): the
-         list takes the free space, the InfoBar stays at the bottom -->
+         kind, each with a check box, what changes on import or why it can't. It fills the window: the list takes the free
+         space, the InfoBar stays at the bottom -->
     <UserControl.Resources>
         <Style x:Key="Description" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />

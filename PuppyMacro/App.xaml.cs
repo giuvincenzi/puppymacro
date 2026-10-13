@@ -28,6 +28,11 @@ public partial class App : Application
     private EventWaitHandle? _showWindowRequest;
     private RegisteredWaitHandle? _showWindowWait;
 
+    // Started with BackupSettingsArgument while PuppyMacro runs: the running instance shows Settings › Backup.
+    private const string ShowBackupSettingsEventName = "PuppyMacro.ShowBackupSettings";
+    private EventWaitHandle? _showBackupSettingsRequest;
+    private RegisteredWaitHandle? _showBackupSettingsWait;
+
     /// <summary>"PuppyMacro v1.1.0", from the version in PuppyMacro.csproj.</summary>
     /// <summary>Debug build (make dev): marked as DEV in the window and the tray.</summary>
     /// <remarks>Declared before <see cref="DisplayTitle"/>: static initializers run in declaration order.</remarks>
@@ -73,6 +78,9 @@ public partial class App : Application
 
     public const string RestartArgument = "--restart";
 
+    /// <summary>Open Settings in <see cref="BackupFileWindow"/>: PuppyMacro opens on Settings › Backup.</summary>
+    public const string BackupSettingsArgument = "--backup-settings";
+
     /// <summary>The mutex a running PuppyMacro holds (one at a time; the AI bridge checks it to know PuppyMacro is open).</summary>
     public const string SingleInstanceName = "PuppyMacro.SingleInstance";
 
@@ -107,6 +115,7 @@ public partial class App : Application
         base.OnStartup(e);
         bool startInTray = e.Args.Contains(StartupService.TrayArgument);
         bool restarting = e.Args.Contains(RestartArgument);
+        bool showBackupSettings = e.Args.Contains(BackupSettingsArgument);
         // A .puppyitems file opened from File Explorer (FileTypes): Import shows it.
         string? itemsFile = e.Args.FirstOrDefault(a => a.EndsWith(ItemFile.Extension, StringComparison.OrdinalIgnoreCase) && File.Exists(a));
         if (itemsFile != null)
@@ -141,7 +150,7 @@ public partial class App : Application
         {
             // Started with Windows while already running: nothing to do.
             if (!startInTray)
-                ShowRunningInstance();
+                ShowRunningInstance(showBackupSettings ? ShowBackupSettingsEventName : ShowWindowEventName);
             if (itemsFile != null)
                 OpenFileChannel.Send(itemsFile);
             Shutdown();
@@ -151,6 +160,10 @@ public partial class App : Application
         _showWindowRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowEventName);
         _showWindowWait = ThreadPool.RegisterWaitForSingleObject(_showWindowRequest,
             (_, _) => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.ShowFromTray()),
+            null, Timeout.Infinite, executeOnlyOnce: false);
+        _showBackupSettingsRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowBackupSettingsEventName);
+        _showBackupSettingsWait = ThreadPool.RegisterWaitForSingleObject(_showBackupSettingsRequest,
+            (_, _) => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.ShowBackupSettings()),
             null, Timeout.Infinite, executeOnlyOnce: false);
 
         OpenFileChannel.Listen(path => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.OpenItemsFile(path)));
@@ -202,6 +215,8 @@ public partial class App : Application
             window.StartInTray();
         else
             window.Show();
+        if (showBackupSettings)
+            window.ShowBackupSettings();
         if (itemsFile != null)
             window.OpenItemsFile(itemsFile);
 
@@ -210,10 +225,10 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Asks the running instance to show its window. This process was started by the user, so it
-    /// may bring a window to the front; it lets the running instance do it.
+    /// Asks the running instance to show its window (<paramref name="eventName"/>: its window, or Settings › Backup). This
+    /// process was started by the user, so it may bring a window to the front; it lets the running instance do it.
     /// </summary>
-    private static void ShowRunningInstance()
+    private static void ShowRunningInstance(string eventName)
     {
         foreach (Process running in Process.GetProcessesByName("PuppyMacro"))
         {
@@ -221,7 +236,7 @@ public partial class App : Application
                 NativeMethods.AllowSetForegroundWindow((uint)running.Id);
             running.Dispose();
         }
-        if (EventWaitHandle.TryOpenExisting(ShowWindowEventName, out EventWaitHandle? request))
+        if (EventWaitHandle.TryOpenExisting(eventName, out EventWaitHandle? request))
         {
             using (request)
                 request.Set();
@@ -323,6 +338,8 @@ public partial class App : Application
     {
         _showWindowWait?.Unregister(null);
         _showWindowRequest?.Dispose();
+        _showBackupSettingsWait?.Unregister(null);
+        _showBackupSettingsRequest?.Dispose();
         if (_ownsMutex)
             _singleInstance?.ReleaseMutex();
         _singleInstance?.Dispose();

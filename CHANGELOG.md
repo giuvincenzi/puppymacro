@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Changed
+- Import and Export of loops, macros and remaps open in a window of their own, taller, as the editors do: PuppyMacro's
+  window is hidden meanwhile and comes back when you import, export or cancel.
+- The title bar's **More options** (⋯) is on the left, next to PuppyMacro's name.
+- The window of a backup opened from File Explorer says **Restore this backup from Settings** and has
+  **Open Settings**, which opens PuppyMacro on Settings › Backup.
+
+### Fixed
+- The title bar's **More options** (⋯) was a little shorter than **Enter overlay mode**.
+- In Import, the window's close button covered the top of the dialog, and the note at the bottom was cut off.
+
 ## 1.18.0
 
 ### Added

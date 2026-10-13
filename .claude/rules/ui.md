@@ -111,12 +111,14 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `ListViewItemCompactSelectedBorderThemeThickness` is `4,0,4,4`, so the first page's background starts
     where that layer starts; the Settings list keeps the library's 4 (no extra margin), as Library in Microsoft Store.
   - The main window's title bar: `TitleBar.ExtendViewIntoTitleBar` with `TitleBar.Height` 48, as Microsoft Store
-    and the library's ButtonsOnTitlebar sample: on the left the app icon at 24 px (12 px above and below) and "PuppyMacro"
-    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build); on the right Enter
-    overlay mode (a standard button with the `MapLayers` icon), More options (a standard button with only the `More` icon,
-    its name as tooltip; approved design B, the Design canvas "PuppyMacro Import, remap without key, title bar": a `ContextMenu` with **Import…**, the `Download` icon, and
-    **Export…**, the `Upload` icon, each with its tooltip) and Stop all, then the window buttons
-    (`TitleBar.SystemOverlayRightInset`). Enter overlay mode and Stop all have their hotkey in the tooltip; all of them have
+    and the library's ButtonsOnTitlebar sample: on the left the app icon at 24 px (12 px above and below), "PuppyMacro"
+    in caption style (no version; "DEV" in `TextFillColorSecondaryBrush` in a development build) and, 16 px after it, More
+    options (a standard button with only the `More` icon, its name as tooltip, as tall as Enter overlay mode: its 16 px icon
+    is shorter than a line of text, so its `Height` is bound to that button's `ActualHeight`; placed there by the user, the
+    Design canvas "PuppyMacro title bar, Import, backup window"; approved design B, the Design canvas "PuppyMacro Import,
+    remap without key, title bar": a `ContextMenu` with **Import…**, the `Download` icon, and **Export…**, the `Upload` icon,
+    each with its tooltip); on the right Enter overlay mode (a standard button with the `MapLayers` icon) and Stop all, then
+    the window buttons (`TitleBar.SystemOverlayRightInset`). Enter overlay mode and Stop all have their hotkey in the tooltip; all of them have
     `WindowChrome.IsHitTestVisibleInChrome` and show on every page. They sit 9 px from the top (the window's 1 px border, then 8), so they look 8 px from the top
     and the bottom, as Microsoft Store's search box (measured). Minimize and close are the library's, as tall as the bar;
     16 px between our last button and them.
@@ -207,7 +209,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     the labels), a `CheckBox` per part with its description and size in caption style, enabled only with Choose; Loops,
     macros, remaps and settings always checked and disabled. Export… is the default button, then the file dialog.
   - Import and Export of loops, macros and remaps (approved design: the Design canvas "PuppyMacro Import and Export", A1 to
-    A3): the title bar's More options › Import… and Export… open a standard `ContentDialog` each, with `Views/ImportItemsView` /
+    A3): the title bar's More options › Import… and Export… open a window each (`ItemsWindow`, titled Import and Export), with `Views/ImportItemsView` /
     `Views/ExportItemsView`: the items in an `ItemsControl` grouped by kind (Loops, Macros, Remaps: a
     `BodyStrongTextBlockStyle` header per group) inside a bordered card (`CardStrokeColorDefaultBrush`,
     `CardBackgroundFillColorDefaultBrush`, 4 px corners) that scrolls, one `CheckBox` per item whose content is its name, the
@@ -219,10 +221,12 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     Search (`TextBox`) and the kind (`ComboBox`: All kinds, Loops, Macros, Remaps), a three-state **Select all shown** with
     "N shown · M selected" on the right, the button **Export N items…**, then the file dialog. Each card's More options menu
     starts with **Export…** (the `Upload` icon, the opposite of Import's `Download`; for remaps after Duplicate), which opens
-    the file dialog at once. Both dialogs are 800 x 900 px (less when the window is smaller; approved, the Design canvas "PuppyMacro Import, remap without key, title bar"), through the
-    library's `ContentDialogMin/MaxWidth` and `…Height` resources set on the dialog (`Views/DialogFill`): the dialog shows its
-    content in a ScrollViewer, so `DialogFill` gives the view the height shown and the list's row is `*`, taking the free
-    space. 32 px above **Select all** / **Select all shown** (after the file or the search), 8 below; Import's `InfoBar` at
+    the file dialog at once. The windows open as the editors (the user's choice: a `ContentDialog` covered the main window's
+    title bar, under its window buttons, and could not grow past the main window): Mica, no minimize or maximize, own
+    taskbar button, 800 x 1000 px and resizable (at least 560 x 520; `WindowFit` keeps them on the screen), centered on the
+    main window, which is hidden meanwhile (`ShowDialogWithoutHotkeys`); the view fills the window, 24 px from its sides, and
+    the list's row is `*`, taking the free space; at the bottom the editors' buttons' area with the main button
+    (`AccentButtonStyle`, Enter) and Cancel (Esc), each at least 160 px. 32 px above **Select all** / **Select all shown** (after the file or the search), 8 below; Import's `InfoBar` at
     the bottom, 16 px under the list. Import's notes are short natural sentences (`i18n.md`): "…, so this comes in without a
     hotkey.", "You already have a loop with this name, so this one is called "Farm (2)"."
   - A remap without a hotkey (only after an import, `data.md`; approved design B, the Design canvas "PuppyMacro Import, remap without key, title bar"): its card shows "No hotkey yet"
@@ -234,12 +238,13 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     8 px corners) 12 px inside the edges; in the middle a 56 px icon, a `TitleTextBlockStyle` title and the file's name in
     caption style. A `.puppyitems` file: the line in `AccentFillColorDefaultBrush`, `ArrowDownload_48_Regular` in the accent
     text color, "Drop to import". A backup: the line and `ArchiveSettings_24_Regular` in `TextFillColorSecondaryBrush`,
-    "Backups open from Settings" and why, and the drop is refused. Any other file: nothing, as before.
+    "Restore this backup from Settings" and why, and the drop is refused. Any other file: nothing, as before.
   - A backup opened from File Explorer (approved by the user as described): `BackupFileWindow`, a small window alone (440 px,
     as `GroupNameWindow`: Mica, its buttons' area at the bottom): the `ArchiveSettings_24_Regular` icon at 32 px in the
-    secondary text color, "Backups open from Settings" in `SubtitleTextBlockStyle`, why (it replaces all the data) and where
-    (Settings › Backup, with the page's own names), the file's name in caption style, and only **Close** (`AccentButtonStyle`,
-    Enter and Esc).
+    secondary text color, "Restore this backup from Settings" in `SubtitleTextBlockStyle` (the user chose it, the Design
+    canvas "PuppyMacro title bar, Import, backup window", 3B), what restoring replaces and where (Settings › Backup, with the
+    page's own names), the file's name in caption style; in the buttons' area, as `GroupNameWindow`'s, **Open Settings**
+    (`AccentButtonStyle`, Enter: PuppyMacro on Settings › Backup) and **Close** (Esc).
   - File icons in File Explorer (approved: the same canvas, Icons B), drawn by `scripts/file-icons.ps1`
     (`Assets/FileIcons`): `.puppyitems`, a white page with a folded corner and the paw in `#0F6CBD`, centered; `.puppymacro`
     (backup), a dark archive box with the paw in `#60CDFF`.

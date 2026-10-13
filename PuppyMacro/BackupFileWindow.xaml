@@ -15,7 +15,8 @@
     ui:WindowHelper.SystemBackdropType="Mica">
 
     <!-- A backup (.puppymacro) opened from File Explorer: it opens only from Settings › Backup, as it replaces the data. Shown
-         alone, without starting PuppyMacro (App.OnStartup); laid out as GroupNameWindow, its buttons' area with only Close -->
+         alone, without starting PuppyMacro (App.OnStartup); laid out as GroupNameWindow: Open Settings (PuppyMacro on
+         Settings › Backup) and Close -->
     <StackPanel>
         <Grid Margin="24,8,24,24">
             <Grid.ColumnDefinitions>
@@ -34,8 +35,17 @@
 
         <Border Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
-            <Button MinWidth="120" HorizontalAlignment="Right" Style="{StaticResource AccentButtonStyle}"
-                    Content="{x:Static r:Strings.BackupFile_Close}" IsDefault="True" IsCancel="True" Click="OnCloseClick" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
+                        Content="{x:Static r:Strings.BackupFile_OpenSettings}" IsDefault="True" Click="OnOpenSettingsClick" />
+                <Button Grid.Column="2" HorizontalAlignment="Stretch" Content="{x:Static r:Strings.BackupFile_Close}" IsCancel="True"
+                        Click="OnCloseClick" />
+            </Grid>
         </Border>
     </StackPanel>
 </Window>

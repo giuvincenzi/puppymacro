@@ -1051,8 +1051,9 @@ Détails : {1}</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Exporter</value></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>Exporter…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Déposez pour importer</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Les sauvegardes s'ouvrent depuis les Paramètres</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>Une sauvegarde remplace toutes vos données, elle s'ouvre donc depuis {0} › {1}.</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Restaurer cette sauvegarde depuis les Paramètres</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>Restaurer une sauvegarde remplace toutes vos boucles, macros, remappages et paramètres. Vous pouvez le faire dans {0} › {1}.</value></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Ouvrir les Paramètres</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Fermer</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Enregistrer des boucles, macros et remappages dans un fichier, pour les partager</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Exporter…</value></data>

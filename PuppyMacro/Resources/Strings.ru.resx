@@ -1089,8 +1089,9 @@
   <data name="Share_Export" xml:space="preserve"><value>Экспорт</value></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>Экспорт…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Отпустите, чтобы импортировать</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Резервные копии открываются в параметрах</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>Резервная копия заменяет все ваши данные, поэтому её открывают в разделе {0} › {1}.</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Восстановите эту резервную копию в параметрах</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>При восстановлении резервной копии заменяются все ваши циклы, макросы, переназначения и параметры. Это можно сделать в разделе {0} › {1}.</value></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Открыть параметры</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Закрыть</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Сохранить циклы, макросы и переназначения в файл, чтобы поделиться ими</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Экспорт…</value></data>

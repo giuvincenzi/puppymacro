@@ -55,4 +55,4 @@ loop, macro, remap, setting, History, AI activity and log. So, for every change 
 - Sharing loops, macros and remaps (`.puppyitems` files: Import… and Export… in the title bar's More options menu, or a file dragged onto the window) and the backup
   (Settings > Backup) stay two separate features: sharing only adds items, the backup replaces the data. A backup
   opens only from Settings, never with a double-click in File Explorer (a double-click only shows `BackupFileWindow`, which
-  says so) or by dragging it onto the window.
+  says so and whose Open Settings opens PuppyMacro on Settings › Backup) or by dragging it onto the window.

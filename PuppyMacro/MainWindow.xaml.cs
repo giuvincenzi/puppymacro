@@ -241,6 +241,16 @@ public partial class MainWindow
         Activate();
     }
 
+    /// <summary>Shows Settings with Backup open (Open Settings in <see cref="BackupFileWindow"/>).</summary>
+    internal void ShowBackupSettings()
+    {
+        ShowFromTray();
+        Rail.Select("Settings");
+        BackupGroup.IsExpanded = true;
+        // Once the Settings page is laid out.
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () => BackupGroup.BringIntoView());
+    }
+
     private void ShowTrayMenu()
     {
         var open = new MenuItem { Header = Strings.Tray_Open, FontWeight = FontWeights.SemiBold };
