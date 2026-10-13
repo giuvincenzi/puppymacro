@@ -50,15 +50,16 @@
   (`PuppyMacro/bin/Debug/...`), so every test starts from the sample data. `new AppSession(seed => ...)`
   starts it from the data the test writes instead (`Seed`: the app's models, referenced by the
   project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18).
-- They run on GitHub in the `test` workflow, job `e2e_test`: on every pull request (a required check for
+- They run on GitHub in the `test` workflow, split over several machines at once (`e2e_group_1`, `e2e_group_2`, …;
+  "End-to-end tests in groups" below), checked by the job `e2e_test`: on every pull request (a required check for
   merging into `main`), on every push to `main` and in `publish_release` before every release (it stops when they
   fail). The push of a release merge skips them, as `publish_release` runs them on that commit: the job
   `decide_which_tests_run` skips only when `github.workflow` is `test` (called by `publish_release` it is
   `publish_release`, the caller's github context). The runner's screen is 1024x768: do not click controls that may be off
   screen there (for example the title bar of a tall window); use UI Automation patterns
   instead (`Window.Close()`, `Invoke`).
-- `make e2e` runs them locally; it builds the dev build first. Tests run one at a time (one
-  PuppyMacro at a time).
+- `make e2e` runs them locally; it builds the dev build first. On one machine tests run one at a time (one
+  PuppyMacro at a time): they share its desktop, mouse, keyboard, window in front and PuppyMacro's data folder.
 - Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages,
   editors, Export's choices, Export of items with search, a `.puppyitems` file opened while PuppyMacro runs (a second
   `PuppyMacro.exe` with its path, as File Explorer starts it; the file dialogs are never opened)), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
@@ -109,15 +110,15 @@
 
 On a pull request or a push to `main`, the `test` workflow's first job, `decide_which_tests_run` (on Linux, quick),
 looks once at the changed files and tells which tests can change their result: a file the build of the projects reads,
-a file the tests read while running, or the workflow itself. `unit_test` and `e2e_test` run only when needed;
-otherwise they are skipped (their Windows machine never starts), and a job skipped by its `if` counts as passing for a
-required check. Called by `publish_release` or started by hand (`workflow_dispatch`: `create_release_pr` on the
+a file the tests read while running, or the workflow itself. `unit_test` and the end-to-end groups run only when
+needed; otherwise they are skipped (their Windows machine never starts): a job skipped by its `if` counts as passing
+for a required check, and `e2e_test` passes when the end-to-end tests were not needed. Called by `publish_release` or started by hand (`workflow_dispatch`: `create_release_pr` on the
 release pull request, `gh workflow run test.yml --ref <branch>`), every test runs. `unit_test`'s first step,
 `block_version_change`, fails a pull request whose branch is not `release/…` when it changes
 `PuppyMacro/Version.props` (`build-and-release.md`): that file is under `PuppyMacro/`, so such a pull request always
 runs `unit_test`.
 
-| Changed file | `unit_test` | `e2e_test` | Why |
+| Changed file | `unit_test` | end-to-end | Why |
 |---|---|---|---|
 | `PuppyMacro/**` | yes | yes | Both test projects reference the app; `ControlResourcesTests` reads its XAML files |
 | `site/guide/*.html` (not `_page.html`), `site/guide/sections.txt` | yes | yes | Embedded in the app (`PuppyMacro.csproj`), checked through `get_help` (`AiToolsTests`, E2E `AiTests`) |
@@ -136,6 +137,36 @@ same pull request.
 Do not filter the `test` workflow with `paths` / `paths-ignore`: a workflow that does not start leaves
 its required check pending and blocks the merge (GitHub docs, "Troubleshooting required status
 checks"), while a job or step skipped by `if` counts as passing.
+
+## End-to-end tests in groups
+
+On GitHub the end-to-end tests run on **`E2E_GROUPS` Windows machines at once** (6 today), written once at the top of
+`.github/workflows/test.yml`. Every test runs in every pull request, exactly once; each machine runs its share one at a
+time, as on a contributor's PC. The groups do not follow the categories: they stay even whatever the categories grow
+into, and a new test needs nothing.
+
+- **`decide_which_tests_run`, step `list_e2e_groups`:** turns `E2E_GROUPS` into the list `[1, 2, …, N]` (a matrix cannot
+  read `env`).
+- **`e2e_group` (one job, copied by the matrix into `e2e_group_1` … `e2e_group_N`, `fail-fast: false` so every broken test
+  shows):**
+  - `build_dev_app`: the E2E project, with the development build it starts;
+  - `list_e2e_tests`: every test by its full name (`PuppyMacro.E2E.Class.Method`, from `dotnet test --list-tests`),
+    sorted the same way on every machine (`LC_ALL=C sort`), numbered from 1;
+  - `pick_group_tests`: test n goes to the group of n's remainder divided by N, the remainder 0 to group N. A number has
+    one remainder, so every test is in exactly one group, and the groups differ by at most one test;
+  - `run_group_tests`: `dotnet test --filter-method` with the group's tests, and a CTRF (JSON) report of what ran;
+  - `save_group_result`: the full list, the group's list and the report, also when tests failed (artifact
+    `e2e_group_<n>`, kept 7 days).
+- **`e2e_test` (the required check):** green when the end-to-end tests were not needed, or when (1) every group saw the
+  same list, (2) every test ran exactly once (none missing, none in two groups), (3) every test and every group passed.
+  Otherwise red, with the missing, doubled or failed tests in the run's summary.
+
+**Changing the number of machines:** change only `E2E_GROUPS`. Nothing else: not the ruleset (it requires `e2e_test`,
+not the groups), not the tests. Each group costs about a minute of its own (machine, checkout, build) on top of its
+tests (about 7 s each), so more groups help less and less: with 66 tests, 6 groups take about 2.5 minutes, 10 about 2.
+GitHub runs at most 20 jobs at once for the whole account (all pull requests and workflows together): the jobs over it
+wait in a queue, they do not fail. Never rename `e2e_test` without changing the ruleset in the same moment
+(`build-and-release.md`).
 
 ## When to add and run tests
 

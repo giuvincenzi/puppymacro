@@ -20,7 +20,7 @@ Never commit directly on `main` and never push to `main`.
 
 - Changes reach `main` only through a pull request.
 - The ruleset "Protect main" (Settings > Rules) requires the checks **`unit_test`** and **`e2e_test`** (the `test`
-  workflow's jobs) to pass, with the branch up to date with `main`. When a pull request changes no file that can
+  workflow's jobs; `e2e_test` sums up the end-to-end groups, `testing.md`) to pass, with the branch up to date with `main`. When a pull request changes no file that can
   change the tests' result they pass without running them (`testing.md`, "Which changes run the tests on GitHub").
 - The release pull request ("Release X.Y.Z", branch `release/X.Y.Z`) is opened only by the `create_release_pr`
   workflow, never by hand; it is the only pull request that may change `PuppyMacro/Version.props`, and merging it

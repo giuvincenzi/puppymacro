@@ -1,5 +1,5 @@
-# The tests: unit tests (unit_test, like `make test`) and end-to-end tests (e2e_test, like `make e2e`) on GitHub Windows
-# machines, so they never take over a contributor's desktop. Both jobs are required checks for merging into main.
+# The tests: unit tests (unit_test, like `make test`) and end-to-end tests (like `make e2e`) on GitHub machines, so they
+# never take over a contributor's desktop. The required checks for merging into main are unit_test and e2e_test.
 # Starts on:
 #   - every pull request (each push to its branch) and every push to main;
 #   - workflow_dispatch: create_release_pr starts it on the release pull request's branch (a pull request opened by a
@@ -8,6 +8,8 @@
 # decide_which_tests_run looks once at the changed files and tells which tests can change their result (the lists and why:
 # testing.md); a test job that is not needed is skipped, and a skipped job counts as passing for a required check.
 # Called by publish_release or started by hand, every test runs.
+# The end-to-end tests run in E2E_GROUPS groups on as many Windows machines at once (e2e_group_1, e2e_group_2, ...), every
+# test in exactly one group; e2e_test checks that each test ran once and passed (testing.md, "End-to-end tests in groups").
 name: test
 
 on:
@@ -20,12 +22,16 @@ on:
 permissions:
   contents: read
 
+env:
+  E2E_GROUPS: 6   # how many machines run the end-to-end tests at once: change only this (testing.md)
+
 jobs:
   decide_which_tests_run:
     runs-on: ubuntu-latest
     outputs:
       unit: ${{ steps.decide.outputs.unit }}
       e2e: ${{ steps.decide.outputs.e2e }}
+      e2e_groups: ${{ steps.groups.outputs.e2e_groups }}
     steps:
       - name: checkout_code
         uses: actions/checkout@v7
@@ -63,6 +69,14 @@ jobs:
           echo "e2e=$e2e" >> "$GITHUB_OUTPUT"
           echo "Unit tests: $unit. End-to-end tests: $e2e (testing.md)." >> "$GITHUB_STEP_SUMMARY"
 
+      # E2E_GROUPS (6) -> [1,2,3,4,5,6], the matrix of e2e_group: a matrix cannot read env, so the number is written once
+      # at the top and turned into the list here.
+      - name: list_e2e_groups
+        id: groups
+        run: |
+          if ! [[ "$E2E_GROUPS" =~ ^[1-9][0-9]*$ ]]; then echo "::error::E2E_GROUPS must be a number from 1: '$E2E_GROUPS'."; exit 1; fi
+          echo "e2e_groups=[$(seq -s, 1 "$E2E_GROUPS")]" >> "$GITHUB_OUTPUT"
+
   unit_test:
     needs: decide_which_tests_run
     if: needs.decide_which_tests_run.outputs.unit == 'true'
@@ -93,10 +107,22 @@ jobs:
       - name: run_unit_tests
         run: dotnet test --project tests/PuppyMacro.Tests/PuppyMacro.Tests.csproj -c Release
 
-  e2e_test:
+  # One copy per group (e2e_group_1 ... e2e_group_N), at the same time, each on its own machine: on one machine the tests
+  # run one at a time (they share its desktop, mouse, keyboard and PuppyMacro's data folder, testing.md).
+  e2e_group:
+    name: e2e_group_${{ matrix.group }}
     needs: decide_which_tests_run
     if: needs.decide_which_tests_run.outputs.e2e == 'true'
+    strategy:
+      fail-fast: false   # a failing group does not stop the others: every broken test shows
+      matrix:
+        group: ${{ fromJSON(needs.decide_which_tests_run.outputs.e2e_groups) }}
     runs-on: windows-latest   # its screen is 1024 x 768 (testing.md)
+    env:
+      GROUP: ${{ matrix.group }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: checkout_code
         uses: actions/checkout@v7
@@ -106,8 +132,116 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      # The test project builds the development build too (PuppyMacro/bin/Debug, started by AppSession).
       - name: build_dev_app
-        run: dotnet build PuppyMacro/PuppyMacro.csproj -c Debug
+        run: dotnet build tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj -c Debug
 
-      - name: run_e2e_tests
-        run: dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj
+      # Every end-to-end test by its full name (PuppyMacro.E2E.Class.Method), in the same order on every machine.
+      - name: list_e2e_tests
+        run: |
+          mkdir -p e2e_results
+          dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build --list-tests > "$RUNNER_TEMP/list.txt"
+          grep -E '^  PuppyMacro\.E2E\.' "$RUNNER_TEMP/list.txt" | tr -d '\r' | sed -E 's/^  //; s/\(.*$//' | LC_ALL=C sort -u > e2e_results/all_tests.txt
+          count=$(wc -l < e2e_results/all_tests.txt)
+          if [ "$count" -eq 0 ]; then echo "::error::No end-to-end tests found."; exit 1; fi
+          echo "$count end-to-end tests."
+
+      # Test n (from 1) goes to the group of n's remainder divided by E2E_GROUPS, the remainder 0 to the last group:
+      # with 6 groups, group 1 takes tests 1, 7, 13, ..., group 6 takes 6, 12, 18, ...
+      - name: pick_group_tests
+        run: |
+          awk -v g="$GROUP" -v n="$E2E_GROUPS" '{ r = NR % n; if (r == 0) r = n; if (r == g) print }' e2e_results/all_tests.txt > e2e_results/group_tests.txt
+          echo "Group $GROUP of $E2E_GROUPS: $(wc -l < e2e_results/group_tests.txt) tests."
+          cat e2e_results/group_tests.txt
+
+      - name: run_group_tests
+        run: |
+          mapfile -t tests < e2e_results/group_tests.txt
+          if [ ${#tests[@]} -eq 0 ]; then echo "No tests in this group."; exit 0; fi
+          dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build \
+            --results-directory "$PWD/e2e_results" --report-xunit-ctrf --report-xunit-ctrf-filename "group_$GROUP.json" \
+            --filter-method "${tests[@]}"
+
+      # Also when tests failed: e2e_test needs every group's lists and report.
+      - name: save_group_result
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e_group_${{ matrix.group }}
+          path: e2e_results/
+          retention-days: 7
+
+  # The required check: green only when every end-to-end test ran exactly once and passed, or when none was needed.
+  e2e_test:
+    needs: [decide_which_tests_run, e2e_group]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: skip_if_not_needed
+        id: needed
+        env:
+          DECIDE: ${{ needs.decide_which_tests_run.result }}
+          E2E: ${{ needs.decide_which_tests_run.outputs.e2e }}
+        run: |
+          if [ "$DECIDE" != success ]; then echo "::error::decide_which_tests_run did not finish."; exit 1; fi
+          if [ "$E2E" != true ]; then echo "End-to-end tests not needed: no changed file can change their result." | tee -a "$GITHUB_STEP_SUMMARY"; fi
+          echo "run=$E2E" >> "$GITHUB_OUTPUT"
+
+      - name: collect_group_results
+        if: steps.needed.outputs.run == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          pattern: e2e_group_*
+          path: e2e_results
+
+      # (1) every group saw the same list, (2) every test ran exactly once (none missing, none twice), (3) every test
+      # and every group passed.
+      - name: check_every_test_ran_once
+        if: steps.needed.outputs.run == 'true'
+        env:
+          GROUPS_RESULT: ${{ needs.e2e_group.result }}
+        shell: python3 {0}
+        run: |
+          import json, os, pathlib, sys
+          groups = int(os.environ["E2E_GROUPS"])
+          root = pathlib.Path("e2e_results")
+          problems, ran, failed, lists = [], {}, [], set()
+          for g in range(1, groups + 1):
+              folder = root / f"e2e_group_{g}"
+              if not (folder / "all_tests.txt").exists():
+                  problems.append(f"e2e_group_{g}: no results (it did not get as far as listing the tests).")
+                  continue
+              lists.add((folder / "all_tests.txt").read_text())
+              mine = [t for t in (folder / "group_tests.txt").read_text().split("\n") if t]
+              report = folder / f"group_{g}.json"
+              if mine and not report.exists():
+                  problems.append(f"e2e_group_{g}: no test report (the tests did not run).")
+                  continue
+              executed = set()
+              for test in (json.loads(report.read_text())["results"]["tests"] if mine else []):
+                  name = test["extra"]["type"] + "." + test["extra"]["method"]
+                  executed.add(name)
+                  if test["status"] != "passed":
+                      failed.append(f"{name} ({test['status']}, e2e_group_{g})")
+              for name in executed:
+                  ran.setdefault(name, []).append(g)
+              for name in set(mine) - executed:
+                  problems.append(f"{name}: in e2e_group_{g}, but it did not run.")
+          if len(lists) > 1:
+              problems.append("The groups did not see the same list of tests.")
+          everything = [t for t in (lists.pop() if len(lists) == 1 else "").split("\n") if t]
+          for name in everything:
+              if name not in ran:
+                  problems.append(f"{name}: ran in no group.")
+          for name, where in ran.items():
+              if len(where) > 1:
+                  problems.append(f"{name}: ran in more than one group ({', '.join(f'e2e_group_{g}' for g in where)}).")
+          if os.environ["GROUPS_RESULT"] != "success":
+              problems.append(f"The groups' result is '{os.environ['GROUPS_RESULT']}'.")
+          summary = [f"End-to-end tests: {len(everything)} in {groups} groups, {len(ran)} ran, {len(failed)} failed."]
+          summary += [f"- Failed: {f}" for f in failed] + [f"- {p}" for p in problems]
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as out:
+              out.write("\n".join(summary) + "\n")
+          print("\n".join(summary))
+          if failed or problems:
+              sys.exit(1)
