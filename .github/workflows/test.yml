@@ -168,6 +168,24 @@ jobs:
               -not [Win32.Window]::IsIconic($_.MainWindowHandle) } |
             ForEach-Object { Write-Host "Window still shown: $($_.ProcessName): $($_.MainWindowTitle)" }
 
+      # The runner's state before the tests (a slow or short-of-memory runner makes the tests fail), in the log and in
+      # machine_state.txt of the artifact.
+      - name: log_machine_state
+        shell: pwsh
+        run: |
+          $os = Get-CimInstance Win32_OperatingSystem
+          $cpu = Get-CimInstance Win32_Processor
+          $state = @(
+            "Time (UTC): $((Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss'))"
+            "Memory: $([math]::Round($os.FreePhysicalMemory / 1KB)) MB free of $([math]::Round($os.TotalVisibleMemorySize / 1KB)) MB"
+            "Paging file: $([math]::Round($os.FreeSpaceInPagingFiles / 1KB)) MB free of $([math]::Round($os.SizeStoredInPagingFiles / 1KB)) MB"
+            "CPU: $(($cpu | Measure-Object -Property LoadPercentage -Average).Average)% load, $(($cpu | Measure-Object -Property NumberOfLogicalProcessors -Sum).Sum) logical processors"
+          )
+          $state += Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle } |
+            ForEach-Object { "Window: $($_.ProcessName): $($_.MainWindowTitle)" }
+          $state | ForEach-Object { Write-Host $_ }
+          $state | Set-Content -Path e2e_results/machine_state.txt -Encoding utf8
+
       - name: run_group_tests
         env:
           E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots   # AppSession saves the screen and the UI tree at the end of every test
@@ -198,12 +216,35 @@ jobs:
             }
           }
 
-      # Also when tests failed: e2e_test needs every group's lists and report.
+      # What each file of the artifact is, for whoever downloads it.
+      - name: describe_group_result
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force e2e_results | Out-Null
+          @'
+          What this artifact holds: one group of the end-to-end tests (testing.md, "End-to-end tests in groups").
+          The name ends with the run's attempt: a "Re-run failed jobs" uploads a new one; e2e_test reads the newest.
+
+          all_tests.txt        every end-to-end test by full name (PuppyMacro.E2E.Class.Method), in the order the groups
+                               share; test n goes to the group of n's remainder divided by E2E_GROUPS.
+          group_tests.txt      this group's tests.
+          group_<n>.json       the CTRF report of what ran: each test's name, status (passed, failed, ...) and duration.
+          machine_state.txt    the runner before the tests: memory, paging file, CPU, the windows still shown.
+          failed_tests/        for each failed test, as it left PuppyMacro, before it closed:
+            Class.Method.png       the whole screen;
+            Class.Method.uia.txt   when, the machine's memory, whether PuppyMacro was responding, then what UI
+                                   Automation saw of every PuppyMacro window: one element per line, indented by
+                                   depth, ControlType "Name" [AutomationId] and offscreen.
+          '@ | Set-Content -Path e2e_results/README.txt -Encoding utf8
+
+      # Also when tests failed: e2e_test needs every group's lists and report. The name has the run's attempt: after a
+      # "Re-run failed jobs" the group's new artifact does not mix with the failed one (e2e_test reads the newest).
       - name: save_group_result
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: e2e_group_${{ matrix.group }}
+          name: e2e_group_${{ matrix.group }}_attempt_${{ github.run_attempt }}
           path: e2e_results/
           retention-days: 7
 
@@ -228,8 +269,9 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: e2e_group_*
-          path: e2e_results
+          path: e2e_results   # one folder per artifact: e2e_group_<n>_attempt_<a>
 
+      # For each group its newest attempt (a re-run group has a newer one, a passed group keeps its first), then:
       # (1) every group saw the same list, (2) every test ran exactly once (none missing, none twice), (3) every test
       # and every group passed.
       - name: check_every_test_ran_once
@@ -243,7 +285,10 @@ jobs:
           root = pathlib.Path("e2e_results")
           problems, ran, failed, lists = [], {}, [], set()
           for g in range(1, groups + 1):
-              folder = root / f"e2e_group_{g}"
+              attempts = sorted(root.glob(f"e2e_group_{g}_attempt_*"), key=lambda p: int(p.name.rsplit("_", 1)[1]))
+              folder = attempts[-1] if attempts else root / f"e2e_group_{g}_attempt_none"
+              if attempts:
+                  print(f"e2e_group_{g}: {folder.name}")
               if not (folder / "all_tests.txt").exists():
                   problems.append(f"e2e_group_{g}: no results (it did not get as far as listing the tests).")
                   continue

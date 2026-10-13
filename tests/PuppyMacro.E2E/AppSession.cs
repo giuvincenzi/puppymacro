@@ -265,7 +265,7 @@ public sealed class AppSession : IDisposable
         if (string.IsNullOrEmpty(folder) || type == null || method == null)
             return;
         const int maxLines = 5000;
-        var lines = new List<string>();
+        var lines = new List<string>(MachineState()) { "" };
         void Write(AutomationElement element, int depth)
         {
             if (lines.Count >= maxLines)
@@ -298,6 +298,34 @@ public sealed class AppSession : IDisposable
         {
             Console.Error.WriteLine($"UI Automation tree not saved: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// The first lines of Class.Method.uia.txt: when, the machine's memory, and whether PuppyMacro was responding (its UI
+    /// thread handles window messages) and how much memory it used. A slow or short-of-memory runner, or a PuppyMacro that
+    /// hangs, shows here.
+    /// </summary>
+    private List<string> MachineState()
+    {
+        const double mb = 1024 * 1024;
+        var lines = new List<string> { $"Time (UTC): {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff}" };
+        var memory = new Native.MEMORYSTATUSEX { dwLength = (uint)System.Runtime.InteropServices.Marshal.SizeOf<Native.MEMORYSTATUSEX>() };
+        lines.Add(Native.GlobalMemoryStatusEx(ref memory)
+            ? $"Machine memory: {memory.dwMemoryLoad}% in use, {memory.ullAvailPhys / mb:0} MB free of {memory.ullTotalPhys / mb:0} MB; " +
+              $"paging file {memory.ullAvailPageFile / mb:0} MB free of {memory.ullTotalPageFile / mb:0} MB"
+            : "Machine memory: not readable");
+        try
+        {
+            using Process app = Process.GetProcessById(ProcessId);
+            lines.Add($"PuppyMacro (process {ProcessId}): {(app.Responding ? "responding" : "NOT RESPONDING")}, " +
+                      $"{app.WorkingSet64 / mb:0} MB in use, {app.Threads.Count} threads, " +
+                      $"{app.TotalProcessorTime.TotalSeconds:0.0} s of CPU since it started");
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            lines.Add($"PuppyMacro (process {ProcessId}): not running ({ex.Message})");
+        }
+        return lines;
     }
 }
 
