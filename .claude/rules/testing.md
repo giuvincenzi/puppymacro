@@ -84,7 +84,8 @@
   use the PC meanwhile, and their input can make the tests fail. Unit tests (`make test`) run
   in the background and can be run any time.
 - Find controls by their UI text (`Find`) or by `x:Name` (`FindById`). Wait with `Retry` and
-  check `.Success`, never fixed sleeps. Other `AppSession` helpers: `GoTo` (a side rail page),
+  check `.Success`, never fixed sleeps. A UI Automation timeout ("Operation timed out", PuppyMacro's UI thread busy) is
+  one more try, not a failure (`AppSession.NotYet`, in the helpers that look for an element or a window). Other `AppSession` helpers: `GoTo` (a side rail page),
   `Expand` (a Settings `SettingsExpander` by `x:Name`, through its `ExpanderToggleButton`: it has
   no ExpandCollapse pattern), `CardButton` / `EditItem` (a list card's buttons), `Dialog` (an
   editor or dialog: while an editor is open the main window is hidden, so it is searched among
@@ -143,8 +144,13 @@ runs `unit_test`.
 | `.gitattributes` | yes | yes | Line endings of `.cs`, `.xaml`, `.csproj` at checkout |
 | `.github/workflows/test.yml` | yes | yes | The workflow |
 
+`screenshots_test` takes the release's screenshots as `create_release_pr` does (`scripts/dev.ps1 -Screenshots`, then
+`scripts/screenshots.ps1`, at 1920 x 1080; saved only as an artifact) when `PuppyMacro/**`, `test.yml` or one of
+`scripts/dev.ps1`, `screenshots.ps1`, `screen-resolution.ps1` changes: a change that breaks them fails the pull request
+(`e2e_test` checks its result) instead of the release.
+
 Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, Markdown files,
-`LICENSE`, `Makefile`, `scripts/`, the other workflows). When the app, a test project or a test
+`LICENSE`, `Makefile`, the other `scripts/`, the other workflows). When the app, a test project or a test
 starts reading another file or folder, add it to this table and to the patterns of `decide_which_tests_run` in the
 same pull request.
 

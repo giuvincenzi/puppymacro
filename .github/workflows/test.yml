@@ -30,6 +30,7 @@ jobs:
     outputs:
       unit: ${{ steps.decide.outputs.unit }}
       e2e: ${{ steps.decide.outputs.e2e }}
+      screenshots: ${{ steps.decide.outputs.screenshots }}
       e2e_groups: ${{ steps.groups.outputs.e2e_groups }}
     steps:
       - name: checkout_code
@@ -54,19 +55,26 @@ jobs:
           fi
           unit=true
           e2e=true
+          screenshots=true
           if [ ${#range[@]} -gt 0 ] && files=$(git diff --name-only "${range[@]}"); then
             # The files each test project builds or reads (testing.md, "Which changes run the tests on GitHub").
             shared='^(PuppyMacro/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|\.gitattributes$|\.github/workflows/test\.yml$)'
             unit=false
             e2e=false
+            screenshots=false
             if grep -E "$shared|^tests/PuppyMacro\.Tests/" <<< "$files" | grep -qvx 'site/guide/_page\.html'; then unit=true; fi
             if grep -E "$shared|^tests/PuppyMacro\.E2E/|^PuppyMacro\.sln$" <<< "$files" | grep -qvx 'site/guide/_page\.html'; then e2e=true; fi
+            # The app and the scripts that take the release's screenshots (create_release_pr's take_screenshots).
+            if grep -qE '^(PuppyMacro/|scripts/(dev|screenshots|screen-resolution)\.ps1$|\.github/workflows/test\.yml$)' <<< "$files"; then screenshots=true; fi
             # The merge of a release pull request: publish_release runs the tests on this commit.
-            if [ "$EVENT" = push ] && grep -qx 'PuppyMacro/Version.props' <<< "$files"; then unit=false; e2e=false; fi
+            if [ "$EVENT" = push ] && grep -qx 'PuppyMacro/Version.props' <<< "$files"; then unit=false; e2e=false; screenshots=false; fi
           fi
-          echo "unit=$unit" >> "$GITHUB_OUTPUT"
-          echo "e2e=$e2e" >> "$GITHUB_OUTPUT"
-          echo "Unit tests: $unit. End-to-end tests: $e2e (testing.md)." >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "unit=$unit"
+            echo "e2e=$e2e"
+            echo "screenshots=$screenshots"
+          } >> "$GITHUB_OUTPUT"
+          echo "Unit tests: $unit. End-to-end tests: $e2e. Screenshots: $screenshots (testing.md)." >> "$GITHUB_STEP_SUMMARY"
 
       # E2E_GROUPS (6) -> [1,2,3,4,5,6], the matrix of e2e_group: a matrix cannot read env, so the number is written once
       # at the top and turned into the list here.
@@ -325,12 +333,57 @@ jobs:
           path: e2e_results/
           retention-days: 7
 
-  # The required check: green only when every end-to-end test ran exactly once and passed, or when none was needed.
+  # The release's screenshots taken as create_release_pr takes them (same scripts, same 1920 x 1080 screen), so a change
+  # that breaks them fails here and not when a release is prepared. They are only saved as an artifact, never committed.
+  screenshots_test:
+    needs: decide_which_tests_run
+    if: needs.decide_which_tests_run.outputs.screenshots == 'true'
+    runs-on: windows-latest
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+
+      - name: install_dotnet
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: set_screen_to_1920x1080
+        shell: powershell
+        run: ./scripts/screen-resolution.ps1 -Width 1920 -Height 1080
+
+      - name: take_screenshots
+        shell: powershell
+        run: |
+          ./scripts/dev.ps1 -Screenshots
+          ./scripts/screenshots.ps1
+
+      - name: save_screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: screenshots_attempt_${{ github.run_attempt }}
+          path: |
+            site/guide/img/*.png
+            site/assets/loops.png
+          retention-days: 7
+
+  # The required check: green only when every end-to-end test ran exactly once and passed, or when none was needed, and
+  # the screenshots were taken (screenshots_test) when needed.
   e2e_test:
-    needs: [decide_which_tests_run, e2e_group]
+    needs: [decide_which_tests_run, e2e_group, screenshots_test]
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: check_screenshots
+        env:
+          SCREENSHOTS: ${{ needs.screenshots_test.result }}
+        run: |
+          if [ "$SCREENSHOTS" != success ] && [ "$SCREENSHOTS" != skipped ]; then
+            echo "::error::screenshots_test: $SCREENSHOTS (scripts/screenshots.ps1, as create_release_pr runs it)."; exit 1
+          fi
+          echo "Screenshots: $SCREENSHOTS." >> "$GITHUB_STEP_SUMMARY"
+
       - name: skip_if_not_needed
         id: needed
         env:

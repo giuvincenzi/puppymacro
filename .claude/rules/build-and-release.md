@@ -78,14 +78,18 @@
 - ssign receives the signing secrets, so it is **pinned** (`$SsignVersion`, `$SsignSha256`) and
   downloaded from its GitHub release only when the SHA-256 matches. Updating it: review the new
   version's source (network calls, what it does with the seed), then change both values.
-- Secrets: the GitHub environment **`signing`** (repository Settings > Environments) holds
+- Secrets: the GitHub environment **`production`** (repository Settings > Environments) holds
   `CERTUM_EMAIL` (the SimplySign account) and `CERTUM_OTP` (the TOTP seed of SimplySign: the
   `secret` of the `otpauth://` QR code shown when SimplySign is activated). The seed signs as the
   certificate owner until the QR code is reissued: never put it anywhere else. To replace it,
   reissue the QR code in SimplySign and update the secret.
+- Environments are named after where a job publishes, as GitHub intends them: `production` is the release (each run of
+  `publish_app` shows in the repository's Deployments). A new place to publish gets an environment of its own with the
+  same secret names and its own values (GitHub cannot rename or copy one: a new environment, its branch rule and its
+  secrets are set by hand). `github-pages` is the site's, the name `actions/deploy-pages` expects.
 - Signing happens only in the `publish_release` workflow, on `main`, when a release is published: its
-  `publish_app` job uses the `signing` environment and `-RequireSigning`, so a release is never published
-  unsigned. The environment allows only the `main` branch (Settings > Environments > `signing` >
+  `publish_app` job uses the `production` environment and `-RequireSigning`, so a release is never published
+  unsigned. The environment allows only the `main` branch (Settings > Environments > `production` >
   Deployment branches and tags), so no other branch or pull request can use the secrets. To try a
   change to signing before a release, build signed locally (below).
 - Code merged into `main` runs in the `publish_release` workflow with the certificate. Before merging a pull
@@ -108,7 +112,7 @@ it does (the workflow the phase, the job the action).
 
 | Workflow | Starts | Jobs |
 |---|---|---|
-| `test` | every pull request and push to `main`; `workflow_dispatch` (`gh workflow run test.yml --ref <branch>`); `workflow_call` (`publish_release`) | `decide_which_tests_run`, then when needed `unit_test` and `e2e_group_1` … `e2e_group_N` (`E2E_GROUPS` machines at once), then `e2e_test`, which checks every end-to-end test ran once and passed (`testing.md`) |
+| `test` | every pull request and push to `main`; `workflow_dispatch` (`gh workflow run test.yml --ref <branch>`); `workflow_call` (`publish_release`) | `decide_which_tests_run`, then when needed `unit_test` and `e2e_group_1` … `e2e_group_N` (`E2E_GROUPS` machines at once), and `screenshots_test`, then `e2e_test`, which checks every end-to-end test ran once and passed and the screenshots were taken (`testing.md`) |
 | `create_release_pr` | only by hand (`workflow_dispatch`) on `main` | `prepare_and_open_pr` |
 | `publish_release` | a push to `main` that changes `PuppyMacro/Version.props` | `run_tests` (calls `test`), `publish_app`, `publish_site` |
 

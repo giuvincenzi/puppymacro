@@ -23,7 +23,7 @@ jobs:
   publish_app:
     needs: run_tests
     runs-on: windows-latest
-    environment: signing   # CERTUM_EMAIL and CERTUM_OTP: the code signing secrets, for main only (build-and-release.md)
+    environment: production   # CERTUM_EMAIL and CERTUM_OTP: the code signing secrets, for main only (build-and-release.md)
     permissions:
       contents: write   # the GitHub Release and its tag
     steps:
