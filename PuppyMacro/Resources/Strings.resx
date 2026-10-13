@@ -291,7 +291,6 @@ What the file does not have stays as it is. Your current data is backed up to th
   <data name="Rail_Ai" xml:space="preserve"><value>AI</value><comment>GLOBAL: a global word, the same in every language (i18n.md, ResourcesTests.Global).</comment></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Settings</value><comment>A page in the side rail: keep it short.</comment></data>
   <!-- ===== Views/ItemCardActions ===== -->
-  <data name="Card_Edit" xml:space="preserve"><value>Edit</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Enabled</value><comment>The name of a card's on/off switch.</comment></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>More options</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Play</value></data>
@@ -344,7 +343,7 @@ What the file does not have stays as it is. Your current data is backed up to th
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} actions, {1}, repeat {2}, speed ×{3}</value><comment>As Macros_Summary; {3}: the speed, like "1.5".</comment></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>All apps</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>No hotkey yet</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Choose a hotkey with Edit to turn it on.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Open it and choose a hotkey to turn it on.</value></data>
   <!-- ===== App.xaml.cs, Services/SettingsStore.cs, Services/MacroLibrary.cs, Services/BackupService.cs ===== -->
   <data name="App_MigrationFailed" xml:space="preserve"><value>Your loops and macros could not be copied to {0}.
 Details: {1}</value><comment>{0}: the data folder's path; {1}: the error.</comment></data>
@@ -1127,17 +1126,17 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
 
   <!-- ===== MainWindow.xaml / MainWindow.xaml.cs / MainWindow.Share.cs ===== -->
   <data name="Share_Import" xml:space="preserve"><value>Import</value><comment>The title bar's button and the title of its dialog: add loops, macros and remaps from a file.</comment></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Import…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Import</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Add loops, macros and remaps from a file</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Export</value><comment>The title bar's button and the title of its dialog: save loops, macros and remaps to a file.</comment></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Export…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Export</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Drop to import</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Restore this backup from Settings</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Restoring a backup replaces all your loops, macros, remaps and settings. You can do it in {0} › {1}.</value><comment>{0}: the Settings page's name (Settings_Title), {1}: its Backup group (Settings_Backup).</comment></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Open Settings</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Close</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Save loops, macros and remaps to a file, to share them</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Export…</value><comment>In a loop's, macro's or remap's card menu: save it to a file.</comment></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Export</value><comment>In a loop's, macro's or remap's card menu: save it to a file.</comment></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro items (*{0})|*{0}</value><comment>A file dialog filter: keep "(*{0})|*{0}" as it is. {0}: the file extension.</comment></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Import loops, macros and remaps</value><comment>The title of the Open file dialog.</comment></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Export loops, macros and remaps</value><comment>The title of the Save file dialog.</comment></data>
@@ -1177,4 +1176,19 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <!-- ===== Services/FileTypes.cs ===== -->
   <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro items</value><comment>The file type File Explorer shows for .puppyitems files.</comment></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro backup</value><comment>The file type File Explorer shows for .puppymacro backup files.</comment></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>No hotkey</value><comment>In the Loops and Macros lists, where the hotkey's keys would be.</comment></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Hold</value><comment>In the table, after the hotkey of a loop or macro in Hold mode: it runs while the keys are held.</comment></data>
+  <data name="Table_Name" xml:space="preserve"><value>Name</value><comment>A column of the Loops and Macros table.</comment></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>What it does</value><comment>A column of the Loops and Macros table: the actions it plays.</comment></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Hotkey</value><comment>A column of the Loops and Macros table.</comment></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Works in</value><comment>A column of the tables: the app it works in, or All apps.</comment></data>
+  <data name="Table_Note" xml:space="preserve"><value>Note</value><comment>A column of the Remap table: the remap's note.</comment></data>
+  <data name="Table_From" xml:space="preserve"><value>From</value><comment>A column of the Remap table: the key or combination pressed.</comment></data>
+  <data name="Table_To" xml:space="preserve"><value>To</value><comment>A column of the Remap table: the key or combination it sends instead.</comment></data>
+  <data name="Main_View" xml:space="preserve"><value>View</value><comment>The group of the List, Table and Grid buttons next to a list's filter.</comment></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>List</value><comment>A view of the Loops, Macros and Remap pages: one line per item.</comment></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Table</value><comment>A view of the Loops, Macros and Remap pages: a table with columns.</comment></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Grid</value><comment>A view of the Loops, Macros and Remap pages: tiles.</comment></data>
+  <data name="Table_State" xml:space="preserve"><value>State</value><comment>A column of the tables: Running, Idle, Disabled…</comment></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Edit</value><comment>The first command of a loop's, macro's or remap's More options menu: opens its editor.</comment></data>
 </root>

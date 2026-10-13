@@ -272,7 +272,6 @@ Ce que le fichier ne contient pas reste inchangé. Vos données actuelles sont d
   <data name="Rail_Macros" xml:space="preserve"><value>Macros</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Remapper</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Paramètres</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>Modifier</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Activé</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Plus d'options</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Démarrer</value></data>
@@ -323,7 +322,7 @@ Ce que le fichier ne contient pas reste inchangé. Vos données actuelles sont d
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} actions, {1}, répéter {2}, vitesse ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Toutes les applications</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Pas encore de raccourci</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Choisissez un raccourci avec Modifier pour l'activer.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Cliquez dessus et choisissez un raccourci pour l’activer.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>Impossible de copier vos boucles et macros dans {0}.
 Détails : {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Certains fichiers de macros n'ont pas pu être mis à jour pour cette version.</value></data>
@@ -1046,17 +1045,17 @@ Détails : {1}</value></data>
   <data name="Ai_OpenedImport" xml:space="preserve"><value>Importer ouvert</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>Exporter ouvert</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Importer</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Importer…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Importer</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Ajouter des boucles, macros et remappages depuis un fichier</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Exporter</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Exporter…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Exporter</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Déposez pour importer</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Restaurer cette sauvegarde depuis les Paramètres</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Restaurer une sauvegarde remplace toutes vos boucles, macros, remappages et paramètres. Vous pouvez le faire dans {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Ouvrir les Paramètres</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Fermer</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Enregistrer des boucles, macros et remappages dans un fichier, pour les partager</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Exporter…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Exporter</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Éléments PuppyMacro (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importer des boucles, macros et remappages</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Exporter des boucles, macros et remappages</value></data>
@@ -1092,4 +1091,19 @@ Détails : {1}</value></data>
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>De PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>Éléments PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>Sauvegarde PuppyMacro</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Aucun raccourci</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Maintenir</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>Action</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Raccourci</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Fonctionne dans</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Table_From" xml:space="preserve"><value>De</value></data>
+  <data name="Table_To" xml:space="preserve"><value>Vers</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Affichage</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Liste</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Tableau</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Grille</value></data>
+  <data name="Table_State" xml:space="preserve"><value>État</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Modifier</value></data>
 </root>

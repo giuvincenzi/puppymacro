@@ -13,7 +13,10 @@
   `publish_release` runs them on that commit.
 - Covered: settings loading and migrations (`SettingsStore`), Export and Import (`BackupServiceTests`: every part, the
   identical copy, partial files, older files, refused files), macros from recorded events
-  (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
+  (`MacroBuilder`), `MacroLibrary`, the list pages' groups (`PageViewsTests`: when they show, All apps first then the apps by
+  name, the user's order inside, the table's own order, the search), each list page's view in the settings (`SettingsStoreTests`:
+  the defaults, a newer version's view), a copy's name (`ItemNamesTests`: "Name (2)", a numbered name counts on), macro groups
+  and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
   the options shared by loop and macro actions (`ActionOptionsTests`: combinations, Hold for, Times, double click, fixed point, older files, Code view checks), `HotkeyConflicts` (also per app, for remap sources and for modifier sides), `HotkeyRules`, which items the overlay shows
   (`OverlayItems`, `FloatingButtons`), `ModifierTracker`, `KeyNames`, `HotkeyBinding` (`Matches`, `Overlaps`, sides), what the key
@@ -67,7 +70,8 @@
   instead (`Window.Close()`, `Invoke`).
 - `make e2e` runs them locally; it builds the dev build first. On one machine tests run one at a time (one
   PuppyMacro at a time): they share its desktop, mouse, keyboard, window in front and PuppyMacro's data folder.
-- Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages,
+- Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages, each list page's view (its
+  default, the List, Table and Grid buttons, the view saved and kept, an item opened with a click in every view),
   editors, Export's choices, Export of items with search (from the title bar's More options), a `.puppyitems` file opened
   while PuppyMacro runs (a second `PuppyMacro.exe` with its path, as File Explorer starts it; the file dialogs are never
   opened), a remap imported without its hotkey and its card, two files opened one after the other (one Import, the last
@@ -88,7 +92,9 @@
   check `.Success`, never fixed sleeps. A UI Automation timeout ("Operation timed out", PuppyMacro's UI thread busy) is
   one more try, not a failure (`AppSession.NotYet`, in the helpers that look for an element or a window). Other `AppSession` helpers: `GoTo` (a side rail page),
   `Expand` (a Settings `SettingsExpander` by `x:Name`, through its `ExpanderToggleButton`: it has
-  no ExpandCollapse pattern), `CardButton` / `EditItem` (a list card's buttons), `Dialog` (an
+  no ExpandCollapse pattern), `ItemRow` (an item of a list page, in List, Table or Grid), `CardButton` (its Play, Stop or More
+  options), `EditItem` (opens its editor with a real click near the item's left end: the library's `SettingsCard` has no
+  Invoke pattern), `ViewButton` (a page's List, Table or Grid button), `Dialog` (an
   editor or dialog: while an editor is open the main window is hidden, so it is searched among
   PuppyMacro's top-level windows) and `TopWindow` (overlay panel, floating buttons). A list's row is found by its
   accessible name (`ui.md`), never by the texts inside it: `CardButton` in the main window, `PanelRow` / `PanelRowIs`
@@ -96,7 +102,8 @@
 - A test that sends input must be harmless: input goes only to a window of the test itself.
   The UI tests use F24 (no keyboard has it). The playback tests (`Macros`, `Loops`, `Remaps`,
   `Recording`, `Overlay`) really run loops, macros and remaps against `TargetWindow`: a topmost
-  window of the test process at a fixed place inside the 1024x768 screen, which logs every key,
+  window of the test process at a fixed place inside the 1024x768 screen (its `Activate` puts it on top before its click and
+  checks the click point is its own: PuppyMacro's main window covers that whole screen), which logs every key,
   button, wheel and move it receives with the time, and has a text box for pasted text. Its
   `Tap` / `Press` / `Click` check first that it is in front (`RequireForeground`), and every point
   a macro clicks or moves to is inside it (`TargetWindow.PointAt`, physical pixels). Hotkeys and

@@ -284,7 +284,7 @@ public partial class KeyCaptureField : UserControl
 
     private void ShowValue()
     {
-        SplitCaps.ItemsSource = DisplayParts(Value, KeyOnly);
+        SplitCaps.Keys = DisplayParts(Value, KeyOnly);
         ClearItem.Visibility = CanClear ? Visibility.Visible : Visibility.Collapsed;
         ShowSideItems();
         ShowState();

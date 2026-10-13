@@ -229,16 +229,36 @@ public sealed class TargetWindow : IDisposable
 
     public List<TargetEvent> Of(TargetEventKind kind) => Events.Where(e => e.Kind == kind).ToList();
 
-    /// <summary>Brings the window to the front with a click on its corner and gives the text box the focus.</summary>
+    /// <summary>
+    /// Brings the window to the front with a click on its corner and gives the text box the focus. First it puts itself on
+    /// top (topmost, without taking the focus: Windows lets any window do that), so the click is its own: a window opened
+    /// while another app is in front can stay under it, and PuppyMacro's main window covers the whole 1024 x 768 screen of
+    /// the GitHub machines, so the click went to PuppyMacro. Then it checks that the corner is its own before clicking.
+    /// </summary>
     public void Activate()
     {
         Clear();
-        Mouse.Click(PointAt(0.98, 0.04));
+        Point corner = PointAt(0.98, 0.04);
+        OnWindowThread(() => Native.SetWindowPos(Handle, Native.HWND_TOPMOST, 0, 0, 0, 0,
+            Native.SWP_NOMOVE | Native.SWP_NOSIZE | Native.SWP_NOACTIVATE | Native.SWP_SHOWWINDOW));
+        Assert.True(Retry.WhileFalse(() => Native.GetAncestor(Native.WindowFromPoint(new Native.POINT { X = corner.X, Y = corner.Y }),
+                Native.GA_ROOT) == Handle, AppSession.Timeout).Success,
+            $"the target window's corner is under another window (\"{TitleAt(corner)}\"): the click would not be its own");
+        Mouse.Click(corner);
         // Its own click arrived (so it is not left in the events), and the window is in front.
         Assert.True(Retry.WhileFalse(() => Native.GetForegroundWindow() == Handle && Ups(Vk.LButton).Count > 0, AppSession.Timeout).Success,
             $"the target window did not come to the front (\"{ForegroundTitle()}\" is)");
         OnWindowThread(() => _text!.Focus());
         Clear();
+    }
+
+    /// <summary>The title of the top-level window at a screen point.</summary>
+    private static string TitleAt(Point point)
+    {
+        IntPtr window = Native.GetAncestor(Native.WindowFromPoint(new Native.POINT { X = point.X, Y = point.Y }), Native.GA_ROOT);
+        var text = new System.Text.StringBuilder(256);
+        Native.GetWindowText(window, text, text.Capacity);
+        return text.ToString();
     }
 
     /// <summary>Stops the test unless the target window is in front, so no input reaches another app.</summary>
@@ -487,6 +507,20 @@ internal static class Native
 
     [DllImport("user32.dll")]
     public static extern IntPtr GetForegroundWindow();
+
+    public static readonly IntPtr HWND_TOPMOST = new(-1);
+    public const uint SWP_NOSIZE = 0x0001, SWP_NOMOVE = 0x0002, SWP_NOACTIVATE = 0x0010, SWP_SHOWWINDOW = 0x0040;
+    public const uint GA_ROOT = 2;
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool SetWindowPos(IntPtr window, IntPtr insertAfter, int x, int y, int width, int height, uint flags);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr WindowFromPoint(POINT point);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetAncestor(IntPtr window, uint flags);
 
     [DllImport("user32.dll")]
     public static extern bool GetCursorPos(out POINT point);

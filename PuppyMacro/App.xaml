@@ -51,14 +51,6 @@
                 <Setter Property="Background" Value="{DynamicResource IdleDotBrush}" />
             </Style>
 
-            <!-- A hotkey or key the user chose, in the accent color (approved, ui.md): the key field and the list
-                 cards. An ItemsControl with ItemTemplate="{StaticResource AccentKeyCapItem}" and
-                 ItemsPanel="{StaticResource KeyCapRow}" over the key names (KeyNames.Parts). -->
-            <DataTemplate x:Key="AccentKeyCapItem">
-                <Border Margin="0,0,4,0" Style="{StaticResource KeyCap}" Background="{DynamicResource AccentFillColorDefaultBrush}">
-                    <TextBlock Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}" Text="{Binding}" />
-                </Border>
-            </DataTemplate>
             <!-- Keys read left to right in every language, as on the keyboard and in Windows (i18n.md) -->
             <ItemsPanelTemplate x:Key="KeyCapRow">
                 <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight" />

@@ -264,7 +264,6 @@
   <data name="Rail_Macros" xml:space="preserve"><value>マクロ</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>リマップ</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>設定</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>編集</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>有効</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>その他のオプション</value></data>
   <data name="Card_Play" xml:space="preserve"><value>再生</value></data>
@@ -310,7 +309,7 @@
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} 個のアクション、{1}、繰り返し: {2}、速度 ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>すべてのアプリ</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>ホットキー未設定</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>[編集] でホットキーを選ぶとオンにできます。</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>開いてホットキーを選ぶとオンにできます。</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>ループとマクロを {0} にコピーできませんでした。
 詳細: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>一部のマクロ ファイルをこのバージョン用に更新できませんでした。</value></data>
@@ -1019,17 +1018,17 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>[インポート] を開きました</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>[エクスポート] を開きました</value></data>
   <data name="Share_Import" xml:space="preserve"><value>インポート</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>インポート…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>インポート</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>ファイルからループ、マクロ、リマップを追加します</value></data>
   <data name="Share_Export" xml:space="preserve"><value>エクスポート</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>エクスポート…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>エクスポート</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>ドロップしてインポート</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>このバックアップは設定から復元します</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>バックアップを復元すると、ループ、マクロ、リマップ、設定がすべて置き換わります。{0} › {1} から復元できます。</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>設定を開く</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>閉じる</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>ループ、マクロ、リマップをファイルに保存して共有します</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>エクスポート…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>エクスポート</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 項目 (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>ループ、マクロ、リマップのインポート</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>ループ、マクロ、リマップのエクスポート</value></data>
@@ -1062,4 +1061,19 @@
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>PuppyMacro {0} から · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro 項目</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro バックアップ</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>ホットキーなし</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>長押し</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>名前</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>動作</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>ホットキー</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>対象アプリ</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>メモ</value></data>
+  <data name="Table_From" xml:space="preserve"><value>変換元</value></data>
+  <data name="Table_To" xml:space="preserve"><value>変換先</value></data>
+  <data name="Main_View" xml:space="preserve"><value>表示</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>一覧</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>表</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>グリッド</value></data>
+  <data name="Table_State" xml:space="preserve"><value>状態</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>編集</value></data>
 </root>

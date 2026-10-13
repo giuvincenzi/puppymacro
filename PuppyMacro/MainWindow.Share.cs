@@ -23,7 +23,7 @@ using Shape = System.Windows.Shapes.Shape;
 namespace PuppyMacro;
 
 /// <summary>
-/// Sharing loops, macros and remaps as .puppyitems files (<see cref="ItemFile"/>): Import and Export in the title bar, Export…
+/// Sharing loops, macros and remaps as .puppyitems files (<see cref="ItemFile"/>): Import and Export in the title bar, Export
 /// in each card's menu, a file opened from File Explorer, and the same windows for AI apps. Not the backup (Settings › Backup).
 /// </summary>
 public partial class MainWindow
@@ -38,7 +38,7 @@ public partial class MainWindow
     /// <summary>While the user's Import window is open: shows another file in it.</summary>
     private Action<string>? _importShowFile;
 
-    /// <summary>The title bar's More options: Import… and Export…, each with its tooltip.</summary>
+    /// <summary>The title bar's More options: Import and Export, each with its tooltip.</summary>
     private void OnTitleMoreClick(object sender, RoutedEventArgs e)
     {
         var import = new MenuItem
@@ -57,7 +57,7 @@ public partial class MainWindow
         menu.IsOpen = true;
     }
 
-    /// <summary>The card menu's Export…: the file dialog at once, for this item alone.</summary>
+    /// <summary>The card menu's Export: the file dialog at once, for this item alone.</summary>
     private void ExportOne(object item) => SaveItemsFile(new List<object> { item }, out _);
 
     /// <summary>

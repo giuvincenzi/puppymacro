@@ -7,15 +7,16 @@
     xmlns:r="clr-namespace:PuppyMacro.Resources"
     x:Name="Root">
 
-    <!-- Play / Stop, Edit and More options: filled Fluent System Icons, lit only under the mouse (SubtleButtons.xaml) -->
+    <!-- Play / Stop and More options: filled Fluent System Icons, lit only under the mouse (SubtleButtons.xaml) -->
     <UserControl.Resources>
         <ResourceDictionary Source="SubtleButtons.xaml" />
     </UserControl.Resources>
 
-    <!-- The right side of every card in the Loops, Macros and Remap lists: Play / Stop (its place left empty in Hold mode),
-         Edit, the Enabled switch and More options. The buttons carry the card's item in their Tag. -->
+    <!-- The right side of every item in the Loops, Macros and Remap lists, in each of their views (List, Table, Grid): Play /
+         Stop (its place left empty in Hold mode), More options and the Enabled switch, last. No Edit: a click on the item opens
+         its editor. The buttons carry the item in their Tag. -->
     <StackPanel Orientation="Horizontal">
-        <Grid x:Name="PlayPart" VerticalAlignment="Center">
+        <Grid x:Name="PlayPart" Margin="0,0,8,0" VerticalAlignment="Center">
             <Button x:Name="PlayButton" Tag="{Binding}" Click="OnPlayClick" ToolTipService.ShowOnDisabled="True">
                 <!-- Two fixed icons: in 0.10.2 a FontIcon whose Icon changes after load can clear it (ui.md) -->
                 <Grid>
@@ -24,15 +25,12 @@
                 </Grid>
             </Button>
         </Grid>
-        <Button x:Name="EditButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="{x:Static r:Strings.Card_Edit}"
-                AutomationProperties.Name="{x:Static r:Strings.Card_Edit}" ToolTipService.ShowOnDisabled="True" Click="OnEditClick">
-            <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Edit_16_Filled}" />
-        </Button>
-        <ui:ToggleSwitch x:Name="EnabledSwitch" Margin="16,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{x:Static r:Strings.Card_Enabled}"
-                         IsOn="{Binding IsOn, ElementName=Root, Mode=TwoWay}" />
-        <Button x:Name="MoreButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="{x:Static r:Strings.Card_MoreOptions}"
+        <Button x:Name="MoreButton" VerticalAlignment="Center" Tag="{Binding}" ToolTip="{x:Static r:Strings.Card_MoreOptions}"
                 AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" Click="OnMoreClick">
             <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.MoreHorizontal_16_Filled}" />
         </Button>
+        <!-- Without the library's On / Off text (English only, and not in the approved design): no text, so no MinWidth for it -->
+        <ui:ToggleSwitch x:Name="EnabledSwitch" Margin="16,0,0,0" MinWidth="0" VerticalAlignment="Center" OnContent="" OffContent=""
+                         AutomationProperties.Name="{x:Static r:Strings.Card_Enabled}" IsOn="{Binding IsOn, ElementName=Root, Mode=TwoWay}" />
     </StackPanel>
 </UserControl>

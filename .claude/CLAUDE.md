@@ -52,7 +52,7 @@ loop, macro, remap, setting, History, AI activity and log. So, for every change 
   maintainer, as `github-actions[bot]` opened it), waiting for them and giving the pull request's link
   (`build-and-release.md`, "When the user asks Claude for the release pull request"). Merging it publishes the release:
   only with the user's OK. No release step runs on a contributor's PC.
-- Sharing loops, macros and remaps (`.puppyitems` files: Import… and Export… in the title bar's More options menu, or a file dragged onto the window) and the backup
+- Sharing loops, macros and remaps (`.puppyitems` files: Import and Export in the title bar's More options menu, or a file dragged onto the window) and the backup
   (Settings > Backup) stay two separate features: sharing only adds items, the backup replaces the data. A backup
   opens only from Settings, never with a double-click in File Explorer (a double-click only shows `BackupFileWindow`, which
   says so and whose Open Settings opens PuppyMacro on Settings › Backup) or by dragging it onto the window.

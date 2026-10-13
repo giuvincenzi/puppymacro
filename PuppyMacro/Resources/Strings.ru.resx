@@ -287,7 +287,6 @@
   <data name="Rail_Macros" xml:space="preserve"><value>Макросы</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Переназначение</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Параметры</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>Изменить</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Включено</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Другие параметры</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Запустить</value></data>
@@ -343,7 +342,7 @@
   <data name="Macros_SummaryWithSpeed_many" xml:space="preserve"><value>{0} действий, {1}, повтор: {2}, скорость ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Все приложения</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Пока без горячей клавиши</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Выберите горячую клавишу через «Изменить», чтобы включить переназначение.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Откройте переназначение и выберите горячую клавишу, чтобы включить его.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>Не удалось скопировать ваши циклы и макросы в {0}.
 Подробности: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Некоторые файлы макросов не удалось обновить до этой версии.</value></data>
@@ -1084,17 +1083,17 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>Открыто окно «Импорт»</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>Открыто окно «Экспорт»</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Импорт</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Импорт…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Импорт</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Добавить циклы, макросы и переназначения из файла</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Экспорт</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Экспорт…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Экспорт</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Отпустите, чтобы импортировать</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Восстановите эту резервную копию в параметрах</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>При восстановлении резервной копии заменяются все ваши циклы, макросы, переназначения и параметры. Это можно сделать в разделе {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Открыть параметры</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Закрыть</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Сохранить циклы, макросы и переназначения в файл, чтобы поделиться ими</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Экспорт…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Экспорт</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Элементы PuppyMacro (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Импорт циклов, макросов и переназначений</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Экспорт циклов, макросов и переназначений</value></data>
@@ -1133,4 +1132,19 @@
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>Создано в PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>Элементы PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>Резервная копия PuppyMacro</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Без горячей клавиши</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Удержание</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Имя</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>Что делает</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Горячая клавиша</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Где работает</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Примечание</value></data>
+  <data name="Table_From" xml:space="preserve"><value>Откуда</value></data>
+  <data name="Table_To" xml:space="preserve"><value>Куда</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Вид</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Список</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Таблица</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Сетка</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Состояние</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Изменить</value></data>
 </root>

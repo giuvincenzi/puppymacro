@@ -5,7 +5,8 @@ namespace PuppyMacro.Services.Ai;
 /// <summary>
 /// The settings an AI app can read (get_settings) and ask to change (update_settings, each value optional: null keeps
 /// it). Start with Windows, Allow AI access, backups and updates are left to the user, and so is Language: it applies only
-/// after PuppyMacro restarts, which would end the AI app's connection.
+/// after PuppyMacro restarts, which would end the AI app's connection. The views of the list pages (List, Table, Grid:
+/// LoopsLayout, MacrosLayout, RemapsLayout) stay out too: they only change how the user's own window looks.
 /// </summary>
 public sealed class AiSettingsValues
 {

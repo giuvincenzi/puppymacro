@@ -88,6 +88,10 @@ paths:
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
   loop is enabled). Keep
   the samples working when models change.
+- `AppSettings.LoopsLayout`, `MacrosLayout`, `RemapsLayout` (`ItemsLayout`: List, Table, Grid): each list page's view.
+  Older files get the defaults, Loops List, Macros Table, Remap List (the user's choice; a new field, no migration). A name
+  this version does not know (a newer version's view) or a number is read by `ItemsLayoutConverter` as a value outside the
+  enum instead of failing the whole file, and `SettingsStore.Sanitize` gives that page its default.
 - `AppSettings.Language`: a code of `AppLanguages.All` or null, "Use system language" (also in older files, no
   migration: an existing user sees PuppyMacro in the Windows display language from 1.17, as decided); an unknown value
   (a newer version's language, a hand edit) is read as null (`SettingsStore.Sanitize`). Nothing in the data depends on

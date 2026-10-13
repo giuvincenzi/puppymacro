@@ -279,7 +279,6 @@
   <data name="Rail_Macros" xml:space="preserve"><value>Makrot</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Ricakto</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Cilësimet</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>Redakto</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Aktivizuar</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Më shumë opsione</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Luaj</value></data>
@@ -330,7 +329,7 @@
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} veprime, {1}, përsëritje: {2}, shpejtësia ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Të gjitha aplikacionet</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Ende pa tast të shpejtë</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Zgjidhni një tast të shpejtë te Redakto për ta aktivizuar.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Hapeni dhe zgjidhni një tast të shpejtë për ta aktivizuar.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>Ciklet dhe makrot tuaja nuk mund të kopjoheshin në {0}.
 Detajet: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Disa skedarë makrosh nuk mund të përditësoheshin në këtë version.</value></data>
@@ -1057,17 +1056,17 @@ Detajet: {1}</value></data>
   <data name="Ai_OpenedImport" xml:space="preserve"><value>Hapi Importo</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>Hapi Eksporto</value></data>
   <data name="Share_Import" xml:space="preserve"><value>Importo</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>Importo…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Importo</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Shtoni cikle, makro dhe ricaktime nga një skedar</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Eksporto</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>Eksporto…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Eksporto</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Lëshojeni për ta importuar</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Riktheje këtë kopje rezervë nga Cilësimet</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Rikthimi i një kopjeje rezervë zëvendëson të gjitha ciklet, makrot, ricaktimet dhe cilësimet e tua. Mund ta bësh te {0} › {1}.</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Hap Cilësimet</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Mbyll</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Ruani cikle, makro dhe ricaktime në një skedar, për t'i ndarë me të tjerët</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>Eksporto…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Eksporto</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Elementet e PuppyMacro (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importo cikle, makro dhe ricaktime</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>Eksporto cikle, makro dhe ricaktime</value></data>
@@ -1103,4 +1102,19 @@ Detajet: {1}</value></data>
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>Nga PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>Elementet e PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>Kopje rezervë e PuppyMacro</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Pa tast të shpejtë</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Mbajtje</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>Çfarë bën</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Tasti i shpejtë</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Funksionon në</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Shënim</value></data>
+  <data name="Table_From" xml:space="preserve"><value>Nga</value></data>
+  <data name="Table_To" xml:space="preserve"><value>Te</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Pamja</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Listë</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Tabelë</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Rrjetë</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Gjendja</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Redakto</value></data>
 </root>

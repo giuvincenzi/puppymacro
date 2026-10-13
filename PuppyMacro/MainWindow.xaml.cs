@@ -24,6 +24,7 @@ using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
 using NumberBoxValueChangedEventArgs = iNKORE.UI.WPF.Modern.Controls.NumberBoxValueChangedEventArgs;
 using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
 using SettingsExpander = iNKORE.UI.WPF.Modern.Controls.SettingsExpander;
+using ToggleSwitch = iNKORE.UI.WPF.Modern.Controls.ToggleSwitch;
 
 namespace PuppyMacro;
 
@@ -33,10 +34,10 @@ public partial class MainWindow
     private readonly AppSettings _settings;
     private readonly LoopEngine _engine;
     private readonly ObservableCollection<LoopItemViewModel> _items;
-    private readonly ListCollectionView _view;
+    private readonly PageViews _view;
     private readonly MacroLibrary _macros;
     private readonly ObservableCollection<MacroItemViewModel> _macroItems;
-    private readonly ListCollectionView _macroView;
+    private readonly PageViews _macroView;
     private readonly OverlayPanelWindow _overlayPanelWindow;
     private readonly List<FloatingButtonWindow> _buttonWindows = new();
     private readonly DispatcherTimer _saveOpacityTimer;
@@ -47,7 +48,7 @@ public partial class MainWindow
     private readonly bool _initializing;
     private bool _overlayModeActive;
     private readonly ObservableCollection<RemapItemViewModel> _remapItems;
-    private readonly ListCollectionView _remapView;
+    private readonly PageViews _remapView;
     private readonly TrayIcon _tray;
     private readonly DispatcherTimer _panelTargetsTimer;
     private bool _engineStarted;
@@ -83,18 +84,16 @@ public partial class MainWindow
         _engine.ForegroundAppChanged += OnForegroundAppChanged;
 
         _items = new ObservableCollection<LoopItemViewModel>(settings.Loops.Select(CreateItem));
-        _view = new ListCollectionView(_items) { Filter = FilterLoop };
-        LoopList.ItemsSource = _view;
+        _view = new PageViews(_items, FilterLoop, item => ((LoopItemViewModel)item).AppExe);
 
         _macroItems = new ObservableCollection<MacroItemViewModel>(macros.Macros.Select(CreateMacroItem));
-        _macroView = new ListCollectionView(_macroItems) { Filter = FilterMacro };
-        MacroList.ItemsSource = _macroView;
+        _macroView = new PageViews(_macroItems, FilterMacro, item => ((MacroItemViewModel)item).AppExe);
 
         _overlayPanelWindow = new OverlayPanelWindow(_items, _macroItems);
 
         _remapItems = new ObservableCollection<RemapItemViewModel>(settings.Remaps.Select(CreateRemapItem));
-        _remapView = new ListCollectionView(_remapItems) { Filter = FilterRemap };
-        RemapList.ItemsSource = _remapView;
+        _remapView = new PageViews(_remapItems, FilterRemap, item => ((RemapItemViewModel)item).Definition.AppExe);
+        InitializeLists();
 
         // Clickable overlay panel: the row positions are refreshed while overlay mode is on.
         _panelTargetsTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
@@ -368,6 +367,7 @@ public partial class MainWindow
     {
         _view.Refresh();
         UpdateLoopState();
+        RefitLists();
     }
 
     /// <summary>
@@ -461,13 +461,6 @@ public partial class MainWindow
         Save();
     }
 
-    /// <summary>The card's Edit (not while loops or macros run).</summary>
-    private void OnEditLoopClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is LoopItemViewModel item && !_engine.AnyRunning)
-            EditLoop(item);
-    }
-
     private void OnMoreClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement button || button.Tag is not LoopItemViewModel item)
@@ -492,6 +485,8 @@ public partial class MainWindow
         };
         moveDown.Click += (_, _) => MoveItem(item, index + 1);
 
+        var duplicate = new MenuItem { Header = Strings.Card_Duplicate, Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
+        duplicate.Click += (_, _) => DuplicateLoop(item);
         var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload } };
         export.Click += (_, _) => ExportOne(item.Definition);
         var menu = new ContextMenu
@@ -499,6 +494,9 @@ public partial class MainWindow
             PlacementTarget = button,
             Placement = PlacementMode.Bottom,
         };
+        menu.Items.Add(EditMenuItem(item));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(duplicate);
         menu.Items.Add(export);
         menu.Items.Add(new Separator());
         menu.Items.Add(moveUp);
@@ -615,6 +613,7 @@ public partial class MainWindow
     {
         _macroView.Refresh();
         UpdateMacroState();
+        RefitLists();
     }
 
     private void UpdateMacroState()
@@ -695,13 +694,6 @@ public partial class MainWindow
         _overlayPanelWindow.RefreshList();
     }
 
-    /// <summary>The card's Edit (not while loops or macros run).</summary>
-    private void OnEditMacroClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is MacroItemViewModel item && !_engine.AnyRunning)
-            EditMacro(item);
-    }
-
     private void OnMacroMoreClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement button || button.Tag is not MacroItemViewModel item)
@@ -717,7 +709,12 @@ public partial class MainWindow
         var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
+        var duplicate = new MenuItem { Header = Strings.Card_Duplicate, Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
+        duplicate.Click += (_, _) => DuplicateMacro(item);
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
+        menu.Items.Add(EditMenuItem(item));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(duplicate);
         menu.Items.Add(export);
         menu.Items.Add(new Separator());
         menu.Items.Add(moveUp);
@@ -911,11 +908,12 @@ public partial class MainWindow
         Save();
     }
 
-    private static bool IsInsideInteractiveControl(DependencyObject? source)
+    /// <summary>The press is on a control inside <paramref name="card"/> (its buttons, switch…), not on the card itself.</summary>
+    private static bool IsInsideInteractiveControl(DependencyObject? source, DependencyObject? card = null)
     {
-        while (source != null)
+        while (source != null && !ReferenceEquals(source, card))
         {
-            if (source is ButtonBase or TextBox or ComboBox or Slider)
+            if (source is ButtonBase or TextBox or ComboBox or Slider or ToggleSwitch)
                 return true;
             source = source is Visual or System.Windows.Media.Media3D.Visual3D
                 ? VisualTreeHelper.GetParent(source)
@@ -927,7 +925,7 @@ public partial class MainWindow
     private void OnCardMouseDown(object sender, MouseButtonEventArgs e)
     {
         _dragCandidate = null;
-        if (IsInsideInteractiveControl(e.OriginalSource as DependencyObject))
+        if (IsInsideInteractiveControl(e.OriginalSource as DependencyObject, sender as DependencyObject))
             return;
         if ((sender as FrameworkElement)?.Tag is IListItem item)
         {
@@ -949,6 +947,9 @@ public partial class MainWindow
         var item = _dragCandidate;
         _dragCandidate = null;
         item.IsDragging = true;
+        // The card is a button (a click opens the editor): without its mouse capture it is no longer pressed, so the drop
+        // does not open the editor.
+        (sender as UIElement)?.ReleaseMouseCapture();
         try
         {
             DragDrop.DoDragDrop((DependencyObject)sender, new DataObject(typeof(IListItem), item), DragDropEffects.Move);
@@ -965,7 +966,7 @@ public partial class MainWindow
         e.Handled = true;
         if (e.Data.GetData(typeof(IListItem)) is not IListItem dragged
             || sender is not FrameworkElement card || card.Tag is not IListItem target
-            || ReferenceEquals(dragged, target) || dragged.GetType() != target.GetType())
+            || !CanDropOn(dragged, target))
         {
             e.Effects = DragDropEffects.None;
             ClearDropIndicators();
@@ -973,7 +974,7 @@ public partial class MainWindow
         }
 
         e.Effects = DragDropEffects.Move;
-        bool before = e.GetPosition(card).Y < card.ActualHeight / 2;
+        bool before = DropsBefore(card, e);
         foreach (var other in AllListItems())
         {
             other.DropBefore = ReferenceEquals(other, target) && before;
@@ -995,13 +996,13 @@ public partial class MainWindow
         e.Handled = true;
         if (e.Data.GetData(typeof(IListItem)) is not IListItem dragged
             || sender is not FrameworkElement card || card.Tag is not IListItem target
-            || ReferenceEquals(dragged, target) || dragged.GetType() != target.GetType())
+            || !CanDropOn(dragged, target))
         {
             ClearDropIndicators();
             return;
         }
 
-        bool before = e.GetPosition(card).Y < card.ActualHeight / 2;
+        bool before = DropsBefore(card, e);
         ClearDropIndicators();
 
         if (dragged is LoopItemViewModel loop && target is LoopItemViewModel loopTarget)
@@ -1610,6 +1611,7 @@ public partial class MainWindow
     {
         _remapView.Refresh();
         UpdateRemapState();
+        RefitLists();
     }
 
     private void UpdateRemapState()
@@ -1653,13 +1655,6 @@ public partial class MainWindow
         Save();
     }
 
-    /// <summary>The card's Edit.</summary>
-    private void OnEditRemapClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is RemapItemViewModel item)
-            EditRemap(item);
-    }
-
     private void OnRemapMoreClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement button || button.Tag is not RemapItemViewModel item)
@@ -1672,9 +1667,20 @@ public partial class MainWindow
         var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Upload } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
+        int index = _remapItems.IndexOf(item);
+        var moveUp = new MenuItem { Header = Strings.Card_MoveUp, Icon = new FontIcon { Icon = SegoeFluentIcons.Up }, IsEnabled = index > 0 };
+        moveUp.Click += (_, _) => MoveRemap(item, index - 1);
+        var moveDown = new MenuItem { Header = Strings.Card_MoveDown, Icon = new FontIcon { Icon = SegoeFluentIcons.Down }, IsEnabled = index < _remapItems.Count - 1 };
+        moveDown.Click += (_, _) => MoveRemap(item, index + 1);
+
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
+        menu.Items.Add(EditMenuItem(item));
+        menu.Items.Add(new Separator());
         menu.Items.Add(duplicate);
         menu.Items.Add(export);
+        menu.Items.Add(new Separator());
+        menu.Items.Add(moveUp);
+        menu.Items.Add(moveDown);
         menu.Items.Add(new Separator());
         menu.Items.Add(delete);
         menu.IsOpen = true;
@@ -1702,6 +1708,76 @@ public partial class MainWindow
     {
         item.Definition.CopyFrom(result);
         item.Refresh();
+        RefreshRemaps();
+        Save();
+    }
+
+    /// <summary>
+    /// More options › Edit, its first command: the item's editor, as a click on it (loops and macros not while one runs).
+    /// </summary>
+    private MenuItem EditMenuItem(object item)
+    {
+        var edit = new MenuItem
+        {
+            Header = Strings.Card_Edit,
+            Icon = new FontIcon { Icon = SegoeFluentIcons.Edit },
+            IsEnabled = item is RemapItemViewModel || !_engine.AnyRunning,
+        };
+        edit.Click += (_, _) => OpenItem(item);
+        return edit;
+    }
+
+    /// <summary>
+    /// More options › Duplicate of a loop: a copy right under it, "Name (2)", disabled and without a hotkey (two loops cannot
+    /// have the same one; a Hold copy becomes Toggle, as Hold needs a hotkey), ready to be edited.
+    /// </summary>
+    private void DuplicateLoop(LoopItemViewModel item)
+    {
+        if (_engine.AnyRunning)
+            return;
+        var copy = item.Definition.Clone();
+        copy.Id = Guid.NewGuid();
+        copy.Name = ItemNames.Copy(copy.Name, _settings.Loops.Select(l => l.Name));
+        copy.Enabled = false;
+        copy.Hotkey = null;
+        if (copy.Mode == ActivationMode.Hold)
+            copy.Mode = ActivationMode.Toggle;
+        _settings.Loops.Insert(_settings.Loops.IndexOf(item.Definition) + 1, copy);
+        _items.Insert(_items.IndexOf(item) + 1, CreateItem(copy));
+        RefreshList();
+        _overlayPanelWindow.RefreshList();
+        Save();
+    }
+
+    /// <summary>More options › Duplicate of a macro: as a loop's (<see cref="DuplicateLoop"/>).</summary>
+    private void DuplicateMacro(MacroItemViewModel item)
+    {
+        if (_engine.AnyRunning)
+            return;
+        var copy = item.Definition.Clone();
+        copy.Id = Guid.NewGuid();
+        copy.Name = ItemNames.Copy(copy.Name, _macros.Macros.Select(m => m.Name));
+        copy.Enabled = false;
+        copy.Hotkey = null;
+        if (copy.Mode == ActivationMode.Hold)
+            copy.Mode = ActivationMode.Toggle;
+        _macros.Macros.Insert(_macros.Macros.IndexOf(item.Definition) + 1, copy);
+        _macroItems.Insert(_macroItems.IndexOf(item) + 1, CreateMacroItem(copy));
+        SaveMacro(copy);
+        SaveMacroOrder();
+        RefreshMacros();
+        _overlayPanelWindow.RefreshList();
+    }
+
+    /// <summary>More options › Move up / Move down of a remap, as a loop's (<see cref="MoveItem"/>).</summary>
+    private void MoveRemap(RemapItemViewModel item, int newIndex)
+    {
+        int oldIndex = _remapItems.IndexOf(item);
+        newIndex = Math.Clamp(newIndex, 0, _remapItems.Count - 1);
+        if (oldIndex < 0 || oldIndex == newIndex)
+            return;
+        _remapItems.Move(oldIndex, newIndex);
+        _settings.Remaps = _remapItems.Select(r => r.Definition).ToList();
         RefreshRemaps();
         Save();
     }

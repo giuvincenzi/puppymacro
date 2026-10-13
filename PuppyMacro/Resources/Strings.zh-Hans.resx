@@ -264,7 +264,6 @@
   <data name="Rail_Macros" xml:space="preserve"><value>宏</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>重映射</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>设置</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>编辑</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>已启用</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>更多选项</value></data>
   <data name="Card_Play" xml:space="preserve"><value>播放</value></data>
@@ -310,7 +309,7 @@
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} 个操作，{1}，重复：{2}，速度 ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>所有应用</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>尚未设置热键</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>通过“编辑”选择热键后即可启用。</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>打开它并选择热键后即可启用。</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>无法将你的循环和宏复制到 {0}。
 详细信息：{1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>某些宏文件无法更新到此版本。</value></data>
@@ -1019,17 +1018,17 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>打开了“导入”</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>打开了“导出”</value></data>
   <data name="Share_Import" xml:space="preserve"><value>导入</value></data>
-  <data name="Share_ImportMenu" xml:space="preserve"><value>导入…</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>导入</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>从文件添加循环、宏和重映射</value></data>
   <data name="Share_Export" xml:space="preserve"><value>导出</value></data>
-  <data name="Share_ExportMenu" xml:space="preserve"><value>导出…</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>导出</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>松开以导入</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>请从设置中还原此备份</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>还原备份会替换你的所有循环、宏、重映射和设置。你可以在 {0} › {1} 中还原。</value></data>
   <data name="BackupFile_OpenSettings" xml:space="preserve"><value>打开设置</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>关闭</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>将循环、宏和重映射保存到文件，以便分享</value></data>
-  <data name="Share_CardExport" xml:space="preserve"><value>导出…</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>导出</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 项目 (*{0})|*{0}</value></data>
   <data name="Share_ImportFileTitle" xml:space="preserve"><value>导入循环、宏和重映射</value></data>
   <data name="Share_ExportFileTitle" xml:space="preserve"><value>导出循环、宏和重映射</value></data>
@@ -1062,4 +1061,19 @@
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>来自 PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro 项目</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro 备份</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>无热键</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>按住</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>名称</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>作用</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>热键</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>适用于</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>备注</value></data>
+  <data name="Table_From" xml:space="preserve"><value>原按键</value></data>
+  <data name="Table_To" xml:space="preserve"><value>映射到</value></data>
+  <data name="Main_View" xml:space="preserve"><value>视图</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>列表</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>表格</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>网格</value></data>
+  <data name="Table_State" xml:space="preserve"><value>状态</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>编辑</value></data>
 </root>

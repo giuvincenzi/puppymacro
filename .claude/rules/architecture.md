@@ -36,6 +36,7 @@ tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end t
 PuppyMacro/
   App.xaml(.cs)                 Main (--mcp bridge, Velopack), single instance, data migration, theme, tray start
   MainWindow.xaml(.cs)          side rail (Views/SideRail): Loops, Macros, Remap, AI, Settings; overlay mode; tray
+  MainWindow.Lists.cs           the list pages' views (List, Table, Grid), a click on an item, tile and column widths
   MainWindow.Updates.cs         update bar, Settings dot and Updates card
   MainWindow.Ai.cs              AI page; the AI tools' host (IAiHost)
   MainWindow.Share.cs           Import and Export of loops, macros and remaps (.puppyitems), files opened from File Explorer
@@ -48,7 +49,7 @@ PuppyMacro/
                                 recording, sounds, storage, Code view checks, tray, startup, updates
   Services/Ai/                  MCP server for AI apps: pipe, bridge, tools, activity, apps' settings, help
   Views/                        view models, SideRail, ItemCardActions (+ SubtleButtons.xaml),
-                                KeyCaptureField, SwitchSettingsExpander, overlay panel, floating
+                                KeyCaptureField, KeyCaps (every key shown as key caps), SwitchSettingsExpander, overlay panel, floating
                                 buttons, Code view (CodeView, ViewSwitchBar, CodeViewSwitch),
                                 MacroShortcutsView, ExportOptionsView, ImportItemsView, ExportItemsView (+ ItemFileRows),
                                 SoundChoicesScroll, ValueSlider, WindowFit
@@ -98,10 +99,18 @@ Rules:
   (the mouse button list) and `Views/PositionPicker` (X, Y, Pick on screen: every point chosen).
 - Loops: `Models/AppSettings.cs` (`LoopDefinition`, `LoopAction`), `Services/ActionRunner.cs`,
   `LoopEditorWindow`.
-- The list cards (Loops, Macros, Remap in `MainWindow`): one view model per item
-  (`LoopItemViewModel`, `MacroItemViewModel`, `RemapItemViewModel`) and the shared right side
-  `Views/ItemCardActions` (Play / Stop, Edit, switch, More options; the buttons carry the item in
-  their `Tag`). `CanEdit` on loops and macros is set by `MainWindow` with the running state.
+- The list pages (Loops, Macros, Remap in `MainWindow`): one view model per item
+  (`LoopItemViewModel`, `MacroItemViewModel`, `RemapItemViewModel`) shown by the templates in `MainWindow.xaml`'s resources
+  in three views (List, Table, Grid; `ui.md`), and the shared buttons `Views/ItemCardActions` (Play / Stop, More options,
+  switch; the buttons carry the item in their `Tag`; `OnItemPlayClick` / `OnItemMoreClick` dispatch by its type).
+  `Views/PageViews` holds a page's two `ListCollectionView`s over the same items and filter: `Grouped` (List and Grid,
+  grouped by app with `AppOrder`) and `Table` (the user's order); `Refresh()` updates both. `MainWindow.Lists.cs` switches
+  the view (`ApplyLayout`: the views not shown get no items, so UI Automation sees each item once), opens an item on a click
+  (`OpenItem`) and measures the tiles' and columns' widths (`FitTiles`, `FitColumns`). `CanEdit` on loops and macros (set
+  by `MainWindow` with the running state) makes their card clickable. More options (`OnMoreClick`, `OnMacroMoreClick`,
+  `OnRemapMoreClick`): Edit (`EditMenuItem`), Duplicate (`DuplicateLoop`, `DuplicateMacro`, `DuplicateRemap`; a copy's name
+  from `Services/ItemNames.Copy`), Export, Move up / Move down (`MoveItem`, `MoveMacro`, `MoveRemap`), Delete. Keys everywhere
+  are `Views/KeyCaps` (`Size` Default or Small, `Accent`); its static sizes also measure them (`KeyCaps.MeasureWidth`).
 - Editors (loop, macro, remap) and the placement overlay open through
   `MainWindow.ShowDialogWithoutHotkeys`: hotkeys off, and the main window is hidden once the editor is
   on screen (so it opens centered on it) and shown again when it closes. The editors therefore have
@@ -176,9 +185,9 @@ Rules:
 - Backup: `Services/BackupService.cs` (export and import of the data folder, `data.md`), `Views/ExportOptionsView`
   (Export's choices, in a `ContentDialog`); the Import confirmation names the file's parts.
 - Sharing (not the backup, the user's choice: two separate features): `.puppyitems` files (`Services/ItemFile.cs`, `data.md`),
-  `MainWindow.Share.cs`: Import… and Export… in the title bar's More options menu (`ItemsWindow`, a window of its own opened
+  `MainWindow.Share.cs`: Import and Export in the title bar's More options menu (`ItemsWindow`, a window of its own opened
   as the editors through `ShowDialogWithoutHotkeys`, the main window hidden meanwhile; for an AI app through `ShowForAi`; with
-  `Views/ImportItemsView` and `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`), Export… in each card's menu (`ExportOne`,
+  `Views/ImportItemsView` and `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`), Export in each card's menu (`ExportOne`,
   the file dialog at once). Import reads the file again at each check box change (`ItemFile.Read` with the chosen indexes: a name or hotkey goes to
   the first chosen item that takes it) and adds the chosen items through `SaveItem`, so the History records them. File
   Explorer: `Services/FileTypes.cs` registers `.puppyitems` and `.puppymacro` (icon, open command `"PuppyMacro.exe" "%1"`)

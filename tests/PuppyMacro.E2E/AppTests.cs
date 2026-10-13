@@ -750,15 +750,15 @@ public class AppTests
     {
         using var app = new AppSession();
 
-        // The card menu's Export… opens the file dialog at once: only looked at here (Move down closes the menu, no keys).
+        // The card menu's Export opens the file dialog at once: only looked at here (Move down closes the menu, no keys).
         app.CardButton("Sample: click every second", "More options").AsButton().Invoke();
-        Assert.NotNull(app.MenuItem("Export…"));
+        Assert.NotNull(app.MenuItem("Export"));
         app.MenuItem("Move down").AsMenuItem().Invoke();
 
-        // The title bar's More options › Export…: the choice first; the file dialog comes only after the dialog's own
+        // The title bar's More options › Export: the choice first; the file dialog comes only after the dialog's own
         // Export…, never pressed here.
         app.FindById(app.MainWindow, "TitleMoreButton").AsButton().Invoke();
-        app.MenuItem("Export…").AsMenuItem().Invoke();
+        app.MenuItem("Export").AsMenuItem().Invoke();
         // A window of its own, as the editors: the main window is hidden meanwhile and comes back after.
         Window export = app.Dialog("Export");
         CheckBox loop = ItemBox(export, "Sample: click every second");
@@ -849,10 +849,9 @@ public class AppTests
             Assert.True(app.Has(window, "CapsLock is already remapped for all apps, so this comes in without a hotkey."));
             import.Invoke();
 
-            // The Remap page opens on it: no hotkey, what to do, its switch off.
+            // The Remap page opens on it: no hotkey (what to do is in its tooltip), its switch off.
             Assert.True(app.Has(app.MainWindow, "E2E remap"));
             Assert.True(app.Has(app.MainWindow, "No hotkey yet"));
-            Assert.True(app.Has(app.MainWindow, "Choose a hotkey with Edit to turn it on."));
             RemapDefinition remap = Retry.WhileNull(() => JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSession.SettingsFile),
                 Seed.JsonOptions)!.Remaps.FirstOrDefault(r => r.Note == "E2E remap"), AppSession.Timeout).Result!;
             Assert.Null(remap.Source);
@@ -863,6 +862,58 @@ public class AppTests
         {
             File.Delete(file);
         }
+    }
+
+    [Fact]
+    public void Each_list_page_has_its_view_switches_with_its_buttons_keeps_it_and_opens_an_item_on_a_click()
+    {
+        using var app = new AppSession();
+
+        // The defaults (the user's choice): Loops List, Macros Table, Remap List.
+        app.GoTo("Loops");
+        Assert.Equal(ToggleState.On, app.ViewButton("Loops", "List").ToggleState);
+        Assert.True(app.HasRow(app.MainWindow, "Sample: click every second"));
+
+        // Table, then Grid: the same items, the choice saved at once. Clicking the view in use keeps it.
+        foreach (string view in new[] { "Table", "Grid" })
+        {
+            ToggleButton button = app.ViewButton("Loops", view);
+            button.Toggle();
+            Assert.True(Retry.WhileFalse(() => button.ToggleState == ToggleState.On, AppSession.Timeout).Success, $"{view} is not on");
+            Assert.Equal(ToggleState.Off, app.ViewButton("Loops", "List").ToggleState);
+            Assert.True(app.HasRow(app.MainWindow, "Sample: click every second"), $"no loop in {view}");
+            Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains($"\"LoopsLayout\": \"{view}\""),
+                AppSession.Timeout, ignoreException: true).Success, $"{view} was not saved");
+        }
+        ToggleButton grid = app.ViewButton("Loops", "Grid");
+        grid.Toggle();
+        Assert.True(Retry.WhileFalse(() => grid.ToggleState == ToggleState.On, AppSession.Timeout).Success, "clicking Grid again turned it off");
+
+        // A click on an item, in each view, opens its editor (there is no Edit button).
+        app.EditItem("Sample: click every second");
+        app.Dialog("Edit loop").Close();
+        app.GoTo("Macros");
+        Assert.Equal(ToggleState.On, app.ViewButton("Macros", "Table").ToggleState);
+        app.EditItem("Sample: type and confirm");
+        app.Dialog("Edit macro").Close();
+        app.GoTo("Remap");
+        Assert.Equal(ToggleState.On, app.ViewButton("Remaps", "List").ToggleState);
+        app.EditItem("Sample: Caps Lock to Esc");
+        app.Dialog("Edit remap").Close();
+    }
+
+    [Fact]
+    public void A_list_page_opens_in_the_view_kept_in_the_settings()
+    {
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.LoopsLayout = ItemsLayout.Table;
+            seed.Settings.Loops.Add(Playback.Loop("E2E kept view", Vk.F24, Playback.Every(Vk.F24, 1, IntervalUnit.Seconds)));
+        });
+
+        app.GoTo("Loops");
+        Assert.Equal(ToggleState.On, app.ViewButton("Loops", "Table").ToggleState);
+        Assert.True(app.HasRow(app.MainWindow, "E2E kept view"));
     }
 
     [Fact]
