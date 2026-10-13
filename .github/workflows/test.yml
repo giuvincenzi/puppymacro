@@ -155,12 +155,31 @@ jobs:
           cat e2e_results/group_tests.txt
 
       - name: run_group_tests
+        env:
+          E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots   # AppSession saves the screen at the end of every test
         run: |
           mapfile -t tests < e2e_results/group_tests.txt
           if [ ${#tests[@]} -eq 0 ]; then echo "No tests in this group."; exit 0; fi
           dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build \
             --results-directory "$PWD/e2e_results" --report-xunit-ctrf --report-xunit-ctrf-filename "group_$GROUP.json" \
             --filter-method "${tests[@]}"
+
+      # The screen as each failed test left it (Class.Method.png), to see why it failed; the passed tests' are dropped.
+      - name: keep_screenshots_of_failed_tests
+        if: always()
+        shell: pwsh
+        run: |
+          $report = "e2e_results/group_$env:GROUP.json"
+          if (-not (Test-Path $report)) { exit 0 }
+          $failed = (Get-Content $report -Raw | ConvertFrom-Json).results.tests | Where-Object status -ne 'passed'
+          foreach ($test in $failed) {
+            $png = Join-Path "$env:RUNNER_TEMP/e2e_screenshots" "$($test.extra.type).$($test.extra.method).png"
+            if (Test-Path $png) {
+              New-Item -ItemType Directory -Force e2e_results/screenshots | Out-Null
+              Copy-Item $png e2e_results/screenshots/
+              Write-Host "Screenshot of the failed test: screenshots/$(Split-Path $png -Leaf)"
+            }
+          }
 
       # Also when tests failed: e2e_test needs every group's lists and report.
       - name: save_group_result

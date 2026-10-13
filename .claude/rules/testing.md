@@ -155,8 +155,11 @@ into, and a new test needs nothing.
   - `pick_group_tests`: test n goes to the group of n's remainder divided by N, the remainder 0 to group N. A number has
     one remainder, so every test is in exactly one group, and the groups differ by at most one test;
   - `run_group_tests`: `dotnet test --filter-method` with the group's tests, and a CTRF (JSON) report of what ran;
-  - `save_group_result`: the full list, the group's list and the report, also when tests failed (artifact
-    `e2e_group_<n>`, kept 7 days).
+  - `keep_screenshots_of_failed_tests`: `AppSession` saves the whole screen at the end of every test, before
+    PuppyMacro closes, when `E2E_SCREENSHOTS` is set (only `run_group_tests` sets it; never locally); this step keeps the
+    failed tests' ones (`screenshots/Class.Method.png`): look at them first when a test fails on GitHub;
+  - `save_group_result`: the full list, the group's list, the report and those screenshots, also when tests failed
+    (artifact `e2e_group_<n>`, kept 7 days: the run's page, Artifacts).
 - **`e2e_test` (the required check):** green when the end-to-end tests were not needed, or when (1) every group saw the
   same list, (2) every test ran exactly once (none missing, none in two groups), (3) every test and every group passed.
   Otherwise red, with the missing, doubled or failed tests in the run's summary.

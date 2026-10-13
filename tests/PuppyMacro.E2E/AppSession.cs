@@ -198,10 +198,38 @@ public sealed class AppSession : IDisposable
 
     public void Dispose()
     {
+        SaveScreenshot();
         Automation.Dispose();
         if (!_app.HasExited)
             _app.Kill();
         _app.Dispose();
+    }
+
+    /// <summary>
+    /// On GitHub (the test workflow sets E2E_SCREENSHOTS to a folder): the whole screen as the test leaves it, before
+    /// PuppyMacro closes, as Class.Method.png. The test does not know yet whether it failed (this runs at the end of its
+    /// `using`), so it is saved for every test and the workflow keeps only the failed tests' ones (testing.md).
+    /// </summary>
+    private static void SaveScreenshot()
+    {
+        string? folder = Environment.GetEnvironmentVariable("E2E_SCREENSHOTS");
+        string? type = TestContext.Current.TestClass?.TestClassName;
+        string? method = TestContext.Current.TestMethod?.MethodName;
+        if (string.IsNullOrEmpty(folder) || type == null || method == null)
+            return;
+        try
+        {
+            Directory.CreateDirectory(folder);
+            System.Drawing.Rectangle screen = System.Windows.Forms.Screen.PrimaryScreen!.Bounds;
+            using var image = new System.Drawing.Bitmap(screen.Width, screen.Height);
+            using (var graphics = System.Drawing.Graphics.FromImage(image))
+                graphics.CopyFromScreen(screen.Location, System.Drawing.Point.Empty, screen.Size);
+            image.Save(Path.Combine(folder, $"{type}.{method}.png"), System.Drawing.Imaging.ImageFormat.Png);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.ExternalException or ArgumentException)
+        {
+            Console.Error.WriteLine($"Screenshot not saved: {ex.Message}");
+        }
     }
 }
 
