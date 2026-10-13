@@ -14,6 +14,8 @@ using Xunit;
 
 // One PuppyMacro at a time: the tests share the app and its data folder.
 [assembly: Xunit.v3.Parallelization(Mode = Xunit.Sdk.ParallelMode.None)]
+// Windows Forms prepared once before the tests, so a test's wait for its target window is only the window (TargetWindow).
+[assembly: AssemblyFixture(typeof(PuppyMacro.E2E.WindowsFormsReady))]
 
 namespace PuppyMacro.E2E;
 

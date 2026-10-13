@@ -104,6 +104,9 @@
   PuppyMacro to the front, as a user's click does. `Playback.PressCard` / `InvokeInMainWindow` bring
   the target window back right after; an item started that way waits about a second before its
   first input (what it sends before goes to PuppyMacro). Hotkeys do not change the window in front.
+- `WindowsFormsReady` (an xUnit assembly fixture, once per test process before its first test) builds the target window's
+  form without showing it: the first target window of a process spent up to 7 s on GitHub preparing Windows Forms inside
+  the test's 10 s wait, and sometimes did not open. Each `.uia.txt` says how long both took (`Target window:`).
 - FlaUI's `Mouse.MoveTo` sets the cursor position, which the low-level mouse hook never sees: moves
   that PuppyMacro must notice (recording) use `TargetWindow.MoveMouse` (SendInput). A floating
   button is clicked on its label: its window also holds the hotkey badge, so the window's middle

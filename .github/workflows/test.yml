@@ -284,8 +284,9 @@ jobs:
                   Machine memory:    percent in use, free and total physical memory, free and total paging file, in MB.
                   Target window:     how the test's own window (TargetWindow, the one playback tests send input to) opened:
                                      "opened in <ms> ms", or "did NOT open in <ms> ms", whether it was the first one in this
-                                     test process (the first loads Windows Forms), and each step reached with its time
-                                     (thread started, form created, handle created, shown); "not opened in this test".
+                                     test process, how long preparing Windows Forms took before the tests (WindowsFormsReady),
+                                     and each step reached with its time (thread started, form created, handle created,
+                                     shown); "not opened in this test".
                   PuppyMacro (process <id>):  "responding" or "NOT RESPONDING" (its UI thread did not handle window messages:
                                      it hung), the memory it used, its threads, and its CPU time since it started.
                 Then an empty line and what UI Automation saw of every PuppyMacro window, one element per line, indented by two

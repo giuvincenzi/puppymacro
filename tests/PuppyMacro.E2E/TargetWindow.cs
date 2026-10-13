@@ -67,13 +67,75 @@ public sealed class TargetWindow : IDisposable
     /// </summary>
     internal static string? LastOpening { get; set; }
 
+    /// <summary>How long <see cref="Prepare"/> took, or why it failed; in <see cref="LastOpening"/>.</summary>
+    private static string _prepared = "Windows Forms not prepared before the tests";
+
+    /// <summary>
+    /// Builds the target window's form once, its handles created, never shown, so this process has loaded and prepared
+    /// Windows Forms before any test (<see cref="WindowsFormsReady"/>). Measured on GitHub, the first target window of a
+    /// process spent 0.2 to 7 s doing that before the form existed, inside the time a test waits for the window, and
+    /// sometimes did not open in time; the window itself opens in tens of ms. A failure here is only recorded: the tests
+    /// that open the window then fail with their own error.
+    /// </summary>
+    internal static void Prepare()
+    {
+        Stopwatch time = Stopwatch.StartNew();
+        Exception? failed = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                Dpi.UsePhysicalPixels();
+                using TargetForm form = NewForm(out TextBox text);
+                _ = form.Handle;
+                _ = text.Handle;
+            }
+            catch (Exception ex)
+            {
+                failed = ex;
+            }
+        })
+        { IsBackground = true, Name = "E2E Windows Forms ready" };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+        _prepared = failed == null
+            ? $"Windows Forms prepared before the tests in {time.ElapsedMilliseconds} ms"
+            : $"Windows Forms not prepared before the tests ({failed.GetType().Name}: {failed.Message})";
+    }
+
+    /// <summary>The window's form with its text box at the bottom, not shown yet.</summary>
+    private static TargetForm NewForm(out TextBox text)
+    {
+        var form = new TargetForm
+        {
+            Text = Title,
+            FormBorderStyle = FormBorderStyle.None,
+            StartPosition = FormStartPosition.Manual,
+            Bounds = Area,
+            TopMost = true,
+            ShowInTaskbar = false,
+            BackColor = Color.FromArgb(24, 40, 56),
+        };
+        text = new TextBox
+        {
+            Multiline = true,
+            AcceptsReturn = true,
+            Dock = DockStyle.Bottom,
+            Height = TextHeight,
+            Font = new Font("Segoe UI", 11),
+        };
+        form.Controls.Add(text);
+        return form;
+    }
+
     public TargetWindow()
     {
         Dpi.UsePhysicalPixels();
         using var ready = new ManualResetEventSlim();
         Exception? failed = null;
         int opening = Interlocked.Increment(ref _openings);
-        string which = opening == 1 ? "the first in this process" : $"number {opening} in this process";
+        string which = (opening == 1 ? "the first in this process" : $"number {opening} in this process") + $" ({_prepared})";
         Stopwatch time = Stopwatch.StartNew();
         var steps = new List<string>();
         void Step(string step)
@@ -92,25 +154,8 @@ public sealed class TargetWindow : IDisposable
             {
                 Step("thread started");
                 Dpi.UsePhysicalPixels();
-                _form = new TargetForm
-                {
-                    Text = Title,
-                    FormBorderStyle = FormBorderStyle.None,
-                    StartPosition = FormStartPosition.Manual,
-                    Bounds = Area,
-                    TopMost = true,
-                    ShowInTaskbar = false,
-                    BackColor = Color.FromArgb(24, 40, 56),
-                };
-                _text = new TextBox
-                {
-                    Multiline = true,
-                    AcceptsReturn = true,
-                    Dock = DockStyle.Bottom,
-                    Height = TextHeight,
-                    Font = new Font("Segoe UI", 11),
-                };
-                _form.Controls.Add(_text);
+                _form = NewForm(out TextBox text);
+                _text = text;
                 Application.AddMessageFilter(new Filter(this));
                 Step("form created");
                 _form.HandleCreated += (_, _) => Step("handle created");
@@ -514,4 +559,13 @@ public static class Vk
     public const int Return = 0x0D, Shift = 0x10, Control = 0x11, LControl = 0xA2, RControl = 0xA3, A = 0x41;
     public const int F13 = 0x7C, F14 = 0x7D, F15 = 0x7E, F16 = 0x7F, F17 = 0x80, F18 = 0x81;
     public const int F19 = 0x82, F20 = 0x83, F21 = 0x84, F22 = 0x85, F23 = 0x86, F24 = 0x87;
+}
+
+/// <summary>
+/// Run by xUnit once in each test process, before its first test (an assembly fixture: on GitHub once per group's
+/// machine, whatever tests it has): Windows Forms is prepared there, not inside a test's wait for its target window.
+/// </summary>
+public sealed class WindowsFormsReady
+{
+    public WindowsFormsReady() => TargetWindow.Prepare();
 }
