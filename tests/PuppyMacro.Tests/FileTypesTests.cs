@@ -27,7 +27,7 @@ public class FileTypesTests : IDisposable
     private string? Value(string key) => _classes.OpenSubKey(key)?.GetValue(null) as string;
 
     [Fact]
-    public void Items_files_get_their_icon_and_open_in_PuppyMacro_and_backups_only_their_icon()
+    public void Items_files_and_backups_get_their_icon_and_open_in_PuppyMacro()
     {
         Assert.True(FileTypes.Apply(_classes, Exe, Icons));
 
@@ -37,7 +37,8 @@ public class FileTypesTests : IDisposable
         Assert.Equal($"\"{Exe}\" \"%1\"", Value(@"PuppyMacro.Items\shell\open\command"));
         Assert.Equal("PuppyMacro.Backup", Value(".puppymacro"));
         Assert.Equal(Icons + @"\PuppyMacroBackup.ico", Value(@"PuppyMacro.Backup\DefaultIcon"));
-        Assert.Null(_classes.OpenSubKey(@"PuppyMacro.Backup\shell")); // a backup is imported from Settings only
+        // A backup only shows a window saying it opens from Settings › Backup (BackupFileWindow).
+        Assert.Equal($"\"{Exe}\" \"%1\"", Value(@"PuppyMacro.Backup\shell\open\command"));
     }
 
     [Fact]

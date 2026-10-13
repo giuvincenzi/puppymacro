@@ -71,7 +71,7 @@
   editors, Export's choices, Export of items with search (from the title bar's More options), a `.puppyitems` file opened
   while PuppyMacro runs (a second `PuppyMacro.exe` with its path, as File Explorer starts it; the file dialogs are never
   opened), a remap imported without its hotkey and its card, two files opened one after the other (one Import, the last
-  file); dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
+  file), a backup opened the same way (only its window, Close, the running PuppyMacro untouched); dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
   `Overlay`, `AI` (`AiTests`: the test is the AI app, it starts `PuppyMacro.exe --mcp` with the MCP SDK's
   `StdioClientTransport` as "E2E test client", calls the tools and answers in PuppyMacro's windows (the ready window with
   Start, never Enter; `import_items`, `export_items` and the Import window opened by `open_import_window`); its remaps use F22 and F23, the key it presses is F22, the points it clicks are on the picker, which

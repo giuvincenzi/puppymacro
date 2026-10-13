@@ -1054,6 +1054,7 @@ Detalles: {1}</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Suelta para importar</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Las copias de seguridad se abren desde Configuración</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Una copia de seguridad reemplaza todos tus datos, así que se abre desde {0} › {1}.</value></data>
+  <data name="BackupFile_Close" xml:space="preserve"><value>Cerrar</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Guardar bucles, macros y reasignaciones en un archivo para compartirlos</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Exportar…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Elementos de PuppyMacro (*{0})|*{0}</value></data>

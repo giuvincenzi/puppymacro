@@ -56,6 +56,26 @@ internal sealed class SettingsStore
         }
     }
 
+    /// <summary>
+    /// The settings as the file has them, never written (a backup opened from File Explorer: another PuppyMacro may be running
+    /// and own the file); a missing or unreadable file gives the defaults.
+    /// </summary>
+    public AppSettings Peek()
+    {
+        try
+        {
+            if (File.Exists(_path) && JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_path), JsonOptions) is { } settings)
+            {
+                Sanitize(settings);
+                return settings;
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        {
+        }
+        return AppSettings.CreateDefault();
+    }
+
     public bool TrySave(AppSettings settings, out string? error)
     {
         error = null;

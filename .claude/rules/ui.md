@@ -235,6 +235,11 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     caption style. A `.puppyitems` file: the line in `AccentFillColorDefaultBrush`, `ArrowDownload_48_Regular` in the accent
     text color, "Drop to import". A backup: the line and `ArchiveSettings_24_Regular` in `TextFillColorSecondaryBrush`,
     "Backups open from Settings" and why, and the drop is refused. Any other file: nothing, as before.
+  - A backup opened from File Explorer (approved by the user as described): `BackupFileWindow`, a small window alone (440 px,
+    as `GroupNameWindow`: Mica, its buttons' area at the bottom): the `ArchiveSettings_24_Regular` icon at 32 px in the
+    secondary text color, "Backups open from Settings" in `SubtitleTextBlockStyle`, why (it replaces all the data) and where
+    (Settings › Backup, with the page's own names), the file's name in caption style, and only **Close** (`AccentButtonStyle`,
+    Enter and Esc).
   - File icons in File Explorer (approved: the same canvas, Icons B), drawn by `scripts/file-icons.ps1`
     (`Assets/FileIcons`): `.puppyitems`, a white page with a folded corner and the paw in `#0F6CBD`, centered; `.puppymacro`
     (backup), a dark archive box with the paw in `#60CDFF`.

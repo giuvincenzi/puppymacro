@@ -413,7 +413,7 @@ public partial class MainWindow
         DropBackupIcon.Visibility = items ? Visibility.Collapsed : Visibility.Visible;
         DropOverlayLine.SetResourceReference(Shape.StrokeProperty, items ? "AccentFillColorDefaultBrush" : "TextFillColorSecondaryBrush");
         DropTitleText.Text = items ? Strings.Share_DropToImport : Strings.Share_DropBackupTitle;
-        DropDescriptionText.Text = items ? "" : BackupOpensFromSettings;
+        DropDescriptionText.Text = items ? "" : BackupFileWindow.Message;
         DropDescriptionText.Visibility = items ? Visibility.Collapsed : Visibility.Visible;
         DropFileText.Text = Path.GetFileName(path);
         if (DropOverlay.Visibility != Visibility.Visible)
@@ -424,10 +424,6 @@ public partial class MainWindow
                     child.Effect = new BlurEffect { Radius = 6 };
         }
     }
-
-    /// <summary>"A backup replaces all your data, so you open it from Settings › Backup.", with the page's own names.</summary>
-    internal static string BackupOpensFromSettings =>
-        string.Format(CultureInfo.CurrentCulture, Strings.Share_DropBackupText, Strings.Settings_Title, Strings.Settings_Backup);
 
     private void HideDropOverlay()
     {

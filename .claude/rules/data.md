@@ -83,7 +83,7 @@ paths:
   grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data). The
   Start with Windows Run entry is outside the data folder: Release builds set it from `StartWithWindows` at every
   start (`MainWindow`), so an import, a reinstall or another PC gets it back. So are the file types (`Services/FileTypes.cs`:
-  `.puppyitems` and `.puppymacro` in `HKCU\Software\Classes`, their icons and the open command of `.puppyitems`): Release
+  `.puppyitems` and `.puppymacro` in `HKCU\Software\Classes`, their icons and open commands): Release
   builds write them at every start, from the exe's place, and remove them on uninstall; they hold no user data.
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
   loop is enabled). Keep

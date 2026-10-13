@@ -897,4 +897,33 @@ public class AppTests
             File.Delete(second);
         }
     }
+
+    [Fact]
+    public void A_backup_opened_from_File_Explorer_only_says_where_it_opens()
+    {
+        using var app = new AppSession();
+        // Only its name matters: the window never reads it.
+        string file = Path.Combine(Path.GetTempPath(), $"E2E backup {Guid.NewGuid():N}.puppymacro");
+        File.WriteAllText(file, "not read");
+        try
+        {
+            using Process backup = Process.Start(AppSession.ExePath, $"\"{file}\"")!;
+            using var attached = FlaUI.Core.Application.Attach(backup.Id);
+            Window window = Retry.WhileNull(() => attached.GetAllTopLevelWindows(app.Automation).FirstOrDefault(w =>
+                w.FindFirstDescendant(cf => cf.ByName("Backups open from Settings")) != null), AppSession.Timeout).Result
+                ?? throw new InvalidOperationException("the backup's window did not open");
+            Assert.True(app.Has(window, "A backup replaces all your data, so you open it from Settings › Backup."));
+            Assert.True(app.Has(window, Path.GetFileName(file)));
+
+            app.FindButton(window, "Close").Invoke();
+            Assert.True(backup.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the backup's PuppyMacro did not exit");
+            // The PuppyMacro already running is left as it was.
+            Assert.False(app.MainWindow.IsOffscreen);
+            Assert.True(app.Has(app.MainWindow, "Sample: click every second"));
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+    }
 }

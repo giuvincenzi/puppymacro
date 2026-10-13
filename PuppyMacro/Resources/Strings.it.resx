@@ -1064,6 +1064,7 @@ Dettagli: {1}</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Rilascia per importare</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>I backup si aprono da Impostazioni</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Un backup sostituisce tutti i tuoi dati, quindi si apre da {0} › {1}.</value></data>
+  <data name="BackupFile_Close" xml:space="preserve"><value>Chiudi</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Salva loop, macro e rimappature in un file, per condividerli</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Esporta…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>Elementi di PuppyMacro (*{0})|*{0}</value></data>

@@ -111,6 +111,18 @@ public partial class App : Application
         string? itemsFile = e.Args.FirstOrDefault(a => a.EndsWith(ItemFile.Extension, StringComparison.OrdinalIgnoreCase) && File.Exists(a));
         if (itemsFile != null)
             itemsFile = Path.GetFullPath(itemsFile);
+        // A backup opened from File Explorer (FileTypes): only a window that says it opens from Settings › Backup, then exit.
+        // Nothing else starts and a running PuppyMacro is left alone; the settings are only read, for the language and theme.
+        if (itemsFile == null
+            && e.Args.FirstOrDefault(a => a.EndsWith(BackupService.Extension, StringComparison.OrdinalIgnoreCase) && File.Exists(a)) is string backupFile)
+        {
+            AppSettings shown = new SettingsStore(AppPaths.SettingsFile).Peek();
+            ApplyLanguage(shown.Language);
+            ApplyTheme(shown.Theme);
+            new BackupFileWindow(backupFile).ShowDialog();
+            Shutdown();
+            return;
+        }
 
         _singleInstance = new Mutex(initiallyOwned: true, SingleInstanceName, out _ownsMutex);
         if (!_ownsMutex && restarting)

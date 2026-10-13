@@ -1053,6 +1053,7 @@ Details: {1}</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Zum Importieren loslassen</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>Sicherungen öffnen Sie in den Einstellungen</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>Eine Sicherung ersetzt alle Ihre Daten, daher öffnen Sie sie unter {0} › {1}.</value></data>
+  <data name="BackupFile_Close" xml:space="preserve"><value>Schließen</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Schleifen, Makros und Neuzuordnungen in einer Datei speichern, um sie zu teilen</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Exportieren…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro-Elemente (*{0})|*{0}</value></data>

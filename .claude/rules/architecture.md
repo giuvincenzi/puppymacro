@@ -180,11 +180,14 @@ Rules:
   `Views/ImportItemsView` and `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`, sized by `Views/DialogFill`), Export… in each card's menu (`ExportOne`, the file dialog at
   once). Import reads the file again at each check box change (`ItemFile.Read` with the chosen indexes: a name or hotkey goes to
   the first chosen item that takes it) and adds the chosen items through `SaveItem`, so the History records them. File
-  Explorer: `Services/FileTypes.cs` registers `.puppyitems` (icon, open command `"PuppyMacro.exe" "%1"`) and `.puppymacro`
-  (icon only: a backup is imported from Settings) in `HKCU\Software\Classes`, Release builds only, at every start in `App`
+  Explorer: `Services/FileTypes.cs` registers `.puppyitems` and `.puppymacro` (icon, open command `"PuppyMacro.exe" "%1"`)
+  in `HKCU\Software\Classes`, Release builds only, at every start in `App`
   (`SHChangeNotify` when something changed), removed by the Velopack uninstall hook. A process started with a `.puppyitems`
   path while PuppyMacro runs hands it over on `Services/OpenFileChannel.cs` (a named pipe, current user only, one per build)
-  and exits. A `.puppyitems` file dropped on the main window goes the same way (`OnFileDrop`; `OnFileDragOver` shows
+  and exits. A process started with a `.puppymacro` path (a backup: it opens only from Settings › Backup) only shows
+  `BackupFileWindow` and exits, before the single-instance mutex: nothing else starts, a running PuppyMacro is left alone,
+  and the settings are only read for the language and theme (`SettingsStore.Peek`, never written). A `.puppyitems` file
+  dropped on the main window goes the same way (`OnFileDrop`; `OnFileDragOver` shows
   `DropOverlay`, also for a backup, which is never imported there; other files and the cards' own drags pass as before;
   Windows refuses drops from File Explorer while PuppyMacro runs as administrator). `MainWindow.OpenItemsFile`: **the last
   file opened wins**: while the user's Import is open it shows the new file in it (`_importShowFile`, as Choose another

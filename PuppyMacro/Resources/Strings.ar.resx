@@ -1161,6 +1161,7 @@
   <data name="Share_DropToImport" xml:space="preserve"><value>أفلِت للاستيراد</value></data>
   <data name="Share_DropBackupTitle" xml:space="preserve"><value>تُفتح النسخ الاحتياطية من الإعدادات</value></data>
   <data name="Share_DropBackupText" xml:space="preserve"><value>تستبدل النسخة الاحتياطية كل بياناتك، لذا تُفتح من {0} › {1}.</value></data>
+  <data name="BackupFile_Close" xml:space="preserve"><value>إغلاق</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>حفظ الحلقات ووحدات الماكرو وعمليات إعادة التعيين في ملف لمشاركتها</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>تصدير…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>عناصر PuppyMacro (*{0})|*{0}</value></data>

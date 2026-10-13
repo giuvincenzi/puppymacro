@@ -5,6 +5,8 @@
 ### Added
 - Drag a `.puppyitems` file onto PuppyMacro's window to import it: the window shows **Drop to import** and the file's
   name. A backup dragged there only reminds you that it opens from Settings › Backup.
+- A double-click on a backup (`.puppymacro`) in File Explorer shows a small window that says it opens from
+  Settings › Backup, as it replaces all your data, instead of asking which app should open it.
 
 ### Changed
 - A remap whose hotkey is already taken is now imported anyway, without it: its card shows **No hotkey yet** and its
