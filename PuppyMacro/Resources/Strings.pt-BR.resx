@@ -290,7 +290,6 @@ O que o arquivo não contém permanece como está. Primeiro é feito um backup d
   <data name="Rail_Remap" xml:space="preserve"><value>Remapear</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Configurações</value></data>
   <!-- ===== Views/ItemCardActions ===== -->
-  <data name="Card_Edit" xml:space="preserve"><value>Editar</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Habilitado</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Mais opções</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Reproduzir</value></data>
@@ -343,7 +342,7 @@ O que o arquivo não contém permanece como está. Primeiro é feito um backup d
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} ações, {1}, repetir {2}, velocidade ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Todos os aplicativos</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Ainda sem tecla de atalho</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Escolha uma tecla de atalho em Editar para ativá-lo.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Abra-o e escolha uma tecla de atalho para ativá-lo.</value></data>
   <!-- ===== App.xaml.cs, Services/SettingsStore.cs, Services/MacroLibrary.cs, Services/BackupService.cs ===== -->
   <data name="App_MigrationFailed" xml:space="preserve"><value>Não foi possível copiar seus loops e macros para {0}.
 Detalhes: {1}</value></data>
@@ -1166,4 +1165,18 @@ Detalhes: {1}</value></data>
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>Do PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>Itens do PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>Backup do PuppyMacro</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Sem tecla de atalho</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Segurar</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Nome</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>O que faz</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Tecla de atalho</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Funciona em</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Status</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Observação</value></data>
+  <data name="Table_From" xml:space="preserve"><value>De</value></data>
+  <data name="Table_To" xml:space="preserve"><value>Para</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Exibição</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Lista</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Tabela</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Grade</value></data>
 </root>

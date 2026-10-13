@@ -272,7 +272,6 @@ Was die Datei nicht enthält, bleibt unverändert. Ihre aktuellen Daten werden z
   <data name="Rail_Macros" xml:space="preserve"><value>Makros</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Neu zuordnen</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Einstellungen</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Aktiviert</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Weitere Optionen</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Starten</value></data>
@@ -323,7 +322,7 @@ Was die Datei nicht enthält, bleibt unverändert. Ihre aktuellen Daten werden z
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} Aktionen, {1}, Wiederholen: {2}, Geschwindigkeit ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Alle Apps</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Noch kein Hotkey</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Wählen Sie unter „Bearbeiten“ einen Hotkey, um sie zu aktivieren.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Öffnen Sie sie und wählen Sie einen Hotkey, um sie zu aktivieren.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>Ihre Schleifen und Makros konnten nicht nach {0} kopiert werden.
 Details: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Einige Makrodateien konnten nicht auf diese Version aktualisiert werden.</value></data>
@@ -1092,4 +1091,18 @@ Details: {1}</value></data>
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>Erstellt mit PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro-Elemente</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro-Sicherung</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Kein Hotkey</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Halten</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>Aktion</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Hotkey</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Gilt für</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Status</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Notiz</value></data>
+  <data name="Table_From" xml:space="preserve"><value>Von</value></data>
+  <data name="Table_To" xml:space="preserve"><value>Nach</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Ansicht</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Liste</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Tabelle</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Raster</value></data>
 </root>

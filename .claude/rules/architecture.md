@@ -36,6 +36,7 @@ tests/PuppyMacro.Tests/         unit tests;  tests/PuppyMacro.E2E/  end-to-end t
 PuppyMacro/
   App.xaml(.cs)                 Main (--mcp bridge, Velopack), single instance, data migration, theme, tray start
   MainWindow.xaml(.cs)          side rail (Views/SideRail): Loops, Macros, Remap, AI, Settings; overlay mode; tray
+  MainWindow.Lists.cs           the list pages' views (List, Table, Grid), a click on an item, tile and column widths
   MainWindow.Updates.cs         update bar, Settings dot and Updates card
   MainWindow.Ai.cs              AI page; the AI tools' host (IAiHost)
   MainWindow.Share.cs           Import and Export of loops, macros and remaps (.puppyitems), files opened from File Explorer
@@ -98,10 +99,15 @@ Rules:
   (the mouse button list) and `Views/PositionPicker` (X, Y, Pick on screen: every point chosen).
 - Loops: `Models/AppSettings.cs` (`LoopDefinition`, `LoopAction`), `Services/ActionRunner.cs`,
   `LoopEditorWindow`.
-- The list cards (Loops, Macros, Remap in `MainWindow`): one view model per item
-  (`LoopItemViewModel`, `MacroItemViewModel`, `RemapItemViewModel`) and the shared right side
-  `Views/ItemCardActions` (Play / Stop, Edit, switch, More options; the buttons carry the item in
-  their `Tag`). `CanEdit` on loops and macros is set by `MainWindow` with the running state.
+- The list pages (Loops, Macros, Remap in `MainWindow`): one view model per item
+  (`LoopItemViewModel`, `MacroItemViewModel`, `RemapItemViewModel`) shown by the templates in `MainWindow.xaml`'s resources
+  in three views (List, Table, Grid; `ui.md`), and the shared buttons `Views/ItemCardActions` (Play / Stop, More options,
+  switch; the buttons carry the item in their `Tag`; `OnItemPlayClick` / `OnItemMoreClick` dispatch by its type).
+  `Views/PageViews` holds a page's two `ListCollectionView`s over the same items and filter: `Grouped` (List and Grid,
+  grouped by app with `AppOrder`) and `Table` (the user's order); `Refresh()` updates both. `MainWindow.Lists.cs` switches
+  the view (`ApplyLayout`: the views not shown get no items, so UI Automation sees each item once), opens an item on a click
+  (`OpenItem`) and measures the tiles' and columns' widths (`FitTiles`, `FitColumns`). `CanEdit` on loops and macros (set
+  by `MainWindow` with the running state) makes their card clickable.
 - Editors (loop, macro, remap) and the placement overlay open through
   `MainWindow.ShowDialogWithoutHotkeys`: hotkeys off, and the main window is hidden once the editor is
   on screen (so it opens centered on it) and shown again when it closes. The editors therefore have

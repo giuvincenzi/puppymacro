@@ -157,6 +157,36 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Each_list_page_keeps_its_view_and_older_or_unknown_values_get_the_page_default()
+    {
+        AppSettings older = LoadJson("""{ "SchemaVersion": 7 }""", out string? warning);
+        Assert.Null(warning);
+        Assert.Equal(ItemsLayout.List, older.LoopsLayout);
+        Assert.Equal(ItemsLayout.Table, older.MacrosLayout);
+        Assert.Equal(ItemsLayout.Grid, older.RemapsLayout);
+
+        // A newer version's view (unknown here) or a number written by hand: the page's default, the rest of the file read.
+        AppSettings unknown = LoadJson("""{ "SchemaVersion": 7, "SoundVolume": 40, "LoopsLayout": "Cards", "MacrosLayout": 7, "RemapsLayout": "table" }""", out warning);
+        Assert.Null(warning);
+        Assert.Equal(40, unknown.SoundVolume);
+        Assert.Equal(ItemsLayout.List, unknown.LoopsLayout);
+        Assert.Equal(ItemsLayout.Table, unknown.MacrosLayout);
+        Assert.Equal(ItemsLayout.Table, unknown.RemapsLayout);
+
+        var store = new SettingsStore(SettingsPath);
+        AppSettings settings = AppSettings.CreateDefault();
+        settings.LoopsLayout = ItemsLayout.Grid;
+        settings.MacrosLayout = ItemsLayout.List;
+        settings.RemapsLayout = ItemsLayout.Table;
+        Assert.True(store.TrySave(settings, out _));
+        Assert.Contains("\"LoopsLayout\": \"Grid\"", File.ReadAllText(SettingsPath));
+        AppSettings loaded = store.Load(out _);
+        Assert.Equal(ItemsLayout.Grid, loaded.LoopsLayout);
+        Assert.Equal(ItemsLayout.List, loaded.MacrosLayout);
+        Assert.Equal(ItemsLayout.Table, loaded.RemapsLayout);
+    }
+
+    [Fact]
     public void The_macro_editor_size_is_kept_and_invalid_sizes_are_dropped()
     {
         AppSettings kept = LoadJson("""{ "MacroEditorWidth": 800, "MacroEditorHeight": 1000 }""", out _);

@@ -304,7 +304,6 @@
   <data name="Rail_Macros" xml:space="preserve"><value>وحدات الماكرو</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>إعادة التعيين</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>الإعدادات</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>تحرير</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>ممكّن</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>مزيد من الخيارات</value></data>
   <data name="Card_Play" xml:space="preserve"><value>تشغيل</value></data>
@@ -375,7 +374,7 @@
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} إجراء، {1}، التكرار: {2}، السرعة ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>كل التطبيقات</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>لا يوجد مفتاح تشغيل سريع بعد</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>اختر مفتاح تشغيل سريع من "تحرير" لتشغيلها.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>افتحها واختر مفتاح تشغيل سريع لتشغيلها.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>تعذر نسخ الحلقات ووحدات الماكرو إلى {0}.
 التفاصيل: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>تعذر تحديث بعض ملفات الماكرو إلى هذا الإصدار.</value></data>
@@ -1212,4 +1211,18 @@
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>من PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>عناصر PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>نسخة PuppyMacro الاحتياطية</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>بلا مفتاح تشغيل سريع</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>ضغط مستمر</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>ما يفعله</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>مفتاح التشغيل السريع</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>يعمل في</value></data>
+  <data name="Table_State" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="Table_From" xml:space="preserve"><value>من</value></data>
+  <data name="Table_To" xml:space="preserve"><value>إلى</value></data>
+  <data name="Main_View" xml:space="preserve"><value>طريقة العرض</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>قائمة</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>جدول</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>شبكة</value></data>
 </root>

@@ -264,7 +264,6 @@
   <data name="Rail_Macros" xml:space="preserve"><value>매크로</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>다시 매핑</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>설정</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>편집</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>사용</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>추가 옵션</value></data>
   <data name="Card_Play" xml:space="preserve"><value>재생</value></data>
@@ -310,7 +309,7 @@
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>동작 {0}개, {1}, {2} 반복, 속도 ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>모든 앱</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>아직 바로 가기 키 없음</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>[편집]에서 바로 가기 키를 선택하면 켤 수 있습니다.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>열어서 바로 가기 키를 선택하면 켤 수 있습니다.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>루프와 매크로를 {0}에 복사할 수 없습니다.
 세부 정보: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>일부 매크로 파일을 이 버전으로 업데이트할 수 없습니다.</value></data>
@@ -1062,4 +1061,18 @@
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>PuppyMacro {0}에서 만듦 · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro 항목</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro 백업</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>바로 가기 키 없음</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>누르고 있기</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>이름</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>동작</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>바로 가기 키</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>적용 대상</value></data>
+  <data name="Table_State" xml:space="preserve"><value>상태</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>메모</value></data>
+  <data name="Table_From" xml:space="preserve"><value>원본</value></data>
+  <data name="Table_To" xml:space="preserve"><value>대상</value></data>
+  <data name="Main_View" xml:space="preserve"><value>보기</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>목록</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>표</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>그리드</value></data>
 </root>

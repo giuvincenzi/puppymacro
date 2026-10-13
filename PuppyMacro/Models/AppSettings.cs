@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace PuppyMacro.Models;
@@ -43,6 +44,36 @@ public enum LoopFilter
     Enabled,
     Disabled,
     Running,
+}
+
+/// <summary>How the Loops, Macros or Remap page shows its items (the switch next to its filter).</summary>
+public enum ItemsLayout
+{
+    /// <summary>One line per item, grouped by the app it works in (the default).</summary>
+    List,
+    /// <summary>One row per item with columns, not grouped (the app is a column).</summary>
+    Table,
+    /// <summary>Tiles, grouped by the app it works in.</summary>
+    Grid,
+}
+
+/// <summary>
+/// Reads an <see cref="ItemsLayout"/> by name. A name this version does not know (a newer version's view) gives a value
+/// outside the enum instead of an error, so it never makes the whole settings file unreadable; <c>SettingsStore.Sanitize</c>
+/// puts the page's default back.
+/// </summary>
+public sealed class ItemsLayoutConverter : JsonConverter<ItemsLayout>
+{
+    public const ItemsLayout Unknown = (ItemsLayout)(-1);
+
+    public override ItemsLayout Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        reader.TokenType == JsonTokenType.String && Enum.TryParse(reader.GetString(), ignoreCase: true, out ItemsLayout value)
+            && Enum.IsDefined(value)
+            ? value
+            : Unknown;
+
+    public override void Write(Utf8JsonWriter writer, ItemsLayout value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.ToString());
 }
 
 /// <summary>Which Ctrl, Alt, Shift or Win of a hotkey counts: either one, or only the left or the right one.</summary>
@@ -538,6 +569,18 @@ public sealed class AppSettings
 
     public List<RemapDefinition> Remaps { get; set; } = new();
     public LoopFilter Filter { get; set; } = LoopFilter.All;
+
+    /// <summary>
+    /// The view of each list page, kept between sessions; older files get these defaults (the user's choice: Loops
+    /// List, Macros Table, Remap Grid). A value this version does not know (a newer version's) is read as the default
+    /// (<see cref="ItemsLayoutConverter"/>, <c>SettingsStore.Sanitize</c>).
+    /// </summary>
+    [JsonConverter(typeof(ItemsLayoutConverter))]
+    public ItemsLayout LoopsLayout { get; set; } = ItemsLayout.List;
+    [JsonConverter(typeof(ItemsLayoutConverter))]
+    public ItemsLayout MacrosLayout { get; set; } = ItemsLayout.Table;
+    [JsonConverter(typeof(ItemsLayoutConverter))]
+    public ItemsLayout RemapsLayout { get; set; } = ItemsLayout.Grid;
 
     /// <summary>Opacity range of the overlay panel and of the floating buttons, in percent.</summary>
     public const int MinOpacity = 20;

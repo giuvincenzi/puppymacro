@@ -199,19 +199,31 @@ public sealed class AppSession : IDisposable
     }
 
     /// <summary>
-    /// The button named <paramref name="buttonName"/> on the list card of <paramref name="itemText"/>: the row whose
-    /// accessible name it is (a loop's or macro's name, a remap's note or keys; ui.md).
+    /// The row of <paramref name="itemText"/> in the page's list, table or grid: the one whose accessible name it is (a
+    /// loop's or macro's name, a remap's note or keys; ui.md).
     /// </summary>
-    public AutomationElement CardButton(string itemText, string buttonName)
-    {
-        AutomationElement row = Retry.WhileNull(() => MainWindow.FindFirstDescendant(
-                cf => cf.ByName(itemText).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.DataItem))), Timeout,
+    public AutomationElement ItemRow(string itemText) =>
+        Retry.WhileNull(() => MainWindow.FindFirstDescendant(
+                cf => cf.ByName(itemText).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.DataItem)
+                    .Or(cf.ByControlType(FlaUI.Core.Definitions.ControlType.ListItem)))), Timeout,
             ignoreException: true).Result ?? throw new TimeoutException($"no list row \"{itemText}\". {Describe(MainWindow)}");
-        return FindButton(row, buttonName);
+
+    /// <summary>The button named <paramref name="buttonName"/> (Play, Stop, More options) on the row of <paramref name="itemText"/>.</summary>
+    public AutomationElement CardButton(string itemText, string buttonName) => FindButton(ItemRow(itemText), buttonName);
+
+    /// <summary>
+    /// Opens the editor of the list item showing <paramref name="itemText"/>, in any view: a click on the item near its left
+    /// end (its icon and name, away from its buttons). A real click: the library's SettingsCard has no Invoke pattern.
+    /// </summary>
+    public void EditItem(string itemText)
+    {
+        System.Drawing.Rectangle row = ItemRow(itemText).BoundingRectangle;
+        MainWindow.SetForeground();
+        FlaUI.Core.Input.Mouse.Click(new System.Drawing.Point(row.Left + 40, row.Top + row.Height / 2));
     }
 
-    /// <summary>Opens the editor of the list item showing <paramref name="itemText"/> with its card's Edit button.</summary>
-    public void EditItem(string itemText) => CardButton(itemText, "Edit").AsButton().Invoke();
+    /// <summary>The List, Table or Grid button of a page ("Loops", "Macros", "Remaps"), by its x:Name.</summary>
+    public ToggleButton ViewButton(string page, string view) => FindById(MainWindow, page + view + "Button").AsToggleButton();
 
     /// <summary>
     /// A window of PuppyMacro with this title, or with this title and " - " what it edits ("Edit macro" finds

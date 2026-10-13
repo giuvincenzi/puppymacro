@@ -37,7 +37,7 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     /// <summary>The hotkey's keys on the card, in the accent color (none without a hotkey).</summary>
     public List<string> HotkeyParts => HasHotkey ? KeyNames.Parts(Definition.Hotkey) : new List<string>();
 
-    /// <summary>Edit can be used: no loop or macro runs (the main window sets it).</summary>
+    /// <summary>The item can be opened in its editor (a click on it): no loop or macro runs (the main window sets it).</summary>
     public bool CanEdit
     {
         get => _canEdit;
@@ -56,6 +56,19 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     public bool OverlayClickPassesThrough => Definition.OverlayClickPassesThrough;
     public string? AppExe => Definition.AppExe;
     public bool HasApp => Definition.AppExe != null;
+    /// <summary>The list's and the grid's group: the app it works in, or All apps.</summary>
+    public string GroupName => Definition.AppExe ?? Strings.Remaps_AllApps;
+    /// <summary>No hotkey: the lists say so where the keys would be.</summary>
+    public bool HasNoHotkey => !HasHotkey;
+    /// <summary>Hold mode with a hotkey: the table says "Hold" after the keys.</summary>
+    public bool IsHoldWithHotkey => IsHoldMode && HasHotkey;
+    /// <summary>The row's accessible name in the lists (ui.md): its name.</summary>
+    public string AccessibleName => Name;
+    // The type icon the lists show, as a loop's (LoopItemViewModel): a macro always has the list of actions.
+    public bool ShowKeyIcon => false;
+    public bool ShowMouseIcon => false;
+    public bool ShowTextIcon => false;
+    public bool ShowListIcon => true;
     public bool IsItemEnabled => Definition.Enabled;
 
     public string Summary

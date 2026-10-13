@@ -13,7 +13,8 @@
   `publish_release` runs them on that commit.
 - Covered: settings loading and migrations (`SettingsStore`), Export and Import (`BackupServiceTests`: every part, the
   identical copy, partial files, older files, refused files), macros from recorded events
-  (`MacroBuilder`), `MacroLibrary`, macro groups and the editor's operations
+  (`MacroBuilder`), `MacroLibrary`, the list pages' groups (`PageViewsTests`: when they show, All apps first then the apps by
+  name, the user's order inside, the table's own order, the search), macro groups and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
   the options shared by loop and macro actions (`ActionOptionsTests`: combinations, Hold for, Times, double click, fixed point, older files, Code view checks), `HotkeyConflicts` (also per app, for remap sources and for modifier sides), `HotkeyRules`, which items the overlay shows
   (`OverlayItems`, `FloatingButtons`), `ModifierTracker`, `KeyNames`, `HotkeyBinding` (`Matches`, `Overlaps`, sides), what the key
@@ -88,7 +89,9 @@
   check `.Success`, never fixed sleeps. A UI Automation timeout ("Operation timed out", PuppyMacro's UI thread busy) is
   one more try, not a failure (`AppSession.NotYet`, in the helpers that look for an element or a window). Other `AppSession` helpers: `GoTo` (a side rail page),
   `Expand` (a Settings `SettingsExpander` by `x:Name`, through its `ExpanderToggleButton`: it has
-  no ExpandCollapse pattern), `CardButton` / `EditItem` (a list card's buttons), `Dialog` (an
+  no ExpandCollapse pattern), `ItemRow` (an item of a list page, in List, Table or Grid), `CardButton` (its Play, Stop or More
+  options), `EditItem` (opens its editor with a real click near the item's left end: the library's `SettingsCard` has no
+  Invoke pattern), `ViewButton` (a page's List, Table or Grid button), `Dialog` (an
   editor or dialog: while an editor is open the main window is hidden, so it is searched among
   PuppyMacro's top-level windows) and `TopWindow` (overlay panel, floating buttons). A list's row is found by its
   accessible name (`ui.md`), never by the texts inside it: `CardButton` in the main window, `PanelRow` / `PanelRowIs`

@@ -6,9 +6,10 @@ using PuppyMacro.Resources;
 namespace PuppyMacro.Views;
 
 /// <summary>
-/// The right side of every card in the Loops, Macros and Remap lists, the same for all: Play / Stop (a loop or
-/// macro in Hold mode has none, its place kept empty; a remap has none), Edit, the Enabled switch and More options.
-/// Its events come from its buttons, whose Tag is the card's item (the window's handlers read it there).
+/// The right side of every item in the Loops, Macros and Remap lists, the same in each view: Play / Stop (a loop or
+/// macro in Hold mode has none, its place kept empty; a remap has none), More options and the Enabled switch. There is
+/// no Edit: a click on the item opens its editor. Its events come from its buttons, whose Tag is the card's item (the
+/// window's handlers read it there).
 /// </summary>
 public partial class ItemCardActions : UserControl
 {
@@ -16,13 +17,8 @@ public partial class ItemCardActions : UserControl
     public static readonly DependencyProperty IsHoldModeProperty = Register(nameof(IsHoldMode), false);
     public static readonly DependencyProperty IsRunningProperty = Register(nameof(IsRunning), false);
     public static readonly DependencyProperty CanPlayProperty = Register(nameof(CanPlay), true);
-    public static readonly DependencyProperty CanEditProperty = Register(nameof(CanEdit), true);
     public static readonly DependencyProperty CanMoreProperty = Register(nameof(CanMore), true);
     public static readonly DependencyProperty CanSwitchProperty = Register(nameof(CanSwitch), true);
-
-    public static readonly DependencyProperty EditBlockedTextProperty = DependencyProperty.Register(
-        nameof(EditBlockedText), typeof(string), typeof(ItemCardActions),
-        new PropertyMetadata(Strings.Main_StopRunningFirst, (d, _) => ((ItemCardActions)d).Update()));
 
     public static readonly DependencyProperty IsOnProperty = DependencyProperty.Register(
         nameof(IsOn), typeof(bool), typeof(ItemCardActions),
@@ -46,23 +42,16 @@ public partial class ItemCardActions : UserControl
     /// <summary>Play / Stop can be used (a disabled item cannot be started).</summary>
     public bool CanPlay { get => (bool)GetValue(CanPlayProperty); set => SetValue(CanPlayProperty, value); }
 
-    /// <summary>Edit can be used (not while loops or macros run).</summary>
-    public bool CanEdit { get => (bool)GetValue(CanEditProperty); set => SetValue(CanEditProperty, value); }
-
     /// <summary>More options can be used (not while the item runs).</summary>
     public bool CanMore { get => (bool)GetValue(CanMoreProperty); set => SetValue(CanMoreProperty, value); }
 
     /// <summary>The Enabled switch can be used (not on a remap without a hotkey: it can't be turned on).</summary>
     public bool CanSwitch { get => (bool)GetValue(CanSwitchProperty); set => SetValue(CanSwitchProperty, value); }
 
-    /// <summary>Edit's tooltip while it cannot be used.</summary>
-    public string EditBlockedText { get => (string)GetValue(EditBlockedTextProperty); set => SetValue(EditBlockedTextProperty, value); }
-
     /// <summary>The Enabled switch.</summary>
     public bool IsOn { get => (bool)GetValue(IsOnProperty); set => SetValue(IsOnProperty, value); }
 
     public event RoutedEventHandler? PlayClick;
-    public event RoutedEventHandler? EditClick;
     public event RoutedEventHandler? MoreClick;
 
     private static DependencyProperty Register(string name, bool value) =>
@@ -72,7 +61,7 @@ public partial class ItemCardActions : UserControl
     private void Update()
     {
         PlayPart.Visibility = ShowPlay ? Visibility.Visible : Visibility.Collapsed;
-        // Hold mode runs only while the hotkey is held: no Play, its place kept so Edit lines up on every card.
+        // Hold mode runs only while the hotkey is held: no Play, its place kept so More options lines up on every card.
         PlayButton.Visibility = IsHoldMode ? Visibility.Hidden : Visibility.Visible;
         PlayIcon.Visibility = IsRunning ? Visibility.Collapsed : Visibility.Visible;
         StopIcon.Visibility = IsRunning ? Visibility.Visible : Visibility.Collapsed;
@@ -80,15 +69,11 @@ public partial class ItemCardActions : UserControl
         PlayButton.ToolTip = play;
         AutomationProperties.SetName(PlayButton, play);
         PlayButton.IsEnabled = CanPlay;
-        EditButton.IsEnabled = CanEdit;
-        EditButton.ToolTip = CanEdit ? Strings.Card_Edit : EditBlockedText;
         MoreButton.IsEnabled = CanMore;
         EnabledSwitch.IsEnabled = CanSwitch;
     }
 
     private void OnPlayClick(object sender, RoutedEventArgs e) => PlayClick?.Invoke(sender, e);
-
-    private void OnEditClick(object sender, RoutedEventArgs e) => EditClick?.Invoke(sender, e);
 
     private void OnMoreClick(object sender, RoutedEventArgs e) => MoreClick?.Invoke(sender, e);
 }

@@ -33,10 +33,10 @@ public partial class MainWindow
     private readonly AppSettings _settings;
     private readonly LoopEngine _engine;
     private readonly ObservableCollection<LoopItemViewModel> _items;
-    private readonly ListCollectionView _view;
+    private readonly PageViews _view;
     private readonly MacroLibrary _macros;
     private readonly ObservableCollection<MacroItemViewModel> _macroItems;
-    private readonly ListCollectionView _macroView;
+    private readonly PageViews _macroView;
     private readonly OverlayPanelWindow _overlayPanelWindow;
     private readonly List<FloatingButtonWindow> _buttonWindows = new();
     private readonly DispatcherTimer _saveOpacityTimer;
@@ -47,7 +47,7 @@ public partial class MainWindow
     private readonly bool _initializing;
     private bool _overlayModeActive;
     private readonly ObservableCollection<RemapItemViewModel> _remapItems;
-    private readonly ListCollectionView _remapView;
+    private readonly PageViews _remapView;
     private readonly TrayIcon _tray;
     private readonly DispatcherTimer _panelTargetsTimer;
     private bool _engineStarted;
@@ -83,18 +83,16 @@ public partial class MainWindow
         _engine.ForegroundAppChanged += OnForegroundAppChanged;
 
         _items = new ObservableCollection<LoopItemViewModel>(settings.Loops.Select(CreateItem));
-        _view = new ListCollectionView(_items) { Filter = FilterLoop };
-        LoopList.ItemsSource = _view;
+        _view = new PageViews(_items, FilterLoop, item => ((LoopItemViewModel)item).AppExe);
 
         _macroItems = new ObservableCollection<MacroItemViewModel>(macros.Macros.Select(CreateMacroItem));
-        _macroView = new ListCollectionView(_macroItems) { Filter = FilterMacro };
-        MacroList.ItemsSource = _macroView;
+        _macroView = new PageViews(_macroItems, FilterMacro, item => ((MacroItemViewModel)item).AppExe);
 
         _overlayPanelWindow = new OverlayPanelWindow(_items, _macroItems);
 
         _remapItems = new ObservableCollection<RemapItemViewModel>(settings.Remaps.Select(CreateRemapItem));
-        _remapView = new ListCollectionView(_remapItems) { Filter = FilterRemap };
-        RemapList.ItemsSource = _remapView;
+        _remapView = new PageViews(_remapItems, FilterRemap, item => ((RemapItemViewModel)item).Definition.AppExe);
+        InitializeLists();
 
         // Clickable overlay panel: the row positions are refreshed while overlay mode is on.
         _panelTargetsTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
@@ -368,6 +366,7 @@ public partial class MainWindow
     {
         _view.Refresh();
         UpdateLoopState();
+        RefitLists();
     }
 
     /// <summary>
@@ -459,13 +458,6 @@ public partial class MainWindow
         RefreshList();
         _overlayPanelWindow.RefreshList();
         Save();
-    }
-
-    /// <summary>The card's Edit (not while loops or macros run).</summary>
-    private void OnEditLoopClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is LoopItemViewModel item && !_engine.AnyRunning)
-            EditLoop(item);
     }
 
     private void OnMoreClick(object sender, RoutedEventArgs e)
@@ -615,6 +607,7 @@ public partial class MainWindow
     {
         _macroView.Refresh();
         UpdateMacroState();
+        RefitLists();
     }
 
     private void UpdateMacroState()
@@ -693,13 +686,6 @@ public partial class MainWindow
         SaveMacroOrder();
         RefreshMacros();
         _overlayPanelWindow.RefreshList();
-    }
-
-    /// <summary>The card's Edit (not while loops or macros run).</summary>
-    private void OnEditMacroClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is MacroItemViewModel item && !_engine.AnyRunning)
-            EditMacro(item);
     }
 
     private void OnMacroMoreClick(object sender, RoutedEventArgs e)
@@ -911,9 +897,10 @@ public partial class MainWindow
         Save();
     }
 
-    private static bool IsInsideInteractiveControl(DependencyObject? source)
+    /// <summary>The press is on a control inside <paramref name="card"/> (its buttons, switch…), not on the card itself.</summary>
+    private static bool IsInsideInteractiveControl(DependencyObject? source, DependencyObject? card = null)
     {
-        while (source != null)
+        while (source != null && !ReferenceEquals(source, card))
         {
             if (source is ButtonBase or TextBox or ComboBox or Slider)
                 return true;
@@ -927,7 +914,7 @@ public partial class MainWindow
     private void OnCardMouseDown(object sender, MouseButtonEventArgs e)
     {
         _dragCandidate = null;
-        if (IsInsideInteractiveControl(e.OriginalSource as DependencyObject))
+        if (IsInsideInteractiveControl(e.OriginalSource as DependencyObject, sender as DependencyObject))
             return;
         if ((sender as FrameworkElement)?.Tag is IListItem item)
         {
@@ -949,6 +936,9 @@ public partial class MainWindow
         var item = _dragCandidate;
         _dragCandidate = null;
         item.IsDragging = true;
+        // The card is a button (a click opens the editor): without its mouse capture it is no longer pressed, so the drop
+        // does not open the editor.
+        (sender as UIElement)?.ReleaseMouseCapture();
         try
         {
             DragDrop.DoDragDrop((DependencyObject)sender, new DataObject(typeof(IListItem), item), DragDropEffects.Move);
@@ -965,7 +955,7 @@ public partial class MainWindow
         e.Handled = true;
         if (e.Data.GetData(typeof(IListItem)) is not IListItem dragged
             || sender is not FrameworkElement card || card.Tag is not IListItem target
-            || ReferenceEquals(dragged, target) || dragged.GetType() != target.GetType())
+            || !CanDropOn(dragged, target))
         {
             e.Effects = DragDropEffects.None;
             ClearDropIndicators();
@@ -973,7 +963,7 @@ public partial class MainWindow
         }
 
         e.Effects = DragDropEffects.Move;
-        bool before = e.GetPosition(card).Y < card.ActualHeight / 2;
+        bool before = DropsBefore(card, e);
         foreach (var other in AllListItems())
         {
             other.DropBefore = ReferenceEquals(other, target) && before;
@@ -995,13 +985,13 @@ public partial class MainWindow
         e.Handled = true;
         if (e.Data.GetData(typeof(IListItem)) is not IListItem dragged
             || sender is not FrameworkElement card || card.Tag is not IListItem target
-            || ReferenceEquals(dragged, target) || dragged.GetType() != target.GetType())
+            || !CanDropOn(dragged, target))
         {
             ClearDropIndicators();
             return;
         }
 
-        bool before = e.GetPosition(card).Y < card.ActualHeight / 2;
+        bool before = DropsBefore(card, e);
         ClearDropIndicators();
 
         if (dragged is LoopItemViewModel loop && target is LoopItemViewModel loopTarget)
@@ -1610,6 +1600,7 @@ public partial class MainWindow
     {
         _remapView.Refresh();
         UpdateRemapState();
+        RefitLists();
     }
 
     private void UpdateRemapState()
@@ -1651,13 +1642,6 @@ public partial class MainWindow
         _remapItems.Add(CreateRemapItem(remap));
         RefreshRemaps();
         Save();
-    }
-
-    /// <summary>The card's Edit.</summary>
-    private void OnEditRemapClick(object sender, RoutedEventArgs e)
-    {
-        if ((sender as FrameworkElement)?.Tag is RemapItemViewModel item)
-            EditRemap(item);
     }
 
     private void OnRemapMoreClick(object sender, RoutedEventArgs e)

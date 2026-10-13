@@ -30,12 +30,18 @@
   <li><strong>Sound</strong>: turn it on to play a sound when the loop starts and stops, and click a sound to pick it and hear it. The volume of every sound is in <strong>Settings &gt; Sound</strong>.</li>
   <li><strong>Code view</strong>, at the top of the window, shows the loop as JSON, as it is saved, in a code editor with suggestions and checks; see <a href="macros.html">Macros &gt; Code view</a>. <strong>History</strong>, next to it, lists its saved versions and restores any of them; see <a href="macros.html#history">Macros &gt; History</a>.</li>
 </ul>
-<h3>The Loops page</h3>
-<p>Each loop is a card with its name, its state (<strong>Running</strong> in green, <strong>Idle</strong> in blue, <strong>Disabled</strong> in yellow), the app it works in when it has a <strong>Specific app</strong>, what it does and how it starts, for example “Toggle with F6” or “Toggle, no hotkey”. On the right of the card:</p>
+<h3 id="views">The Loops page</h3>
+<p>The three buttons next to the filter show the loops as a <strong>List</strong>, a <strong>Table</strong> or a <strong>Grid</strong>. Each page (Loops, Macros, Remap) keeps its own choice; at first Loops shows the list, Macros the table and Remap the grid.</p>
+<ul>
+  <li><strong>List</strong>: one line per loop, with its state (a green dot while it is <strong>Running</strong>, blue when <strong>Idle</strong>, yellow when <strong>Disabled</strong>), its name and its hotkey.</li>
+  <li><strong>Table</strong>: one row per loop, with the columns <strong>Name</strong>, <strong>What it does</strong>, <strong>Hotkey</strong> (with <strong>Hold</strong> for a Hold loop), <strong>Works in</strong> (its app, or <strong>All apps</strong>) and <strong>State</strong>.</li>
+  <li><strong>Grid</strong>: a tile per loop, with its name on up to two lines, its state, its hotkey and its buttons.</li>
+</ul>
+<p>In the list and the grid, the loops for a <strong>Specific app</strong> are grouped under the app's name, after the ones for all apps. A name that does not fit ends with “…”; point at it to read it all. A hotkey is always shown whole.</p>
+<p>Click a loop to open its editor (not while loops or macros are running). Its buttons:</p>
 <ul>
   <li><strong>Play</strong> (▶) starts the loop and <strong>Stop</strong> (■) stops it. A Hold loop has no Play: it runs only while its hotkey is held down.</li>
-  <li><strong>Edit</strong> (the pencil) opens the editor. It is off while loops or macros are running.</li>
-  <li>The switch enables or disables the loop. A disabled loop does not react to its hotkey and is greyed out.</li>
-  <li><strong>More options</strong> (<strong>⋯</strong>): <strong>Move up</strong>, <strong>Move down</strong> and <strong>Delete</strong>, which asks first.</li>
+  <li><strong>More options</strong> (<strong>⋯</strong>): <strong>Export…</strong>, <strong>Move up</strong>, <strong>Move down</strong> and <strong>Delete</strong>, which asks first.</li>
+  <li>The switch, last, enables or disables the loop. A disabled loop does not react to its hotkey and is greyed out.</li>
 </ul>
-<p>You can also drag loops to reorder them. The search box and the filter (<strong>All loops</strong>, <strong>Enabled</strong>, <strong>Disabled</strong>, <strong>Running</strong>) help with long lists.</p>
+<p>In the list and the grid you can also drag a loop to another place in its group. The search box and the filter (<strong>All loops</strong>, <strong>Enabled</strong>, <strong>Disabled</strong>, <strong>Running</strong>) help with long lists.</p>

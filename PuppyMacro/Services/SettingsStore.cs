@@ -201,6 +201,14 @@ internal sealed class SettingsStore
         settings.SoundVolume = Math.Clamp(settings.SoundVolume, 0, 100);
         // A language this version is not translated into (a newer version's, or written by hand) follows Windows.
         settings.Language = AppLanguages.Normalize(settings.Language);
+        // A list view this version does not have (a newer version's) gives that page's default view.
+        var defaults = new AppSettings();
+        if (!Enum.IsDefined(settings.LoopsLayout))
+            settings.LoopsLayout = defaults.LoopsLayout;
+        if (!Enum.IsDefined(settings.MacrosLayout))
+            settings.MacrosLayout = defaults.MacrosLayout;
+        if (!Enum.IsDefined(settings.RemapsLayout))
+            settings.RemapsLayout = defaults.RemapsLayout;
         settings.Remaps ??= new();
         // Schema 7: a remap's source is a key or a combination (Source); the single key of older files
         // (SourceVk) becomes a Source with no modifiers. Hotkeys without sides take either side (ModifierSide.Any).

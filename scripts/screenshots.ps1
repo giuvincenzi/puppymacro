@@ -18,6 +18,8 @@ public static class W {
   [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr hdc, uint flags);
+  [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] public static extern void mouse_event(uint flags, int dx, int dy, uint data, IntPtr extra);
   [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L, T, R, B; }
   [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr h, int a, out RECT r, int s);
 }
@@ -45,15 +47,19 @@ $main = WaitFor { $A::FromHandle($proc.MainWindowHandle) } 'main window'
 Start-Sleep -Seconds 2
 
 function OpenEditor($itemText, $title) {
-  # The list's row is named after its item (ui.md, as the end-to-end tests' CardButton finds it); the card's Edit
-  # button is inside it. The main window hides while the editor is open.
+  # The list's row is named after its item (ui.md, as the end-to-end tests' ItemRow finds it), in List, Table or Grid; a
+  # click on it opens its editor. A real click near its left end (its icon and name, away from its buttons): the library's
+  # SettingsCard has no Invoke pattern. The main window hides while the editor is open.
   $row = WaitFor { $main.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
       (New-Object $PC($A::NameProperty, $itemText)),
-      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::DataItem))))) } "the row of $itemText"
-  $edit = WaitFor { $row.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
-      (New-Object $PC($A::NameProperty, 'Edit')),
-      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button))))) } "Edit of $itemText"
-  $edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+      (New-Object System.Windows.Automation.OrCondition(
+        (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::DataItem)),
+        (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem))))))) } "the row of $itemText"
+  [W]::SetForegroundWindow($proc.MainWindowHandle) | Out-Null
+  $r = $row.Current.BoundingRectangle
+  [W]::SetCursorPos([int]($r.Left + 40), [int]($r.Top + $r.Height / 2)) | Out-Null
+  [W]::mouse_event(0x0002, 0, 0, 0, [IntPtr]::Zero) # left down
+  [W]::mouse_event(0x0004, 0, 0, 0, [IntPtr]::Zero) # left up
   # The editor's title is "Edit loop - <its name>".
   WaitFor { $A::RootElement.FindAll($TS::Children, (New-Object $PC($A::ProcessIdProperty, $proc.Id))) |
       Where-Object { $_.Current.Name -eq $title -or $_.Current.Name.StartsWith("$title - ") } |

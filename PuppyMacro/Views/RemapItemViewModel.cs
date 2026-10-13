@@ -35,6 +35,10 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     public bool IsAllApps => Definition.AppExe == null;
     public bool IsSpecificApp => Definition.AppExe != null;
     public string ScopeText => Definition.AppExe ?? Strings.Remaps_AllApps;
+    /// <summary>The list's and the grid's group: the app it works in, or All apps.</summary>
+    public string GroupName => ScopeText;
+    /// <summary>What the lists show as its name: its note, or its keys when it has none.</summary>
+    public string Title => AccessibleName;
     public string Note => Definition.Note;
     public bool HasNote => !string.IsNullOrWhiteSpace(Definition.Note);
     /// <summary>The row's accessible name: its note, or its keys when it has none ("J → C").</summary>

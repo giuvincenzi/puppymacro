@@ -287,7 +287,6 @@ Ce nu conține fișierul rămâne neschimbat. Datele curente se salvează mai î
   <data name="Rail_Macros" xml:space="preserve"><value>Macrocomenzi</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Remapare</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Setări</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>Editare</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Activat</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Mai multe opțiuni</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Redare</value></data>
@@ -343,7 +342,7 @@ Ce nu conține fișierul rămâne neschimbat. Datele curente se salvează mai î
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} de acțiuni, {1}, repetare {2}, viteză ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Toate aplicațiile</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Încă nicio tastă rapidă</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Alegeți o tastă rapidă din Editare pentru a o activa.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Deschideți-o și alegeți o tastă rapidă pentru a o activa.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>Buclele și macrocomenzile dvs. nu au putut fi copiate în {0}.
 Detalii: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Unele fișiere de macrocomenzi nu au putut fi actualizate la această versiune.</value></data>
@@ -1133,4 +1132,18 @@ Detalii: {1}</value></data>
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>Din PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>Elemente PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>Copie de rezervă PuppyMacro</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Fără tastă rapidă</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Menținere</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>Ce face</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Tastă rapidă</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Funcționează în</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Stare</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Notă</value></data>
+  <data name="Table_From" xml:space="preserve"><value>De la</value></data>
+  <data name="Table_To" xml:space="preserve"><value>Către</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Vizualizare</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Listă</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Tabel</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Grilă</value></data>
 </root>

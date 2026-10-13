@@ -9,7 +9,7 @@
     xmlns:r="clr-namespace:PuppyMacro.Resources"
     Title="PuppyMacro"
     Icon="pack://application:,,,/Assets/PuppyMacro.ico"
-    Width="800"
+    Width="1300"
     Height="900"
     MinWidth="560"
     MinHeight="560"
@@ -30,6 +30,367 @@
         <ItemsPanelTemplate x:Key="CardListPanel">
             <ikw:SimpleStackPanel Spacing="4" />
         </ItemsPanelTemplate>
+
+        <!-- ================= The views of the Loops, Macros and Remap pages (approved: the Design canvas "PuppyMacro lists
+             redesign", B + C): List (one clickable SettingsCard per item, grouped by app), Table (a ListView with columns, not
+             grouped) and Grid (SettingsCard tiles, grouped by app). A click on an item opens its editor (OnItemClick); its
+             buttons are ItemCardActions. MainWindow.Lists.cs switches them and sizes the tiles and the columns. ================= -->
+
+        <!-- Grid: tiles side by side, every tile of a page as wide (MainWindow puts the width in the ItemsControl's Tag) -->
+        <ItemsPanelTemplate x:Key="TilePanel">
+            <WrapPanel ItemWidth="{Binding Tag, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+        </ItemsPanelTemplate>
+
+        <!-- List and Grid: a title per app (All apps first), as the sections of Windows Settings; only when the page has more than one -->
+        <GroupStyle x:Key="AppGroups" x:Shared="False">
+            <GroupStyle.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,12,0,8" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{Binding Name}" />
+                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding ItemCount}" />
+                    </StackPanel>
+                </DataTemplate>
+            </GroupStyle.HeaderTemplate>
+        </GroupStyle>
+
+        <!-- Every list's rows have an accessible name (ui.md) -->
+        <Style x:Key="ItemRow" TargetType="ContentPresenter">
+            <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+        </Style>
+        <Style x:Key="TableRow" TargetType="ListViewItem" BasedOn="{StaticResource {x:Static GridView.GridViewItemContainerStyleKey}}">
+            <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+            <EventSetter Event="MouseLeftButtonUp" Handler="OnTableRowClick" />
+            <EventSetter Event="KeyDown" Handler="OnTableRowKeyDown" />
+            <Style.Triggers>
+                <!-- Disabled: greyed, while its switch and menu stay usable (approved, ui.md) -->
+                <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- The icon of a loop's or macro's kind: one FontIcon per icon, never a changed Icon (ui.md) -->
+        <DataTemplate x:Key="ItemTypeIcon">
+            <Grid>
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" Visibility="{Binding ShowKeyIcon, Converter={StaticResource BoolToVisibility}}" />
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}" Visibility="{Binding ShowMouseIcon, Converter={StaticResource BoolToVisibility}}" />
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}" Visibility="{Binding ShowTextIcon, Converter={StaticResource BoolToVisibility}}" />
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.BulletedList}" Visibility="{Binding ShowListIcon, Converter={StaticResource BoolToVisibility}}" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- A loop's or macro's hotkey as key caps, or "No hotkey" -->
+        <DataTemplate x:Key="ItemKeys">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Static r:Strings.Card_NoHotkey}"
+                           Visibility="{Binding HasNoHotkey, Converter={StaticResource BoolToVisibility}}" />
+                <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding HotkeyParts}"
+                              ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- A remap's keys: the key or combination pressed, then the one it sends; "No hotkey yet" for a remap Import left
+             without one (data.md), the reason in its tooltip -->
+        <DataTemplate x:Key="RemapSourceKeys">
+            <Grid>
+                <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding SourceParts}"
+                              ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}"
+                              Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" />
+                <StackPanel Orientation="Horizontal" Background="Transparent" ToolTip="{x:Static r:Strings.Remaps_NoHotkeyHint}"
+                            Visibility="{Binding HasNoSource, Converter={StaticResource BoolToVisibility}}">
+                    <ui:FontIcon Margin="0,0,6,0" VerticalAlignment="Center" FontSize="12" Icon="{x:Static ui:SegoeFluentIcons.Warning}"
+                                 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+                    <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                               Text="{x:Static r:Strings.Remaps_NoHotkey}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="RemapTargetKeys">
+            <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding TargetParts}"
+                          ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+        </DataTemplate>
+        <DataTemplate x:Key="RemapKeys">
+            <StackPanel Orientation="Horizontal">
+                <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapSourceKeys}" />
+                <TextBlock Margin="2,0,6,0" VerticalAlignment="Center" Text="→" />
+                <ContentPresenter VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapTargetKeys}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Its state: the library's dots (approved, ui.md) -->
+        <DataTemplate x:Key="ItemStatusDot">
+            <ui:InfoBadge x:Name="StatusBadge" VerticalAlignment="Center" Style="{StaticResource IdleDotInfoBadgeStyle}" ToolTip="{Binding Status}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                    <Setter TargetName="StatusBadge" Property="Style" Value="{StaticResource CautionDotInfoBadgeStyle}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                    <Setter TargetName="StatusBadge" Property="Style" Value="{StaticResource SuccessDotInfoBadgeStyle}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <DataTemplate x:Key="ItemStatus">
+            <StackPanel Orientation="Horizontal">
+                <ContentPresenter Margin="0,0,8,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatusDot}" />
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding Status}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- List: a loop or a macro on one line -->
+        <DataTemplate x:Key="ItemCard">
+            <StackPanel>
+                <Border Height="3" Margin="0,0,0,3" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                        Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
+                <ui:SettingsCard x:Name="Card" AllowDrop="True" Tag="{Binding}" IsClickEnabled="{Binding CanEdit}" IsActionIconVisible="False"
+                                 AutomationProperties.Name="{Binding AccessibleName}" Click="OnItemClick"
+                                 PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
+                                 DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ContentControl x:Name="TypeIcon" Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource ItemTypeIcon}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:SettingsCard.Header>
+                        <DockPanel x:Name="HeaderPanel">
+                            <ContentPresenter Margin="0,0,10,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatusDot}" />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
+                        </DockPanel>
+                    </ui:SettingsCard.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ContentPresenter x:Name="KeysPart" Margin="0,0,16,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemKeys}" />
+                        <views:ItemCardActions IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}" CanPlay="{Binding CanStartStop}"
+                                               CanMore="{Binding IsNotRunning}" IsOn="{Binding IsLoopEnabled}" PlayClick="OnItemPlayClick" MoreClick="OnItemMoreClick" />
+                    </StackPanel>
+                </ui:SettingsCard>
+                <Border Height="3" Margin="0,3,0,0" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                        Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                    <!-- Disabled: greyed like a disabled card, while its switch and menu stay usable (approved, ui.md) -->
+                    <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="HeaderPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="KeysPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsDragging}" Value="True">
+                    <Setter TargetName="Card" Property="Opacity" Value="0.45" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Grid: a loop or a macro as a tile; the name on up to two lines, its state under it, the keys and buttons at the
+             bottom. The accent line where a dragged tile goes is on its left or right side. -->
+        <DataTemplate x:Key="ItemTile">
+            <Grid Margin="0,0,8,8">
+                <ui:SettingsCard x:Name="Card" AllowDrop="True" Tag="{Binding}" IsClickEnabled="{Binding CanEdit}" IsActionIconVisible="False"
+                                 ContentAlignment="Vertical" AutomationProperties.Name="{Binding AccessibleName}" Click="OnItemClick"
+                                 PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
+                                 DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ContentControl x:Name="TypeIcon" Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource ItemTypeIcon}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:SettingsCard.Header>
+                        <!-- Always two lines high, so every tile is as tall -->
+                        <TextBlock x:Name="NameText" Height="40" LineHeight="20" LineStackingStrategy="BlockLineHeight" TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis" Text="{Binding Name}" ToolTip="{Binding Name}" />
+                    </ui:SettingsCard.Header>
+                    <ui:SettingsCard.Description>
+                        <ContentPresenter x:Name="StatusPart" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                    </ui:SettingsCard.Description>
+                    <DockPanel>
+                        <views:ItemCardActions DockPanel.Dock="Right" IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}" CanPlay="{Binding CanStartStop}"
+                                               CanMore="{Binding IsNotRunning}" IsOn="{Binding IsLoopEnabled}" PlayClick="OnItemPlayClick" MoreClick="OnItemMoreClick" />
+                        <ContentPresenter x:Name="KeysPart" Margin="0,0,8,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemKeys}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+                <Border Width="3" Margin="-6,0,0,0" HorizontalAlignment="Left" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                        Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
+                <Border Width="3" Margin="0,0,-6,0" HorizontalAlignment="Right" CornerRadius="2" Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                        Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                    <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="NameText" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="StatusPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="KeysPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsDragging}" Value="True">
+                    <Setter TargetName="Card" Property="Opacity" Value="0.45" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- List: a remap on one line -->
+        <DataTemplate x:Key="RemapCard">
+            <ui:SettingsCard Tag="{Binding}" IsClickEnabled="True" IsActionIconVisible="False" AutomationProperties.Name="{Binding AccessibleName}" Click="OnItemClick">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon x:Name="TypeIcon" Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
+                </ui:SettingsCard.HeaderIcon>
+                <ui:SettingsCard.Header>
+                    <DockPanel x:Name="HeaderPanel">
+                        <ContentPresenter Margin="0,0,10,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource ItemStatusDot}" />
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Title}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+                    </DockPanel>
+                </ui:SettingsCard.Header>
+                <StackPanel Orientation="Horizontal">
+                    <ContentPresenter x:Name="KeysPart" Margin="0,0,16,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapKeys}" />
+                    <views:ItemCardActions ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}" MoreClick="OnItemMoreClick" />
+                </StackPanel>
+            </ui:SettingsCard>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                    <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="HeaderPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="KeysPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Grid: a remap as a tile -->
+        <DataTemplate x:Key="RemapTile">
+            <ui:SettingsCard Margin="0,0,8,8" Tag="{Binding}" IsClickEnabled="True" IsActionIconVisible="False" ContentAlignment="Vertical"
+                             AutomationProperties.Name="{Binding AccessibleName}" Click="OnItemClick">
+                <ui:SettingsCard.HeaderIcon>
+                    <ui:FontIcon x:Name="TypeIcon" Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
+                </ui:SettingsCard.HeaderIcon>
+                <ui:SettingsCard.Header>
+                    <TextBlock x:Name="NameText" Height="40" LineHeight="20" LineStackingStrategy="BlockLineHeight" TextWrapping="Wrap"
+                               TextTrimming="CharacterEllipsis" Text="{Binding Title}" ToolTip="{Binding Title}" />
+                </ui:SettingsCard.Header>
+                <ui:SettingsCard.Description>
+                    <ContentPresenter x:Name="StatusPart" Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                </ui:SettingsCard.Description>
+                <DockPanel>
+                    <views:ItemCardActions DockPanel.Dock="Right" ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}" MoreClick="OnItemMoreClick" />
+                    <ContentPresenter x:Name="KeysPart" Margin="0,0,8,0" VerticalAlignment="Center" Content="{Binding}" ContentTemplate="{StaticResource RemapKeys}" />
+                </DockPanel>
+            </ui:SettingsCard>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
+                    <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="NameText" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="StatusPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter TargetName="KeysPart" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Table: the columns of loops and macros (each ListView its own copy). MainWindow.Lists.cs sizes them: the keys and
+             State as wide as their longest content, Works in up to two lines, Name and What it does the rest. -->
+        <GridView x:Key="ItemColumns" x:Shared="False">
+            <GridViewColumn Width="44">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <ContentControl Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource ItemTypeIcon}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_Name}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_WhatItDoes}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding Summary}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Summary}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_Hotkey}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding HotkeyParts}"
+                                          ItemTemplate="{StaticResource KeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+                            <TextBlock Margin="2,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Static r:Strings.Card_Hold}"
+                                       Visibility="{Binding IsHoldWithHotkey, Converter={StaticResource BoolToVisibility}}" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Static r:Strings.Card_NoHotkey}"
+                                       Visibility="{Binding HasNoHotkey, Converter={StaticResource BoolToVisibility}}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_WorksIn}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock MaxHeight="32" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding GroupName}" TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding GroupName}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_State}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn>
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <views:ItemCardActions IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}" CanPlay="{Binding CanStartStop}"
+                                               CanMore="{Binding IsNotRunning}" IsOn="{Binding IsLoopEnabled}" PlayClick="OnItemPlayClick" MoreClick="OnItemMoreClick" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+        </GridView>
+
+        <!-- Table: the columns of remaps -->
+        <GridView x:Key="RemapColumns" x:Shared="False">
+            <GridViewColumn Width="44">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_Note}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_From}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource RemapSourceKeys}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_To}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource RemapTargetKeys}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_WorksIn}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock MaxHeight="32" Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding GroupName}" TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding GroupName}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{x:Static r:Strings.Table_State}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ItemStatus}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn>
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <views:ItemCardActions ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}" MoreClick="OnItemMoreClick" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+        </GridView>
     </Window.Resources>
 
     <Grid x:Name="RootGrid">
@@ -217,9 +578,11 @@
                                 ToolTipService.ShowOnDisabled="True" Click="OnAddLoopClick" />
                     </Grid>
 
+                    <!-- Search, filter and the view (List, Table, Grid): the search box gives up the space -->
                     <Grid Grid.Row="1" Margin="0,16,0,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="SearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Loops_Search}" TextChanged="OnSearchChanged" />
@@ -229,101 +592,47 @@
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterRunning}" />
                         </ComboBox>
+                        <StackPanel Grid.Column="2" Margin="12,0,0,0" Orientation="Horizontal" AutomationProperties.Name="{x:Static r:Strings.Main_View}">
+                            <ToggleButton x:Name="LoopsListButton" ToolTip="{x:Static r:Strings.Main_ViewList}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewList}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TextBulletListLtr_16_Regular}" />
+                            </ToggleButton>
+                            <ToggleButton x:Name="LoopsTableButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewTable}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewTable}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableSimple_16_Regular}" />
+                            </ToggleButton>
+                            <ToggleButton x:Name="LoopsGridButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewGrid}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewGrid}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Grid_16_Regular}" />
+                            </ToggleButton>
+                        </StackPanel>
                     </Grid>
 
                     <TextBlock x:Name="CountText" Grid.Row="2" Margin="0,0,0,8" Style="{StaticResource CaptionTextBlockStyle}"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 
-                    <ui:ScrollViewerEx Grid.Row="3" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,0,0,16">
-                            <TextBlock x:Name="EmptyLoopsText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                            <ItemsControl x:Name="LoopList" ItemsPanel="{StaticResource CardListPanel}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style TargetType="ContentPresenter">
-                                        <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type views:LoopItemViewModel}">
-                                        <StackPanel>
-                                            <Border Height="3" Margin="0,0,0,3" CornerRadius="2"
-                                                    Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                    Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
-                                            <ui:SettingsCard x:Name="Card" AllowDrop="True" Tag="{Binding}"
-                                                             PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
-                                                             DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
-                                                <ui:SettingsCard.HeaderIcon>
-                                                    <Grid x:Name="TypeIcon">
-                                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}"
-                                                                     Visibility="{Binding ShowKeyIcon, Converter={StaticResource BoolToVisibility}}" />
-                                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Mouse}"
-                                                                     Visibility="{Binding ShowMouseIcon, Converter={StaticResource BoolToVisibility}}" />
-                                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
-                                                                     Visibility="{Binding ShowTextIcon, Converter={StaticResource BoolToVisibility}}" />
-                                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.BulletedList}"
-                                                                     Visibility="{Binding ShowListIcon, Converter={StaticResource BoolToVisibility}}" />
-                                                    </Grid>
-                                                </ui:SettingsCard.HeaderIcon>
-                                                <ui:SettingsCard.Header>
-                                                    <StackPanel x:Name="HeaderPanel" Orientation="Horizontal">
-                                                        <TextBlock MaxWidth="260" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
-                                                        <ui:InfoBadge x:Name="StatusBadge" Margin="10,0,6,0" VerticalAlignment="Center" Style="{StaticResource IdleDotInfoBadgeStyle}" />
-                                                        <TextBlock x:Name="StatusText" Style="{StaticResource CaptionTextBlockStyle}"
-                                                                   VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                                   Text="{Binding Status}" />
-                                                        <!-- Specific app: the app it works in -->
-                                                        <StackPanel x:Name="AppPanel" Margin="12,0,0,0" Orientation="Horizontal" VerticalAlignment="Center"
-                                                                    Visibility="{Binding HasApp, Converter={StaticResource BoolToVisibility}}"
-                                                                    TextElement.Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-                                                            <ui:FontIcon FontSize="12" VerticalAlignment="Center" Icon="{x:Static ui:SegoeFluentIcons.AppIconDefault}" />
-                                                            <TextBlock x:Name="AppText" Margin="6,0,0,0" MaxWidth="200" Style="{StaticResource CaptionTextBlockStyle}"
-                                                                       VerticalAlignment="Center" Text="{Binding AppExe}" TextTrimming="CharacterEllipsis" />
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </ui:SettingsCard.Header>
-                                                <ui:SettingsCard.Description>
-                                                    <!-- Two text lines, as on every list page: the same card height on Loops, Macros and Remap -->
-                                                    <StackPanel x:Name="DescriptionPanel">
-                                                        <TextBlock Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
-                                                        <!-- MinHeight: the height of a line with keys, so every card is as tall with or without a hotkey -->
-                                                        <StackPanel MinHeight="22" Orientation="Horizontal">
-                                                            <TextBlock VerticalAlignment="Center" Text="{Binding ActivationLead}" />
-                                                            <ItemsControl Margin="6,0,0,0" VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding HotkeyParts}"
-                                                                          ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </ui:SettingsCard.Description>
-                                                <views:ItemCardActions IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}"
-                                                                       CanPlay="{Binding CanStartStop}" CanEdit="{Binding CanEdit}" CanMore="{Binding IsNotRunning}"
-                                                                       IsOn="{Binding IsLoopEnabled}" PlayClick="OnStartStopClick" EditClick="OnEditLoopClick"
-                                                                       MoreClick="OnMoreClick" />
-                                            </ui:SettingsCard>
-                                            <Border Height="3" Margin="0,3,0,0" CornerRadius="2"
-                                                    Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                    Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
-                                        </StackPanel>
-                                        <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
-                                                <!-- Disabled: greyed like a disabled card, while its switch and menu stay usable (approved, ui.md) -->
-                                                <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="HeaderPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="AppPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="DescriptionPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="StatusBadge" Property="Style" Value="{StaticResource CautionDotInfoBadgeStyle}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsDragging}" Value="True">
-                                                <Setter TargetName="Card" Property="Opacity" Value="0.45" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                                <Setter TargetName="StatusBadge" Property="Style" Value="{StaticResource SuccessDotInfoBadgeStyle}" />
-                                            </DataTrigger>
-                                        </DataTemplate.Triggers>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ui:ScrollViewerEx>
+                    <DockPanel Grid.Row="3">
+                        <TextBlock x:Name="EmptyLoopsText" DockPanel.Dock="Top" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <Grid>
+                            <ui:ScrollViewerEx x:Name="LoopsScroll" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0,0,0,16">
+                                    <ItemsControl x:Name="LoopList" ItemsPanel="{StaticResource CardListPanel}" ItemTemplate="{StaticResource ItemCard}"
+                                                  ItemContainerStyle="{StaticResource ItemRow}">
+                                        <ItemsControl.GroupStyle>
+                                            <StaticResource ResourceKey="AppGroups" />
+                                        </ItemsControl.GroupStyle>
+                                    </ItemsControl>
+                                    <!-- -8 on the right: the tiles' own 8 px gap after the last column -->
+                                    <ItemsControl x:Name="LoopTiles" Margin="0,0,-8,0" ItemsPanel="{StaticResource TilePanel}" ItemTemplate="{StaticResource ItemTile}"
+                                                  ItemContainerStyle="{StaticResource ItemRow}" SizeChanged="OnTilesSizeChanged">
+                                        <ItemsControl.GroupStyle>
+                                            <StaticResource ResourceKey="AppGroups" />
+                                        </ItemsControl.GroupStyle>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ui:ScrollViewerEx>
+                            <ListView x:Name="LoopTable" Margin="0,0,0,16" SelectionMode="Single" View="{StaticResource ItemColumns}"
+                                      ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                        </Grid>
+                    </DockPanel>
                 </Grid>
 
                 <!-- ================= Macros page ================= -->
@@ -339,11 +648,13 @@
                         <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="{x:Static r:Strings.Macros_Title}" />
                         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
                             <Button x:Name="NewMacroButton" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Macros_Add}" ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
-                            <!-- A standard button with a red dot before its text (approved, ui.md) -->
+                            <!-- A standard button with the red Record icon before its text, as the macro editor's Record actions
+                                 (approved: the user found the InfoBadge dot too small) -->
                             <Button x:Name="RecordMacroButton" Margin="8,0,0,0"
                                     AutomationProperties.Name="{x:Static r:Strings.Macros_Record}" ToolTipService.ShowOnDisabled="True" Click="OnRecordMacroClick">
                                 <StackPanel Orientation="Horizontal">
-                                    <ui:InfoBadge Margin="0,0,8,0" VerticalAlignment="Center" Style="{StaticResource CriticalDotInfoBadgeStyle}" />
+                                    <ui:FontIcon Margin="0,0,8,0" VerticalAlignment="Center" FontSize="12" Icon="{x:Static ui:SegoeFluentIcons.Record}"
+                                                 Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
                                     <TextBlock Text="{x:Static r:Strings.Macros_Record}" />
                                 </StackPanel>
                             </Button>
@@ -354,6 +665,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="MacroSearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Macros_Search}" TextChanged="OnMacroSearchChanged" />
                         <ComboBox x:Name="MacroFilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnMacroFilterChanged">
@@ -362,92 +674,46 @@
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterRunning}" />
                         </ComboBox>
+                        <StackPanel Grid.Column="2" Margin="12,0,0,0" Orientation="Horizontal" AutomationProperties.Name="{x:Static r:Strings.Main_View}">
+                            <ToggleButton x:Name="MacrosListButton" ToolTip="{x:Static r:Strings.Main_ViewList}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewList}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TextBulletListLtr_16_Regular}" />
+                            </ToggleButton>
+                            <ToggleButton x:Name="MacrosTableButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewTable}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewTable}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableSimple_16_Regular}" />
+                            </ToggleButton>
+                            <ToggleButton x:Name="MacrosGridButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewGrid}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewGrid}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Grid_16_Regular}" />
+                            </ToggleButton>
+                        </StackPanel>
                     </Grid>
 
                     <TextBlock x:Name="MacroCountText" Grid.Row="2" Margin="0,0,0,8" Style="{StaticResource CaptionTextBlockStyle}"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 
-                    <ui:ScrollViewerEx Grid.Row="3" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,0,0,16">
-                            <TextBlock x:Name="EmptyMacrosText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                            <ItemsControl x:Name="MacroList" ItemsPanel="{StaticResource CardListPanel}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style TargetType="ContentPresenter">
-                                        <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type views:MacroItemViewModel}">
-                                        <StackPanel>
-                                            <Border Height="3" Margin="0,0,0,3" CornerRadius="2"
-                                                    Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                    Visibility="{Binding DropBefore, Converter={StaticResource BoolToVisibility}}" />
-                                            <ui:SettingsCard x:Name="Card" AllowDrop="True" Tag="{Binding}"
-                                                             PreviewMouseLeftButtonDown="OnCardMouseDown" PreviewMouseMove="OnCardMouseMove"
-                                                             DragOver="OnCardDragOver" DragLeave="OnCardDragLeave" Drop="OnCardDrop">
-                                                <ui:SettingsCard.HeaderIcon>
-                                                    <ui:FontIcon x:Name="TypeIcon" Icon="{x:Static ui:SegoeFluentIcons.BulletedList}" />
-                                                </ui:SettingsCard.HeaderIcon>
-                                                <ui:SettingsCard.Header>
-                                                    <StackPanel x:Name="HeaderPanel" Orientation="Horizontal">
-                                                        <TextBlock MaxWidth="260" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
-                                                        <ui:InfoBadge x:Name="StatusBadge" Margin="10,0,6,0" VerticalAlignment="Center" Style="{StaticResource IdleDotInfoBadgeStyle}" />
-                                                        <TextBlock x:Name="StatusText" Style="{StaticResource CaptionTextBlockStyle}"
-                                                                   VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                                   Text="{Binding Status}" />
-                                                        <!-- Specific app: the app it works in -->
-                                                        <StackPanel x:Name="AppPanel" Margin="12,0,0,0" Orientation="Horizontal" VerticalAlignment="Center"
-                                                                    Visibility="{Binding HasApp, Converter={StaticResource BoolToVisibility}}"
-                                                                    TextElement.Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-                                                            <ui:FontIcon FontSize="12" VerticalAlignment="Center" Icon="{x:Static ui:SegoeFluentIcons.AppIconDefault}" />
-                                                            <TextBlock x:Name="AppText" Margin="6,0,0,0" MaxWidth="200" Style="{StaticResource CaptionTextBlockStyle}"
-                                                                       VerticalAlignment="Center" Text="{Binding AppExe}" TextTrimming="CharacterEllipsis" />
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </ui:SettingsCard.Header>
-                                                <ui:SettingsCard.Description>
-                                                    <!-- Two text lines, as on every list page: the same card height on Loops, Macros and Remap -->
-                                                    <StackPanel x:Name="DescriptionPanel">
-                                                        <TextBlock Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
-                                                        <!-- MinHeight: the height of a line with keys, so every card is as tall with or without a hotkey -->
-                                                        <StackPanel MinHeight="22" Orientation="Horizontal">
-                                                            <TextBlock VerticalAlignment="Center" Text="{Binding ActivationLead}" />
-                                                            <ItemsControl Margin="6,0,0,0" VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding HotkeyParts}"
-                                                                          ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </ui:SettingsCard.Description>
-                                                <views:ItemCardActions IsHoldMode="{Binding IsHoldMode}" IsRunning="{Binding IsRunning}"
-                                                                       CanPlay="{Binding CanStartStop}" CanEdit="{Binding CanEdit}" CanMore="{Binding IsNotRunning}"
-                                                                       IsOn="{Binding IsLoopEnabled}" PlayClick="OnMacroStartStopClick" EditClick="OnEditMacroClick"
-                                                                       MoreClick="OnMacroMoreClick" />
-                                            </ui:SettingsCard>
-                                            <Border Height="3" Margin="0,3,0,0" CornerRadius="2"
-                                                    Background="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                    Visibility="{Binding DropAfter, Converter={StaticResource BoolToVisibility}}" />
-                                        </StackPanel>
-                                        <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
-                                                <!-- Disabled: greyed like a disabled card, while its switch and menu stay usable (approved, ui.md) -->
-                                                <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="HeaderPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="AppPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="DescriptionPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="StatusBadge" Property="Style" Value="{StaticResource CautionDotInfoBadgeStyle}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsDragging}" Value="True">
-                                                <Setter TargetName="Card" Property="Opacity" Value="0.45" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                                <Setter TargetName="StatusBadge" Property="Style" Value="{StaticResource SuccessDotInfoBadgeStyle}" />
-                                            </DataTrigger>
-                                        </DataTemplate.Triggers>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ui:ScrollViewerEx>
+                    <DockPanel Grid.Row="3">
+                        <TextBlock x:Name="EmptyMacrosText" DockPanel.Dock="Top" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <Grid>
+                            <ui:ScrollViewerEx x:Name="MacrosScroll" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0,0,0,16">
+                                    <ItemsControl x:Name="MacroList" ItemsPanel="{StaticResource CardListPanel}" ItemTemplate="{StaticResource ItemCard}"
+                                                  ItemContainerStyle="{StaticResource ItemRow}">
+                                        <ItemsControl.GroupStyle>
+                                            <StaticResource ResourceKey="AppGroups" />
+                                        </ItemsControl.GroupStyle>
+                                    </ItemsControl>
+                                    <ItemsControl x:Name="MacroTiles" Margin="0,0,-8,0" ItemsPanel="{StaticResource TilePanel}" ItemTemplate="{StaticResource ItemTile}"
+                                                  ItemContainerStyle="{StaticResource ItemRow}" SizeChanged="OnTilesSizeChanged">
+                                        <ItemsControl.GroupStyle>
+                                            <StaticResource ResourceKey="AppGroups" />
+                                        </ItemsControl.GroupStyle>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ui:ScrollViewerEx>
+                            <ListView x:Name="MacroTable" Margin="0,0,0,16" SelectionMode="Single" View="{StaticResource ItemColumns}"
+                                      ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                        </Grid>
+                    </DockPanel>
                 </Grid>
 
                 <!-- ================= Remap page ================= -->
@@ -467,6 +733,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="RemapSearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Remaps_Search}" TextChanged="OnRemapSearchChanged" />
                         <ComboBox x:Name="RemapFilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnRemapFilterChanged">
@@ -474,75 +741,44 @@
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterEnabled}" />
                             <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
                         </ComboBox>
+                        <StackPanel Grid.Column="2" Margin="12,0,0,0" Orientation="Horizontal" AutomationProperties.Name="{x:Static r:Strings.Main_View}">
+                            <ToggleButton x:Name="RemapsListButton" ToolTip="{x:Static r:Strings.Main_ViewList}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewList}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TextBulletListLtr_16_Regular}" />
+                            </ToggleButton>
+                            <ToggleButton x:Name="RemapsTableButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewTable}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewTable}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.TableSimple_16_Regular}" />
+                            </ToggleButton>
+                            <ToggleButton x:Name="RemapsGridButton" Margin="4,0,0,0" ToolTip="{x:Static r:Strings.Main_ViewGrid}" AutomationProperties.Name="{x:Static r:Strings.Main_ViewGrid}" Checked="OnLayoutChecked" Unchecked="OnLayoutUnchecked">
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Grid_16_Regular}" />
+                            </ToggleButton>
+                        </StackPanel>
                     </Grid>
                     <TextBlock x:Name="RemapCountText" Grid.Row="2" Margin="0,0,0,8" Style="{StaticResource CaptionTextBlockStyle}"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                    <ui:ScrollViewerEx Grid.Row="3" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,0,0,16">
-                            <TextBlock x:Name="EmptyRemapsText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                            <ItemsControl x:Name="RemapList" ItemsPanel="{StaticResource CardListPanel}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style TargetType="ContentPresenter">
-                                        <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type views:RemapItemViewModel}">
-                                        <ui:SettingsCard>
-                                            <ui:SettingsCard.HeaderIcon>
-                                                <ui:FontIcon x:Name="TypeIcon" Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
-                                            </ui:SettingsCard.HeaderIcon>
-                                            <ui:SettingsCard.Header>
-                                                <StackPanel x:Name="HeaderPanel" Orientation="Horizontal">
-                                                    <!-- The source key → the key or combination it sends, in the accent color; "No hotkey yet"
-                                                         for a remap Import left without one (data.md) -->
-                                                    <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding SourceParts}"
-                                                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}"
-                                                                  Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" />
-                                                    <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="{x:Static r:Strings.Remaps_NoHotkey}"
-                                                               Visibility="{Binding HasNoSource, Converter={StaticResource BoolToVisibility}}" />
-                                                    <TextBlock Margin="2,0,6,0" VerticalAlignment="Center" Text="→" />
-                                                    <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding TargetParts}"
-                                                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
-                                                    <ui:InfoBadge x:Name="StatusBadge" Margin="10,0,6,0" VerticalAlignment="Center" Style="{StaticResource IdleDotInfoBadgeStyle}" />
-                                                    <TextBlock x:Name="StatusText" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status}" />
-                                                </StackPanel>
-                                            </ui:SettingsCard.Header>
-                                            <ui:SettingsCard.Description>
-                                                <!-- Two text lines, as on every list page; without a note the second one stays empty but keeps its height.
-                                                     Without a hotkey the second line says what to do, in the caution color (approved design B,
-                                                     the Design canvas "PuppyMacro Import, remap without key, title bar") -->
-                                                <StackPanel x:Name="DescriptionPanel">
-                                                    <TextBlock x:Name="ScopeText" Text="{Binding ScopeText}" TextTrimming="CharacterEllipsis" />
-                                                    <TextBlock Text="{Binding Note}" TextTrimming="CharacterEllipsis"
-                                                               Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" />
-                                                    <StackPanel Orientation="Horizontal" Visibility="{Binding HasNoSource, Converter={StaticResource BoolToVisibility}}">
-                                                        <ui:FontIcon Margin="0,0,6,0" VerticalAlignment="Center" FontSize="12" Icon="{x:Static ui:SegoeFluentIcons.Warning}"
-                                                                     Foreground="{DynamicResource SystemFillColorCautionBrush}" />
-                                                        <TextBlock TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemFillColorCautionBrush}"
-                                                                   Text="{x:Static r:Strings.Remaps_NoHotkeyHint}" />
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </ui:SettingsCard.Description>
-                                            <views:ItemCardActions ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}"
-                                                                   EditClick="OnEditRemapClick" MoreClick="OnRemapMoreClick" />
-                                        </ui:SettingsCard>
-                                        <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding IsLoopEnabled}" Value="False">
-                                                <!-- Disabled: greyed like a disabled card, while its switch and menu stay usable (approved, ui.md) -->
-                                                <Setter TargetName="TypeIcon" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="HeaderPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="DescriptionPanel" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                                                <Setter TargetName="StatusBadge" Property="Style" Value="{StaticResource CautionDotInfoBadgeStyle}" />
-                                            </DataTrigger>
-                                        </DataTemplate.Triggers>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ui:ScrollViewerEx>
+                    <DockPanel Grid.Row="3">
+                        <TextBlock x:Name="EmptyRemapsText" DockPanel.Dock="Top" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <Grid>
+                            <ui:ScrollViewerEx x:Name="RemapsScroll" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0,0,0,16">
+                                    <ItemsControl x:Name="RemapList" ItemsPanel="{StaticResource CardListPanel}" ItemTemplate="{StaticResource RemapCard}"
+                                                  ItemContainerStyle="{StaticResource ItemRow}">
+                                        <ItemsControl.GroupStyle>
+                                            <StaticResource ResourceKey="AppGroups" />
+                                        </ItemsControl.GroupStyle>
+                                    </ItemsControl>
+                                    <ItemsControl x:Name="RemapTiles" Margin="0,0,-8,0" ItemsPanel="{StaticResource TilePanel}" ItemTemplate="{StaticResource RemapTile}"
+                                                  ItemContainerStyle="{StaticResource ItemRow}" SizeChanged="OnTilesSizeChanged">
+                                        <ItemsControl.GroupStyle>
+                                            <StaticResource ResourceKey="AppGroups" />
+                                        </ItemsControl.GroupStyle>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ui:ScrollViewerEx>
+                            <ListView x:Name="RemapTable" Margin="0,0,0,16" SelectionMode="Single" View="{StaticResource RemapColumns}"
+                                      ItemContainerStyle="{StaticResource TableRow}" SizeChanged="OnTableSizeChanged" />
+                        </Grid>
+                    </DockPanel>
                 </Grid>
 
                 <!-- ================= AI page: AI apps on this PC use PuppyMacro through its MCP server (MainWindow.Ai.cs) ================= -->

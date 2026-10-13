@@ -273,7 +273,6 @@ Lo que el archivo no contiene se queda como está. Primero se hace una copia de 
   <data name="Rail_Macros" xml:space="preserve"><value>Macros</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Reasignar</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Configuración</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>Editar</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Habilitado</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Más opciones</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Reproducir</value></data>
@@ -324,7 +323,7 @@ Lo que el archivo no contiene se queda como está. Primero se hace una copia de 
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} acciones, {1}, repetir {2}, velocidad ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Todas las aplicaciones</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Sin tecla de acceso rápido</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Elige una tecla de acceso rápido con Editar para activarla.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Ábrela y elige una tecla de acceso rápido para activarla.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>No se pudieron copiar tus bucles y macros en {0}.
 Detalles: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Algunos archivos de macro no se pudieron actualizar a esta versión.</value></data>
@@ -1093,4 +1092,18 @@ Detalles: {1}</value></data>
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>De PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>Elementos de PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>Copia de seguridad de PuppyMacro</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Sin tecla de acceso rápido</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Mantener</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>Qué hace</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Tecla de acceso rápido</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Funciona en</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Estado</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Nota</value></data>
+  <data name="Table_From" xml:space="preserve"><value>De</value></data>
+  <data name="Table_To" xml:space="preserve"><value>A</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Vista</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Lista</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Tabla</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Cuadrícula</value></data>
 </root>

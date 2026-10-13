@@ -279,7 +279,6 @@ Ciò che il file non contiene resta com'è. Prima viene fatto un backup dei dati
   <data name="Rail_Macros" xml:space="preserve"><value>Macro</value></data>
   <data name="Rail_Remap" xml:space="preserve"><value>Rimappa</value></data>
   <data name="Rail_Settings" xml:space="preserve"><value>Impostazioni</value></data>
-  <data name="Card_Edit" xml:space="preserve"><value>Modifica</value></data>
   <data name="Card_Enabled" xml:space="preserve"><value>Abilitato</value></data>
   <data name="Card_MoreOptions" xml:space="preserve"><value>Altre opzioni</value></data>
   <data name="Card_Play" xml:space="preserve"><value>Avvia</value></data>
@@ -330,7 +329,7 @@ Ciò che il file non contiene resta com'è. Prima viene fatto un backup dei dati
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} azioni, {1}, ripeti {2}, velocità ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>Tutte le app</value></data>
   <data name="Remaps_NoHotkey" xml:space="preserve"><value>Nessun tasto di scelta rapida</value></data>
-  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Scegli un tasto di scelta rapida con Modifica per attivarla.</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Aprila e scegli un tasto di scelta rapida per attivarla.</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>Non è stato possibile copiare i tuoi loop e le tue macro in {0}.
 Dettagli: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Non è stato possibile aggiornare alcuni file di macro a questa versione.</value></data>
@@ -1103,4 +1102,18 @@ Dettagli: {1}</value></data>
   <data name="ImportItems_FromVersion" xml:space="preserve"><value>Da PuppyMacro {0} · {1}</value></data>
   <data name="FileTypes_Items" xml:space="preserve"><value>Elementi di PuppyMacro</value></data>
   <data name="FileTypes_Backup" xml:space="preserve"><value>Backup di PuppyMacro</value></data>
+  <data name="Card_NoHotkey" xml:space="preserve"><value>Nessun tasto di scelta rapida</value></data>
+  <data name="Card_Hold" xml:space="preserve"><value>Tieni premuto</value></data>
+  <data name="Table_Name" xml:space="preserve"><value>Nome</value></data>
+  <data name="Table_WhatItDoes" xml:space="preserve"><value>Cosa fa</value></data>
+  <data name="Table_Hotkey" xml:space="preserve"><value>Tasto di scelta rapida</value></data>
+  <data name="Table_WorksIn" xml:space="preserve"><value>Funziona in</value></data>
+  <data name="Table_State" xml:space="preserve"><value>Stato</value></data>
+  <data name="Table_Note" xml:space="preserve"><value>Nota</value></data>
+  <data name="Table_From" xml:space="preserve"><value>Da</value></data>
+  <data name="Table_To" xml:space="preserve"><value>A</value></data>
+  <data name="Main_View" xml:space="preserve"><value>Visualizzazione</value></data>
+  <data name="Main_ViewList" xml:space="preserve"><value>Elenco</value></data>
+  <data name="Main_ViewTable" xml:space="preserve"><value>Tabella</value></data>
+  <data name="Main_ViewGrid" xml:space="preserve"><value>Griglia</value></data>
 </root>

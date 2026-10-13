@@ -75,15 +75,42 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   the bug is gone.
 - Approved by the user (custom on purpose):
   - Drag to move: an accent line (`AccentTextFillColorPrimaryBrush`) where the dragged items go, a
-    3 px rounded Border above or below a list card (`DropBefore` / `DropAfter`), a 2 px border on a
-    macro editor row.
+    3 px rounded Border above or below a list card (`DropBefore` / `DropAfter`), on the left or right of a tile in the Grid
+    view, a 2 px border on a macro editor row. In a grouped view an item moves only inside its group; the Table view has no
+    drag (More options › Move up / Move down).
   - Settings > Overlay > Opacity: a small preview of the panel (`OpacityPreviewPanel`) with the
     overlay panel's fixed dark colors, so the chosen opacity can be seen, 36 px high so the row keeps the library's height like the others in the group.
   - Development builds: the orange "Development build" strip under the title bar (fixed colors,
     `build-and-release.md`).
-  - Disabled loops, macros and remaps in the lists: the card's icon, header and description use
-    `TextFillColorDisabledBrush`, while the card stays enabled (its switch and More options menu must
-    keep working; the card's own disabled state would block them).
+  - Disabled loops, macros and remaps in the lists: the card's or tile's icon, name, state and keys use
+    `TextFillColorDisabledBrush` (in the Table view the row's `Foreground`), while the card stays enabled (its switch and
+    More options menu must keep working; the card's own disabled state would block them).
+  - **The views of the Loops, Macros and Remap pages** (approved: the Design canvas "PuppyMacro lists redesign", B + C; the
+    templates in `MainWindow.xaml`'s resources, the logic in `MainWindow.Lists.cs` and `Views/PageViews`): to the right of the
+    filter, on the search's row (the search box takes what is left), three standard `ToggleButton`s with an icon and its
+    name as tooltip, 4 px apart: **List** (`TextBulletListLtr_16_Regular`), **Table** (`TableSimple_16_Regular`), **Grid**
+    (`Grid_16_Regular`); the one in use stays checked (`Checked` / `Unchecked`, so UI Automation's Toggle works too). Each
+    page keeps its own view in the settings (`data.md`); at first Loops List, Macros Table, Remap Grid (the user's choice).
+    - **List**: one clickable `SettingsCard` per item (`IsClickEnabled`, no action icon), on one line, the library's
+      height: the type icon, the status dot, the name (trimmed with "…", its tooltip the whole name), then the keys and
+      `ItemCardActions`. A remap shows its note (or its keys) and its keys `from → to`.
+    - **Grid**: the same `SettingsCard` as a tile (`ContentAlignment="Vertical"`) in a `WrapPanel`: the name on two lines
+      (always two lines high, so every tile is as tall), the state (dot and text) as its description, the keys and
+      `ItemCardActions` at the bottom; 8 px between tiles. Every tile of a page is as wide: at least 260 px, as many columns
+      as fit, and wider together when the page's longest hotkey needs it (measured, `FitTiles`).
+    - List and Grid group the items by the app they work in (a `GroupStyle`: the app, or All apps, in
+      `BodyStrongTextBlockStyle` and the count in caption style, 12 px above and 8 below), All apps first, then the apps by
+      name, each in the user's order; only when the page has items for more than one app (`PageViews.NeedsGroups`).
+    - **Table**: the library's `ListView` with a `GridView` (columns with headers), not grouped. Loops and macros: the
+      type icon, **Name**, **What it does** (the summary), **Hotkey** (keys, "Hold" for Hold mode, "No hotkey"), **Works
+      in** (the app or All apps, up to two lines, then "…"), **State** (dot and text), then `ItemCardActions`. Remaps:
+      icon, **Note**, **From**, **To**, Works in, State, buttons. Widths (`FitColumns`, measured, so they hold in every
+      language): the keys as wide as the page's longest combination, Works in 120 px, State as its longest word in the
+      language in use, the buttons as `ItemCardActions`; Name and What it does share the rest 3 to 2 (Note takes it all).
+      Every cell is left-aligned under its header.
+    - **A click on the item opens its editor** (the card's `Click`; in the table a click on the row away from its buttons,
+      or Enter): there is no Edit button. Loops and macros open only while nothing runs (their card is not clickable then).
+      Keys never get trimmed: texts give up the space.
   - `Views/SwitchSettingsExpander`: a `SettingsExpander` with a switch in its header whose options
     open only while the switch is on (`CanExpand`): otherwise no arrow and the header does not open
     it. Use it for every group whose switch unlocks its options (today: Show in overlay, floating button, Sound
@@ -149,7 +176,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     Add action in `AccentTextFillColorPrimaryBrush`
     (an `AppBarButton` has no accent style), and Record (named "Record actions") with the `Record` icon in
     `SystemFillColorCriticalBrush`. Elsewhere the record dot is a `CriticalDot` `InfoBadge` before the
-    text (Record macro, the "Ready to record" title).
+    text (the "Ready to record" title). **Record macro** on the Macros page shows instead the editor's `Record` icon at 12 px in
+    `SystemFillColorCriticalBrush` before its text (approved: the user found the dot too small).
   - The macro editor's action list: a thin divider under each row, across the whole row, and hover
     and selection on the whole row, square, so they reach the dividers: in the list's resources
     `ListViewItemCompactSelectedBorderThemeThickness` and `ListViewItemCornerRadius` set to 0. A
@@ -229,9 +257,10 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     (`AccentButtonStyle`, Enter) and Cancel (Esc), each at least 160 px. 32 px above **Select all** / **Select all shown** (after the file or the search), 8 below; Import's `InfoBar` at
     the bottom, 16 px under the list. Import's notes are short natural sentences (`i18n.md`): "…, so this comes in without a
     hotkey.", "You already have a loop with this name, so this one is called "Farm (2)"."
-  - A remap without a hotkey (only after an import, `data.md`; approved design B, the Design canvas "PuppyMacro Import, remap without key, title bar"): its card shows "No hotkey yet"
-    instead of the source keys, its second line is the `Warning` icon and "Choose a hotkey with Edit to turn it on." in
-    `SystemFillColorCautionBrush` instead of the note, and its switch is off and disabled (`ItemCardActions.CanSwitch`).
+  - A remap without a hotkey (only after an import, `data.md`; approved design B, the Design canvas "PuppyMacro Import, remap
+    without key, title bar", on one line since the lists redesign): in every view the `Warning` icon and "No hotkey yet" in
+    `SystemFillColorCautionBrush` instead of the source keys, its tooltip "Open it and choose a hotkey to turn it on.", and its
+    switch is off and disabled (`ItemCardActions.CanSwitch`).
   - A file dragged over the main window (approved, the Design canvas "PuppyMacro Import, remap without key, title bar"; custom: no standard component covers a window): `DropOverlay`,
     over the whole window, title bar too, with `Panel.ZIndex` 100 and no hit testing. The window's content is blurred
     (`BlurEffect`, radius 6) and covered by `SolidBackgroundFillColorBaseBrush` at 82%; a dashed `Rectangle` (2 px, `4 3`,
@@ -289,16 +318,13 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   click - Open inventory" (its name, or its description), "Edit remap - Sample: Caps Lock to Esc" (its
   note, or its keys). The macro action's Test button shows the filled Play icon before its text.
 - **A key the user chose is shown as accent `KeyCap`s** wherever it appears: the template
-  `AccentKeyCapItem` with the panel `KeyCapRow` (`App.xaml`), used by `KeyCaptureField` and by the list
-  cards (a loop's or macro's hotkey after "Toggle with" / "Hold with", a remap's keys in its title).
-  The second line of loop and macro cards has `MinHeight="22"`, the height of a line with keys, so
-  cards with and without a hotkey are equally tall.
-- **The right side of every card in the Loops, Macros and Remap lists is `Views/ItemCardActions`**
-  (approved): Play / Stop (in Hold mode its place stays empty; none on remaps), Edit (off while loops or
-  macros run), the Enabled switch and More options (off while that loop or macro runs). Edit is
-  not in the More options menu. Its
-  buttons show filled Fluent System Icons (`Play_16_Filled`, `Stop_16_Filled`, `Edit_16_Filled`,
-  `MoreHorizontal_16_Filled`) and are subtle icon buttons.
+  `AccentKeyCapItem` with the panel `KeyCapRow` (`App.xaml`), used by `KeyCaptureField` and by Import and Export. **Except the
+  Loops, Macros and Remap lists** (every view), which show plain key caps, `KeyCapItem` (`KeyCap` with the text in the color
+  around it, greyed with a disabled item; approved with the lists redesign).
+- **The buttons of every item in the Loops, Macros and Remap lists, in each view, are `Views/ItemCardActions`**
+  (approved): Play / Stop (in Hold mode its place stays empty; none on remaps), More options (off while that loop or macro
+  runs), then the Enabled switch, last. There is no Edit: a click on the item opens its editor. Its buttons show filled
+  Fluent System Icons (`Play_16_Filled`, `Stop_16_Filled`, `MoreHorizontal_16_Filled`) and are subtle icon buttons.
 - **Subtle icon buttons** (approved): an icon-only `Button` that lights up only under the mouse, as
   the `AppBarButton`s in a command bar (iNKORE has no subtle style for a plain `Button`). Merge
   `Views/SubtleButtons.xaml` into the Resources of the element that holds them: it redefines the
