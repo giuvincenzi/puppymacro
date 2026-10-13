@@ -1024,8 +1024,9 @@
   <data name="Share_Export" xml:space="preserve"><value>导出</value></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>导出…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>松开以导入</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>备份需从设置中打开</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>备份会替换你的所有数据，因此需从 {0} › {1} 打开。</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>请从设置中还原此备份</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>还原备份会替换你的所有循环、宏、重映射和设置。你可以在 {0} › {1} 中还原。</value></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>打开设置</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>关闭</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>将循环、宏和重映射保存到文件，以便分享</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>导出…</value></data>

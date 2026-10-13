@@ -40,7 +40,7 @@ PuppyMacro/
   MainWindow.Ai.cs              AI page; the AI tools' host (IAiHost)
   MainWindow.Share.cs           Import and Export of loops, macros and remaps (.puppyitems), files opened from File Explorer
   AiRequestWindow, AiActivityWindow   what an AI app asks the user (confirm, a key); AI activity (View all)
-  LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow, GroupNameWindow
+  LoopEditorWindow, MacroEditorWindow, MacroActionWindow, RemapEditorWindow, GroupNameWindow, ItemsWindow (Import, Export)
   OverlayPanelWindow, FloatingButtonWindow, PlacementWindow, PickPointWindow, RecordPromptWindow,
   RecordingBarWindow, CountdownWindow
   Models/                       AppSettings (settings.json), loops, macros, remaps
@@ -176,9 +176,10 @@ Rules:
 - Backup: `Services/BackupService.cs` (export and import of the data folder, `data.md`), `Views/ExportOptionsView`
   (Export's choices, in a `ContentDialog`); the Import confirmation names the file's parts.
 - Sharing (not the backup, the user's choice: two separate features): `.puppyitems` files (`Services/ItemFile.cs`, `data.md`),
-  `MainWindow.Share.cs`: Import… and Export… in the title bar's More options menu (`ContentDialog`s with
-  `Views/ImportItemsView` and `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`, sized by `Views/DialogFill`), Export… in each card's menu (`ExportOne`, the file dialog at
-  once). Import reads the file again at each check box change (`ItemFile.Read` with the chosen indexes: a name or hotkey goes to
+  `MainWindow.Share.cs`: Import… and Export… in the title bar's More options menu (`ItemsWindow`, a window of its own opened
+  as the editors through `ShowDialogWithoutHotkeys`, the main window hidden meanwhile; for an AI app through `ShowForAi`; with
+  `Views/ImportItemsView` and `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`), Export… in each card's menu (`ExportOne`,
+  the file dialog at once). Import reads the file again at each check box change (`ItemFile.Read` with the chosen indexes: a name or hotkey goes to
   the first chosen item that takes it) and adds the chosen items through `SaveItem`, so the History records them. File
   Explorer: `Services/FileTypes.cs` registers `.puppyitems` and `.puppymacro` (icon, open command `"PuppyMacro.exe" "%1"`)
   in `HKCU\Software\Classes`, Release builds only, at every start in `App`
@@ -186,7 +187,10 @@ Rules:
   path while PuppyMacro runs hands it over on `Services/OpenFileChannel.cs` (a named pipe, current user only, one per build)
   and exits. A process started with a `.puppymacro` path (a backup: it opens only from Settings › Backup) only shows
   `BackupFileWindow` and exits, before the single-instance mutex: nothing else starts, a running PuppyMacro is left alone,
-  and the settings are only read for the language and theme (`SettingsStore.Peek`, never written). A `.puppyitems` file
+  and the settings are only read for the language and theme (`SettingsStore.Peek`, never written). Its Open Settings starts
+  `PuppyMacro.exe --backup-settings` (`App.BackupSettingsArgument`; a new process, as `App.ApplyLanguage` runs once per
+  process): it opens on Settings with Backup open (`MainWindow.ShowBackupSettings`), or, while PuppyMacro runs, signals the
+  `PuppyMacro.ShowBackupSettings` event, which the running one waits on as on `PuppyMacro.ShowWindow`, and exits. A `.puppyitems` file
   dropped on the main window goes the same way (`OnFileDrop`; `OnFileDragOver` shows
   `DropOverlay`, also for a backup, which is never imported there; other files and the cards' own drags pass as before;
   Windows refuses drops from File Explorer while PuppyMacro runs as administrator). `MainWindow.OpenItemsFile`: **the last
@@ -227,8 +231,8 @@ Rules:
   tested) and `get_schema` the defaults (`CodeSchema` `withDefaults`); the answers of `save_*` and `patch_item` are the new Id or
   the changes, never the item. Sharing: `export_items` (a `.puppyitems` file's text, a read), `import_items` (a file's text and
   `only`, the indexes to take; `ItemFile`'s rules, then `IAiHost.Save` for each; one confirmation for all with
-  `AiAskBeforeChanging`), `open_import_window` / `open_export_window` (`IAiHost.ShowImport` / `ShowExport`: the main window comes
-  to the front with the same `ContentDialog`s, closed after `AnswerTimeout` without input). With `AiAskBeforeChanging`, `AiRequestWindow` lists `ItemHistory.Changes` first; `delete_item` (asks with `AiAskBeforeDeleting`, on by default),
+  `AiAskBeforeChanging`), `open_import_window` / `open_export_window` (`IAiHost.ShowImport` / `ShowExport`: the same `ItemsWindow`s, through
+  `ShowForAi`: centered on the screen, in front, closed after `AnswerTimeout` without input). With `AiAskBeforeChanging`, `AiRequestWindow` lists `ItemHistory.Changes` first; `delete_item` (asks with `AiAskBeforeDeleting`, on by default),
   `set_enabled` (a change), `update_settings` (`AiAskBeforeSettings`, on by default); interactions (`pick_point`,
   `pick_points`, `pick_app`, `capture_hotkey`, `place_floating_button`) with a `title`, a `description` and `steps` the AI
   writes (`AiAsk`, no length limits; the steps shown numbered): first `AiReadyWindow` (centered, draggable, topmost, not

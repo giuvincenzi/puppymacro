@@ -1062,8 +1062,9 @@ Detajet: {1}</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Eksporto</value></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>Eksporto…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Lëshojeni për ta importuar</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Kopjet rezervë hapen nga Cilësimet</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>Një kopje rezervë zëvendëson të gjitha të dhënat tuaja, prandaj hapet nga {0} › {1}.</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Riktheje këtë kopje rezervë nga Cilësimet</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>Rikthimi i një kopjeje rezervë zëvendëson të gjitha ciklet, makrot, ricaktimet dhe cilësimet e tua. Mund ta bësh te {0} › {1}.</value></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Hap Cilësimet</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Mbyll</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Ruani cikle, makro dhe ricaktime në një skedar, për t'i ndarë me të tjerët</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Eksporto…</value></data>

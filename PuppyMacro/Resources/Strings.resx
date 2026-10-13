@@ -1132,8 +1132,9 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Share_Export" xml:space="preserve"><value>Export</value><comment>The title bar's button and the title of its dialog: save loops, macros and remaps to a file.</comment></data>
   <data name="Share_ExportMenu" xml:space="preserve"><value>Export…</value></data>
   <data name="Share_DropToImport" xml:space="preserve"><value>Drop to import</value></data>
-  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Backups open from Settings</value></data>
-  <data name="Share_DropBackupText" xml:space="preserve"><value>A backup replaces all your data, so you open it from {0} › {1}.</value><comment>{0}: the Settings page's name (Settings_Title), {1}: its Backup group (Settings_Backup).</comment></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Restore this backup from Settings</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>Restoring a backup replaces all your loops, macros, remaps and settings. You can do it in {0} › {1}.</value><comment>{0}: the Settings page's name (Settings_Title), {1}: its Backup group (Settings_Backup).</comment></data>
+  <data name="BackupFile_OpenSettings" xml:space="preserve"><value>Open Settings</value></data>
   <data name="BackupFile_Close" xml:space="preserve"><value>Close</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Save loops, macros and remaps to a file, to share them</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Export…</value><comment>In a loop's, macro's or remap's card menu: save it to a file.</comment></data>

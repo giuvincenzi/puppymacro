@@ -740,9 +740,9 @@ public class AppTests
         Assert.True(Retry.WhileFalse(() => list.SelectedItem?.Text == expected, AppSession.Timeout).Success,
             $"the mouse button field shows \"{list.SelectedItem?.Text}\", not \"{expected}\"");
     }
-    /// <summary>A check box of Import's or Export's list, by the item it shows.</summary>
-    private static CheckBox ItemBox(AppSession app, string title) =>
-        Retry.WhileNull(() => app.MainWindow.FindFirstDescendant(cf => cf.ByName(title).And(cf.ByControlType(ControlType.CheckBox))),
+    /// <summary>A check box of Import's or Export's list (in <paramref name="window"/>), by the item it shows.</summary>
+    private static CheckBox ItemBox(Window window, string title) =>
+        Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByName(title).And(cf.ByControlType(ControlType.CheckBox))),
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: $"check box \"{title}\" not found").Result!.AsCheckBox();
 
     [Fact]
@@ -759,24 +759,26 @@ public class AppTests
         // Export…, never pressed here.
         app.FindById(app.MainWindow, "TitleMoreButton").AsButton().Invoke();
         app.MenuItem("Export…").AsMenuItem().Invoke();
-        CheckBox loop = ItemBox(app, "Sample: click every second");
-        Assert.True(app.Has(app.MainWindow, "Sample: type and confirm"));
-        Assert.True(app.HasRow(app.FindById(app.MainWindow, "ExportItemList"), "Sample: type and confirm"));
+        // A window of its own, as the editors: the main window is hidden meanwhile and comes back after.
+        Window export = app.Dialog("Export");
+        CheckBox loop = ItemBox(export, "Sample: click every second");
+        Assert.True(app.Has(export, "Sample: type and confirm"));
+        Assert.True(app.HasRow(app.FindById(export, "ExportItemList"), "Sample: type and confirm"));
         Assert.False(loop.IsChecked);
-        Assert.False(app.FindButton(app.MainWindow, "Export 0 items…").IsEnabled);
+        Assert.False(app.FindButton(export, "Export 0 items…").IsEnabled);
 
         loop.Toggle();
-        Assert.True(app.FindButton(app.MainWindow, "Export 1 item…").IsEnabled);
+        Assert.True(app.FindButton(export, "Export 1 item…").IsEnabled);
 
-        app.FindById(app.MainWindow, "ExportSearchBox").AsTextBox().Text = "hold";
-        Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf =>
+        app.FindById(export, "ExportSearchBox").AsTextBox().Text = "hold";
+        Assert.True(Retry.WhileFalse(() => export.FindFirstDescendant(cf =>
             cf.ByName("Sample: click every second").And(cf.ByControlType(ControlType.CheckBox))) == null, AppSession.Timeout).Success);
-        Assert.False(ItemBox(app, "Sample: hold W").IsChecked);
-        Assert.Equal("1 shown · 1 selected", app.FindById(app.MainWindow, "ExportCountText").Name);
+        Assert.False(ItemBox(export, "Sample: hold W").IsChecked);
+        Assert.Equal("1 shown · 1 selected", app.FindById(export, "ExportCountText").Name);
 
-        app.FindButton(app.MainWindow, "Cancel").Invoke();
-        Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf => cf.ByAutomationId("ExportCountText")) == null,
-            AppSession.Timeout).Success);
+        app.FindButton(export, "Cancel").Invoke();
+        Assert.True(Retry.WhileFalse(() => !HasWindow(app, "Export"), AppSession.Timeout, ignoreException: true).Success);
+        Assert.True(Retry.WhileFalse(() => !app.MainWindow.IsOffscreen, AppSession.Timeout).Success, "the main window did not come back");
     }
 
     [Fact]
@@ -796,12 +798,15 @@ public class AppTests
             // File Explorer starts PuppyMacro with the file: this second one hands it to the running one and exits.
             OpenFromFileExplorer(file);
 
-            Button import = app.FindButton(app.MainWindow, "Import 2 items");
-            Assert.True(app.Has(app.MainWindow, "You already have a macro with this name, so this one is called \"Sample: type and confirm (2)\"."));
-            Assert.True(app.Has(app.MainWindow,
+            Window window = app.Dialog("Import");
+            Button import = app.FindButton(window, "Import 2 items");
+            Assert.True(app.Has(window, "You already have a macro with this name, so this one is called \"Sample: type and confirm (2)\"."));
+            Assert.True(app.Has(window,
                 "F6 is already used by the loop \"Sample: click every second\", so this comes in without a hotkey."));
-            Assert.True(ItemBox(app, "E2E shared loop").IsChecked);
-            Assert.True(app.HasRow(app.FindById(app.MainWindow, "ImportItemList"), "E2E shared loop"));
+            Assert.True(ItemBox(window, "E2E shared loop").IsChecked);
+            Assert.True(app.HasRow(app.FindById(window, "ImportItemList"), "E2E shared loop"));
+            // Its last line, the InfoBar under the list, is shown in full.
+            Assert.True(app.Has(window, "Imported items start disabled."));
             import.Invoke();
 
             Assert.True(app.Has(app.MainWindow, "E2E shared loop"));
@@ -841,8 +846,9 @@ public class AppTests
         {
             OpenFromFileExplorer(file);
 
-            Button import = app.FindButton(app.MainWindow, "Import 1 item");
-            Assert.True(app.Has(app.MainWindow, "CapsLock is already remapped for all apps, so this comes in without a hotkey."));
+            Window window = app.Dialog("Import");
+            Button import = app.FindButton(window, "Import 1 item");
+            Assert.True(app.Has(window, "CapsLock is already remapped for all apps, so this comes in without a hotkey."));
             import.Invoke();
 
             // The Remap page opens on it: no hotkey, what to do, its switch off.
@@ -877,19 +883,20 @@ public class AppTests
         try
         {
             OpenFromFileExplorer(first);
-            Assert.NotNull(ItemBox(app, "E2E first loop"));
+            Window window = app.Dialog("Import");
+            Assert.NotNull(ItemBox(window, "E2E first loop"));
 
             // The second file takes the first one's place in the same Import.
             OpenFromFileExplorer(second);
-            Assert.NotNull(ItemBox(app, "E2E second loop"));
-            Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf =>
+            Assert.NotNull(ItemBox(window, "E2E second loop"));
+            Assert.True(Retry.WhileFalse(() => window.FindFirstDescendant(cf =>
                 cf.ByName("E2E first loop").And(cf.ByControlType(ControlType.CheckBox))) == null, AppSession.Timeout).Success);
 
-            app.FindButton(app.MainWindow, "Cancel").Invoke();
+            app.FindButton(window, "Cancel").Invoke();
+            Assert.True(Retry.WhileFalse(() => !HasWindow(app, "Import"), AppSession.Timeout, ignoreException: true).Success);
 
             // Nothing waits behind it: no other Import opens.
-            Assert.False(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf => cf.ByName("Import 1 item")) != null,
-                TimeSpan.FromSeconds(3)).Success);
+            Assert.False(Retry.WhileFalse(() => HasWindow(app, "Import"), TimeSpan.FromSeconds(3), ignoreException: true).Success);
         }
         finally
         {
@@ -897,6 +904,23 @@ public class AppTests
             File.Delete(second);
         }
     }
+
+    /// <summary>The window of a backup opened from File Explorer: a PuppyMacro started with <paramref name="file"/>.</summary>
+    private static Window BackupWindow(AppSession app, Process backup, string file)
+    {
+        using var attached = FlaUI.Core.Application.Attach(backup.Id);
+        Window window = Retry.WhileNull(() => attached.GetAllTopLevelWindows(app.Automation).FirstOrDefault(w =>
+            w.FindFirstDescendant(cf => cf.ByName("Restore this backup from Settings")) != null), AppSession.Timeout).Result
+            ?? throw new InvalidOperationException("the backup's window did not open");
+        Assert.True(app.Has(window,
+            "Restoring a backup replaces all your loops, macros, remaps and settings. You can do it in Settings › Backup."));
+        Assert.True(app.Has(window, Path.GetFileName(file)));
+        return window;
+    }
+
+    /// <summary>A top-level window of this PuppyMacro has this title.</summary>
+    private static bool HasWindow(AppSession app, string title) =>
+        app.Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(app.ProcessId)).Any(w => w.Name == title);
 
     [Fact]
     public void A_backup_opened_from_File_Explorer_only_says_where_it_opens()
@@ -908,18 +932,37 @@ public class AppTests
         try
         {
             using Process backup = Process.Start(AppSession.ExePath, $"\"{file}\"")!;
-            using var attached = FlaUI.Core.Application.Attach(backup.Id);
-            Window window = Retry.WhileNull(() => attached.GetAllTopLevelWindows(app.Automation).FirstOrDefault(w =>
-                w.FindFirstDescendant(cf => cf.ByName("Backups open from Settings")) != null), AppSession.Timeout).Result
-                ?? throw new InvalidOperationException("the backup's window did not open");
-            Assert.True(app.Has(window, "A backup replaces all your data, so you open it from Settings › Backup."));
-            Assert.True(app.Has(window, Path.GetFileName(file)));
+            Window window = BackupWindow(app, backup, file);
 
             app.FindButton(window, "Close").Invoke();
             Assert.True(backup.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the backup's PuppyMacro did not exit");
             // The PuppyMacro already running is left as it was.
             Assert.False(app.MainWindow.IsOffscreen);
             Assert.True(app.Has(app.MainWindow, "Sample: click every second"));
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+    }
+
+    [Fact]
+    public void A_backup_s_Open_Settings_shows_Settings_Backup_in_the_running_PuppyMacro()
+    {
+        using var app = new AppSession();
+        string file = Path.Combine(Path.GetTempPath(), $"E2E backup {Guid.NewGuid():N}.puppymacro");
+        File.WriteAllText(file, "not read");
+        try
+        {
+            using Process backup = Process.Start(AppSession.ExePath, $"\"{file}\"")!;
+            Window window = BackupWindow(app, backup, file);
+
+            app.FindButton(window, "Open Settings").Invoke();
+            Assert.True(backup.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the backup's PuppyMacro did not exit");
+            // The running PuppyMacro shows Settings with Backup open: its Import… and Export… (never pressed here).
+            Assert.NotNull(app.FindButton(app.MainWindow, "Import…"));
+            Assert.NotNull(app.FindButton(app.MainWindow, "Export…"));
+            Assert.False(app.MainWindow.IsOffscreen);
         }
         finally
         {

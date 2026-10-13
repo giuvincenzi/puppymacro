@@ -5,9 +5,9 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:r="clr-namespace:PuppyMacro.Resources">
 
-    <!-- Export's content, in its ContentDialog (approved design: the Design canvas "PuppyMacro Import and Export", A3; size and
+    <!-- Export's content, in its window (ItemsWindow; approved design: the Design canvas "PuppyMacro Import and Export", A3;
          spacing: the canvas "PuppyMacro Import, remap without key, title bar"): search, kind, then the user's loops, macros and
-         remaps by kind, each with a check box. The dialog gives it its height (DialogFill): the list takes the free space -->
+         remaps by kind, each with a check box. It fills the window: the list takes the free space -->
     <UserControl.Resources>
         <Style x:Key="Description" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />

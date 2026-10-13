@@ -39,9 +39,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Enter overlay
-             mode, More options (Import…, Export…) and Stop all on the right before the window buttons drawn by the library (as its
-             ButtonsOnTitlebar sample) ================= -->
+        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon, name and More options (Import…,
+             Export…) on the left, Enter overlay mode and Stop all on the right before the window buttons drawn by the library (as
+             its ButtonsOnTitlebar sample) ================= -->
         <!-- Left to right in every language: the window buttons the library draws stay on the right (i18n.md) -->
         <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}"
               FlowDirection="LeftToRight">
@@ -61,10 +61,20 @@
                     <Run Text="PuppyMacro" />
                     <Run x:Name="DevBuildRun" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                 </TextBlock>
+                <!-- More options: Import… and Export… of loops, macros and remaps as .puppyitems files (MainWindow.Share.cs; not
+                     the backup), in a menu (approved design B, the Design canvas "PuppyMacro Import, remap without key, title bar"),
+                     16 px after the name (approved: the Design canvas "PuppyMacro title bar, Import, backup window", 1B). Its icon is
+                     shorter than a line of text: it takes Enter overlay mode's height, so the two buttons line up -->
+                <Button x:Name="TitleMoreButton" Margin="16,9,0,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
+                        Height="{Binding ActualHeight, ElementName=OverlayModeButton}"
+                        AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" ToolTip="{x:Static r:Strings.Card_MoreOptions}"
+                        Click="OnTitleMoreClick">
+                    <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.More}" />
+                </Button>
             </StackPanel>
 
 
-            <!-- On the right: Enter overlay mode, More options (Import…, Export…), Stop all, the window buttons. The buttons sit 9 px from the top: the window's
+            <!-- On the right: Enter overlay mode, Stop all, the window buttons. The buttons sit 9 px from the top: the window's
                  1 px border, then 8, so they look 8 px from the top and from the bottom (their bottom line is almost the bar's
                  color), as Microsoft Store's search box -->
             <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
@@ -74,13 +84,6 @@
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
                         <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Main_EnterOverlayMode}" />
                     </StackPanel>
-                </Button>
-                <!-- More options: Import… and Export… of loops, macros and remaps as .puppyitems files (MainWindow.Share.cs; not
-                     the backup), in a menu (approved design B, the Design canvas "PuppyMacro Import, remap without key, title bar") -->
-                <Button x:Name="TitleMoreButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" ToolTip="{x:Static r:Strings.Card_MoreOptions}"
-                        Click="OnTitleMoreClick">
-                    <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.More}" />
                 </Button>
                 <!-- Shown only while something runs. Approved (ui.md): the accent button with its accent colors replaced by
                      the theme's critical one (WinUI lightweight styling), at 90% and 80% on mouse over and press as the
