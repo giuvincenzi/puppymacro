@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -37,11 +39,15 @@ internal static class HotkeyConflicts
     {
         string? conflict = FindForRemap(source, appExe, settings, macros);
         if (conflict != null)
-            return conflict + " Hotkeys take priority over remaps.";
+            return Text(Strings.Hotkey_TakesPriorityOverRemaps, conflict);
 
         var same = settings.Remaps.FirstOrDefault(r => r.Id != editingId && source.Overlaps(r.Source)
             && string.Equals(r.AppExe, appExe, StringComparison.OrdinalIgnoreCase));
-        return same != null ? $"{KeyNames.Format(source)} is already remapped {(appExe == null ? "for all apps" : "for " + appExe)}." : null;
+        if (same == null)
+            return null;
+        return appExe == null
+            ? Text(Strings.Hotkey_AlreadyRemapped, KeyNames.Format(source))
+            : Text(Strings.Hotkey_AlreadyRemappedInApp, KeyNames.Format(source), appExe);
     }
 
     /// <summary>
@@ -53,22 +59,26 @@ internal static class HotkeyConflicts
     {
         string name = KeyNames.Format(binding);
         if (ignoreGlobal != "StopAll" && binding.Overlaps(settings.StopAllHotkey))
-            return $"{name} is already used by Stop all.";
+            return Text(Strings.Hotkey_UsedByStopAll, name);
         if (ignoreGlobal != "OverlayMode" && binding.Overlaps(settings.OverlayModeHotkey))
-            return $"{name} is already used by Overlay mode.";
+            return Text(Strings.Hotkey_UsedByOverlayMode, name);
         if (ignoreGlobal != "Record" && binding.Overlaps(settings.RecordHotkey))
-            return $"{name} is already used by Record.";
+            return Text(Strings.Hotkey_UsedByRecord, name);
 
         var loop = settings.Loops.FirstOrDefault(l => l.Id != ignoreId && binding.Overlaps(l.Hotkey) && clashesWith(l.AppExe));
         if (loop != null)
-            return $"{name} is already used by the loop \"{loop.Name}\"{InApp(loop.AppExe)}.";
+            return loop.AppExe == null
+                ? Text(Strings.Hotkey_UsedByLoop, name, loop.Name)
+                : Text(Strings.Hotkey_UsedByLoopInApp, name, loop.Name, loop.AppExe);
 
         var macro = macros.Macros.FirstOrDefault(m => m.Id != ignoreId && binding.Overlaps(m.Hotkey) && clashesWith(m.AppExe));
         if (macro != null)
-            return $"{name} is already used by the macro \"{macro.Name}\"{InApp(macro.AppExe)}.";
+            return macro.AppExe == null
+                ? Text(Strings.Hotkey_UsedByMacro, name, macro.Name)
+                : Text(Strings.Hotkey_UsedByMacroInApp, name, macro.Name, macro.AppExe);
 
         return null;
     }
 
-    private static string InApp(string? appExe) => appExe == null ? "" : $" in {appExe}";
+    private static string Text(string format, params object[] args) => string.Format(CultureInfo.CurrentCulture, format, args);
 }

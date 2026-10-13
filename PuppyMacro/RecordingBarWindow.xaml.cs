@@ -1,9 +1,12 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
+using PuppyMacro.Services;
 
 namespace PuppyMacro;
 
@@ -19,6 +22,12 @@ public partial class RecordingBarWindow
     {
         InitializeComponent();
         HotkeyText.Text = hotkey;
+        // One sentence around the key cap: the text before {0} and the text after it.
+        string pressToStop = Strings.Recording_PressToStop;
+        int at = pressToStop.IndexOf("{0}", StringComparison.Ordinal);
+        PressText.Text = at < 0 ? pressToStop : pressToStop[..at].Trim();
+        ToStopText.Text = at < 0 ? "" : pressToStop[(at + 3)..].Trim();
+        SetCount(0);
         _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
         _timer.Tick += (_, _) => TimeText.Text = _clock.Elapsed.ToString(@"mm\:ss");
         _timer.Start();
@@ -45,7 +54,7 @@ public partial class RecordingBarWindow
         CountdownPanel.Visibility = Visibility.Visible;
         RecordingPanel.Visibility = Visibility.Collapsed;
         int left = seconds;
-        CountdownText.Text = $"Recording starts in {left}";
+        CountdownText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Recording_StartsIn, left);
         _bigCountdown = new CountdownWindow();
         _bigCountdown.Show();
         _bigCountdown.SetNumber(left);
@@ -55,7 +64,7 @@ public partial class RecordingBarWindow
             left--;
             if (left > 0)
             {
-                CountdownText.Text = $"Recording starts in {left}";
+                CountdownText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Recording_StartsIn, left);
                 _bigCountdown?.SetNumber(left);
                 return;
             }
@@ -97,7 +106,7 @@ public partial class RecordingBarWindow
         Top = work.Top + 18;
     }
 
-    public void SetCount(int events) => CountText.Text = $"{events} {(events == 1 ? "event" : "events")}";
+    public void SetCount(int events) => CountText.Text = Plurals.Format("Recording_Events", events);
 
     private void OnStopClick(object sender, RoutedEventArgs e) => StopRequested?.Invoke();
 

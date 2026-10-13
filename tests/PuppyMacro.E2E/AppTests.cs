@@ -51,6 +51,50 @@ public class AppTests
     }
 
     [Fact]
+    public void A_new_language_is_saved_and_asks_to_restart()
+    {
+        using var app = new AppSession();
+        app.GoTo("Settings");
+
+        var languages = app.FindById(app.MainWindow, "LanguageComboBox").AsComboBox();
+        languages.Expand();
+        string[] names = languages.Items.Select(i => i.Name).ToArray();
+        Assert.Equal("Use system language", names[0]);
+        Assert.Equal("Deutsch", names[1]);
+        Assert.Contains("العربية", names);
+
+        // Later keeps PuppyMacro open in English: the language is used from the next start.
+        languages.Select("Italiano");
+        languages.Collapse();
+        Assert.True(app.Has(app.MainWindow, "PuppyMacro restarts to show Italiano. Running loops and macros stop."));
+        app.FindButton(app.MainWindow, "Later").Invoke();
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"Language\": \"it\""),
+            AppSession.Timeout).Success);
+        Assert.True(app.Has(app.MainWindow, "Settings"));
+    }
+
+    [Theory]
+    [InlineData("it")]
+    [InlineData("ar")]
+    public void The_app_starts_in_the_language_it_is_given(string language)
+    {
+        using var app = new AppSession(language: language);
+        var culture = System.Globalization.CultureInfo.GetCultureInfo(language);
+        string Text(string key) => PuppyMacro.Resources.Strings.ResourceManager.GetString(key, culture)!;
+
+        Assert.Equal(Text("Loops_Add"), app.FindById(app.MainWindow, "AddLoopButton").Name);
+        // Data stays as it is: the samples' names are not translated.
+        Assert.True(app.Has(app.MainWindow, "Sample: click every second"));
+
+        app.GoTo(Text("Rail_Settings"));
+        Assert.True(app.Has(app.MainWindow, Text("Settings_Language")));
+        var languages = app.FindById(app.MainWindow, "LanguageComboBox").AsComboBox();
+        languages.Expand();
+        Assert.Equal(Text("Settings_LanguageSystem"), languages.Items[0].Name);
+        languages.Collapse();
+    }
+
+    [Fact]
     public void Export_offers_everything_or_the_chosen_parts()
     {
         using var app = new AppSession();

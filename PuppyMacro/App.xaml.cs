@@ -1,16 +1,20 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
 using iNKORE.UI.WPF.Modern;
 using Velopack;
+using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
 
 namespace PuppyMacro;
 
@@ -46,6 +50,17 @@ public partial class App : Application
     /// <summary>The development build's marks (the strip, DEV in titles and in the overlay panel) are shown: not in
     /// <see cref="IsScreenshotMode"/>. Its data folder and samples stay a development build's (<see cref="IsDevBuild"/>).</summary>
     public static bool ShowsDevMarks { get; } = IsDevBuild && !IsScreenshotMode;
+
+    /// <summary>Set by the end-to-end tests and make screenshots: a development build in this language (a code of
+    /// <see cref="AppLanguages.All"/>, "en"), whatever the setting and Windows' language, so their texts are known.</summary>
+    public const string LanguageVariable = "PUPPYMACRO_LANGUAGE";
+
+    /// <summary>Windows' display language and regional format, as they were when PuppyMacro started.</summary>
+    private static readonly CultureInfo WindowsLanguage = CultureInfo.CurrentUICulture;
+    private static readonly CultureInfo WindowsFormat = CultureInfo.CurrentCulture;
+
+    /// <summary>The language of the texts since PuppyMacro started (a code of <see cref="AppLanguages.All"/>).</summary>
+    public static string LanguageInUse { get; private set; } = AppLanguages.English;
 
     public static string DisplayTitle { get; } = BuildDisplayTitle();
 
@@ -130,7 +145,8 @@ public partial class App : Application
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
 
-        string? warning = null;
+        // The migration runs before the settings say the language: its warning is written once the language is set.
+        Exception? migrationError = null;
 #if DEBUG
         DevSampleData.WriteIfEmpty();
 #else
@@ -140,19 +156,24 @@ public partial class App : Application
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            warning = $"Your loops and macros could not be copied to {AppPaths.DataFolder}.\n\nDetails: {ex.Message}";
+            migrationError = ex;
         }
 #endif
 
         var store = new SettingsStore(AppPaths.SettingsFile);
         AppSettings settings = store.Load(out string? loadWarning);
-        warning ??= loadWarning;
+        // Before any window: x:Static texts are read when a window is built, and a binding formats with the
+        // FrameworkElement.Language it has then.
+        ApplyLanguage(settings.Language);
+        string? warning = migrationError != null
+            ? string.Format(CultureInfo.CurrentCulture, Strings.App_MigrationFailed, AppPaths.DataFolder, migrationError.Message)
+            : loadWarning;
 
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
         macros.Load(settings.MacroOrder, out string? macroWarning);
         warning ??= macroWarning;
         if (settings.LoadedSchemaVersion < 6 && !macros.FillButtonOpacity(settings.OverlayPanelOpacity))
-            warning ??= "Some macro files could not be updated to this version.";
+            warning ??= Strings.App_MacrosNotUpdated;
 
         // Keep the Run entry pointing at this exe (new versions live in new folders).
         // The development build never touches it: the entry belongs to the installed app.
@@ -173,7 +194,7 @@ public partial class App : Application
             window.OpenItemsFile(itemsFile);
 
         if (warning != null)
-            MessageBox.Show(warning, "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(warning, "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions);
     }
 
     /// <summary>
@@ -205,6 +226,53 @@ public partial class App : Application
         Current.Shutdown();
     }
 
+    /// <summary>The language of the texts with this Language setting (on this Windows).</summary>
+    public static string LanguageFor(string? setting) => AppLanguages.Resolve(setting, WindowsLanguage);
+
+    /// <summary>
+    /// Sets the language of the texts and the format of numbers and dates for every thread, once at start (changing the
+    /// Language setting restarts PuppyMacro). WPF formats bindings with FrameworkElement.Language, which is en-US unless set.
+    /// </summary>
+    private static void ApplyLanguage(string? setting)
+    {
+        string? forced = IsDevBuild ? AppLanguages.Normalize(Environment.GetEnvironmentVariable(LanguageVariable)) : null;
+        LanguageInUse = LanguageFor(forced ?? setting);
+
+        CultureInfo texts = CultureInfo.GetCultureInfo(LanguageInUse);
+        CultureInfo format = AppLanguages.FormatCulture(LanguageInUse, WindowsFormat);
+        CultureInfo.DefaultThreadCurrentUICulture = texts;
+        CultureInfo.DefaultThreadCurrentCulture = format;
+        CultureInfo.CurrentUICulture = texts;
+        CultureInfo.CurrentCulture = format;
+        FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(format.IetfLanguageTag)));
+
+        IsRightToLeft = texts.TextInfo.IsRightToLeft;
+        if (IsRightToLeft)
+        {
+            // Arabic: each window's content and each dialog right to left, before they are drawn. The window frame stays
+            // the library's (its buttons on the right); what must stay left to right says so itself (i18n.md).
+            EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler((sender, _) => RightToLeft((sender as Window)?.Content as FrameworkElement)));
+            EventManager.RegisterClassHandler(typeof(ContentDialog), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler((sender, _) => RightToLeft(sender as FrameworkElement)));
+        }
+    }
+
+    /// <summary>The texts' language reads right to left (Arabic).</summary>
+    public static bool IsRightToLeft { get; private set; }
+
+    /// <summary>Message boxes read right to left in Arabic.</summary>
+    public static MessageBoxOptions MessageBoxOptions =>
+        IsRightToLeft ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : MessageBoxOptions.None;
+
+    /// <summary>Right to left, unless the element sets its own direction (a canvas at the screen's coordinates).</summary>
+    private static void RightToLeft(FrameworkElement? element)
+    {
+        if (element != null && element.ReadLocalValue(FrameworkElement.FlowDirectionProperty) == DependencyProperty.UnsetValue)
+            element.FlowDirection = FlowDirection.RightToLeft;
+    }
+
     /// <summary>Applies System, Light or Dark. System (no theme set) also follows later Windows theme changes.</summary>
     public static void ApplyTheme(AppTheme mode) =>
         ThemeManager.Current.ApplicationTheme = mode switch
@@ -230,7 +298,8 @@ public partial class App : Application
         _showingError = true;
         try
         {
-            MessageBox.Show($"Unexpected error:\n\n{e.Exception.Message}", "PuppyMacro", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, Strings.App_UnexpectedError, e.Exception.Message), "PuppyMacro",
+                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions);
         }
         finally
         {

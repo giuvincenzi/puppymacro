@@ -1,4 +1,5 @@
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -15,14 +16,14 @@ internal static class HotkeyRules
         if (!binding.HasModifiers)
         {
             if (KeyNames.IsPrimaryMouse(binding.Vk))
-                return "Left and right click need Ctrl, Alt, Shift or Win: alone they would block the mouse.";
+                return Strings.Hotkey_ClickNeedsModifier;
             if (KeyNames.IsWheel(binding.Vk))
-                return "The scroll wheel needs Ctrl, Alt, Shift or Win: alone it would block scrolling.";
+                return Strings.Hotkey_WheelNeedsModifier;
             if (binding.Vk == KeyNames.VK_ESCAPE)
-                return "Esc needs Ctrl, Alt, Shift or Win.";
+                return Strings.Hotkey_EscNeedsModifier;
         }
         if (hold && KeyNames.IsWheel(binding.Vk))
-            return "The scroll wheel can't be held down. Switch to Toggle, or choose another hotkey.";
+            return Strings.Hotkey_WheelCantHold;
         return null;
     }
 }

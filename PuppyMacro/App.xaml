@@ -59,8 +59,9 @@
                     <TextBlock Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}" Text="{Binding}" />
                 </Border>
             </DataTemplate>
+            <!-- Keys read left to right in every language, as on the keyboard and in Windows (i18n.md) -->
             <ItemsPanelTemplate x:Key="KeyCapRow">
-                <StackPanel Orientation="Horizontal" />
+                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight" />
             </ItemsPanelTemplate>
         </ResourceDictionary>
     </Application.Resources>

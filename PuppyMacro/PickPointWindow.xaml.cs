@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro;
@@ -35,11 +37,11 @@ public partial class PickPointWindow
         _labels = labels is { Count: > 0 } ? labels : null;
         if (pickApp)
         {
-            Title = "Pick an app";
-            InstructionsText.Text = "Click a window of the app";
+            Title = Strings.Pick_AppTitle;
+            InstructionsText.Text = Strings.Pick_ClickApp;
         }
         if (askedBy != null)
-            InstructionsText.Text = $"{askedBy}: {reason}";
+            InstructionsText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Pick_AskedBy, askedBy, reason);
         _instructions = InstructionsText.Text;
         UpdateCounter();
         Left = SystemParameters.VirtualScreenLeft;
@@ -68,7 +70,7 @@ public partial class PickPointWindow
     private void UpdateCounter()
     {
         if (_count > 1)
-            InstructionsText.Text = $"{Math.Min(_points.Count + 1, _count)} / {_count}   {_instructions}";
+            InstructionsText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Pick_Counter, Math.Min(_points.Count + 1, _count), _count, _instructions);
         if (_labels != null)
             PointLabelText.Text = _labels[Math.Min(_points.Count, _labels.Count - 1)];
     }
@@ -105,7 +107,7 @@ public partial class PickPointWindow
             IsHitTestVisible = false,
             Child = new TextBlock
             {
-                Text = number.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                Text = number.ToString(CultureInfo.CurrentCulture),
                 FontSize = 12,
                 FontWeight = FontWeights.SemiBold,
                 Foreground = System.Windows.Media.Brushes.Black,
@@ -177,7 +179,7 @@ public partial class PickPointWindow
         {
             _hoveredWindow = window.Handle;
             _hoveredApp = AppWindows.ExeName(window.ProcessId);
-            AppLabelText.Text = _hoveredApp.Length > 0 ? _hoveredApp : "Can't read this app's name";
+            AppLabelText.Text = _hoveredApp.Length > 0 ? _hoveredApp : Strings.Pick_CantReadName;
         }
 
         // Physical pixels to this window's units.

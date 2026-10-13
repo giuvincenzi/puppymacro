@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -26,7 +27,7 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     public List<string> TargetParts => KeyNames.Parts(Definition.Target);
     public bool IsAllApps => Definition.AppExe == null;
     public bool IsSpecificApp => Definition.AppExe != null;
-    public string ScopeText => Definition.AppExe ?? "All apps";
+    public string ScopeText => Definition.AppExe ?? Strings.Remaps_AllApps;
     public string Note => Definition.Note;
     public bool HasNote => !string.IsNullOrWhiteSpace(Definition.Note);
     public string SearchText => $"{SourceText} {TargetText} {ScopeText} {Note}";
@@ -46,7 +47,7 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     }
 
     /// <summary>Shown next to the remap, as the loops' and macros' status.</summary>
-    public string Status => Definition.Enabled ? "Enabled" : "Disabled";
+    public string Status => Definition.Enabled ? Strings.Card_StatusEnabled : Strings.Card_StatusDisabled;
 
     public void Refresh() => OnPropertyChanged(string.Empty);
 

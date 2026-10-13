@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -27,38 +28,38 @@ internal static class LoopJson
     {
         check.SameId(l.Id, id);
         if (string.IsNullOrWhiteSpace(l.Name))
-            check.Add("Name", "Enter a name.");
+            check.Add("Name", Strings.Code_EnterName);
         if (l.Actions.Count == 0)
-            check.Add("Actions", "Add at least one action.");
+            check.Add("Actions", Strings.Code_AddAction);
 
         // Fields of version 1.0, converted when settings.json is loaded.
         if (l.KeyVk != null)
-            check.Add("KeyVk", "Not used any more: keys go in \"Actions\". Remove it.");
+            check.Add("KeyVk", Strings.Code_KeyVkOld);
         if (l.IntervalMs != null)
-            check.Add("IntervalMs", "Not used any more: intervals go in \"Actions\". Remove it.");
+            check.Add("IntervalMs", Strings.Code_IntervalMsOld);
         if (l.HotkeyVk != null)
-            check.Add("HotkeyVk", "Not used any more: use \"Hotkey\". Remove it.");
+            check.Add("HotkeyVk", Strings.Code_HotkeyVkOld);
 
         for (int i = 0; i < l.Actions.Count; i++)
         {
             LoopAction a = l.Actions[i];
             string path = $"Actions[{i}]";
             if (a.Type == ActionType.Key && !CodeJson.IsKeyCode(a.KeyVk))
-                check.Add($"{path}.KeyVk", "Choose the key or mouse button: a virtual-key code from 1 to 254.");
+                check.Add($"{path}.KeyVk", Strings.Code_LoopChooseKey);
             if (a.Type == ActionType.Text && string.IsNullOrEmpty(a.Text))
-                check.Add($"{path}.Text", "Enter the text.");
+                check.Add($"{path}.Text", Strings.Code_EnterText);
             if (a.Type == ActionType.Text && a.HoldDown)
-                check.Add($"{path}.HoldDown", "Only Press key and Click can be held down.");
+                check.Add($"{path}.HoldDown", Strings.Code_TextNoHold);
             bool hasInterval = !(a.Type == ActionType.Key && a.HoldDown);
             if (hasInterval && (double.IsNaN(a.IntervalMs) || a.IntervalMs < LoopAction.MinIntervalMs || a.IntervalMs > LoopAction.MaxIntervalMs))
-                check.Add($"{path}.IntervalValue", "The interval must be between 10 ms and 24 h.");
+                check.Add($"{path}.IntervalValue", Strings.Code_IntervalRange);
             CheckPressOptions(a, $"{path}.", check);
         }
 
         check.AppExe(l.AppExe);
         check.Hotkey(l.Hotkey, l.Mode, binding => conflict(binding, AppScope.Normalize(l.AppExe)));
         if (HotkeyIsPressed(l.Hotkey, l.Actions))
-            check.Add("Hotkey", "The hotkey cannot be one of the keys this loop presses.");
+            check.Add("Hotkey", Strings.Code_HotkeyPressed);
         check.KnownSound(l.SoundName);
         check.FloatingButton(l.FloatingButton, l.Mode);
     }
@@ -74,9 +75,9 @@ internal static class LoopJson
     private static void CheckPressOptions(LoopAction a, string path, CodeJson.Checker check)
     {
         bool key = a.Type == ActionType.Key;
-        string? whyNoModifiers = !key ? "Only Press key has Ctrl, Alt, Shift or Win. Remove it."
-            : a.IsClick ? "A click has no Ctrl, Alt, Shift or Win. Remove it."
-            : a.HoldDown ? "Hold down works with a single key. For a combination, use Repeat."
+        string? whyNoModifiers = !key ? Strings.Code_LoopOnlyPressKeyModifiers
+            : a.IsClick ? Strings.Code_ClickNoModifiers
+            : a.HoldDown ? Strings.Code_HoldDownSingleKey
             : null;
         check.KeyModifiers(path, a, whyNoModifiers);
 
@@ -87,14 +88,14 @@ internal static class LoopJson
         }
         if (!key)
         {
-            const string onlyKeys = "Only Press key and Click have it. Remove it.";
+            string onlyKeys = Strings.Code_OnlyPressKeyAndClick;
             NotHere("HoldMs", a.HoldMs, onlyKeys);
             NotHere("Repeat", a.Repeat, onlyKeys);
             NotHere("RepeatPauseMs", a.RepeatPauseMs, onlyKeys);
         }
         if (!a.IsClick)
         {
-            const string onlyClicks = "Only Click has it. Remove it.";
+            string onlyClicks = Strings.Code_OnlyClick;
             NotHere("ClickCount", a.ClickCount, onlyClicks);
             NotHere("X", a.X, onlyClicks);
             NotHere("Y", a.Y, onlyClicks);
@@ -106,9 +107,9 @@ internal static class LoopJson
         if (a.RepeatPauseMs is double pause)
             check.Range(path + "RepeatPauseMs", pause, MacroJson.RepeatPauseMs);
         if (a.IsClick && a.ClickCount is not null and not (1 or 2))
-            check.Add(path + "ClickCount", "Must be 1 (single click), 2 (double click) or null.");
+            check.Add(path + "ClickCount", Strings.Code_ClickCountOrNull);
         if (a.IsClick && (a.X == null) != (a.Y == null))
-            check.Add(path + (a.X == null ? "Y" : "X"), "Set both X and Y for a fixed point, or neither (null: where the pointer is).");
+            check.Add(path + (a.X == null ? "Y" : "X"), Strings.Code_SetBothXYFixed);
         if (a.IsClick && a.X is int x)
             check.Range(path + "X", x, MacroJson.Coordinate);
         if (a.IsClick && a.Y is int y)
@@ -140,22 +141,22 @@ internal static class RemapJson
 
         // The single key of versions before schema 7, converted when settings.json is loaded.
         if (r.SourceVk != null)
-            check.Add("SourceVk", "Not used any more: use \"Source\", like {\"Vk\": 65} for A. Remove it.");
+            check.Add("SourceVk", Strings.Code_SourceVkOld);
 
         bool sourceValid = false;
         if (r.Source is not { IsSet: true } source)
-            check.Add("Source", "Choose the key, mouse button or combination to remap.");
+            check.Add("Source", Strings.Code_ChooseSource);
         else
             sourceValid = check.RemapKey("Source", source);
 
         if (r.Target is not { IsSet: true } target)
-            check.Add("Target", "Choose what to send instead.");
+            check.Add("Target", Strings.Code_ChooseTarget);
         else if (check.RemapKey("Target", target) && r.Source != null && target.SameAs(r.Source))
-            check.Add("Target", "Send something different from what you press.");
+            check.Add("Target", Strings.Code_TargetDifferent);
 
         check.AppExe(r.AppExe);
         if (sourceValid && KeyNames.IsPrimaryMouse(r.Source!.Vk) && !r.Source.HasModifiers && r.AppExe == null)
-            check.Add("AppExe", "Left and right click can be remapped only in a specific app, so they keep working everywhere else.");
+            check.Add("AppExe", Strings.Code_PrimaryMouseNeedsApp);
 
         if (sourceValid && clash(r.Source!, AppScope.Normalize(r.AppExe)) is string message)
             check.Add("Source", message);

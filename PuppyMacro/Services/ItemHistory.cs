@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using PuppyMacro.Models;
 
@@ -18,11 +19,38 @@ public sealed class HistoryVersion
     /// <summary>"You", or the AI app that saved it ("Claude Code"). Empty for the version before the history started.</summary>
     public string By { get; set; } = "";
 
-    /// <summary>One line: "Created", "Hotkey: F6 → F7", "3 changes", "Deleted".</summary>
+    /// <summary>One line in English: "Created", "Hotkey: F6 → F7", "3 changes", "Deleted". Kept for older versions;
+    /// shown when there is no <see cref="SummaryPhrase"/> (versions saved before 1.17).</summary>
     public string Summary { get; set; } = "";
 
-    /// <summary>What changed from the version before, one line each.</summary>
+    /// <summary>What changed from the version before, one line each, in English (as <see cref="Summary"/>).</summary>
     public List<string> Changes { get; set; } = new();
+
+    /// <summary><see cref="Summary"/> in the language of the moment (i18n.md).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Phrase? SummaryPhrase { get; set; }
+
+    /// <summary><see cref="Changes"/> in the language of the moment.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<Phrase>? ChangePhrases { get; set; }
+
+    /// <summary>The summary to show: in the user's language, or as it was saved by an older version.</summary>
+    [JsonIgnore]
+    public string ShownSummary => SummaryPhrase?.TryRender(CultureInfo.CurrentUICulture) ?? Summary;
+
+    /// <summary>The changes to show, as <see cref="ShownSummary"/>.</summary>
+    [JsonIgnore]
+    public List<string> ShownChanges => ChangePhrases?.Select(p => p.TryRender(CultureInfo.CurrentUICulture)).ToList() is { } shown
+        && shown.All(s => s != null) ? shown! : Changes;
+
+    /// <summary>A version whose texts are <paramref name="summary"/> and <paramref name="changes"/>, kept in English too.</summary>
+    internal static HistoryVersion With(Phrase summary, List<Phrase>? changes = null) => new()
+    {
+        Summary = summary.English,
+        SummaryPhrase = summary,
+        Changes = changes?.Select(c => c.English).ToList() ?? new(),
+        ChangePhrases = changes is { Count: > 0 } ? changes : null,
+    };
 
     /// <summary>The item as saved (for a deletion: as it was before).</summary>
     public string Json { get; set; } = "";
@@ -75,17 +103,19 @@ internal sealed class ItemHistory
         versions.Reverse(); // oldest first
         bool restored = versions.Count > 0 && versions[^1].Deleted;
         if (versions.Count == 0 && before != null)
-            versions.Add(new HistoryVersion { Time = _now(), Summary = "Before the history started", Json = before });
+            versions.Add(Version(Phrase.Of("History_BeforeHistory"), before));
 
         // Compared with the last version kept (a deleted item: with what it was when deleted).
         string? baseJson = versions.Count > 0 ? versions[^1].Json : before;
-        List<string> changes = baseJson != null ? Changes(baseJson, json) : new List<string>();
-        string summary = restored ? "Restored"
-            : baseJson == null ? "Created"
+        List<Phrase> changes = baseJson != null ? Diff(baseJson, json) : new List<Phrase>();
+        Phrase summary = restored ? Phrase.Of("History_Restored")
+            : baseJson == null ? Phrase.Of("History_Created")
             : changes.Count == 1 ? changes[0]
-            : changes.Count == 0 ? "Saved"
-            : $"{changes.Count} changes";
-        versions.Add(new HistoryVersion { Time = _now(), By = by, Summary = summary, Changes = changes, Json = json });
+            : changes.Count == 0 ? Phrase.Of("History_Saved")
+            : Phrase.Plural("History_Changes", changes.Count);
+        HistoryVersion version = Version(summary, json, changes);
+        version.By = by;
+        versions.Add(version);
         Write(id, versions);
         _current[id] = json;
     }
@@ -98,9 +128,20 @@ internal sealed class ItemHistory
         List<HistoryVersion> versions = Versions(id);
         versions.Reverse();
         if (versions.Count == 0)
-            versions.Add(new HistoryVersion { Time = _now(), Summary = "Before the history started", Json = json });
-        versions.Add(new HistoryVersion { Time = _now(), By = by, Summary = "Deleted", Json = json, Deleted = true });
+            versions.Add(Version(Phrase.Of("History_BeforeHistory"), json));
+        HistoryVersion deleted = Version(Phrase.Of("History_Deleted"), json);
+        deleted.By = by;
+        deleted.Deleted = true;
+        versions.Add(deleted);
         Write(id, versions);
+    }
+
+    private HistoryVersion Version(Phrase summary, string json, List<Phrase>? changes = null)
+    {
+        HistoryVersion version = HistoryVersion.With(summary, changes);
+        version.Time = _now();
+        version.Json = json;
+        return version;
     }
 
     /// <summary>
@@ -171,19 +212,24 @@ internal sealed class ItemHistory
     private static readonly HashSet<string> KeyObjects = new(StringComparer.Ordinal) { "Hotkey", "Source", "Target" };
 
     /// <summary>
-    /// What changed between two versions of an item's JSON, for people: "Hotkey: F6 → F7", "Added action 3 (Click)",
-    /// "Action 2 (Destroy): Delay 100 → 250".
+    /// What changed between two versions of an item's JSON, for people, in the language of this thread: "Hotkey: F6 → F7",
+    /// "Added action 3 (Click)", "Action 2 (Destroy): Delay 100 → 250". The names of the fields are the Code view's, in
+    /// every language.
     /// </summary>
-    public static List<string> Changes(string beforeJson, string afterJson)
+    public static List<string> Changes(string beforeJson, string afterJson) =>
+        Diff(beforeJson, afterJson).Select(c => c.ToString()).ToList();
+
+    /// <summary><see cref="Changes"/> as phrases, to be kept and shown in the language of the moment.</summary>
+    public static List<Phrase> Diff(string beforeJson, string afterJson)
     {
         JsonObject? before = Parse(beforeJson);
         JsonObject? after = Parse(afterJson);
-        var changes = new List<string>();
+        var changes = new List<Phrase>();
         if (before == null || after == null)
             return changes;
 
-        var a = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        var b = new SortedDictionary<string, string>(StringComparer.Ordinal);
+        var a = new SortedDictionary<string, PhraseArg>(StringComparer.Ordinal);
+        var b = new SortedDictionary<string, PhraseArg>(StringComparer.Ordinal);
         Leaves(before, "", a);
         Leaves(after, "", b);
 
@@ -192,15 +238,16 @@ internal sealed class ItemHistory
         var afterActions = after["Actions"] as JsonArray;
         int beforeCount = beforeActions?.Count ?? 0, afterCount = afterActions?.Count ?? 0;
         for (int i = beforeCount; i < afterCount; i++)
-            changes.Add($"Added action {i + 1}{ActionLabel(afterActions![i])}");
+            changes.Add(ActionPhrase("History_ActionAdded", i, afterActions![i]));
         for (int i = afterCount; i < beforeCount; i++)
-            changes.Add($"Removed action {i + 1}{ActionLabel(beforeActions![i])}");
+            changes.Add(ActionPhrase("History_ActionRemoved", i, beforeActions![i]));
 
+        PhraseArg none = Phrase.Of("History_None");
         foreach (string key in a.Keys.Union(b.Keys).Distinct().OrderBy(k => k, StringComparer.Ordinal))
         {
-            a.TryGetValue(key, out string? old);
-            b.TryGetValue(key, out string? now);
-            if (old == now)
+            a.TryGetValue(key, out PhraseArg? old);
+            b.TryGetValue(key, out PhraseArg? now);
+            if (Same(old, now))
                 continue;
             Match action = Regex.Match(key, @"^Actions\[(\d+)\]\.(.+)$");
             if (action.Success)
@@ -208,14 +255,28 @@ internal sealed class ItemHistory
                 int index = int.Parse(action.Groups[1].Value, CultureInfo.InvariantCulture);
                 if (index >= Math.Min(beforeCount, afterCount))
                     continue; // added or removed above
-                changes.Add($"Action {index + 1}{ActionLabel(afterActions![index])}: {Label(action.Groups[2].Value)} {old ?? "none"} → {now ?? "none"}");
+                Phrase what = ActionPhrase("History_ActionChanged", index, afterActions![index]);
+                what.Args!.AddRange(new[] { (PhraseArg)Label(action.Groups[2].Value), old ?? none, now ?? none });
+                changes.Add(what);
             }
             else if (!key.StartsWith("Actions", StringComparison.Ordinal) && key != "Id") // actions: added or removed above
             {
-                changes.Add($"{Label(key)}: {old ?? "none"} → {now ?? "none"}");
+                changes.Add(Phrase.Of("History_FieldChanged", Label(key), old ?? none, now ?? none));
             }
         }
         return changes;
+    }
+
+    /// <summary>The same value: compared as English text (keys by their names).</summary>
+    private static bool Same(PhraseArg? a, PhraseArg? b) =>
+        a?.TryRender(CultureInfo.InvariantCulture) == b?.TryRender(CultureInfo.InvariantCulture);
+
+    /// <summary>"Added action 3" or, with the action's name or type, "Added action 3 (Click)" (the key's "…Named" text).</summary>
+    private static Phrase ActionPhrase(string key, int index, JsonNode? action)
+    {
+        string number = (index + 1).ToString(CultureInfo.InvariantCulture);
+        string? label = ActionLabel(action);
+        return label == null ? Phrase.Of(key, number) : Phrase.Of(key + "Named", number, label);
     }
 
     private static JsonObject? Parse(string json)
@@ -230,20 +291,20 @@ internal sealed class ItemHistory
         }
     }
 
-    /// <summary>" (Destroy)", the action's name, or " (Click)", its type; "" when it has neither.</summary>
-    private static string ActionLabel(JsonNode? action)
+    /// <summary>"Destroy", the action's name, or "Click", its type; null when it has neither.</summary>
+    private static string? ActionLabel(JsonNode? action)
     {
         if (action is not JsonObject o)
-            return "";
+            return null;
         string? name = (o["Name"] as JsonValue)?.TryGetValue(out string? n) == true ? n : null;
         if (!string.IsNullOrWhiteSpace(name))
-            return $" ({name})";
+            return name;
         string? type = (o["Type"] as JsonValue)?.TryGetValue(out string? t) == true ? t : null;
-        return string.IsNullOrEmpty(type) ? "" : $" ({Label(type)})";
+        return string.IsNullOrEmpty(type) ? null : Label(type);
     }
 
     /// <summary>Every value of the item by its path ("Name", "FloatingButton.Size", "Actions[1].DelayMs"), as shown to people.</summary>
-    private static void Leaves(JsonNode? node, string path, IDictionary<string, string> output)
+    private static void Leaves(JsonNode? node, string path, IDictionary<string, PhraseArg> output)
     {
         string last = path.Contains('.') ? path[(path.LastIndexOf('.') + 1)..] : path;
         switch (node)
@@ -256,29 +317,30 @@ internal sealed class ItemHistory
                     Leaves(value, path.Length == 0 ? key : $"{path}.{key}", output);
                 break;
             case JsonArray array when last == "Path":
-                output[path] = $"a path of {array.Count} points{(array.Count > 0 ? $" ({Hash(array.ToJsonString())})" : "")}";
+                output[path] = Phrase.Plural("History_Path", array.Count,
+                    array.Count > 0 ? $" ({Hash(array.ToJsonString())})" : "");
                 break;
             case JsonArray array:
                 for (int i = 0; i < array.Count; i++)
                     Leaves(array[i], $"{path}[{i}]", output);
                 if (array.Count == 0)
-                    output[path] = "none";
+                    output[path] = Phrase.Of("History_None");
                 break;
             case JsonValue value:
                 output[path] = Show(value);
                 break;
             default:
-                output[path] = "none";
+                output[path] = Phrase.Of("History_None");
                 break;
         }
     }
 
-    private static string KeysOf(JsonObject keys)
+    private static PhraseArg KeysOf(JsonObject keys)
     {
         try
         {
             HotkeyBinding? binding = keys.Deserialize<HotkeyBinding>(CodeJson.Options);
-            return binding is { IsSet: true } ? KeyNames.Format(binding) : "none";
+            return binding is { IsSet: true } ? PhraseArg.Of(binding) : Phrase.Of("History_None");
         }
         catch (Exception ex) when (ex is JsonException or NotSupportedException)
         {
@@ -286,10 +348,10 @@ internal sealed class ItemHistory
         }
     }
 
-    private static string Show(JsonValue value)
+    private static PhraseArg Show(JsonValue value)
     {
         if (value.TryGetValue(out bool flag))
-            return flag ? "On" : "Off";
+            return Phrase.Of(flag ? "History_On" : "History_Off");
         if (value.TryGetValue(out string? text))
             return $"\"{text}\"";
         if (value.TryGetValue(out double number))

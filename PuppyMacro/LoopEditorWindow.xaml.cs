@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
 
@@ -46,13 +47,16 @@ public partial class LoopEditorWindow
         source.Id = _itemId;
         _placeButton = placeButton;
 
-        string title = existing == null ? "Add loop" : $"Edit loop - {existing.Name}";
+        string title = existing == null
+            ? Strings.LoopEditor_AddTitle
+            : string.Format(CultureInfo.CurrentCulture, Strings.LoopEditor_EditNamedTitle, existing.Name);
         Title = title;
 
         _soundName = source.SoundName;
-        SoundChoices.ItemsSource = SoundService.Names;
+        // The sounds by their names in the user's language; the id (the file's value) is the same position in SoundService.Names.
+        SoundChoices.ItemsSource = SoundService.DisplayNames();
         SoundChoices.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
-        SoundChoicesScroll.Attach(SoundScroll, () => _soundName);
+        SoundChoicesScroll.Attach(SoundScroll, () => SoundService.DisplayName(_soundName));
         _actions.CollectionChanged += OnActionsChanged;
         ActionsList.ItemsSource = _actions;
         LoadLoop(source);
@@ -187,14 +191,14 @@ public partial class LoopEditorWindow
 
     private void OnSoundSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (SoundChoices.SelectedItem is string name)
-            _soundName = name;
+        if (SoundChoices.SelectedIndex >= 0)
+            _soundName = SoundService.Names[SoundChoices.SelectedIndex];
     }
 
     /// <summary>A click on a sound picks it and plays it, also when it is already the chosen one.</summary>
     private void OnSoundClick(object sender, RoutedEventArgs e)
     {
-        if ((e.OriginalSource as RadioButton)?.Content is not string name)
+        if ((e.OriginalSource as RadioButton)?.Content is not string shown || SoundService.IdOf(shown) is not string name)
             return;
         _soundName = name;
         _sounds.Preview(name);
@@ -249,30 +253,30 @@ public partial class LoopEditorWindow
         FloatingEditor?.SetHoldMode(HoldRadio.IsChecked == true);
         Validate();
         ActivationHint.Text = HoldRadio.IsChecked == true
-            ? "Runs only while the hotkey is held down."
-            : "Press the hotkey to start, press it again to stop.";
+            ? Strings.LoopEditor_HoldHint
+            : Strings.Editor_ToggleHint;
     }
 
     private string? GetValidationError()
     {
         if (string.IsNullOrWhiteSpace(NameBox.Text))
-            return "Enter a name.";
+            return Strings.Editor_EnterName;
         if (_actions.Count == 0)
-            return "Add at least one action.";
+            return Strings.LoopEditor_NoActionsError;
         if (_actions.Select(a => a.Problem).FirstOrDefault(p => p != null) is string rowProblem)
             return rowProblem;
         // Written so that an empty interval (NaN) fails too.
         if (_actions.Any(a => a.ShowEvery && !(a.IntervalMs >= LoopAction.MinIntervalMs && a.IntervalMs <= LoopAction.MaxIntervalMs)))
-            return "Every interval must be between 10 ms and 24 h.";
+            return Strings.LoopEditor_IntervalError;
         if (AppScopeCard.ValidationError is string appError)
             return appError;
 
         if (_hotkey == null || !_hotkey.IsSet)
-            return HoldRadio.IsChecked == true ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
+            return HoldRadio.IsChecked == true ? Strings.Editor_HoldNeedsHotkey : null;
         if (HotkeyRules.Problem(_hotkey, hold: HoldRadio.IsChecked == true) is string problem)
             return problem;
         if (LoopJson.HotkeyIsPressed(_hotkey, _actions.Select(a => a.ToLoopAction())))
-            return "The hotkey cannot be one of the keys this loop presses.";
+            return Strings.LoopEditor_HotkeyIsPressed;
 
         return HotkeyConflict(_hotkey, SelectedApp);
     }

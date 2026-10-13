@@ -2,7 +2,8 @@
     x:Class="PuppyMacro.Views.ImportItemsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:r="clr-namespace:PuppyMacro.Resources">
 
     <!-- Import's content, in its ContentDialog (approved design: the Design canvas "PuppyMacro Import and Export", A2): the
          file, then its loops, macros and remaps by kind, each with a check box, what changes on import or why it can't -->
@@ -25,7 +26,7 @@
                 <TextBlock x:Name="ImportFileText" TextTrimming="CharacterEllipsis" />
                 <TextBlock x:Name="ImportFromText" Style="{StaticResource Description}" />
             </StackPanel>
-            <Button x:Name="OtherFileButton" Grid.Column="2" VerticalAlignment="Center" Content="Choose another file…"
+            <Button x:Name="OtherFileButton" Grid.Column="2" VerticalAlignment="Center" Content="{x:Static r:Strings.ImportItems_OtherFile}"
                     Click="OnOtherFileClick" />
         </Grid>
 
@@ -33,7 +34,7 @@
                    Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
 
         <StackPanel x:Name="ImportListPanel">
-            <CheckBox x:Name="ImportSelectAllBox" Margin="0,12,0,8" Content="Select all" IsThreeState="True" Click="OnSelectAllClick" />
+            <CheckBox x:Name="ImportSelectAllBox" Margin="0,12,0,8" Content="{x:Static r:Strings.ImportItems_SelectAll}" IsThreeState="True" Click="OnSelectAllClick" />
             <Border BorderThickness="1" CornerRadius="4" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
                 <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
@@ -75,7 +76,7 @@
                 </ScrollViewer>
             </Border>
             <ui:InfoBar Margin="0,12,0,0" IsOpen="True" IsClosable="False" Severity="Informational"
-                        Title="Imported items start disabled." Message="Turn each one on when you have checked what it does." />
+                        Title="{x:Static r:Strings.ImportItems_StartDisabled}" Message="{x:Static r:Strings.ImportItems_StartDisabledMessage}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

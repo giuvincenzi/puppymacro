@@ -36,8 +36,12 @@ developers goes in `.claude/rules/`; how to use the app goes in the user guide.
 
 ## Every user-visible change updates the documentation
 
+The app is translated (`i18n.md`); the website and the guide are only in English and use the English UI texts.
+
 In the same change as the code, for a new feature, changed behavior, new or renamed setting
 or UI text:
+
+- translate every new or changed UI text into every language (`Strings.<code>.resx`, `i18n.md`);
 
 - update the matching file in `site/guide/` (new feature: new file and a line in
   `sections.txt`);

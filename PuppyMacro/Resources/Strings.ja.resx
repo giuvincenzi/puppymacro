@@ -1,0 +1,1057 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ListSeparator" xml:space="preserve"><value>、</value></data>
+  <data name="Day_Today" xml:space="preserve"><value>今日</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>昨日</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>システム</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>ライト</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>ダーク</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>言語</value></data>
+  <data name="Settings_LanguageDescription" xml:space="preserve"><value>変更すると PuppyMacro が再起動します</value></data>
+  <data name="Settings_LanguageSystem" xml:space="preserve"><value>システムの言語を使用する</value></data>
+  <data name="LanguageRestart_Title" xml:space="preserve"><value>PuppyMacro を再起動しますか?</value></data>
+  <data name="LanguageRestart_Content" xml:space="preserve"><value>{0} で表示するために PuppyMacro を再起動します。実行中のループとマクロは停止します。</value></data>
+  <data name="LanguageRestart_Restart" xml:space="preserve"><value>今すぐ再起動</value></data>
+  <data name="LanguageRestart_Later" xml:space="preserve"><value>後で</value></data>
+  <data name="History_BeforeHistory" xml:space="preserve"><value>履歴の開始前</value></data>
+  <data name="History_Created" xml:space="preserve"><value>作成</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>保存</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>削除</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>復元</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0} 件の変更</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>アクション {0} を追加</value></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>アクション {0} ({1}) を追加</value></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>アクション {0} を削除</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>アクション {0} ({1}) を削除</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>アクション {0}: {1} {2} → {3}</value></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>アクション {0} ({1}): {2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>なし</value></data>
+  <data name="History_On" xml:space="preserve"><value>オン</value></data>
+  <data name="History_Off" xml:space="preserve"><value>オフ</value></data>
+  <data name="History_Path_other" xml:space="preserve"><value>{0} 点のパス{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0} (現在)</value></data>
+  <data name="History_You" xml:space="preserve"><value>あなた</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>これは現在のバージョンです。</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>[復元] を選ぶと、このバージョンがエディターに読み込まれます。残すには [保存] を選んでください。現在のバージョンは履歴に残ります。</value></data>
+  <data name="Ai_Connected" xml:space="preserve"><value>接続しました</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>AI アクセスがオフのときに接続しようとしました</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>AI アクセスがオフのときに {0} を呼び出しました</value></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>ループ、マクロ、リマップを読み取りました</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>設定を読み取りました</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>開いているアプリの一覧を取得しました</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>ガイドを読み取りました: {0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>ループ {0} を読み取りました</value></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>マクロ {0} を読み取りました</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>リマップ {0} を読み取りました</value></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>新しいループ</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>新しいマクロ</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>新しいリマップ</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>ループの変更</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>マクロの変更</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>リマップの変更</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>新しいループ {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>新しいマクロ {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>新しいリマップ {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>ループ {0} を変更しました: {1}</value></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>マクロ {0} を変更しました: {1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>リマップ {0} を変更しました: {1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>ループ {0} を削除しました</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>マクロ {0} を削除しました</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>リマップ {0} を削除しました</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>ループ {0} を有効にしました</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>マクロ {0} を有効にしました</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>リマップ {0} を有効にしました</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>ループ {0} を無効にしました</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>マクロ {0} を無効にしました</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>リマップ {0} を無効にしました</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>ループ {0} のフローティング ボタンを配置しました</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>マクロ {0} のフローティング ボタンを配置しました</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>ループ {0} を開きました</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>マクロ {0} を開きました</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>リマップ {0} を開きました</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>設定を変更しました: {0}</value></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>位置の指定を求めました: {0}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>{0} か所の位置の指定を求めました: {1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>アプリの指定を求めました: {0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>キーの指定を求めました: {0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>すべてのループとマクロを停止しました</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{0} → {1} ({2} 内)</value></data>
+  <data name="Ai_Item_loop" xml:space="preserve"><value>ループ {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>マクロ {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>リマップ {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>この新しいループを保存しますか?</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>この新しいマクロを保存しますか?</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>この新しいリマップを保存しますか?</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>ループへのこれらの変更を保存しますか?</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>マクロへのこれらの変更を保存しますか?</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>リマップへのこれらの変更を保存しますか?</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>このループを削除しますか?</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>このマクロを削除しますか?</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>このリマップを削除しますか?</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>このループを有効にしますか?</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>このマクロを有効にしますか?</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>このリマップを有効にしますか?</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>このループを無効にしますか?</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>このマクロを無効にしますか?</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>このリマップを無効にしますか?</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>これらの設定を変更しますか?</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>削除</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>有効にする</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>無効にする</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>適用</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>なし</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>次の設定は復元できません: {0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>テーマ</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>閉じるときにシステム トレイに格納</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>オーバーレイ パネル</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>パネルの項目をクリック</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>オーバーレイ パネルの不透明度</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>サウンドの音量</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>すべて停止のホットキー</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>オーバーレイ モードのホットキー</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>記録のホットキー</value></data>
+  <data name="AiKind_Read" xml:space="preserve"><value>読み取り</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>操作</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>変更</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>接続</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>復元済み</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>保存済み</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>変更して保存済み</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>完了</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>キャンセル済み</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>応答なし</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>拒否</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>エラー</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>復元: {0}</value></data>
+  <data name="Main_EnterOverlayMode" xml:space="preserve"><value>オーバーレイ モードに切り替え</value></data>
+  <data name="Main_StopAll" xml:space="preserve"><value>すべて停止</value></data>
+  <data name="Main_DevelopmentBuild" xml:space="preserve"><value>開発ビルド</value></data>
+  <data name="Main_FilterEnabled" xml:space="preserve"><value>有効</value></data>
+  <data name="Main_FilterDisabled" xml:space="preserve"><value>無効</value></data>
+  <data name="Main_FilterRunning" xml:space="preserve"><value>実行中</value></data>
+  <data name="Loops_Title" xml:space="preserve"><value>ループ</value></data>
+  <data name="Loops_Add" xml:space="preserve"><value>ループを追加</value></data>
+  <data name="Loops_Search" xml:space="preserve"><value>ループを検索</value></data>
+  <data name="Loops_FilterAll" xml:space="preserve"><value>すべてのループ</value></data>
+  <data name="Macros_Title" xml:space="preserve"><value>マクロ</value></data>
+  <data name="Macros_Add" xml:space="preserve"><value>マクロを追加</value></data>
+  <data name="Macros_Record" xml:space="preserve"><value>マクロを記録</value></data>
+  <data name="Macros_Search" xml:space="preserve"><value>マクロを検索</value></data>
+  <data name="Macros_FilterAll" xml:space="preserve"><value>すべてのマクロ</value></data>
+  <data name="Remaps_Title" xml:space="preserve"><value>リマップ</value></data>
+  <data name="Remaps_Add" xml:space="preserve"><value>リマップを追加</value></data>
+  <data name="Remaps_Search" xml:space="preserve"><value>リマップを検索</value></data>
+  <data name="Remaps_FilterAll" xml:space="preserve"><value>すべてのリマップ</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>設定</value></data>
+  <data name="Settings_General" xml:space="preserve"><value>全般</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>テーマ</value></data>
+  <data name="Settings_ThemeDescription" xml:space="preserve"><value>[システム] は Windows の設定に従います</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>閉じるときにシステム トレイに格納</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>ウィンドウを閉じても、システム トレイで実行し続けます</value></data>
+  <data name="Settings_StartWithWindows" xml:space="preserve"><value>Windows の起動時に開始</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>サインイン時にシステム トレイで起動します</value></data>
+  <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>ホットキーとオーバーレイ</value></data>
+  <data name="Settings_Hotkeys" xml:space="preserve"><value>ホットキー</value></data>
+  <data name="Settings_StopAllDescription" xml:space="preserve"><value>すべてのループとマクロを停止します</value></data>
+  <data name="Settings_OverlayMode" xml:space="preserve"><value>オーバーレイ モード</value></data>
+  <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>オーバーレイ モードのオンとオフを切り替えます</value></data>
+  <data name="Settings_Record" xml:space="preserve"><value>記録</value></data>
+  <data name="Settings_RecordDescription" xml:space="preserve"><value>マクロの記録を開始、停止します</value></data>
+  <data name="Settings_OverlayPanel" xml:space="preserve"><value>オーバーレイ パネル</value></data>
+  <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>ループとマクロの一覧</value></data>
+  <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>オーバーレイ パネルを表示する</value></data>
+  <data name="Settings_Opacity" xml:space="preserve"><value>不透明度</value></data>
+  <data name="Settings_OverlayPanelOpacity" xml:space="preserve"><value>オーバーレイ パネルの不透明度</value></data>
+  <data name="Settings_OpacityPreviewItem" xml:space="preserve"><value>左クリック連打</value></data>
+  <data name="Settings_PositionOnScreen" xml:space="preserve"><value>画面上の位置</value></data>
+  <data name="Settings_PositionOnScreenDescription" xml:space="preserve"><value>パネルとフローティング ボタンをドラッグします</value></data>
+  <data name="Settings_ClickInPanel" xml:space="preserve"><value>パネルの項目をクリックして開始または停止する</value></data>
+  <data name="Settings_ClickInPanelDescription" xml:space="preserve"><value>一部の全画面アプリはクリックに反応することがあります。その場合は、これをオフにしてホットキーのみを使用してください。</value></data>
+  <data name="Settings_Sound" xml:space="preserve"><value>サウンド</value></data>
+  <data name="Settings_SoundDescription" xml:space="preserve"><value>ループとマクロの開始音と停止音</value></data>
+  <data name="Settings_SoundVolume" xml:space="preserve"><value>サウンドの音量</value></data>
+  <data name="Settings_DataAndUpdates" xml:space="preserve"><value>データと更新</value></data>
+  <data name="Settings_Backup" xml:space="preserve"><value>バックアップ</value></data>
+  <data name="Settings_ExportOrImport" xml:space="preserve"><value>エクスポートまたはインポート</value></data>
+  <data name="Settings_ExportOrImportDescription" xml:space="preserve"><value>データを 1 つのファイルに保存して、コピーを残したり、PuppyMacro を別の PC に移したりします</value></data>
+  <data name="Settings_ExportButton" xml:space="preserve"><value>エクスポート…</value></data>
+  <data name="Settings_ImportButton" xml:space="preserve"><value>インポート…</value></data>
+  <data name="Settings_OpenDataFolder" xml:space="preserve"><value>データ フォルダーを開く</value></data>
+  <data name="Settings_Updates" xml:space="preserve"><value>更新</value></data>
+  <data name="Settings_WhatsNew" xml:space="preserve"><value>新機能</value></data>
+  <data name="Settings_CheckForUpdates" xml:space="preserve"><value>更新を自動的に確認する</value></data>
+  <data name="Settings_CheckForUpdatesDescription" xml:space="preserve"><value>PuppyMacro の起動時と 12 時間ごと</value></data>
+  <data name="Settings_About" xml:space="preserve"><value>バージョン情報</value></data>
+  <data name="Settings_UserGuide" xml:space="preserve"><value>ユーザー ガイド</value></data>
+  <data name="Settings_NotInDevBuild" xml:space="preserve"><value>開発ビルドでは使用できません</value></data>
+  <data name="Settings_DataSavedIn" xml:space="preserve"><value>データの保存先: {0}</value></data>
+  <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>現在、ホットキーが機能していません:
+{0}</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro はシステム トレイで実行中です。終了するには、アイコンを右クリックしてください。</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>PuppyMacro を開く</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>終了</value></data>
+  <data name="Main_RunningCount_other" xml:space="preserve"><value>{0} 個が実行中</value></data>
+  <data name="Loops_Count_other" xml:space="preserve"><value>{0} 個のループ</value></data>
+  <data name="Loops_CountLine" xml:space="preserve"><value>{0}、{1}</value></data>
+  <data name="Loops_Empty" xml:space="preserve"><value>ループはまだありません。[ループを追加] を選んで作成してください。</value></data>
+  <data name="Loops_NoMatch" xml:space="preserve"><value>検索またはフィルターに一致するループはありません。</value></data>
+  <data name="Main_StopRunningFirst" xml:space="preserve"><value>先に実行中のループとマクロを停止してください</value></data>
+  <data name="Card_Delete" xml:space="preserve"><value>削除</value></data>
+  <data name="Card_MoveUp" xml:space="preserve"><value>上へ移動</value></data>
+  <data name="Card_MoveDown" xml:space="preserve"><value>下へ移動</value></data>
+  <data name="Card_Duplicate" xml:space="preserve"><value>複製</value></data>
+  <data name="Main_Cancel" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="Main_DeleteNamedConfirm" xml:space="preserve"><value>「{0}」を削除しますか? この操作は元に戻せません。</value></data>
+  <data name="Loops_DeleteTitle" xml:space="preserve"><value>ループの削除</value></data>
+  <data name="Macros_Count_other" xml:space="preserve"><value>{0} 個のマクロ</value></data>
+  <data name="Macros_CountLine" xml:space="preserve"><value>{0}、{1}</value></data>
+  <data name="Macros_Empty" xml:space="preserve"><value>マクロはまだありません。記録するか、[マクロを追加] を選んで 1 ステップずつ作成してください。</value></data>
+  <data name="Macros_NoMatch" xml:space="preserve"><value>検索またはフィルターに一致するマクロはありません。</value></data>
+  <data name="Macros_DeleteTitle" xml:space="preserve"><value>マクロの削除</value></data>
+  <data name="Macros_SaveFailed" xml:space="preserve"><value>マクロ「{0}」を保存できませんでした: {1}</value></data>
+  <data name="Settings_NothingToPlace" xml:space="preserve"><value>配置するものがありません。オーバーレイ パネルをオンにするか、フローティング ボタンを追加してください。</value></data>
+  <data name="Main_StopAllTooltip" xml:space="preserve"><value>すべて停止 ({0})</value></data>
+  <data name="Main_EnterOverlayModeTooltip" xml:space="preserve"><value>オーバーレイ モードに切り替え ({0})</value></data>
+  <data name="Settings_SaveFailed" xml:space="preserve"><value>設定を保存できませんでした: {0}</value></data>
+  <data name="Remaps_Count_other" xml:space="preserve"><value>{0} 個のリマップ</value></data>
+  <data name="Remaps_EnabledCount_other" xml:space="preserve"><value>{0} 個が有効</value></data>
+  <data name="Remaps_CountLine" xml:space="preserve"><value>{0}、{1}</value></data>
+  <data name="Remaps_Empty" xml:space="preserve"><value>リマップはまだありません。[リマップを追加] を選んで、キーやボタンを別のものに変えてください。</value></data>
+  <data name="Remaps_NoMatch" xml:space="preserve"><value>検索またはフィルターに一致するリマップはありません。</value></data>
+  <data name="Remaps_DeleteTitle" xml:space="preserve"><value>リマップの削除</value></data>
+  <data name="Remaps_DeleteConfirm" xml:space="preserve"><value>リマップ {0} → {1} を削除しますか? この操作は元に戻せません。</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>エクスポート</value></data>
+  <data name="Export_FileDialogTitle" xml:space="preserve"><value>PuppyMacro のデータのエクスポート</value></data>
+  <data name="Backup_FileFilter" xml:space="preserve"><value>PuppyMacro バックアップ (*{0})|*{0}</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>エクスポートに失敗しました: {0}</value></data>
+  <data name="Backup_ImportFileDialogTitle" xml:space="preserve"><value>PuppyMacro のデータのインポート</value></data>
+  <data name="Backup_ImportFailed" xml:space="preserve"><value>インポートに失敗しました: {0}</value></data>
+  <data name="Backup_ImportTitle" xml:space="preserve"><value>インポート</value></data>
+  <data name="Backup_ImportConfirm" xml:space="preserve"><value>このファイルには {0} が含まれています。現在のデータをこれで置き換えますか?
+ファイルに含まれないものはそのまま残ります。現在のデータは先にデータ フォルダーにバックアップされ、その後 PuppyMacro が再起動します。</value></data>
+  <data name="Backup_ImportAndRestart" xml:space="preserve"><value>インポートして再起動</value></data>
+  <data name="Backup_PartData" xml:space="preserve"><value>ループ、マクロ、リマップ、設定</value></data>
+  <data name="Backup_PartHistory" xml:space="preserve"><value>履歴</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>AI アクティビティ</value></data>
+  <data name="Backup_PartLogs" xml:space="preserve"><value>ログ</value></data>
+  <data name="Main_ListLastAnd" xml:space="preserve"><value>{0}、{1}</value></data>
+  <data name="Update_CheckFailed" xml:space="preserve"><value>更新を確認できませんでした。{0}</value></data>
+  <data name="Update_DownloadFailed" xml:space="preserve"><value>更新をダウンロードできませんでした。{0}</value></data>
+  <data name="Update_NotInstalled" xml:space="preserve"><value>更新を受け取るには、セットアップで PuppyMacro をインストールしてください</value></data>
+  <data name="Update_DownloadingVersion" xml:space="preserve"><value>バージョン {0} をダウンロードしています… {1}%</value></data>
+  <data name="Update_TryAgain" xml:space="preserve"><value>再試行</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>バージョン {0} が利用可能です (現在のバージョン: {1})</value></data>
+  <data name="Update_UpdateAndRestart" xml:space="preserve"><value>更新して再起動</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>更新を確認しています…</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>PuppyMacro {0} は最新の状態です。確認日時: {1}</value></data>
+  <data name="Update_CurrentVersion" xml:space="preserve"><value>PuppyMacro {0}</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>今すぐ確認</value></data>
+  <data name="Update_BarTitle" xml:space="preserve"><value>バージョン {0} が利用可能です</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>ダウンロードしています… {0}%</value></data>
+  <data name="Rail_Pages" xml:space="preserve"><value>ページ</value></data>
+  <data name="Rail_SettingsAndHelp" xml:space="preserve"><value>設定とヘルプ</value></data>
+  <data name="Rail_Loops" xml:space="preserve"><value>ループ</value></data>
+  <data name="Rail_Macros" xml:space="preserve"><value>マクロ</value></data>
+  <data name="Rail_Remap" xml:space="preserve"><value>リマップ</value></data>
+  <data name="Rail_Settings" xml:space="preserve"><value>設定</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>編集</value></data>
+  <data name="Card_Enabled" xml:space="preserve"><value>有効</value></data>
+  <data name="Card_MoreOptions" xml:space="preserve"><value>その他のオプション</value></data>
+  <data name="Card_Play" xml:space="preserve"><value>再生</value></data>
+  <data name="Card_Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="Export_WhatToExport" xml:space="preserve"><value>エクスポートする内容</value></data>
+  <data name="Export_Everything" xml:space="preserve"><value>すべて</value></data>
+  <data name="Export_Choose" xml:space="preserve"><value>エクスポートする内容を選ぶ</value></data>
+  <data name="Export_PartData" xml:space="preserve"><value>ループ、マクロ、リマップ、設定</value></data>
+  <data name="Export_PartHistory" xml:space="preserve"><value>履歴</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>AI アクティビティ</value></data>
+  <data name="Export_PartLogs" xml:space="preserve"><value>ログ</value></data>
+  <data name="Export_EverythingDescription" xml:space="preserve"><value>PuppyMacro を別の PC に移すための完全なコピー · {0}</value></data>
+  <data name="Export_PartDataDescription" xml:space="preserve"><value>常に含まれます · {0}</value></data>
+  <data name="Export_PartHistoryDescription" xml:space="preserve"><value>各ループ、マクロ、リマップの以前のバージョン · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>AI アプリの要求と復元 · {0}</value></data>
+  <data name="Export_PartLogsDescription" xml:space="preserve"><value>トラブルシューティング用 · {0}</value></data>
+  <data name="Export_SizeB" xml:space="preserve"><value>{0} バイト</value></data>
+  <data name="Export_SizeKB" xml:space="preserve"><value>{0} KB</value></data>
+  <data name="Export_SizeMB" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Export_SizeGB" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Card_ToggleWith" xml:space="preserve"><value>切り替え:</value></data>
+  <data name="Card_HoldWith" xml:space="preserve"><value>長押し:</value></data>
+  <data name="Card_ToggleNoHotkey" xml:space="preserve"><value>切り替え、ホットキーなし</value></data>
+  <data name="Card_HoldNoHotkey" xml:space="preserve"><value>長押し、ホットキーなし</value></data>
+  <data name="Card_StatusRunning" xml:space="preserve"><value>実行中</value></data>
+  <data name="Card_StatusIdle" xml:space="preserve"><value>待機中</value></data>
+  <data name="Card_StatusDisabled" xml:space="preserve"><value>無効</value></data>
+  <data name="Card_StatusEnabled" xml:space="preserve"><value>有効</value></data>
+  <data name="Loops_NoActions" xml:space="preserve"><value>アクションなし</value></data>
+  <data name="Loops_ActionsSummary_other" xml:space="preserve"><value>{0} 個のアクション: {1}</value></data>
+  <data name="Loops_IntervalMilliseconds" xml:space="preserve"><value>{0} ミリ秒</value></data>
+  <data name="Loops_IntervalSeconds" xml:space="preserve"><value>{0} 秒</value></data>
+  <data name="Loops_IntervalMinutes" xml:space="preserve"><value>{0} 分</value></data>
+  <data name="Loops_IntervalHours" xml:space="preserve"><value>{0} 時間</value></data>
+  <data name="Loops_HeldDown" xml:space="preserve"><value>{0} を押したまま</value></data>
+  <data name="Loops_KeyEvery" xml:space="preserve"><value>{1} ごとに {0}</value></data>
+  <data name="Loops_KeyTimesEvery_other" xml:space="preserve"><value>{2} ごとに {1} を {0} 回</value></data>
+  <data name="Loops_PastesEvery" xml:space="preserve"><value>{1} ごとに「{0}」を貼り付け</value></data>
+  <data name="Macros_RepeatLoop" xml:space="preserve"><value>ループ</value></data>
+  <data name="Macros_RepeatOnce" xml:space="preserve"><value>1 回</value></data>
+  <data name="Macros_RepeatTimes_other" xml:space="preserve"><value>{0} 回</value></data>
+  <data name="Macros_Summary_other" xml:space="preserve"><value>{0} 個のアクション、{1}、繰り返し: {2}</value></data>
+  <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} 個のアクション、{1}、繰り返し: {2}、速度 ×{3}</value></data>
+  <data name="Remaps_AllApps" xml:space="preserve"><value>すべてのアプリ</value></data>
+  <data name="App_MigrationFailed" xml:space="preserve"><value>ループとマクロを {0} にコピーできませんでした。
+詳細: {1}</value></data>
+  <data name="App_MacrosNotUpdated" xml:space="preserve"><value>一部のマクロ ファイルをこのバージョン用に更新できませんでした。</value></data>
+  <data name="App_UnexpectedError" xml:space="preserve"><value>予期しないエラー:
+{0}</value></data>
+  <data name="App_SettingsReset" xml:space="preserve"><value>設定を読み取れなかったため、リセットされました。
+古いファイルは {0} として保存されました。
+詳細: {1}</value></data>
+  <data name="App_MacroFilesSkipped" xml:space="preserve"><value>一部のマクロ ファイルを読み取れなかったため、スキップしました (例: {0})。</value></data>
+  <data name="Backup_NotABackup" xml:space="preserve"><value>このファイルは PuppyMacro のバックアップではありません。</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>接続中の AI アプリ: 選ぶと AI ページを開きます</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>接続中の AI アプリ</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Claude Desktop や Visual Studio Code など、この PC の AI アプリから PuppyMacro を使えます。普段の言葉で頼むだけで、AI がループ、マクロ、リマップを作成し、すぐに試せます。</value></data>
+  <data name="AiPage_Beta" xml:space="preserve"><value>ベータ</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>PuppyMacro の AI アプリ対応は新しい機能です。動作しますが、今後変わる可能性があり、AI が要求を誤解することもあります。変更はすべて項目の履歴に残るため、いつでも元に戻せます。</value></data>
+  <data name="AiPage_Access" xml:space="preserve"><value>アクセス</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>AI アクセスを許可する</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>この PC の AI アプリが、ループ、マクロ、リマップ、設定を読み取って変更できます。変更はすべて項目の履歴に残ります。</value></data>
+  <data name="AiPage_AskDelete" xml:space="preserve"><value>ループ、マクロ、リマップを削除する前に確認する</value></data>
+  <data name="AiPage_AskDeleteName" xml:space="preserve"><value>削除する前に確認する</value></data>
+  <data name="AiPage_AskChange" xml:space="preserve"><value>ループ、マクロ、リマップを変更する前に確認する</value></data>
+  <data name="AiPage_AskChangeName" xml:space="preserve"><value>変更する前に確認する</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>オフ: AI が作成、変更した項目はすぐに保存され、試せる状態になります。</value></data>
+  <data name="AiPage_AskSettings" xml:space="preserve"><value>設定を変更する前に確認する</value></data>
+  <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>テーマ、グローバル ホットキー、オーバーレイ パネル、サウンド</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>AI アプリが必要とするときに PuppyMacro を起動する</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>オフ: PuppyMacro が閉じている間、AI アプリは PuppyMacro を使えず、開くように案内します。</value></data>
+  <data name="AiPage_Apps" xml:space="preserve"><value>アプリ</value></data>
+  <data name="AiPage_RecentActivity" xml:space="preserve"><value>最近のアクティビティ</value></data>
+  <data name="AiPage_ViewAll" xml:space="preserve"><value>すべて表示</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>要求はまだありません。上で AI アプリを接続し、ループ、マクロ、リマップの作成を頼んでください。</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>PuppyMacro で AI を使う方法</value></data>
+  <data name="AiApps_ConnectedSince" xml:space="preserve"><value>{0} から接続中</value></data>
+  <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>追加しました。接続するには Claude Desktop を再起動してください。</value></data>
+  <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>追加しました。接続するには Copilot Chat を Agent mode で開いてください。</value></data>
+  <data name="AiApps_CodexAdded" xml:space="preserve"><value>追加しました。接続するには Codex を再起動してください。</value></data>
+  <data name="AiApps_InstalledNotConnected" xml:space="preserve"><value>インストール済み、未接続</value></data>
+  <data name="AiApps_VsCodeInstalled" xml:space="preserve"><value>インストール済み。GitHub Copilot と、そこで選んだモデルを使います。</value></data>
+  <data name="AiApps_NotInstalled" xml:space="preserve"><value>未インストール</value></data>
+  <data name="AiApps_Connect" xml:space="preserve"><value>接続</value></data>
+  <data name="AiApps_Remove" xml:space="preserve"><value>削除</value></data>
+  <data name="AiApps_CopyConfiguration" xml:space="preserve"><value>構成をコピー</value></data>
+  <data name="AiApps_ActionName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="AiApps_GetClaude" xml:space="preserve"><value>Claude Desktop を入手</value></data>
+  <data name="AiApps_GetVsCode" xml:space="preserve"><value>Visual Studio Code を入手</value></data>
+  <data name="AiApps_GetCodex" xml:space="preserve"><value>Codex を入手</value></data>
+  <data name="AiApps_OtherApps" xml:space="preserve"><value>その他のアプリ</value></data>
+  <data name="AiApps_OthersConnected" xml:space="preserve"><value>接続中: {0}</value></data>
+  <data name="AiApps_OthersHint" xml:space="preserve"><value>ローカル MCP サーバーに対応したアプリなら使えます。構成をそのアプリの MCP 設定に貼り付けてください。</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>構成をコピーしました。AI アプリの MCP 設定に貼り付けて、アプリを再起動してください。</value></data>
+  <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code が開きませんでした: {0}</value></data>
+  <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Visual Studio Code で削除してください: "MCP: Open User Configuration" を実行して「{0}」を削除します。</value></data>
+  <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>PuppyMacro のフォルダーに、Codex の設定で扱えない文字が含まれています。</value></data>
+  <data name="AiApps_SettingsNotChanged" xml:space="preserve"><value>{0} の設定を変更できませんでした: {1}</value></data>
+  <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>{0} の設定ファイルが JSON オブジェクトではないため、PuppyMacro は変更しませんでした ({1})。</value></data>
+  <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>{0} の設定ファイルの "{1}" がオブジェクトではないため、PuppyMacro は変更しませんでした ({2})。</value></data>
+  <data name="AiApps_SettingsFileError" xml:space="preserve"><value>{0} の設定ファイルにエラーがあるため、PuppyMacro は変更しませんでした: {1} ({2})</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>別のプログラムが PuppyMacro の AI 接続を使用しているため、AI アプリが接続できません。そのプログラムを閉じるか、Windows を再起動してください。</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>AI アプリが接続できません: {0}</value></data>
+  <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>これらの設定は復元できません。</value></data>
+  <data name="AiActivity_CantRestore" xml:space="preserve"><value>この変更は復元できません。</value></data>
+  <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>この変更は復元できません: {0}</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>AI アクティビティ</value></data>
+  <data name="AiActivity_KeptNote" xml:space="preserve"><value>この PC に保存: 最新の要求を最大 20 MB まで。</value></data>
+  <data name="AiActivity_ClearHistory" xml:space="preserve"><value>履歴を消去</value></data>
+  <data name="AiActivity_Close" xml:space="preserve"><value>閉じる</value></data>
+  <data name="AiActivity_Period" xml:space="preserve"><value>期間</value></data>
+  <data name="AiActivity_Last7Days" xml:space="preserve"><value>過去 7 日間</value></data>
+  <data name="AiActivity_Last30Days" xml:space="preserve"><value>過去 30 日間</value></data>
+  <data name="AiActivity_All" xml:space="preserve"><value>すべて</value></data>
+  <data name="AiActivity_App" xml:space="preserve"><value>アプリ</value></data>
+  <data name="AiActivity_Type" xml:space="preserve"><value>種類</value></data>
+  <data name="AiActivity_Result" xml:space="preserve"><value>結果</value></data>
+  <data name="AiActivity_Search" xml:space="preserve"><value>検索</value></data>
+  <data name="AiActivity_SearchPlaceholder" xml:space="preserve"><value>アクティビティを検索</value></data>
+  <data name="AiActivity_AllApps" xml:space="preserve"><value>すべてのアプリ</value></data>
+  <data name="AiActivity_AllTypes" xml:space="preserve"><value>すべての種類</value></data>
+  <data name="AiActivity_AllResults" xml:space="preserve"><value>すべての結果</value></data>
+  <data name="AiActivity_Restore" xml:space="preserve"><value>復元</value></data>
+  <data name="AiActivity_Details" xml:space="preserve"><value>詳細</value></data>
+  <data name="AiActivity_NoRequests" xml:space="preserve"><value>要求はまだありません。</value></data>
+  <data name="AiActivity_NoMatch" xml:space="preserve"><value>フィルターに一致する要求はありません。</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>AI の要求の履歴を削除しますか? この操作は元に戻せません。</value></data>
+  <data name="AiActivity_Clear" xml:space="preserve"><value>消去</value></data>
+  <data name="AiActivity_Cancel" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>AI の要求</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>AI の要求 - {0}</value></data>
+  <data name="AiRequest_AskedBy" xml:space="preserve"><value>要求元: {0}</value></data>
+  <data name="AiRequest_Instructions" xml:space="preserve"><value>手順</value></data>
+  <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>
+  <data name="AiRequest_KeyHeader" xml:space="preserve"><value>キーまたは組み合わせ</value></data>
+  <data name="AiRequest_KeyDescription" xml:space="preserve"><value>組み合わせにするには、先に Ctrl、Alt、Shift、Win のいずれかを押したままにします。Ctrl、Alt、Shift、Win を単独で使うには、押して離します。</value></data>
+  <data name="AiRequest_KeyPrompt" xml:space="preserve"><value>キーまたは組み合わせを押してください (Esc でキャンセル)</value></data>
+  <data name="AiRequest_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="AiRequest_Cancel" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="AiRequest_NoticeWithDescription" xml:space="preserve"><value>{0} ({1} からの要求)</value></data>
+  <data name="AiRequest_NoticeAskedBy" xml:space="preserve"><value>{0} からの要求です。</value></data>
+  <data name="AiReady_AppAsks" xml:space="preserve"><value>{0} からの依頼</value></data>
+  <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
+  <data name="AiReady_Hint" xml:space="preserve"><value>準備ができたら {0} を押してください · {1} でキャンセル</value></data>
+  <data name="AiReady_Start" xml:space="preserve"><value>開始</value></data>
+  <data name="Pick_Title" xml:space="preserve"><value>位置の選択</value></data>
+  <data name="Pick_ClickPoint" xml:space="preserve"><value>カーソルの移動先をクリックしてください</value></data>
+  <data name="Pick_Cancel" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="Pick_AppTitle" xml:space="preserve"><value>アプリの選択</value></data>
+  <data name="Pick_ClickApp" xml:space="preserve"><value>アプリのウィンドウをクリックしてください</value></data>
+  <data name="Pick_AskedBy" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Pick_Counter" xml:space="preserve"><value>{0} / {1}   {2}</value></data>
+  <data name="Pick_CantReadName" xml:space="preserve"><value>このアプリの名前を読み取れません</value></data>
+  <data name="Placement_Title" xml:space="preserve"><value>オーバーレイの配置</value></data>
+  <data name="Placement_DragPanel" xml:space="preserve"><value>パネルを目的の場所にドラッグしてください</value></data>
+  <data name="Placement_DragPanelAndButtons" xml:space="preserve"><value>パネルとボタンを目的の場所にドラッグしてください</value></data>
+  <data name="Placement_DragButton" xml:space="preserve"><value>ボタンを目的の場所にドラッグしてください</value></data>
+  <data name="Placement_DragButtons" xml:space="preserve"><value>ボタンを目的の場所にドラッグしてください</value></data>
+  <data name="Placement_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Placement_Cancel" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="Placement_Arrows" xml:space="preserve"><value>方向キー</value></data>
+  <data name="Placement_Nudge" xml:space="preserve"><value>1 ピクセル移動 (Shift: 10)</value></data>
+  <data name="Placement_NudgeSelected" xml:space="preserve"><value>選択した要素を 1 ピクセル移動 (Shift: 10)</value></data>
+  <data name="Placement_Selection" xml:space="preserve"><value>{0}   X {1}   Y {2}</value></data>
+  <data name="MacroEditor_EditTitle" xml:space="preserve"><value>マクロの編集</value></data>
+  <data name="Editor_Name" xml:space="preserve"><value>名前</value></data>
+  <data name="MacroEditor_NamePlaceholder" xml:space="preserve"><value>例: クラフトと分解</value></data>
+  <data name="Editor_Actions" xml:space="preserve"><value>アクション</value></data>
+  <data name="MacroEditor_AddAction" xml:space="preserve"><value>アクションを追加</value></data>
+  <data name="MacroEditor_Record" xml:space="preserve"><value>記録</value></data>
+  <data name="MacroEditor_RecordActions" xml:space="preserve"><value>アクションを記録</value></data>
+  <data name="Editor_Test" xml:space="preserve"><value>テスト</value></data>
+  <data name="MacroEditor_TestAction" xml:space="preserve"><value>アクションをテスト</value></data>
+  <data name="MacroEditor_TestTooltip" xml:space="preserve"><value>選択したアクションを背後のウィンドウで 1 回再生します</value></data>
+  <data name="MacroEditor_Edit" xml:space="preserve"><value>編集</value></data>
+  <data name="MacroEditor_EditAction" xml:space="preserve"><value>アクションを編集</value></data>
+  <data name="MacroEditor_Copy" xml:space="preserve"><value>コピー</value></data>
+  <data name="MacroEditor_CopyTooltip" xml:space="preserve"><value>選択したアクションをコピーして、ここか別のマクロに貼り付けます (Ctrl+C)</value></data>
+  <data name="MacroEditor_Paste" xml:space="preserve"><value>貼り付け</value></data>
+  <data name="MacroEditor_PasteTooltip" xml:space="preserve"><value>コピーしたアクションを、新しいアクションの挿入位置に貼り付けます (Ctrl+V)</value></data>
+  <data name="MacroEditor_Duplicate" xml:space="preserve"><value>複製</value></data>
+  <data name="MacroEditor_DuplicateTooltip" xml:space="preserve"><value>選択したアクションを複製します (Ctrl+D)</value></data>
+  <data name="MacroEditor_Group" xml:space="preserve"><value>グループ化</value></data>
+  <data name="MacroEditor_GroupTooltip" xml:space="preserve"><value>選択したアクションをグループにまとめます (Ctrl+G)</value></data>
+  <data name="MacroEditor_Delete" xml:space="preserve"><value>削除</value></data>
+  <data name="MacroEditor_DeleteTooltip" xml:space="preserve"><value>選択したアクションを削除します (Delete)</value></data>
+  <data name="MacroEditor_RenameGroup" xml:space="preserve"><value>グループ名の変更</value></data>
+  <data name="MacroEditor_Ungroup" xml:space="preserve"><value>グループ解除</value></data>
+  <data name="MacroEditor_UngroupTooltip" xml:space="preserve"><value>グループ解除 (アクションは残します)</value></data>
+  <data name="MacroEditor_ExpandAllGroups" xml:space="preserve"><value>すべてのグループを展開</value></data>
+  <data name="MacroEditor_CollapseAllGroups" xml:space="preserve"><value>すべてのグループを折りたたむ</value></data>
+  <data name="MacroEditor_Shortcuts" xml:space="preserve"><value>ショートカット</value></data>
+  <data name="MacroEditor_CompactList" xml:space="preserve"><value>コンパクトな一覧</value></data>
+  <data name="MacroEditor_CompactListTooltip" xml:space="preserve"><value>コンパクトな一覧: 行を小さくします</value></data>
+  <data name="MacroEditor_DensityNormal" xml:space="preserve"><value>標準</value></data>
+  <data name="MacroEditor_DensityCompact" xml:space="preserve"><value>コンパクト</value></data>
+  <data name="MacroEditor_DelayTooltip" xml:space="preserve"><value>このアクションの前の遅延</value></data>
+  <data name="MacroEditor_NoActions" xml:space="preserve"><value>アクションはまだありません。アクションを記録するか、1 つずつ追加してください。</value></data>
+  <data name="Editor_Enabled" xml:space="preserve"><value>有効</value></data>
+  <data name="MacroEditor_Repeat" xml:space="preserve"><value>繰り返し</value></data>
+  <data name="MacroEditor_Once" xml:space="preserve"><value>1 回</value></data>
+  <data name="MacroEditor_Loop" xml:space="preserve"><value>ループ</value></data>
+  <data name="MacroEditor_NTimes" xml:space="preserve"><value>N 回</value></data>
+  <data name="MacroEditor_Times" xml:space="preserve"><value>回数</value></data>
+  <data name="MacroEditor_Speed" xml:space="preserve"><value>速度</value></data>
+  <data name="Editor_Activation" xml:space="preserve"><value>起動方法</value></data>
+  <data name="Editor_Toggle" xml:space="preserve"><value>切り替え</value></data>
+  <data name="Editor_Hold" xml:space="preserve"><value>長押し</value></data>
+  <data name="Editor_Hotkey" xml:space="preserve"><value>ホットキー</value></data>
+  <data name="Editor_HotkeyHelp" xml:space="preserve"><value>F2 や A など、任意のキーまたはマウス ボタン。組み合わせにするには、先に Ctrl、Alt、Shift、Win のいずれかを押したままにします。左クリック、右クリック、スクロール ホイール、Esc には組み合わせが必要です。長押しにはホットキーが必要です。</value></data>
+  <data name="Editor_Sound" xml:space="preserve"><value>サウンド</value></data>
+  <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>マクロの開始時と停止時に再生されます</value></data>
+  <data name="Editor_SoundChoose" xml:space="preserve"><value>サウンドをクリックして選び、開始音と停止音を確認します</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Editor_Cancel" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="LoopEditor_AddTitle" xml:space="preserve"><value>ループの追加</value></data>
+  <data name="LoopEditor_NamePlaceholder" xml:space="preserve"><value>例: 左クリック連打</value></data>
+  <data name="LoopEditor_PressKey" xml:space="preserve"><value>キーを押す</value></data>
+  <data name="LoopEditor_Click" xml:space="preserve"><value>クリック</value></data>
+  <data name="LoopEditor_PasteText" xml:space="preserve"><value>テキストの貼り付け</value></data>
+  <data name="LoopEditor_SoundDescription" xml:space="preserve"><value>ループの開始時と停止時に再生されます</value></data>
+  <data name="RemapEditor_AddTitle" xml:space="preserve"><value>リマップの追加</value></data>
+  <data name="RemapEditor_WhenIPress" xml:space="preserve"><value>押すキー</value></data>
+  <data name="RemapEditor_SendInstead" xml:space="preserve"><value>代わりに送信</value></data>
+  <data name="RemapEditor_KeyDescription" xml:space="preserve"><value>キー、マウス ボタン、または組み合わせ (先に Ctrl、Alt、Shift、Win のいずれかを押したままにします)。Ctrl、Alt、Shift、Win を単独で使うには、押して離します。</value></data>
+  <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>キーまたは組み合わせを押してください (Esc でキャンセル)</value></data>
+  <data name="RemapEditor_Note" xml:space="preserve"><value>メモ (省略可能)</value></data>
+  <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>例: サイド ボタンで更新</value></data>
+  <data name="ActionWindow_Title" xml:space="preserve"><value>アクション</value></data>
+  <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>このアクションを背後のウィンドウで 1 回再生します</value></data>
+  <data name="ActionWindow_Name" xml:space="preserve"><value>名前 (省略可能)</value></data>
+  <data name="ActionWindow_NameDescription" xml:space="preserve"><value>一覧に太字で表示されます</value></data>
+  <data name="ActionWindow_NamePlaceholder" xml:space="preserve"><value>例: インベントリを開く</value></data>
+  <data name="ActionWindow_Delay" xml:space="preserve"><value>遅延</value></data>
+  <data name="ActionWindow_DelayDescription" xml:space="preserve"><value>このアクションの前に待機します</value></data>
+  <data name="Editor_Ms" xml:space="preserve"><value>ミリ秒</value></data>
+  <data name="Group_Title" xml:space="preserve"><value>アクションのグループ化</value></data>
+  <data name="Group_Name" xml:space="preserve"><value>グループ名</value></data>
+  <data name="Group_NamePlaceholder" xml:space="preserve"><value>例: 作業台を開く</value></data>
+  <data name="Group_Ok" xml:space="preserve"><value>グループ化</value></data>
+  <data name="MacroEditor_AddTitle" xml:space="preserve"><value>マクロの追加</value></data>
+  <data name="MacroEditor_EditNamedTitle" xml:space="preserve"><value>マクロの編集 - {0}</value></data>
+  <data name="MacroEditor_SpeedValue" xml:space="preserve"><value>×{0}</value></data>
+  <data name="MacroEditor_ActionNumber" xml:space="preserve"><value>#{0}</value></data>
+  <data name="MacroEditor_ActionRange" xml:space="preserve"><value>#{0}–{1}</value></data>
+  <data name="MacroEditor_GroupInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="MacroEditor_Total" xml:space="preserve"><value>{0}、等速 (×1) で {1}</value></data>
+  <data name="MacroEditor_TotalInGroups" xml:space="preserve"><value>{0} ({1})、等速 (×1) で {2}</value></data>
+  <data name="MacroEditor_ActionCount_other" xml:space="preserve"><value>{0} 個のアクション</value></data>
+  <data name="MacroEditor_GroupCount_other" xml:space="preserve"><value>{0} 個のグループ</value></data>
+  <data name="MacroEditor_InsertAfterGroup" xml:space="preserve"><value>新しいアクションはグループ「{0}」の後に挿入されます</value></data>
+  <data name="MacroEditor_InsertAfterInGroup" xml:space="preserve"><value>新しいアクションは「{1}」内の #{0} の後に挿入されます</value></data>
+  <data name="MacroEditor_InsertAfter" xml:space="preserve"><value>新しいアクションは #{0} の後に挿入されます</value></data>
+  <data name="MacroEditor_InsertAtEnd" xml:space="preserve"><value>新しいアクションは末尾に挿入されます</value></data>
+  <data name="MacroEditor_Selected_other" xml:space="preserve"><value>{0} 個のアクションを選択中 · {1}</value></data>
+  <data name="MacroEditor_NoneSelected" xml:space="preserve"><value>アクションを選択すると、編集、グループ化、コピーなどができます · {0}</value></data>
+  <data name="MacroEditor_DelayHeader" xml:space="preserve"><value>このアクションの前の遅延 (ミリ秒)</value></data>
+  <data name="Editor_Close" xml:space="preserve"><value>閉じる</value></data>
+  <data name="MacroEditor_NewGroupName" xml:space="preserve"><value>グループ {0}</value></data>
+  <data name="MacroEditor_HoldHint" xml:space="preserve"><value>ホットキーを押している間だけ再生されます。</value></data>
+  <data name="Editor_ToggleHint" xml:space="preserve"><value>ホットキーを押すと開始し、もう一度押すと停止します。</value></data>
+  <data name="Editor_EnterName" xml:space="preserve"><value>名前を入力してください。</value></data>
+  <data name="MacroEditor_NoActionsError" xml:space="preserve"><value>アクションを 1 つ以上追加または記録してください。</value></data>
+  <data name="Editor_HoldNeedsHotkey" xml:space="preserve"><value>長押しにはホットキーが必要です。ホットキーを選ぶか、切り替えに変更してください。</value></data>
+  <data name="LoopEditor_EditNamedTitle" xml:space="preserve"><value>ループの編集 - {0}</value></data>
+  <data name="LoopEditor_HoldHint" xml:space="preserve"><value>ホットキーを押している間だけ実行されます。</value></data>
+  <data name="LoopEditor_NoActionsError" xml:space="preserve"><value>アクションを 1 つ以上追加してください。</value></data>
+  <data name="LoopEditor_IntervalError" xml:space="preserve"><value>間隔はすべて 10 ミリ秒から 24 時間の範囲で指定してください。</value></data>
+  <data name="LoopEditor_HotkeyIsPressed" xml:space="preserve"><value>このループが押すキーをホットキーにすることはできません。</value></data>
+  <data name="RemapEditor_EditNamedTitle" xml:space="preserve"><value>リマップの編集 - {0}</value></data>
+  <data name="RemapEditor_EditKeysTitle" xml:space="preserve"><value>リマップの編集 - {0} → {1}</value></data>
+  <data name="RemapEditor_NoSourceError" xml:space="preserve"><value>リマップするキー、マウス ボタン、または組み合わせを選んでください。</value></data>
+  <data name="RemapEditor_NoTargetError" xml:space="preserve"><value>代わりに送信するものを選んでください。</value></data>
+  <data name="RemapEditor_SameKeysError" xml:space="preserve"><value>押すものとは異なるものを送信してください。</value></data>
+  <data name="RemapEditor_PrimaryMouseError" xml:space="preserve"><value>左クリックと右クリックは特定のアプリでのみリマップできます。ほかの場所では通常どおり機能させるためです。</value></data>
+  <data name="ActionWindow_Type_PressKey" xml:space="preserve"><value>キーを押す</value></data>
+  <data name="ActionWindow_Type_KeyDown" xml:space="preserve"><value>キー ダウン</value></data>
+  <data name="ActionWindow_Type_KeyUp" xml:space="preserve"><value>キー アップ</value></data>
+  <data name="ActionWindow_Type_Click" xml:space="preserve"><value>クリック</value></data>
+  <data name="ActionWindow_Type_MouseDown" xml:space="preserve"><value>マウス ボタン ダウン</value></data>
+  <data name="ActionWindow_Type_MouseUp" xml:space="preserve"><value>マウス ボタン アップ</value></data>
+  <data name="ActionWindow_Type_MoveTo" xml:space="preserve"><value>移動</value></data>
+  <data name="ActionWindow_Type_MovePath" xml:space="preserve"><value>経路に沿って移動</value></data>
+  <data name="ActionWindow_Type_Scroll" xml:space="preserve"><value>スクロール</value></data>
+  <data name="ActionWindow_Type_PasteText" xml:space="preserve"><value>テキストの貼り付け</value></data>
+  <data name="ActionWindow_Add_PressKey" xml:space="preserve"><value>キーを押すアクションの追加</value></data>
+  <data name="ActionWindow_Add_KeyDown" xml:space="preserve"><value>キー ダウンの追加</value></data>
+  <data name="ActionWindow_Add_KeyUp" xml:space="preserve"><value>キー アップの追加</value></data>
+  <data name="ActionWindow_Add_Click" xml:space="preserve"><value>クリックの追加</value></data>
+  <data name="ActionWindow_Add_MouseDown" xml:space="preserve"><value>マウス ボタン ダウンの追加</value></data>
+  <data name="ActionWindow_Add_MouseUp" xml:space="preserve"><value>マウス ボタン アップの追加</value></data>
+  <data name="ActionWindow_Add_MoveTo" xml:space="preserve"><value>移動の追加</value></data>
+  <data name="ActionWindow_Add_MovePath" xml:space="preserve"><value>経路に沿った移動の追加</value></data>
+  <data name="ActionWindow_Add_Scroll" xml:space="preserve"><value>スクロールの追加</value></data>
+  <data name="ActionWindow_Add_PasteText" xml:space="preserve"><value>テキストの貼り付けの追加</value></data>
+  <data name="ActionWindow_Edit_PressKey" xml:space="preserve"><value>キーを押すアクションの編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyDown" xml:space="preserve"><value>キー ダウンの編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyUp" xml:space="preserve"><value>キー アップの編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_Click" xml:space="preserve"><value>クリックの編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseDown" xml:space="preserve"><value>マウス ボタン ダウンの編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseUp" xml:space="preserve"><value>マウス ボタン アップの編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_MoveTo" xml:space="preserve"><value>移動の編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_MovePath" xml:space="preserve"><value>経路に沿った移動の編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_Scroll" xml:space="preserve"><value>スクロールの編集 - {0}</value></data>
+  <data name="ActionWindow_Edit_PasteText" xml:space="preserve"><value>テキストの貼り付けの編集 - {0}</value></data>
+  <data name="Shortcuts_Select" xml:space="preserve"><value>選択</value></data>
+  <data name="Shortcuts_Click" xml:space="preserve"><value>クリック</value></data>
+  <data name="Shortcuts_CtrlClick" xml:space="preserve"><value>アクションを選択範囲に追加する、または選択範囲から外す</value></data>
+  <data name="Shortcuts_ShiftClick" xml:space="preserve"><value>このアクションまでのすべてのアクションを選択する</value></data>
+  <data name="Shortcuts_Move" xml:space="preserve"><value>移動</value></data>
+  <data name="Shortcuts_Drag" xml:space="preserve"><value>ドラッグ</value></data>
+  <data name="Shortcuts_DragWhat" xml:space="preserve"><value>選択したアクションを移動する (グループへの出し入れも可能)</value></data>
+  <data name="Shortcuts_MoveUpDown" xml:space="preserve"><value>選択したアクションを上下に移動する</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>編集</value></data>
+  <data name="Shortcuts_DoubleClick" xml:space="preserve"><value>ダブルクリック</value></data>
+  <data name="Shortcuts_DoubleClickWhat" xml:space="preserve"><value>アクションを編集する、グループを開く/閉じる</value></data>
+  <data name="Shortcuts_RightClick" xml:space="preserve"><value>右クリック</value></data>
+  <data name="Shortcuts_RightClickWhat" xml:space="preserve"><value>選択したアクションのコマンドを表示する</value></data>
+  <data name="Shortcuts_Group" xml:space="preserve"><value>選択したアクションをグループにまとめる</value></data>
+  <data name="Shortcuts_Duplicate" xml:space="preserve"><value>選択したアクションを複製する</value></data>
+  <data name="Shortcuts_Copy" xml:space="preserve"><value>選択したアクションをコピーして、ここか別のマクロに貼り付ける</value></data>
+  <data name="Shortcuts_Paste" xml:space="preserve"><value>コピーしたアクションを、新しいアクションの挿入位置に貼り付ける</value></data>
+  <data name="Shortcuts_Delete" xml:space="preserve"><value>選択したアクションを削除する</value></data>
+  <data name="Shortcuts_Note" xml:space="preserve"><value>新しいアクションは、選択したアクションまたはグループの後か、末尾に挿入されます。[テスト] を選ぶと、選択したアクションを PuppyMacro の背後のウィンドウで 1 回再生します。</value></data>
+  <data name="Editor_FormView" xml:space="preserve"><value>フォーム ビュー</value></data>
+  <data name="Editor_CodeView" xml:space="preserve"><value>コード ビュー</value></data>
+  <data name="Editor_CodeViewTooltip" xml:space="preserve"><value>JSON として編集します。Ctrl+Space で候補を表示します</value></data>
+  <data name="Editor_History" xml:space="preserve"><value>履歴</value></data>
+  <data name="Editor_HistoryTooltip" xml:space="preserve"><value>保存されたバージョン: 誰が何を変更したか、および復元</value></data>
+  <data name="CodeView_Format" xml:space="preserve"><value>フォーマット</value></data>
+  <data name="CodeView_FormatTooltip" xml:space="preserve"><value>コードをフォーマットします (Shift+Alt+F)</value></data>
+  <data name="CodeView_Loading" xml:space="preserve"><value>コード エディターを読み込んでいます…</value></data>
+  <data name="CodeView_EditorName" xml:space="preserve"><value>コード エディター</value></data>
+  <data name="CodeView_Stopped" xml:space="preserve"><value>コード エディターが停止しました。このウィンドウを閉じて、もう一度開いてください。</value></data>
+  <data name="CodeView_NeedsWebView2" xml:space="preserve"><value>コード ビューには Microsoft Edge WebView2 ランタイムが必要です。Microsoft からインストールして、このウィンドウをもう一度開いてください。</value></data>
+  <data name="CodeView_CouldNotStart" xml:space="preserve"><value>コード エディターを起動できませんでした: {0}</value></data>
+  <data name="CodeView_Checking" xml:space="preserve"><value>確認しています…</value></data>
+  <data name="CodeView_NoProblems" xml:space="preserve"><value>問題はありません。</value></data>
+  <data name="CodeView_CheckerFailed" xml:space="preserve"><value>コード チェッカーを起動できませんでした: {0}</value></data>
+  <data name="CodeView_Problems" xml:space="preserve"><value>問題</value></data>
+  <data name="CodeView_ProblemsTitle" xml:space="preserve"><value>問題</value></data>
+  <data name="CodeView_Position" xml:space="preserve"><value>行 {0}、列 {1}</value></data>
+  <data name="CodeView_FixProblems_other" xml:space="preserve"><value>{0} 件の問題を修正するか、変更を破棄してください。</value></data>
+  <data name="CodeView_DiscardChanges" xml:space="preserve"><value>変更を破棄</value></data>
+  <data name="CodeView_DiscardChangesTooltip" xml:space="preserve"><value>コードの変更を元に戻して、フォーム ビューに戻ります</value></data>
+  <data name="HistoryView_Empty" xml:space="preserve"><value>バージョンはまだありません。保存するたびに、そのバージョンがここに残ります。</value></data>
+  <data name="HistoryView_Versions" xml:space="preserve"><value>バージョン</value></data>
+  <data name="HistoryView_ChangesTitle" xml:space="preserve"><value>前のバージョンからの変更:</value></data>
+  <data name="HistoryView_Restore" xml:space="preserve"><value>このバージョンを復元</value></data>
+  <data name="HistoryView_RestoredTitle" xml:space="preserve"><value>{0:g} のバージョンがエディターに読み込まれました。</value></data>
+  <data name="HistoryView_RestoredMessage" xml:space="preserve"><value>残すには [保存] を、元のままにするには [キャンセル] を選んでください。</value></data>
+  <data name="AppScope_Header" xml:space="preserve"><value>特定のアプリ</value></data>
+  <data name="AppScope_AllApps" xml:space="preserve"><value>すべてのアプリで動作します</value></data>
+  <data name="AppScope_App" xml:space="preserve"><value>アプリ</value></data>
+  <data name="AppScope_AppTooltip" xml:space="preserve"><value>アプリの .exe 名 (例: Diablo IV.exe)</value></data>
+  <data name="AppScope_Pick" xml:space="preserve"><value>選択</value></data>
+  <data name="AppScope_PickTooltip" xml:space="preserve"><value>アプリのウィンドウをクリックします</value></data>
+  <data name="AppScope_Browse" xml:space="preserve"><value>参照…</value></data>
+  <data name="AppScope_NoAppError" xml:space="preserve"><value>動作させるアプリを選ぶか、[特定のアプリ] をオフにしてください。</value></data>
+  <data name="AppScope_ChooseApp" xml:space="preserve"><value>動作させるアプリを選択</value></data>
+  <data name="AppScope_OnlyApp" xml:space="preserve"><value>{0} が前面にあるときだけ動作します</value></data>
+  <data name="AppScope_Help" xml:space="preserve"><value>実行中のアプリを選ぶか、そのウィンドウを選択するか、.exe を参照してください。そのアプリが前面にあるときだけ動作します。</value></data>
+  <data name="AppScope_HelpStops" xml:space="preserve"><value>実行中のアプリを選ぶか、そのウィンドウを選択するか、.exe を参照してください。そのアプリが前面にあるときだけ動作し、別のアプリに切り替えると停止します。</value></data>
+  <data name="AppScope_BrowseTitle" xml:space="preserve"><value>アプリの選択</value></data>
+  <data name="AppScope_BrowseFilter" xml:space="preserve"><value>プログラム (*.exe)|*.exe</value></data>
+  <data name="OverlayOptions_Show" xml:space="preserve"><value>オーバーレイに表示する</value></data>
+  <data name="OverlayOptions_ShowDescription" xml:space="preserve"><value>オーバーレイ パネル内、またはフローティング ボタンとして</value></data>
+  <data name="OverlayOptions_HideWhenDisabled" xml:space="preserve"><value>無効のときは非表示にする</value></data>
+  <data name="OverlayOptions_HideWhenDisabledDescription" xml:space="preserve"><value>無効の間はオーバーレイに表示されません</value></data>
+  <data name="OverlayOptions_PassThrough" xml:space="preserve"><value>クリックを背後のアプリにも送る</value></data>
+  <data name="OverlayOptions_PassThroughDescription" xml:space="preserve"><value>オーバーレイでクリックすると、下にあるウィンドウもクリックされます</value></data>
+  <data name="FloatingButton_Header" xml:space="preserve"><value>フローティング ボタン</value></data>
+  <data name="FloatingButton_Description" xml:space="preserve"><value>オーバーレイ モードで開始、停止する丸いボタン。パネルの行の代わりに表示されます</value></data>
+  <data name="FloatingButton_NeedsToggle" xml:space="preserve"><value>切り替えが必要です: クリックでは開始と停止はできますが、長押しはできません</value></data>
+  <data name="FloatingButton_Label" xml:space="preserve"><value>ラベル</value></data>
+  <data name="FloatingButton_Size" xml:space="preserve"><value>サイズ</value></data>
+  <data name="FloatingButton_Small" xml:space="preserve"><value>小</value></data>
+  <data name="FloatingButton_Medium" xml:space="preserve"><value>中</value></data>
+  <data name="FloatingButton_Large" xml:space="preserve"><value>大</value></data>
+  <data name="FloatingButton_PositionOnScreen" xml:space="preserve"><value>画面上の位置</value></data>
+  <data name="FloatingButton_Position" xml:space="preserve"><value>位置</value></data>
+  <data name="FloatingButton_Opacity" xml:space="preserve"><value>不透明度</value></data>
+  <data name="FloatingButton_OpacityLabel" xml:space="preserve"><value>フローティング ボタンの不透明度</value></data>
+  <data name="MacroEditor_ExpandGroup" xml:space="preserve"><value>グループを展開</value></data>
+  <data name="MacroEditor_CollapseGroup" xml:space="preserve"><value>グループを折りたたむ</value></data>
+  <data name="MacroEditor_GroupAccessibleName" xml:space="preserve"><value>グループ {0}、{1}</value></data>
+  <data name="MacroEditor_DelayMs" xml:space="preserve"><value>{0:0.##} ミリ秒</value></data>
+  <data name="MacroEditor_RowPress" xml:space="preserve"><value>{0} を押す</value></data>
+  <data name="MacroEditor_RowKeyDown" xml:space="preserve"><value>キー ダウン {0}</value></data>
+  <data name="MacroEditor_RowKeyUp" xml:space="preserve"><value>キー アップ {0}</value></data>
+  <data name="MacroEditor_RowButtonDown" xml:space="preserve"><value>{0} ボタン ダウン</value></data>
+  <data name="MacroEditor_RowButtonUp" xml:space="preserve"><value>{0} ボタン アップ</value></data>
+  <data name="MacroEditor_RowMoveSmoothly" xml:space="preserve"><value>滑らかに移動</value></data>
+  <data name="MacroEditor_RowScrollUp" xml:space="preserve"><value>上へスクロール</value></data>
+  <data name="MacroEditor_RowScrollDown" xml:space="preserve"><value>下へスクロール</value></data>
+  <data name="MacroEditor_RowScrollLeft" xml:space="preserve"><value>左へスクロール</value></data>
+  <data name="MacroEditor_RowScrollRight" xml:space="preserve"><value>右へスクロール</value></data>
+  <data name="MacroEditor_RowTimes_other" xml:space="preserve"><value>{1} ({0} 回)</value></data>
+  <data name="MacroEditor_RowHeld" xml:space="preserve"><value>{0} ミリ秒押したまま</value></data>
+  <data name="MacroEditor_RowAt" xml:space="preserve"><value>位置 {0}, {1}</value></data>
+  <data name="MacroEditor_RowPath_other" xml:space="preserve"><value>{0} 点、{1}</value></data>
+  <data name="MacroEditor_RowScrollSteps_other" xml:space="preserve"><value>{0} ステップ</value></data>
+  <data name="MacroEditor_RowQuoted" xml:space="preserve"><value>「{0}」</value></data>
+  <data name="Action_Direction" xml:space="preserve"><value>方向</value></data>
+  <data name="Action_DirectionUp" xml:space="preserve"><value>上</value></data>
+  <data name="Action_DirectionDown" xml:space="preserve"><value>下</value></data>
+  <data name="Action_DirectionLeft" xml:space="preserve"><value>左</value></data>
+  <data name="Action_DirectionRight" xml:space="preserve"><value>右</value></data>
+  <data name="Action_Remove" xml:space="preserve"><value>削除</value></data>
+  <data name="Action_WhileLoopRuns" xml:space="preserve"><value>ループの実行中</value></data>
+  <data name="Action_Repeat" xml:space="preserve"><value>繰り返す</value></data>
+  <data name="Action_HoldDown" xml:space="preserve"><value>押したままにする</value></data>
+  <data name="Action_Every" xml:space="preserve"><value>間隔</value></data>
+  <data name="Action_Interval" xml:space="preserve"><value>間隔</value></data>
+  <data name="Action_Unit" xml:space="preserve"><value>単位</value></data>
+  <data name="Action_UnitMs" xml:space="preserve"><value>ミリ秒</value></data>
+  <data name="Action_UnitS" xml:space="preserve"><value>秒</value></data>
+  <data name="Action_UnitMin" xml:space="preserve"><value>分</value></data>
+  <data name="Action_UnitH" xml:space="preserve"><value>時間</value></data>
+  <data name="Action_Position" xml:space="preserve"><value>位置</value></data>
+  <data name="Action_Mode" xml:space="preserve"><value>モード</value></data>
+  <data name="Action_Single" xml:space="preserve"><value>シングル</value></data>
+  <data name="Action_Double" xml:space="preserve"><value>ダブル</value></data>
+  <data name="Action_HoldFor" xml:space="preserve"><value>押す時間</value></data>
+  <data name="Action_Times" xml:space="preserve"><value>回数</value></data>
+  <data name="Action_PauseBetween" xml:space="preserve"><value>間隔</value></data>
+  <data name="Action_PauseBetweenDescription" xml:space="preserve"><value>回数が 2 以上のときの、押してから次に押すまでの間隔</value></data>
+  <data name="Action_FixedPoint" xml:space="preserve"><value>固定位置</value></data>
+  <data name="Action_Text" xml:space="preserve"><value>テキスト</value></data>
+  <data name="Action_TextToPaste" xml:space="preserve"><value>貼り付けるテキスト</value></data>
+  <data name="Action_EnterBefore" xml:space="preserve"><value>貼り付ける前に Enter を押す</value></data>
+  <data name="Action_EnterAfter" xml:space="preserve"><value>貼り付けた後に Enter を押す</value></data>
+  <data name="Action_Movement" xml:space="preserve"><value>移動</value></data>
+  <data name="Action_Instantly" xml:space="preserve"><value>瞬時</value></data>
+  <data name="Action_Smoothly" xml:space="preserve"><value>滑らか</value></data>
+  <data name="Action_Speed" xml:space="preserve"><value>速度</value></data>
+  <data name="Action_MovementSpeed" xml:space="preserve"><value>移動速度</value></data>
+  <data name="Action_Steps" xml:space="preserve"><value>ステップ数</value></data>
+  <data name="Action_UseClick" xml:space="preserve"><value>マウス ボタンには [クリック] を使用してください。</value></data>
+  <data name="Action_UseMouseAction" xml:space="preserve"><value>マウス ボタンには [クリック] または [マウス ボタン] のアクションを使用してください。</value></data>
+  <data name="Action_TitlePressKey" xml:space="preserve"><value>キーを押す</value></data>
+  <data name="Action_TitleKeyDown" xml:space="preserve"><value>キー ダウン</value></data>
+  <data name="Action_TitleKeyUp" xml:space="preserve"><value>キー アップ</value></data>
+  <data name="Action_TitleClick" xml:space="preserve"><value>クリック</value></data>
+  <data name="Action_TitleMouseDown" xml:space="preserve"><value>マウス ボタン ダウン</value></data>
+  <data name="Action_TitleMouseUp" xml:space="preserve"><value>マウス ボタン アップ</value></data>
+  <data name="Action_TitleMoveTo" xml:space="preserve"><value>移動</value></data>
+  <data name="Action_TitleScroll" xml:space="preserve"><value>スクロール</value></data>
+  <data name="Action_TitlePasteText" xml:space="preserve"><value>テキストの貼り付け</value></data>
+  <data name="Action_HoldButtonDescription" xml:space="preserve"><value>ボタンを押してから離すまでの時間</value></data>
+  <data name="Action_HoldKeyDescription" xml:space="preserve"><value>キーを押してから離すまでの時間</value></data>
+  <data name="Action_AFixedPoint" xml:space="preserve"><value>固定位置</value></data>
+  <data name="Action_WherePointerIs" xml:space="preserve"><value>ポインターの位置</value></data>
+  <data name="Action_SpeedVerySlow" xml:space="preserve"><value>とても遅い</value></data>
+  <data name="Action_SpeedSlow" xml:space="preserve"><value>遅い</value></data>
+  <data name="Action_SpeedNormal" xml:space="preserve"><value>標準</value></data>
+  <data name="Action_SpeedFast" xml:space="preserve"><value>速い</value></data>
+  <data name="Action_SpeedVeryFast" xml:space="preserve"><value>とても速い</value></data>
+  <data name="Action_SpeedText" xml:space="preserve"><value>速度: {0}、約 {1} 秒</value></data>
+  <data name="Action_SummaryEvery" xml:space="preserve"><value>{0} {1} ごと</value></data>
+  <data name="Action_SummaryTimes_other" xml:space="preserve"><value>{1} ({0} 回)</value></data>
+  <data name="Action_SummaryAt" xml:space="preserve"><value>位置 {0}, {1}</value></data>
+  <data name="Action_SummaryWherePointerIs" xml:space="preserve"><value>ポインターの位置</value></data>
+  <data name="Action_SummaryNoKey" xml:space="preserve"><value>キーが未設定</value></data>
+  <data name="Action_SummaryNoText" xml:space="preserve"><value>テキストが未入力</value></data>
+  <data name="Action_SummaryUntilKeyUp" xml:space="preserve"><value>{0}、キー アップまで</value></data>
+  <data name="Action_SummarySteps_other" xml:space="preserve"><value>{0} ステップ</value></data>
+  <data name="Action_SummaryText" xml:space="preserve"><value>「{0}」</value></data>
+  <data name="Action_SummaryTextThenEnter" xml:space="preserve"><value>「{0}」の後に Enter</value></data>
+  <data name="Action_SummaryHeldDown" xml:space="preserve"><value>{0}、ループの実行中は押したまま</value></data>
+  <data name="Action_ChooseKeyEach" xml:space="preserve"><value>[キーを押す] ごとにキーを選んでください。</value></data>
+  <data name="Action_ChooseKey" xml:space="preserve"><value>キーを選んでください。</value></data>
+  <data name="Action_SetFixedPoint" xml:space="preserve"><value>固定位置の [クリック] ごとに位置を設定してください。</value></data>
+  <data name="Action_EnterTextEach" xml:space="preserve"><value>[テキストの貼り付け] ごとにテキストを入力してください。</value></data>
+  <data name="Action_EnterText" xml:space="preserve"><value>貼り付けるテキストを入力してください。</value></data>
+  <data name="Action_HoldNeedsSingleKey" xml:space="preserve"><value>押したままにできるのは単一のキーだけです。組み合わせには [繰り返す] を使用してください。</value></data>
+  <data name="KeyField_PromptHotkey" xml:space="preserve"><value>ホットキーを押してください (Esc でキャンセル)</value></data>
+  <data name="KeyField_PromptCombination" xml:space="preserve"><value>キーまたは組み合わせを押してください (Esc でキャンセル)</value></data>
+  <data name="KeyField_PromptKeyOrModifier" xml:space="preserve"><value>キー、または Ctrl、Alt、Shift、Win のいずれかを単独で押してください (Esc でキャンセル)</value></data>
+  <data name="KeyField_SetHotkey" xml:space="preserve"><value>ホットキーを設定</value></data>
+  <data name="KeyField_SetKey" xml:space="preserve"><value>キーを設定</value></data>
+  <data name="KeyField_ChangeHotkey" xml:space="preserve"><value>ホットキーを変更</value></data>
+  <data name="KeyField_ChangeKey" xml:space="preserve"><value>キーを変更</value></data>
+  <data name="KeyField_ClearHotkey" xml:space="preserve"><value>ホットキーをクリア</value></data>
+  <data name="KeyField_ClearKey" xml:space="preserve"><value>キーをクリア</value></data>
+  <data name="KeyField_Change" xml:space="preserve"><value>変更</value></data>
+  <data name="KeyField_Clear" xml:space="preserve"><value>クリア</value></data>
+  <data name="Mouse_Button" xml:space="preserve"><value>マウス ボタン</value></data>
+  <data name="Mouse_Left" xml:space="preserve"><value>左</value></data>
+  <data name="Mouse_Right" xml:space="preserve"><value>右</value></data>
+  <data name="Mouse_Middle" xml:space="preserve"><value>中央</value></data>
+  <data name="Mouse_Back" xml:space="preserve"><value>戻る (X1)</value></data>
+  <data name="Mouse_Forward" xml:space="preserve"><value>進む (X2)</value></data>
+  <data name="Mouse_ClickLeft" xml:space="preserve"><value>左クリック</value></data>
+  <data name="Mouse_ClickRight" xml:space="preserve"><value>右クリック</value></data>
+  <data name="Mouse_ClickMiddle" xml:space="preserve"><value>中央クリック</value></data>
+  <data name="Mouse_ClickBack" xml:space="preserve"><value>戻る (X1) クリック</value></data>
+  <data name="Mouse_ClickForward" xml:space="preserve"><value>進む (X2) クリック</value></data>
+  <data name="Mouse_DoubleClickLeft" xml:space="preserve"><value>左ダブルクリック</value></data>
+  <data name="Mouse_DoubleClickRight" xml:space="preserve"><value>右ダブルクリック</value></data>
+  <data name="Mouse_DoubleClickMiddle" xml:space="preserve"><value>中央ダブルクリック</value></data>
+  <data name="Mouse_DoubleClickBack" xml:space="preserve"><value>戻る (X1) ダブルクリック</value></data>
+  <data name="Mouse_DoubleClickForward" xml:space="preserve"><value>進む (X2) ダブルクリック</value></data>
+  <data name="Mouse_DetectTooltip" xml:space="preserve"><value>マウス ボタンを押して検出します</value></data>
+  <data name="Mouse_Detect" xml:space="preserve"><value>マウス ボタンを検出</value></data>
+  <data name="Mouse_Prompt" xml:space="preserve"><value>マウス ボタンを押してください (Esc でキャンセル)</value></data>
+  <data name="Mouse_UsePressKey" xml:space="preserve"><value>キーには [キーを押す] を使用してください。</value></data>
+  <data name="Position_X" xml:space="preserve"><value>X</value></data>
+  <data name="Position_Y" xml:space="preserve"><value>Y</value></data>
+  <data name="Position_PickOnScreen" xml:space="preserve"><value>画面上で選択</value></data>
+  <data name="Slider_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Keys_NoHotkey" xml:space="preserve"><value>ホットキーなし</value></data>
+  <data name="Keys_Join" xml:space="preserve"><value> +</value></data>
+  <data name="Keys_None" xml:space="preserve"><value>なし</value></data>
+  <data name="Keys_WheelUp" xml:space="preserve"><value>ホイール上</value></data>
+  <data name="Keys_WheelDown" xml:space="preserve"><value>ホイール下</value></data>
+  <data name="Keys_WheelLeft" xml:space="preserve"><value>ホイール左</value></data>
+  <data name="Keys_WheelRight" xml:space="preserve"><value>ホイール右</value></data>
+  <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
+  <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>
+  <data name="Keys_Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="Keys_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Keys_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Keys_Win" xml:space="preserve"><value>Win</value></data>
+  <data name="Keys_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Keys_CapsLock" xml:space="preserve"><value>CapsLock</value></data>
+  <data name="Keys_Esc" xml:space="preserve"><value>Esc</value></data>
+  <data name="Keys_Space" xml:space="preserve"><value>Space</value></data>
+  <data name="Keys_PageUp" xml:space="preserve"><value>PageUp</value></data>
+  <data name="Keys_PageDown" xml:space="preserve"><value>PageDown</value></data>
+  <data name="Keys_End" xml:space="preserve"><value>End</value></data>
+  <data name="Keys_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Keys_Left" xml:space="preserve"><value>左矢印</value></data>
+  <data name="Keys_Up" xml:space="preserve"><value>上矢印</value></data>
+  <data name="Keys_Right" xml:space="preserve"><value>右矢印</value></data>
+  <data name="Keys_Down" xml:space="preserve"><value>下矢印</value></data>
+  <data name="Keys_PrintScreen" xml:space="preserve"><value>PrintScreen</value></data>
+  <data name="Keys_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Keys_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Keys_LeftWin" xml:space="preserve"><value>左 Win</value></data>
+  <data name="Keys_RightWin" xml:space="preserve"><value>右 Win</value></data>
+  <data name="Keys_NumpadDigit" xml:space="preserve"><value>テンキー{0}</value></data>
+  <data name="Keys_NumpadMultiply" xml:space="preserve"><value>テンキー*</value></data>
+  <data name="Keys_NumpadAdd" xml:space="preserve"><value>テンキー+</value></data>
+  <data name="Keys_NumpadSubtract" xml:space="preserve"><value>テンキー-</value></data>
+  <data name="Keys_NumpadDecimal" xml:space="preserve"><value>テンキー.</value></data>
+  <data name="Keys_NumpadDivide" xml:space="preserve"><value>テンキー/</value></data>
+  <data name="Keys_NumLock" xml:space="preserve"><value>NumLock</value></data>
+  <data name="Keys_ScrollLock" xml:space="preserve"><value>ScrollLock</value></data>
+  <data name="Keys_LeftShift" xml:space="preserve"><value>左 Shift</value></data>
+  <data name="Keys_RightShift" xml:space="preserve"><value>右 Shift</value></data>
+  <data name="Keys_LeftCtrl" xml:space="preserve"><value>左 Ctrl</value></data>
+  <data name="Keys_RightCtrl" xml:space="preserve"><value>右 Ctrl</value></data>
+  <data name="Keys_LeftAlt" xml:space="preserve"><value>左 Alt</value></data>
+  <data name="Keys_RightAlt" xml:space="preserve"><value>右 Alt</value></data>
+  <data name="Keys_EitherCtrl" xml:space="preserve"><value>左右どちらかの Ctrl</value></data>
+  <data name="Keys_EitherAlt" xml:space="preserve"><value>左右どちらかの Alt</value></data>
+  <data name="Keys_EitherShift" xml:space="preserve"><value>左右どちらかの Shift</value></data>
+  <data name="Keys_EitherWin" xml:space="preserve"><value>左右どちらかの Win</value></data>
+  <data name="Keys_Unknown" xml:space="preserve"><value>キー 0x{0:X2}</value></data>
+  <data name="Hotkey_ClickNeedsModifier" xml:space="preserve"><value>左クリックと右クリックには Ctrl、Alt、Shift、Win のいずれかが必要です。単独ではマウスが使えなくなります。</value></data>
+  <data name="Hotkey_WheelNeedsModifier" xml:space="preserve"><value>スクロール ホイールには Ctrl、Alt、Shift、Win のいずれかが必要です。単独ではスクロールできなくなります。</value></data>
+  <data name="Hotkey_EscNeedsModifier" xml:space="preserve"><value>Esc には Ctrl、Alt、Shift、Win のいずれかが必要です。</value></data>
+  <data name="Hotkey_WheelCantHold" xml:space="preserve"><value>スクロール ホイールは押したままにできません。切り替えに変更するか、別のホットキーを選んでください。</value></data>
+  <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} は既に [すべて停止] で使用されています。</value></data>
+  <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} は既に [オーバーレイ モード] で使用されています。</value></data>
+  <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} は既に [記録] で使用されています。</value></data>
+  <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} は既にループ「{1}」で使用されています。</value></data>
+  <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} は既に {2} のループ「{1}」で使用されています。</value></data>
+  <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} は既にマクロ「{1}」で使用されています。</value></data>
+  <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} は既に {2} のマクロ「{1}」で使用されています。</value></data>
+  <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} ホットキーはリマップより優先されます。</value></data>
+  <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} は既にすべてのアプリでリマップされています。</value></data>
+  <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} は既に {1} でリマップされています。</value></data>
+  <data name="Sound_Chime" xml:space="preserve"><value>チャイム</value></data>
+  <data name="Sound_Blip" xml:space="preserve"><value>ブリップ</value></data>
+  <data name="Sound_Pop" xml:space="preserve"><value>ポップ</value></data>
+  <data name="Sound_Bell" xml:space="preserve"><value>ベル</value></data>
+  <data name="Sound_Arcade" xml:space="preserve"><value>アーケード</value></data>
+  <data name="Sound_Soft" xml:space="preserve"><value>ソフト</value></data>
+  <data name="Sound_Marimba" xml:space="preserve"><value>マリンバ</value></data>
+  <data name="Sound_Pluck" xml:space="preserve"><value>プラック</value></data>
+  <data name="Sound_Harp" xml:space="preserve"><value>ハープ</value></data>
+  <data name="Sound_Kalimba" xml:space="preserve"><value>カリンバ</value></data>
+  <data name="Sound_Xylophone" xml:space="preserve"><value>シロフォン</value></data>
+  <data name="Sound_Glock" xml:space="preserve"><value>グロッケン</value></data>
+  <data name="Sound_Organ" xml:space="preserve"><value>オルガン</value></data>
+  <data name="Sound_Flute" xml:space="preserve"><value>フルート</value></data>
+  <data name="Sound_Synth" xml:space="preserve"><value>シンセ</value></data>
+  <data name="Sound_Pad" xml:space="preserve"><value>パッド</value></data>
+  <data name="Sound_Brass" xml:space="preserve"><value>ブラス</value></data>
+  <data name="Sound_Bass" xml:space="preserve"><value>ベース</value></data>
+  <data name="Sound_Click" xml:space="preserve"><value>クリック</value></data>
+  <data name="Sound_Tick" xml:space="preserve"><value>チック</value></data>
+  <data name="Sound_Knock" xml:space="preserve"><value>ノック</value></data>
+  <data name="Sound_Switch" xml:space="preserve"><value>スイッチ</value></data>
+  <data name="Sound_Tom" xml:space="preserve"><value>タム</value></data>
+  <data name="Sound_Conga" xml:space="preserve"><value>コンガ</value></data>
+  <data name="Sound_Cowbell" xml:space="preserve"><value>カウベル</value></data>
+  <data name="Sound_Triangle" xml:space="preserve"><value>トライアングル</value></data>
+  <data name="Sound_Gong" xml:space="preserve"><value>ゴング</value></data>
+  <data name="Sound_Coin" xml:space="preserve"><value>コイン</value></data>
+  <data name="Sound_Jump" xml:space="preserve"><value>ジャンプ</value></data>
+  <data name="Sound_Laser" xml:space="preserve"><value>レーザー</value></data>
+  <data name="Sound_Zap" xml:space="preserve"><value>ザップ</value></data>
+  <data name="Sound_Powerup" xml:space="preserve"><value>パワーアップ</value></data>
+  <data name="Sound_Retro" xml:space="preserve"><value>レトロ</value></data>
+  <data name="Sound_Fanfare" xml:space="preserve"><value>ファンファーレ</value></data>
+  <data name="Sound_Twinkle" xml:space="preserve"><value>トゥインクル</value></data>
+  <data name="Sound_Sparkle" xml:space="preserve"><value>スパークル</value></data>
+  <data name="Sound_Bubble" xml:space="preserve"><value>バブル</value></data>
+  <data name="Sound_Drop" xml:space="preserve"><value>ドロップ</value></data>
+  <data name="Sound_Whoosh" xml:space="preserve"><value>ヒュッ</value></data>
+  <data name="Sound_Whistle" xml:space="preserve"><value>ホイッスル</value></data>
+  <data name="Sound_Chirp" xml:space="preserve"><value>さえずり</value></data>
+  <data name="Sound_Cricket" xml:space="preserve"><value>コオロギ</value></data>
+  <data name="Sound_Doorbell" xml:space="preserve"><value>ドアベル</value></data>
+  <data name="Sound_Phone" xml:space="preserve"><value>電話</value></data>
+  <data name="Sound_Alarm" xml:space="preserve"><value>アラーム</value></data>
+  <data name="Sound_Modem" xml:space="preserve"><value>モデム</value></data>
+  <data name="Sound_Radar" xml:space="preserve"><value>レーダー</value></data>
+  <data name="Sound_Sonar" xml:space="preserve"><value>ソナー</value></data>
+  <data name="Sound_Echo" xml:space="preserve"><value>エコー</value></data>
+  <data name="Sound_Robot" xml:space="preserve"><value>ロボット</value></data>
+  <data name="Sound_Siren" xml:space="preserve"><value>サイレン</value></data>
+  <data name="Sound_Hum" xml:space="preserve"><value>ハム</value></data>
+  <data name="Sound_Ripple" xml:space="preserve"><value>波紋</value></data>
+  <data name="Sound_Wobble" xml:space="preserve"><value>ワブル</value></data>
+  <data name="Sound_Warp" xml:space="preserve"><value>ワープ</value></data>
+  <data name="Sound_Ufo" xml:space="preserve"><value>UFO</value></data>
+  <data name="Code_MustBeObject" xml:space="preserve"><value>JSON オブジェクトである必要があります。</value></data>
+  <data name="Code_Between" xml:space="preserve"><value>{0} から {1} の範囲である必要があります。</value></data>
+  <data name="Code_IdCannotChange" xml:space="preserve"><value>Id は変更できません。"{0}" を使用してください (Ctrl+Space で候補が表示されます)。</value></data>
+  <data name="Code_UnknownSound" xml:space="preserve"><value>不明なサウンドです。次のいずれかを使用してください: {0}。</value></data>
+  <data name="Code_HoldNeedsHotkey" xml:space="preserve"><value>長押しにはホットキーが必要です。ホットキーを設定するか、"Toggle" を使用してください。</value></data>
+  <data name="Code_HotkeyNotAKey" xml:space="preserve"><value>キーではありません。1 から 254 の仮想キー コード、またはスクロール ホイールのコード (256 上、257 下、258 左、259 右) を使用してください。</value></data>
+  <data name="Code_HotkeyModifierAlone" xml:space="preserve"><value>Ctrl、Alt、Shift、Win を単独でキーにすることはできません。"Ctrl"、"Alt"、"Shift"、"Win" で設定してください。</value></data>
+  <data name="Code_RemapChooseKey" xml:space="preserve"><value>キーまたはマウス ボタンを選んでください: 1 から 254 の仮想キー コード。</value></data>
+  <data name="Code_RemapModifierSide" xml:space="preserve"><value>Ctrl、Alt、Shift、Win を単独で使う場合: 左右どちらかのキーのコードを使用してください (Shift は 160、161、Ctrl は 162、163、Alt は 164、165、Win は 91、92)。</value></data>
+  <data name="Code_RemapModifierNoOthers" xml:space="preserve"><value>Ctrl、Alt、Shift、Win を単独で使う場合、ほかの修飾キーは使えません: "Ctrl"、"Alt"、"Shift"、"Win" を false に設定してください。</value></data>
+  <data name="Code_OnlyWithModifier" xml:space="preserve"><value>"{0}": true の場合のみ有効です。これを削除するか、"{0}" を true に設定してください。</value></data>
+  <data name="Code_AppExeEmpty" xml:space="preserve"><value>"notepad.exe" のようにアプリのファイル名を書くか、すべてのアプリの場合は null にしてください。</value></data>
+  <data name="Code_AppExeNotExe" xml:space="preserve"><value>".exe" で終わるアプリのファイル名を書いてください。</value></data>
+  <data name="Code_AtMostCharacters_other" xml:space="preserve"><value>{0} 文字以内にしてください。</value></data>
+  <data name="Code_SetBothXY" xml:space="preserve"><value>X と Y の両方を設定するか、どちらも設定しないでください (null: メイン画面の中央)。</value></data>
+  <data name="Code_FloatingNeedsToggle" xml:space="preserve"><value>"Toggle" が必要です: クリックでは開始と停止はできますが、長押しはできません。</value></data>
+  <data name="Code_MustBeOneOf" xml:space="preserve"><value>次のいずれかである必要があります: {0}。</value></data>
+  <data name="Code_AtPath" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Code_InvalidJsonDetail" xml:space="preserve"><value>無効な JSON です: {0}</value></data>
+  <data name="Code_UnknownProperty" xml:space="preserve"><value>不明なプロパティ "{0}" です。</value></data>
+  <data name="Code_WrongType" xml:space="preserve"><value>この値は型が間違っているか、許可された値ではありません。</value></data>
+  <data name="Code_NeedsValue" xml:space="preserve"><value>ここには null ではなく値が必要です。</value></data>
+  <data name="Code_InvalidJson" xml:space="preserve"><value>無効な JSON です。</value></data>
+  <data name="Code_EnterName" xml:space="preserve"><value>名前を入力してください。</value></data>
+  <data name="Code_AddAction" xml:space="preserve"><value>アクションを 1 つ以上追加してください。</value></data>
+  <data name="Code_KeyVkOld" xml:space="preserve"><value>使用されなくなりました: キーは "Actions" に指定します。これを削除してください。</value></data>
+  <data name="Code_IntervalMsOld" xml:space="preserve"><value>使用されなくなりました: 間隔は "Actions" に指定します。これを削除してください。</value></data>
+  <data name="Code_HotkeyVkOld" xml:space="preserve"><value>使用されなくなりました: "Hotkey" を使用してください。これを削除してください。</value></data>
+  <data name="Code_LoopChooseKey" xml:space="preserve"><value>キーまたはマウス ボタンを選んでください: 1 から 254 の仮想キー コード。</value></data>
+  <data name="Code_EnterText" xml:space="preserve"><value>テキストを入力してください。</value></data>
+  <data name="Code_TextNoHold" xml:space="preserve"><value>押したままにできるのは [キーを押す] と [クリック] だけです。</value></data>
+  <data name="Code_IntervalRange" xml:space="preserve"><value>間隔は 10 ミリ秒から 24 時間の範囲で指定してください。</value></data>
+  <data name="Code_HotkeyPressed" xml:space="preserve"><value>このループが押すキーをホットキーにすることはできません。</value></data>
+  <data name="Code_LoopOnlyPressKeyModifiers" xml:space="preserve"><value>Ctrl、Alt、Shift、Win を持てるのは [キーを押す] だけです。これを削除してください。</value></data>
+  <data name="Code_ClickNoModifiers" xml:space="preserve"><value>クリックには Ctrl、Alt、Shift、Win はありません。これを削除してください。</value></data>
+  <data name="Code_HoldDownSingleKey" xml:space="preserve"><value>押したままにできるのは単一のキーだけです。組み合わせには "Repeat" を使用してください。</value></data>
+  <data name="Code_OnlyPressKeyAndClick" xml:space="preserve"><value>これを持てるのは [キーを押す] と [クリック] だけです。これを削除してください。</value></data>
+  <data name="Code_OnlyClick" xml:space="preserve"><value>これを持てるのは [クリック] だけです。これを削除してください。</value></data>
+  <data name="Code_ClickCountOrNull" xml:space="preserve"><value>1 (シングル クリック)、2 (ダブルクリック)、または null である必要があります。</value></data>
+  <data name="Code_SetBothXYFixed" xml:space="preserve"><value>固定位置には X と Y の両方を設定するか、どちらも設定しないでください (null: ポインターの位置)。</value></data>
+  <data name="Code_SourceVkOld" xml:space="preserve"><value>使用されなくなりました: "Source" を使用してください (A の場合は {"Vk": 65} など)。これを削除してください。</value></data>
+  <data name="Code_ChooseSource" xml:space="preserve"><value>リマップするキー、マウス ボタン、または組み合わせを選んでください。</value></data>
+  <data name="Code_ChooseTarget" xml:space="preserve"><value>代わりに送信するものを選んでください。</value></data>
+  <data name="Code_TargetDifferent" xml:space="preserve"><value>押すものとは異なるものを送信してください。</value></data>
+  <data name="Code_PrimaryMouseNeedsApp" xml:space="preserve"><value>左クリックと右クリックは特定のアプリでのみリマップできます。ほかの場所では通常どおり機能させるためです。</value></data>
+  <data name="Code_GroupNotAllowed" xml:space="preserve"><value>このアクションを入れられるのは次のみです: {0}。グループのアクションは連続している必要があります。</value></data>
+  <data name="Code_SpeedSteps" xml:space="preserve"><value>0.25、0.5、1、2、4 のいずれかである必要があります。</value></data>
+  <data name="Code_GroupIdTwice" xml:space="preserve"><value>2 つのグループがこの Id を持っています。</value></data>
+  <data name="Code_EnterGroupName" xml:space="preserve"><value>グループ名を入力してください。</value></data>
+  <data name="Code_NoSuchGroup" xml:space="preserve"><value>"Groups" にこの Id のグループはありません。</value></data>
+  <data name="Code_GroupApart" xml:space="preserve"><value>グループのアクションは連続している必要があります。</value></data>
+  <data name="Code_GroupNoActions" xml:space="preserve"><value>このグループにはアクションがありません。アクションを追加する ("GroupId") か、グループを削除してください。</value></data>
+  <data name="Code_MacroChooseKey" xml:space="preserve"><value>キーを選んでください: 1 から 254 の仮想キー コード。</value></data>
+  <data name="Code_UseMouseAction" xml:space="preserve"><value>マウス ボタンには [クリック]、[マウス ボタン ダウン]、[マウス ボタン アップ] のアクションを使用してください。</value></data>
+  <data name="Code_ChooseMouseButton" xml:space="preserve"><value>マウス ボタンを選んでください: 1 左、2 右、4 中央、5 戻る (X1)、6 進む (X2)。</value></data>
+  <data name="Code_KeyDownOneKey" xml:space="preserve"><value>[キー ダウン] と [キー アップ] には 1 つのキーを指定します。Ctrl、Alt、Shift、Win を単独で使うには、"Vk" にそのキー コードを指定してください (Shift は 160、161、Ctrl は 162、163、Alt は 164、165、Win は 91、92)。</value></data>
+  <data name="Code_MacroOnlyPressKeyModifiers" xml:space="preserve"><value>Ctrl、Alt、Shift、Win を持てるのは [キーを押す] アクションだけです。これを削除してください。</value></data>
+  <data name="Code_ClickCount" xml:space="preserve"><value>1 (シングル クリック) または 2 (ダブルクリック) である必要があります。</value></data>
+  <data name="Code_PathEmpty" xml:space="preserve"><value>パスには 1 つ以上の点が必要です。</value></data>
+  <data name="Code_PathTimes" xml:space="preserve"><value>時間は 0 以上から始まり、前に戻らない必要があります。</value></data>
+  <data name="Code_EnterPasteText" xml:space="preserve"><value>貼り付けるテキストを入力してください。</value></data>
+  <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro オーバーレイ パネル</value></data>
+  <data name="Overlay_MovePanel" xml:space="preserve"><value>パネルを移動</value></data>
+  <data name="Overlay_MovePanelTip" xml:space="preserve"><value>ドラッグしてパネルを移動します</value></data>
+  <data name="Overlay_Exit" xml:space="preserve"><value>オーバーレイ モードを終了</value></data>
+  <data name="Overlay_ExitTip" xml:space="preserve"><value>オーバーレイ モードを終了 ({0})</value></data>
+  <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>終了して PuppyMacro を開く</value></data>
+  <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>オーバーレイ モードを終了して PuppyMacro を開きます</value></data>
+  <data name="Overlay_NothingToShow" xml:space="preserve"><value>表示するものがありません。</value></data>
+  <data name="Overlay_AllOnButtons" xml:space="preserve"><value>すべてフローティング ボタンにあります。</value></data>
+  <data name="Overlay_NothingForApp" xml:space="preserve"><value>このアプリ用の項目はありません。</value></data>
+  <data name="Overlay_Macros" xml:space="preserve"><value>マクロ</value></data>
+  <data name="Overlay_StopAll" xml:space="preserve"><value>すべて停止</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>クリックで開始/停止 · 右クリックで有効/無効</value></data>
+  <data name="Floating_WindowTitle" xml:space="preserve"><value>PuppyMacro フローティング ボタン</value></data>
+  <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>PuppyMacro フローティング ボタン: {0}</value></data>
+  <data name="Recording_Title" xml:space="preserve"><value>記録中</value></data>
+  <data name="Recording_StartsIn" xml:space="preserve"><value>{0} 秒後に記録を開始します</value></data>
+  <data name="Recording_SwitchHint" xml:space="preserve"><value>記録するウィンドウに切り替えてください。クリックはまだ記録されません。</value></data>
+  <data name="Recording_Cancel" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="Recording_Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="Recording_Events_other" xml:space="preserve"><value>{0} 件のイベント</value></data>
+  <data name="Recording_PressToStop" xml:space="preserve"><value>{0} を押すと停止します</value></data>
+  <data name="Recording_ReadyTitle" xml:space="preserve"><value>記録の準備完了</value></data>
+  <data name="Recording_PressOrSelect" xml:space="preserve"><value>{0} を押すか、{1} を選んでください</value></data>
+  <data name="Recording_StartRecording" xml:space="preserve"><value>記録を開始</value></data>
+  <data name="Recording_RecordMouseMovement" xml:space="preserve"><value>マウスの動きを記録する</value></data>
+  <data name="Recording_PromptDescription" xml:space="preserve"><value>記録するウィンドウに切り替えるまで 3 秒あります。{0} を押すか [停止] を選ぶまで、キー入力、クリック、移動のすべてが記録されます。</value></data>
+  <data name="Countdown_Title" xml:space="preserve"><value>記録のカウントダウン</value></data>
+  <data name="Countdown_Starts" xml:space="preserve"><value>記録を開始します…</value></data>
+  <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>キーボードを読み取れませんでした。</value></data>
+  <data name="Input_CannotReadMouse" xml:space="preserve"><value>マウスを読み取れませんでした。</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>このファイルは PuppyMacro の項目ファイルではありません。</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>このファイルは、このバージョン ({1}) より新しい PuppyMacro {0} で作成されました。インポートするには PuppyMacro を更新してください。</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>このファイルは新しいバージョンの PuppyMacro で作成されました。インポートするには PuppyMacro を更新してください。</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>項目 {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>不明な種類 "{0}" です。PuppyMacro がインポートできるのはループ、マクロ、リマップです。</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>ループがありません。</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>マクロがありません。</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>リマップがありません。</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>同じ名前のループがあります。「{0}」としてインポートしました。</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>同じ名前のマクロがあります。「{0}」としてインポートしました。</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} は既にこのファイル内のループ「{1}」で使用されています。</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} は既にこのファイル内のマクロ「{1}」で使用されています。</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: ホットキーなしでインポートしました。</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: ホットキーなしで、切り替えとしてインポートしました (長押しにはホットキーが必要です)。</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} は既にこのファイル内のループ「{1}」で使用されています。ホットキーはリマップより優先されます。</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} は既にこのファイル内のマクロ「{1}」で使用されています。ホットキーはリマップより優先されます。</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} は既にこのファイル内ですべてのアプリでリマップされています。</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} は既にこのファイル内で {1} でリマップされています。</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro 項目</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>リマップ {0}</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>{0} 個の項目をエクスポートしました</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>ループ {0} をインポートしました</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>マクロ {0} をインポートしました</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>リマップ {0} をインポートしました</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>{0} 個の項目をインポート</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>これらの {0} 個の項目をインポートしますか?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>インポート</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>[インポート] を開きました</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>[エクスポート] を開きました</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>インポート</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>ファイルからループ、マクロ、リマップを追加します</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>エクスポート</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>ループ、マクロ、リマップをファイルに保存して共有します</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>エクスポート…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 項目 (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>ループ、マクロ、リマップのインポート</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>ループ、マクロ、リマップのエクスポート</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>{0} から</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>ファイルを読み取れませんでした: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>更新を確認</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>{0} 個の項目をインポート</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>{0} 個の項目をエクスポート…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>エクスポートに失敗しました</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>ループ</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>マクロ</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>リマップ</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>その他</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>1 つのファイルに保存するループ、マクロ、リマップを選んでください。共有したり、別の PC で使ったりできます。</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>検索</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>種類</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>すべての種類</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>表示されているものをすべて選択</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} 個を表示 · {1} 個を選択</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>ループ、マクロ、リマップはまだありません。</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>検索に一致するものはありません。</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>別のファイルを選ぶ…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>すべて選択</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>インポートした項目は無効の状態で追加されます。</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>動作を確認してから、1 つずつオンにしてください。</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>その他の項目 {0} 個</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>項目なし</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>PuppyMacro {0} から · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro 項目</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro バックアップ</value></data>
+</root>

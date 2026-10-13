@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -13,6 +14,7 @@ using System.Windows.Threading;
 using iNKORE.UI.WPF.Modern.Common.IconKeys;
 using iNKORE.UI.WPF.Modern.Controls;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
 using PuppyMacro.Views;
@@ -161,7 +163,8 @@ public partial class MainWindow : IAiHost
         string exe = AppPaths.ExecutablePath;
         bool access = _settings.AllowAiAccess;
         AiClient? Live(string name) => clients.FirstOrDefault(c => c.Name == name);
-        static string Since(AiClient client) => $"Connected since {client.Since:HH:mm}";
+        static string Since(AiClient client) =>
+            string.Format(CultureInfo.CurrentCulture, Strings.AiApps_ConnectedSince, client.Since.ToString("t", CultureInfo.CurrentCulture));
 
         string claudeConfig = AiApps.ClaudeConfigPath(AppDataFolder, LocalAppDataFolder);
         bool claudeInstalled = AiApps.ClaudeInstalled(AppDataFolder, LocalAppDataFolder);
@@ -184,12 +187,12 @@ public partial class MainWindow : IAiHost
                 Id = "claude", Name = "Claude Desktop",
                 Icon = ExeIcon(Path.Combine(LocalAppDataFolder, "AnthropicClaude", "claude.exe")),
                 Status = claude != null ? Since(claude)
-                    : claudeAdded ? "Added. Restart Claude Desktop to connect."
-                    : claudeInstalled ? "Installed, not connected" : "Not installed",
+                    : claudeAdded ? Strings.AiApps_ClaudeAdded
+                    : claudeInstalled ? Strings.AiApps_InstalledNotConnected : Strings.AiApps_NotInstalled,
                 Connected = claude != null, Waiting = claude == null && claudeAdded,
-                ActionText = claudeAdded ? "Remove" : claudeInstalled ? "Connect" : null,
+                ActionText = claudeAdded ? Strings.AiApps_Remove : claudeInstalled ? Strings.AiApps_Connect : null,
                 ActionIsAccent = !claudeAdded, ActionEnabled = access,
-                LinkText = claudeInstalled ? null : "Get Claude Desktop",
+                LinkText = claudeInstalled ? null : Strings.AiApps_GetClaude,
                 LinkUri = claudeInstalled ? null : new Uri("https://claude.ai/download"),
             },
             new()
@@ -197,33 +200,33 @@ public partial class MainWindow : IAiHost
                 Id = "vscode", Name = "Visual Studio Code",
                 Icon = ExeIcon(codeExe),
                 Status = code != null ? Since(code)
-                    : codeAdded ? "Added. Open Copilot Chat in Agent mode to connect."
-                    : codeExe != null ? "Installed. Uses GitHub Copilot, with the model you choose there." : "Not installed",
+                    : codeAdded ? Strings.AiApps_VsCodeAdded
+                    : codeExe != null ? Strings.AiApps_VsCodeInstalled : Strings.AiApps_NotInstalled,
                 Connected = code != null, Waiting = code == null && codeAdded,
-                ActionText = codeAdded ? "Remove" : codeExe != null ? "Connect" : null,
+                ActionText = codeAdded ? Strings.AiApps_Remove : codeExe != null ? Strings.AiApps_Connect : null,
                 ActionIsAccent = !codeAdded, ActionEnabled = access,
-                LinkText = codeExe != null ? null : "Get Visual Studio Code",
+                LinkText = codeExe != null ? null : Strings.AiApps_GetVsCode,
                 LinkUri = codeExe != null ? null : new Uri("https://code.visualstudio.com/"),
             },
             new()
             {
                 Id = "codex", Name = "Codex",
                 Status = codex != null ? Since(codex)
-                    : codexAdded ? "Added. Restart Codex to connect."
-                    : codexInstalled ? "Installed, not connected" : "Not installed",
+                    : codexAdded ? Strings.AiApps_CodexAdded
+                    : codexInstalled ? Strings.AiApps_InstalledNotConnected : Strings.AiApps_NotInstalled,
                 Connected = codex != null, Waiting = codex == null && codexAdded,
-                ActionText = codexAdded ? "Remove" : codexInstalled ? "Connect" : null,
+                ActionText = codexAdded ? Strings.AiApps_Remove : codexInstalled ? Strings.AiApps_Connect : null,
                 ActionIsAccent = !codexAdded, ActionEnabled = access,
-                LinkText = codexInstalled ? null : "Get Codex",
+                LinkText = codexInstalled ? null : Strings.AiApps_GetCodex,
                 LinkUri = codexInstalled ? null : new Uri("https://chatgpt.com/codex"),
             },
             new()
             {
-                Id = "other", Name = "Other apps",
-                Status = others.Count > 0 ? $"Connected: {string.Join(", ", others)}"
-                    : "Any app that supports local MCP servers: paste the configuration in its MCP settings.",
+                Id = "other", Name = Strings.AiApps_OtherApps,
+                Status = others.Count > 0 ? string.Format(CultureInfo.CurrentCulture, Strings.AiApps_OthersConnected, string.Join(Strings.ListSeparator, others))
+                    : Strings.AiApps_OthersHint,
                 Connected = others.Count > 0,
-                ActionText = "Copy configuration", ActionEnabled = access,
+                ActionText = Strings.AiApps_CopyConfiguration, ActionEnabled = access,
             },
         };
     }
@@ -260,7 +263,7 @@ public partial class MainWindow : IAiHost
             var button = new Button { Content = tile.ActionText, Tag = tile, IsEnabled = tile.ActionEnabled, Margin = new Thickness(8, 0, 0, 0) };
             if (tile.ActionIsAccent)
                 button.Style = (Style)FindResource("AccentButtonStyle"); // otherwise the implicit (standard) style
-            System.Windows.Automation.AutomationProperties.SetName(button, $"{tile.ActionText} {tile.Name}");
+            System.Windows.Automation.AutomationProperties.SetName(button, string.Format(CultureInfo.CurrentCulture, Strings.AiApps_ActionName, tile.ActionText, tile.Name));
             button.Click += OnAiAppActionClick;
             actions.Children.Add(button);
         }
@@ -284,29 +287,31 @@ public partial class MainWindow : IAiHost
         string exe = AppPaths.ExecutablePath;
         string? error = null;
         string? done = null;
-        switch (tile.Id, tile.ActionText)
+        // The button's text tells Connect from Remove (both in the language shown).
+        bool connect = tile.ActionText == Strings.AiApps_Connect;
+        switch (tile.Id, connect)
         {
-            case ("claude", "Connect"):
+            case ("claude", true):
                 error = AiApps.ClaudeAdd(AiApps.ClaudeConfigPath(AppDataFolder, LocalAppDataFolder), exe);
                 break;
-            case ("claude", "Remove"):
+            case ("claude", false):
                 error = AiApps.ClaudeRemove(AiApps.ClaudeConfigPath(AppDataFolder, LocalAppDataFolder));
                 break;
-            case ("vscode", "Connect"):
+            case ("vscode", true):
                 error = Open(AiApps.VsCodeInstallUri(exe));
                 break;
-            case ("vscode", "Remove"):
+            case ("vscode", false):
                 error = AiApps.VsCodeRemove(AiApps.VsCodeConfigPath(AppDataFolder));
                 break;
-            case ("codex", "Connect"):
+            case ("codex", true):
                 error = AiApps.CodexAdd(AiApps.CodexConfigPath(UserProfileFolder), exe);
                 break;
-            case ("codex", "Remove"):
+            case ("codex", false):
                 error = AiApps.CodexRemove(AiApps.CodexConfigPath(UserProfileFolder));
                 break;
             case ("other", _):
                 Clipboard.SetText(AiApps.GenericConfiguration(exe));
-                done = "Configuration copied. Paste it in your AI app's MCP settings, then restart the app.";
+                done = Strings.AiApps_ConfigurationCopied;
                 break;
         }
         ShowAiMessage(error, done);
@@ -332,7 +337,7 @@ public partial class MainWindow : IAiHost
         }
         catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
         {
-            return "Visual Studio Code did not open: " + ex.Message;
+            return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_VsCodeDidNotOpen, ex.Message);
         }
     }
 
@@ -361,7 +366,7 @@ public partial class MainWindow : IAiHost
             if (entry.ItemKind == "settings")
             {
                 if (JsonSerializer.Deserialize<AiSettingsValues>(entry.Before, CodeJson.Options) is not { } values)
-                    return "These settings can't be restored.";
+                    return Strings.AiActivity_CantRestoreSettings;
                 if (_aiTools.RestoreSettings(values) is string problem)
                     return problem;
             }
@@ -375,13 +380,13 @@ public partial class MainWindow : IAiHost
                     _ => null,
                 };
                 if (item == null)
-                    return "This change can't be restored.";
+                    return Strings.AiActivity_CantRestore;
                 SaveItem(item);
             }
         }
         catch (JsonException ex)
         {
-            return "This change can't be restored: " + ex.Message;
+            return string.Format(CultureInfo.CurrentCulture, Strings.AiActivity_CantRestoreReason, ex.Message);
         }
         _aiLog.MarkRestored(entry);
         return null;

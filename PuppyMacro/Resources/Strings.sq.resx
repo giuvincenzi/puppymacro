@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="ListSeparator" xml:space="preserve"><value>, </value></data>
+  <data name="Day_Today" xml:space="preserve"><value>Sot</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>Dje</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>Sistemi</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>E çelët</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>E errët</value></data>
+
+  <data name="Settings_Language" xml:space="preserve"><value>Gjuha</value></data>
+  <data name="Settings_LanguageDescription" xml:space="preserve"><value>PuppyMacro riniset për ta ndryshuar</value></data>
+  <data name="Settings_LanguageSystem" xml:space="preserve"><value>Përdor gjuhën e sistemit</value></data>
+  <data name="LanguageRestart_Title" xml:space="preserve"><value>Të riniset PuppyMacro?</value></data>
+  <data name="LanguageRestart_Content" xml:space="preserve"><value>PuppyMacro riniset për të shfaqur {0}. Ciklet dhe makrot në ekzekutim ndalen.</value></data>
+  <data name="LanguageRestart_Restart" xml:space="preserve"><value>Rinis tani</value></data>
+  <data name="LanguageRestart_Later" xml:space="preserve"><value>Më vonë</value></data>
+
+  <data name="History_BeforeHistory" xml:space="preserve"><value>Para fillimit të historikut</value></data>
+  <data name="History_Created" xml:space="preserve"><value>Krijuar</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>Ruajtur</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>Fshirë</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>Rikthyer</value></data>
+  <data name="History_Changes_one" xml:space="preserve"><value>{0} ndryshim</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0} ndryshime</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>U shtua veprimi {0}</value></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>U shtua veprimi {0} ({1})</value></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>U hoq veprimi {0}</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>U hoq veprimi {0} ({1})</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>Veprimi {0}: {1} {2} → {3}</value></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>Veprimi {0} ({1}): {2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>asnjë</value></data>
+  <data name="History_On" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="History_Off" xml:space="preserve"><value>Joaktiv</value></data>
+  <data name="History_Path_one" xml:space="preserve"><value>një shteg me {0} pikë{1}</value></data>
+  <data name="History_Path_other" xml:space="preserve"><value>një shteg me {0} pika{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0} (aktuale)</value></data>
+  <data name="History_You" xml:space="preserve"><value>Ju</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>Ky është versioni aktual.</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>Rikthe e vendos këtë version në redaktues: përzgjidhni Ruaj për ta mbajtur. Versioni aktual mbetet në Historik.</value></data>
+
+  <data name="Ai_Connected" xml:space="preserve"><value>U lidh</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Tentoi të lidhej ndërkohë që qasja AI ishte joaktive</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>Thirri {0} ndërkohë që qasja AI ishte joaktive</value></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>Lexoi ciklet, makrot dhe ricaktimet tuaja</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>Lexoi cilësimet tuaja</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>Listoi aplikacionet e hapura</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>Lexoi udhëzuesin: {0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>Lexoi ciklin {0}</value></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>Lexoi makronë {0}</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>Lexoi ricaktimin {0}</value></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>Cikël i ri</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>Makro e re</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>Ricaktim i ri</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>Ndryshim i ciklit</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>Ndryshim i makros</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>Ndryshim i ricaktimit</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>Cikël i ri {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>Makro e re {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>Ricaktim i ri {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>Ndryshoi ciklin {0}: {1}</value></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>Ndryshoi makronë {0}: {1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>Ndryshoi ricaktimin {0}: {1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>Fshiu ciklin {0}</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>Fshiu makronë {0}</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>Fshiu ricaktimin {0}</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>Aktivizoi ciklin {0}</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>Aktivizoi makronë {0}</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>Aktivizoi ricaktimin {0}</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>Çaktivizoi ciklin {0}</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>Çaktivizoi makronë {0}</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>Çaktivizoi ricaktimin {0}</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>Vendosi butonin notues të ciklit {0}</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>Vendosi butonin notues të makros {0}</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>Hapi ciklin {0}</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>Hapi makronë {0}</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>Hapi ricaktimin {0}</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>Ndryshoi cilësimet: {0}</value></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>Kërkoi një pikë: {0}</value></data>
+  <data name="Ai_AskedPoints_one" xml:space="preserve"><value>Kërkoi {0} pikë: {1}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>Kërkoi {0} pika: {1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>Kërkoi një aplikacion: {0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>Kërkoi një tast: {0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>Ndaloi të gjitha ciklet dhe makrot</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{0} → {1} në {2}</value></data>
+
+  <data name="Ai_Item_loop" xml:space="preserve"><value>Cikli {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>Makroja {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>Ricaktimi {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>Të ruhet ky cikël i ri?</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>Të ruhet kjo makro e re?</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>Të ruhet ky ricaktim i ri?</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>Të ruhen këto ndryshime në cikël?</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>Të ruhen këto ndryshime në makro?</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>Të ruhen këto ndryshime në ricaktim?</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>Të fshihet ky cikël?</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>Të fshihet kjo makro?</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>Të fshihet ky ricaktim?</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>Të aktivizohet ky cikël?</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>Të aktivizohet kjo makro?</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>Të aktivizohet ky ricaktim?</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>Të çaktivizohet ky cikël?</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>Të çaktivizohet kjo makro?</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>Të çaktivizohet ky ricaktim?</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>Të ndryshohen këto cilësime?</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>Ruaj</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>Fshi</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>Aktivizo</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>Çaktivizo</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>Apliko</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>Asnjë</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Këto cilësime nuk mund të rikthehen: {0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>Tema</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Mbyll në zonën e njoftimeve</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Paneli i mbivendosjes</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Kliko elementet në panel</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Patejdukshmëria e panelit të mbivendosjes</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>Volumi i tingullit</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Tasti i shpejtë për Ndal të gjitha</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Tasti i shpejtë për regjimin e mbivendosjes</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Tasti i shpejtë për regjistrimin</value></data>
+
+  <data name="AiKind_Read" xml:space="preserve"><value>Lexim</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>Ruajtje</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>Ndërveprim</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>Ndryshim</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>Lidhje</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>Rikthyer</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>Ruajtur</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>Ruajtur me ndryshime</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>Kryer</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>Anuluar</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>Pa përgjigje</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>Refuzuar</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>Gabim</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>Rikthe: {0}</value></data>
+
+  <data name="Main_EnterOverlayMode" xml:space="preserve"><value>Hyr në regjimin e mbivendosjes</value></data>
+  <data name="Main_StopAll" xml:space="preserve"><value>Ndal të gjitha</value></data>
+  <data name="Main_DevelopmentBuild" xml:space="preserve"><value>Version zhvillimi</value></data>
+  <data name="Main_FilterEnabled" xml:space="preserve"><value>Aktivizuar</value></data>
+  <data name="Main_FilterDisabled" xml:space="preserve"><value>Çaktivizuar</value></data>
+  <data name="Main_FilterRunning" xml:space="preserve"><value>Në ekzekutim</value></data>
+  <data name="Loops_Title" xml:space="preserve"><value>Ciklet</value></data>
+  <data name="Loops_Add" xml:space="preserve"><value>Shto cikël</value></data>
+  <data name="Loops_Search" xml:space="preserve"><value>Kërko ciklet</value></data>
+  <data name="Loops_FilterAll" xml:space="preserve"><value>Të gjitha ciklet</value></data>
+  <data name="Macros_Title" xml:space="preserve"><value>Makrot</value></data>
+  <data name="Macros_Add" xml:space="preserve"><value>Shto makro</value></data>
+  <data name="Macros_Record" xml:space="preserve"><value>Regjistro makro</value></data>
+  <data name="Macros_Search" xml:space="preserve"><value>Kërko makrot</value></data>
+  <data name="Macros_FilterAll" xml:space="preserve"><value>Të gjitha makrot</value></data>
+  <data name="Remaps_Title" xml:space="preserve"><value>Ricakto</value></data>
+  <data name="Remaps_Add" xml:space="preserve"><value>Shto ricaktim</value></data>
+  <data name="Remaps_Search" xml:space="preserve"><value>Kërko ricaktimet</value></data>
+  <data name="Remaps_FilterAll" xml:space="preserve"><value>Të gjitha ricaktimet</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Cilësimet</value></data>
+  <data name="Settings_General" xml:space="preserve"><value>Të përgjithshme</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>Tema</value></data>
+  <data name="Settings_ThemeDescription" xml:space="preserve"><value>Sistemi ndjek cilësimin tuaj të Windows</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>Mbyll në zonën e njoftimeve</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Vazhdon të ekzekutohet në zonën e njoftimeve kur mbyllni dritaren</value></data>
+  <data name="Settings_StartWithWindows" xml:space="preserve"><value>Nis me Windows</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Niset në zonën e njoftimeve kur hyni</value></data>
+  <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Tastet e shpejta dhe mbivendosja</value></data>
+  <data name="Settings_Hotkeys" xml:space="preserve"><value>Tastet e shpejta</value></data>
+  <data name="Settings_StopAllDescription" xml:space="preserve"><value>Ndal çdo cikël dhe makro</value></data>
+  <data name="Settings_OverlayMode" xml:space="preserve"><value>Regjimi i mbivendosjes</value></data>
+  <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Aktivizo ose çaktivizo regjimin e mbivendosjes</value></data>
+  <data name="Settings_Record" xml:space="preserve"><value>Regjistro</value></data>
+  <data name="Settings_RecordDescription" xml:space="preserve"><value>Nis dhe ndal regjistrimin e një makroje</value></data>
+  <data name="Settings_OverlayPanel" xml:space="preserve"><value>Paneli i mbivendosjes</value></data>
+  <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>Lista e cikleve dhe makrove tuaja</value></data>
+  <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Shfaq panelin e mbivendosjes</value></data>
+  <data name="Settings_Opacity" xml:space="preserve"><value>Patejdukshmëria</value></data>
+  <data name="Settings_OverlayPanelOpacity" xml:space="preserve"><value>Patejdukshmëria e panelit të mbivendosjes</value></data>
+  <data name="Settings_OpacityPreviewItem" xml:space="preserve"><value>Klikim majtas pa ndalim</value></data>
+  <data name="Settings_PositionOnScreen" xml:space="preserve"><value>Pozicioni në ekran</value></data>
+  <data name="Settings_PositionOnScreenDescription" xml:space="preserve"><value>Zvarritni panelin dhe butonat notues</value></data>
+  <data name="Settings_ClickInPanel" xml:space="preserve"><value>Klikoni elementet në panel për t'i nisur ose ndaluar</value></data>
+  <data name="Settings_ClickInPanelDescription" xml:space="preserve"><value>Disa aplikacione në ekran të plotë mund të reagojnë ndaj klikimit. Nëse ndodh, çaktivizojeni këtë dhe përdorni vetëm tastet e shpejta.</value></data>
+  <data name="Settings_Sound" xml:space="preserve"><value>Tingulli</value></data>
+  <data name="Settings_SoundDescription" xml:space="preserve"><value>Tingujt e nisjes dhe ndalimit të cikleve dhe makrove</value></data>
+  <data name="Settings_SoundVolume" xml:space="preserve"><value>Volumi i tingullit</value></data>
+  <data name="Settings_DataAndUpdates" xml:space="preserve"><value>Të dhënat dhe përditësimet</value></data>
+  <data name="Settings_Backup" xml:space="preserve"><value>Kopja rezervë</value></data>
+  <data name="Settings_ExportOrImport" xml:space="preserve"><value>Eksporto ose importo</value></data>
+  <data name="Settings_ExportOrImportDescription" xml:space="preserve"><value>Ruani të dhënat tuaja në një skedar, për të mbajtur një kopje ose për ta zhvendosur PuppyMacro në një PC tjetër</value></data>
+  <data name="Settings_ExportButton" xml:space="preserve"><value>Eksporto…</value></data>
+  <data name="Settings_ImportButton" xml:space="preserve"><value>Importo…</value></data>
+  <data name="Settings_OpenDataFolder" xml:space="preserve"><value>Hap dosjen e të dhënave</value></data>
+  <data name="Settings_Updates" xml:space="preserve"><value>Përditësimet</value></data>
+  <data name="Settings_WhatsNew" xml:space="preserve"><value>Çfarë ka të re</value></data>
+  <data name="Settings_CheckForUpdates" xml:space="preserve"><value>Kontrollo automatikisht për përditësime</value></data>
+  <data name="Settings_CheckForUpdatesDescription" xml:space="preserve"><value>Kur niset PuppyMacro dhe çdo 12 orë</value></data>
+  <data name="Settings_About" xml:space="preserve"><value>Rreth</value></data>
+  <data name="Settings_UserGuide" xml:space="preserve"><value>Udhëzuesi i përdoruesit</value></data>
+  <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Nuk ofrohet në versionin e zhvillimit</value></data>
+  <data name="Settings_DataSavedIn" xml:space="preserve"><value>Të dhënat ruhen në {0}</value></data>
+  <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Tastet e shpejta nuk funksionojnë tani:
+{0}</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro vazhdon të ekzekutohet në zonën e njoftimeve. Klikoni me të djathtën ikonën e tij për të dalë.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Hap PuppyMacro</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>Dil</value></data>
+  <data name="Main_RunningCount_one" xml:space="preserve"><value>{0} në ekzekutim</value></data>
+  <data name="Main_RunningCount_other" xml:space="preserve"><value>{0} në ekzekutim</value></data>
+  <data name="Loops_Count_one" xml:space="preserve"><value>{0} cikël</value></data>
+  <data name="Loops_Count_other" xml:space="preserve"><value>{0} cikle</value></data>
+  <data name="Loops_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Loops_Empty" xml:space="preserve"><value>Ende nuk ka cikle. Përzgjidhni Shto cikël për të krijuar një.</value></data>
+  <data name="Loops_NoMatch" xml:space="preserve"><value>Asnjë cikël nuk përputhet me kërkimin ose filtrin.</value></data>
+  <data name="Main_StopRunningFirst" xml:space="preserve"><value>Ndaloni fillimisht ciklet dhe makrot në ekzekutim</value></data>
+  <data name="Card_Delete" xml:space="preserve"><value>Fshi</value></data>
+  <data name="Card_MoveUp" xml:space="preserve"><value>Zhvendos lart</value></data>
+  <data name="Card_MoveDown" xml:space="preserve"><value>Zhvendos poshtë</value></data>
+  <data name="Card_Duplicate" xml:space="preserve"><value>Dyfisho</value></data>
+  <data name="Main_Cancel" xml:space="preserve"><value>Anulo</value></data>
+  <data name="Main_DeleteNamedConfirm" xml:space="preserve"><value>Të fshihet "{0}"? Kjo nuk mund të zhbëhet.</value></data>
+  <data name="Loops_DeleteTitle" xml:space="preserve"><value>Fshi ciklin</value></data>
+  <data name="Macros_Count_one" xml:space="preserve"><value>{0} makro</value></data>
+  <data name="Macros_Count_other" xml:space="preserve"><value>{0} makro</value></data>
+  <data name="Macros_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Macros_Empty" xml:space="preserve"><value>Ende nuk ka makro. Regjistroni një, ose përzgjidhni Shto makro për ta ndërtuar hap pas hapi.</value></data>
+  <data name="Macros_NoMatch" xml:space="preserve"><value>Asnjë makro nuk përputhet me kërkimin ose filtrin.</value></data>
+  <data name="Macros_DeleteTitle" xml:space="preserve"><value>Fshi makronë</value></data>
+  <data name="Macros_SaveFailed" xml:space="preserve"><value>Makroja "{0}" nuk mund të ruhej: {1}</value></data>
+  <data name="Settings_NothingToPlace" xml:space="preserve"><value>Nuk ka asgjë për të vendosur. Aktivizoni panelin e mbivendosjes ose shtoni një buton notues.</value></data>
+  <data name="Main_StopAllTooltip" xml:space="preserve"><value>Ndal të gjitha ({0})</value></data>
+  <data name="Main_EnterOverlayModeTooltip" xml:space="preserve"><value>Hyr në regjimin e mbivendosjes ({0})</value></data>
+  <data name="Settings_SaveFailed" xml:space="preserve"><value>Cilësimet tuaja nuk mund të ruheshin: {0}</value></data>
+  <data name="Remaps_Count_one" xml:space="preserve"><value>{0} ricaktim</value></data>
+  <data name="Remaps_Count_other" xml:space="preserve"><value>{0} ricaktime</value></data>
+  <data name="Remaps_EnabledCount_one" xml:space="preserve"><value>{0} aktiv</value></data>
+  <data name="Remaps_EnabledCount_other" xml:space="preserve"><value>{0} aktive</value></data>
+  <data name="Remaps_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Remaps_Empty" xml:space="preserve"><value>Ende nuk ka ricaktime. Përzgjidhni Shto ricaktim për ta kthyer një tast ose buton në një tjetër.</value></data>
+  <data name="Remaps_NoMatch" xml:space="preserve"><value>Asnjë ricaktim nuk përputhet me kërkimin ose filtrin.</value></data>
+  <data name="Remaps_DeleteTitle" xml:space="preserve"><value>Fshi ricaktimin</value></data>
+  <data name="Remaps_DeleteConfirm" xml:space="preserve"><value>Të fshihet ricaktimi {0} → {1}? Kjo nuk mund të zhbëhet.</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>Eksporto</value></data>
+  <data name="Export_FileDialogTitle" xml:space="preserve"><value>Eksporto të dhënat e PuppyMacro</value></data>
+  <data name="Backup_FileFilter" xml:space="preserve"><value>Kopje rezervë e PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>Eksportimi dështoi: {0}</value></data>
+  <data name="Backup_ImportFileDialogTitle" xml:space="preserve"><value>Importo të dhënat e PuppyMacro</value></data>
+  <data name="Backup_ImportFailed" xml:space="preserve"><value>Importimi dështoi: {0}</value></data>
+  <data name="Backup_ImportTitle" xml:space="preserve"><value>Importo</value></data>
+  <data name="Backup_ImportConfirm" xml:space="preserve"><value>Ky skedar ka {0}. Të zëvendësohen tuajat me to?
+Çfarë nuk ka skedari mbetet siç është. Të dhënat tuaja aktuale ruhen fillimisht si kopje rezervë në dosjen e të dhënave, pastaj PuppyMacro riniset.</value></data>
+  <data name="Backup_ImportAndRestart" xml:space="preserve"><value>Importo dhe rinis</value></data>
+  <data name="Backup_PartData" xml:space="preserve"><value>cikle, makro, ricaktime dhe cilësime</value></data>
+  <data name="Backup_PartHistory" xml:space="preserve"><value>Historikun</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>aktivitetin AI</value></data>
+  <data name="Backup_PartLogs" xml:space="preserve"><value>evidencat</value></data>
+  <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} dhe {1}</value></data>
+  <data name="Update_CheckFailed" xml:space="preserve"><value>Nuk mund të kontrollohej për përditësime. {0}</value></data>
+  <data name="Update_DownloadFailed" xml:space="preserve"><value>Përditësimi nuk mund të shkarkohej. {0}</value></data>
+  <data name="Update_NotInstalled" xml:space="preserve"><value>Instaloni PuppyMacro me Setup për të marrë përditësime</value></data>
+  <data name="Update_DownloadingVersion" xml:space="preserve"><value>Po shkarkohet versioni {0}… {1}%</value></data>
+  <data name="Update_TryAgain" xml:space="preserve"><value>Provo përsëri</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>Versioni {0} është i disponueshëm (ju keni {1})</value></data>
+  <data name="Update_UpdateAndRestart" xml:space="preserve"><value>Përditëso dhe rinis</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>Po kontrollohet për përditësime…</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>PuppyMacro {0} është i përditësuar. Kontrolluar në {1}</value></data>
+  <data name="Update_CurrentVersion" xml:space="preserve"><value>PuppyMacro {0}</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>Kontrollo tani</value></data>
+  <data name="Update_BarTitle" xml:space="preserve"><value>Versioni {0} i disponueshëm</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>Po shkarkohet… {0}%</value></data>
+  <data name="Rail_Pages" xml:space="preserve"><value>Faqet</value></data>
+  <data name="Rail_SettingsAndHelp" xml:space="preserve"><value>Cilësimet dhe ndihma</value></data>
+  <data name="Rail_Loops" xml:space="preserve"><value>Ciklet</value></data>
+  <data name="Rail_Macros" xml:space="preserve"><value>Makrot</value></data>
+  <data name="Rail_Remap" xml:space="preserve"><value>Ricakto</value></data>
+  <data name="Rail_Settings" xml:space="preserve"><value>Cilësimet</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Redakto</value></data>
+  <data name="Card_Enabled" xml:space="preserve"><value>Aktivizuar</value></data>
+  <data name="Card_MoreOptions" xml:space="preserve"><value>Më shumë opsione</value></data>
+  <data name="Card_Play" xml:space="preserve"><value>Luaj</value></data>
+  <data name="Card_Stop" xml:space="preserve"><value>Ndal</value></data>
+  <data name="Export_WhatToExport" xml:space="preserve"><value>Çfarë të eksportohet</value></data>
+  <data name="Export_Everything" xml:space="preserve"><value>Gjithçka</value></data>
+  <data name="Export_Choose" xml:space="preserve"><value>Zgjidhni çfarë të eksportohet</value></data>
+  <data name="Export_PartData" xml:space="preserve"><value>Ciklet, makrot, ricaktimet dhe cilësimet</value></data>
+  <data name="Export_PartHistory" xml:space="preserve"><value>Historiku</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>Aktiviteti AI</value></data>
+  <data name="Export_PartLogs" xml:space="preserve"><value>Evidencat</value></data>
+  <data name="Export_EverythingDescription" xml:space="preserve"><value>Një kopje identike, për ta zhvendosur PuppyMacro në një PC tjetër · {0}</value></data>
+  <data name="Export_PartDataDescription" xml:space="preserve"><value>Përfshihen gjithmonë · {0}</value></data>
+  <data name="Export_PartHistoryDescription" xml:space="preserve"><value>Versionet e mëparshme të çdo cikli, makroje dhe ricaktimi · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Çfarë kërkuan aplikacionet AI, me Rikthe · {0}</value></data>
+  <data name="Export_PartLogsDescription" xml:space="preserve"><value>Për zgjidhjen e problemeve · {0}</value></data>
+  <data name="Export_SizeB" xml:space="preserve"><value>{0} B</value></data>
+  <data name="Export_SizeKB" xml:space="preserve"><value>{0} KB</value></data>
+  <data name="Export_SizeMB" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Export_SizeGB" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Card_ToggleWith" xml:space="preserve"><value>Ndërrim me</value></data>
+  <data name="Card_HoldWith" xml:space="preserve"><value>Mbajtje me</value></data>
+  <data name="Card_ToggleNoHotkey" xml:space="preserve"><value>Ndërrim, pa tast të shpejtë</value></data>
+  <data name="Card_HoldNoHotkey" xml:space="preserve"><value>Mbajtje, pa tast të shpejtë</value></data>
+  <data name="Card_StatusRunning" xml:space="preserve"><value>Në ekzekutim</value></data>
+  <data name="Card_StatusIdle" xml:space="preserve"><value>Në pritje</value></data>
+  <data name="Card_StatusDisabled" xml:space="preserve"><value>Çaktivizuar</value></data>
+  <data name="Card_StatusEnabled" xml:space="preserve"><value>Aktivizuar</value></data>
+  <data name="Loops_NoActions" xml:space="preserve"><value>Asnjë veprim</value></data>
+  <data name="Loops_ActionsSummary_one" xml:space="preserve"><value>{0} veprim: {1}</value></data>
+  <data name="Loops_ActionsSummary_other" xml:space="preserve"><value>{0} veprime: {1}</value></data>
+  <data name="Loops_IntervalMilliseconds" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="Loops_IntervalSeconds" xml:space="preserve"><value>{0} s</value></data>
+  <data name="Loops_IntervalMinutes" xml:space="preserve"><value>{0} min</value></data>
+  <data name="Loops_IntervalHours" xml:space="preserve"><value>{0} orë</value></data>
+  <data name="Loops_HeldDown" xml:space="preserve"><value>{0} i mbajtur shtypur</value></data>
+  <data name="Loops_KeyEvery" xml:space="preserve"><value>{0} çdo {1}</value></data>
+  <data name="Loops_KeyTimesEvery_one" xml:space="preserve"><value>{1} {0} herë çdo {2}</value></data>
+  <data name="Loops_KeyTimesEvery_other" xml:space="preserve"><value>{1} {0} herë çdo {2}</value></data>
+  <data name="Loops_PastesEvery" xml:space="preserve"><value>ngjit "{0}" çdo {1}</value></data>
+  <data name="Macros_RepeatLoop" xml:space="preserve"><value>në cikël</value></data>
+  <data name="Macros_RepeatOnce" xml:space="preserve"><value>një herë</value></data>
+  <data name="Macros_RepeatTimes_one" xml:space="preserve"><value>{0} herë</value></data>
+  <data name="Macros_RepeatTimes_other" xml:space="preserve"><value>{0} herë</value></data>
+  <data name="Macros_Summary_one" xml:space="preserve"><value>{0} veprim, {1}, përsëritje: {2}</value></data>
+  <data name="Macros_Summary_other" xml:space="preserve"><value>{0} veprime, {1}, përsëritje: {2}</value></data>
+  <data name="Macros_SummaryWithSpeed_one" xml:space="preserve"><value>{0} veprim, {1}, përsëritje: {2}, shpejtësia ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} veprime, {1}, përsëritje: {2}, shpejtësia ×{3}</value></data>
+  <data name="Remaps_AllApps" xml:space="preserve"><value>Të gjitha aplikacionet</value></data>
+  <data name="App_MigrationFailed" xml:space="preserve"><value>Ciklet dhe makrot tuaja nuk mund të kopjoheshin në {0}.
+Detajet: {1}</value></data>
+  <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Disa skedarë makrosh nuk mund të përditësoheshin në këtë version.</value></data>
+  <data name="App_UnexpectedError" xml:space="preserve"><value>Gabim i papritur:
+{0}</value></data>
+  <data name="App_SettingsReset" xml:space="preserve"><value>Cilësimet tuaja nuk mund të lexoheshin, prandaj u rivendosën.
+Skedari i vjetër u ruajt si {0}.
+Detajet: {1}</value></data>
+  <data name="App_MacroFilesSkipped" xml:space="preserve"><value>Disa skedarë makrosh nuk mund të lexoheshin dhe u anashkaluan (p.sh. {0}).</value></data>
+  <data name="Backup_NotABackup" xml:space="preserve"><value>Ky skedar nuk është kopje rezervë e PuppyMacro.</value></data>
+
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplikacionet AI të lidhura: përzgjidhni për të hapur faqen AI</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>Aplikacionet AI të lidhura</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Përdoreni PuppyMacro nga një aplikacion AI në këtë PC, si Claude Desktop ose Visual Studio Code. Kërkoni me fjalët tuaja: AI krijon cikle, makro dhe ricaktime, dhe ju i provoni menjëherë.</value></data>
+  <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>Aplikacionet AI në PuppyMacro janë të reja: funksionojnë, por mund të ndryshojnë, dhe një AI mund ta kuptojë gabim një kërkesë. Çdo ndryshim ruhet në Historikun e elementit, kështu që mund të ktheheni gjithmonë pas.</value></data>
+  <data name="AiPage_Access" xml:space="preserve"><value>Qasja</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>Lejo qasjen AI</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>Aplikacionet AI në këtë PC mund të lexojnë dhe ndryshojnë ciklet, makrot, ricaktimet dhe cilësimet tuaja. Çdo ndryshim ruhet në Historikun e elementit.</value></data>
+  <data name="AiPage_AskDelete" xml:space="preserve"><value>Pyet para fshirjes së një cikli, makroje ose ricaktimi</value></data>
+  <data name="AiPage_AskDeleteName" xml:space="preserve"><value>Pyet para fshirjes</value></data>
+  <data name="AiPage_AskChange" xml:space="preserve"><value>Pyet para ndryshimit të një cikli, makroje ose ricaktimi</value></data>
+  <data name="AiPage_AskChangeName" xml:space="preserve"><value>Pyet para ndryshimit</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Joaktiv: elementet e reja dhe të ndryshuara nga AI ruhen menjëherë, gati për t'u provuar.</value></data>
+  <data name="AiPage_AskSettings" xml:space="preserve"><value>Pyet para ndryshimit të cilësimeve</value></data>
+  <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Tema, tastet e shpejta globale, paneli i mbivendosjes, tingulli</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Nis PuppyMacro kur një aplikacion AI ka nevojë</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Joaktiv: kur PuppyMacro është i mbyllur, aplikacionet AI nuk mund ta përdorin dhe ju thonë ta hapni.</value></data>
+  <data name="AiPage_Apps" xml:space="preserve"><value>Aplikacionet</value></data>
+  <data name="AiPage_RecentActivity" xml:space="preserve"><value>Aktiviteti i fundit</value></data>
+  <data name="AiPage_ViewAll" xml:space="preserve"><value>Shiko të gjitha</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>Ende nuk ka kërkesa. Lidhni një aplikacion AI më sipër, pastaj kërkojini të krijojë një cikël, një makro ose një ricaktim.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>Si ta përdorni AI-në me PuppyMacro</value></data>
+  <data name="AiApps_ConnectedSince" xml:space="preserve"><value>Lidhur që nga {0}</value></data>
+  <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>U shtua. Rinisni Claude Desktop për t'u lidhur.</value></data>
+  <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>U shtua. Hapni Copilot Chat në Agent mode për t'u lidhur.</value></data>
+  <data name="AiApps_CodexAdded" xml:space="preserve"><value>U shtua. Rinisni Codex për t'u lidhur.</value></data>
+  <data name="AiApps_InstalledNotConnected" xml:space="preserve"><value>Instaluar, jo i lidhur</value></data>
+  <data name="AiApps_VsCodeInstalled" xml:space="preserve"><value>Instaluar. Përdor GitHub Copilot, me modelin që zgjidhni atje.</value></data>
+  <data name="AiApps_NotInstalled" xml:space="preserve"><value>Nuk është instaluar</value></data>
+  <data name="AiApps_Connect" xml:space="preserve"><value>Lidh</value></data>
+  <data name="AiApps_Remove" xml:space="preserve"><value>Hiq</value></data>
+  <data name="AiApps_CopyConfiguration" xml:space="preserve"><value>Kopjo konfigurimin</value></data>
+  <data name="AiApps_ActionName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="AiApps_GetClaude" xml:space="preserve"><value>Merr Claude Desktop</value></data>
+  <data name="AiApps_GetVsCode" xml:space="preserve"><value>Merr Visual Studio Code</value></data>
+  <data name="AiApps_GetCodex" xml:space="preserve"><value>Merr Codex</value></data>
+  <data name="AiApps_OtherApps" xml:space="preserve"><value>Aplikacione të tjera</value></data>
+  <data name="AiApps_OthersConnected" xml:space="preserve"><value>Lidhur: {0}</value></data>
+  <data name="AiApps_OthersHint" xml:space="preserve"><value>Çdo aplikacion që mbështet serverë lokalë MCP: ngjitni konfigurimin në cilësimet e tij MCP.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Konfigurimi u kopjua. Ngjiteni në cilësimet MCP të aplikacionit tuaj AI, pastaj rinisni aplikacionin.</value></data>
+  <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code nuk u hap: {0}</value></data>
+  <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Hiqeni në Visual Studio Code: ekzekutoni "MCP: Open User Configuration" dhe fshini "{0}".</value></data>
+  <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>Dosja e PuppyMacro ka një karakter që cilësimet e Codex nuk e pranojnë.</value></data>
+  <data name="AiApps_SettingsNotChanged" xml:space="preserve"><value>Cilësimet e {0} nuk mund të ndryshoheshin: {1}</value></data>
+  <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>Skedari i cilësimeve të {0} nuk është objekt JSON, prandaj PuppyMacro nuk e ndryshoi ({1}).</value></data>
+  <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>Në skedarin e cilësimeve të {0}, "{1}" nuk është objekt, prandaj PuppyMacro nuk e ndryshoi ({2}).</value></data>
+  <data name="AiApps_SettingsFileError" xml:space="preserve"><value>Skedari i cilësimeve të {0} ka një gabim, prandaj PuppyMacro nuk e ndryshoi: {1} ({2})</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Një program tjetër përdor lidhjen AI të PuppyMacro, prandaj aplikacionet AI nuk mund të lidhen. Mbylleni atë ose rinisni Windows.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>Aplikacionet AI nuk mund të lidhen: {0}</value></data>
+  <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>Këto cilësime nuk mund të rikthehen.</value></data>
+  <data name="AiActivity_CantRestore" xml:space="preserve"><value>Ky ndryshim nuk mund të rikthehet.</value></data>
+  <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>Ky ndryshim nuk mund të rikthehet: {0}</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>Aktiviteti AI</value></data>
+  <data name="AiActivity_KeptNote" xml:space="preserve"><value>Ruhet në këtë PC: kërkesat më të reja, deri në 20 MB.</value></data>
+  <data name="AiActivity_ClearHistory" xml:space="preserve"><value>Pastro historikun</value></data>
+  <data name="AiActivity_Close" xml:space="preserve"><value>Mbyll</value></data>
+  <data name="AiActivity_Period" xml:space="preserve"><value>Periudha</value></data>
+  <data name="AiActivity_Last7Days" xml:space="preserve"><value>7 ditët e fundit</value></data>
+  <data name="AiActivity_Last30Days" xml:space="preserve"><value>30 ditët e fundit</value></data>
+  <data name="AiActivity_All" xml:space="preserve"><value>Të gjitha</value></data>
+  <data name="AiActivity_App" xml:space="preserve"><value>Aplikacioni</value></data>
+  <data name="AiActivity_Type" xml:space="preserve"><value>Lloji</value></data>
+  <data name="AiActivity_Result" xml:space="preserve"><value>Rezultati</value></data>
+  <data name="AiActivity_Search" xml:space="preserve"><value>Kërko</value></data>
+  <data name="AiActivity_SearchPlaceholder" xml:space="preserve"><value>Kërko në aktivitet</value></data>
+  <data name="AiActivity_AllApps" xml:space="preserve"><value>Të gjitha aplikacionet</value></data>
+  <data name="AiActivity_AllTypes" xml:space="preserve"><value>Të gjitha llojet</value></data>
+  <data name="AiActivity_AllResults" xml:space="preserve"><value>Të gjitha rezultatet</value></data>
+  <data name="AiActivity_Restore" xml:space="preserve"><value>Rikthe</value></data>
+  <data name="AiActivity_Details" xml:space="preserve"><value>Detajet</value></data>
+  <data name="AiActivity_NoRequests" xml:space="preserve"><value>Ende nuk ka kërkesa.</value></data>
+  <data name="AiActivity_NoMatch" xml:space="preserve"><value>Asnjë kërkesë nuk përputhet me filtrat.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>Të fshihet historiku i kërkesave AI? Kjo nuk mund të zhbëhet.</value></data>
+  <data name="AiActivity_Clear" xml:space="preserve"><value>Pastro</value></data>
+  <data name="AiActivity_Cancel" xml:space="preserve"><value>Anulo</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>Kërkesë AI</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>Kërkesë AI - {0}</value></data>
+  <data name="AiRequest_AskedBy" xml:space="preserve"><value>Kërkuar nga {0}</value></data>
+  <data name="AiRequest_Instructions" xml:space="preserve"><value>Udhëzimet</value></data>
+  <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>
+  <data name="AiRequest_KeyHeader" xml:space="preserve"><value>Tasti ose kombinimi</value></data>
+  <data name="AiRequest_KeyDescription" xml:space="preserve"><value>Për një kombinim, mbani fillimisht shtypur Ctrl, Alt, Shift ose Win. Për Ctrl, Alt, Shift ose Win vetëm, shtypeni dhe lëshojeni.</value></data>
+  <data name="AiRequest_KeyPrompt" xml:space="preserve"><value>Shtypni tastin ose kombinimin (Esc anulon)</value></data>
+  <data name="AiRequest_Ok" xml:space="preserve"><value>Në rregull</value></data>
+  <data name="AiRequest_Cancel" xml:space="preserve"><value>Anulo</value></data>
+  <data name="AiRequest_NoticeWithDescription" xml:space="preserve"><value>{0} (kërkuar nga {1})</value></data>
+  <data name="AiRequest_NoticeAskedBy" xml:space="preserve"><value>Kërkuar nga {0}.</value></data>
+  <data name="AiReady_AppAsks" xml:space="preserve"><value>{0} kërkon</value></data>
+  <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
+  <data name="AiReady_Hint" xml:space="preserve"><value>Shtypni {0} kur të jeni gati · {1} anulon</value></data>
+  <data name="AiReady_Start" xml:space="preserve"><value>Nis</value></data>
+  <data name="Pick_Title" xml:space="preserve"><value>Zgjidh një pikë</value></data>
+  <data name="Pick_ClickPoint" xml:space="preserve"><value>Klikoni pikën ku duhet të shkojë kursori</value></data>
+  <data name="Pick_Cancel" xml:space="preserve"><value>Anulo</value></data>
+  <data name="Pick_AppTitle" xml:space="preserve"><value>Zgjidh një aplikacion</value></data>
+  <data name="Pick_ClickApp" xml:space="preserve"><value>Klikoni një dritare të aplikacionit</value></data>
+  <data name="Pick_AskedBy" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Pick_Counter" xml:space="preserve"><value>{0} / {1}   {2}</value></data>
+  <data name="Pick_CantReadName" xml:space="preserve"><value>Emri i këtij aplikacioni nuk mund të lexohet</value></data>
+  <data name="Placement_Title" xml:space="preserve"><value>Pozicionimi i mbivendosjes</value></data>
+  <data name="Placement_DragPanel" xml:space="preserve"><value>Zvarriteni panelin ku e dëshironi</value></data>
+  <data name="Placement_DragPanelAndButtons" xml:space="preserve"><value>Zvarritni panelin dhe butonat ku i dëshironi</value></data>
+  <data name="Placement_DragButton" xml:space="preserve"><value>Zvarriteni butonin ku e dëshironi</value></data>
+  <data name="Placement_DragButtons" xml:space="preserve"><value>Zvarritni butonat ku i dëshironi</value></data>
+  <data name="Placement_Save" xml:space="preserve"><value>Ruaj</value></data>
+  <data name="Placement_Cancel" xml:space="preserve"><value>Anulo</value></data>
+  <data name="Placement_Arrows" xml:space="preserve"><value>Shigjetat</value></data>
+  <data name="Placement_Nudge" xml:space="preserve"><value>Zhvendos me 1 piksel (Shift: 10)</value></data>
+  <data name="Placement_NudgeSelected" xml:space="preserve"><value>Zhvendos të përzgjedhurin me 1 piksel (Shift: 10)</value></data>
+  <data name="Placement_Selection" xml:space="preserve"><value>{0}   X {1}   Y {2}</value></data>
+
+  <data name="MacroEditor_EditTitle" xml:space="preserve"><value>Redakto makronë</value></data>
+  <data name="Editor_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="MacroEditor_NamePlaceholder" xml:space="preserve"><value>p.sh. Prodho dhe çmonto</value></data>
+  <data name="Editor_Actions" xml:space="preserve"><value>Veprimet</value></data>
+  <data name="MacroEditor_AddAction" xml:space="preserve"><value>Shto veprim</value></data>
+  <data name="MacroEditor_Record" xml:space="preserve"><value>Regjistro</value></data>
+  <data name="MacroEditor_RecordActions" xml:space="preserve"><value>Regjistro veprime</value></data>
+  <data name="Editor_Test" xml:space="preserve"><value>Testo</value></data>
+  <data name="MacroEditor_TestAction" xml:space="preserve"><value>Testo veprimin</value></data>
+  <data name="MacroEditor_TestTooltip" xml:space="preserve"><value>Luaj veprimin e përzgjedhur një herë në dritaren prapa</value></data>
+  <data name="MacroEditor_Edit" xml:space="preserve"><value>Redakto</value></data>
+  <data name="MacroEditor_EditAction" xml:space="preserve"><value>Redakto veprimin</value></data>
+  <data name="MacroEditor_Copy" xml:space="preserve"><value>Kopjo</value></data>
+  <data name="MacroEditor_CopyTooltip" xml:space="preserve"><value>Kopjo veprimet e përzgjedhura, për t'i ngjitur këtu ose në një makro tjetër (Ctrl+C)</value></data>
+  <data name="MacroEditor_Paste" xml:space="preserve"><value>Ngjit</value></data>
+  <data name="MacroEditor_PasteTooltip" xml:space="preserve"><value>Ngjit veprimet e kopjuara aty ku shkojnë veprimet e reja (Ctrl+V)</value></data>
+  <data name="MacroEditor_Duplicate" xml:space="preserve"><value>Dyfisho</value></data>
+  <data name="MacroEditor_DuplicateTooltip" xml:space="preserve"><value>Dyfisho veprimet e përzgjedhura (Ctrl+D)</value></data>
+  <data name="MacroEditor_Group" xml:space="preserve"><value>Grupo</value></data>
+  <data name="MacroEditor_GroupTooltip" xml:space="preserve"><value>Vendos veprimet e përzgjedhura në një grup (Ctrl+G)</value></data>
+  <data name="MacroEditor_Delete" xml:space="preserve"><value>Fshi</value></data>
+  <data name="MacroEditor_DeleteTooltip" xml:space="preserve"><value>Fshi veprimet e përzgjedhura (Delete)</value></data>
+  <data name="MacroEditor_RenameGroup" xml:space="preserve"><value>Riemërto grupin</value></data>
+  <data name="MacroEditor_Ungroup" xml:space="preserve"><value>Zhgrupo</value></data>
+  <data name="MacroEditor_UngroupTooltip" xml:space="preserve"><value>Zhgrupo (mbaj veprimet)</value></data>
+  <data name="MacroEditor_ExpandAllGroups" xml:space="preserve"><value>Zgjero të gjitha grupet</value></data>
+  <data name="MacroEditor_CollapseAllGroups" xml:space="preserve"><value>Palos të gjitha grupet</value></data>
+  <data name="MacroEditor_Shortcuts" xml:space="preserve"><value>Shkurtoret</value></data>
+  <data name="MacroEditor_CompactList" xml:space="preserve"><value>Listë kompakte</value></data>
+  <data name="MacroEditor_CompactListTooltip" xml:space="preserve"><value>Listë kompakte: rreshta më të vegjël</value></data>
+  <data name="MacroEditor_DensityNormal" xml:space="preserve"><value>Normale</value></data>
+  <data name="MacroEditor_DensityCompact" xml:space="preserve"><value>Kompakte</value></data>
+  <data name="MacroEditor_DelayTooltip" xml:space="preserve"><value>Vonesa para këtij veprimi</value></data>
+  <data name="MacroEditor_NoActions" xml:space="preserve"><value>Ende nuk ka veprime. Regjistroni veprime ose shtojini një nga një.</value></data>
+  <data name="Editor_Enabled" xml:space="preserve"><value>Aktivizuar</value></data>
+  <data name="MacroEditor_Repeat" xml:space="preserve"><value>Përsërit</value></data>
+  <data name="MacroEditor_Once" xml:space="preserve"><value>Një herë</value></data>
+  <data name="MacroEditor_Loop" xml:space="preserve"><value>Në cikël</value></data>
+  <data name="MacroEditor_NTimes" xml:space="preserve"><value>N herë</value></data>
+  <data name="MacroEditor_Times" xml:space="preserve"><value>Herë</value></data>
+  <data name="MacroEditor_Speed" xml:space="preserve"><value>Shpejtësia</value></data>
+  <data name="Editor_Activation" xml:space="preserve"><value>Aktivizimi</value></data>
+  <data name="Editor_Toggle" xml:space="preserve"><value>Ndërrim</value></data>
+  <data name="Editor_Hold" xml:space="preserve"><value>Mbajtje</value></data>
+  <data name="Editor_Hotkey" xml:space="preserve"><value>Tasti i shpejtë</value></data>
+  <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Çdo tast ose buton i miut, si F2 ose A. Për një kombinim, mbani fillimisht shtypur Ctrl, Alt, Shift ose Win; klikimi majtas dhe djathtas, rrota e miut dhe Esc kanë nevojë për një të tillë. Mbajtja ka nevojë për një tast të shpejtë.</value></data>
+  <data name="Editor_Sound" xml:space="preserve"><value>Tingulli</value></data>
+  <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Luhet kur makroja niset dhe ndalet</value></data>
+  <data name="Editor_SoundChoose" xml:space="preserve"><value>Klikoni një tingull për ta zgjedhur dhe për të dëgjuar si niset dhe ndalet</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>Ruaj</value></data>
+  <data name="Editor_Cancel" xml:space="preserve"><value>Anulo</value></data>
+  <data name="LoopEditor_AddTitle" xml:space="preserve"><value>Shto cikël</value></data>
+  <data name="LoopEditor_NamePlaceholder" xml:space="preserve"><value>p.sh. Klikim majtas pa ndalim</value></data>
+  <data name="LoopEditor_PressKey" xml:space="preserve"><value>Shtyp tastin</value></data>
+  <data name="LoopEditor_Click" xml:space="preserve"><value>Klikim</value></data>
+  <data name="LoopEditor_PasteText" xml:space="preserve"><value>Ngjit tekst</value></data>
+  <data name="LoopEditor_SoundDescription" xml:space="preserve"><value>Luhet kur cikli niset dhe ndalet</value></data>
+  <data name="RemapEditor_AddTitle" xml:space="preserve"><value>Shto ricaktim</value></data>
+  <data name="RemapEditor_WhenIPress" xml:space="preserve"><value>Kur shtyp</value></data>
+  <data name="RemapEditor_SendInstead" xml:space="preserve"><value>Dërgo në vend të tij</value></data>
+  <data name="RemapEditor_KeyDescription" xml:space="preserve"><value>Një tast, një buton i miut ose një kombinim (mbani fillimisht shtypur Ctrl, Alt, Shift ose Win). Për Ctrl, Alt, Shift ose Win vetëm, shtypeni dhe lëshojeni.</value></data>
+  <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Shtypni tastin ose kombinimin (Esc anulon)</value></data>
+  <data name="RemapEditor_Note" xml:space="preserve"><value>Shënim (opsional)</value></data>
+  <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>p.sh. Rifresko me butonin anësor</value></data>
+  <data name="ActionWindow_Title" xml:space="preserve"><value>Veprimi</value></data>
+  <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Luaj këtë veprim një herë në dritaren prapa</value></data>
+  <data name="ActionWindow_Name" xml:space="preserve"><value>Emri (opsional)</value></data>
+  <data name="ActionWindow_NameDescription" xml:space="preserve"><value>Shfaqet me shkronja të trasha në listë</value></data>
+  <data name="ActionWindow_NamePlaceholder" xml:space="preserve"><value>p.sh. Hap inventarin</value></data>
+  <data name="ActionWindow_Delay" xml:space="preserve"><value>Vonesa</value></data>
+  <data name="ActionWindow_DelayDescription" xml:space="preserve"><value>Prit para këtij veprimi</value></data>
+  <data name="Editor_Ms" xml:space="preserve"><value>ms</value></data>
+  <data name="Group_Title" xml:space="preserve"><value>Grupo veprimet</value></data>
+  <data name="Group_Name" xml:space="preserve"><value>Emri i grupit</value></data>
+  <data name="Group_NamePlaceholder" xml:space="preserve"><value>p.sh. Hap tavolinën e prodhimit</value></data>
+  <data name="Group_Ok" xml:space="preserve"><value>Grupo</value></data>
+  <data name="MacroEditor_AddTitle" xml:space="preserve"><value>Shto makro</value></data>
+  <data name="MacroEditor_EditNamedTitle" xml:space="preserve"><value>Redakto makronë - {0}</value></data>
+  <data name="MacroEditor_SpeedValue" xml:space="preserve"><value>×{0}</value></data>
+  <data name="MacroEditor_ActionNumber" xml:space="preserve"><value>#{0}</value></data>
+  <data name="MacroEditor_ActionRange" xml:space="preserve"><value>#{0}–{1}</value></data>
+  <data name="MacroEditor_GroupInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="MacroEditor_Total" xml:space="preserve"><value>{0}, {1} me ×1</value></data>
+  <data name="MacroEditor_TotalInGroups" xml:space="preserve"><value>{0} në {1}, {2} me ×1</value></data>
+  <data name="MacroEditor_ActionCount_one" xml:space="preserve"><value>{0} veprim</value></data>
+  <data name="MacroEditor_ActionCount_other" xml:space="preserve"><value>{0} veprime</value></data>
+  <data name="MacroEditor_GroupCount_one" xml:space="preserve"><value>{0} grup</value></data>
+  <data name="MacroEditor_GroupCount_other" xml:space="preserve"><value>{0} grupe</value></data>
+  <data name="MacroEditor_InsertAfterGroup" xml:space="preserve"><value>Veprimet e reja shkojnë pas grupit "{0}"</value></data>
+  <data name="MacroEditor_InsertAfterInGroup" xml:space="preserve"><value>Veprimet e reja shkojnë pas #{0}, në "{1}"</value></data>
+  <data name="MacroEditor_InsertAfter" xml:space="preserve"><value>Veprimet e reja shkojnë pas #{0}</value></data>
+  <data name="MacroEditor_InsertAtEnd" xml:space="preserve"><value>Veprimet e reja shkojnë në fund</value></data>
+  <data name="MacroEditor_Selected_one" xml:space="preserve"><value>{0} veprim i përzgjedhur · {1}</value></data>
+  <data name="MacroEditor_Selected_other" xml:space="preserve"><value>{0} veprime të përzgjedhura · {1}</value></data>
+  <data name="MacroEditor_NoneSelected" xml:space="preserve"><value>Përzgjidhni veprime për t'i redaktuar, grupuar, kopjuar e të tjera · {0}</value></data>
+  <data name="MacroEditor_DelayHeader" xml:space="preserve"><value>Vonesa para këtij veprimi (ms)</value></data>
+  <data name="Editor_Close" xml:space="preserve"><value>Mbyll</value></data>
+  <data name="MacroEditor_NewGroupName" xml:space="preserve"><value>Grupi {0}</value></data>
+  <data name="MacroEditor_HoldHint" xml:space="preserve"><value>Luhet vetëm sa kohë që tasti i shpejtë mbahet shtypur.</value></data>
+  <data name="Editor_ToggleHint" xml:space="preserve"><value>Shtypni tastin e shpejtë për ta nisur, shtypeni përsëri për ta ndaluar.</value></data>
+  <data name="Editor_EnterName" xml:space="preserve"><value>Shkruani një emër.</value></data>
+  <data name="MacroEditor_NoActionsError" xml:space="preserve"><value>Shtoni ose regjistroni të paktën një veprim.</value></data>
+  <data name="Editor_HoldNeedsHotkey" xml:space="preserve"><value>Mbajtja ka nevojë për një tast të shpejtë. Zgjidhni një ose kaloni te Ndërrim.</value></data>
+  <data name="LoopEditor_EditNamedTitle" xml:space="preserve"><value>Redakto ciklin - {0}</value></data>
+  <data name="LoopEditor_HoldHint" xml:space="preserve"><value>Ekzekutohet vetëm sa kohë që tasti i shpejtë mbahet shtypur.</value></data>
+  <data name="LoopEditor_NoActionsError" xml:space="preserve"><value>Shtoni të paktën një veprim.</value></data>
+  <data name="LoopEditor_IntervalError" xml:space="preserve"><value>Çdo interval duhet të jetë ndërmjet 10 ms dhe 24 orë.</value></data>
+  <data name="LoopEditor_HotkeyIsPressed" xml:space="preserve"><value>Tasti i shpejtë nuk mund të jetë një nga tastet që shtyp ky cikël.</value></data>
+  <data name="RemapEditor_EditNamedTitle" xml:space="preserve"><value>Redakto ricaktimin - {0}</value></data>
+  <data name="RemapEditor_EditKeysTitle" xml:space="preserve"><value>Redakto ricaktimin - {0} → {1}</value></data>
+  <data name="RemapEditor_NoSourceError" xml:space="preserve"><value>Zgjidhni tastin, butonin e miut ose kombinimin për ta ricaktuar.</value></data>
+  <data name="RemapEditor_NoTargetError" xml:space="preserve"><value>Zgjidhni çfarë të dërgohet në vend të tij.</value></data>
+  <data name="RemapEditor_SameKeysError" xml:space="preserve"><value>Dërgoni diçka të ndryshme nga ajo që shtypni.</value></data>
+  <data name="RemapEditor_PrimaryMouseError" xml:space="preserve"><value>Klikimi majtas dhe djathtas mund të ricaktohen vetëm në një aplikacion specifik, që të vazhdojnë të funksionojnë kudo tjetër.</value></data>
+  <data name="ActionWindow_Type_PressKey" xml:space="preserve"><value>Shtyp tastin</value></data>
+  <data name="ActionWindow_Type_KeyDown" xml:space="preserve"><value>Tasti poshtë</value></data>
+  <data name="ActionWindow_Type_KeyUp" xml:space="preserve"><value>Tasti lart</value></data>
+  <data name="ActionWindow_Type_Click" xml:space="preserve"><value>Klikim</value></data>
+  <data name="ActionWindow_Type_MouseDown" xml:space="preserve"><value>Butoni i miut poshtë</value></data>
+  <data name="ActionWindow_Type_MouseUp" xml:space="preserve"><value>Butoni i miut lart</value></data>
+  <data name="ActionWindow_Type_MoveTo" xml:space="preserve"><value>Zhvendos te</value></data>
+  <data name="ActionWindow_Type_MovePath" xml:space="preserve"><value>Zhvendos sipas shtegut</value></data>
+  <data name="ActionWindow_Type_Scroll" xml:space="preserve"><value>Lëviz</value></data>
+  <data name="ActionWindow_Type_PasteText" xml:space="preserve"><value>Ngjit tekst</value></data>
+  <data name="ActionWindow_Add_PressKey" xml:space="preserve"><value>Shto: Shtyp tastin</value></data>
+  <data name="ActionWindow_Add_KeyDown" xml:space="preserve"><value>Shto: Tasti poshtë</value></data>
+  <data name="ActionWindow_Add_KeyUp" xml:space="preserve"><value>Shto: Tasti lart</value></data>
+  <data name="ActionWindow_Add_Click" xml:space="preserve"><value>Shto: Klikim</value></data>
+  <data name="ActionWindow_Add_MouseDown" xml:space="preserve"><value>Shto: Butoni i miut poshtë</value></data>
+  <data name="ActionWindow_Add_MouseUp" xml:space="preserve"><value>Shto: Butoni i miut lart</value></data>
+  <data name="ActionWindow_Add_MoveTo" xml:space="preserve"><value>Shto: Zhvendos te</value></data>
+  <data name="ActionWindow_Add_MovePath" xml:space="preserve"><value>Shto: Zhvendos sipas shtegut</value></data>
+  <data name="ActionWindow_Add_Scroll" xml:space="preserve"><value>Shto: Lëviz</value></data>
+  <data name="ActionWindow_Add_PasteText" xml:space="preserve"><value>Shto: Ngjit tekst</value></data>
+  <data name="ActionWindow_Edit_PressKey" xml:space="preserve"><value>Redakto: Shtyp tastin - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyDown" xml:space="preserve"><value>Redakto: Tasti poshtë - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyUp" xml:space="preserve"><value>Redakto: Tasti lart - {0}</value></data>
+  <data name="ActionWindow_Edit_Click" xml:space="preserve"><value>Redakto: Klikim - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseDown" xml:space="preserve"><value>Redakto: Butoni i miut poshtë - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseUp" xml:space="preserve"><value>Redakto: Butoni i miut lart - {0}</value></data>
+  <data name="ActionWindow_Edit_MoveTo" xml:space="preserve"><value>Redakto: Zhvendos te - {0}</value></data>
+  <data name="ActionWindow_Edit_MovePath" xml:space="preserve"><value>Redakto: Zhvendos sipas shtegut - {0}</value></data>
+  <data name="ActionWindow_Edit_Scroll" xml:space="preserve"><value>Redakto: Lëviz - {0}</value></data>
+  <data name="ActionWindow_Edit_PasteText" xml:space="preserve"><value>Redakto: Ngjit tekst - {0}</value></data>
+  <data name="Shortcuts_Select" xml:space="preserve"><value>Përzgjidh</value></data>
+  <data name="Shortcuts_Click" xml:space="preserve"><value>klikim</value></data>
+  <data name="Shortcuts_CtrlClick" xml:space="preserve"><value>Shto një veprim në përzgjedhje, ose hiqe</value></data>
+  <data name="Shortcuts_ShiftClick" xml:space="preserve"><value>Përzgjidh të gjitha veprimet deri te ky</value></data>
+  <data name="Shortcuts_Move" xml:space="preserve"><value>Zhvendos</value></data>
+  <data name="Shortcuts_Drag" xml:space="preserve"><value>Zvarrit</value></data>
+  <data name="Shortcuts_DragWhat" xml:space="preserve"><value>Zhvendos veprimet e përzgjedhura, edhe brenda ose jashtë një grupi</value></data>
+  <data name="Shortcuts_MoveUpDown" xml:space="preserve"><value>Zhvendos veprimet e përzgjedhura lart ose poshtë</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>Redakto</value></data>
+  <data name="Shortcuts_DoubleClick" xml:space="preserve"><value>Kliko dy herë</value></data>
+  <data name="Shortcuts_DoubleClickWhat" xml:space="preserve"><value>Redakto një veprim; hap ose mbyll një grup</value></data>
+  <data name="Shortcuts_RightClick" xml:space="preserve"><value>Klikim djathtas</value></data>
+  <data name="Shortcuts_RightClickWhat" xml:space="preserve"><value>Shfaq komandat për veprimet e përzgjedhura</value></data>
+  <data name="Shortcuts_Group" xml:space="preserve"><value>Vendos veprimet e përzgjedhura në një grup</value></data>
+  <data name="Shortcuts_Duplicate" xml:space="preserve"><value>Dyfisho veprimet e përzgjedhura</value></data>
+  <data name="Shortcuts_Copy" xml:space="preserve"><value>Kopjo veprimet e përzgjedhura, për t'i ngjitur këtu ose në një makro tjetër</value></data>
+  <data name="Shortcuts_Paste" xml:space="preserve"><value>Ngjit veprimet e kopjuara aty ku shkojnë veprimet e reja</value></data>
+  <data name="Shortcuts_Delete" xml:space="preserve"><value>Fshi veprimet e përzgjedhura</value></data>
+  <data name="Shortcuts_Note" xml:space="preserve"><value>Veprimet e reja shkojnë pas veprimit ose grupit të përzgjedhur, ose në fund. Testo e luan veprimin e përzgjedhur një herë në dritaren prapa PuppyMacro.</value></data>
+  <data name="Editor_FormView" xml:space="preserve"><value>Pamja e formularit</value></data>
+  <data name="Editor_CodeView" xml:space="preserve"><value>Pamja e kodit</value></data>
+  <data name="Editor_CodeViewTooltip" xml:space="preserve"><value>Redaktojeni si JSON. Ctrl+Space shfaq sugjerime</value></data>
+  <data name="Editor_History" xml:space="preserve"><value>Historiku</value></data>
+  <data name="Editor_HistoryTooltip" xml:space="preserve"><value>Versionet e ruajtura: kush ndryshoi çfarë, dhe Rikthe</value></data>
+  <data name="CodeView_Format" xml:space="preserve"><value>Formato</value></data>
+  <data name="CodeView_FormatTooltip" xml:space="preserve"><value>Formato kodin (Shift+Alt+F)</value></data>
+  <data name="CodeView_Loading" xml:space="preserve"><value>Po ngarkohet redaktuesi i kodit…</value></data>
+  <data name="CodeView_EditorName" xml:space="preserve"><value>Redaktuesi i kodit</value></data>
+  <data name="CodeView_Stopped" xml:space="preserve"><value>Redaktuesi i kodit ndaloi. Mbylleni këtë dritare dhe hapeni përsëri.</value></data>
+  <data name="CodeView_NeedsWebView2" xml:space="preserve"><value>Pamja e kodit ka nevojë për Microsoft Edge WebView2 Runtime. Instalojeni nga Microsoft, pastaj hapeni përsëri këtë dritare.</value></data>
+  <data name="CodeView_CouldNotStart" xml:space="preserve"><value>Redaktuesi i kodit nuk mund të nisej: {0}</value></data>
+  <data name="CodeView_Checking" xml:space="preserve"><value>Po kontrollohet…</value></data>
+  <data name="CodeView_NoProblems" xml:space="preserve"><value>Asnjë problem.</value></data>
+  <data name="CodeView_CheckerFailed" xml:space="preserve"><value>Kontrolluesi i kodit nuk mund të nisej: {0}</value></data>
+  <data name="CodeView_Problems" xml:space="preserve"><value>Problemet</value></data>
+  <data name="CodeView_ProblemsTitle" xml:space="preserve"><value>PROBLEMET</value></data>
+  <data name="CodeView_Position" xml:space="preserve"><value>Rr {0}, Kol {1}</value></data>
+  <data name="CodeView_FixProblems_one" xml:space="preserve"><value>Rregulloni problemin, ose hidhni poshtë ndryshimet.</value></data>
+  <data name="CodeView_FixProblems_other" xml:space="preserve"><value>Rregulloni {0} problemet, ose hidhni poshtë ndryshimet.</value></data>
+  <data name="CodeView_DiscardChanges" xml:space="preserve"><value>Hidh poshtë ndryshimet</value></data>
+  <data name="CodeView_DiscardChangesTooltip" xml:space="preserve"><value>Zhbëj ndryshimet e kodit dhe kthehu te Pamja e formularit</value></data>
+  <data name="HistoryView_Empty" xml:space="preserve"><value>Ende nuk ka versione: sa herë që ruhet, versioni mbahet këtu.</value></data>
+  <data name="HistoryView_Versions" xml:space="preserve"><value>Versionet</value></data>
+  <data name="HistoryView_ChangesTitle" xml:space="preserve"><value>Ndryshimet nga versioni i mëparshëm:</value></data>
+  <data name="HistoryView_Restore" xml:space="preserve"><value>Rikthe këtë version</value></data>
+  <data name="HistoryView_RestoredTitle" xml:space="preserve"><value>Versioni i {0:g} është në redaktues.</value></data>
+  <data name="HistoryView_RestoredMessage" xml:space="preserve"><value>Përzgjidhni Ruaj për ta mbajtur, ose Anulo për ta lënë siç është.</value></data>
+  <data name="AppScope_Header" xml:space="preserve"><value>Aplikacion specifik</value></data>
+  <data name="AppScope_AllApps" xml:space="preserve"><value>Funksionon në të gjitha aplikacionet</value></data>
+  <data name="AppScope_App" xml:space="preserve"><value>Aplikacioni</value></data>
+  <data name="AppScope_AppTooltip" xml:space="preserve"><value>Emri .exe i aplikacionit, p.sh. Diablo IV.exe</value></data>
+  <data name="AppScope_Pick" xml:space="preserve"><value>Zgjidh</value></data>
+  <data name="AppScope_PickTooltip" xml:space="preserve"><value>Klikoni një dritare të aplikacionit</value></data>
+  <data name="AppScope_Browse" xml:space="preserve"><value>Shfleto…</value></data>
+  <data name="AppScope_NoAppError" xml:space="preserve"><value>Zgjidhni aplikacionin ku funksionon, ose çaktivizoni Aplikacion specifik.</value></data>
+  <data name="AppScope_ChooseApp" xml:space="preserve"><value>Zgjidhni aplikacionin ku funksionon</value></data>
+  <data name="AppScope_OnlyApp" xml:space="preserve"><value>Funksionon vetëm kur {0} është përpara</value></data>
+  <data name="AppScope_Help" xml:space="preserve"><value>Zgjidhni një aplikacion në ekzekutim, zgjidhni dritaren e tij ose shfletoni për skedarin e tij .exe. Funksionon vetëm kur ai aplikacion është përpara.</value></data>
+  <data name="AppScope_HelpStops" xml:space="preserve"><value>Zgjidhni një aplikacion në ekzekutim, zgjidhni dritaren e tij ose shfletoni për skedarin e tij .exe. Funksionon vetëm kur ai aplikacion është përpara dhe ndalet kur kaloni në një aplikacion tjetër.</value></data>
+  <data name="AppScope_BrowseTitle" xml:space="preserve"><value>Zgjidhni aplikacionin</value></data>
+  <data name="AppScope_BrowseFilter" xml:space="preserve"><value>Programet (*.exe)|*.exe</value></data>
+  <data name="OverlayOptions_Show" xml:space="preserve"><value>Shfaq në mbivendosje</value></data>
+  <data name="OverlayOptions_ShowDescription" xml:space="preserve"><value>Në panelin e mbivendosjes, ose si buton notues</value></data>
+  <data name="OverlayOptions_HideWhenDisabled" xml:space="preserve"><value>Fshih kur është çaktivizuar</value></data>
+  <data name="OverlayOptions_HideWhenDisabledDescription" xml:space="preserve"><value>I fshehur nga mbivendosja sa kohë që është çaktivizuar</value></data>
+  <data name="OverlayOptions_PassThrough" xml:space="preserve"><value>Klikimet arrijnë edhe te aplikacioni prapa</value></data>
+  <data name="OverlayOptions_PassThroughDescription" xml:space="preserve"><value>Klikimi i tij në mbivendosje klikon edhe dritaren poshtë</value></data>
+  <data name="FloatingButton_Header" xml:space="preserve"><value>Buton notues</value></data>
+  <data name="FloatingButton_Description" xml:space="preserve"><value>Një buton i rrumbullakët që e nis dhe e ndalon në regjimin e mbivendosjes, në vend të rreshtit të tij në panel</value></data>
+  <data name="FloatingButton_NeedsToggle" xml:space="preserve"><value>Ka nevojë për Ndërrim: një klikim mund të nisë dhe ndalojë, por jo të mbajë</value></data>
+  <data name="FloatingButton_Label" xml:space="preserve"><value>Etiketa</value></data>
+  <data name="FloatingButton_Size" xml:space="preserve"><value>Madhësia</value></data>
+  <data name="FloatingButton_Small" xml:space="preserve"><value>I vogël</value></data>
+  <data name="FloatingButton_Medium" xml:space="preserve"><value>Mesatar</value></data>
+  <data name="FloatingButton_Large" xml:space="preserve"><value>I madh</value></data>
+  <data name="FloatingButton_PositionOnScreen" xml:space="preserve"><value>Pozicioni në ekran</value></data>
+  <data name="FloatingButton_Position" xml:space="preserve"><value>Pozicioni</value></data>
+  <data name="FloatingButton_Opacity" xml:space="preserve"><value>Patejdukshmëria</value></data>
+  <data name="FloatingButton_OpacityLabel" xml:space="preserve"><value>Patejdukshmëria e butonit notues</value></data>
+  <data name="MacroEditor_ExpandGroup" xml:space="preserve"><value>Zgjero grupin</value></data>
+  <data name="MacroEditor_CollapseGroup" xml:space="preserve"><value>Palos grupin</value></data>
+  <data name="MacroEditor_GroupAccessibleName" xml:space="preserve"><value>Grupi {0}, {1}</value></data>
+  <data name="MacroEditor_DelayMs" xml:space="preserve"><value>{0:0.##} ms</value></data>
+  <data name="MacroEditor_RowPress" xml:space="preserve"><value>Shtyp {0}</value></data>
+  <data name="MacroEditor_RowKeyDown" xml:space="preserve"><value>Tasti poshtë {0}</value></data>
+  <data name="MacroEditor_RowKeyUp" xml:space="preserve"><value>Tasti lart {0}</value></data>
+  <data name="MacroEditor_RowButtonDown" xml:space="preserve"><value>Butoni i miut poshtë: {0}</value></data>
+  <data name="MacroEditor_RowButtonUp" xml:space="preserve"><value>Butoni i miut lart: {0}</value></data>
+  <data name="MacroEditor_RowMoveSmoothly" xml:space="preserve"><value>Zhvendos butë</value></data>
+  <data name="MacroEditor_RowScrollUp" xml:space="preserve"><value>Lëviz lart</value></data>
+  <data name="MacroEditor_RowScrollDown" xml:space="preserve"><value>Lëviz poshtë</value></data>
+  <data name="MacroEditor_RowScrollLeft" xml:space="preserve"><value>Lëviz majtas</value></data>
+  <data name="MacroEditor_RowScrollRight" xml:space="preserve"><value>Lëviz djathtas</value></data>
+  <data name="MacroEditor_RowTimes_one" xml:space="preserve"><value>{1} {0} herë</value></data>
+  <data name="MacroEditor_RowTimes_other" xml:space="preserve"><value>{1} {0} herë</value></data>
+  <data name="MacroEditor_RowHeld" xml:space="preserve"><value>mbajtur {0} ms</value></data>
+  <data name="MacroEditor_RowAt" xml:space="preserve"><value>te {0}, {1}</value></data>
+  <data name="MacroEditor_RowPath_one" xml:space="preserve"><value>{0} pikë, {1}</value></data>
+  <data name="MacroEditor_RowPath_other" xml:space="preserve"><value>{0} pika, {1}</value></data>
+  <data name="MacroEditor_RowScrollSteps_one" xml:space="preserve"><value>{0} hap</value></data>
+  <data name="MacroEditor_RowScrollSteps_other" xml:space="preserve"><value>{0} hapa</value></data>
+  <data name="MacroEditor_RowQuoted" xml:space="preserve"><value>"{0}"</value></data>
+
+  <data name="Action_Direction" xml:space="preserve"><value>Drejtimi</value></data>
+  <data name="Action_DirectionUp" xml:space="preserve"><value>Lart</value></data>
+  <data name="Action_DirectionDown" xml:space="preserve"><value>Poshtë</value></data>
+  <data name="Action_DirectionLeft" xml:space="preserve"><value>Majtas</value></data>
+  <data name="Action_DirectionRight" xml:space="preserve"><value>Djathtas</value></data>
+  <data name="Action_Remove" xml:space="preserve"><value>Hiq</value></data>
+  <data name="Action_WhileLoopRuns" xml:space="preserve"><value>Sa kohë që cikli ekzekutohet</value></data>
+  <data name="Action_Repeat" xml:space="preserve"><value>Përsërit</value></data>
+  <data name="Action_HoldDown" xml:space="preserve"><value>Mbaj shtypur</value></data>
+  <data name="Action_Every" xml:space="preserve"><value>Çdo</value></data>
+  <data name="Action_Interval" xml:space="preserve"><value>Intervali</value></data>
+  <data name="Action_Unit" xml:space="preserve"><value>Njësia</value></data>
+  <data name="Action_UnitMs" xml:space="preserve"><value>ms</value></data>
+  <data name="Action_UnitS" xml:space="preserve"><value>s</value></data>
+  <data name="Action_UnitMin" xml:space="preserve"><value>min</value></data>
+  <data name="Action_UnitH" xml:space="preserve"><value>orë</value></data>
+  <data name="Action_Position" xml:space="preserve"><value>Pozicioni</value></data>
+  <data name="Action_Mode" xml:space="preserve"><value>Mënyra</value></data>
+  <data name="Action_Single" xml:space="preserve"><value>Njëfish</value></data>
+  <data name="Action_Double" xml:space="preserve"><value>Dyfish</value></data>
+  <data name="Action_HoldFor" xml:space="preserve"><value>Mbaj për</value></data>
+  <data name="Action_Times" xml:space="preserve"><value>Herë</value></data>
+  <data name="Action_PauseBetween" xml:space="preserve"><value>Pauza ndërmjet</value></data>
+  <data name="Action_PauseBetweenDescription" xml:space="preserve"><value>Ndërmjet një shtypjeje dhe tjetrës, kur Herë është më shumë se 1</value></data>
+  <data name="Action_FixedPoint" xml:space="preserve"><value>Pikë fikse</value></data>
+  <data name="Action_Text" xml:space="preserve"><value>Teksti</value></data>
+  <data name="Action_TextToPaste" xml:space="preserve"><value>Teksti për t'u ngjitur</value></data>
+  <data name="Action_EnterBefore" xml:space="preserve"><value>Shtyp Enter para ngjitjes</value></data>
+  <data name="Action_EnterAfter" xml:space="preserve"><value>Shtyp Enter pas ngjitjes</value></data>
+  <data name="Action_Movement" xml:space="preserve"><value>Zhvendosja</value></data>
+  <data name="Action_Instantly" xml:space="preserve"><value>Menjëherë</value></data>
+  <data name="Action_Smoothly" xml:space="preserve"><value>Butë</value></data>
+  <data name="Action_Speed" xml:space="preserve"><value>Shpejtësia</value></data>
+  <data name="Action_MovementSpeed" xml:space="preserve"><value>Shpejtësia e zhvendosjes</value></data>
+  <data name="Action_Steps" xml:space="preserve"><value>Hapat</value></data>
+  <data name="Action_UseClick" xml:space="preserve"><value>Përdorni Klikim për butonat e miut.</value></data>
+  <data name="Action_UseMouseAction" xml:space="preserve"><value>Përdorni një veprim Klikim ose Butoni i miut për butonat e miut.</value></data>
+  <data name="Action_TitlePressKey" xml:space="preserve"><value>Shtyp tastin</value></data>
+  <data name="Action_TitleKeyDown" xml:space="preserve"><value>Tasti poshtë</value></data>
+  <data name="Action_TitleKeyUp" xml:space="preserve"><value>Tasti lart</value></data>
+  <data name="Action_TitleClick" xml:space="preserve"><value>Klikim</value></data>
+  <data name="Action_TitleMouseDown" xml:space="preserve"><value>Butoni i miut poshtë</value></data>
+  <data name="Action_TitleMouseUp" xml:space="preserve"><value>Butoni i miut lart</value></data>
+  <data name="Action_TitleMoveTo" xml:space="preserve"><value>Zhvendos te</value></data>
+  <data name="Action_TitleScroll" xml:space="preserve"><value>Lëviz</value></data>
+  <data name="Action_TitlePasteText" xml:space="preserve"><value>Ngjit tekst</value></data>
+  <data name="Action_HoldButtonDescription" xml:space="preserve"><value>Sa kohë qëndron i shtypur butoni para se të lëshohet</value></data>
+  <data name="Action_HoldKeyDescription" xml:space="preserve"><value>Sa kohë qëndron i shtypur tasti para se të lëshohet</value></data>
+  <data name="Action_AFixedPoint" xml:space="preserve"><value>Një pikë fikse</value></data>
+  <data name="Action_WherePointerIs" xml:space="preserve"><value>Aty ku është treguesi</value></data>
+  <data name="Action_SpeedVerySlow" xml:space="preserve"><value>shumë e ngadaltë</value></data>
+  <data name="Action_SpeedSlow" xml:space="preserve"><value>e ngadaltë</value></data>
+  <data name="Action_SpeedNormal" xml:space="preserve"><value>normale</value></data>
+  <data name="Action_SpeedFast" xml:space="preserve"><value>e shpejtë</value></data>
+  <data name="Action_SpeedVeryFast" xml:space="preserve"><value>shumë e shpejtë</value></data>
+  <data name="Action_SpeedText" xml:space="preserve"><value>Shpejtësia: {0}, rreth {1} s</value></data>
+  <data name="Action_SummaryEvery" xml:space="preserve"><value>çdo {0} {1}</value></data>
+  <data name="Action_SummaryTimes_one" xml:space="preserve"><value>{1} {0} herë</value></data>
+  <data name="Action_SummaryTimes_other" xml:space="preserve"><value>{1} {0} herë</value></data>
+  <data name="Action_SummaryAt" xml:space="preserve"><value>te {0}, {1}</value></data>
+  <data name="Action_SummaryWherePointerIs" xml:space="preserve"><value>aty ku është treguesi</value></data>
+  <data name="Action_SummaryNoKey" xml:space="preserve"><value>Ende pa tast</value></data>
+  <data name="Action_SummaryNoText" xml:space="preserve"><value>Ende pa tekst</value></data>
+  <data name="Action_SummaryUntilKeyUp" xml:space="preserve"><value>{0}, deri te Tasti lart</value></data>
+  <data name="Action_SummarySteps_one" xml:space="preserve"><value>{0} hap</value></data>
+  <data name="Action_SummarySteps_other" xml:space="preserve"><value>{0} hapa</value></data>
+  <data name="Action_SummaryText" xml:space="preserve"><value>"{0}"</value></data>
+  <data name="Action_SummaryTextThenEnter" xml:space="preserve"><value>"{0}", pastaj Enter</value></data>
+  <data name="Action_SummaryHeldDown" xml:space="preserve"><value>{0}, mbajtur shtypur sa kohë që cikli ekzekutohet</value></data>
+  <data name="Action_ChooseKeyEach" xml:space="preserve"><value>Zgjidhni një tast për çdo Shtyp tastin.</value></data>
+  <data name="Action_ChooseKey" xml:space="preserve"><value>Zgjidhni një tast.</value></data>
+  <data name="Action_SetFixedPoint" xml:space="preserve"><value>Caktoni pozicionin e çdo Klikimi në një pikë fikse.</value></data>
+  <data name="Action_EnterTextEach" xml:space="preserve"><value>Shkruani tekstin për çdo Ngjit tekst.</value></data>
+  <data name="Action_EnterText" xml:space="preserve"><value>Shkruani tekstin për t'u ngjitur.</value></data>
+  <data name="Action_HoldNeedsSingleKey" xml:space="preserve"><value>Mbaj shtypur funksionon me një tast të vetëm. Për një kombinim, përdorni Përsërit.</value></data>
+  <data name="KeyField_PromptHotkey" xml:space="preserve"><value>Shtypni tastin e shpejtë (Esc anulon)</value></data>
+  <data name="KeyField_PromptCombination" xml:space="preserve"><value>Shtypni tastin ose kombinimin (Esc anulon)</value></data>
+  <data name="KeyField_PromptKeyOrModifier" xml:space="preserve"><value>Shtypni një tast, ose vetëm Ctrl, Alt, Shift ose Win (Esc anulon)</value></data>
+  <data name="KeyField_SetHotkey" xml:space="preserve"><value>Cakto tastin e shpejtë</value></data>
+  <data name="KeyField_SetKey" xml:space="preserve"><value>Cakto tastin</value></data>
+  <data name="KeyField_ChangeHotkey" xml:space="preserve"><value>Ndrysho tastin e shpejtë</value></data>
+  <data name="KeyField_ChangeKey" xml:space="preserve"><value>Ndrysho tastin</value></data>
+  <data name="KeyField_ClearHotkey" xml:space="preserve"><value>Pastro tastin e shpejtë</value></data>
+  <data name="KeyField_ClearKey" xml:space="preserve"><value>Pastro tastin</value></data>
+  <data name="KeyField_Change" xml:space="preserve"><value>Ndrysho</value></data>
+  <data name="KeyField_Clear" xml:space="preserve"><value>Pastro</value></data>
+  <data name="Mouse_Button" xml:space="preserve"><value>Butoni i miut</value></data>
+  <data name="Mouse_Left" xml:space="preserve"><value>Majtas</value></data>
+  <data name="Mouse_Right" xml:space="preserve"><value>Djathtas</value></data>
+  <data name="Mouse_Middle" xml:space="preserve"><value>Mesi</value></data>
+  <data name="Mouse_Back" xml:space="preserve"><value>Prapa (X1)</value></data>
+  <data name="Mouse_Forward" xml:space="preserve"><value>Përpara (X2)</value></data>
+  <data name="Mouse_ClickLeft" xml:space="preserve"><value>Klikim majtas</value></data>
+  <data name="Mouse_ClickRight" xml:space="preserve"><value>Klikim djathtas</value></data>
+  <data name="Mouse_ClickMiddle" xml:space="preserve"><value>Klikim në mes</value></data>
+  <data name="Mouse_ClickBack" xml:space="preserve"><value>Klikim Prapa (X1)</value></data>
+  <data name="Mouse_ClickForward" xml:space="preserve"><value>Klikim Përpara (X2)</value></data>
+  <data name="Mouse_DoubleClickLeft" xml:space="preserve"><value>Klikim i dyfishtë majtas</value></data>
+  <data name="Mouse_DoubleClickRight" xml:space="preserve"><value>Klikim i dyfishtë djathtas</value></data>
+  <data name="Mouse_DoubleClickMiddle" xml:space="preserve"><value>Klikim i dyfishtë në mes</value></data>
+  <data name="Mouse_DoubleClickBack" xml:space="preserve"><value>Klikim i dyfishtë Prapa (X1)</value></data>
+  <data name="Mouse_DoubleClickForward" xml:space="preserve"><value>Klikim i dyfishtë Përpara (X2)</value></data>
+  <data name="Mouse_DetectTooltip" xml:space="preserve"><value>Shtypni një buton të miut për ta zbuluar</value></data>
+  <data name="Mouse_Detect" xml:space="preserve"><value>Zbulo butonin e miut</value></data>
+  <data name="Mouse_Prompt" xml:space="preserve"><value>Shtypni një buton të miut (Esc anulon)</value></data>
+  <data name="Mouse_UsePressKey" xml:space="preserve"><value>Përdorni Shtyp tastin për tastet.</value></data>
+  <data name="Position_X" xml:space="preserve"><value>X</value></data>
+  <data name="Position_Y" xml:space="preserve"><value>Y</value></data>
+  <data name="Position_PickOnScreen" xml:space="preserve"><value>Zgjidh në ekran</value></data>
+  <data name="Slider_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Keys_NoHotkey" xml:space="preserve"><value>Pa tast të shpejtë</value></data>
+  <data name="Keys_Join" xml:space="preserve"><value> + </value></data>
+  <data name="Keys_None" xml:space="preserve"><value>Asnjë</value></data>
+  <data name="Keys_WheelUp" xml:space="preserve"><value>Rrota lart</value></data>
+  <data name="Keys_WheelDown" xml:space="preserve"><value>Rrota poshtë</value></data>
+  <data name="Keys_WheelLeft" xml:space="preserve"><value>Rrota majtas</value></data>
+  <data name="Keys_WheelRight" xml:space="preserve"><value>Rrota djathtas</value></data>
+  <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
+  <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>
+  <data name="Keys_Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="Keys_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Keys_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Keys_Win" xml:space="preserve"><value>Win</value></data>
+  <data name="Keys_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Keys_CapsLock" xml:space="preserve"><value>CapsLock</value></data>
+  <data name="Keys_Esc" xml:space="preserve"><value>Esc</value></data>
+  <data name="Keys_Space" xml:space="preserve"><value>Hapësirë</value></data>
+  <data name="Keys_PageUp" xml:space="preserve"><value>PageUp</value></data>
+  <data name="Keys_PageDown" xml:space="preserve"><value>PageDown</value></data>
+  <data name="Keys_End" xml:space="preserve"><value>End</value></data>
+  <data name="Keys_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Keys_Left" xml:space="preserve"><value>Majtas</value></data>
+  <data name="Keys_Up" xml:space="preserve"><value>Lart</value></data>
+  <data name="Keys_Right" xml:space="preserve"><value>Djathtas</value></data>
+  <data name="Keys_Down" xml:space="preserve"><value>Poshtë</value></data>
+  <data name="Keys_PrintScreen" xml:space="preserve"><value>PrintScreen</value></data>
+  <data name="Keys_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Keys_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Keys_LeftWin" xml:space="preserve"><value>Win majtas</value></data>
+  <data name="Keys_RightWin" xml:space="preserve"><value>Win djathtas</value></data>
+  <data name="Keys_NumpadDigit" xml:space="preserve"><value>Numpad{0}</value></data>
+  <data name="Keys_NumpadMultiply" xml:space="preserve"><value>Numpad*</value></data>
+  <data name="Keys_NumpadAdd" xml:space="preserve"><value>Numpad+</value></data>
+  <data name="Keys_NumpadSubtract" xml:space="preserve"><value>Numpad-</value></data>
+  <data name="Keys_NumpadDecimal" xml:space="preserve"><value>Numpad.</value></data>
+  <data name="Keys_NumpadDivide" xml:space="preserve"><value>Numpad/</value></data>
+  <data name="Keys_NumLock" xml:space="preserve"><value>NumLock</value></data>
+  <data name="Keys_ScrollLock" xml:space="preserve"><value>ScrollLock</value></data>
+  <data name="Keys_LeftShift" xml:space="preserve"><value>Shift majtas</value></data>
+  <data name="Keys_RightShift" xml:space="preserve"><value>Shift djathtas</value></data>
+  <data name="Keys_LeftCtrl" xml:space="preserve"><value>Ctrl majtas</value></data>
+  <data name="Keys_RightCtrl" xml:space="preserve"><value>Ctrl djathtas</value></data>
+  <data name="Keys_LeftAlt" xml:space="preserve"><value>Alt majtas</value></data>
+  <data name="Keys_RightAlt" xml:space="preserve"><value>Alt djathtas</value></data>
+  <data name="Keys_EitherCtrl" xml:space="preserve"><value>Ctrl majtas ose djathtas</value></data>
+  <data name="Keys_EitherAlt" xml:space="preserve"><value>Alt majtas ose djathtas</value></data>
+  <data name="Keys_EitherShift" xml:space="preserve"><value>Shift majtas ose djathtas</value></data>
+  <data name="Keys_EitherWin" xml:space="preserve"><value>Win majtas ose djathtas</value></data>
+  <data name="Keys_Unknown" xml:space="preserve"><value>Tasti 0x{0:X2}</value></data>
+  <data name="Hotkey_ClickNeedsModifier" xml:space="preserve"><value>Klikimi majtas dhe djathtas kanë nevojë për Ctrl, Alt, Shift ose Win: vetëm do ta bllokonin miun.</value></data>
+  <data name="Hotkey_WheelNeedsModifier" xml:space="preserve"><value>Rrota e miut ka nevojë për Ctrl, Alt, Shift ose Win: vetëm do ta bllokonte lëvizjen.</value></data>
+  <data name="Hotkey_EscNeedsModifier" xml:space="preserve"><value>Esc ka nevojë për Ctrl, Alt, Shift ose Win.</value></data>
+  <data name="Hotkey_WheelCantHold" xml:space="preserve"><value>Rrota e miut nuk mund të mbahet shtypur. Kaloni te Ndërrim, ose zgjidhni një tast tjetër të shpejtë.</value></data>
+  <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} përdoret tashmë nga Ndal të gjitha.</value></data>
+  <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} përdoret tashmë nga Regjimi i mbivendosjes.</value></data>
+  <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} përdoret tashmë nga Regjistro.</value></data>
+  <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}".</value></data>
+  <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}" në {2}.</value></data>
+  <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}".</value></data>
+  <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}" në {2}.</value></data>
+  <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Tastet e shpejta kanë përparësi ndaj ricaktimeve.</value></data>
+  <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} është ricaktuar tashmë për të gjitha aplikacionet.</value></data>
+  <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} është ricaktuar tashmë për {1}.</value></data>
+  <data name="Sound_Chime" xml:space="preserve"><value>Kambanëz</value></data>
+  <data name="Sound_Blip" xml:space="preserve"><value>Blip</value></data>
+  <data name="Sound_Pop" xml:space="preserve"><value>Pop</value></data>
+  <data name="Sound_Bell" xml:space="preserve"><value>Zile</value></data>
+  <data name="Sound_Arcade" xml:space="preserve"><value>Arcade</value></data>
+  <data name="Sound_Soft" xml:space="preserve"><value>I butë</value></data>
+  <data name="Sound_Marimba" xml:space="preserve"><value>Marimba</value></data>
+  <data name="Sound_Pluck" xml:space="preserve"><value>Cimbisje</value></data>
+  <data name="Sound_Harp" xml:space="preserve"><value>Harpë</value></data>
+  <data name="Sound_Kalimba" xml:space="preserve"><value>Kalimba</value></data>
+  <data name="Sound_Xylophone" xml:space="preserve"><value>Ksilofon</value></data>
+  <data name="Sound_Glock" xml:space="preserve"><value>Glockenspiel</value></data>
+  <data name="Sound_Organ" xml:space="preserve"><value>Organo</value></data>
+  <data name="Sound_Flute" xml:space="preserve"><value>Flaut</value></data>
+  <data name="Sound_Synth" xml:space="preserve"><value>Sintetizator</value></data>
+  <data name="Sound_Pad" xml:space="preserve"><value>Pad</value></data>
+  <data name="Sound_Brass" xml:space="preserve"><value>Bori</value></data>
+  <data name="Sound_Bass" xml:space="preserve"><value>Bas</value></data>
+  <data name="Sound_Click" xml:space="preserve"><value>Klik</value></data>
+  <data name="Sound_Tick" xml:space="preserve"><value>Tik</value></data>
+  <data name="Sound_Knock" xml:space="preserve"><value>Trokitje</value></data>
+  <data name="Sound_Switch" xml:space="preserve"><value>Çelës</value></data>
+  <data name="Sound_Tom" xml:space="preserve"><value>Tom</value></data>
+  <data name="Sound_Conga" xml:space="preserve"><value>Konga</value></data>
+  <data name="Sound_Cowbell" xml:space="preserve"><value>Këmborë</value></data>
+  <data name="Sound_Triangle" xml:space="preserve"><value>Trekëndësh</value></data>
+  <data name="Sound_Gong" xml:space="preserve"><value>Gong</value></data>
+  <data name="Sound_Coin" xml:space="preserve"><value>Monedhë</value></data>
+  <data name="Sound_Jump" xml:space="preserve"><value>Kërcim</value></data>
+  <data name="Sound_Laser" xml:space="preserve"><value>Lazer</value></data>
+  <data name="Sound_Zap" xml:space="preserve"><value>Zap</value></data>
+  <data name="Sound_Powerup" xml:space="preserve"><value>Fuqizim</value></data>
+  <data name="Sound_Retro" xml:space="preserve"><value>Retro</value></data>
+  <data name="Sound_Fanfare" xml:space="preserve"><value>Fanfarë</value></data>
+  <data name="Sound_Twinkle" xml:space="preserve"><value>Vezullim</value></data>
+  <data name="Sound_Sparkle" xml:space="preserve"><value>Shkëndijë</value></data>
+  <data name="Sound_Bubble" xml:space="preserve"><value>Flluskë</value></data>
+  <data name="Sound_Drop" xml:space="preserve"><value>Pikë uji</value></data>
+  <data name="Sound_Whoosh" xml:space="preserve"><value>Fëshfëritje</value></data>
+  <data name="Sound_Whistle" xml:space="preserve"><value>Fishkëllimë</value></data>
+  <data name="Sound_Chirp" xml:space="preserve"><value>Cicërimë</value></data>
+  <data name="Sound_Cricket" xml:space="preserve"><value>Bulkth</value></data>
+  <data name="Sound_Doorbell" xml:space="preserve"><value>Zile dere</value></data>
+  <data name="Sound_Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Sound_Alarm" xml:space="preserve"><value>Alarm</value></data>
+  <data name="Sound_Modem" xml:space="preserve"><value>Modem</value></data>
+  <data name="Sound_Radar" xml:space="preserve"><value>Radar</value></data>
+  <data name="Sound_Sonar" xml:space="preserve"><value>Sonar</value></data>
+  <data name="Sound_Echo" xml:space="preserve"><value>Jehonë</value></data>
+  <data name="Sound_Robot" xml:space="preserve"><value>Robot</value></data>
+  <data name="Sound_Siren" xml:space="preserve"><value>Sirenë</value></data>
+  <data name="Sound_Hum" xml:space="preserve"><value>Gumëzhimë</value></data>
+  <data name="Sound_Ripple" xml:space="preserve"><value>Valëzim</value></data>
+  <data name="Sound_Wobble" xml:space="preserve"><value>Lëkundje</value></data>
+  <data name="Sound_Warp" xml:space="preserve"><value>Warp</value></data>
+  <data name="Sound_Ufo" xml:space="preserve"><value>UFO</value></data>
+
+  <data name="Code_MustBeObject" xml:space="preserve"><value>Ky duhet të jetë një objekt JSON.</value></data>
+  <data name="Code_Between" xml:space="preserve"><value>Duhet të jetë ndërmjet {0} dhe {1}.</value></data>
+  <data name="Code_IdCannotChange" xml:space="preserve"><value>Id nuk mund të ndryshohet. Përdorni "{0}" (Ctrl+Space e sugjeron).</value></data>
+  <data name="Code_UnknownSound" xml:space="preserve"><value>Tingull i panjohur. Përdorni një nga: {0}.</value></data>
+  <data name="Code_HoldNeedsHotkey" xml:space="preserve"><value>Mbajtja ka nevojë për një tast të shpejtë. Caktoni një ose përdorni "Toggle".</value></data>
+  <data name="Code_HotkeyNotAKey" xml:space="preserve"><value>Nuk është tast: përdorni një kod virtual tasti nga 1 deri në 254, ose një kod të rrotës së miut (256 lart, 257 poshtë, 258 majtas, 259 djathtas).</value></data>
+  <data name="Code_HotkeyModifierAlone" xml:space="preserve"><value>Ctrl, Alt, Shift dhe Win vetëm nuk mund të jenë tasti: caktojini me "Ctrl", "Alt", "Shift" dhe "Win".</value></data>
+  <data name="Code_RemapChooseKey" xml:space="preserve"><value>Zgjidhni një tast ose buton të miut: një kod virtual tasti nga 1 deri në 254.</value></data>
+  <data name="Code_RemapModifierSide" xml:space="preserve"><value>Ctrl, Alt, Shift ose Win vetëm: përdorni kodin e tastit të tij majtas ose djathtas (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_RemapModifierNoOthers" xml:space="preserve"><value>Ctrl, Alt, Shift ose Win vetëm nuk merr modifikues tjetër: caktoni "Ctrl", "Alt", "Shift" dhe "Win" në false.</value></data>
+  <data name="Code_OnlyWithModifier" xml:space="preserve"><value>Vetëm me "{0}": true. Hiqeni, ose caktoni "{0}" në true.</value></data>
+  <data name="Code_AppExeEmpty" xml:space="preserve"><value>Shkruani emrin e skedarit të aplikacionit, si "notepad.exe", ose null për të gjitha aplikacionet.</value></data>
+  <data name="Code_AppExeNotExe" xml:space="preserve"><value>Shkruani emrin e skedarit të aplikacionit, që mbaron me ".exe".</value></data>
+  <data name="Code_AtMostCharacters_one" xml:space="preserve"><value>Të shumtën {0} karakter.</value></data>
+  <data name="Code_AtMostCharacters_other" xml:space="preserve"><value>Të shumtën {0} karaktere.</value></data>
+  <data name="Code_SetBothXY" xml:space="preserve"><value>Caktoni edhe X edhe Y, ose asnjërin (null: mesi i ekranit kryesor).</value></data>
+  <data name="Code_FloatingNeedsToggle" xml:space="preserve"><value>Ka nevojë për "Toggle": një klikim mund të nisë dhe ndalojë, por jo të mbajë.</value></data>
+  <data name="Code_MustBeOneOf" xml:space="preserve"><value>Duhet të jetë një nga: {0}.</value></data>
+  <data name="Code_AtPath" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Code_InvalidJsonDetail" xml:space="preserve"><value>JSON i pavlefshëm: {0}</value></data>
+  <data name="Code_UnknownProperty" xml:space="preserve"><value>Veti e panjohur "{0}".</value></data>
+  <data name="Code_WrongType" xml:space="preserve"><value>Kjo vlerë ka llojin e gabuar ose nuk është një nga vlerat e lejuara.</value></data>
+  <data name="Code_NeedsValue" xml:space="preserve"><value>Këtu nevojitet një vlerë, jo null.</value></data>
+  <data name="Code_InvalidJson" xml:space="preserve"><value>JSON i pavlefshëm.</value></data>
+  <data name="Code_EnterName" xml:space="preserve"><value>Shkruani një emër.</value></data>
+  <data name="Code_AddAction" xml:space="preserve"><value>Shtoni të paktën një veprim.</value></data>
+  <data name="Code_KeyVkOld" xml:space="preserve"><value>Nuk përdoret më: tastet shkojnë te "Actions". Hiqeni.</value></data>
+  <data name="Code_IntervalMsOld" xml:space="preserve"><value>Nuk përdoret më: intervalet shkojnë te "Actions". Hiqeni.</value></data>
+  <data name="Code_HotkeyVkOld" xml:space="preserve"><value>Nuk përdoret më: përdorni "Hotkey". Hiqeni.</value></data>
+  <data name="Code_LoopChooseKey" xml:space="preserve"><value>Zgjidhni tastin ose butonin e miut: një kod virtual tasti nga 1 deri në 254.</value></data>
+  <data name="Code_EnterText" xml:space="preserve"><value>Shkruani tekstin.</value></data>
+  <data name="Code_TextNoHold" xml:space="preserve"><value>Vetëm Shtyp tastin dhe Klikim mund të mbahen shtypur.</value></data>
+  <data name="Code_IntervalRange" xml:space="preserve"><value>Intervali duhet të jetë ndërmjet 10 ms dhe 24 orë.</value></data>
+  <data name="Code_HotkeyPressed" xml:space="preserve"><value>Tasti i shpejtë nuk mund të jetë një nga tastet që shtyp ky cikël.</value></data>
+  <data name="Code_LoopOnlyPressKeyModifiers" xml:space="preserve"><value>Vetëm Shtyp tastin ka Ctrl, Alt, Shift ose Win. Hiqeni.</value></data>
+  <data name="Code_ClickNoModifiers" xml:space="preserve"><value>Një klikim nuk ka Ctrl, Alt, Shift ose Win. Hiqeni.</value></data>
+  <data name="Code_HoldDownSingleKey" xml:space="preserve"><value>Mbaj shtypur funksionon me një tast të vetëm. Për një kombinim, përdorni Repeat.</value></data>
+  <data name="Code_OnlyPressKeyAndClick" xml:space="preserve"><value>Vetëm Shtyp tastin dhe Klikim e kanë. Hiqeni.</value></data>
+  <data name="Code_OnlyClick" xml:space="preserve"><value>Vetëm Klikim e ka. Hiqeni.</value></data>
+  <data name="Code_ClickCountOrNull" xml:space="preserve"><value>Duhet të jetë 1 (klikim njëfish), 2 (klikim i dyfishtë) ose null.</value></data>
+  <data name="Code_SetBothXYFixed" xml:space="preserve"><value>Caktoni edhe X edhe Y për një pikë fikse, ose asnjërin (null: aty ku është treguesi).</value></data>
+  <data name="Code_SourceVkOld" xml:space="preserve"><value>Nuk përdoret më: përdorni "Source", si {"Vk": 65} për A. Hiqeni.</value></data>
+  <data name="Code_ChooseSource" xml:space="preserve"><value>Zgjidhni tastin, butonin e miut ose kombinimin për ta ricaktuar.</value></data>
+  <data name="Code_ChooseTarget" xml:space="preserve"><value>Zgjidhni çfarë të dërgohet në vend të tij.</value></data>
+  <data name="Code_TargetDifferent" xml:space="preserve"><value>Dërgoni diçka të ndryshme nga ajo që shtypni.</value></data>
+  <data name="Code_PrimaryMouseNeedsApp" xml:space="preserve"><value>Klikimi majtas dhe djathtas mund të ricaktohen vetëm në një aplikacion specifik, që të vazhdojnë të funksionojnë kudo tjetër.</value></data>
+  <data name="Code_GroupNotAllowed" xml:space="preserve"><value>Ky veprim mund të jetë vetëm në: {0}. Veprimet e një grupi duhet të jenë njëri pas tjetrit.</value></data>
+  <data name="Code_SpeedSteps" xml:space="preserve"><value>Duhet të jetë 0.25, 0.5, 1, 2 ose 4.</value></data>
+  <data name="Code_GroupIdTwice" xml:space="preserve"><value>Dy grupe kanë këtë Id.</value></data>
+  <data name="Code_EnterGroupName" xml:space="preserve"><value>Shkruani një emër grupi.</value></data>
+  <data name="Code_NoSuchGroup" xml:space="preserve"><value>Asnjë grup në "Groups" nuk ka këtë Id.</value></data>
+  <data name="Code_GroupApart" xml:space="preserve"><value>Veprimet e një grupi duhet të jenë njëri pas tjetrit.</value></data>
+  <data name="Code_GroupNoActions" xml:space="preserve"><value>Ky grup nuk ka veprime: jepini disa ("GroupId") ose hiqeni.</value></data>
+  <data name="Code_MacroChooseKey" xml:space="preserve"><value>Zgjidhni një tast: një kod virtual tasti nga 1 deri në 254.</value></data>
+  <data name="Code_UseMouseAction" xml:space="preserve"><value>Përdorni një veprim Klikim, Butoni i miut poshtë ose Butoni i miut lart për butonat e miut.</value></data>
+  <data name="Code_ChooseMouseButton" xml:space="preserve"><value>Zgjidhni një buton të miut: 1 majtas, 2 djathtas, 4 mesi, 5 prapa (X1), 6 përpara (X2).</value></data>
+  <data name="Code_KeyDownOneKey" xml:space="preserve"><value>Tasti poshtë dhe Tasti lart marrin një tast: për Ctrl, Alt, Shift ose Win vetëm përdorni kodin e tastit te "Vk" (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_MacroOnlyPressKeyModifiers" xml:space="preserve"><value>Vetëm një veprim Shtyp tastin ka Ctrl, Alt, Shift ose Win. Hiqeni.</value></data>
+  <data name="Code_ClickCount" xml:space="preserve"><value>Duhet të jetë 1 (klikim njëfish) ose 2 (klikim i dyfishtë).</value></data>
+  <data name="Code_PathEmpty" xml:space="preserve"><value>Një shteg ka nevojë për të paktën një pikë.</value></data>
+  <data name="Code_PathTimes" xml:space="preserve"><value>Kohët duhet të nisin nga 0 ose më shumë dhe të mos kthehen kurrë pas.</value></data>
+  <data name="Code_EnterPasteText" xml:space="preserve"><value>Shkruani tekstin për t'u ngjitur.</value></data>
+  <data name="Overlay_WindowTitle" xml:space="preserve"><value>Paneli i mbivendosjes së PuppyMacro</value></data>
+  <data name="Overlay_MovePanel" xml:space="preserve"><value>Zhvendos panelin</value></data>
+  <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Zvarriteni për të zhvendosur panelin</value></data>
+  <data name="Overlay_Exit" xml:space="preserve"><value>Dil nga regjimi i mbivendosjes</value></data>
+  <data name="Overlay_ExitTip" xml:space="preserve"><value>Dil nga regjimi i mbivendosjes ({0})</value></data>
+  <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Dil dhe hap PuppyMacro</value></data>
+  <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Dil nga regjimi i mbivendosjes dhe hap PuppyMacro</value></data>
+  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Nuk ka asgjë për të shfaqur.</value></data>
+  <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Gjithçka është në butona notues.</value></data>
+  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Asgjë për këtë aplikacion.</value></data>
+  <data name="Overlay_Macros" xml:space="preserve"><value>Makrot</value></data>
+  <data name="Overlay_StopAll" xml:space="preserve"><value>Ndal të gjitha</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Klikoni për të nisur ose ndaluar · Klikoni me të djathtën për të aktivizuar ose çaktivizuar</value></data>
+  <data name="Floating_WindowTitle" xml:space="preserve"><value>Butoni notues i PuppyMacro</value></data>
+  <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Butoni notues i PuppyMacro: {0}</value></data>
+  <data name="Recording_Title" xml:space="preserve"><value>Regjistrimi</value></data>
+  <data name="Recording_StartsIn" xml:space="preserve"><value>Regjistrimi nis për {0}</value></data>
+  <data name="Recording_SwitchHint" xml:space="preserve"><value>Kaloni te dritarja që do të regjistroni. Klikimet nuk regjistrohen ende.</value></data>
+  <data name="Recording_Cancel" xml:space="preserve"><value>Anulo</value></data>
+  <data name="Recording_Stop" xml:space="preserve"><value>Ndal</value></data>
+  <data name="Recording_Events_one" xml:space="preserve"><value>{0} ngjarje</value></data>
+  <data name="Recording_Events_other" xml:space="preserve"><value>{0} ngjarje</value></data>
+  <data name="Recording_PressToStop" xml:space="preserve"><value>Shtypni {0} për të ndaluar</value></data>
+  <data name="Recording_ReadyTitle" xml:space="preserve"><value>Gati për regjistrim</value></data>
+  <data name="Recording_PressOrSelect" xml:space="preserve"><value>Shtypni {0} ose përzgjidhni {1}</value></data>
+  <data name="Recording_StartRecording" xml:space="preserve"><value>Nis regjistrimin</value></data>
+  <data name="Recording_RecordMouseMovement" xml:space="preserve"><value>Regjistro lëvizjen e miut</value></data>
+  <data name="Recording_PromptDescription" xml:space="preserve"><value>Keni 3 sekonda për të kaluar te dritarja që doni të regjistroni. Çdo gjë që shtypni, klikoni dhe lëvizni regjistrohet derisa të shtypni {0} ose të përzgjidhni Ndal.</value></data>
+  <data name="Countdown_Title" xml:space="preserve"><value>Numërimi mbrapsht i regjistrimit</value></data>
+  <data name="Countdown_Starts" xml:space="preserve"><value>Regjistrimi po nis…</value></data>
+  <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>Tastiera nuk mund të lexohej.</value></data>
+  <data name="Input_CannotReadMouse" xml:space="preserve"><value>Miu nuk mund të lexohej.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>Ky nuk është skedar elementesh i PuppyMacro.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>Ky skedar u krijua me PuppyMacro {0}, më të ri se ky ({1}). Përditësoni PuppyMacro për ta importuar.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>Ky skedar u krijua me një PuppyMacro më të ri. Përditësoni PuppyMacro për ta importuar.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Elementi {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Lloj i panjohur "{0}": PuppyMacro importon cikle, makro dhe ricaktime.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>Cikli mungon.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>Makroja mungon.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>Ricaktimi mungon.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Ekziston një cikël me këtë emër: u importua si "{0}".</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Ekziston një makro me këtë emër: u importua si "{0}".</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}" në këtë skedar.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}" në këtë skedar.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: u importua pa tast të shpejtë.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: u importua pa tast të shpejtë, si Ndërrim (Mbajtja ka nevojë për një tast të shpejtë).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}" në këtë skedar. Tastet e shpejta kanë përparësi ndaj ricaktimeve.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}" në këtë skedar. Tastet e shpejta kanë përparësi ndaj ricaktimeve.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} është ricaktuar tashmë për të gjitha aplikacionet në këtë skedar.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} është ricaktuar tashmë për {1} në këtë skedar.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>Elementet e PuppyMacro</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Ricaktimi {0}</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>Eksportoi {0} element</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>Eksportoi {0} elemente</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>Importoi ciklin {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>Importoi makronë {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>Importoi ricaktimin {0}</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>Importim i {0} elementi</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>Importim i {0} elementeve</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>Të importohet ky element?</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>Të importohen këto {0} elemente?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Importo</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>Hapi Importo</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>Hapi Eksporto</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>Importo</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Shtoni cikle, makro dhe ricaktime nga një skedar</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Eksporto</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Ruani cikle, makro dhe ricaktime në një skedar, për t'i ndarë me të tjerët</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Eksporto…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>Elementet e PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importo cikle, makro dhe ricaktime</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Eksporto cikle, makro dhe ricaktime</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>Në rregull</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>Nga {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>Skedari nuk mund të lexohej: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Kontrollo për përditësime</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>Importo {0} element</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>Importo {0} elemente</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>Eksporto {0} element…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>Eksporto {0} elemente…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Eksportimi dështoi</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Ciklet</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Makrot</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Ricaktimet</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Të tjera</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Zgjidhni ciklet, makrot dhe ricaktimet që do të ruhen në një skedar, për t'i ndarë me të tjerët ose për t'i përdorur në një PC tjetër.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Kërko</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Lloji</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>Të gjitha llojet</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Përzgjidh të gjitha të shfaqurat</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} të shfaqura · {1} të përzgjedhura</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>Ende nuk keni cikle, makro ose ricaktime.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Asgjë nuk përputhet me kërkimin.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Zgjidh një skedar tjetër…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Përzgjidh të gjitha</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Elementet e importuara nisin të çaktivizuara.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Aktivizojeni secilin pasi të keni kontrolluar se çfarë bën.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} element tjetër</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} elemente të tjera</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>Asnjë element</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>Nga PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>Elementet e PuppyMacro</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>Kopje rezervë e PuppyMacro</value></data>
+</root>

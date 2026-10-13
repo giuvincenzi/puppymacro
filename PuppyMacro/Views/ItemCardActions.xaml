@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     x:Name="Root">
 
     <!-- Play / Stop, Edit and More options: filled Fluent System Icons, lit only under the mouse (SubtleButtons.xaml) -->
@@ -23,14 +24,14 @@
                 </Grid>
             </Button>
         </Grid>
-        <Button x:Name="EditButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="Edit"
-                AutomationProperties.Name="Edit" ToolTipService.ShowOnDisabled="True" Click="OnEditClick">
+        <Button x:Name="EditButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="{x:Static r:Strings.Card_Edit}"
+                AutomationProperties.Name="{x:Static r:Strings.Card_Edit}" ToolTipService.ShowOnDisabled="True" Click="OnEditClick">
             <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.Edit_16_Filled}" />
         </Button>
-        <ui:ToggleSwitch x:Name="EnabledSwitch" Margin="16,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="Enabled"
+        <ui:ToggleSwitch x:Name="EnabledSwitch" Margin="16,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{x:Static r:Strings.Card_Enabled}"
                          IsOn="{Binding IsOn, ElementName=Root, Mode=TwoWay}" />
-        <Button x:Name="MoreButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="More options"
-                AutomationProperties.Name="More options" Click="OnMoreClick">
+        <Button x:Name="MoreButton" Margin="8,0,0,0" VerticalAlignment="Center" Tag="{Binding}" ToolTip="{x:Static r:Strings.Card_MoreOptions}"
+                AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" Click="OnMoreClick">
             <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.MoreHorizontal_16_Filled}" />
         </Button>
     </StackPanel>

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -73,7 +75,10 @@ public abstract class ItemFileRow : INotifyPropertyChanged
                 break;
             case RemapDefinition remap:
                 Title = $"{KeyNames.Format(remap.Source)} → {KeyNames.Format(remap.Target)}";
-                Summary = (remap.AppExe ?? "All apps") + (remap.Note.Trim().Length > 0 ? " · " + remap.Note.Trim() : "");
+                string apps = remap.AppExe ?? Strings.Remaps_AllApps;
+                Summary = remap.Note.Trim().Length > 0
+                    ? string.Format(CultureInfo.CurrentCulture, Strings.Share_RemapSummary, apps, remap.Note.Trim())
+                    : apps;
                 Lead = "";
                 HotkeyParts = new List<string>();
                 break;
@@ -82,10 +87,10 @@ public abstract class ItemFileRow : INotifyPropertyChanged
 
     protected static string GroupOf(string kind) => kind switch
     {
-        "loop" => "Loops",
-        "macro" => "Macros",
-        "remap" => "Remaps",
-        _ => "Other",
+        "loop" => Strings.Share_GroupLoops,
+        "macro" => Strings.Share_GroupMacros,
+        "remap" => Strings.Share_GroupRemaps,
+        _ => Strings.Share_GroupOther,
     };
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null) =>

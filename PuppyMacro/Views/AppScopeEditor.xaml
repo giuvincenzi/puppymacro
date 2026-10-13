@@ -2,11 +2,12 @@
     x:Class="PuppyMacro.Views.AppScopeEditor"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:views="clr-namespace:PuppyMacro.Views">
 
     <!-- Specific app expander, shared by the loop, macro and remap editors -->
-    <views:SwitchSettingsExpander x:Name="AppExpander" Header="Specific app" Description="Works in all apps"
+    <views:SwitchSettingsExpander x:Name="AppExpander" Header="{x:Static r:Strings.AppScope_Header}" Description="{x:Static r:Strings.AppScope_AllApps}"
                                   CanExpand="{Binding IsOn, ElementName=AppSwitch}">
         <ui:ToggleSwitch x:Name="AppSwitch" Toggled="OnSwitchToggled" />
 
@@ -20,16 +21,16 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <ComboBox x:Name="AppBox" HorizontalAlignment="Stretch" IsEditable="True" IsTextSearchEnabled="True"
-                                  AutomationProperties.Name="App" DropDownOpened="OnAppDropDownOpened"
-                                  ToolTip="The app's .exe name, e.g. Diablo IV.exe" />
+                                  AutomationProperties.Name="{x:Static r:Strings.AppScope_App}" DropDownOpened="OnAppDropDownOpened"
+                                  ToolTip="{x:Static r:Strings.AppScope_AppTooltip}" />
                         <Button x:Name="PickButton" Grid.Column="1" Margin="8,0,0,0" Click="OnPickClick"
-                                AutomationProperties.Name="Pick" ToolTip="Click a window of the app">
+                                AutomationProperties.Name="{x:Static r:Strings.AppScope_Pick}" ToolTip="{x:Static r:Strings.AppScope_PickTooltip}">
                             <StackPanel Orientation="Horizontal">
                                 <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
-                                <TextBlock Margin="8,0,0,0" Text="Pick" />
+                                <TextBlock Margin="8,0,0,0" Text="{x:Static r:Strings.AppScope_Pick}" />
                             </StackPanel>
                         </Button>
-                        <Button Grid.Column="2" Margin="8,0,0,0" Content="Browse…" Click="OnBrowseClick" />
+                        <Button Grid.Column="2" Margin="8,0,0,0" Content="{x:Static r:Strings.AppScope_Browse}" Click="OnBrowseClick" />
                     </Grid>
                     <TextBlock x:Name="HelpText" Margin="0,4,0,0" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />

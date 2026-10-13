@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -15,13 +17,22 @@ internal sealed class HistoryRow
     {
         Version = version;
         Current = current;
-        TimeText = version.Time.ToString("HH:mm");
-        DayText = version.Time.Date == DateTime.Today ? "Today"
-            : version.Time.Date == DateTime.Today.AddDays(-1) ? "Yesterday"
-            : version.Time.ToString("D");
-        By = version.By.Length > 0 ? version.By : "—";
-        SummaryText = current ? $"{version.Summary} (current)" : version.Summary;
+        TimeText = version.Time.ToString("t", CultureInfo.CurrentCulture);
+        DayText = DayName(version.Time);
+        By = ByName(version.By);
+        SummaryText = current ? string.Format(CultureInfo.CurrentCulture, Strings.History_CurrentVersion, version.ShownSummary)
+            : version.ShownSummary;
     }
+
+    /// <summary>"Today", "Yesterday" or the date, as the History and the AI activity group by day.</summary>
+    public static string DayName(DateTime time) =>
+        time.Date == DateTime.Today ? Strings.Day_Today
+        : time.Date == DateTime.Today.AddDays(-1) ? Strings.Day_Yesterday
+        : time.ToString("D", CultureInfo.CurrentCulture);
+
+    /// <summary>Who saved a version: "You" (kept in English in the file) in the user's language, an AI app's name, or "—".</summary>
+    public static string ByName(string by) =>
+        by == ItemHistory.You ? Strings.History_You : by.Length > 0 ? by : "—";
 
     public HistoryVersion Version { get; }
     public bool Current { get; }
@@ -68,12 +79,11 @@ public partial class HistoryView : UserControl
             return;
         }
         DetailPanel.Visibility = Visibility.Visible;
-        DetailTitle.Text = $"{row.Version.Time:g} · {row.By}";
-        ChangeList.ItemsSource = row.Version.Changes.Count > 0 ? row.Version.Changes : new List<string> { row.Version.Summary };
+        DetailTitle.Text = $"{row.Version.Time.ToString("g", CultureInfo.CurrentCulture)} · {row.By}";
+        List<string> changes = row.Version.ShownChanges;
+        ChangeList.ItemsSource = changes.Count > 0 ? changes : new List<string> { row.Version.ShownSummary };
         RestoreButton.IsEnabled = !row.Current;
-        RestoreHint.Text = row.Current
-            ? "This is the current version."
-            : "Restore puts this version in the editor: select Save to keep it. The current version stays in the History.";
+        RestoreHint.Text = row.Current ? Strings.History_ThisIsCurrent : Strings.History_RestoreHint;
     }
 
     private void OnRestoreClick(object sender, RoutedEventArgs e)

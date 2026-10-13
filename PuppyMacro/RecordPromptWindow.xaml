@@ -3,7 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    Title="Ready to record"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    Title="{x:Static r:Strings.Recording_ReadyTitle}"
     Width="440"
     SizeToContent="Height"
     ResizeMode="NoResize"
@@ -18,19 +19,19 @@
             <!-- A red dot before the title, as on the record buttons (approved, ui.md) -->
             <StackPanel Margin="0,0,0,12" Orientation="Horizontal">
                 <ui:InfoBadge Margin="0,0,10,0" VerticalAlignment="Center" Style="{StaticResource CriticalDotInfoBadgeStyle}" />
-                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Ready to record" />
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Static r:Strings.Recording_ReadyTitle}" />
             </StackPanel>
-            <WrapPanel>
-                <TextBlock Text="Press " VerticalAlignment="Center" />
-                <Border Margin="4,0" Style="{StaticResource KeyCap}">
+            <!-- "Press {0} or select {1}" (Recording_PressOrSelect): the code puts the texts around the key cap and the
+                 button's name in the order of the language. -->
+            <WrapPanel x:Name="SentencePanel">
+                <Border x:Name="HotkeyCap" Margin="4,0" Style="{StaticResource KeyCap}">
                     <TextBlock x:Name="HotkeyText" />
                 </Border>
-                <TextBlock Text=" or select " VerticalAlignment="Center" />
-                <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Start recording" VerticalAlignment="Center" />
+                <TextBlock x:Name="StartName" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Recording_StartRecording}" VerticalAlignment="Center" />
             </WrapPanel>
             <TextBlock x:Name="DescriptionText" Margin="0,12,0,0" TextWrapping="Wrap"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-            <CheckBox x:Name="MouseMovementBox" Margin="0,12,0,0" Content="Record mouse movement"
+            <CheckBox x:Name="MouseMovementBox" Margin="0,12,0,0" Content="{x:Static r:Strings.Recording_RecordMouseMovement}"
                       Checked="OnMouseMovementChanged" Unchecked="OnMouseMovementChanged" />
         </StackPanel>
 
@@ -43,8 +44,8 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"
-                        Content="Start recording" Click="OnStartNowClick" />
-                <Button Grid.Column="2" HorizontalAlignment="Stretch" Content="Cancel" Click="OnCancelClick" />
+                        Content="{x:Static r:Strings.Recording_StartRecording}" Click="OnStartNowClick" />
+                <Button Grid.Column="2" HorizontalAlignment="Stretch" Content="{x:Static r:Strings.Recording_Cancel}" Click="OnCancelClick" />
             </Grid>
         </Border>
     </StackPanel>

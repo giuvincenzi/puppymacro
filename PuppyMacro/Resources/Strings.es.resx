@@ -1,0 +1,1088 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="ListSeparator" xml:space="preserve"><value>, </value></data>
+  <data name="Day_Today" xml:space="preserve"><value>Hoy</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>Ayer</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>Sistema</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Claro</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Oscuro</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>Idioma</value></data>
+  <data name="Settings_LanguageDescription" xml:space="preserve"><value>PuppyMacro se reinicia para cambiarlo</value></data>
+  <data name="Settings_LanguageSystem" xml:space="preserve"><value>Usar el idioma del sistema</value></data>
+  <data name="LanguageRestart_Title" xml:space="preserve"><value>¿Reiniciar PuppyMacro?</value></data>
+  <data name="LanguageRestart_Content" xml:space="preserve"><value>PuppyMacro se reinicia para mostrarse en {0}. Los bucles y las macros en ejecución se detienen.</value></data>
+  <data name="LanguageRestart_Restart" xml:space="preserve"><value>Reiniciar ahora</value></data>
+  <data name="LanguageRestart_Later" xml:space="preserve"><value>Más tarde</value></data>
+  <data name="History_BeforeHistory" xml:space="preserve"><value>Antes de que comenzara el historial</value></data>
+  <data name="History_Created" xml:space="preserve"><value>Se creó</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>Se guardó</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>Se eliminó</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>Se restauró</value></data>
+  <data name="History_Changes_one" xml:space="preserve"><value>{0} cambio</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0} cambios</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>Se agregó la acción {0}</value></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>Se agregó la acción {0} ({1})</value></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>Se quitó la acción {0}</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>Se quitó la acción {0} ({1})</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>Acción {0}: {1} {2} → {3}</value></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>Acción {0} ({1}): {2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>ninguno</value></data>
+  <data name="History_On" xml:space="preserve"><value>Activado</value></data>
+  <data name="History_Off" xml:space="preserve"><value>Desactivado</value></data>
+  <data name="History_Path_one" xml:space="preserve"><value>una ruta de {0} punto{1}</value></data>
+  <data name="History_Path_other" xml:space="preserve"><value>una ruta de {0} puntos{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0} (actual)</value></data>
+  <data name="History_You" xml:space="preserve"><value>Tú</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>Esta es la versión actual.</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>Restaurar pone esta versión en el editor: selecciona Guardar para conservarla. La versión actual se queda en el Historial.</value></data>
+  <data name="Ai_Connected" xml:space="preserve"><value>Se conectó</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>Intentó conectarse con el acceso de AI desactivado</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>Llamó a {0} con el acceso de AI desactivado</value></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>Leyó tus bucles, macros y reasignaciones</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>Leyó tu configuración</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>Enumeró las aplicaciones abiertas</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>Leyó la guía: {0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>Leyó el bucle {0}</value></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>Leyó la macro {0}</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>Leyó la reasignación {0}</value></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>Nuevo bucle</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>Nueva macro</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>Nueva reasignación</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>Cambio en el bucle</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>Cambio en la macro</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>Cambio en la reasignación</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>Nuevo bucle {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>Nueva macro {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>Nueva reasignación {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>Cambió el bucle {0}: {1}</value></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>Cambió la macro {0}: {1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>Cambió la reasignación {0}: {1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>Eliminó el bucle {0}</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>Eliminó la macro {0}</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>Eliminó la reasignación {0}</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>Habilitó el bucle {0}</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>Habilitó la macro {0}</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>Habilitó la reasignación {0}</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>Deshabilitó el bucle {0}</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>Deshabilitó la macro {0}</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>Deshabilitó la reasignación {0}</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>Colocó el botón flotante del bucle {0}</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>Colocó el botón flotante de la macro {0}</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>Abrió el bucle {0}</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>Abrió la macro {0}</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>Abrió la reasignación {0}</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>Cambió la configuración: {0}</value></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>Pidió un punto: {0}</value></data>
+  <data name="Ai_AskedPoints_one" xml:space="preserve"><value>Pidió {0} punto: {1}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>Pidió {0} puntos: {1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>Pidió una aplicación: {0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>Pidió una tecla: {0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>Detuvo todos los bucles y macros</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{0} → {1} en {2}</value></data>
+  <data name="Ai_Item_loop" xml:space="preserve"><value>Bucle {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>Macro {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>Reasignación {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>¿Guardar este nuevo bucle?</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>¿Guardar esta nueva macro?</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>¿Guardar esta nueva reasignación?</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>¿Guardar estos cambios en el bucle?</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>¿Guardar estos cambios en la macro?</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>¿Guardar estos cambios en la reasignación?</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>¿Eliminar este bucle?</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>¿Eliminar esta macro?</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>¿Eliminar esta reasignación?</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>¿Habilitar este bucle?</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>¿Habilitar esta macro?</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>¿Habilitar esta reasignación?</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>¿Deshabilitar este bucle?</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>¿Deshabilitar esta macro?</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>¿Deshabilitar esta reasignación?</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>¿Cambiar esta configuración?</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>Guardar</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>Habilitar</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>Deshabilitar</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>Aplicar</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>Ninguno</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Esta configuración no se puede restaurar: {0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>Tema</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Cerrar en la bandeja del sistema</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Panel de superposición</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Hacer clic en los elementos del panel</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Opacidad del panel de superposición</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>Volumen del sonido</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Tecla de acceso rápido de Detener todo</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Tecla de acceso rápido del modo de superposición</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Tecla de acceso rápido de Grabar</value></data>
+  <data name="AiKind_Read" xml:space="preserve"><value>Lectura</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>Guardado</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>Interacción</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>Cambio</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>Conexión</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>Restaurado</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>Guardado</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>Guardado con cambios</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>Hecho</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>Cancelado</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>Sin respuesta</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>Rechazado</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>Error</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>Restaurar: {0}</value></data>
+  <data name="Main_EnterOverlayMode" xml:space="preserve"><value>Entrar en modo de superposición</value></data>
+  <data name="Main_StopAll" xml:space="preserve"><value>Detener todo</value></data>
+  <data name="Main_DevelopmentBuild" xml:space="preserve"><value>Compilación de desarrollo</value></data>
+  <data name="Main_FilterEnabled" xml:space="preserve"><value>Habilitados</value></data>
+  <data name="Main_FilterDisabled" xml:space="preserve"><value>Deshabilitados</value></data>
+  <data name="Main_FilterRunning" xml:space="preserve"><value>En ejecución</value></data>
+  <data name="Loops_Title" xml:space="preserve"><value>Bucles</value></data>
+  <data name="Loops_Add" xml:space="preserve"><value>Agregar bucle</value></data>
+  <data name="Loops_Search" xml:space="preserve"><value>Buscar bucles</value></data>
+  <data name="Loops_FilterAll" xml:space="preserve"><value>Todos los bucles</value></data>
+  <data name="Macros_Title" xml:space="preserve"><value>Macros</value></data>
+  <data name="Macros_Add" xml:space="preserve"><value>Agregar macro</value></data>
+  <data name="Macros_Record" xml:space="preserve"><value>Grabar macro</value></data>
+  <data name="Macros_Search" xml:space="preserve"><value>Buscar macros</value></data>
+  <data name="Macros_FilterAll" xml:space="preserve"><value>Todas las macros</value></data>
+  <data name="Remaps_Title" xml:space="preserve"><value>Reasignar</value></data>
+  <data name="Remaps_Add" xml:space="preserve"><value>Agregar reasignación</value></data>
+  <data name="Remaps_Search" xml:space="preserve"><value>Buscar reasignaciones</value></data>
+  <data name="Remaps_FilterAll" xml:space="preserve"><value>Todas las reasignaciones</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Configuración</value></data>
+  <data name="Settings_General" xml:space="preserve"><value>General</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>Tema</value></data>
+  <data name="Settings_ThemeDescription" xml:space="preserve"><value>Sistema sigue la configuración de Windows</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>Cerrar en la bandeja del sistema</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Seguir ejecutándose en la bandeja del sistema al cerrar la ventana</value></data>
+  <data name="Settings_StartWithWindows" xml:space="preserve"><value>Iniciar con Windows</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Se inicia en la bandeja del sistema al iniciar sesión</value></data>
+  <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Teclas de acceso rápido y superposición</value></data>
+  <data name="Settings_Hotkeys" xml:space="preserve"><value>Teclas de acceso rápido</value></data>
+  <data name="Settings_StopAllDescription" xml:space="preserve"><value>Detener todos los bucles y macros</value></data>
+  <data name="Settings_OverlayMode" xml:space="preserve"><value>Modo de superposición</value></data>
+  <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Activar o desactivar el modo de superposición</value></data>
+  <data name="Settings_Record" xml:space="preserve"><value>Grabar</value></data>
+  <data name="Settings_RecordDescription" xml:space="preserve"><value>Iniciar y detener la grabación de una macro</value></data>
+  <data name="Settings_OverlayPanel" xml:space="preserve"><value>Panel de superposición</value></data>
+  <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>La lista de tus bucles y macros</value></data>
+  <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Mostrar el panel de superposición</value></data>
+  <data name="Settings_Opacity" xml:space="preserve"><value>Opacidad</value></data>
+  <data name="Settings_OverlayPanelOpacity" xml:space="preserve"><value>Opacidad del panel de superposición</value></data>
+  <data name="Settings_OpacityPreviewItem" xml:space="preserve"><value>Spam de clic izquierdo</value></data>
+  <data name="Settings_PositionOnScreen" xml:space="preserve"><value>Posición en la pantalla</value></data>
+  <data name="Settings_PositionOnScreenDescription" xml:space="preserve"><value>Arrastra el panel y los botones flotantes</value></data>
+  <data name="Settings_ClickInPanel" xml:space="preserve"><value>Hacer clic en los elementos del panel para iniciarlos o detenerlos</value></data>
+  <data name="Settings_ClickInPanelDescription" xml:space="preserve"><value>Algunas aplicaciones en pantalla completa pueden reaccionar al clic. En ese caso, desactiva esta opción y usa solo teclas de acceso rápido.</value></data>
+  <data name="Settings_Sound" xml:space="preserve"><value>Sonido</value></data>
+  <data name="Settings_SoundDescription" xml:space="preserve"><value>Sonidos de inicio y detención de bucles y macros</value></data>
+  <data name="Settings_SoundVolume" xml:space="preserve"><value>Volumen del sonido</value></data>
+  <data name="Settings_DataAndUpdates" xml:space="preserve"><value>Datos y actualizaciones</value></data>
+  <data name="Settings_Backup" xml:space="preserve"><value>Copia de seguridad</value></data>
+  <data name="Settings_ExportOrImport" xml:space="preserve"><value>Exportar o importar</value></data>
+  <data name="Settings_ExportOrImportDescription" xml:space="preserve"><value>Guarda tus datos en un archivo, para conservar una copia o mover PuppyMacro a otro equipo</value></data>
+  <data name="Settings_ExportButton" xml:space="preserve"><value>Exportar…</value></data>
+  <data name="Settings_ImportButton" xml:space="preserve"><value>Importar…</value></data>
+  <data name="Settings_OpenDataFolder" xml:space="preserve"><value>Abrir carpeta de datos</value></data>
+  <data name="Settings_Updates" xml:space="preserve"><value>Actualizaciones</value></data>
+  <data name="Settings_WhatsNew" xml:space="preserve"><value>Novedades</value></data>
+  <data name="Settings_CheckForUpdates" xml:space="preserve"><value>Buscar actualizaciones automáticamente</value></data>
+  <data name="Settings_CheckForUpdatesDescription" xml:space="preserve"><value>Al iniciar PuppyMacro y cada 12 horas</value></data>
+  <data name="Settings_About" xml:space="preserve"><value>Acerca de</value></data>
+  <data name="Settings_UserGuide" xml:space="preserve"><value>Guía del usuario</value></data>
+  <data name="Settings_NotInDevBuild" xml:space="preserve"><value>No disponible en la compilación de desarrollo</value></data>
+  <data name="Settings_DataSavedIn" xml:space="preserve"><value>Datos guardados en {0}</value></data>
+  <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Las teclas de acceso rápido no funcionan en este momento:
+{0}</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro sigue ejecutándose en la bandeja del sistema. Haz clic con el botón derecho en su icono para salir.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Abrir PuppyMacro</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>Salir</value></data>
+  <data name="Main_RunningCount_one" xml:space="preserve"><value>{0} en ejecución</value></data>
+  <data name="Main_RunningCount_other" xml:space="preserve"><value>{0} en ejecución</value></data>
+  <data name="Loops_Count_one" xml:space="preserve"><value>{0} bucle</value></data>
+  <data name="Loops_Count_other" xml:space="preserve"><value>{0} bucles</value></data>
+  <data name="Loops_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Loops_Empty" xml:space="preserve"><value>Aún no hay bucles. Selecciona Agregar bucle para crear uno.</value></data>
+  <data name="Loops_NoMatch" xml:space="preserve"><value>Ningún bucle coincide con la búsqueda o el filtro.</value></data>
+  <data name="Main_StopRunningFirst" xml:space="preserve"><value>Detén primero los bucles y las macros en ejecución</value></data>
+  <data name="Card_Delete" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="Card_MoveUp" xml:space="preserve"><value>Subir</value></data>
+  <data name="Card_MoveDown" xml:space="preserve"><value>Bajar</value></data>
+  <data name="Card_Duplicate" xml:space="preserve"><value>Duplicar</value></data>
+  <data name="Main_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Main_DeleteNamedConfirm" xml:space="preserve"><value>¿Eliminar "{0}"? Esta acción no se puede deshacer.</value></data>
+  <data name="Loops_DeleteTitle" xml:space="preserve"><value>Eliminar bucle</value></data>
+  <data name="Macros_Count_one" xml:space="preserve"><value>{0} macro</value></data>
+  <data name="Macros_Count_other" xml:space="preserve"><value>{0} macros</value></data>
+  <data name="Macros_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Macros_Empty" xml:space="preserve"><value>Aún no hay macros. Graba una o selecciona Agregar macro para crearla paso a paso.</value></data>
+  <data name="Macros_NoMatch" xml:space="preserve"><value>Ninguna macro coincide con la búsqueda o el filtro.</value></data>
+  <data name="Macros_DeleteTitle" xml:space="preserve"><value>Eliminar macro</value></data>
+  <data name="Macros_SaveFailed" xml:space="preserve"><value>No se pudo guardar la macro "{0}": {1}</value></data>
+  <data name="Settings_NothingToPlace" xml:space="preserve"><value>No hay nada que colocar. Activa el panel de superposición o agrega un botón flotante.</value></data>
+  <data name="Main_StopAllTooltip" xml:space="preserve"><value>Detener todo ({0})</value></data>
+  <data name="Main_EnterOverlayModeTooltip" xml:space="preserve"><value>Entrar en modo de superposición ({0})</value></data>
+  <data name="Settings_SaveFailed" xml:space="preserve"><value>No se pudo guardar la configuración: {0}</value></data>
+  <data name="Remaps_Count_one" xml:space="preserve"><value>{0} reasignación</value></data>
+  <data name="Remaps_Count_other" xml:space="preserve"><value>{0} reasignaciones</value></data>
+  <data name="Remaps_EnabledCount_one" xml:space="preserve"><value>{0} habilitada</value></data>
+  <data name="Remaps_EnabledCount_other" xml:space="preserve"><value>{0} habilitadas</value></data>
+  <data name="Remaps_CountLine" xml:space="preserve"><value>{0}, {1}</value></data>
+  <data name="Remaps_Empty" xml:space="preserve"><value>Aún no hay reasignaciones. Selecciona Agregar reasignación para convertir una tecla o un botón en otro.</value></data>
+  <data name="Remaps_NoMatch" xml:space="preserve"><value>Ninguna reasignación coincide con la búsqueda o el filtro.</value></data>
+  <data name="Remaps_DeleteTitle" xml:space="preserve"><value>Eliminar reasignación</value></data>
+  <data name="Remaps_DeleteConfirm" xml:space="preserve"><value>¿Eliminar la reasignación {0} → {1}? Esta acción no se puede deshacer.</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>Exportar</value></data>
+  <data name="Export_FileDialogTitle" xml:space="preserve"><value>Exportar datos de PuppyMacro</value></data>
+  <data name="Backup_FileFilter" xml:space="preserve"><value>Copia de seguridad de PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>Error al exportar: {0}</value></data>
+  <data name="Backup_ImportFileDialogTitle" xml:space="preserve"><value>Importar datos de PuppyMacro</value></data>
+  <data name="Backup_ImportFailed" xml:space="preserve"><value>Error al importar: {0}</value></data>
+  <data name="Backup_ImportTitle" xml:space="preserve"><value>Importar</value></data>
+  <data name="Backup_ImportConfirm" xml:space="preserve"><value>Este archivo contiene {0}. ¿Quieres reemplazar los tuyos por estos?
+Lo que el archivo no contiene se queda como está. Primero se hace una copia de seguridad de tus datos actuales en la carpeta de datos y luego PuppyMacro se reinicia.</value></data>
+  <data name="Backup_ImportAndRestart" xml:space="preserve"><value>Importar y reiniciar</value></data>
+  <data name="Backup_PartData" xml:space="preserve"><value>bucles, macros, reasignaciones y configuración</value></data>
+  <data name="Backup_PartHistory" xml:space="preserve"><value>Historial</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>actividad de AI</value></data>
+  <data name="Backup_PartLogs" xml:space="preserve"><value>registros</value></data>
+  <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} y {1}</value></data>
+  <data name="Update_CheckFailed" xml:space="preserve"><value>No se pudo buscar actualizaciones. {0}</value></data>
+  <data name="Update_DownloadFailed" xml:space="preserve"><value>No se pudo descargar la actualización. {0}</value></data>
+  <data name="Update_NotInstalled" xml:space="preserve"><value>Instala PuppyMacro con el programa de instalación para recibir actualizaciones</value></data>
+  <data name="Update_DownloadingVersion" xml:space="preserve"><value>Descargando la versión {0}… {1}%</value></data>
+  <data name="Update_TryAgain" xml:space="preserve"><value>Volver a intentarlo</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>La versión {0} está disponible (tienes la {1})</value></data>
+  <data name="Update_UpdateAndRestart" xml:space="preserve"><value>Actualizar y reiniciar</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>Buscando actualizaciones…</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>PuppyMacro {0} está actualizado. Comprobado a las {1}</value></data>
+  <data name="Update_CurrentVersion" xml:space="preserve"><value>PuppyMacro {0}</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>Buscar ahora</value></data>
+  <data name="Update_BarTitle" xml:space="preserve"><value>Versión {0} disponible</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>Descargando… {0}%</value></data>
+  <data name="Rail_Pages" xml:space="preserve"><value>Páginas</value></data>
+  <data name="Rail_SettingsAndHelp" xml:space="preserve"><value>Configuración y ayuda</value></data>
+  <data name="Rail_Loops" xml:space="preserve"><value>Bucles</value></data>
+  <data name="Rail_Macros" xml:space="preserve"><value>Macros</value></data>
+  <data name="Rail_Remap" xml:space="preserve"><value>Reasignar</value></data>
+  <data name="Rail_Settings" xml:space="preserve"><value>Configuración</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="Card_Enabled" xml:space="preserve"><value>Habilitado</value></data>
+  <data name="Card_MoreOptions" xml:space="preserve"><value>Más opciones</value></data>
+  <data name="Card_Play" xml:space="preserve"><value>Reproducir</value></data>
+  <data name="Card_Stop" xml:space="preserve"><value>Detener</value></data>
+  <data name="Export_WhatToExport" xml:space="preserve"><value>Qué exportar</value></data>
+  <data name="Export_Everything" xml:space="preserve"><value>Todo</value></data>
+  <data name="Export_Choose" xml:space="preserve"><value>Elegir qué exportar</value></data>
+  <data name="Export_PartData" xml:space="preserve"><value>Bucles, macros, reasignaciones y configuración</value></data>
+  <data name="Export_PartHistory" xml:space="preserve"><value>Historial</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>Actividad de AI</value></data>
+  <data name="Export_PartLogs" xml:space="preserve"><value>Registros</value></data>
+  <data name="Export_EverythingDescription" xml:space="preserve"><value>Una copia idéntica, para mover PuppyMacro a otro equipo · {0}</value></data>
+  <data name="Export_PartDataDescription" xml:space="preserve"><value>Siempre incluido · {0}</value></data>
+  <data name="Export_PartHistoryDescription" xml:space="preserve"><value>Versiones anteriores de cada bucle, macro y reasignación · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>Lo que pidieron las aplicaciones de AI, con Restaurar · {0}</value></data>
+  <data name="Export_PartLogsDescription" xml:space="preserve"><value>Para solucionar problemas · {0}</value></data>
+  <data name="Export_SizeB" xml:space="preserve"><value>{0} bytes</value></data>
+  <data name="Export_SizeKB" xml:space="preserve"><value>{0} KB</value></data>
+  <data name="Export_SizeMB" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Export_SizeGB" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Card_ToggleWith" xml:space="preserve"><value>Alternar con</value></data>
+  <data name="Card_HoldWith" xml:space="preserve"><value>Mantener con</value></data>
+  <data name="Card_ToggleNoHotkey" xml:space="preserve"><value>Alternar, sin tecla de acceso rápido</value></data>
+  <data name="Card_HoldNoHotkey" xml:space="preserve"><value>Mantener, sin tecla de acceso rápido</value></data>
+  <data name="Card_StatusRunning" xml:space="preserve"><value>En ejecución</value></data>
+  <data name="Card_StatusIdle" xml:space="preserve"><value>Inactivo</value></data>
+  <data name="Card_StatusDisabled" xml:space="preserve"><value>Deshabilitado</value></data>
+  <data name="Card_StatusEnabled" xml:space="preserve"><value>Habilitada</value></data>
+  <data name="Loops_NoActions" xml:space="preserve"><value>Sin acciones</value></data>
+  <data name="Loops_ActionsSummary_one" xml:space="preserve"><value>{0} acción: {1}</value></data>
+  <data name="Loops_ActionsSummary_other" xml:space="preserve"><value>{0} acciones: {1}</value></data>
+  <data name="Loops_IntervalMilliseconds" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="Loops_IntervalSeconds" xml:space="preserve"><value>{0} s</value></data>
+  <data name="Loops_IntervalMinutes" xml:space="preserve"><value>{0} min</value></data>
+  <data name="Loops_IntervalHours" xml:space="preserve"><value>{0} h</value></data>
+  <data name="Loops_HeldDown" xml:space="preserve"><value>{0} sin soltar</value></data>
+  <data name="Loops_KeyEvery" xml:space="preserve"><value>{0} cada {1}</value></data>
+  <data name="Loops_KeyTimesEvery_one" xml:space="preserve"><value>{1} {0} vez cada {2}</value></data>
+  <data name="Loops_KeyTimesEvery_other" xml:space="preserve"><value>{1} {0} veces cada {2}</value></data>
+  <data name="Loops_PastesEvery" xml:space="preserve"><value>pega "{0}" cada {1}</value></data>
+  <data name="Macros_RepeatLoop" xml:space="preserve"><value>en bucle</value></data>
+  <data name="Macros_RepeatOnce" xml:space="preserve"><value>una vez</value></data>
+  <data name="Macros_RepeatTimes_one" xml:space="preserve"><value>{0} vez</value></data>
+  <data name="Macros_RepeatTimes_other" xml:space="preserve"><value>{0} veces</value></data>
+  <data name="Macros_Summary_one" xml:space="preserve"><value>{0} acción, {1}, repetir {2}</value></data>
+  <data name="Macros_Summary_other" xml:space="preserve"><value>{0} acciones, {1}, repetir {2}</value></data>
+  <data name="Macros_SummaryWithSpeed_one" xml:space="preserve"><value>{0} acción, {1}, repetir {2}, velocidad ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} acciones, {1}, repetir {2}, velocidad ×{3}</value></data>
+  <data name="Remaps_AllApps" xml:space="preserve"><value>Todas las aplicaciones</value></data>
+  <data name="App_MigrationFailed" xml:space="preserve"><value>No se pudieron copiar tus bucles y macros en {0}.
+Detalles: {1}</value></data>
+  <data name="App_MacrosNotUpdated" xml:space="preserve"><value>Algunos archivos de macro no se pudieron actualizar a esta versión.</value></data>
+  <data name="App_UnexpectedError" xml:space="preserve"><value>Error inesperado:
+{0}</value></data>
+  <data name="App_SettingsReset" xml:space="preserve"><value>No se pudo leer tu configuración, así que se restableció.
+El archivo anterior se guardó como {0}.
+Detalles: {1}</value></data>
+  <data name="App_MacroFilesSkipped" xml:space="preserve"><value>Algunos archivos de macro no se pudieron leer y se omitieron (por ejemplo, {0}).</value></data>
+  <data name="Backup_NotABackup" xml:space="preserve"><value>Este archivo no es una copia de seguridad de PuppyMacro.</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>Aplicaciones de AI conectadas: selecciona para abrir la página AI</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>Aplicaciones de AI conectadas</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>Usa PuppyMacro desde una aplicación de AI de este equipo, como Claude Desktop o Visual Studio Code. Pide con tus propias palabras: la AI crea bucles, macros y reasignaciones, y tú los pruebas al momento.</value></data>
+  <data name="AiPage_Beta" xml:space="preserve"><value>Beta</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>Las aplicaciones de AI en PuppyMacro son nuevas: funcionan, pero pueden cambiar, y una AI puede malinterpretar una petición. Cada cambio se guarda en el Historial del elemento, así que siempre puedes volver atrás.</value></data>
+  <data name="AiPage_Access" xml:space="preserve"><value>Acceso</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>Permitir el acceso de AI</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>Las aplicaciones de AI de este equipo pueden leer y cambiar tus bucles, macros, reasignaciones y configuración. Cada cambio se guarda en el Historial del elemento.</value></data>
+  <data name="AiPage_AskDelete" xml:space="preserve"><value>Preguntar antes de eliminar un bucle, una macro o una reasignación</value></data>
+  <data name="AiPage_AskDeleteName" xml:space="preserve"><value>Preguntar antes de eliminar</value></data>
+  <data name="AiPage_AskChange" xml:space="preserve"><value>Preguntar antes de cambiar un bucle, una macro o una reasignación</value></data>
+  <data name="AiPage_AskChangeName" xml:space="preserve"><value>Preguntar antes de cambiar</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Desactivado: los elementos nuevos y cambiados por la AI se guardan al momento, listos para probar.</value></data>
+  <data name="AiPage_AskSettings" xml:space="preserve"><value>Preguntar antes de cambiar la configuración</value></data>
+  <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Tema, teclas de acceso rápido globales, panel de superposición, sonido</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Iniciar PuppyMacro cuando una aplicación de AI lo necesite</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Desactivado: mientras PuppyMacro está cerrado, las aplicaciones de AI no pueden usarlo y te piden que lo abras.</value></data>
+  <data name="AiPage_Apps" xml:space="preserve"><value>Aplicaciones</value></data>
+  <data name="AiPage_RecentActivity" xml:space="preserve"><value>Actividad reciente</value></data>
+  <data name="AiPage_ViewAll" xml:space="preserve"><value>Ver todo</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>Aún no hay peticiones. Conecta una aplicación de AI arriba y pídele que cree un bucle, una macro o una reasignación.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>Cómo usar la AI con PuppyMacro</value></data>
+  <data name="AiApps_ConnectedSince" xml:space="preserve"><value>Conectada desde las {0}</value></data>
+  <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>Agregado. Reinicia Claude Desktop para conectarte.</value></data>
+  <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>Agregado. Abre Copilot Chat en modo Agent para conectarte.</value></data>
+  <data name="AiApps_CodexAdded" xml:space="preserve"><value>Agregado. Reinicia Codex para conectarte.</value></data>
+  <data name="AiApps_InstalledNotConnected" xml:space="preserve"><value>Instalada, no conectada</value></data>
+  <data name="AiApps_VsCodeInstalled" xml:space="preserve"><value>Instalada. Usa GitHub Copilot, con el modelo que elijas allí.</value></data>
+  <data name="AiApps_NotInstalled" xml:space="preserve"><value>No instalada</value></data>
+  <data name="AiApps_Connect" xml:space="preserve"><value>Conectar</value></data>
+  <data name="AiApps_Remove" xml:space="preserve"><value>Quitar</value></data>
+  <data name="AiApps_CopyConfiguration" xml:space="preserve"><value>Copiar configuración</value></data>
+  <data name="AiApps_ActionName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="AiApps_GetClaude" xml:space="preserve"><value>Obtener Claude Desktop</value></data>
+  <data name="AiApps_GetVsCode" xml:space="preserve"><value>Obtener Visual Studio Code</value></data>
+  <data name="AiApps_GetCodex" xml:space="preserve"><value>Obtener Codex</value></data>
+  <data name="AiApps_OtherApps" xml:space="preserve"><value>Otras aplicaciones</value></data>
+  <data name="AiApps_OthersConnected" xml:space="preserve"><value>Conectadas: {0}</value></data>
+  <data name="AiApps_OthersHint" xml:space="preserve"><value>Cualquier aplicación compatible con servidores MCP locales: pega la configuración en su configuración de MCP.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>Configuración copiada. Pégala en la configuración de MCP de tu aplicación de AI y reinicia la aplicación.</value></data>
+  <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code no se abrió: {0}</value></data>
+  <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>Quítalo en Visual Studio Code: ejecuta "MCP: Open User Configuration" y elimina "{0}".</value></data>
+  <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>La carpeta de PuppyMacro tiene un carácter que la configuración de Codex no admite.</value></data>
+  <data name="AiApps_SettingsNotChanged" xml:space="preserve"><value>No se pudo cambiar la configuración de {0}: {1}</value></data>
+  <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>El archivo de configuración de {0} no es un objeto JSON, así que PuppyMacro no lo cambió ({1}).</value></data>
+  <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>En el archivo de configuración de {0}, "{1}" no es un objeto, así que PuppyMacro no lo cambió ({2}).</value></data>
+  <data name="AiApps_SettingsFileError" xml:space="preserve"><value>El archivo de configuración de {0} tiene un error, así que PuppyMacro no lo cambió: {1} ({2})</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>Otro programa usa la conexión de AI de PuppyMacro, así que las aplicaciones de AI no pueden conectarse. Ciérralo o reinicia Windows.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>Las aplicaciones de AI no pueden conectarse: {0}</value></data>
+  <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>Esta configuración no se puede restaurar.</value></data>
+  <data name="AiActivity_CantRestore" xml:space="preserve"><value>Este cambio no se puede restaurar.</value></data>
+  <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>Este cambio no se puede restaurar: {0}</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>Actividad de AI</value></data>
+  <data name="AiActivity_KeptNote" xml:space="preserve"><value>Se guarda en este equipo: las peticiones más recientes, hasta 20 MB.</value></data>
+  <data name="AiActivity_ClearHistory" xml:space="preserve"><value>Borrar historial</value></data>
+  <data name="AiActivity_Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="AiActivity_Period" xml:space="preserve"><value>Período</value></data>
+  <data name="AiActivity_Last7Days" xml:space="preserve"><value>Últimos 7 días</value></data>
+  <data name="AiActivity_Last30Days" xml:space="preserve"><value>Últimos 30 días</value></data>
+  <data name="AiActivity_All" xml:space="preserve"><value>Todo</value></data>
+  <data name="AiActivity_App" xml:space="preserve"><value>Aplicación</value></data>
+  <data name="AiActivity_Type" xml:space="preserve"><value>Tipo</value></data>
+  <data name="AiActivity_Result" xml:space="preserve"><value>Resultado</value></data>
+  <data name="AiActivity_Search" xml:space="preserve"><value>Buscar</value></data>
+  <data name="AiActivity_SearchPlaceholder" xml:space="preserve"><value>Buscar en la actividad</value></data>
+  <data name="AiActivity_AllApps" xml:space="preserve"><value>Todas las aplicaciones</value></data>
+  <data name="AiActivity_AllTypes" xml:space="preserve"><value>Todos los tipos</value></data>
+  <data name="AiActivity_AllResults" xml:space="preserve"><value>Todos los resultados</value></data>
+  <data name="AiActivity_Restore" xml:space="preserve"><value>Restaurar</value></data>
+  <data name="AiActivity_Details" xml:space="preserve"><value>Detalles</value></data>
+  <data name="AiActivity_NoRequests" xml:space="preserve"><value>Aún no hay peticiones.</value></data>
+  <data name="AiActivity_NoMatch" xml:space="preserve"><value>Ninguna petición coincide con los filtros.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>¿Eliminar el historial de peticiones de AI? Esta acción no se puede deshacer.</value></data>
+  <data name="AiActivity_Clear" xml:space="preserve"><value>Borrar</value></data>
+  <data name="AiActivity_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>Petición de AI</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>Petición de AI - {0}</value></data>
+  <data name="AiRequest_AskedBy" xml:space="preserve"><value>Pedido por {0}</value></data>
+  <data name="AiRequest_Instructions" xml:space="preserve"><value>Instrucciones</value></data>
+  <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>
+  <data name="AiRequest_KeyHeader" xml:space="preserve"><value>Tecla o combinación</value></data>
+  <data name="AiRequest_KeyDescription" xml:space="preserve"><value>Para una combinación, mantén presionada primero Ctrl, Alt, Mayús o Win. Para Ctrl, Alt, Mayús o Win solas, presiónala y suéltala.</value></data>
+  <data name="AiRequest_KeyPrompt" xml:space="preserve"><value>Presiona la tecla o combinación (Esc cancela)</value></data>
+  <data name="AiRequest_Ok" xml:space="preserve"><value>Aceptar</value></data>
+  <data name="AiRequest_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="AiRequest_NoticeWithDescription" xml:space="preserve"><value>{0} (pedido por {1})</value></data>
+  <data name="AiRequest_NoticeAskedBy" xml:space="preserve"><value>Pedido por {0}.</value></data>
+  <data name="AiReady_AppAsks" xml:space="preserve"><value>{0} pide</value></data>
+  <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
+  <data name="AiReady_Hint" xml:space="preserve"><value>Presiona {0} cuando estés listo · {1} cancela</value></data>
+  <data name="AiReady_Start" xml:space="preserve"><value>Comenzar</value></data>
+  <data name="Pick_Title" xml:space="preserve"><value>Elegir un punto</value></data>
+  <data name="Pick_ClickPoint" xml:space="preserve"><value>Haz clic en el punto al que debe ir el cursor</value></data>
+  <data name="Pick_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Pick_AppTitle" xml:space="preserve"><value>Elegir una aplicación</value></data>
+  <data name="Pick_ClickApp" xml:space="preserve"><value>Haz clic en una ventana de la aplicación</value></data>
+  <data name="Pick_AskedBy" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Pick_Counter" xml:space="preserve"><value>{0} / {1}   {2}</value></data>
+  <data name="Pick_CantReadName" xml:space="preserve"><value>No se puede leer el nombre de esta aplicación</value></data>
+  <data name="Placement_Title" xml:space="preserve"><value>Colocar la superposición</value></data>
+  <data name="Placement_DragPanel" xml:space="preserve"><value>Arrastra el panel adonde quieras</value></data>
+  <data name="Placement_DragPanelAndButtons" xml:space="preserve"><value>Arrastra el panel y los botones adonde quieras</value></data>
+  <data name="Placement_DragButton" xml:space="preserve"><value>Arrastra el botón adonde quieras</value></data>
+  <data name="Placement_DragButtons" xml:space="preserve"><value>Arrastra los botones adonde quieras</value></data>
+  <data name="Placement_Save" xml:space="preserve"><value>Guardar</value></data>
+  <data name="Placement_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Placement_Arrows" xml:space="preserve"><value>Flechas</value></data>
+  <data name="Placement_Nudge" xml:space="preserve"><value>Mover 1 píxel (Mayús: 10)</value></data>
+  <data name="Placement_NudgeSelected" xml:space="preserve"><value>Mover el elemento seleccionado 1 píxel (Mayús: 10)</value></data>
+  <data name="Placement_Selection" xml:space="preserve"><value>{0}   X {1}   Y {2}</value></data>
+  <data name="MacroEditor_EditTitle" xml:space="preserve"><value>Editar macro</value></data>
+  <data name="Editor_Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="MacroEditor_NamePlaceholder" xml:space="preserve"><value>p. ej., Fabricar y desguazar</value></data>
+  <data name="Editor_Actions" xml:space="preserve"><value>Acciones</value></data>
+  <data name="MacroEditor_AddAction" xml:space="preserve"><value>Agregar acción</value></data>
+  <data name="MacroEditor_Record" xml:space="preserve"><value>Grabar</value></data>
+  <data name="MacroEditor_RecordActions" xml:space="preserve"><value>Grabar acciones</value></data>
+  <data name="Editor_Test" xml:space="preserve"><value>Probar</value></data>
+  <data name="MacroEditor_TestAction" xml:space="preserve"><value>Probar acción</value></data>
+  <data name="MacroEditor_TestTooltip" xml:space="preserve"><value>Reproducir la acción seleccionada una vez en la ventana de detrás</value></data>
+  <data name="MacroEditor_Edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="MacroEditor_EditAction" xml:space="preserve"><value>Editar acción</value></data>
+  <data name="MacroEditor_Copy" xml:space="preserve"><value>Copiar</value></data>
+  <data name="MacroEditor_CopyTooltip" xml:space="preserve"><value>Copiar las acciones seleccionadas, para pegarlas aquí o en otra macro (Ctrl+C)</value></data>
+  <data name="MacroEditor_Paste" xml:space="preserve"><value>Pegar</value></data>
+  <data name="MacroEditor_PasteTooltip" xml:space="preserve"><value>Pegar las acciones copiadas donde van las acciones nuevas (Ctrl+V)</value></data>
+  <data name="MacroEditor_Duplicate" xml:space="preserve"><value>Duplicar</value></data>
+  <data name="MacroEditor_DuplicateTooltip" xml:space="preserve"><value>Duplicar las acciones seleccionadas (Ctrl+D)</value></data>
+  <data name="MacroEditor_Group" xml:space="preserve"><value>Agrupar</value></data>
+  <data name="MacroEditor_GroupTooltip" xml:space="preserve"><value>Poner las acciones seleccionadas en un grupo (Ctrl+G)</value></data>
+  <data name="MacroEditor_Delete" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="MacroEditor_DeleteTooltip" xml:space="preserve"><value>Eliminar las acciones seleccionadas (Supr)</value></data>
+  <data name="MacroEditor_RenameGroup" xml:space="preserve"><value>Cambiar nombre del grupo</value></data>
+  <data name="MacroEditor_Ungroup" xml:space="preserve"><value>Desagrupar</value></data>
+  <data name="MacroEditor_UngroupTooltip" xml:space="preserve"><value>Desagrupar (conservar las acciones)</value></data>
+  <data name="MacroEditor_ExpandAllGroups" xml:space="preserve"><value>Expandir todos los grupos</value></data>
+  <data name="MacroEditor_CollapseAllGroups" xml:space="preserve"><value>Contraer todos los grupos</value></data>
+  <data name="MacroEditor_Shortcuts" xml:space="preserve"><value>Métodos abreviados</value></data>
+  <data name="MacroEditor_CompactList" xml:space="preserve"><value>Lista compacta</value></data>
+  <data name="MacroEditor_CompactListTooltip" xml:space="preserve"><value>Lista compacta: filas más pequeñas</value></data>
+  <data name="MacroEditor_DensityNormal" xml:space="preserve"><value>Normal</value></data>
+  <data name="MacroEditor_DensityCompact" xml:space="preserve"><value>Compacta</value></data>
+  <data name="MacroEditor_DelayTooltip" xml:space="preserve"><value>Retraso antes de esta acción</value></data>
+  <data name="MacroEditor_NoActions" xml:space="preserve"><value>Aún no hay acciones. Graba acciones o agrégalas una a una.</value></data>
+  <data name="Editor_Enabled" xml:space="preserve"><value>Habilitado</value></data>
+  <data name="MacroEditor_Repeat" xml:space="preserve"><value>Repetir</value></data>
+  <data name="MacroEditor_Once" xml:space="preserve"><value>Una vez</value></data>
+  <data name="MacroEditor_Loop" xml:space="preserve"><value>En bucle</value></data>
+  <data name="MacroEditor_NTimes" xml:space="preserve"><value>N veces</value></data>
+  <data name="MacroEditor_Times" xml:space="preserve"><value>Veces</value></data>
+  <data name="MacroEditor_Speed" xml:space="preserve"><value>Velocidad</value></data>
+  <data name="Editor_Activation" xml:space="preserve"><value>Activación</value></data>
+  <data name="Editor_Toggle" xml:space="preserve"><value>Alternar</value></data>
+  <data name="Editor_Hold" xml:space="preserve"><value>Mantener</value></data>
+  <data name="Editor_Hotkey" xml:space="preserve"><value>Tecla de acceso rápido</value></data>
+  <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Cualquier tecla o botón del mouse, como F2 o A. Para una combinación, mantén presionada primero Ctrl, Alt, Mayús o Win; el clic izquierdo y derecho, la rueda del mouse y Esc la necesitan. Mantener necesita una tecla de acceso rápido.</value></data>
+  <data name="Editor_Sound" xml:space="preserve"><value>Sonido</value></data>
+  <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Suena cuando la macro se inicia y se detiene</value></data>
+  <data name="Editor_SoundChoose" xml:space="preserve"><value>Haz clic en un sonido para elegirlo y oír cómo suena al iniciar y al detener</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>Guardar</value></data>
+  <data name="Editor_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="LoopEditor_AddTitle" xml:space="preserve"><value>Agregar bucle</value></data>
+  <data name="LoopEditor_NamePlaceholder" xml:space="preserve"><value>p. ej., Spam de clic izquierdo</value></data>
+  <data name="LoopEditor_PressKey" xml:space="preserve"><value>Presionar tecla</value></data>
+  <data name="LoopEditor_Click" xml:space="preserve"><value>Clic</value></data>
+  <data name="LoopEditor_PasteText" xml:space="preserve"><value>Pegar texto</value></data>
+  <data name="LoopEditor_SoundDescription" xml:space="preserve"><value>Suena cuando el bucle se inicia y se detiene</value></data>
+  <data name="RemapEditor_AddTitle" xml:space="preserve"><value>Agregar reasignación</value></data>
+  <data name="RemapEditor_WhenIPress" xml:space="preserve"><value>Cuando presiono</value></data>
+  <data name="RemapEditor_SendInstead" xml:space="preserve"><value>Enviar en su lugar</value></data>
+  <data name="RemapEditor_KeyDescription" xml:space="preserve"><value>Una tecla, un botón del mouse o una combinación (mantén presionada primero Ctrl, Alt, Mayús o Win). Para Ctrl, Alt, Mayús o Win solas, presiónala y suéltala.</value></data>
+  <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Presiona la tecla o combinación (Esc cancela)</value></data>
+  <data name="RemapEditor_Note" xml:space="preserve"><value>Nota (opcional)</value></data>
+  <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>p. ej., Actualizar con el botón lateral</value></data>
+  <data name="ActionWindow_Title" xml:space="preserve"><value>Acción</value></data>
+  <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Reproducir esta acción una vez en la ventana de detrás</value></data>
+  <data name="ActionWindow_Name" xml:space="preserve"><value>Nombre (opcional)</value></data>
+  <data name="ActionWindow_NameDescription" xml:space="preserve"><value>Se muestra en negrita en la lista</value></data>
+  <data name="ActionWindow_NamePlaceholder" xml:space="preserve"><value>p. ej., Abrir inventario</value></data>
+  <data name="ActionWindow_Delay" xml:space="preserve"><value>Retraso</value></data>
+  <data name="ActionWindow_DelayDescription" xml:space="preserve"><value>Esperar antes de esta acción</value></data>
+  <data name="Editor_Ms" xml:space="preserve"><value>ms</value></data>
+  <data name="Group_Title" xml:space="preserve"><value>Agrupar acciones</value></data>
+  <data name="Group_Name" xml:space="preserve"><value>Nombre del grupo</value></data>
+  <data name="Group_NamePlaceholder" xml:space="preserve"><value>p. ej., Abrir mesa de fabricación</value></data>
+  <data name="Group_Ok" xml:space="preserve"><value>Agrupar</value></data>
+  <data name="MacroEditor_AddTitle" xml:space="preserve"><value>Agregar macro</value></data>
+  <data name="MacroEditor_EditNamedTitle" xml:space="preserve"><value>Editar macro - {0}</value></data>
+  <data name="MacroEditor_SpeedValue" xml:space="preserve"><value>×{0}</value></data>
+  <data name="MacroEditor_ActionNumber" xml:space="preserve"><value>#{0}</value></data>
+  <data name="MacroEditor_ActionRange" xml:space="preserve"><value>#{0}–{1}</value></data>
+  <data name="MacroEditor_GroupInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="MacroEditor_Total" xml:space="preserve"><value>{0}, {1} a ×1</value></data>
+  <data name="MacroEditor_TotalInGroups" xml:space="preserve"><value>{0} en {1}, {2} a ×1</value></data>
+  <data name="MacroEditor_ActionCount_one" xml:space="preserve"><value>{0} acción</value></data>
+  <data name="MacroEditor_ActionCount_other" xml:space="preserve"><value>{0} acciones</value></data>
+  <data name="MacroEditor_GroupCount_one" xml:space="preserve"><value>{0} grupo</value></data>
+  <data name="MacroEditor_GroupCount_other" xml:space="preserve"><value>{0} grupos</value></data>
+  <data name="MacroEditor_InsertAfterGroup" xml:space="preserve"><value>Las acciones nuevas van después del grupo "{0}"</value></data>
+  <data name="MacroEditor_InsertAfterInGroup" xml:space="preserve"><value>Las acciones nuevas van después de #{0}, en "{1}"</value></data>
+  <data name="MacroEditor_InsertAfter" xml:space="preserve"><value>Las acciones nuevas van después de #{0}</value></data>
+  <data name="MacroEditor_InsertAtEnd" xml:space="preserve"><value>Las acciones nuevas van al final</value></data>
+  <data name="MacroEditor_Selected_one" xml:space="preserve"><value>{0} acción seleccionada · {1}</value></data>
+  <data name="MacroEditor_Selected_other" xml:space="preserve"><value>{0} acciones seleccionadas · {1}</value></data>
+  <data name="MacroEditor_NoneSelected" xml:space="preserve"><value>Selecciona acciones para editarlas, agruparlas, copiarlas y más · {0}</value></data>
+  <data name="MacroEditor_DelayHeader" xml:space="preserve"><value>Retraso antes de esta acción (ms)</value></data>
+  <data name="Editor_Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="MacroEditor_NewGroupName" xml:space="preserve"><value>Grupo {0}</value></data>
+  <data name="MacroEditor_HoldHint" xml:space="preserve"><value>Se reproduce solo mientras se mantiene presionada la tecla de acceso rápido.</value></data>
+  <data name="Editor_ToggleHint" xml:space="preserve"><value>Presiona la tecla de acceso rápido para iniciar y vuelve a presionarla para detener.</value></data>
+  <data name="Editor_EnterName" xml:space="preserve"><value>Escribe un nombre.</value></data>
+  <data name="MacroEditor_NoActionsError" xml:space="preserve"><value>Agrega o graba al menos una acción.</value></data>
+  <data name="Editor_HoldNeedsHotkey" xml:space="preserve"><value>Mantener necesita una tecla de acceso rápido. Elige una o cambia a Alternar.</value></data>
+  <data name="LoopEditor_EditNamedTitle" xml:space="preserve"><value>Editar bucle - {0}</value></data>
+  <data name="LoopEditor_HoldHint" xml:space="preserve"><value>Se ejecuta solo mientras se mantiene presionada la tecla de acceso rápido.</value></data>
+  <data name="LoopEditor_NoActionsError" xml:space="preserve"><value>Agrega al menos una acción.</value></data>
+  <data name="LoopEditor_IntervalError" xml:space="preserve"><value>Cada intervalo debe estar entre 10 ms y 24 h.</value></data>
+  <data name="LoopEditor_HotkeyIsPressed" xml:space="preserve"><value>La tecla de acceso rápido no puede ser una de las teclas que presiona este bucle.</value></data>
+  <data name="RemapEditor_EditNamedTitle" xml:space="preserve"><value>Editar reasignación - {0}</value></data>
+  <data name="RemapEditor_EditKeysTitle" xml:space="preserve"><value>Editar reasignación - {0} → {1}</value></data>
+  <data name="RemapEditor_NoSourceError" xml:space="preserve"><value>Elige la tecla, el botón del mouse o la combinación que quieres reasignar.</value></data>
+  <data name="RemapEditor_NoTargetError" xml:space="preserve"><value>Elige qué enviar en su lugar.</value></data>
+  <data name="RemapEditor_SameKeysError" xml:space="preserve"><value>Envía algo distinto de lo que presionas.</value></data>
+  <data name="RemapEditor_PrimaryMouseError" xml:space="preserve"><value>El clic izquierdo y el derecho solo se pueden reasignar en una aplicación específica, para que sigan funcionando en todas las demás.</value></data>
+  <data name="ActionWindow_Type_PressKey" xml:space="preserve"><value>Presionar tecla</value></data>
+  <data name="ActionWindow_Type_KeyDown" xml:space="preserve"><value>Presionar tecla sin soltar</value></data>
+  <data name="ActionWindow_Type_KeyUp" xml:space="preserve"><value>Soltar tecla</value></data>
+  <data name="ActionWindow_Type_Click" xml:space="preserve"><value>Clic</value></data>
+  <data name="ActionWindow_Type_MouseDown" xml:space="preserve"><value>Presionar botón del mouse sin soltar</value></data>
+  <data name="ActionWindow_Type_MouseUp" xml:space="preserve"><value>Soltar botón del mouse</value></data>
+  <data name="ActionWindow_Type_MoveTo" xml:space="preserve"><value>Mover a</value></data>
+  <data name="ActionWindow_Type_MovePath" xml:space="preserve"><value>Mover por una ruta</value></data>
+  <data name="ActionWindow_Type_Scroll" xml:space="preserve"><value>Desplazar</value></data>
+  <data name="ActionWindow_Type_PasteText" xml:space="preserve"><value>Pegar texto</value></data>
+  <data name="ActionWindow_Add_PressKey" xml:space="preserve"><value>Agregar Presionar tecla</value></data>
+  <data name="ActionWindow_Add_KeyDown" xml:space="preserve"><value>Agregar Presionar tecla sin soltar</value></data>
+  <data name="ActionWindow_Add_KeyUp" xml:space="preserve"><value>Agregar Soltar tecla</value></data>
+  <data name="ActionWindow_Add_Click" xml:space="preserve"><value>Agregar Clic</value></data>
+  <data name="ActionWindow_Add_MouseDown" xml:space="preserve"><value>Agregar Presionar botón del mouse sin soltar</value></data>
+  <data name="ActionWindow_Add_MouseUp" xml:space="preserve"><value>Agregar Soltar botón del mouse</value></data>
+  <data name="ActionWindow_Add_MoveTo" xml:space="preserve"><value>Agregar Mover a</value></data>
+  <data name="ActionWindow_Add_MovePath" xml:space="preserve"><value>Agregar Mover por una ruta</value></data>
+  <data name="ActionWindow_Add_Scroll" xml:space="preserve"><value>Agregar Desplazar</value></data>
+  <data name="ActionWindow_Add_PasteText" xml:space="preserve"><value>Agregar Pegar texto</value></data>
+  <data name="ActionWindow_Edit_PressKey" xml:space="preserve"><value>Editar Presionar tecla - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyDown" xml:space="preserve"><value>Editar Presionar tecla sin soltar - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyUp" xml:space="preserve"><value>Editar Soltar tecla - {0}</value></data>
+  <data name="ActionWindow_Edit_Click" xml:space="preserve"><value>Editar Clic - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseDown" xml:space="preserve"><value>Editar Presionar botón del mouse sin soltar - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseUp" xml:space="preserve"><value>Editar Soltar botón del mouse - {0}</value></data>
+  <data name="ActionWindow_Edit_MoveTo" xml:space="preserve"><value>Editar Mover a - {0}</value></data>
+  <data name="ActionWindow_Edit_MovePath" xml:space="preserve"><value>Editar Mover por una ruta - {0}</value></data>
+  <data name="ActionWindow_Edit_Scroll" xml:space="preserve"><value>Editar Desplazar - {0}</value></data>
+  <data name="ActionWindow_Edit_PasteText" xml:space="preserve"><value>Editar Pegar texto - {0}</value></data>
+  <data name="Shortcuts_Select" xml:space="preserve"><value>Seleccionar</value></data>
+  <data name="Shortcuts_Click" xml:space="preserve"><value>clic</value></data>
+  <data name="Shortcuts_CtrlClick" xml:space="preserve"><value>Agregar una acción a la selección o quitarla</value></data>
+  <data name="Shortcuts_ShiftClick" xml:space="preserve"><value>Seleccionar todas las acciones hasta esta</value></data>
+  <data name="Shortcuts_Move" xml:space="preserve"><value>Mover</value></data>
+  <data name="Shortcuts_Drag" xml:space="preserve"><value>Arrastrar</value></data>
+  <data name="Shortcuts_DragWhat" xml:space="preserve"><value>Mover las acciones seleccionadas, también dentro o fuera de un grupo</value></data>
+  <data name="Shortcuts_MoveUpDown" xml:space="preserve"><value>Subir o bajar las acciones seleccionadas</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="Shortcuts_DoubleClick" xml:space="preserve"><value>Doble clic</value></data>
+  <data name="Shortcuts_DoubleClickWhat" xml:space="preserve"><value>Editar una acción; abrir o cerrar un grupo</value></data>
+  <data name="Shortcuts_RightClick" xml:space="preserve"><value>Clic derecho</value></data>
+  <data name="Shortcuts_RightClickWhat" xml:space="preserve"><value>Mostrar los comandos para las acciones seleccionadas</value></data>
+  <data name="Shortcuts_Group" xml:space="preserve"><value>Poner las acciones seleccionadas en un grupo</value></data>
+  <data name="Shortcuts_Duplicate" xml:space="preserve"><value>Duplicar las acciones seleccionadas</value></data>
+  <data name="Shortcuts_Copy" xml:space="preserve"><value>Copiar las acciones seleccionadas, para pegarlas aquí o en otra macro</value></data>
+  <data name="Shortcuts_Paste" xml:space="preserve"><value>Pegar las acciones copiadas donde van las acciones nuevas</value></data>
+  <data name="Shortcuts_Delete" xml:space="preserve"><value>Eliminar las acciones seleccionadas</value></data>
+  <data name="Shortcuts_Note" xml:space="preserve"><value>Las acciones nuevas van después de la acción o el grupo seleccionado, o al final. Probar reproduce la acción seleccionada una vez en la ventana que está detrás de PuppyMacro.</value></data>
+  <data name="Editor_FormView" xml:space="preserve"><value>Vista de formulario</value></data>
+  <data name="Editor_CodeView" xml:space="preserve"><value>Vista de código</value></data>
+  <data name="Editor_CodeViewTooltip" xml:space="preserve"><value>Editarlo como JSON. Ctrl+Espacio muestra sugerencias</value></data>
+  <data name="Editor_History" xml:space="preserve"><value>Historial</value></data>
+  <data name="Editor_HistoryTooltip" xml:space="preserve"><value>Sus versiones guardadas: quién cambió qué, y Restaurar</value></data>
+  <data name="CodeView_Format" xml:space="preserve"><value>Formatear</value></data>
+  <data name="CodeView_FormatTooltip" xml:space="preserve"><value>Formatear el código (Mayús+Alt+F)</value></data>
+  <data name="CodeView_Loading" xml:space="preserve"><value>Cargando el editor de código…</value></data>
+  <data name="CodeView_EditorName" xml:space="preserve"><value>Editor de código</value></data>
+  <data name="CodeView_Stopped" xml:space="preserve"><value>El editor de código se detuvo. Cierra esta ventana y vuelve a abrirla.</value></data>
+  <data name="CodeView_NeedsWebView2" xml:space="preserve"><value>La vista de código necesita Microsoft Edge WebView2 Runtime. Instálalo desde Microsoft y vuelve a abrir esta ventana.</value></data>
+  <data name="CodeView_CouldNotStart" xml:space="preserve"><value>No se pudo iniciar el editor de código: {0}</value></data>
+  <data name="CodeView_Checking" xml:space="preserve"><value>Comprobando…</value></data>
+  <data name="CodeView_NoProblems" xml:space="preserve"><value>No hay problemas.</value></data>
+  <data name="CodeView_CheckerFailed" xml:space="preserve"><value>No se pudo iniciar el comprobador de código: {0}</value></data>
+  <data name="CodeView_Problems" xml:space="preserve"><value>Problemas</value></data>
+  <data name="CodeView_ProblemsTitle" xml:space="preserve"><value>PROBLEMAS</value></data>
+  <data name="CodeView_Position" xml:space="preserve"><value>Lín. {0}, col. {1}</value></data>
+  <data name="CodeView_FixProblems_one" xml:space="preserve"><value>Corrige el problema o descarta los cambios.</value></data>
+  <data name="CodeView_FixProblems_other" xml:space="preserve"><value>Corrige los {0} problemas o descarta los cambios.</value></data>
+  <data name="CodeView_DiscardChanges" xml:space="preserve"><value>Descartar cambios</value></data>
+  <data name="CodeView_DiscardChangesTooltip" xml:space="preserve"><value>Deshacer los cambios en el código y volver a la vista de formulario</value></data>
+  <data name="HistoryView_Empty" xml:space="preserve"><value>Aún no hay versiones: cada vez que se guarda, la versión se conserva aquí.</value></data>
+  <data name="HistoryView_Versions" xml:space="preserve"><value>Versiones</value></data>
+  <data name="HistoryView_ChangesTitle" xml:space="preserve"><value>Cambios respecto a la versión anterior:</value></data>
+  <data name="HistoryView_Restore" xml:space="preserve"><value>Restaurar esta versión</value></data>
+  <data name="HistoryView_RestoredTitle" xml:space="preserve"><value>La versión del {0:g} está en el editor.</value></data>
+  <data name="HistoryView_RestoredMessage" xml:space="preserve"><value>Selecciona Guardar para conservarla o Cancelar para dejarlo como está.</value></data>
+  <data name="AppScope_Header" xml:space="preserve"><value>Aplicación específica</value></data>
+  <data name="AppScope_AllApps" xml:space="preserve"><value>Funciona en todas las aplicaciones</value></data>
+  <data name="AppScope_App" xml:space="preserve"><value>Aplicación</value></data>
+  <data name="AppScope_AppTooltip" xml:space="preserve"><value>El nombre del .exe de la aplicación, p. ej., Diablo IV.exe</value></data>
+  <data name="AppScope_Pick" xml:space="preserve"><value>Elegir</value></data>
+  <data name="AppScope_PickTooltip" xml:space="preserve"><value>Haz clic en una ventana de la aplicación</value></data>
+  <data name="AppScope_Browse" xml:space="preserve"><value>Examinar…</value></data>
+  <data name="AppScope_NoAppError" xml:space="preserve"><value>Elige la aplicación en la que funciona o desactiva Aplicación específica.</value></data>
+  <data name="AppScope_ChooseApp" xml:space="preserve"><value>Elige la aplicación en la que funciona</value></data>
+  <data name="AppScope_OnlyApp" xml:space="preserve"><value>Solo funciona mientras {0} está en primer plano</value></data>
+  <data name="AppScope_Help" xml:space="preserve"><value>Elige una aplicación en ejecución, selecciona su ventana o busca su .exe. Solo funciona mientras esa aplicación está en primer plano.</value></data>
+  <data name="AppScope_HelpStops" xml:space="preserve"><value>Elige una aplicación en ejecución, selecciona su ventana o busca su .exe. Solo funciona mientras esa aplicación está en primer plano, y se detiene cuando cambias a otra aplicación.</value></data>
+  <data name="AppScope_BrowseTitle" xml:space="preserve"><value>Elegir la aplicación</value></data>
+  <data name="AppScope_BrowseFilter" xml:space="preserve"><value>Programas (*.exe)|*.exe</value></data>
+  <data name="OverlayOptions_Show" xml:space="preserve"><value>Mostrar en la superposición</value></data>
+  <data name="OverlayOptions_ShowDescription" xml:space="preserve"><value>En el panel de superposición o como botón flotante</value></data>
+  <data name="OverlayOptions_HideWhenDisabled" xml:space="preserve"><value>Ocultar cuando esté deshabilitado</value></data>
+  <data name="OverlayOptions_HideWhenDisabledDescription" xml:space="preserve"><value>No se muestra en la superposición mientras esté deshabilitado</value></data>
+  <data name="OverlayOptions_PassThrough" xml:space="preserve"><value>Los clics también llegan a la aplicación de detrás</value></data>
+  <data name="OverlayOptions_PassThroughDescription" xml:space="preserve"><value>Al hacer clic en él en la superposición, también se hace clic en la ventana de debajo</value></data>
+  <data name="FloatingButton_Header" xml:space="preserve"><value>Botón flotante</value></data>
+  <data name="FloatingButton_Description" xml:space="preserve"><value>Un botón redondo que lo inicia y lo detiene en el modo de superposición, en lugar de su fila en el panel</value></data>
+  <data name="FloatingButton_NeedsToggle" xml:space="preserve"><value>Necesita Alternar: un clic puede iniciar y detener, pero no mantener</value></data>
+  <data name="FloatingButton_Label" xml:space="preserve"><value>Etiqueta</value></data>
+  <data name="FloatingButton_Size" xml:space="preserve"><value>Tamaño</value></data>
+  <data name="FloatingButton_Small" xml:space="preserve"><value>Pequeño</value></data>
+  <data name="FloatingButton_Medium" xml:space="preserve"><value>Mediano</value></data>
+  <data name="FloatingButton_Large" xml:space="preserve"><value>Grande</value></data>
+  <data name="FloatingButton_PositionOnScreen" xml:space="preserve"><value>Posición en la pantalla</value></data>
+  <data name="FloatingButton_Position" xml:space="preserve"><value>Posición</value></data>
+  <data name="FloatingButton_Opacity" xml:space="preserve"><value>Opacidad</value></data>
+  <data name="FloatingButton_OpacityLabel" xml:space="preserve"><value>Opacidad del botón flotante</value></data>
+  <data name="MacroEditor_ExpandGroup" xml:space="preserve"><value>Expandir grupo</value></data>
+  <data name="MacroEditor_CollapseGroup" xml:space="preserve"><value>Contraer grupo</value></data>
+  <data name="MacroEditor_GroupAccessibleName" xml:space="preserve"><value>Grupo {0}, {1}</value></data>
+  <data name="MacroEditor_DelayMs" xml:space="preserve"><value>{0:0.##} ms</value></data>
+  <data name="MacroEditor_RowPress" xml:space="preserve"><value>Presionar {0}</value></data>
+  <data name="MacroEditor_RowKeyDown" xml:space="preserve"><value>Presionar {0} sin soltar</value></data>
+  <data name="MacroEditor_RowKeyUp" xml:space="preserve"><value>Soltar {0}</value></data>
+  <data name="MacroEditor_RowButtonDown" xml:space="preserve"><value>Presionar botón {0} sin soltar</value></data>
+  <data name="MacroEditor_RowButtonUp" xml:space="preserve"><value>Soltar botón {0}</value></data>
+  <data name="MacroEditor_RowMoveSmoothly" xml:space="preserve"><value>Mover con suavidad</value></data>
+  <data name="MacroEditor_RowScrollUp" xml:space="preserve"><value>Desplazar hacia arriba</value></data>
+  <data name="MacroEditor_RowScrollDown" xml:space="preserve"><value>Desplazar hacia abajo</value></data>
+  <data name="MacroEditor_RowScrollLeft" xml:space="preserve"><value>Desplazar a la izquierda</value></data>
+  <data name="MacroEditor_RowScrollRight" xml:space="preserve"><value>Desplazar a la derecha</value></data>
+  <data name="MacroEditor_RowTimes_one" xml:space="preserve"><value>{1} {0} veces</value></data>
+  <data name="MacroEditor_RowTimes_other" xml:space="preserve"><value>{1} {0} veces</value></data>
+  <data name="MacroEditor_RowHeld" xml:space="preserve"><value>mantenido {0} ms</value></data>
+  <data name="MacroEditor_RowAt" xml:space="preserve"><value>en {0}, {1}</value></data>
+  <data name="MacroEditor_RowPath_one" xml:space="preserve"><value>{0} punto, {1}</value></data>
+  <data name="MacroEditor_RowPath_other" xml:space="preserve"><value>{0} puntos, {1}</value></data>
+  <data name="MacroEditor_RowScrollSteps_one" xml:space="preserve"><value>{0} paso</value></data>
+  <data name="MacroEditor_RowScrollSteps_other" xml:space="preserve"><value>{0} pasos</value></data>
+  <data name="MacroEditor_RowQuoted" xml:space="preserve"><value>"{0}"</value></data>
+  <data name="Action_Direction" xml:space="preserve"><value>Dirección</value></data>
+  <data name="Action_DirectionUp" xml:space="preserve"><value>Arriba</value></data>
+  <data name="Action_DirectionDown" xml:space="preserve"><value>Abajo</value></data>
+  <data name="Action_DirectionLeft" xml:space="preserve"><value>Izquierda</value></data>
+  <data name="Action_DirectionRight" xml:space="preserve"><value>Derecha</value></data>
+  <data name="Action_Remove" xml:space="preserve"><value>Quitar</value></data>
+  <data name="Action_WhileLoopRuns" xml:space="preserve"><value>Mientras se ejecuta el bucle</value></data>
+  <data name="Action_Repeat" xml:space="preserve"><value>Repetir</value></data>
+  <data name="Action_HoldDown" xml:space="preserve"><value>Mantener presionado</value></data>
+  <data name="Action_Every" xml:space="preserve"><value>Cada</value></data>
+  <data name="Action_Interval" xml:space="preserve"><value>Intervalo</value></data>
+  <data name="Action_Unit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="Action_UnitMs" xml:space="preserve"><value>ms</value></data>
+  <data name="Action_UnitS" xml:space="preserve"><value>s</value></data>
+  <data name="Action_UnitMin" xml:space="preserve"><value>min</value></data>
+  <data name="Action_UnitH" xml:space="preserve"><value>h</value></data>
+  <data name="Action_Position" xml:space="preserve"><value>Posición</value></data>
+  <data name="Action_Mode" xml:space="preserve"><value>Modo</value></data>
+  <data name="Action_Single" xml:space="preserve"><value>Simple</value></data>
+  <data name="Action_Double" xml:space="preserve"><value>Doble</value></data>
+  <data name="Action_HoldFor" xml:space="preserve"><value>Mantener durante</value></data>
+  <data name="Action_Times" xml:space="preserve"><value>Veces</value></data>
+  <data name="Action_PauseBetween" xml:space="preserve"><value>Pausa entre pulsaciones</value></data>
+  <data name="Action_PauseBetweenDescription" xml:space="preserve"><value>Entre una pulsación y la siguiente, cuando Veces es mayor que 1</value></data>
+  <data name="Action_FixedPoint" xml:space="preserve"><value>Punto fijo</value></data>
+  <data name="Action_Text" xml:space="preserve"><value>Texto</value></data>
+  <data name="Action_TextToPaste" xml:space="preserve"><value>Texto que se pegará</value></data>
+  <data name="Action_EnterBefore" xml:space="preserve"><value>Presionar Entrar antes de pegar</value></data>
+  <data name="Action_EnterAfter" xml:space="preserve"><value>Presionar Entrar después de pegar</value></data>
+  <data name="Action_Movement" xml:space="preserve"><value>Movimiento</value></data>
+  <data name="Action_Instantly" xml:space="preserve"><value>Al instante</value></data>
+  <data name="Action_Smoothly" xml:space="preserve"><value>Con suavidad</value></data>
+  <data name="Action_Speed" xml:space="preserve"><value>Velocidad</value></data>
+  <data name="Action_MovementSpeed" xml:space="preserve"><value>Velocidad del movimiento</value></data>
+  <data name="Action_Steps" xml:space="preserve"><value>Pasos</value></data>
+  <data name="Action_UseClick" xml:space="preserve"><value>Usa Clic para los botones del mouse.</value></data>
+  <data name="Action_UseMouseAction" xml:space="preserve"><value>Usa una acción Clic o de botón del mouse para los botones del mouse.</value></data>
+  <data name="Action_TitlePressKey" xml:space="preserve"><value>Presionar tecla</value></data>
+  <data name="Action_TitleKeyDown" xml:space="preserve"><value>Presionar tecla sin soltar</value></data>
+  <data name="Action_TitleKeyUp" xml:space="preserve"><value>Soltar tecla</value></data>
+  <data name="Action_TitleClick" xml:space="preserve"><value>Clic</value></data>
+  <data name="Action_TitleMouseDown" xml:space="preserve"><value>Presionar botón del mouse sin soltar</value></data>
+  <data name="Action_TitleMouseUp" xml:space="preserve"><value>Soltar botón del mouse</value></data>
+  <data name="Action_TitleMoveTo" xml:space="preserve"><value>Mover a</value></data>
+  <data name="Action_TitleScroll" xml:space="preserve"><value>Desplazar</value></data>
+  <data name="Action_TitlePasteText" xml:space="preserve"><value>Pegar texto</value></data>
+  <data name="Action_HoldButtonDescription" xml:space="preserve"><value>Cuánto tiempo se mantiene presionado el botón antes de soltarlo</value></data>
+  <data name="Action_HoldKeyDescription" xml:space="preserve"><value>Cuánto tiempo se mantiene presionada la tecla antes de soltarla</value></data>
+  <data name="Action_AFixedPoint" xml:space="preserve"><value>En un punto fijo</value></data>
+  <data name="Action_WherePointerIs" xml:space="preserve"><value>Donde está el puntero</value></data>
+  <data name="Action_SpeedVerySlow" xml:space="preserve"><value>muy lenta</value></data>
+  <data name="Action_SpeedSlow" xml:space="preserve"><value>lenta</value></data>
+  <data name="Action_SpeedNormal" xml:space="preserve"><value>normal</value></data>
+  <data name="Action_SpeedFast" xml:space="preserve"><value>rápida</value></data>
+  <data name="Action_SpeedVeryFast" xml:space="preserve"><value>muy rápida</value></data>
+  <data name="Action_SpeedText" xml:space="preserve"><value>Velocidad: {0}, unos {1} s</value></data>
+  <data name="Action_SummaryEvery" xml:space="preserve"><value>cada {0} {1}</value></data>
+  <data name="Action_SummaryTimes_one" xml:space="preserve"><value>{1} {0} vez</value></data>
+  <data name="Action_SummaryTimes_other" xml:space="preserve"><value>{1} {0} veces</value></data>
+  <data name="Action_SummaryAt" xml:space="preserve"><value>en {0}, {1}</value></data>
+  <data name="Action_SummaryWherePointerIs" xml:space="preserve"><value>donde está el puntero</value></data>
+  <data name="Action_SummaryNoKey" xml:space="preserve"><value>Aún no hay tecla</value></data>
+  <data name="Action_SummaryNoText" xml:space="preserve"><value>Aún no hay texto</value></data>
+  <data name="Action_SummaryUntilKeyUp" xml:space="preserve"><value>{0}, hasta Soltar tecla</value></data>
+  <data name="Action_SummarySteps_one" xml:space="preserve"><value>{0} paso</value></data>
+  <data name="Action_SummarySteps_other" xml:space="preserve"><value>{0} pasos</value></data>
+  <data name="Action_SummaryText" xml:space="preserve"><value>"{0}"</value></data>
+  <data name="Action_SummaryTextThenEnter" xml:space="preserve"><value>"{0}" y luego Entrar</value></data>
+  <data name="Action_SummaryHeldDown" xml:space="preserve"><value>{0}, sin soltar mientras se ejecuta el bucle</value></data>
+  <data name="Action_ChooseKeyEach" xml:space="preserve"><value>Elige una tecla para cada Presionar tecla.</value></data>
+  <data name="Action_ChooseKey" xml:space="preserve"><value>Elige una tecla.</value></data>
+  <data name="Action_SetFixedPoint" xml:space="preserve"><value>Establece la posición de cada Clic en un punto fijo.</value></data>
+  <data name="Action_EnterTextEach" xml:space="preserve"><value>Escribe el texto de cada Pegar texto.</value></data>
+  <data name="Action_EnterText" xml:space="preserve"><value>Escribe el texto que se pegará.</value></data>
+  <data name="Action_HoldNeedsSingleKey" xml:space="preserve"><value>Mantener presionado funciona con una sola tecla. Para una combinación, usa Repetir.</value></data>
+  <data name="KeyField_PromptHotkey" xml:space="preserve"><value>Presiona la tecla de acceso rápido (Esc cancela)</value></data>
+  <data name="KeyField_PromptCombination" xml:space="preserve"><value>Presiona la tecla o combinación (Esc cancela)</value></data>
+  <data name="KeyField_PromptKeyOrModifier" xml:space="preserve"><value>Presiona una tecla, o Ctrl, Alt, Mayús o Win sola (Esc cancela)</value></data>
+  <data name="KeyField_SetHotkey" xml:space="preserve"><value>Establecer tecla de acceso rápido</value></data>
+  <data name="KeyField_SetKey" xml:space="preserve"><value>Establecer tecla</value></data>
+  <data name="KeyField_ChangeHotkey" xml:space="preserve"><value>Cambiar tecla de acceso rápido</value></data>
+  <data name="KeyField_ChangeKey" xml:space="preserve"><value>Cambiar tecla</value></data>
+  <data name="KeyField_ClearHotkey" xml:space="preserve"><value>Borrar tecla de acceso rápido</value></data>
+  <data name="KeyField_ClearKey" xml:space="preserve"><value>Borrar tecla</value></data>
+  <data name="KeyField_Change" xml:space="preserve"><value>Cambiar</value></data>
+  <data name="KeyField_Clear" xml:space="preserve"><value>Borrar</value></data>
+  <data name="Mouse_Button" xml:space="preserve"><value>Botón del mouse</value></data>
+  <data name="Mouse_Left" xml:space="preserve"><value>Izquierdo</value></data>
+  <data name="Mouse_Right" xml:space="preserve"><value>Derecho</value></data>
+  <data name="Mouse_Middle" xml:space="preserve"><value>Central</value></data>
+  <data name="Mouse_Back" xml:space="preserve"><value>Atrás (X1)</value></data>
+  <data name="Mouse_Forward" xml:space="preserve"><value>Adelante (X2)</value></data>
+  <data name="Mouse_ClickLeft" xml:space="preserve"><value>Clic izquierdo</value></data>
+  <data name="Mouse_ClickRight" xml:space="preserve"><value>Clic derecho</value></data>
+  <data name="Mouse_ClickMiddle" xml:space="preserve"><value>Clic central</value></data>
+  <data name="Mouse_ClickBack" xml:space="preserve"><value>Clic en Atrás (X1)</value></data>
+  <data name="Mouse_ClickForward" xml:space="preserve"><value>Clic en Adelante (X2)</value></data>
+  <data name="Mouse_DoubleClickLeft" xml:space="preserve"><value>Doble clic izquierdo</value></data>
+  <data name="Mouse_DoubleClickRight" xml:space="preserve"><value>Doble clic derecho</value></data>
+  <data name="Mouse_DoubleClickMiddle" xml:space="preserve"><value>Doble clic central</value></data>
+  <data name="Mouse_DoubleClickBack" xml:space="preserve"><value>Doble clic en Atrás (X1)</value></data>
+  <data name="Mouse_DoubleClickForward" xml:space="preserve"><value>Doble clic en Adelante (X2)</value></data>
+  <data name="Mouse_DetectTooltip" xml:space="preserve"><value>Presiona un botón del mouse para detectarlo</value></data>
+  <data name="Mouse_Detect" xml:space="preserve"><value>Detectar el botón del mouse</value></data>
+  <data name="Mouse_Prompt" xml:space="preserve"><value>Presiona un botón del mouse (Esc cancela)</value></data>
+  <data name="Mouse_UsePressKey" xml:space="preserve"><value>Usa Presionar tecla para las teclas.</value></data>
+  <data name="Position_X" xml:space="preserve"><value>X</value></data>
+  <data name="Position_Y" xml:space="preserve"><value>Y</value></data>
+  <data name="Position_PickOnScreen" xml:space="preserve"><value>Elegir en la pantalla</value></data>
+  <data name="Slider_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Keys_NoHotkey" xml:space="preserve"><value>Sin tecla de acceso rápido</value></data>
+  <data name="Keys_Join" xml:space="preserve"><value> + </value></data>
+  <data name="Keys_None" xml:space="preserve"><value>Ninguna</value></data>
+  <data name="Keys_WheelUp" xml:space="preserve"><value>Rueda arriba</value></data>
+  <data name="Keys_WheelDown" xml:space="preserve"><value>Rueda abajo</value></data>
+  <data name="Keys_WheelLeft" xml:space="preserve"><value>Rueda a la izquierda</value></data>
+  <data name="Keys_WheelRight" xml:space="preserve"><value>Rueda a la derecha</value></data>
+  <data name="Keys_Backspace" xml:space="preserve"><value>Retroceso</value></data>
+  <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="Keys_Enter" xml:space="preserve"><value>Entrar</value></data>
+  <data name="Keys_Shift" xml:space="preserve"><value>Mayús</value></data>
+  <data name="Keys_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Keys_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Keys_Win" xml:space="preserve"><value>Win</value></data>
+  <data name="Keys_Pause" xml:space="preserve"><value>Pausa</value></data>
+  <data name="Keys_CapsLock" xml:space="preserve"><value>Bloq Mayús</value></data>
+  <data name="Keys_Esc" xml:space="preserve"><value>Esc</value></data>
+  <data name="Keys_Space" xml:space="preserve"><value>Espacio</value></data>
+  <data name="Keys_PageUp" xml:space="preserve"><value>Re Pág</value></data>
+  <data name="Keys_PageDown" xml:space="preserve"><value>Av Pág</value></data>
+  <data name="Keys_End" xml:space="preserve"><value>Fin</value></data>
+  <data name="Keys_Home" xml:space="preserve"><value>Inicio</value></data>
+  <data name="Keys_Left" xml:space="preserve"><value>Izquierda</value></data>
+  <data name="Keys_Up" xml:space="preserve"><value>Arriba</value></data>
+  <data name="Keys_Right" xml:space="preserve"><value>Derecha</value></data>
+  <data name="Keys_Down" xml:space="preserve"><value>Abajo</value></data>
+  <data name="Keys_PrintScreen" xml:space="preserve"><value>Impr Pant</value></data>
+  <data name="Keys_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Keys_Delete" xml:space="preserve"><value>Supr</value></data>
+  <data name="Keys_LeftWin" xml:space="preserve"><value>Win izquierda</value></data>
+  <data name="Keys_RightWin" xml:space="preserve"><value>Win derecha</value></data>
+  <data name="Keys_NumpadDigit" xml:space="preserve"><value>Num{0}</value></data>
+  <data name="Keys_NumpadMultiply" xml:space="preserve"><value>Num*</value></data>
+  <data name="Keys_NumpadAdd" xml:space="preserve"><value>Num+</value></data>
+  <data name="Keys_NumpadSubtract" xml:space="preserve"><value>Num-</value></data>
+  <data name="Keys_NumpadDecimal" xml:space="preserve"><value>Num.</value></data>
+  <data name="Keys_NumpadDivide" xml:space="preserve"><value>Num/</value></data>
+  <data name="Keys_NumLock" xml:space="preserve"><value>Bloq Num</value></data>
+  <data name="Keys_ScrollLock" xml:space="preserve"><value>Bloq Despl</value></data>
+  <data name="Keys_LeftShift" xml:space="preserve"><value>Mayús izquierda</value></data>
+  <data name="Keys_RightShift" xml:space="preserve"><value>Mayús derecha</value></data>
+  <data name="Keys_LeftCtrl" xml:space="preserve"><value>Ctrl izquierda</value></data>
+  <data name="Keys_RightCtrl" xml:space="preserve"><value>Ctrl derecha</value></data>
+  <data name="Keys_LeftAlt" xml:space="preserve"><value>Alt izquierda</value></data>
+  <data name="Keys_RightAlt" xml:space="preserve"><value>Alt derecha</value></data>
+  <data name="Keys_EitherCtrl" xml:space="preserve"><value>Ctrl izquierda o derecha</value></data>
+  <data name="Keys_EitherAlt" xml:space="preserve"><value>Alt izquierda o derecha</value></data>
+  <data name="Keys_EitherShift" xml:space="preserve"><value>Mayús izquierda o derecha</value></data>
+  <data name="Keys_EitherWin" xml:space="preserve"><value>Win izquierda o derecha</value></data>
+  <data name="Keys_Unknown" xml:space="preserve"><value>Tecla 0x{0:X2}</value></data>
+  <data name="Hotkey_ClickNeedsModifier" xml:space="preserve"><value>El clic izquierdo y el derecho necesitan Ctrl, Alt, Mayús o Win: solos bloquearían el mouse.</value></data>
+  <data name="Hotkey_WheelNeedsModifier" xml:space="preserve"><value>La rueda del mouse necesita Ctrl, Alt, Mayús o Win: sola bloquearía el desplazamiento.</value></data>
+  <data name="Hotkey_EscNeedsModifier" xml:space="preserve"><value>Esc necesita Ctrl, Alt, Mayús o Win.</value></data>
+  <data name="Hotkey_WheelCantHold" xml:space="preserve"><value>La rueda del mouse no se puede mantener presionada. Cambia a Alternar o elige otra tecla de acceso rápido.</value></data>
+  <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} ya se usa en Detener todo.</value></data>
+  <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} ya se usa en Modo de superposición.</value></data>
+  <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} ya se usa en Grabar.</value></data>
+  <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} ya se usa en el bucle "{1}".</value></data>
+  <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} ya se usa en el bucle "{1}" en {2}.</value></data>
+  <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} ya se usa en la macro "{1}".</value></data>
+  <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} ya se usa en la macro "{1}" en {2}.</value></data>
+  <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Las teclas de acceso rápido tienen prioridad sobre las reasignaciones.</value></data>
+  <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} ya está reasignada para todas las aplicaciones.</value></data>
+  <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} ya está reasignada para {1}.</value></data>
+  <data name="Sound_Chime" xml:space="preserve"><value>Campanilla</value></data>
+  <data name="Sound_Blip" xml:space="preserve"><value>Blip</value></data>
+  <data name="Sound_Pop" xml:space="preserve"><value>Pop</value></data>
+  <data name="Sound_Bell" xml:space="preserve"><value>Campana</value></data>
+  <data name="Sound_Arcade" xml:space="preserve"><value>Arcade</value></data>
+  <data name="Sound_Soft" xml:space="preserve"><value>Suave</value></data>
+  <data name="Sound_Marimba" xml:space="preserve"><value>Marimba</value></data>
+  <data name="Sound_Pluck" xml:space="preserve"><value>Punteo</value></data>
+  <data name="Sound_Harp" xml:space="preserve"><value>Arpa</value></data>
+  <data name="Sound_Kalimba" xml:space="preserve"><value>Kalimba</value></data>
+  <data name="Sound_Xylophone" xml:space="preserve"><value>Xilófono</value></data>
+  <data name="Sound_Glock" xml:space="preserve"><value>Glockenspiel</value></data>
+  <data name="Sound_Organ" xml:space="preserve"><value>Órgano</value></data>
+  <data name="Sound_Flute" xml:space="preserve"><value>Flauta</value></data>
+  <data name="Sound_Synth" xml:space="preserve"><value>Sintetizador</value></data>
+  <data name="Sound_Pad" xml:space="preserve"><value>Pad</value></data>
+  <data name="Sound_Brass" xml:space="preserve"><value>Metales</value></data>
+  <data name="Sound_Bass" xml:space="preserve"><value>Bajo</value></data>
+  <data name="Sound_Click" xml:space="preserve"><value>Clic</value></data>
+  <data name="Sound_Tick" xml:space="preserve"><value>Tictac</value></data>
+  <data name="Sound_Knock" xml:space="preserve"><value>Toc toc</value></data>
+  <data name="Sound_Switch" xml:space="preserve"><value>Interruptor</value></data>
+  <data name="Sound_Tom" xml:space="preserve"><value>Tom</value></data>
+  <data name="Sound_Conga" xml:space="preserve"><value>Conga</value></data>
+  <data name="Sound_Cowbell" xml:space="preserve"><value>Cencerro</value></data>
+  <data name="Sound_Triangle" xml:space="preserve"><value>Triángulo</value></data>
+  <data name="Sound_Gong" xml:space="preserve"><value>Gong</value></data>
+  <data name="Sound_Coin" xml:space="preserve"><value>Moneda</value></data>
+  <data name="Sound_Jump" xml:space="preserve"><value>Salto</value></data>
+  <data name="Sound_Laser" xml:space="preserve"><value>Láser</value></data>
+  <data name="Sound_Zap" xml:space="preserve"><value>Zap</value></data>
+  <data name="Sound_Powerup" xml:space="preserve"><value>Potenciador</value></data>
+  <data name="Sound_Retro" xml:space="preserve"><value>Retro</value></data>
+  <data name="Sound_Fanfare" xml:space="preserve"><value>Fanfarria</value></data>
+  <data name="Sound_Twinkle" xml:space="preserve"><value>Titileo</value></data>
+  <data name="Sound_Sparkle" xml:space="preserve"><value>Destello</value></data>
+  <data name="Sound_Bubble" xml:space="preserve"><value>Burbuja</value></data>
+  <data name="Sound_Drop" xml:space="preserve"><value>Gota</value></data>
+  <data name="Sound_Whoosh" xml:space="preserve"><value>Ráfaga</value></data>
+  <data name="Sound_Whistle" xml:space="preserve"><value>Silbato</value></data>
+  <data name="Sound_Chirp" xml:space="preserve"><value>Gorjeo</value></data>
+  <data name="Sound_Cricket" xml:space="preserve"><value>Grillo</value></data>
+  <data name="Sound_Doorbell" xml:space="preserve"><value>Timbre</value></data>
+  <data name="Sound_Phone" xml:space="preserve"><value>Teléfono</value></data>
+  <data name="Sound_Alarm" xml:space="preserve"><value>Alarma</value></data>
+  <data name="Sound_Modem" xml:space="preserve"><value>Módem</value></data>
+  <data name="Sound_Radar" xml:space="preserve"><value>Radar</value></data>
+  <data name="Sound_Sonar" xml:space="preserve"><value>Sonar</value></data>
+  <data name="Sound_Echo" xml:space="preserve"><value>Eco</value></data>
+  <data name="Sound_Robot" xml:space="preserve"><value>Robot</value></data>
+  <data name="Sound_Siren" xml:space="preserve"><value>Sirena</value></data>
+  <data name="Sound_Hum" xml:space="preserve"><value>Zumbido</value></data>
+  <data name="Sound_Ripple" xml:space="preserve"><value>Onda</value></data>
+  <data name="Sound_Wobble" xml:space="preserve"><value>Vaivén</value></data>
+  <data name="Sound_Warp" xml:space="preserve"><value>Distorsión</value></data>
+  <data name="Sound_Ufo" xml:space="preserve"><value>Ovni</value></data>
+  <data name="Code_MustBeObject" xml:space="preserve"><value>Debe ser un objeto JSON.</value></data>
+  <data name="Code_Between" xml:space="preserve"><value>Debe estar entre {0} y {1}.</value></data>
+  <data name="Code_IdCannotChange" xml:space="preserve"><value>El Id no se puede cambiar. Usa "{0}" (Ctrl+Espacio lo sugiere).</value></data>
+  <data name="Code_UnknownSound" xml:space="preserve"><value>Sonido desconocido. Usa uno de estos: {0}.</value></data>
+  <data name="Code_HoldNeedsHotkey" xml:space="preserve"><value>Mantener necesita una tecla de acceso rápido. Establece una o usa "Toggle".</value></data>
+  <data name="Code_HotkeyNotAKey" xml:space="preserve"><value>No es una tecla: usa un código de tecla virtual de 1 a 254 o un código de la rueda del mouse (256 arriba, 257 abajo, 258 izquierda, 259 derecha).</value></data>
+  <data name="Code_HotkeyModifierAlone" xml:space="preserve"><value>Ctrl, Alt, Mayús y Win solas no pueden ser la tecla: establécelas con "Ctrl", "Alt", "Shift" y "Win".</value></data>
+  <data name="Code_RemapChooseKey" xml:space="preserve"><value>Elige una tecla o un botón del mouse: un código de tecla virtual de 1 a 254.</value></data>
+  <data name="Code_RemapModifierSide" xml:space="preserve"><value>Ctrl, Alt, Mayús o Win sola: usa el código de su tecla izquierda o derecha (160, 161 Mayús; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_RemapModifierNoOthers" xml:space="preserve"><value>Ctrl, Alt, Mayús o Win sola no admite otro modificador: establece "Ctrl", "Alt", "Shift" y "Win" en false.</value></data>
+  <data name="Code_OnlyWithModifier" xml:space="preserve"><value>Solo con "{0}": true. Quítalo o establece "{0}" en true.</value></data>
+  <data name="Code_AppExeEmpty" xml:space="preserve"><value>Escribe el nombre de archivo de la aplicación, como "notepad.exe", o null para todas las aplicaciones.</value></data>
+  <data name="Code_AppExeNotExe" xml:space="preserve"><value>Escribe el nombre de archivo de la aplicación, terminado en ".exe".</value></data>
+  <data name="Code_AtMostCharacters_one" xml:space="preserve"><value>Como máximo {0} carácter.</value></data>
+  <data name="Code_AtMostCharacters_other" xml:space="preserve"><value>Como máximo {0} caracteres.</value></data>
+  <data name="Code_SetBothXY" xml:space="preserve"><value>Establece X e Y, o ninguno de los dos (null: el centro de la pantalla principal).</value></data>
+  <data name="Code_FloatingNeedsToggle" xml:space="preserve"><value>Necesita "Toggle": un clic puede iniciar y detener, pero no mantener.</value></data>
+  <data name="Code_MustBeOneOf" xml:space="preserve"><value>Debe ser uno de estos: {0}.</value></data>
+  <data name="Code_AtPath" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Code_InvalidJsonDetail" xml:space="preserve"><value>JSON no válido: {0}</value></data>
+  <data name="Code_UnknownProperty" xml:space="preserve"><value>Propiedad desconocida "{0}".</value></data>
+  <data name="Code_WrongType" xml:space="preserve"><value>Este valor tiene un tipo incorrecto o no es uno de los valores permitidos.</value></data>
+  <data name="Code_NeedsValue" xml:space="preserve"><value>Aquí se necesita un valor, no null.</value></data>
+  <data name="Code_InvalidJson" xml:space="preserve"><value>JSON no válido.</value></data>
+  <data name="Code_EnterName" xml:space="preserve"><value>Escribe un nombre.</value></data>
+  <data name="Code_AddAction" xml:space="preserve"><value>Agrega al menos una acción.</value></data>
+  <data name="Code_KeyVkOld" xml:space="preserve"><value>Ya no se usa: las teclas van en "Actions". Quítalo.</value></data>
+  <data name="Code_IntervalMsOld" xml:space="preserve"><value>Ya no se usa: los intervalos van en "Actions". Quítalo.</value></data>
+  <data name="Code_HotkeyVkOld" xml:space="preserve"><value>Ya no se usa: usa "Hotkey". Quítalo.</value></data>
+  <data name="Code_LoopChooseKey" xml:space="preserve"><value>Elige la tecla o el botón del mouse: un código de tecla virtual de 1 a 254.</value></data>
+  <data name="Code_EnterText" xml:space="preserve"><value>Escribe el texto.</value></data>
+  <data name="Code_TextNoHold" xml:space="preserve"><value>Solo Presionar tecla y Clic se pueden mantener presionados.</value></data>
+  <data name="Code_IntervalRange" xml:space="preserve"><value>El intervalo debe estar entre 10 ms y 24 h.</value></data>
+  <data name="Code_HotkeyPressed" xml:space="preserve"><value>La tecla de acceso rápido no puede ser una de las teclas que presiona este bucle.</value></data>
+  <data name="Code_LoopOnlyPressKeyModifiers" xml:space="preserve"><value>Solo Presionar tecla tiene Ctrl, Alt, Mayús o Win. Quítalo.</value></data>
+  <data name="Code_ClickNoModifiers" xml:space="preserve"><value>Un clic no tiene Ctrl, Alt, Mayús ni Win. Quítalo.</value></data>
+  <data name="Code_HoldDownSingleKey" xml:space="preserve"><value>Mantener presionado funciona con una sola tecla. Para una combinación, usa "Repeat".</value></data>
+  <data name="Code_OnlyPressKeyAndClick" xml:space="preserve"><value>Solo lo tienen Presionar tecla y Clic. Quítalo.</value></data>
+  <data name="Code_OnlyClick" xml:space="preserve"><value>Solo lo tiene Clic. Quítalo.</value></data>
+  <data name="Code_ClickCountOrNull" xml:space="preserve"><value>Debe ser 1 (clic simple), 2 (doble clic) o null.</value></data>
+  <data name="Code_SetBothXYFixed" xml:space="preserve"><value>Establece X e Y para un punto fijo, o ninguno de los dos (null: donde está el puntero).</value></data>
+  <data name="Code_SourceVkOld" xml:space="preserve"><value>Ya no se usa: usa "Source", como {"Vk": 65} para A. Quítalo.</value></data>
+  <data name="Code_ChooseSource" xml:space="preserve"><value>Elige la tecla, el botón del mouse o la combinación que quieres reasignar.</value></data>
+  <data name="Code_ChooseTarget" xml:space="preserve"><value>Elige qué enviar en su lugar.</value></data>
+  <data name="Code_TargetDifferent" xml:space="preserve"><value>Envía algo distinto de lo que presionas.</value></data>
+  <data name="Code_PrimaryMouseNeedsApp" xml:space="preserve"><value>El clic izquierdo y el derecho solo se pueden reasignar en una aplicación específica, para que sigan funcionando en todas las demás.</value></data>
+  <data name="Code_GroupNotAllowed" xml:space="preserve"><value>Esta acción solo puede estar en: {0}. Las acciones de un grupo deben estar juntas.</value></data>
+  <data name="Code_SpeedSteps" xml:space="preserve"><value>Debe ser 0.25, 0.5, 1, 2 o 4.</value></data>
+  <data name="Code_GroupIdTwice" xml:space="preserve"><value>Dos grupos tienen este Id.</value></data>
+  <data name="Code_EnterGroupName" xml:space="preserve"><value>Escribe un nombre de grupo.</value></data>
+  <data name="Code_NoSuchGroup" xml:space="preserve"><value>Ningún grupo de "Groups" tiene este Id.</value></data>
+  <data name="Code_GroupApart" xml:space="preserve"><value>Las acciones de un grupo deben estar juntas.</value></data>
+  <data name="Code_GroupNoActions" xml:space="preserve"><value>Este grupo no tiene acciones: asígnale algunas ("GroupId") o quítalo.</value></data>
+  <data name="Code_MacroChooseKey" xml:space="preserve"><value>Elige una tecla: un código de tecla virtual de 1 a 254.</value></data>
+  <data name="Code_UseMouseAction" xml:space="preserve"><value>Usa una acción Clic, Presionar botón del mouse sin soltar o Soltar botón del mouse para los botones del mouse.</value></data>
+  <data name="Code_ChooseMouseButton" xml:space="preserve"><value>Elige un botón del mouse: 1 izquierdo, 2 derecho, 4 central, 5 atrás (X1), 6 adelante (X2).</value></data>
+  <data name="Code_KeyDownOneKey" xml:space="preserve"><value>Presionar tecla sin soltar y Soltar tecla admiten una sola tecla: para Ctrl, Alt, Mayús o Win sola, usa su código de tecla en "Vk" (160, 161 Mayús; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).</value></data>
+  <data name="Code_MacroOnlyPressKeyModifiers" xml:space="preserve"><value>Solo una acción Presionar tecla tiene Ctrl, Alt, Mayús o Win. Quítalo.</value></data>
+  <data name="Code_ClickCount" xml:space="preserve"><value>Debe ser 1 (clic simple) o 2 (doble clic).</value></data>
+  <data name="Code_PathEmpty" xml:space="preserve"><value>Una ruta necesita al menos un punto.</value></data>
+  <data name="Code_PathTimes" xml:space="preserve"><value>Los tiempos deben empezar en 0 o más y nunca retroceder.</value></data>
+  <data name="Code_EnterPasteText" xml:space="preserve"><value>Escribe el texto que se pegará.</value></data>
+  <data name="Overlay_WindowTitle" xml:space="preserve"><value>Panel de superposición de PuppyMacro</value></data>
+  <data name="Overlay_MovePanel" xml:space="preserve"><value>Mover el panel</value></data>
+  <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Arrastra para mover el panel</value></data>
+  <data name="Overlay_Exit" xml:space="preserve"><value>Salir del modo de superposición</value></data>
+  <data name="Overlay_ExitTip" xml:space="preserve"><value>Salir del modo de superposición ({0})</value></data>
+  <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Salir y abrir PuppyMacro</value></data>
+  <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Salir del modo de superposición y abrir PuppyMacro</value></data>
+  <data name="Overlay_NothingToShow" xml:space="preserve"><value>No hay nada que mostrar.</value></data>
+  <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Todo está en botones flotantes.</value></data>
+  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Nada para esta aplicación.</value></data>
+  <data name="Overlay_Macros" xml:space="preserve"><value>Macros</value></data>
+  <data name="Overlay_StopAll" xml:space="preserve"><value>Detener todo</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Haz clic para iniciar o detener · Clic derecho para habilitar o deshabilitar</value></data>
+  <data name="Floating_WindowTitle" xml:space="preserve"><value>Botón flotante de PuppyMacro</value></data>
+  <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Botón flotante de PuppyMacro: {0}</value></data>
+  <data name="Recording_Title" xml:space="preserve"><value>Grabando</value></data>
+  <data name="Recording_StartsIn" xml:space="preserve"><value>La grabación comienza en {0}</value></data>
+  <data name="Recording_SwitchHint" xml:space="preserve"><value>Cambia a la ventana que quieres grabar. Los clics aún no se graban.</value></data>
+  <data name="Recording_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Recording_Stop" xml:space="preserve"><value>Detener</value></data>
+  <data name="Recording_Events_one" xml:space="preserve"><value>{0} evento</value></data>
+  <data name="Recording_Events_other" xml:space="preserve"><value>{0} eventos</value></data>
+  <data name="Recording_PressToStop" xml:space="preserve"><value>Presiona {0} para detener</value></data>
+  <data name="Recording_ReadyTitle" xml:space="preserve"><value>Listo para grabar</value></data>
+  <data name="Recording_PressOrSelect" xml:space="preserve"><value>Presiona {0} o selecciona {1}</value></data>
+  <data name="Recording_StartRecording" xml:space="preserve"><value>Iniciar grabación</value></data>
+  <data name="Recording_RecordMouseMovement" xml:space="preserve"><value>Grabar el movimiento del mouse</value></data>
+  <data name="Recording_PromptDescription" xml:space="preserve"><value>Tienes 3 segundos para cambiar a la ventana que quieres grabar. Todo lo que presiones, hagas clic y muevas se graba hasta que presiones {0} o selecciones Detener.</value></data>
+  <data name="Countdown_Title" xml:space="preserve"><value>Cuenta atrás de la grabación</value></data>
+  <data name="Countdown_Starts" xml:space="preserve"><value>La grabación comienza…</value></data>
+  <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>No se pudo leer el teclado.</value></data>
+  <data name="Input_CannotReadMouse" xml:space="preserve"><value>No se pudo leer el mouse.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>Este archivo no es un archivo de elementos de PuppyMacro.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>Este archivo se creó con PuppyMacro {0}, más reciente que esta versión ({1}). Actualiza PuppyMacro para importarlo.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>Este archivo se creó con una versión más reciente de PuppyMacro. Actualiza PuppyMacro para importarlo.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>Elemento {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>Tipo desconocido "{0}": PuppyMacro importa bucles, macros y reasignaciones.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>Falta el bucle.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>Falta la macro.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>Falta la reasignación.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>Ya hay un bucle con este nombre: se importa como "{0}".</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>Ya hay una macro con este nombre: se importa como "{0}".</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} ya se usa en el bucle "{1}" de este archivo.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} ya se usa en la macro "{1}" de este archivo.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: se importa sin tecla de acceso rápido.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: se importa sin tecla de acceso rápido, como Alternar (Mantener necesita una tecla de acceso rápido).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} ya se usa en el bucle "{1}" de este archivo. Las teclas de acceso rápido tienen prioridad sobre las reasignaciones.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} ya se usa en la macro "{1}" de este archivo. Las teclas de acceso rápido tienen prioridad sobre las reasignaciones.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} ya está reasignada para todas las aplicaciones en este archivo.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} ya está reasignada para {1} en este archivo.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>Elementos de PuppyMacro</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>Reasignación {0}</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>Exportó {0} elemento</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>Exportó {0} elementos</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>Importó el bucle {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>Importó la macro {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>Importó la reasignación {0}</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>Importar {0} elemento</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>Importar {0} elementos</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>¿Importar este elemento?</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>¿Importar estos {0} elementos?</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>Importar</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>Abrió Importar</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>Abrió Exportar</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>Importar</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>Agregar bucles, macros y reasignaciones desde un archivo</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>Exportar</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>Guardar bucles, macros y reasignaciones en un archivo para compartirlos</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>Exportar…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>Elementos de PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>Importar bucles, macros y reasignaciones</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>Exportar bucles, macros y reasignaciones</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>Aceptar</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>De {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>No se pudo leer el archivo: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>Buscar actualizaciones</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>Importar {0} elemento</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>Importar {0} elementos</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>Exportar {0} elemento…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>Exportar {0} elementos…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>Error al exportar</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>Bucles</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>Macros</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>Reasignaciones</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>Otros</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>Elige los bucles, macros y reasignaciones que quieres guardar en un archivo, para compartirlos o usarlos en otro equipo.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>Buscar</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>Tipo</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>Todos los tipos</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>Seleccionar todos los mostrados</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>{0} mostrados · {1} seleccionados</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>Aún no tienes bucles, macros ni reasignaciones.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>Nada coincide con la búsqueda.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>Elegir otro archivo…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>Seleccionar todo</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>Los elementos importados empiezan deshabilitados.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>Activa cada uno cuando hayas comprobado lo que hace.</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>{0} elemento de otro tipo</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} elementos de otro tipo</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>No hay elementos</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>De PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>Elementos de PuppyMacro</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>Copia de seguridad de PuppyMacro</value></data>
+</root>

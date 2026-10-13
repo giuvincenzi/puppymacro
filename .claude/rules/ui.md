@@ -11,6 +11,17 @@ paths:
 - Before a UI change, follow "UI changes" in `working-rules.md` (ask whether the user wants
   visual proposals as a Design artifact, wait for approval, then implement).
 
+## Texts
+
+Every text of the UI comes from `Resources/Strings.resx` (`{x:Static r:Strings.Key}`, `Strings.Key`) and is translated
+into every language in the same change (`i18n.md`). Layouts must hold longer texts (German, Russian) and right to left
+(Arabic): no fixed widths for text, let cards and buttons grow.
+
+- **A group of choices is always the library's `RadioButtons`** (`MaxColumns` for side by side), never `RadioButton`s
+  laid out by hand in a `StackPanel` or `WrapPanel`: a `RadioButton` has `MinWidth` 120 and no space after its text,
+  so a longer text touches the next one, while `RadioButtons` makes every column as wide as the longest choice with
+  its own spacing (7 px).
+
 ## Standard components only (strict)
 
 The app must look and behave exactly like Windows 11. It is built with
@@ -79,9 +90,12 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `ListView`s (pages on top, Settings at the bottom) sharing one selection, so the selection, its
     animated accent pill, hover and arrow keys are the library's. Each item (style `RailItem`:
     `MinWidth` 0, since the library's 88 is wider than the rail, and `Padding` `0,8`): the page's
-    Fluent System Icons `_20_Regular` icon (FontSize 20) over its name in caption style; selected,
+    Fluent System Icons `_20_Regular` icon (FontSize 20) over its name in caption style, on one line; a name longer
+    than the item shrinks to fit it (a `Viewbox` with `StretchDirection="DownOnly"`, at most 60 px wide: approved by the
+    user, as Microsoft Store shrinks "Downloads"), so the rail stays 72 px in every language; selected,
     the `_20_Filled` icon in `AccentTextFillColorPrimaryBrush` instead, and the name fades out while
-    the icon slides down 10 px to the middle (167 ms, curve `0,0,0,1`, WinUI's
+    the icon slides down by half the name's height and margin, measured (`SideRail.Slide`: a shrunk name is lower), so it
+    ends in the middle (167 ms, curve `0,0,0,1`, WinUI's
     `ControlFastAnimationDuration` and `ControlFastOutSlowInKeySpline`). The update dot on Settings is an
     `AttentionDot` `InfoBadge` placed as Microsoft Store's on Downloads (measured, approved): 6 px, 7 px right of the
     icon and 3 px above it, inside the icon's grid so it moves with it. The update bar is the library's `InfoBar`

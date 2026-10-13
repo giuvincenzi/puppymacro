@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -29,6 +31,9 @@ public partial class ImportItemsView : UserControl
     /// <summary>The file can't be read: its error, shown instead of the list.</summary>
     public string? Error { get; private set; }
 
+    /// <summary>The file was made with a newer PuppyMacro: updating reads it.</summary>
+    public bool NeedsUpdate { get; private set; }
+
     /// <summary>The chosen items, ready to add, read with these choices.</summary>
     internal List<object> ChosenItems() => _read == null || Error != null
         ? new List<object>()
@@ -43,6 +48,7 @@ public partial class ImportItemsView : UserControl
         ItemFileContent content = read(null);
         ImportFileText.Text = fileName;
         Error = content.Error;
+        NeedsUpdate = content.NeedsUpdate;
         ImportErrorText.Text = content.Error ?? "";
         ImportErrorText.Visibility = content.Error == null ? Visibility.Collapsed : Visibility.Visible;
         ImportListPanel.Visibility = content.Error == null ? Visibility.Visible : Visibility.Collapsed;
@@ -63,19 +69,18 @@ public partial class ImportItemsView : UserControl
     /// <summary>"From PuppyMacro 1.17.0 · 2 loops, 1 macro".</summary>
     private static string Counts(ItemFileContent content)
     {
-        static string Count(int n, string one) => n == 1 ? $"1 {one}" : $"{n} {one}s";
         var parts = new List<string>();
-        foreach ((string kind, string word) in new[] { ("loop", "loop"), ("macro", "macro"), ("remap", "remap") })
+        foreach ((string kind, string key) in new[] { ("loop", "Loops_Count"), ("macro", "Macros_Count"), ("remap", "Remaps_Count") })
         {
             int n = content.Entries.Count(e => e.Kind == kind);
             if (n > 0)
-                parts.Add(Count(n, word));
+                parts.Add(Plurals.Format(key, n));
         }
         int other = content.Entries.Count(e => e.Kind is not ("loop" or "macro" or "remap"));
         if (other > 0)
-            parts.Add(Count(other, "other item"));
-        string items = parts.Count == 0 ? "No items" : string.Join(", ", parts);
-        return content.App == null ? items : $"From PuppyMacro {content.App} · {items}";
+            parts.Add(Plurals.Format("ImportItems_OtherCount", other));
+        string items = parts.Count == 0 ? Strings.ImportItems_NoItems : string.Join(Strings.ListSeparator, parts);
+        return content.App == null ? items : string.Format(CultureInfo.CurrentCulture, Strings.ImportItems_FromVersion, content.App, items);
     }
 
     private List<int> Chosen() => _rows.Where(r => r.IsChecked).Select(r => r.Index).ToList();

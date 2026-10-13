@@ -2,7 +2,8 @@
     x:Class="PuppyMacro.PickPointWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Pick a point"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    Title="{x:Static r:Strings.Pick_Title}"
     WindowStyle="None"
     AllowsTransparency="True"
     Background="#26000000"
@@ -17,7 +18,8 @@
     MouseMove="OnMouseMove"
     PreviewKeyDown="OnKeyDown">
 
-    <Canvas>
+    <!-- Left to right in every language: its children sit at the screen's coordinates (i18n.md) -->
+    <Canvas FlowDirection="LeftToRight">
         <!-- Pick an app: the window under the cursor, outlined, with its .exe name (approved, fixed dark look) -->
         <Border x:Name="Highlight" BorderThickness="2" CornerRadius="8" BorderBrush="#60CDFF"
                 IsHitTestVisible="False" Visibility="Collapsed" />
@@ -36,11 +38,11 @@
         <Border x:Name="Instructions" Padding="16,10" CornerRadius="8" BorderThickness="1"
                 Background="#F2202020" BorderBrush="#1FFFFFFF" Cursor="Arrow">
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="InstructionsText" FontSize="13" Text="Click the point the cursor should go to" VerticalAlignment="Center" />
+                <TextBlock x:Name="InstructionsText" FontSize="13" Text="{x:Static r:Strings.Pick_ClickPoint}" VerticalAlignment="Center" />
                 <Border Margin="16,0,6,0" Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737">
-                    <TextBlock FontSize="12" Text="Esc" />
+                    <TextBlock FontSize="12" Text="{x:Static r:Strings.Keys_Esc}" />
                 </Border>
-                <TextBlock FontSize="13" Foreground="#C5C5C5" Text="Cancel" VerticalAlignment="Center" />
+                <TextBlock FontSize="13" Foreground="#C5C5C5" Text="{x:Static r:Strings.Pick_Cancel}" VerticalAlignment="Center" />
             </StackPanel>
         </Border>
     </Canvas>

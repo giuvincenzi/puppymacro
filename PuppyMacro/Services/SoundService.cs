@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -25,6 +28,17 @@ internal sealed class SoundService
         "Bubble", "Drop", "Whoosh", "Whistle", "Chirp", "Cricket",
         "Doorbell", "Phone", "Alarm", "Modem", "Radar", "Sonar", "Echo", "Robot", "Siren", "Hum", "Ripple", "Wobble", "Warp", "Ufo",
     };
+
+    /// <summary>The name shown to the user for a sound id of <see cref="Names"/> (the id stays in files): the text
+    /// "Sound_{id}" in the language of the moment, or the id when there is none.</summary>
+    public static string DisplayName(string id) =>
+        Strings.ResourceManager.GetString("Sound_" + id, CultureInfo.CurrentUICulture) ?? id;
+
+    /// <summary>The names the editors list, in the order of <see cref="Names"/>.</summary>
+    public static IReadOnlyList<string> DisplayNames() => Names.Select(DisplayName).ToList();
+
+    /// <summary>The sound id of a name the editors show (<see cref="DisplayName"/>), or null.</summary>
+    public static string? IdOf(string displayName) => Names.FirstOrDefault(id => DisplayName(id) == displayName);
 
     private sealed class Clip
     {

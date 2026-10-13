@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Win32;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -24,11 +25,11 @@ internal static class FileTypes
     public static List<(string Key, string Value)> Entries(string exe, string iconsFolder) => new()
     {
         (ItemFile.Extension, ItemsProgId),
-        (ItemsProgId, "PuppyMacro items"),
+        (ItemsProgId, Strings.FileTypes_Items),
         (ItemsProgId + @"\DefaultIcon", Path.Combine(iconsFolder, "PuppyMacroItems.ico")),
         (ItemsProgId + @"\shell\open\command", $"\"{exe}\" \"%1\""),
         (BackupService.Extension, BackupProgId),
-        (BackupProgId, "PuppyMacro backup"),
+        (BackupProgId, Strings.FileTypes_Backup),
         (BackupProgId + @"\DefaultIcon", Path.Combine(iconsFolder, "PuppyMacroBackup.ico")),
     };
 

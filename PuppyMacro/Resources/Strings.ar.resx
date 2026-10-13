@@ -1,0 +1,1207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ListSeparator" xml:space="preserve"><value>، </value></data>
+  <data name="Day_Today" xml:space="preserve"><value>اليوم</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>أمس</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>النظام</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>فاتح</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>داكن</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>اللغة</value></data>
+  <data name="Settings_LanguageDescription" xml:space="preserve"><value>تتم إعادة تشغيل PuppyMacro لتغييرها</value></data>
+  <data name="Settings_LanguageSystem" xml:space="preserve"><value>استخدام لغة النظام</value></data>
+  <data name="LanguageRestart_Title" xml:space="preserve"><value>هل تريد إعادة تشغيل PuppyMacro؟</value></data>
+  <data name="LanguageRestart_Content" xml:space="preserve"><value>تتم إعادة تشغيل PuppyMacro لعرض {0}. تتوقف الحلقات ووحدات الماكرو قيد التشغيل.</value></data>
+  <data name="LanguageRestart_Restart" xml:space="preserve"><value>إعادة التشغيل الآن</value></data>
+  <data name="LanguageRestart_Later" xml:space="preserve"><value>لاحقًا</value></data>
+  <data name="History_BeforeHistory" xml:space="preserve"><value>قبل بدء المحفوظات</value></data>
+  <data name="History_Created" xml:space="preserve"><value>تم الإنشاء</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>تم الحفظ</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>تم الحذف</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>تمت الاستعادة</value></data>
+  <data name="History_Changes_zero" xml:space="preserve"><value>{0} تغيير</value></data>
+  <data name="History_Changes_one" xml:space="preserve"><value>تغيير واحد</value></data>
+  <data name="History_Changes_two" xml:space="preserve"><value>تغييران</value></data>
+  <data name="History_Changes_few" xml:space="preserve"><value>{0} تغييرات</value></data>
+  <data name="History_Changes_many" xml:space="preserve"><value>{0} تغييرًا</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0} تغيير</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>تمت إضافة الإجراء {0}</value></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>تمت إضافة الإجراء {0} ({1})</value></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>تمت إزالة الإجراء {0}</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>تمت إزالة الإجراء {0} ({1})</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>الإجراء {0}: {1} {2} → {3}</value></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>الإجراء {0} ({1}): {2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="History_On" xml:space="preserve"><value>تشغيل</value></data>
+  <data name="History_Off" xml:space="preserve"><value>إيقاف التشغيل</value></data>
+  <data name="History_Path_zero" xml:space="preserve"><value>مسار من {0} نقطة{1}</value></data>
+  <data name="History_Path_one" xml:space="preserve"><value>مسار من نقطة واحدة{1}</value></data>
+  <data name="History_Path_two" xml:space="preserve"><value>مسار من نقطتين{1}</value></data>
+  <data name="History_Path_few" xml:space="preserve"><value>مسار من {0} نقاط{1}</value></data>
+  <data name="History_Path_many" xml:space="preserve"><value>مسار من {0} نقطة{1}</value></data>
+  <data name="History_Path_other" xml:space="preserve"><value>مسار من {0} نقطة{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0} (الحالي)</value></data>
+  <data name="History_You" xml:space="preserve"><value>أنت</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>هذا هو الإصدار الحالي.</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>تضع الاستعادة هذا الإصدار في المحرر: حدد "حفظ" للاحتفاظ به. يبقى الإصدار الحالي في المحفوظات.</value></data>
+  <data name="Ai_Connected" xml:space="preserve"><value>متصل</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>حاول الاتصال أثناء إيقاف تشغيل وصول AI</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>استدعى {0} أثناء إيقاف تشغيل وصول AI</value></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>قرأ الحلقات ووحدات الماكرو وعمليات إعادة التعيين</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>قرأ الإعدادات</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>سرد التطبيقات المفتوحة</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>قرأ الدليل: {0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>قرأ الحلقة {0}</value></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>قرأ الماكرو {0}</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>قرأ إعادة التعيين {0}</value></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>حلقة جديدة</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>ماكرو جديد</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>إعادة تعيين جديدة</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>تغيير على الحلقة</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>تغيير على الماكرو</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>تغيير على إعادة التعيين</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>حلقة جديدة {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>ماكرو جديد {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>إعادة تعيين جديدة {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>غيّر الحلقة {0}: {1}</value></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>غيّر الماكرو {0}: {1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>غيّر إعادة التعيين {0}: {1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>حذف الحلقة {0}</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>حذف الماكرو {0}</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>حذف إعادة التعيين {0}</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>مكّن الحلقة {0}</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>مكّن الماكرو {0}</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>مكّن إعادة التعيين {0}</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>عطّل الحلقة {0}</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>عطّل الماكرو {0}</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>عطّل إعادة التعيين {0}</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>وضع الزر العائم للحلقة {0}</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>وضع الزر العائم للماكرو {0}</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>فتح الحلقة {0}</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>فتح الماكرو {0}</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>فتح إعادة التعيين {0}</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>غيّر الإعدادات: {0}</value></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>طلب نقطة: {0}</value></data>
+  <data name="Ai_AskedPoints_zero" xml:space="preserve"><value>طلب {0} نقطة: {1}</value></data>
+  <data name="Ai_AskedPoints_one" xml:space="preserve"><value>طلب نقطة واحدة: {1}</value></data>
+  <data name="Ai_AskedPoints_two" xml:space="preserve"><value>طلب نقطتين: {1}</value></data>
+  <data name="Ai_AskedPoints_few" xml:space="preserve"><value>طلب {0} نقاط: {1}</value></data>
+  <data name="Ai_AskedPoints_many" xml:space="preserve"><value>طلب {0} نقطة: {1}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>طلب {0} نقطة: {1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>طلب تطبيقًا: {0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>طلب مفتاحًا: {0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>أوقف كل الحلقات ووحدات الماكرو</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{0} → {1} في {2}</value></data>
+  <data name="Ai_Item_loop" xml:space="preserve"><value>الحلقة {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>الماكرو {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>إعادة التعيين {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>هل تريد حفظ هذه الحلقة الجديدة؟</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>هل تريد حفظ هذا الماكرو الجديد؟</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>هل تريد حفظ إعادة التعيين الجديدة هذه؟</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>هل تريد حفظ هذه التغييرات على الحلقة؟</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>هل تريد حفظ هذه التغييرات على الماكرو؟</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>هل تريد حفظ هذه التغييرات على إعادة التعيين؟</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>هل تريد حذف هذه الحلقة؟</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>هل تريد حذف هذا الماكرو؟</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>هل تريد حذف إعادة التعيين هذه؟</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>هل تريد تمكين هذه الحلقة؟</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>هل تريد تمكين هذا الماكرو؟</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>هل تريد تمكين إعادة التعيين هذه؟</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>هل تريد تعطيل هذه الحلقة؟</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>هل تريد تعطيل هذا الماكرو؟</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>هل تريد تعطيل إعادة التعيين هذه؟</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>هل تريد تغيير هذه الإعدادات؟</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>تمكين</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>تعطيل</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>تطبيق</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>بلا</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>يتعذر استعادة هذه الإعدادات: {0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>السمة</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>الإغلاق إلى علبة النظام</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>لوحة التراكب</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>النقر على العناصر في اللوحة</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>عتامة لوحة التراكب</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>مستوى الصوت</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>مفتاح التشغيل السريع لإيقاف الكل</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>مفتاح التشغيل السريع لوضع التراكب</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>مفتاح التشغيل السريع للتسجيل</value></data>
+  <data name="AiKind_Read" xml:space="preserve"><value>قراءة</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>تفاعل</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>تغيير</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>اتصال</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>تمت الاستعادة</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>تم الحفظ</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>تم الحفظ مع تغييرات</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>تم</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>تم الإلغاء</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>لا توجد إجابة</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>خطأ</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>استعادة: {0}</value></data>
+  <data name="Main_EnterOverlayMode" xml:space="preserve"><value>الدخول إلى وضع التراكب</value></data>
+  <data name="Main_StopAll" xml:space="preserve"><value>إيقاف الكل</value></data>
+  <data name="Main_DevelopmentBuild" xml:space="preserve"><value>إصدار التطوير</value></data>
+  <data name="Main_FilterEnabled" xml:space="preserve"><value>ممكّن</value></data>
+  <data name="Main_FilterDisabled" xml:space="preserve"><value>معطّل</value></data>
+  <data name="Main_FilterRunning" xml:space="preserve"><value>قيد التشغيل</value></data>
+  <data name="Loops_Title" xml:space="preserve"><value>الحلقات</value></data>
+  <data name="Loops_Add" xml:space="preserve"><value>إضافة حلقة</value></data>
+  <data name="Loops_Search" xml:space="preserve"><value>البحث في الحلقات</value></data>
+  <data name="Loops_FilterAll" xml:space="preserve"><value>كل الحلقات</value></data>
+  <data name="Macros_Title" xml:space="preserve"><value>وحدات الماكرو</value></data>
+  <data name="Macros_Add" xml:space="preserve"><value>إضافة ماكرو</value></data>
+  <data name="Macros_Record" xml:space="preserve"><value>تسجيل ماكرو</value></data>
+  <data name="Macros_Search" xml:space="preserve"><value>البحث في وحدات الماكرو</value></data>
+  <data name="Macros_FilterAll" xml:space="preserve"><value>كل وحدات الماكرو</value></data>
+  <data name="Remaps_Title" xml:space="preserve"><value>إعادة التعيين</value></data>
+  <data name="Remaps_Add" xml:space="preserve"><value>إضافة إعادة تعيين</value></data>
+  <data name="Remaps_Search" xml:space="preserve"><value>البحث في عمليات إعادة التعيين</value></data>
+  <data name="Remaps_FilterAll" xml:space="preserve"><value>كل عمليات إعادة التعيين</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>الإعدادات</value></data>
+  <data name="Settings_General" xml:space="preserve"><value>عام</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>السمة</value></data>
+  <data name="Settings_ThemeDescription" xml:space="preserve"><value>يتبع "النظام" إعداد Windows</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>الإغلاق إلى علبة النظام</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>متابعة التشغيل في علبة النظام عند إغلاق النافذة</value></data>
+  <data name="Settings_StartWithWindows" xml:space="preserve"><value>البدء مع Windows</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>يبدأ في علبة النظام عند تسجيل الدخول</value></data>
+  <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>مفاتيح التشغيل السريع والتراكب</value></data>
+  <data name="Settings_Hotkeys" xml:space="preserve"><value>مفاتيح التشغيل السريع</value></data>
+  <data name="Settings_StopAllDescription" xml:space="preserve"><value>إيقاف كل حلقة وكل ماكرو</value></data>
+  <data name="Settings_OverlayMode" xml:space="preserve"><value>وضع التراكب</value></data>
+  <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>تبديل وضع التراكب</value></data>
+  <data name="Settings_Record" xml:space="preserve"><value>تسجيل</value></data>
+  <data name="Settings_RecordDescription" xml:space="preserve"><value>بدء تسجيل ماكرو وإيقافه</value></data>
+  <data name="Settings_OverlayPanel" xml:space="preserve"><value>لوحة التراكب</value></data>
+  <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>قائمة الحلقات ووحدات الماكرو</value></data>
+  <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>إظهار لوحة التراكب</value></data>
+  <data name="Settings_Opacity" xml:space="preserve"><value>العتامة</value></data>
+  <data name="Settings_OverlayPanelOpacity" xml:space="preserve"><value>عتامة لوحة التراكب</value></data>
+  <data name="Settings_OpacityPreviewItem" xml:space="preserve"><value>نقر أيسر متكرر</value></data>
+  <data name="Settings_PositionOnScreen" xml:space="preserve"><value>الموضع على الشاشة</value></data>
+  <data name="Settings_PositionOnScreenDescription" xml:space="preserve"><value>اسحب اللوحة والأزرار العائمة</value></data>
+  <data name="Settings_ClickInPanel" xml:space="preserve"><value>النقر على العناصر في اللوحة لبدئها أو إيقافها</value></data>
+  <data name="Settings_ClickInPanelDescription" xml:space="preserve"><value>قد تستجيب بعض التطبيقات التي تعمل بملء الشاشة للنقرة. إذا حدث ذلك، فأوقف تشغيل هذا الخيار واستخدم مفاتيح التشغيل السريع فقط.</value></data>
+  <data name="Settings_Sound" xml:space="preserve"><value>الصوت</value></data>
+  <data name="Settings_SoundDescription" xml:space="preserve"><value>أصوات بدء الحلقات ووحدات الماكرو وإيقافها</value></data>
+  <data name="Settings_SoundVolume" xml:space="preserve"><value>مستوى الصوت</value></data>
+  <data name="Settings_DataAndUpdates" xml:space="preserve"><value>البيانات والتحديثات</value></data>
+  <data name="Settings_Backup" xml:space="preserve"><value>النسخ الاحتياطي</value></data>
+  <data name="Settings_ExportOrImport" xml:space="preserve"><value>التصدير أو الاستيراد</value></data>
+  <data name="Settings_ExportOrImportDescription" xml:space="preserve"><value>احفظ بياناتك في ملف واحد، للاحتفاظ بنسخة أو لنقل PuppyMacro إلى كمبيوتر آخر</value></data>
+  <data name="Settings_ExportButton" xml:space="preserve"><value>تصدير…</value></data>
+  <data name="Settings_ImportButton" xml:space="preserve"><value>استيراد…</value></data>
+  <data name="Settings_OpenDataFolder" xml:space="preserve"><value>فتح مجلد البيانات</value></data>
+  <data name="Settings_Updates" xml:space="preserve"><value>التحديثات</value></data>
+  <data name="Settings_WhatsNew" xml:space="preserve"><value>الجديد</value></data>
+  <data name="Settings_CheckForUpdates" xml:space="preserve"><value>التحقق من وجود تحديثات تلقائيًا</value></data>
+  <data name="Settings_CheckForUpdatesDescription" xml:space="preserve"><value>عند بدء PuppyMacro وكل 12 ساعة</value></data>
+  <data name="Settings_About" xml:space="preserve"><value>حول</value></data>
+  <data name="Settings_UserGuide" xml:space="preserve"><value>دليل المستخدم</value></data>
+  <data name="Settings_NotInDevBuild" xml:space="preserve"><value>غير متوفر في إصدار التطوير</value></data>
+  <data name="Settings_DataSavedIn" xml:space="preserve"><value>البيانات محفوظة في {0}</value></data>
+  <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>لا تعمل مفاتيح التشغيل السريع حاليًا:
+{0}</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>لا يزال PuppyMacro قيد التشغيل في علبة النظام. انقر بزر الماوس الأيمن فوق أيقونته للخروج.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>فتح PuppyMacro</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>خروج</value></data>
+  <data name="Main_RunningCount_zero" xml:space="preserve"><value>{0} قيد التشغيل</value></data>
+  <data name="Main_RunningCount_one" xml:space="preserve"><value>{0} قيد التشغيل</value></data>
+  <data name="Main_RunningCount_two" xml:space="preserve"><value>{0} قيد التشغيل</value></data>
+  <data name="Main_RunningCount_few" xml:space="preserve"><value>{0} قيد التشغيل</value></data>
+  <data name="Main_RunningCount_many" xml:space="preserve"><value>{0} قيد التشغيل</value></data>
+  <data name="Main_RunningCount_other" xml:space="preserve"><value>{0} قيد التشغيل</value></data>
+  <data name="Loops_Count_zero" xml:space="preserve"><value>{0} حلقة</value></data>
+  <data name="Loops_Count_one" xml:space="preserve"><value>حلقة واحدة</value></data>
+  <data name="Loops_Count_two" xml:space="preserve"><value>حلقتان</value></data>
+  <data name="Loops_Count_few" xml:space="preserve"><value>{0} حلقات</value></data>
+  <data name="Loops_Count_many" xml:space="preserve"><value>{0} حلقة</value></data>
+  <data name="Loops_Count_other" xml:space="preserve"><value>{0} حلقة</value></data>
+  <data name="Loops_CountLine" xml:space="preserve"><value>{0}، {1}</value></data>
+  <data name="Loops_Empty" xml:space="preserve"><value>لا توجد حلقات بعد. حدد "إضافة حلقة" لإنشاء واحدة.</value></data>
+  <data name="Loops_NoMatch" xml:space="preserve"><value>لا توجد حلقات تطابق البحث أو عامل التصفية.</value></data>
+  <data name="Main_StopRunningFirst" xml:space="preserve"><value>أوقف الحلقات ووحدات الماكرو قيد التشغيل أولًا</value></data>
+  <data name="Card_Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Card_MoveUp" xml:space="preserve"><value>نقل لأعلى</value></data>
+  <data name="Card_MoveDown" xml:space="preserve"><value>نقل لأسفل</value></data>
+  <data name="Card_Duplicate" xml:space="preserve"><value>تكرار</value></data>
+  <data name="Main_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="Main_DeleteNamedConfirm" xml:space="preserve"><value>هل تريد حذف "{0}"؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="Loops_DeleteTitle" xml:space="preserve"><value>حذف الحلقة</value></data>
+  <data name="Macros_Count_zero" xml:space="preserve"><value>{0} ماكرو</value></data>
+  <data name="Macros_Count_one" xml:space="preserve"><value>ماكرو واحد</value></data>
+  <data name="Macros_Count_two" xml:space="preserve"><value>وحدتا ماكرو</value></data>
+  <data name="Macros_Count_few" xml:space="preserve"><value>{0} وحدات ماكرو</value></data>
+  <data name="Macros_Count_many" xml:space="preserve"><value>{0} وحدة ماكرو</value></data>
+  <data name="Macros_Count_other" xml:space="preserve"><value>{0} وحدة ماكرو</value></data>
+  <data name="Macros_CountLine" xml:space="preserve"><value>{0}، {1}</value></data>
+  <data name="Macros_Empty" xml:space="preserve"><value>لا توجد وحدات ماكرو بعد. سجّل واحدًا، أو حدد "إضافة ماكرو" لإنشائه خطوة بخطوة.</value></data>
+  <data name="Macros_NoMatch" xml:space="preserve"><value>لا توجد وحدات ماكرو تطابق البحث أو عامل التصفية.</value></data>
+  <data name="Macros_DeleteTitle" xml:space="preserve"><value>حذف الماكرو</value></data>
+  <data name="Macros_SaveFailed" xml:space="preserve"><value>تعذر حفظ الماكرو "{0}": {1}</value></data>
+  <data name="Settings_NothingToPlace" xml:space="preserve"><value>لا يوجد شيء لوضعه. شغّل لوحة التراكب أو أضف زرًا عائمًا.</value></data>
+  <data name="Main_StopAllTooltip" xml:space="preserve"><value>إيقاف الكل ({0})</value></data>
+  <data name="Main_EnterOverlayModeTooltip" xml:space="preserve"><value>الدخول إلى وضع التراكب ({0})</value></data>
+  <data name="Settings_SaveFailed" xml:space="preserve"><value>تعذر حفظ الإعدادات: {0}</value></data>
+  <data name="Remaps_Count_zero" xml:space="preserve"><value>{0} عملية إعادة تعيين</value></data>
+  <data name="Remaps_Count_one" xml:space="preserve"><value>إعادة تعيين واحدة</value></data>
+  <data name="Remaps_Count_two" xml:space="preserve"><value>عمليتا إعادة تعيين</value></data>
+  <data name="Remaps_Count_few" xml:space="preserve"><value>{0} عمليات إعادة تعيين</value></data>
+  <data name="Remaps_Count_many" xml:space="preserve"><value>{0} عملية إعادة تعيين</value></data>
+  <data name="Remaps_Count_other" xml:space="preserve"><value>{0} عملية إعادة تعيين</value></data>
+  <data name="Remaps_EnabledCount_zero" xml:space="preserve"><value>{0} ممكّنة</value></data>
+  <data name="Remaps_EnabledCount_one" xml:space="preserve"><value>{0} ممكّنة</value></data>
+  <data name="Remaps_EnabledCount_two" xml:space="preserve"><value>{0} ممكّنة</value></data>
+  <data name="Remaps_EnabledCount_few" xml:space="preserve"><value>{0} ممكّنة</value></data>
+  <data name="Remaps_EnabledCount_many" xml:space="preserve"><value>{0} ممكّنة</value></data>
+  <data name="Remaps_EnabledCount_other" xml:space="preserve"><value>{0} ممكّنة</value></data>
+  <data name="Remaps_CountLine" xml:space="preserve"><value>{0}، {1}</value></data>
+  <data name="Remaps_Empty" xml:space="preserve"><value>لا توجد عمليات إعادة تعيين بعد. حدد "إضافة إعادة تعيين" لتحويل مفتاح أو زر إلى آخر.</value></data>
+  <data name="Remaps_NoMatch" xml:space="preserve"><value>لا توجد عمليات إعادة تعيين تطابق البحث أو عامل التصفية.</value></data>
+  <data name="Remaps_DeleteTitle" xml:space="preserve"><value>حذف إعادة التعيين</value></data>
+  <data name="Remaps_DeleteConfirm" xml:space="preserve"><value>هل تريد حذف إعادة التعيين {0} → {1}؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>تصدير</value></data>
+  <data name="Export_FileDialogTitle" xml:space="preserve"><value>تصدير بيانات PuppyMacro</value></data>
+  <data name="Backup_FileFilter" xml:space="preserve"><value>نسخة PuppyMacro الاحتياطية (*{0})|*{0}</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>فشل التصدير: {0}</value></data>
+  <data name="Backup_ImportFileDialogTitle" xml:space="preserve"><value>استيراد بيانات PuppyMacro</value></data>
+  <data name="Backup_ImportFailed" xml:space="preserve"><value>فشل الاستيراد: {0}</value></data>
+  <data name="Backup_ImportTitle" xml:space="preserve"><value>استيراد</value></data>
+  <data name="Backup_ImportConfirm" xml:space="preserve"><value>يحتوي هذا الملف على {0}. هل تريد استبدال بياناتك بها؟
+يبقى ما لا يحتويه الملف كما هو. يتم أولًا نسخ بياناتك الحالية احتياطيًا إلى مجلد البيانات، ثم تتم إعادة تشغيل PuppyMacro.</value></data>
+  <data name="Backup_ImportAndRestart" xml:space="preserve"><value>استيراد وإعادة تشغيل</value></data>
+  <data name="Backup_PartData" xml:space="preserve"><value>الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات</value></data>
+  <data name="Backup_PartHistory" xml:space="preserve"><value>المحفوظات</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>نشاط AI</value></data>
+  <data name="Backup_PartLogs" xml:space="preserve"><value>السجلات</value></data>
+  <data name="Main_ListLastAnd" xml:space="preserve"><value>{0} و{1}</value></data>
+  <data name="Update_CheckFailed" xml:space="preserve"><value>تعذر التحقق من وجود تحديثات. {0}</value></data>
+  <data name="Update_DownloadFailed" xml:space="preserve"><value>تعذر تنزيل التحديث. {0}</value></data>
+  <data name="Update_NotInstalled" xml:space="preserve"><value>ثبّت PuppyMacro باستخدام برنامج الإعداد للحصول على التحديثات</value></data>
+  <data name="Update_DownloadingVersion" xml:space="preserve"><value>جارٍ تنزيل الإصدار {0}… {1}%</value></data>
+  <data name="Update_TryAgain" xml:space="preserve"><value>إعادة المحاولة</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>الإصدار {0} متوفر (لديك {1})</value></data>
+  <data name="Update_UpdateAndRestart" xml:space="preserve"><value>تحديث وإعادة تشغيل</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>جارٍ التحقق من وجود تحديثات…</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>PuppyMacro {0} محدّث. تم التحقق في {1}</value></data>
+  <data name="Update_CurrentVersion" xml:space="preserve"><value>PuppyMacro {0}</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>التحقق الآن</value></data>
+  <data name="Update_BarTitle" xml:space="preserve"><value>الإصدار {0} متوفر</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>جارٍ التنزيل… {0}%</value></data>
+  <data name="Rail_Pages" xml:space="preserve"><value>الصفحات</value></data>
+  <data name="Rail_SettingsAndHelp" xml:space="preserve"><value>الإعدادات والتعليمات</value></data>
+  <data name="Rail_Loops" xml:space="preserve"><value>الحلقات</value></data>
+  <data name="Rail_Macros" xml:space="preserve"><value>وحدات الماكرو</value></data>
+  <data name="Rail_Remap" xml:space="preserve"><value>إعادة التعيين</value></data>
+  <data name="Rail_Settings" xml:space="preserve"><value>الإعدادات</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>تحرير</value></data>
+  <data name="Card_Enabled" xml:space="preserve"><value>ممكّن</value></data>
+  <data name="Card_MoreOptions" xml:space="preserve"><value>مزيد من الخيارات</value></data>
+  <data name="Card_Play" xml:space="preserve"><value>تشغيل</value></data>
+  <data name="Card_Stop" xml:space="preserve"><value>إيقاف</value></data>
+  <data name="Export_WhatToExport" xml:space="preserve"><value>ما يتم تصديره</value></data>
+  <data name="Export_Everything" xml:space="preserve"><value>كل شيء</value></data>
+  <data name="Export_Choose" xml:space="preserve"><value>اختيار ما يتم تصديره</value></data>
+  <data name="Export_PartData" xml:space="preserve"><value>الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات</value></data>
+  <data name="Export_PartHistory" xml:space="preserve"><value>المحفوظات</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>نشاط AI</value></data>
+  <data name="Export_PartLogs" xml:space="preserve"><value>السجلات</value></data>
+  <data name="Export_EverythingDescription" xml:space="preserve"><value>نسخة مطابقة، لنقل PuppyMacro إلى كمبيوتر آخر · {0}</value></data>
+  <data name="Export_PartDataDescription" xml:space="preserve"><value>مضمّنة دائمًا · {0}</value></data>
+  <data name="Export_PartHistoryDescription" xml:space="preserve"><value>الإصدارات السابقة لكل حلقة وماكرو وإعادة تعيين · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>ما طلبته تطبيقات AI، مع الاستعادة · {0}</value></data>
+  <data name="Export_PartLogsDescription" xml:space="preserve"><value>لاستكشاف الأخطاء وإصلاحها · {0}</value></data>
+  <data name="Export_SizeB" xml:space="preserve"><value>{0} بايت</value></data>
+  <data name="Export_SizeKB" xml:space="preserve"><value>{0} كيلوبايت</value></data>
+  <data name="Export_SizeMB" xml:space="preserve"><value>{0} ميغابايت</value></data>
+  <data name="Export_SizeGB" xml:space="preserve"><value>{0} غيغابايت</value></data>
+  <data name="Card_ToggleWith" xml:space="preserve"><value>تبديل بـ</value></data>
+  <data name="Card_HoldWith" xml:space="preserve"><value>ضغط مستمر بـ</value></data>
+  <data name="Card_ToggleNoHotkey" xml:space="preserve"><value>تبديل، بلا مفتاح تشغيل سريع</value></data>
+  <data name="Card_HoldNoHotkey" xml:space="preserve"><value>ضغط مستمر، بلا مفتاح تشغيل سريع</value></data>
+  <data name="Card_StatusRunning" xml:space="preserve"><value>قيد التشغيل</value></data>
+  <data name="Card_StatusIdle" xml:space="preserve"><value>خامل</value></data>
+  <data name="Card_StatusDisabled" xml:space="preserve"><value>معطّل</value></data>
+  <data name="Card_StatusEnabled" xml:space="preserve"><value>ممكّن</value></data>
+  <data name="Loops_NoActions" xml:space="preserve"><value>لا توجد إجراءات</value></data>
+  <data name="Loops_ActionsSummary_zero" xml:space="preserve"><value>{0} إجراء: {1}</value></data>
+  <data name="Loops_ActionsSummary_one" xml:space="preserve"><value>إجراء واحد: {1}</value></data>
+  <data name="Loops_ActionsSummary_two" xml:space="preserve"><value>إجراءان: {1}</value></data>
+  <data name="Loops_ActionsSummary_few" xml:space="preserve"><value>{0} إجراءات: {1}</value></data>
+  <data name="Loops_ActionsSummary_many" xml:space="preserve"><value>{0} إجراءً: {1}</value></data>
+  <data name="Loops_ActionsSummary_other" xml:space="preserve"><value>{0} إجراء: {1}</value></data>
+  <data name="Loops_IntervalMilliseconds" xml:space="preserve"><value>{0} مللي ثانية</value></data>
+  <data name="Loops_IntervalSeconds" xml:space="preserve"><value>{0} ثانية</value></data>
+  <data name="Loops_IntervalMinutes" xml:space="preserve"><value>{0} دقيقة</value></data>
+  <data name="Loops_IntervalHours" xml:space="preserve"><value>{0} ساعة</value></data>
+  <data name="Loops_HeldDown" xml:space="preserve"><value>{0} مضغوط باستمرار</value></data>
+  <data name="Loops_KeyEvery" xml:space="preserve"><value>{0} كل {1}</value></data>
+  <data name="Loops_KeyTimesEvery_zero" xml:space="preserve"><value>{1} {0} مرة كل {2}</value></data>
+  <data name="Loops_KeyTimesEvery_one" xml:space="preserve"><value>{1} مرة واحدة كل {2}</value></data>
+  <data name="Loops_KeyTimesEvery_two" xml:space="preserve"><value>{1} مرتين كل {2}</value></data>
+  <data name="Loops_KeyTimesEvery_few" xml:space="preserve"><value>{1} {0} مرات كل {2}</value></data>
+  <data name="Loops_KeyTimesEvery_many" xml:space="preserve"><value>{1} {0} مرة كل {2}</value></data>
+  <data name="Loops_KeyTimesEvery_other" xml:space="preserve"><value>{1} {0} مرة كل {2}</value></data>
+  <data name="Loops_PastesEvery" xml:space="preserve"><value>يلصق "{0}" كل {1}</value></data>
+  <data name="Macros_RepeatLoop" xml:space="preserve"><value>حلقة</value></data>
+  <data name="Macros_RepeatOnce" xml:space="preserve"><value>مرة واحدة</value></data>
+  <data name="Macros_RepeatTimes_zero" xml:space="preserve"><value>{0} مرة</value></data>
+  <data name="Macros_RepeatTimes_one" xml:space="preserve"><value>مرة واحدة</value></data>
+  <data name="Macros_RepeatTimes_two" xml:space="preserve"><value>مرتين</value></data>
+  <data name="Macros_RepeatTimes_few" xml:space="preserve"><value>{0} مرات</value></data>
+  <data name="Macros_RepeatTimes_many" xml:space="preserve"><value>{0} مرة</value></data>
+  <data name="Macros_RepeatTimes_other" xml:space="preserve"><value>{0} مرة</value></data>
+  <data name="Macros_Summary_zero" xml:space="preserve"><value>{0} إجراء، {1}، التكرار: {2}</value></data>
+  <data name="Macros_Summary_one" xml:space="preserve"><value>إجراء واحد، {1}، التكرار: {2}</value></data>
+  <data name="Macros_Summary_two" xml:space="preserve"><value>إجراءان، {1}، التكرار: {2}</value></data>
+  <data name="Macros_Summary_few" xml:space="preserve"><value>{0} إجراءات، {1}، التكرار: {2}</value></data>
+  <data name="Macros_Summary_many" xml:space="preserve"><value>{0} إجراءً، {1}، التكرار: {2}</value></data>
+  <data name="Macros_Summary_other" xml:space="preserve"><value>{0} إجراء، {1}، التكرار: {2}</value></data>
+  <data name="Macros_SummaryWithSpeed_zero" xml:space="preserve"><value>{0} إجراء، {1}، التكرار: {2}، السرعة ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_one" xml:space="preserve"><value>إجراء واحد، {1}، التكرار: {2}، السرعة ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_two" xml:space="preserve"><value>إجراءان، {1}، التكرار: {2}، السرعة ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_few" xml:space="preserve"><value>{0} إجراءات، {1}، التكرار: {2}، السرعة ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_many" xml:space="preserve"><value>{0} إجراءً، {1}، التكرار: {2}، السرعة ×{3}</value></data>
+  <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} إجراء، {1}، التكرار: {2}، السرعة ×{3}</value></data>
+  <data name="Remaps_AllApps" xml:space="preserve"><value>كل التطبيقات</value></data>
+  <data name="App_MigrationFailed" xml:space="preserve"><value>تعذر نسخ الحلقات ووحدات الماكرو إلى {0}.
+التفاصيل: {1}</value></data>
+  <data name="App_MacrosNotUpdated" xml:space="preserve"><value>تعذر تحديث بعض ملفات الماكرو إلى هذا الإصدار.</value></data>
+  <data name="App_UnexpectedError" xml:space="preserve"><value>خطأ غير متوقع:
+{0}</value></data>
+  <data name="App_SettingsReset" xml:space="preserve"><value>تعذرت قراءة الإعدادات، لذا تمت إعادة تعيينها.
+تم حفظ الملف القديم باسم {0}.
+التفاصيل: {1}</value></data>
+  <data name="App_MacroFilesSkipped" xml:space="preserve"><value>تعذرت قراءة بعض ملفات الماكرو وتم تخطيها (مثل {0}).</value></data>
+  <data name="Backup_NotABackup" xml:space="preserve"><value>هذا الملف ليس نسخة احتياطية من PuppyMacro.</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>تطبيقات AI المتصلة: حدد لفتح صفحة AI</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>تطبيقات AI المتصلة</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>استخدم PuppyMacro من تطبيق AI على هذا الكمبيوتر، مثل Claude Desktop أو Visual Studio Code. اطلب بكلماتك الخاصة: ينشئ AI الحلقات ووحدات الماكرو وعمليات إعادة التعيين، وتجربها على الفور.</value></data>
+  <data name="AiPage_Beta" xml:space="preserve"><value>إصدار تجريبي</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>تطبيقات AI في PuppyMacro جديدة: إنها تعمل، لكنها قد تتغير، وقد يخطئ AI في فهم طلب. يتم الاحتفاظ بكل تغيير في محفوظات العنصر، لذا يمكنك دائمًا الرجوع.</value></data>
+  <data name="AiPage_Access" xml:space="preserve"><value>الوصول</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>السماح بوصول AI</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>يمكن لتطبيقات AI على هذا الكمبيوتر قراءة الحلقات ووحدات الماكرو وعمليات إعادة التعيين والإعدادات وتغييرها. يتم الاحتفاظ بكل تغيير في محفوظات العنصر.</value></data>
+  <data name="AiPage_AskDelete" xml:space="preserve"><value>السؤال قبل حذف حلقة أو ماكرو أو إعادة تعيين</value></data>
+  <data name="AiPage_AskDeleteName" xml:space="preserve"><value>السؤال قبل الحذف</value></data>
+  <data name="AiPage_AskChange" xml:space="preserve"><value>السؤال قبل تغيير حلقة أو ماكرو أو إعادة تعيين</value></data>
+  <data name="AiPage_AskChangeName" xml:space="preserve"><value>السؤال قبل التغيير</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>عند إيقاف التشغيل: يتم حفظ العناصر الجديدة والمتغيرة من AI على الفور، جاهزة للتجربة.</value></data>
+  <data name="AiPage_AskSettings" xml:space="preserve"><value>السؤال قبل تغيير الإعدادات</value></data>
+  <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>السمة، ومفاتيح التشغيل السريع العامة، ولوحة التراكب، والصوت</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>بدء PuppyMacro عندما يحتاج إليه تطبيق AI</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>عند إيقاف التشغيل: أثناء إغلاق PuppyMacro، لا يمكن لتطبيقات AI استخدامه وتطلب منك فتحه.</value></data>
+  <data name="AiPage_Apps" xml:space="preserve"><value>التطبيقات</value></data>
+  <data name="AiPage_RecentActivity" xml:space="preserve"><value>النشاط الأخير</value></data>
+  <data name="AiPage_ViewAll" xml:space="preserve"><value>عرض الكل</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>لا توجد طلبات بعد. قم بتوصيل تطبيق AI أعلاه، ثم اطلب منه إنشاء حلقة أو ماكرو أو إعادة تعيين.</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>كيفية استخدام AI مع PuppyMacro</value></data>
+  <data name="AiApps_ConnectedSince" xml:space="preserve"><value>متصل منذ {0}</value></data>
+  <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>تمت الإضافة. أعد تشغيل Claude Desktop للاتصال.</value></data>
+  <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>تمت الإضافة. افتح Copilot Chat في Agent mode للاتصال.</value></data>
+  <data name="AiApps_CodexAdded" xml:space="preserve"><value>تمت الإضافة. أعد تشغيل Codex للاتصال.</value></data>
+  <data name="AiApps_InstalledNotConnected" xml:space="preserve"><value>مثبّت، غير متصل</value></data>
+  <data name="AiApps_VsCodeInstalled" xml:space="preserve"><value>مثبّت. يستخدم GitHub Copilot، مع النموذج الذي تختاره هناك.</value></data>
+  <data name="AiApps_NotInstalled" xml:space="preserve"><value>غير مثبّت</value></data>
+  <data name="AiApps_Connect" xml:space="preserve"><value>اتصال</value></data>
+  <data name="AiApps_Remove" xml:space="preserve"><value>إزالة</value></data>
+  <data name="AiApps_CopyConfiguration" xml:space="preserve"><value>نسخ التكوين</value></data>
+  <data name="AiApps_ActionName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="AiApps_GetClaude" xml:space="preserve"><value>الحصول على Claude Desktop</value></data>
+  <data name="AiApps_GetVsCode" xml:space="preserve"><value>الحصول على Visual Studio Code</value></data>
+  <data name="AiApps_GetCodex" xml:space="preserve"><value>الحصول على Codex</value></data>
+  <data name="AiApps_OtherApps" xml:space="preserve"><value>تطبيقات أخرى</value></data>
+  <data name="AiApps_OthersConnected" xml:space="preserve"><value>متصل: {0}</value></data>
+  <data name="AiApps_OthersHint" xml:space="preserve"><value>أي تطبيق يدعم خوادم MCP المحلية: الصق التكوين في إعدادات MCP الخاصة به.</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>تم نسخ التكوين. الصقه في إعدادات MCP لتطبيق AI، ثم أعد تشغيل التطبيق.</value></data>
+  <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>لم يتم فتح Visual Studio Code: {0}</value></data>
+  <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>قم بإزالته في Visual Studio Code: شغّل "MCP: Open User Configuration" واحذف "{0}".</value></data>
+  <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>يحتوي مجلد PuppyMacro على حرف لا يمكن لإعدادات Codex احتواؤه.</value></data>
+  <data name="AiApps_SettingsNotChanged" xml:space="preserve"><value>تعذر تغيير إعدادات {0}: {1}</value></data>
+  <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>ملف إعدادات {0} ليس كائن JSON، لذا لم يغيّره PuppyMacro ({1}).</value></data>
+  <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>في ملف إعدادات {0}، "{1}" ليس كائنًا، لذا لم يغيّره PuppyMacro ({2}).</value></data>
+  <data name="AiApps_SettingsFileError" xml:space="preserve"><value>يحتوي ملف إعدادات {0} على خطأ، لذا لم يغيّره PuppyMacro: {1} ({2})</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>يستخدم برنامج آخر اتصال AI الخاص بـ PuppyMacro، لذا لا يمكن لتطبيقات AI الاتصال. أغلقه، أو أعد تشغيل Windows.</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>لا يمكن لتطبيقات AI الاتصال: {0}</value></data>
+  <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>يتعذر استعادة هذه الإعدادات.</value></data>
+  <data name="AiActivity_CantRestore" xml:space="preserve"><value>يتعذر استعادة هذا التغيير.</value></data>
+  <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>يتعذر استعادة هذا التغيير: {0}</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>نشاط AI</value></data>
+  <data name="AiActivity_KeptNote" xml:space="preserve"><value>محفوظة على هذا الكمبيوتر: أحدث الطلبات، حتى 20 ميغابايت.</value></data>
+  <data name="AiActivity_ClearHistory" xml:space="preserve"><value>مسح المحفوظات</value></data>
+  <data name="AiActivity_Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="AiActivity_Period" xml:space="preserve"><value>الفترة</value></data>
+  <data name="AiActivity_Last7Days" xml:space="preserve"><value>آخر 7 أيام</value></data>
+  <data name="AiActivity_Last30Days" xml:space="preserve"><value>آخر 30 يومًا</value></data>
+  <data name="AiActivity_All" xml:space="preserve"><value>الكل</value></data>
+  <data name="AiActivity_App" xml:space="preserve"><value>التطبيق</value></data>
+  <data name="AiActivity_Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="AiActivity_Result" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="AiActivity_Search" xml:space="preserve"><value>بحث</value></data>
+  <data name="AiActivity_SearchPlaceholder" xml:space="preserve"><value>البحث في النشاط</value></data>
+  <data name="AiActivity_AllApps" xml:space="preserve"><value>كل التطبيقات</value></data>
+  <data name="AiActivity_AllTypes" xml:space="preserve"><value>كل الأنواع</value></data>
+  <data name="AiActivity_AllResults" xml:space="preserve"><value>كل النتائج</value></data>
+  <data name="AiActivity_Restore" xml:space="preserve"><value>استعادة</value></data>
+  <data name="AiActivity_Details" xml:space="preserve"><value>التفاصيل</value></data>
+  <data name="AiActivity_NoRequests" xml:space="preserve"><value>لا توجد طلبات بعد.</value></data>
+  <data name="AiActivity_NoMatch" xml:space="preserve"><value>لا توجد طلبات تطابق عوامل التصفية.</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>هل تريد حذف محفوظات طلبات AI؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="AiActivity_Clear" xml:space="preserve"><value>مسح</value></data>
+  <data name="AiActivity_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>طلب AI</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>طلب AI - {0}</value></data>
+  <data name="AiRequest_AskedBy" xml:space="preserve"><value>طلبه {0}</value></data>
+  <data name="AiRequest_Instructions" xml:space="preserve"><value>الإرشادات</value></data>
+  <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>
+  <data name="AiRequest_KeyHeader" xml:space="preserve"><value>مفتاح أو مجموعة مفاتيح</value></data>
+  <data name="AiRequest_KeyDescription" xml:space="preserve"><value>لمجموعة مفاتيح، اضغط باستمرار على Ctrl أو Alt أو Shift أو Win أولًا. لاستخدام Ctrl أو Alt أو Shift أو Win بمفرده، اضغط عليه ثم حرره.</value></data>
+  <data name="AiRequest_KeyPrompt" xml:space="preserve"><value>اضغط على المفتاح أو مجموعة المفاتيح (Esc للإلغاء)</value></data>
+  <data name="AiRequest_Ok" xml:space="preserve"><value>موافق</value></data>
+  <data name="AiRequest_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="AiRequest_NoticeWithDescription" xml:space="preserve"><value>{0} (طلبه {1})</value></data>
+  <data name="AiRequest_NoticeAskedBy" xml:space="preserve"><value>طلبه {0}.</value></data>
+  <data name="AiReady_AppAsks" xml:space="preserve"><value>يطلب {0}</value></data>
+  <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
+  <data name="AiReady_Hint" xml:space="preserve"><value>اضغط على {0} عندما تكون جاهزًا · {1} للإلغاء</value></data>
+  <data name="AiReady_Start" xml:space="preserve"><value>بدء</value></data>
+  <data name="Pick_Title" xml:space="preserve"><value>اختيار نقطة</value></data>
+  <data name="Pick_ClickPoint" xml:space="preserve"><value>انقر على النقطة التي يجب أن ينتقل إليها المؤشر</value></data>
+  <data name="Pick_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="Pick_AppTitle" xml:space="preserve"><value>اختيار تطبيق</value></data>
+  <data name="Pick_ClickApp" xml:space="preserve"><value>انقر على نافذة من نوافذ التطبيق</value></data>
+  <data name="Pick_AskedBy" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Pick_Counter" xml:space="preserve"><value>{0} / {1}   {2}</value></data>
+  <data name="Pick_CantReadName" xml:space="preserve"><value>يتعذر قراءة اسم هذا التطبيق</value></data>
+  <data name="Placement_Title" xml:space="preserve"><value>تحديد موضع التراكب</value></data>
+  <data name="Placement_DragPanel" xml:space="preserve"><value>اسحب اللوحة إلى المكان الذي تريده</value></data>
+  <data name="Placement_DragPanelAndButtons" xml:space="preserve"><value>اسحب اللوحة والأزرار إلى المكان الذي تريده</value></data>
+  <data name="Placement_DragButton" xml:space="preserve"><value>اسحب الزر إلى المكان الذي تريده</value></data>
+  <data name="Placement_DragButtons" xml:space="preserve"><value>اسحب الأزرار إلى المكان الذي تريده</value></data>
+  <data name="Placement_Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Placement_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="Placement_Arrows" xml:space="preserve"><value>الأسهم</value></data>
+  <data name="Placement_Nudge" xml:space="preserve"><value>النقل بمقدار 1 بكسل (Shift: 10)</value></data>
+  <data name="Placement_NudgeSelected" xml:space="preserve"><value>نقل العنصر المحدد بمقدار 1 بكسل (Shift: 10)</value></data>
+  <data name="Placement_Selection" xml:space="preserve"><value>{0}   X {1}   Y {2}</value></data>
+  <data name="MacroEditor_EditTitle" xml:space="preserve"><value>تحرير الماكرو</value></data>
+  <data name="Editor_Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="MacroEditor_NamePlaceholder" xml:space="preserve"><value>مثال: صناعة وتفكيك</value></data>
+  <data name="Editor_Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="MacroEditor_AddAction" xml:space="preserve"><value>إضافة إجراء</value></data>
+  <data name="MacroEditor_Record" xml:space="preserve"><value>تسجيل</value></data>
+  <data name="MacroEditor_RecordActions" xml:space="preserve"><value>تسجيل الإجراءات</value></data>
+  <data name="Editor_Test" xml:space="preserve"><value>اختبار</value></data>
+  <data name="MacroEditor_TestAction" xml:space="preserve"><value>اختبار الإجراء</value></data>
+  <data name="MacroEditor_TestTooltip" xml:space="preserve"><value>تشغيل الإجراء المحدد مرة واحدة في النافذة الموجودة خلفه</value></data>
+  <data name="MacroEditor_Edit" xml:space="preserve"><value>تحرير</value></data>
+  <data name="MacroEditor_EditAction" xml:space="preserve"><value>تحرير الإجراء</value></data>
+  <data name="MacroEditor_Copy" xml:space="preserve"><value>نسخ</value></data>
+  <data name="MacroEditor_CopyTooltip" xml:space="preserve"><value>نسخ الإجراءات المحددة للصقها هنا أو في ماكرو آخر (Ctrl+C)</value></data>
+  <data name="MacroEditor_Paste" xml:space="preserve"><value>لصق</value></data>
+  <data name="MacroEditor_PasteTooltip" xml:space="preserve"><value>لصق الإجراءات المنسوخة في مكان إضافة الإجراءات الجديدة (Ctrl+V)</value></data>
+  <data name="MacroEditor_Duplicate" xml:space="preserve"><value>تكرار</value></data>
+  <data name="MacroEditor_DuplicateTooltip" xml:space="preserve"><value>تكرار الإجراءات المحددة (Ctrl+D)</value></data>
+  <data name="MacroEditor_Group" xml:space="preserve"><value>تجميع</value></data>
+  <data name="MacroEditor_GroupTooltip" xml:space="preserve"><value>وضع الإجراءات المحددة في مجموعة (Ctrl+G)</value></data>
+  <data name="MacroEditor_Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="MacroEditor_DeleteTooltip" xml:space="preserve"><value>حذف الإجراءات المحددة (Delete)</value></data>
+  <data name="MacroEditor_RenameGroup" xml:space="preserve"><value>إعادة تسمية المجموعة</value></data>
+  <data name="MacroEditor_Ungroup" xml:space="preserve"><value>فك التجميع</value></data>
+  <data name="MacroEditor_UngroupTooltip" xml:space="preserve"><value>فك التجميع (مع الاحتفاظ بالإجراءات)</value></data>
+  <data name="MacroEditor_ExpandAllGroups" xml:space="preserve"><value>توسيع كل المجموعات</value></data>
+  <data name="MacroEditor_CollapseAllGroups" xml:space="preserve"><value>طي كل المجموعات</value></data>
+  <data name="MacroEditor_Shortcuts" xml:space="preserve"><value>الاختصارات</value></data>
+  <data name="MacroEditor_CompactList" xml:space="preserve"><value>قائمة مضغوطة</value></data>
+  <data name="MacroEditor_CompactListTooltip" xml:space="preserve"><value>قائمة مضغوطة: صفوف أصغر</value></data>
+  <data name="MacroEditor_DensityNormal" xml:space="preserve"><value>عادي</value></data>
+  <data name="MacroEditor_DensityCompact" xml:space="preserve"><value>مضغوط</value></data>
+  <data name="MacroEditor_DelayTooltip" xml:space="preserve"><value>التأخير قبل هذا الإجراء</value></data>
+  <data name="MacroEditor_NoActions" xml:space="preserve"><value>لا توجد إجراءات بعد. سجّل الإجراءات أو أضفها واحدًا تلو الآخر.</value></data>
+  <data name="Editor_Enabled" xml:space="preserve"><value>ممكّن</value></data>
+  <data name="MacroEditor_Repeat" xml:space="preserve"><value>التكرار</value></data>
+  <data name="MacroEditor_Once" xml:space="preserve"><value>مرة واحدة</value></data>
+  <data name="MacroEditor_Loop" xml:space="preserve"><value>حلقة</value></data>
+  <data name="MacroEditor_NTimes" xml:space="preserve"><value>عدد مرات محدد</value></data>
+  <data name="MacroEditor_Times" xml:space="preserve"><value>عدد المرات</value></data>
+  <data name="MacroEditor_Speed" xml:space="preserve"><value>السرعة</value></data>
+  <data name="Editor_Activation" xml:space="preserve"><value>التنشيط</value></data>
+  <data name="Editor_Toggle" xml:space="preserve"><value>تبديل</value></data>
+  <data name="Editor_Hold" xml:space="preserve"><value>ضغط مستمر</value></data>
+  <data name="Editor_Hotkey" xml:space="preserve"><value>مفتاح التشغيل السريع</value></data>
+  <data name="Editor_HotkeyHelp" xml:space="preserve"><value>أي مفتاح أو زر ماوس، مثل F2 أو A. لمجموعة مفاتيح، اضغط باستمرار على Ctrl أو Alt أو Shift أو Win أولًا؛ يحتاج النقر الأيسر والأيمن وعجلة التمرير وEsc إلى واحد منها. يحتاج الضغط المستمر إلى مفتاح تشغيل سريع.</value></data>
+  <data name="Editor_Sound" xml:space="preserve"><value>الصوت</value></data>
+  <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>يتم تشغيله عند بدء الماكرو وإيقافه</value></data>
+  <data name="Editor_SoundChoose" xml:space="preserve"><value>انقر على صوت لاختياره وسماع صوت البدء والإيقاف</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Editor_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="LoopEditor_AddTitle" xml:space="preserve"><value>إضافة حلقة</value></data>
+  <data name="LoopEditor_NamePlaceholder" xml:space="preserve"><value>مثال: نقر أيسر متكرر</value></data>
+  <data name="LoopEditor_PressKey" xml:space="preserve"><value>ضغط مفتاح</value></data>
+  <data name="LoopEditor_Click" xml:space="preserve"><value>نقر</value></data>
+  <data name="LoopEditor_PasteText" xml:space="preserve"><value>لصق نص</value></data>
+  <data name="LoopEditor_SoundDescription" xml:space="preserve"><value>يتم تشغيله عند بدء الحلقة وإيقافها</value></data>
+  <data name="RemapEditor_AddTitle" xml:space="preserve"><value>إضافة إعادة تعيين</value></data>
+  <data name="RemapEditor_WhenIPress" xml:space="preserve"><value>عندما أضغط على</value></data>
+  <data name="RemapEditor_SendInstead" xml:space="preserve"><value>إرسال بدلًا من ذلك</value></data>
+  <data name="RemapEditor_KeyDescription" xml:space="preserve"><value>مفتاح أو زر ماوس أو مجموعة مفاتيح (اضغط باستمرار على Ctrl أو Alt أو Shift أو Win أولًا). لاستخدام Ctrl أو Alt أو Shift أو Win بمفرده، اضغط عليه ثم حرره.</value></data>
+  <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>اضغط على المفتاح أو مجموعة المفاتيح (Esc للإلغاء)</value></data>
+  <data name="RemapEditor_Note" xml:space="preserve"><value>ملاحظة (اختيارية)</value></data>
+  <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>مثال: التحديث بالزر الجانبي</value></data>
+  <data name="ActionWindow_Title" xml:space="preserve"><value>الإجراء</value></data>
+  <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>تشغيل هذا الإجراء مرة واحدة في النافذة الموجودة خلفه</value></data>
+  <data name="ActionWindow_Name" xml:space="preserve"><value>الاسم (اختياري)</value></data>
+  <data name="ActionWindow_NameDescription" xml:space="preserve"><value>يظهر بخط غامق في القائمة</value></data>
+  <data name="ActionWindow_NamePlaceholder" xml:space="preserve"><value>مثال: فتح المخزون</value></data>
+  <data name="ActionWindow_Delay" xml:space="preserve"><value>التأخير</value></data>
+  <data name="ActionWindow_DelayDescription" xml:space="preserve"><value>الانتظار قبل هذا الإجراء</value></data>
+  <data name="Editor_Ms" xml:space="preserve"><value>مللي ثانية</value></data>
+  <data name="Group_Title" xml:space="preserve"><value>تجميع الإجراءات</value></data>
+  <data name="Group_Name" xml:space="preserve"><value>اسم المجموعة</value></data>
+  <data name="Group_NamePlaceholder" xml:space="preserve"><value>مثال: فتح طاولة الصناعة</value></data>
+  <data name="Group_Ok" xml:space="preserve"><value>تجميع</value></data>
+  <data name="MacroEditor_AddTitle" xml:space="preserve"><value>إضافة ماكرو</value></data>
+  <data name="MacroEditor_EditNamedTitle" xml:space="preserve"><value>تحرير الماكرو - {0}</value></data>
+  <data name="MacroEditor_SpeedValue" xml:space="preserve"><value>×{0}</value></data>
+  <data name="MacroEditor_ActionNumber" xml:space="preserve"><value>#{0}</value></data>
+  <data name="MacroEditor_ActionRange" xml:space="preserve"><value>#{0}–{1}</value></data>
+  <data name="MacroEditor_GroupInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="MacroEditor_Total" xml:space="preserve"><value>{0}، {1} بسرعة ×1</value></data>
+  <data name="MacroEditor_TotalInGroups" xml:space="preserve"><value>{0} في {1}، {2} بسرعة ×1</value></data>
+  <data name="MacroEditor_ActionCount_zero" xml:space="preserve"><value>{0} إجراء</value></data>
+  <data name="MacroEditor_ActionCount_one" xml:space="preserve"><value>إجراء واحد</value></data>
+  <data name="MacroEditor_ActionCount_two" xml:space="preserve"><value>إجراءان</value></data>
+  <data name="MacroEditor_ActionCount_few" xml:space="preserve"><value>{0} إجراءات</value></data>
+  <data name="MacroEditor_ActionCount_many" xml:space="preserve"><value>{0} إجراءً</value></data>
+  <data name="MacroEditor_ActionCount_other" xml:space="preserve"><value>{0} إجراء</value></data>
+  <data name="MacroEditor_GroupCount_zero" xml:space="preserve"><value>{0} مجموعة</value></data>
+  <data name="MacroEditor_GroupCount_one" xml:space="preserve"><value>مجموعة واحدة</value></data>
+  <data name="MacroEditor_GroupCount_two" xml:space="preserve"><value>مجموعتان</value></data>
+  <data name="MacroEditor_GroupCount_few" xml:space="preserve"><value>{0} مجموعات</value></data>
+  <data name="MacroEditor_GroupCount_many" xml:space="preserve"><value>{0} مجموعة</value></data>
+  <data name="MacroEditor_GroupCount_other" xml:space="preserve"><value>{0} مجموعة</value></data>
+  <data name="MacroEditor_InsertAfterGroup" xml:space="preserve"><value>تتم إضافة الإجراءات الجديدة بعد المجموعة "{0}"</value></data>
+  <data name="MacroEditor_InsertAfterInGroup" xml:space="preserve"><value>تتم إضافة الإجراءات الجديدة بعد #{0}، في "{1}"</value></data>
+  <data name="MacroEditor_InsertAfter" xml:space="preserve"><value>تتم إضافة الإجراءات الجديدة بعد #{0}</value></data>
+  <data name="MacroEditor_InsertAtEnd" xml:space="preserve"><value>تتم إضافة الإجراءات الجديدة في النهاية</value></data>
+  <data name="MacroEditor_Selected_zero" xml:space="preserve"><value>تم تحديد {0} إجراء · {1}</value></data>
+  <data name="MacroEditor_Selected_one" xml:space="preserve"><value>تم تحديد إجراء واحد · {1}</value></data>
+  <data name="MacroEditor_Selected_two" xml:space="preserve"><value>تم تحديد إجراءين · {1}</value></data>
+  <data name="MacroEditor_Selected_few" xml:space="preserve"><value>تم تحديد {0} إجراءات · {1}</value></data>
+  <data name="MacroEditor_Selected_many" xml:space="preserve"><value>تم تحديد {0} إجراءً · {1}</value></data>
+  <data name="MacroEditor_Selected_other" xml:space="preserve"><value>تم تحديد {0} إجراء · {1}</value></data>
+  <data name="MacroEditor_NoneSelected" xml:space="preserve"><value>حدد إجراءات لتحريرها وتجميعها ونسخها والمزيد · {0}</value></data>
+  <data name="MacroEditor_DelayHeader" xml:space="preserve"><value>التأخير قبل هذا الإجراء (مللي ثانية)</value></data>
+  <data name="Editor_Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="MacroEditor_NewGroupName" xml:space="preserve"><value>المجموعة {0}</value></data>
+  <data name="MacroEditor_HoldHint" xml:space="preserve"><value>يعمل فقط أثناء الضغط المستمر على مفتاح التشغيل السريع.</value></data>
+  <data name="Editor_ToggleHint" xml:space="preserve"><value>اضغط على مفتاح التشغيل السريع للبدء، واضغط عليه مرة أخرى للإيقاف.</value></data>
+  <data name="Editor_EnterName" xml:space="preserve"><value>أدخل اسمًا.</value></data>
+  <data name="MacroEditor_NoActionsError" xml:space="preserve"><value>أضف إجراءً واحدًا على الأقل أو سجّله.</value></data>
+  <data name="Editor_HoldNeedsHotkey" xml:space="preserve"><value>يحتاج الضغط المستمر إلى مفتاح تشغيل سريع. اختر واحدًا أو بدّل إلى "تبديل".</value></data>
+  <data name="LoopEditor_EditNamedTitle" xml:space="preserve"><value>تحرير الحلقة - {0}</value></data>
+  <data name="LoopEditor_HoldHint" xml:space="preserve"><value>تعمل فقط أثناء الضغط المستمر على مفتاح التشغيل السريع.</value></data>
+  <data name="LoopEditor_NoActionsError" xml:space="preserve"><value>أضف إجراءً واحدًا على الأقل.</value></data>
+  <data name="LoopEditor_IntervalError" xml:space="preserve"><value>يجب أن يكون كل فاصل زمني بين 10 مللي ثانية و24 ساعة.</value></data>
+  <data name="LoopEditor_HotkeyIsPressed" xml:space="preserve"><value>لا يمكن أن يكون مفتاح التشغيل السريع أحد المفاتيح التي تضغطها هذه الحلقة.</value></data>
+  <data name="RemapEditor_EditNamedTitle" xml:space="preserve"><value>تحرير إعادة التعيين - {0}</value></data>
+  <data name="RemapEditor_EditKeysTitle" xml:space="preserve"><value>تحرير إعادة التعيين - {0} → {1}</value></data>
+  <data name="RemapEditor_NoSourceError" xml:space="preserve"><value>اختر المفتاح أو زر الماوس أو مجموعة المفاتيح المراد إعادة تعيينها.</value></data>
+  <data name="RemapEditor_NoTargetError" xml:space="preserve"><value>اختر ما يتم إرساله بدلًا من ذلك.</value></data>
+  <data name="RemapEditor_SameKeysError" xml:space="preserve"><value>أرسل شيئًا مختلفًا عما تضغط عليه.</value></data>
+  <data name="RemapEditor_PrimaryMouseError" xml:space="preserve"><value>لا يمكن إعادة تعيين النقر الأيسر والأيمن إلا في تطبيق محدد، حتى يستمرا في العمل في كل مكان آخر.</value></data>
+  <data name="ActionWindow_Type_PressKey" xml:space="preserve"><value>ضغط مفتاح</value></data>
+  <data name="ActionWindow_Type_KeyDown" xml:space="preserve"><value>ضغط المفتاح لأسفل</value></data>
+  <data name="ActionWindow_Type_KeyUp" xml:space="preserve"><value>تحرير المفتاح</value></data>
+  <data name="ActionWindow_Type_Click" xml:space="preserve"><value>نقر</value></data>
+  <data name="ActionWindow_Type_MouseDown" xml:space="preserve"><value>ضغط زر الماوس لأسفل</value></data>
+  <data name="ActionWindow_Type_MouseUp" xml:space="preserve"><value>تحرير زر الماوس</value></data>
+  <data name="ActionWindow_Type_MoveTo" xml:space="preserve"><value>الانتقال إلى</value></data>
+  <data name="ActionWindow_Type_MovePath" xml:space="preserve"><value>مسار الحركة</value></data>
+  <data name="ActionWindow_Type_Scroll" xml:space="preserve"><value>تمرير</value></data>
+  <data name="ActionWindow_Type_PasteText" xml:space="preserve"><value>لصق نص</value></data>
+  <data name="ActionWindow_Add_PressKey" xml:space="preserve"><value>إضافة ضغط مفتاح</value></data>
+  <data name="ActionWindow_Add_KeyDown" xml:space="preserve"><value>إضافة ضغط المفتاح لأسفل</value></data>
+  <data name="ActionWindow_Add_KeyUp" xml:space="preserve"><value>إضافة تحرير المفتاح</value></data>
+  <data name="ActionWindow_Add_Click" xml:space="preserve"><value>إضافة نقر</value></data>
+  <data name="ActionWindow_Add_MouseDown" xml:space="preserve"><value>إضافة ضغط زر الماوس لأسفل</value></data>
+  <data name="ActionWindow_Add_MouseUp" xml:space="preserve"><value>إضافة تحرير زر الماوس</value></data>
+  <data name="ActionWindow_Add_MoveTo" xml:space="preserve"><value>إضافة انتقال إلى</value></data>
+  <data name="ActionWindow_Add_MovePath" xml:space="preserve"><value>إضافة مسار حركة</value></data>
+  <data name="ActionWindow_Add_Scroll" xml:space="preserve"><value>إضافة تمرير</value></data>
+  <data name="ActionWindow_Add_PasteText" xml:space="preserve"><value>إضافة لصق نص</value></data>
+  <data name="ActionWindow_Edit_PressKey" xml:space="preserve"><value>تحرير ضغط مفتاح - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyDown" xml:space="preserve"><value>تحرير ضغط المفتاح لأسفل - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyUp" xml:space="preserve"><value>تحرير تحرير المفتاح - {0}</value></data>
+  <data name="ActionWindow_Edit_Click" xml:space="preserve"><value>تحرير النقر - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseDown" xml:space="preserve"><value>تحرير ضغط زر الماوس لأسفل - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseUp" xml:space="preserve"><value>تحرير تحرير زر الماوس - {0}</value></data>
+  <data name="ActionWindow_Edit_MoveTo" xml:space="preserve"><value>تحرير الانتقال إلى - {0}</value></data>
+  <data name="ActionWindow_Edit_MovePath" xml:space="preserve"><value>تحرير مسار الحركة - {0}</value></data>
+  <data name="ActionWindow_Edit_Scroll" xml:space="preserve"><value>تحرير التمرير - {0}</value></data>
+  <data name="ActionWindow_Edit_PasteText" xml:space="preserve"><value>تحرير لصق النص - {0}</value></data>
+  <data name="Shortcuts_Select" xml:space="preserve"><value>تحديد</value></data>
+  <data name="Shortcuts_Click" xml:space="preserve"><value>نقر</value></data>
+  <data name="Shortcuts_CtrlClick" xml:space="preserve"><value>إضافة إجراء إلى التحديد، أو إزالته منه</value></data>
+  <data name="Shortcuts_ShiftClick" xml:space="preserve"><value>تحديد كل الإجراءات حتى هذا الإجراء</value></data>
+  <data name="Shortcuts_Move" xml:space="preserve"><value>نقل</value></data>
+  <data name="Shortcuts_Drag" xml:space="preserve"><value>سحب</value></data>
+  <data name="Shortcuts_DragWhat" xml:space="preserve"><value>نقل الإجراءات المحددة، وأيضًا إلى داخل مجموعة أو خارجها</value></data>
+  <data name="Shortcuts_MoveUpDown" xml:space="preserve"><value>نقل الإجراءات المحددة لأعلى أو لأسفل</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>تحرير</value></data>
+  <data name="Shortcuts_DoubleClick" xml:space="preserve"><value>نقر مزدوج</value></data>
+  <data name="Shortcuts_DoubleClickWhat" xml:space="preserve"><value>تحرير إجراء؛ فتح مجموعة أو إغلاقها</value></data>
+  <data name="Shortcuts_RightClick" xml:space="preserve"><value>نقر بزر الماوس الأيمن</value></data>
+  <data name="Shortcuts_RightClickWhat" xml:space="preserve"><value>إظهار الأوامر الخاصة بالإجراءات المحددة</value></data>
+  <data name="Shortcuts_Group" xml:space="preserve"><value>وضع الإجراءات المحددة في مجموعة</value></data>
+  <data name="Shortcuts_Duplicate" xml:space="preserve"><value>تكرار الإجراءات المحددة</value></data>
+  <data name="Shortcuts_Copy" xml:space="preserve"><value>نسخ الإجراءات المحددة للصقها هنا أو في ماكرو آخر</value></data>
+  <data name="Shortcuts_Paste" xml:space="preserve"><value>لصق الإجراءات المنسوخة في مكان إضافة الإجراءات الجديدة</value></data>
+  <data name="Shortcuts_Delete" xml:space="preserve"><value>حذف الإجراءات المحددة</value></data>
+  <data name="Shortcuts_Note" xml:space="preserve"><value>تتم إضافة الإجراءات الجديدة بعد الإجراء أو المجموعة المحددة، أو في النهاية. يشغّل "اختبار" الإجراء المحدد مرة واحدة في النافذة الموجودة خلف PuppyMacro.</value></data>
+  <data name="Editor_FormView" xml:space="preserve"><value>عرض النموذج</value></data>
+  <data name="Editor_CodeView" xml:space="preserve"><value>عرض التعليمات البرمجية</value></data>
+  <data name="Editor_CodeViewTooltip" xml:space="preserve"><value>تحريره بتنسيق JSON. يعرض Ctrl+Space اقتراحات</value></data>
+  <data name="Editor_History" xml:space="preserve"><value>المحفوظات</value></data>
+  <data name="Editor_HistoryTooltip" xml:space="preserve"><value>إصداراته المحفوظة: من غيّر ماذا، والاستعادة</value></data>
+  <data name="CodeView_Format" xml:space="preserve"><value>تنسيق</value></data>
+  <data name="CodeView_FormatTooltip" xml:space="preserve"><value>تنسيق التعليمات البرمجية (Shift+Alt+F)</value></data>
+  <data name="CodeView_Loading" xml:space="preserve"><value>جارٍ تحميل محرر التعليمات البرمجية…</value></data>
+  <data name="CodeView_EditorName" xml:space="preserve"><value>محرر التعليمات البرمجية</value></data>
+  <data name="CodeView_Stopped" xml:space="preserve"><value>توقف محرر التعليمات البرمجية. أغلق هذه النافذة وافتحها مرة أخرى.</value></data>
+  <data name="CodeView_NeedsWebView2" xml:space="preserve"><value>يحتاج عرض التعليمات البرمجية إلى Microsoft Edge WebView2 Runtime. ثبّته من Microsoft، ثم افتح هذه النافذة مرة أخرى.</value></data>
+  <data name="CodeView_CouldNotStart" xml:space="preserve"><value>تعذر بدء محرر التعليمات البرمجية: {0}</value></data>
+  <data name="CodeView_Checking" xml:space="preserve"><value>جارٍ التحقق…</value></data>
+  <data name="CodeView_NoProblems" xml:space="preserve"><value>لا توجد مشكلات.</value></data>
+  <data name="CodeView_CheckerFailed" xml:space="preserve"><value>تعذر بدء مدقق التعليمات البرمجية: {0}</value></data>
+  <data name="CodeView_Problems" xml:space="preserve"><value>المشكلات</value></data>
+  <data name="CodeView_ProblemsTitle" xml:space="preserve"><value>المشكلات</value></data>
+  <data name="CodeView_Position" xml:space="preserve"><value>السطر {0}، العمود {1}</value></data>
+  <data name="CodeView_FixProblems_zero" xml:space="preserve"><value>أصلح المشكلات ({0})، أو تجاهل التغييرات.</value></data>
+  <data name="CodeView_FixProblems_one" xml:space="preserve"><value>أصلح المشكلة، أو تجاهل التغييرات.</value></data>
+  <data name="CodeView_FixProblems_two" xml:space="preserve"><value>أصلح المشكلتين، أو تجاهل التغييرات.</value></data>
+  <data name="CodeView_FixProblems_few" xml:space="preserve"><value>أصلح المشكلات الـ {0}، أو تجاهل التغييرات.</value></data>
+  <data name="CodeView_FixProblems_many" xml:space="preserve"><value>أصلح المشكلات الـ {0}، أو تجاهل التغييرات.</value></data>
+  <data name="CodeView_FixProblems_other" xml:space="preserve"><value>أصلح المشكلات الـ {0}، أو تجاهل التغييرات.</value></data>
+  <data name="CodeView_DiscardChanges" xml:space="preserve"><value>تجاهل التغييرات</value></data>
+  <data name="CodeView_DiscardChangesTooltip" xml:space="preserve"><value>التراجع عن تغييرات التعليمات البرمجية والرجوع إلى عرض النموذج</value></data>
+  <data name="HistoryView_Empty" xml:space="preserve"><value>لا توجد إصدارات بعد: في كل مرة يتم فيها الحفظ، يتم الاحتفاظ بالإصدار هنا.</value></data>
+  <data name="HistoryView_Versions" xml:space="preserve"><value>الإصدارات</value></data>
+  <data name="HistoryView_ChangesTitle" xml:space="preserve"><value>التغييرات عن الإصدار السابق:</value></data>
+  <data name="HistoryView_Restore" xml:space="preserve"><value>استعادة هذا الإصدار</value></data>
+  <data name="HistoryView_RestoredTitle" xml:space="preserve"><value>إصدار {0:g} موجود في المحرر.</value></data>
+  <data name="HistoryView_RestoredMessage" xml:space="preserve"><value>حدد "حفظ" للاحتفاظ به، أو "إلغاء الأمر" لترك العنصر كما هو.</value></data>
+  <data name="AppScope_Header" xml:space="preserve"><value>تطبيق محدد</value></data>
+  <data name="AppScope_AllApps" xml:space="preserve"><value>يعمل في كل التطبيقات</value></data>
+  <data name="AppScope_App" xml:space="preserve"><value>التطبيق</value></data>
+  <data name="AppScope_AppTooltip" xml:space="preserve"><value>اسم ملف .exe للتطبيق، مثل Diablo IV.exe</value></data>
+  <data name="AppScope_Pick" xml:space="preserve"><value>اختيار</value></data>
+  <data name="AppScope_PickTooltip" xml:space="preserve"><value>انقر على نافذة من نوافذ التطبيق</value></data>
+  <data name="AppScope_Browse" xml:space="preserve"><value>استعراض…</value></data>
+  <data name="AppScope_NoAppError" xml:space="preserve"><value>اختر التطبيق الذي يعمل فيه، أو أوقف تشغيل "تطبيق محدد".</value></data>
+  <data name="AppScope_ChooseApp" xml:space="preserve"><value>اختر التطبيق الذي يعمل فيه</value></data>
+  <data name="AppScope_OnlyApp" xml:space="preserve"><value>يعمل فقط عندما يكون {0} في المقدمة</value></data>
+  <data name="AppScope_Help" xml:space="preserve"><value>اختر تطبيقًا قيد التشغيل، أو اختر نافذته، أو استعرض للوصول إلى ملف .exe الخاص به. يعمل فقط عندما يكون هذا التطبيق في المقدمة.</value></data>
+  <data name="AppScope_HelpStops" xml:space="preserve"><value>اختر تطبيقًا قيد التشغيل، أو اختر نافذته، أو استعرض للوصول إلى ملف .exe الخاص به. يعمل فقط عندما يكون هذا التطبيق في المقدمة، ويتوقف عند التبديل إلى تطبيق آخر.</value></data>
+  <data name="AppScope_BrowseTitle" xml:space="preserve"><value>اختيار التطبيق</value></data>
+  <data name="AppScope_BrowseFilter" xml:space="preserve"><value>البرامج (*.exe)|*.exe</value></data>
+  <data name="OverlayOptions_Show" xml:space="preserve"><value>الإظهار في التراكب</value></data>
+  <data name="OverlayOptions_ShowDescription" xml:space="preserve"><value>في لوحة التراكب، أو كزر عائم</value></data>
+  <data name="OverlayOptions_HideWhenDisabled" xml:space="preserve"><value>الإخفاء عند التعطيل</value></data>
+  <data name="OverlayOptions_HideWhenDisabledDescription" xml:space="preserve"><value>مخفي من التراكب أثناء تعطيله</value></data>
+  <data name="OverlayOptions_PassThrough" xml:space="preserve"><value>تصل النقرات أيضًا إلى التطبيق الموجود خلفه</value></data>
+  <data name="OverlayOptions_PassThroughDescription" xml:space="preserve"><value>النقر عليه في التراكب ينقر أيضًا على النافذة الموجودة تحته</value></data>
+  <data name="FloatingButton_Header" xml:space="preserve"><value>زر عائم</value></data>
+  <data name="FloatingButton_Description" xml:space="preserve"><value>زر دائري يبدؤه ويوقفه في وضع التراكب، بدلًا من صفه في اللوحة</value></data>
+  <data name="FloatingButton_NeedsToggle" xml:space="preserve"><value>يحتاج إلى "تبديل": يمكن للنقرة البدء والإيقاف، ولكن ليس الضغط المستمر</value></data>
+  <data name="FloatingButton_Label" xml:space="preserve"><value>التسمية</value></data>
+  <data name="FloatingButton_Size" xml:space="preserve"><value>الحجم</value></data>
+  <data name="FloatingButton_Small" xml:space="preserve"><value>صغير</value></data>
+  <data name="FloatingButton_Medium" xml:space="preserve"><value>متوسط</value></data>
+  <data name="FloatingButton_Large" xml:space="preserve"><value>كبير</value></data>
+  <data name="FloatingButton_PositionOnScreen" xml:space="preserve"><value>الموضع على الشاشة</value></data>
+  <data name="FloatingButton_Position" xml:space="preserve"><value>الموضع</value></data>
+  <data name="FloatingButton_Opacity" xml:space="preserve"><value>العتامة</value></data>
+  <data name="FloatingButton_OpacityLabel" xml:space="preserve"><value>عتامة الزر العائم</value></data>
+  <data name="MacroEditor_ExpandGroup" xml:space="preserve"><value>توسيع المجموعة</value></data>
+  <data name="MacroEditor_CollapseGroup" xml:space="preserve"><value>طي المجموعة</value></data>
+  <data name="MacroEditor_GroupAccessibleName" xml:space="preserve"><value>المجموعة {0}، {1}</value></data>
+  <data name="MacroEditor_DelayMs" xml:space="preserve"><value>{0:0.##} مللي ثانية</value></data>
+  <data name="MacroEditor_RowPress" xml:space="preserve"><value>ضغط {0}</value></data>
+  <data name="MacroEditor_RowKeyDown" xml:space="preserve"><value>ضغط المفتاح لأسفل {0}</value></data>
+  <data name="MacroEditor_RowKeyUp" xml:space="preserve"><value>تحرير المفتاح {0}</value></data>
+  <data name="MacroEditor_RowButtonDown" xml:space="preserve"><value>ضغط الزر {0} لأسفل</value></data>
+  <data name="MacroEditor_RowButtonUp" xml:space="preserve"><value>تحرير الزر {0}</value></data>
+  <data name="MacroEditor_RowMoveSmoothly" xml:space="preserve"><value>انتقال بسلاسة</value></data>
+  <data name="MacroEditor_RowScrollUp" xml:space="preserve"><value>تمرير لأعلى</value></data>
+  <data name="MacroEditor_RowScrollDown" xml:space="preserve"><value>تمرير لأسفل</value></data>
+  <data name="MacroEditor_RowScrollLeft" xml:space="preserve"><value>تمرير لليسار</value></data>
+  <data name="MacroEditor_RowScrollRight" xml:space="preserve"><value>تمرير لليمين</value></data>
+  <data name="MacroEditor_RowTimes_zero" xml:space="preserve"><value>{1} {0} مرة</value></data>
+  <data name="MacroEditor_RowTimes_one" xml:space="preserve"><value>{1} مرة واحدة</value></data>
+  <data name="MacroEditor_RowTimes_two" xml:space="preserve"><value>{1} مرتين</value></data>
+  <data name="MacroEditor_RowTimes_few" xml:space="preserve"><value>{1} {0} مرات</value></data>
+  <data name="MacroEditor_RowTimes_many" xml:space="preserve"><value>{1} {0} مرة</value></data>
+  <data name="MacroEditor_RowTimes_other" xml:space="preserve"><value>{1} {0} مرة</value></data>
+  <data name="MacroEditor_RowHeld" xml:space="preserve"><value>مضغوط لمدة {0} مللي ثانية</value></data>
+  <data name="MacroEditor_RowAt" xml:space="preserve"><value>عند {0}، {1}</value></data>
+  <data name="MacroEditor_RowPath_zero" xml:space="preserve"><value>{0} نقطة، {1}</value></data>
+  <data name="MacroEditor_RowPath_one" xml:space="preserve"><value>نقطة واحدة، {1}</value></data>
+  <data name="MacroEditor_RowPath_two" xml:space="preserve"><value>نقطتان، {1}</value></data>
+  <data name="MacroEditor_RowPath_few" xml:space="preserve"><value>{0} نقاط، {1}</value></data>
+  <data name="MacroEditor_RowPath_many" xml:space="preserve"><value>{0} نقطة، {1}</value></data>
+  <data name="MacroEditor_RowPath_other" xml:space="preserve"><value>{0} نقطة، {1}</value></data>
+  <data name="MacroEditor_RowScrollSteps_zero" xml:space="preserve"><value>{0} خطوة</value></data>
+  <data name="MacroEditor_RowScrollSteps_one" xml:space="preserve"><value>خطوة واحدة</value></data>
+  <data name="MacroEditor_RowScrollSteps_two" xml:space="preserve"><value>خطوتان</value></data>
+  <data name="MacroEditor_RowScrollSteps_few" xml:space="preserve"><value>{0} خطوات</value></data>
+  <data name="MacroEditor_RowScrollSteps_many" xml:space="preserve"><value>{0} خطوة</value></data>
+  <data name="MacroEditor_RowScrollSteps_other" xml:space="preserve"><value>{0} خطوة</value></data>
+  <data name="MacroEditor_RowQuoted" xml:space="preserve"><value>"{0}"</value></data>
+  <data name="Action_Direction" xml:space="preserve"><value>الاتجاه</value></data>
+  <data name="Action_DirectionUp" xml:space="preserve"><value>لأعلى</value></data>
+  <data name="Action_DirectionDown" xml:space="preserve"><value>لأسفل</value></data>
+  <data name="Action_DirectionLeft" xml:space="preserve"><value>لليسار</value></data>
+  <data name="Action_DirectionRight" xml:space="preserve"><value>لليمين</value></data>
+  <data name="Action_Remove" xml:space="preserve"><value>إزالة</value></data>
+  <data name="Action_WhileLoopRuns" xml:space="preserve"><value>أثناء تشغيل الحلقة</value></data>
+  <data name="Action_Repeat" xml:space="preserve"><value>تكرار</value></data>
+  <data name="Action_HoldDown" xml:space="preserve"><value>ضغط مستمر</value></data>
+  <data name="Action_Every" xml:space="preserve"><value>كل</value></data>
+  <data name="Action_Interval" xml:space="preserve"><value>الفاصل الزمني</value></data>
+  <data name="Action_Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="Action_UnitMs" xml:space="preserve"><value>مللي ثانية</value></data>
+  <data name="Action_UnitS" xml:space="preserve"><value>ثانية</value></data>
+  <data name="Action_UnitMin" xml:space="preserve"><value>دقيقة</value></data>
+  <data name="Action_UnitH" xml:space="preserve"><value>ساعة</value></data>
+  <data name="Action_Position" xml:space="preserve"><value>الموضع</value></data>
+  <data name="Action_Mode" xml:space="preserve"><value>الوضع</value></data>
+  <data name="Action_Single" xml:space="preserve"><value>مفرد</value></data>
+  <data name="Action_Double" xml:space="preserve"><value>مزدوج</value></data>
+  <data name="Action_HoldFor" xml:space="preserve"><value>مدة الضغط</value></data>
+  <data name="Action_Times" xml:space="preserve"><value>عدد المرات</value></data>
+  <data name="Action_PauseBetween" xml:space="preserve"><value>الإيقاف المؤقت بين المرات</value></data>
+  <data name="Action_PauseBetweenDescription" xml:space="preserve"><value>بين ضغطة والتي تليها، عندما يكون "عدد المرات" أكثر من 1</value></data>
+  <data name="Action_FixedPoint" xml:space="preserve"><value>نقطة ثابتة</value></data>
+  <data name="Action_Text" xml:space="preserve"><value>النص</value></data>
+  <data name="Action_TextToPaste" xml:space="preserve"><value>النص المراد لصقه</value></data>
+  <data name="Action_EnterBefore" xml:space="preserve"><value>الضغط على Enter قبل اللصق</value></data>
+  <data name="Action_EnterAfter" xml:space="preserve"><value>الضغط على Enter بعد اللصق</value></data>
+  <data name="Action_Movement" xml:space="preserve"><value>الحركة</value></data>
+  <data name="Action_Instantly" xml:space="preserve"><value>فورًا</value></data>
+  <data name="Action_Smoothly" xml:space="preserve"><value>بسلاسة</value></data>
+  <data name="Action_Speed" xml:space="preserve"><value>السرعة</value></data>
+  <data name="Action_MovementSpeed" xml:space="preserve"><value>سرعة الحركة</value></data>
+  <data name="Action_Steps" xml:space="preserve"><value>الخطوات</value></data>
+  <data name="Action_UseClick" xml:space="preserve"><value>استخدم "نقر" لأزرار الماوس.</value></data>
+  <data name="Action_UseMouseAction" xml:space="preserve"><value>استخدم إجراء "نقر" أو "زر الماوس" لأزرار الماوس.</value></data>
+  <data name="Action_TitlePressKey" xml:space="preserve"><value>ضغط مفتاح</value></data>
+  <data name="Action_TitleKeyDown" xml:space="preserve"><value>ضغط المفتاح لأسفل</value></data>
+  <data name="Action_TitleKeyUp" xml:space="preserve"><value>تحرير المفتاح</value></data>
+  <data name="Action_TitleClick" xml:space="preserve"><value>نقر</value></data>
+  <data name="Action_TitleMouseDown" xml:space="preserve"><value>ضغط زر الماوس لأسفل</value></data>
+  <data name="Action_TitleMouseUp" xml:space="preserve"><value>تحرير زر الماوس</value></data>
+  <data name="Action_TitleMoveTo" xml:space="preserve"><value>الانتقال إلى</value></data>
+  <data name="Action_TitleScroll" xml:space="preserve"><value>تمرير</value></data>
+  <data name="Action_TitlePasteText" xml:space="preserve"><value>لصق نص</value></data>
+  <data name="Action_HoldButtonDescription" xml:space="preserve"><value>المدة التي يظل فيها الزر مضغوطًا قبل تحريره</value></data>
+  <data name="Action_HoldKeyDescription" xml:space="preserve"><value>المدة التي يظل فيها المفتاح مضغوطًا قبل تحريره</value></data>
+  <data name="Action_AFixedPoint" xml:space="preserve"><value>نقطة ثابتة</value></data>
+  <data name="Action_WherePointerIs" xml:space="preserve"><value>مكان المؤشر</value></data>
+  <data name="Action_SpeedVerySlow" xml:space="preserve"><value>بطيئة جدًا</value></data>
+  <data name="Action_SpeedSlow" xml:space="preserve"><value>بطيئة</value></data>
+  <data name="Action_SpeedNormal" xml:space="preserve"><value>عادية</value></data>
+  <data name="Action_SpeedFast" xml:space="preserve"><value>سريعة</value></data>
+  <data name="Action_SpeedVeryFast" xml:space="preserve"><value>سريعة جدًا</value></data>
+  <data name="Action_SpeedText" xml:space="preserve"><value>السرعة: {0}، حوالي {1} ثانية</value></data>
+  <data name="Action_SummaryEvery" xml:space="preserve"><value>كل {0} {1}</value></data>
+  <data name="Action_SummaryTimes_zero" xml:space="preserve"><value>{1} {0} مرة</value></data>
+  <data name="Action_SummaryTimes_one" xml:space="preserve"><value>{1} مرة واحدة</value></data>
+  <data name="Action_SummaryTimes_two" xml:space="preserve"><value>{1} مرتين</value></data>
+  <data name="Action_SummaryTimes_few" xml:space="preserve"><value>{1} {0} مرات</value></data>
+  <data name="Action_SummaryTimes_many" xml:space="preserve"><value>{1} {0} مرة</value></data>
+  <data name="Action_SummaryTimes_other" xml:space="preserve"><value>{1} {0} مرة</value></data>
+  <data name="Action_SummaryAt" xml:space="preserve"><value>عند {0}، {1}</value></data>
+  <data name="Action_SummaryWherePointerIs" xml:space="preserve"><value>في مكان المؤشر</value></data>
+  <data name="Action_SummaryNoKey" xml:space="preserve"><value>لا يوجد مفتاح بعد</value></data>
+  <data name="Action_SummaryNoText" xml:space="preserve"><value>لا يوجد نص بعد</value></data>
+  <data name="Action_SummaryUntilKeyUp" xml:space="preserve"><value>{0}، حتى "تحرير المفتاح"</value></data>
+  <data name="Action_SummarySteps_zero" xml:space="preserve"><value>{0} خطوة</value></data>
+  <data name="Action_SummarySteps_one" xml:space="preserve"><value>خطوة واحدة</value></data>
+  <data name="Action_SummarySteps_two" xml:space="preserve"><value>خطوتان</value></data>
+  <data name="Action_SummarySteps_few" xml:space="preserve"><value>{0} خطوات</value></data>
+  <data name="Action_SummarySteps_many" xml:space="preserve"><value>{0} خطوة</value></data>
+  <data name="Action_SummarySteps_other" xml:space="preserve"><value>{0} خطوة</value></data>
+  <data name="Action_SummaryText" xml:space="preserve"><value>"{0}"</value></data>
+  <data name="Action_SummaryTextThenEnter" xml:space="preserve"><value>"{0}"، ثم Enter</value></data>
+  <data name="Action_SummaryHeldDown" xml:space="preserve"><value>{0}، مضغوط باستمرار أثناء تشغيل الحلقة</value></data>
+  <data name="Action_ChooseKeyEach" xml:space="preserve"><value>اختر مفتاحًا لكل "ضغط مفتاح".</value></data>
+  <data name="Action_ChooseKey" xml:space="preserve"><value>اختر مفتاحًا.</value></data>
+  <data name="Action_SetFixedPoint" xml:space="preserve"><value>حدد موضع كل "نقر" عند نقطة ثابتة.</value></data>
+  <data name="Action_EnterTextEach" xml:space="preserve"><value>أدخل النص لكل "لصق نص".</value></data>
+  <data name="Action_EnterText" xml:space="preserve"><value>أدخل النص المراد لصقه.</value></data>
+  <data name="Action_HoldNeedsSingleKey" xml:space="preserve"><value>يعمل الضغط المستمر مع مفتاح واحد. لمجموعة مفاتيح، استخدم "تكرار".</value></data>
+  <data name="KeyField_PromptHotkey" xml:space="preserve"><value>اضغط على مفتاح التشغيل السريع (Esc للإلغاء)</value></data>
+  <data name="KeyField_PromptCombination" xml:space="preserve"><value>اضغط على المفتاح أو مجموعة المفاتيح (Esc للإلغاء)</value></data>
+  <data name="KeyField_PromptKeyOrModifier" xml:space="preserve"><value>اضغط على مفتاح، أو على Ctrl أو Alt أو Shift أو Win بمفرده (Esc للإلغاء)</value></data>
+  <data name="KeyField_SetHotkey" xml:space="preserve"><value>تعيين مفتاح التشغيل السريع</value></data>
+  <data name="KeyField_SetKey" xml:space="preserve"><value>تعيين المفتاح</value></data>
+  <data name="KeyField_ChangeHotkey" xml:space="preserve"><value>تغيير مفتاح التشغيل السريع</value></data>
+  <data name="KeyField_ChangeKey" xml:space="preserve"><value>تغيير المفتاح</value></data>
+  <data name="KeyField_ClearHotkey" xml:space="preserve"><value>مسح مفتاح التشغيل السريع</value></data>
+  <data name="KeyField_ClearKey" xml:space="preserve"><value>مسح المفتاح</value></data>
+  <data name="KeyField_Change" xml:space="preserve"><value>تغيير</value></data>
+  <data name="KeyField_Clear" xml:space="preserve"><value>مسح</value></data>
+  <data name="Mouse_Button" xml:space="preserve"><value>زر الماوس</value></data>
+  <data name="Mouse_Left" xml:space="preserve"><value>الأيسر</value></data>
+  <data name="Mouse_Right" xml:space="preserve"><value>الأيمن</value></data>
+  <data name="Mouse_Middle" xml:space="preserve"><value>الأوسط</value></data>
+  <data name="Mouse_Back" xml:space="preserve"><value>الخلف (X1)</value></data>
+  <data name="Mouse_Forward" xml:space="preserve"><value>الأمام (X2)</value></data>
+  <data name="Mouse_ClickLeft" xml:space="preserve"><value>نقر أيسر</value></data>
+  <data name="Mouse_ClickRight" xml:space="preserve"><value>نقر أيمن</value></data>
+  <data name="Mouse_ClickMiddle" xml:space="preserve"><value>نقر أوسط</value></data>
+  <data name="Mouse_ClickBack" xml:space="preserve"><value>نقر الخلف (X1)</value></data>
+  <data name="Mouse_ClickForward" xml:space="preserve"><value>نقر الأمام (X2)</value></data>
+  <data name="Mouse_DoubleClickLeft" xml:space="preserve"><value>نقر أيسر مزدوج</value></data>
+  <data name="Mouse_DoubleClickRight" xml:space="preserve"><value>نقر أيمن مزدوج</value></data>
+  <data name="Mouse_DoubleClickMiddle" xml:space="preserve"><value>نقر أوسط مزدوج</value></data>
+  <data name="Mouse_DoubleClickBack" xml:space="preserve"><value>نقر مزدوج على الخلف (X1)</value></data>
+  <data name="Mouse_DoubleClickForward" xml:space="preserve"><value>نقر مزدوج على الأمام (X2)</value></data>
+  <data name="Mouse_DetectTooltip" xml:space="preserve"><value>اضغط على زر ماوس لاكتشافه</value></data>
+  <data name="Mouse_Detect" xml:space="preserve"><value>اكتشاف زر الماوس</value></data>
+  <data name="Mouse_Prompt" xml:space="preserve"><value>اضغط على زر ماوس (Esc للإلغاء)</value></data>
+  <data name="Mouse_UsePressKey" xml:space="preserve"><value>استخدم "ضغط مفتاح" للمفاتيح.</value></data>
+  <data name="Position_X" xml:space="preserve"><value>X</value></data>
+  <data name="Position_Y" xml:space="preserve"><value>Y</value></data>
+  <data name="Position_PickOnScreen" xml:space="preserve"><value>الاختيار على الشاشة</value></data>
+  <data name="Slider_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Keys_NoHotkey" xml:space="preserve"><value>لا يوجد مفتاح تشغيل سريع</value></data>
+  <data name="Keys_Join" xml:space="preserve"><value> + </value></data>
+  <data name="Keys_None" xml:space="preserve"><value>بلا</value></data>
+  <data name="Keys_WheelUp" xml:space="preserve"><value>العجلة لأعلى</value></data>
+  <data name="Keys_WheelDown" xml:space="preserve"><value>العجلة لأسفل</value></data>
+  <data name="Keys_WheelLeft" xml:space="preserve"><value>العجلة لليسار</value></data>
+  <data name="Keys_WheelRight" xml:space="preserve"><value>العجلة لليمين</value></data>
+  <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
+  <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>
+  <data name="Keys_Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="Keys_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Keys_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Keys_Win" xml:space="preserve"><value>Win</value></data>
+  <data name="Keys_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Keys_CapsLock" xml:space="preserve"><value>CapsLock</value></data>
+  <data name="Keys_Esc" xml:space="preserve"><value>Esc</value></data>
+  <data name="Keys_Space" xml:space="preserve"><value>Space</value></data>
+  <data name="Keys_PageUp" xml:space="preserve"><value>PageUp</value></data>
+  <data name="Keys_PageDown" xml:space="preserve"><value>PageDown</value></data>
+  <data name="Keys_End" xml:space="preserve"><value>End</value></data>
+  <data name="Keys_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Keys_Left" xml:space="preserve"><value>سهم لليسار</value></data>
+  <data name="Keys_Up" xml:space="preserve"><value>سهم لأعلى</value></data>
+  <data name="Keys_Right" xml:space="preserve"><value>سهم لليمين</value></data>
+  <data name="Keys_Down" xml:space="preserve"><value>سهم لأسفل</value></data>
+  <data name="Keys_PrintScreen" xml:space="preserve"><value>PrintScreen</value></data>
+  <data name="Keys_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Keys_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Keys_LeftWin" xml:space="preserve"><value>Win الأيسر</value></data>
+  <data name="Keys_RightWin" xml:space="preserve"><value>Win الأيمن</value></data>
+  <data name="Keys_NumpadDigit" xml:space="preserve"><value>Numpad{0}</value></data>
+  <data name="Keys_NumpadMultiply" xml:space="preserve"><value>Numpad*</value></data>
+  <data name="Keys_NumpadAdd" xml:space="preserve"><value>Numpad+</value></data>
+  <data name="Keys_NumpadSubtract" xml:space="preserve"><value>Numpad-</value></data>
+  <data name="Keys_NumpadDecimal" xml:space="preserve"><value>Numpad.</value></data>
+  <data name="Keys_NumpadDivide" xml:space="preserve"><value>Numpad/</value></data>
+  <data name="Keys_NumLock" xml:space="preserve"><value>NumLock</value></data>
+  <data name="Keys_ScrollLock" xml:space="preserve"><value>ScrollLock</value></data>
+  <data name="Keys_LeftShift" xml:space="preserve"><value>Shift الأيسر</value></data>
+  <data name="Keys_RightShift" xml:space="preserve"><value>Shift الأيمن</value></data>
+  <data name="Keys_LeftCtrl" xml:space="preserve"><value>Ctrl الأيسر</value></data>
+  <data name="Keys_RightCtrl" xml:space="preserve"><value>Ctrl الأيمن</value></data>
+  <data name="Keys_LeftAlt" xml:space="preserve"><value>Alt الأيسر</value></data>
+  <data name="Keys_RightAlt" xml:space="preserve"><value>Alt الأيمن</value></data>
+  <data name="Keys_EitherCtrl" xml:space="preserve"><value>Ctrl الأيسر أو الأيمن</value></data>
+  <data name="Keys_EitherAlt" xml:space="preserve"><value>Alt الأيسر أو الأيمن</value></data>
+  <data name="Keys_EitherShift" xml:space="preserve"><value>Shift الأيسر أو الأيمن</value></data>
+  <data name="Keys_EitherWin" xml:space="preserve"><value>Win الأيسر أو الأيمن</value></data>
+  <data name="Keys_Unknown" xml:space="preserve"><value>المفتاح 0x{0:X2}</value></data>
+  <data name="Hotkey_ClickNeedsModifier" xml:space="preserve"><value>يحتاج النقر الأيسر والأيمن إلى Ctrl أو Alt أو Shift أو Win: بمفردهما سيحظران الماوس.</value></data>
+  <data name="Hotkey_WheelNeedsModifier" xml:space="preserve"><value>تحتاج عجلة التمرير إلى Ctrl أو Alt أو Shift أو Win: بمفردها ستحظر التمرير.</value></data>
+  <data name="Hotkey_EscNeedsModifier" xml:space="preserve"><value>يحتاج Esc إلى Ctrl أو Alt أو Shift أو Win.</value></data>
+  <data name="Hotkey_WheelCantHold" xml:space="preserve"><value>لا يمكن الضغط المستمر على عجلة التمرير. بدّل إلى "تبديل"، أو اختر مفتاح تشغيل سريع آخر.</value></data>
+  <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة "إيقاف الكل".</value></data>
+  <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة "وضع التراكب".</value></data>
+  <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة "تسجيل".</value></data>
+  <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}".</value></data>
+  <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}" في {2}.</value></data>
+  <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}".</value></data>
+  <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}" في {2}.</value></data>
+  <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} لمفاتيح التشغيل السريع الأولوية على عمليات إعادة التعيين.</value></data>
+  <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لكل التطبيقات.</value></data>
+  <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لـ {1}.</value></data>
+  <data name="Sound_Chime" xml:space="preserve"><value>رنين</value></data>
+  <data name="Sound_Blip" xml:space="preserve"><value>بيب</value></data>
+  <data name="Sound_Pop" xml:space="preserve"><value>فرقعة</value></data>
+  <data name="Sound_Bell" xml:space="preserve"><value>جرس</value></data>
+  <data name="Sound_Arcade" xml:space="preserve"><value>أركيد</value></data>
+  <data name="Sound_Soft" xml:space="preserve"><value>ناعم</value></data>
+  <data name="Sound_Marimba" xml:space="preserve"><value>ماريمبا</value></data>
+  <data name="Sound_Pluck" xml:space="preserve"><value>نقر الأوتار</value></data>
+  <data name="Sound_Harp" xml:space="preserve"><value>قيثارة</value></data>
+  <data name="Sound_Kalimba" xml:space="preserve"><value>كاليمبا</value></data>
+  <data name="Sound_Xylophone" xml:space="preserve"><value>إكسيليفون</value></data>
+  <data name="Sound_Glock" xml:space="preserve"><value>غلوكنشبيل</value></data>
+  <data name="Sound_Organ" xml:space="preserve"><value>أرغن</value></data>
+  <data name="Sound_Flute" xml:space="preserve"><value>ناي</value></data>
+  <data name="Sound_Synth" xml:space="preserve"><value>سينث</value></data>
+  <data name="Sound_Pad" xml:space="preserve"><value>باد</value></data>
+  <data name="Sound_Brass" xml:space="preserve"><value>نحاسيات</value></data>
+  <data name="Sound_Bass" xml:space="preserve"><value>باص</value></data>
+  <data name="Sound_Click" xml:space="preserve"><value>نقرة</value></data>
+  <data name="Sound_Tick" xml:space="preserve"><value>تكة</value></data>
+  <data name="Sound_Knock" xml:space="preserve"><value>طرق</value></data>
+  <data name="Sound_Switch" xml:space="preserve"><value>قاطع</value></data>
+  <data name="Sound_Tom" xml:space="preserve"><value>طبلة توم</value></data>
+  <data name="Sound_Conga" xml:space="preserve"><value>كونغا</value></data>
+  <data name="Sound_Cowbell" xml:space="preserve"><value>جرس البقر</value></data>
+  <data name="Sound_Triangle" xml:space="preserve"><value>مثلث</value></data>
+  <data name="Sound_Gong" xml:space="preserve"><value>غونغ</value></data>
+  <data name="Sound_Coin" xml:space="preserve"><value>عملة</value></data>
+  <data name="Sound_Jump" xml:space="preserve"><value>قفزة</value></data>
+  <data name="Sound_Laser" xml:space="preserve"><value>ليزر</value></data>
+  <data name="Sound_Zap" xml:space="preserve"><value>صعقة</value></data>
+  <data name="Sound_Powerup" xml:space="preserve"><value>تعزيز</value></data>
+  <data name="Sound_Retro" xml:space="preserve"><value>ريترو</value></data>
+  <data name="Sound_Fanfare" xml:space="preserve"><value>نفير احتفالي</value></data>
+  <data name="Sound_Twinkle" xml:space="preserve"><value>وميض</value></data>
+  <data name="Sound_Sparkle" xml:space="preserve"><value>بريق</value></data>
+  <data name="Sound_Bubble" xml:space="preserve"><value>فقاعة</value></data>
+  <data name="Sound_Drop" xml:space="preserve"><value>قطرة</value></data>
+  <data name="Sound_Whoosh" xml:space="preserve"><value>حفيف</value></data>
+  <data name="Sound_Whistle" xml:space="preserve"><value>صفارة</value></data>
+  <data name="Sound_Chirp" xml:space="preserve"><value>زقزقة</value></data>
+  <data name="Sound_Cricket" xml:space="preserve"><value>صرصور الليل</value></data>
+  <data name="Sound_Doorbell" xml:space="preserve"><value>جرس الباب</value></data>
+  <data name="Sound_Phone" xml:space="preserve"><value>هاتف</value></data>
+  <data name="Sound_Alarm" xml:space="preserve"><value>منبه</value></data>
+  <data name="Sound_Modem" xml:space="preserve"><value>مودم</value></data>
+  <data name="Sound_Radar" xml:space="preserve"><value>رادار</value></data>
+  <data name="Sound_Sonar" xml:space="preserve"><value>سونار</value></data>
+  <data name="Sound_Echo" xml:space="preserve"><value>صدى</value></data>
+  <data name="Sound_Robot" xml:space="preserve"><value>روبوت</value></data>
+  <data name="Sound_Siren" xml:space="preserve"><value>صفارة إنذار</value></data>
+  <data name="Sound_Hum" xml:space="preserve"><value>طنين</value></data>
+  <data name="Sound_Ripple" xml:space="preserve"><value>تموج</value></data>
+  <data name="Sound_Wobble" xml:space="preserve"><value>تذبذب</value></data>
+  <data name="Sound_Warp" xml:space="preserve"><value>التواء</value></data>
+  <data name="Sound_Ufo" xml:space="preserve"><value>طبق طائر</value></data>
+  <data name="Code_MustBeObject" xml:space="preserve"><value>يجب أن يكون هذا كائن JSON.</value></data>
+  <data name="Code_Between" xml:space="preserve"><value>يجب أن تكون القيمة بين {0} و{1}.</value></data>
+  <data name="Code_IdCannotChange" xml:space="preserve"><value>لا يمكن تغيير Id. استخدم "{0}" (يقترحه Ctrl+Space).</value></data>
+  <data name="Code_UnknownSound" xml:space="preserve"><value>صوت غير معروف. استخدم أحد الأصوات التالية: {0}.</value></data>
+  <data name="Code_HoldNeedsHotkey" xml:space="preserve"><value>يحتاج الضغط المستمر إلى مفتاح تشغيل سريع. عيّن واحدًا أو استخدم "Toggle".</value></data>
+  <data name="Code_HotkeyNotAKey" xml:space="preserve"><value>ليس مفتاحًا: استخدم رمز مفتاح ظاهري من 1 إلى 254، أو رمز عجلة تمرير (256 لأعلى، 257 لأسفل، 258 لليسار، 259 لليمين).</value></data>
+  <data name="Code_HotkeyModifierAlone" xml:space="preserve"><value>لا يمكن أن يكون Ctrl أو Alt أو Shift أو Win بمفرده هو المفتاح: عيّنها باستخدام "Ctrl" و"Alt" و"Shift" و"Win".</value></data>
+  <data name="Code_RemapChooseKey" xml:space="preserve"><value>اختر مفتاحًا أو زر ماوس: رمز مفتاح ظاهري من 1 إلى 254.</value></data>
+  <data name="Code_RemapModifierSide" xml:space="preserve"><value>Ctrl أو Alt أو Shift أو Win بمفرده: استخدم رمز مفتاحه الأيسر أو الأيمن (160، 161 Shift؛ 162، 163 Ctrl؛ 164، 165 Alt؛ 91، 92 Win).</value></data>
+  <data name="Code_RemapModifierNoOthers" xml:space="preserve"><value>لا يقبل Ctrl أو Alt أو Shift أو Win بمفرده أي مفتاح تعديل آخر: عيّن "Ctrl" و"Alt" و"Shift" و"Win" إلى false.</value></data>
+  <data name="Code_OnlyWithModifier" xml:space="preserve"><value>فقط مع "{0}": true. أزله، أو عيّن "{0}" إلى true.</value></data>
+  <data name="Code_AppExeEmpty" xml:space="preserve"><value>اكتب اسم ملف التطبيق، مثل "notepad.exe"، أو null لكل التطبيقات.</value></data>
+  <data name="Code_AppExeNotExe" xml:space="preserve"><value>اكتب اسم ملف التطبيق، منتهيًا بـ ".exe".</value></data>
+  <data name="Code_AtMostCharacters_zero" xml:space="preserve"><value>{0} حرف على الأكثر.</value></data>
+  <data name="Code_AtMostCharacters_one" xml:space="preserve"><value>حرف واحد على الأكثر.</value></data>
+  <data name="Code_AtMostCharacters_two" xml:space="preserve"><value>حرفان على الأكثر.</value></data>
+  <data name="Code_AtMostCharacters_few" xml:space="preserve"><value>{0} أحرف على الأكثر.</value></data>
+  <data name="Code_AtMostCharacters_many" xml:space="preserve"><value>{0} حرفًا على الأكثر.</value></data>
+  <data name="Code_AtMostCharacters_other" xml:space="preserve"><value>{0} حرف على الأكثر.</value></data>
+  <data name="Code_SetBothXY" xml:space="preserve"><value>عيّن X وY معًا، أو لا تعيّن أيًا منهما (null: منتصف الشاشة الرئيسية).</value></data>
+  <data name="Code_FloatingNeedsToggle" xml:space="preserve"><value>يحتاج إلى "Toggle": يمكن للنقرة البدء والإيقاف، ولكن ليس الضغط المستمر.</value></data>
+  <data name="Code_MustBeOneOf" xml:space="preserve"><value>يجب أن تكون إحدى القيم التالية: {0}.</value></data>
+  <data name="Code_AtPath" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Code_InvalidJsonDetail" xml:space="preserve"><value>JSON غير صالح: {0}</value></data>
+  <data name="Code_UnknownProperty" xml:space="preserve"><value>خاصية غير معروفة "{0}".</value></data>
+  <data name="Code_WrongType" xml:space="preserve"><value>هذه القيمة من نوع خاطئ أو ليست إحدى القيم المسموح بها.</value></data>
+  <data name="Code_NeedsValue" xml:space="preserve"><value>مطلوب قيمة هنا، وليس null.</value></data>
+  <data name="Code_InvalidJson" xml:space="preserve"><value>JSON غير صالح.</value></data>
+  <data name="Code_EnterName" xml:space="preserve"><value>أدخل اسمًا.</value></data>
+  <data name="Code_AddAction" xml:space="preserve"><value>أضف إجراءً واحدًا على الأقل.</value></data>
+  <data name="Code_KeyVkOld" xml:space="preserve"><value>لم يعد مستخدمًا: توضع المفاتيح في "Actions". أزله.</value></data>
+  <data name="Code_IntervalMsOld" xml:space="preserve"><value>لم يعد مستخدمًا: توضع الفواصل الزمنية في "Actions". أزله.</value></data>
+  <data name="Code_HotkeyVkOld" xml:space="preserve"><value>لم يعد مستخدمًا: استخدم "Hotkey". أزله.</value></data>
+  <data name="Code_LoopChooseKey" xml:space="preserve"><value>اختر المفتاح أو زر الماوس: رمز مفتاح ظاهري من 1 إلى 254.</value></data>
+  <data name="Code_EnterText" xml:space="preserve"><value>أدخل النص.</value></data>
+  <data name="Code_TextNoHold" xml:space="preserve"><value>يمكن الضغط المستمر على "ضغط مفتاح" و"نقر" فقط.</value></data>
+  <data name="Code_IntervalRange" xml:space="preserve"><value>يجب أن يكون الفاصل الزمني بين 10 مللي ثانية و24 ساعة.</value></data>
+  <data name="Code_HotkeyPressed" xml:space="preserve"><value>لا يمكن أن يكون مفتاح التشغيل السريع أحد المفاتيح التي تضغطها هذه الحلقة.</value></data>
+  <data name="Code_LoopOnlyPressKeyModifiers" xml:space="preserve"><value>"ضغط مفتاح" فقط يحتوي على Ctrl أو Alt أو Shift أو Win. أزله.</value></data>
+  <data name="Code_ClickNoModifiers" xml:space="preserve"><value>لا يحتوي النقر على Ctrl أو Alt أو Shift أو Win. أزله.</value></data>
+  <data name="Code_HoldDownSingleKey" xml:space="preserve"><value>يعمل الضغط المستمر مع مفتاح واحد. لمجموعة مفاتيح، استخدم Repeat.</value></data>
+  <data name="Code_OnlyPressKeyAndClick" xml:space="preserve"><value>يتوفر هذا فقط في "ضغط مفتاح" و"نقر". أزله.</value></data>
+  <data name="Code_OnlyClick" xml:space="preserve"><value>يتوفر هذا فقط في "نقر". أزله.</value></data>
+  <data name="Code_ClickCountOrNull" xml:space="preserve"><value>يجب أن تكون 1 (نقرة مفردة) أو 2 (نقرة مزدوجة) أو null.</value></data>
+  <data name="Code_SetBothXYFixed" xml:space="preserve"><value>عيّن X وY معًا لنقطة ثابتة، أو لا تعيّن أيًا منهما (null: مكان المؤشر).</value></data>
+  <data name="Code_SourceVkOld" xml:space="preserve"><value>لم يعد مستخدمًا: استخدم "Source"، مثل {"Vk": 65} للمفتاح A. أزله.</value></data>
+  <data name="Code_ChooseSource" xml:space="preserve"><value>اختر المفتاح أو زر الماوس أو مجموعة المفاتيح المراد إعادة تعيينها.</value></data>
+  <data name="Code_ChooseTarget" xml:space="preserve"><value>اختر ما يتم إرساله بدلًا من ذلك.</value></data>
+  <data name="Code_TargetDifferent" xml:space="preserve"><value>أرسل شيئًا مختلفًا عما تضغط عليه.</value></data>
+  <data name="Code_PrimaryMouseNeedsApp" xml:space="preserve"><value>لا يمكن إعادة تعيين النقر الأيسر والأيمن إلا في تطبيق محدد، حتى يستمرا في العمل في كل مكان آخر.</value></data>
+  <data name="Code_GroupNotAllowed" xml:space="preserve"><value>يمكن أن يكون هذا الإجراء فقط في: {0}. يجب أن تكون إجراءات المجموعة متجاورة.</value></data>
+  <data name="Code_SpeedSteps" xml:space="preserve"><value>يجب أن تكون 0.25 أو 0.5 أو 1 أو 2 أو 4.</value></data>
+  <data name="Code_GroupIdTwice" xml:space="preserve"><value>هناك مجموعتان لهما هذا Id.</value></data>
+  <data name="Code_EnterGroupName" xml:space="preserve"><value>أدخل اسم مجموعة.</value></data>
+  <data name="Code_NoSuchGroup" xml:space="preserve"><value>لا توجد مجموعة في "Groups" لها هذا Id.</value></data>
+  <data name="Code_GroupApart" xml:space="preserve"><value>يجب أن تكون إجراءات المجموعة متجاورة.</value></data>
+  <data name="Code_GroupNoActions" xml:space="preserve"><value>لا تحتوي هذه المجموعة على إجراءات: أضف إليها إجراءات ("GroupId") أو أزلها.</value></data>
+  <data name="Code_MacroChooseKey" xml:space="preserve"><value>اختر مفتاحًا: رمز مفتاح ظاهري من 1 إلى 254.</value></data>
+  <data name="Code_UseMouseAction" xml:space="preserve"><value>استخدم إجراء "نقر" أو "ضغط زر الماوس لأسفل" أو "تحرير زر الماوس" لأزرار الماوس.</value></data>
+  <data name="Code_ChooseMouseButton" xml:space="preserve"><value>اختر زر ماوس: 1 الأيسر، 2 الأيمن، 4 الأوسط، 5 الخلف (X1)، 6 الأمام (X2).</value></data>
+  <data name="Code_KeyDownOneKey" xml:space="preserve"><value>يقبل "ضغط المفتاح لأسفل" و"تحرير المفتاح" مفتاحًا واحدًا: لاستخدام Ctrl أو Alt أو Shift أو Win بمفرده، استخدم رمز مفتاحه في "Vk" (160، 161 Shift؛ 162، 163 Ctrl؛ 164، 165 Alt؛ 91، 92 Win).</value></data>
+  <data name="Code_MacroOnlyPressKeyModifiers" xml:space="preserve"><value>إجراء "ضغط مفتاح" فقط يحتوي على Ctrl أو Alt أو Shift أو Win. أزله.</value></data>
+  <data name="Code_ClickCount" xml:space="preserve"><value>يجب أن تكون 1 (نقرة مفردة) أو 2 (نقرة مزدوجة).</value></data>
+  <data name="Code_PathEmpty" xml:space="preserve"><value>يحتاج المسار إلى نقطة واحدة على الأقل.</value></data>
+  <data name="Code_PathTimes" xml:space="preserve"><value>يجب أن تبدأ الأوقات من 0 أو أكثر وألا تعود إلى الخلف أبدًا.</value></data>
+  <data name="Code_EnterPasteText" xml:space="preserve"><value>أدخل النص المراد لصقه.</value></data>
+  <data name="Overlay_WindowTitle" xml:space="preserve"><value>لوحة تراكب PuppyMacro</value></data>
+  <data name="Overlay_MovePanel" xml:space="preserve"><value>نقل اللوحة</value></data>
+  <data name="Overlay_MovePanelTip" xml:space="preserve"><value>اسحب لنقل اللوحة</value></data>
+  <data name="Overlay_Exit" xml:space="preserve"><value>الخروج من وضع التراكب</value></data>
+  <data name="Overlay_ExitTip" xml:space="preserve"><value>الخروج من وضع التراكب ({0})</value></data>
+  <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>الخروج وفتح PuppyMacro</value></data>
+  <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>الخروج من وضع التراكب وفتح PuppyMacro</value></data>
+  <data name="Overlay_NothingToShow" xml:space="preserve"><value>لا يوجد شيء لعرضه.</value></data>
+  <data name="Overlay_AllOnButtons" xml:space="preserve"><value>كل شيء موجود على أزرار عائمة.</value></data>
+  <data name="Overlay_NothingForApp" xml:space="preserve"><value>لا يوجد شيء لهذا التطبيق.</value></data>
+  <data name="Overlay_Macros" xml:space="preserve"><value>وحدات الماكرو</value></data>
+  <data name="Overlay_StopAll" xml:space="preserve"><value>إيقاف الكل</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>انقر للبدء أو الإيقاف · انقر بزر الماوس الأيمن للتمكين أو التعطيل</value></data>
+  <data name="Floating_WindowTitle" xml:space="preserve"><value>زر PuppyMacro العائم</value></data>
+  <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>زر PuppyMacro العائم: {0}</value></data>
+  <data name="Recording_Title" xml:space="preserve"><value>التسجيل</value></data>
+  <data name="Recording_StartsIn" xml:space="preserve"><value>يبدأ التسجيل خلال {0}</value></data>
+  <data name="Recording_SwitchHint" xml:space="preserve"><value>بدّل إلى النافذة المراد تسجيلها. لا يتم تسجيل النقرات بعد.</value></data>
+  <data name="Recording_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="Recording_Stop" xml:space="preserve"><value>إيقاف</value></data>
+  <data name="Recording_Events_zero" xml:space="preserve"><value>{0} حدث</value></data>
+  <data name="Recording_Events_one" xml:space="preserve"><value>حدث واحد</value></data>
+  <data name="Recording_Events_two" xml:space="preserve"><value>حدثان</value></data>
+  <data name="Recording_Events_few" xml:space="preserve"><value>{0} أحداث</value></data>
+  <data name="Recording_Events_many" xml:space="preserve"><value>{0} حدثًا</value></data>
+  <data name="Recording_Events_other" xml:space="preserve"><value>{0} حدث</value></data>
+  <data name="Recording_PressToStop" xml:space="preserve"><value>اضغط على {0} للإيقاف</value></data>
+  <data name="Recording_ReadyTitle" xml:space="preserve"><value>جاهز للتسجيل</value></data>
+  <data name="Recording_PressOrSelect" xml:space="preserve"><value>اضغط على {0} أو حدد {1}</value></data>
+  <data name="Recording_StartRecording" xml:space="preserve"><value>بدء التسجيل</value></data>
+  <data name="Recording_RecordMouseMovement" xml:space="preserve"><value>تسجيل حركة الماوس</value></data>
+  <data name="Recording_PromptDescription" xml:space="preserve"><value>لديك 3 ثوانٍ للتبديل إلى النافذة التي تريد تسجيلها. يتم تسجيل كل ما تضغط عليه وتنقره وتحركه حتى تضغط على {0} أو تحدد "إيقاف".</value></data>
+  <data name="Countdown_Title" xml:space="preserve"><value>العد التنازلي للتسجيل</value></data>
+  <data name="Countdown_Starts" xml:space="preserve"><value>يبدأ التسجيل…</value></data>
+  <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>تعذرت قراءة لوحة المفاتيح.</value></data>
+  <data name="Input_CannotReadMouse" xml:space="preserve"><value>تعذرت قراءة الماوس.</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>هذا الملف ليس ملف عناصر PuppyMacro.</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>تم إنشاء هذا الملف باستخدام PuppyMacro {0}، وهو أحدث من هذا الإصدار ({1}). حدّث PuppyMacro لاستيراده.</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>تم إنشاء هذا الملف باستخدام إصدار أحدث من PuppyMacro. حدّث PuppyMacro لاستيراده.</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>العنصر {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>نوع غير معروف "{0}": يستورد PuppyMacro الحلقات ووحدات الماكرو وعمليات إعادة التعيين.</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>الحلقة مفقودة.</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>الماكرو مفقود.</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>إعادة التعيين مفقودة.</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>توجد حلقة بهذا الاسم: تم استيرادها باسم "{0}".</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>يوجد ماكرو بهذا الاسم: تم استيراده باسم "{0}".</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}" في هذا الملف.</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}" في هذا الملف.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: تم الاستيراد بدون مفتاح تشغيل سريع.</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: تم الاستيراد بدون مفتاح تشغيل سريع، بوضع "تبديل" (يحتاج الضغط المستمر إلى مفتاح تشغيل سريع).</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}" في هذا الملف. لمفاتيح التشغيل السريع الأولوية على عمليات إعادة التعيين.</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}" في هذا الملف. لمفاتيح التشغيل السريع الأولوية على عمليات إعادة التعيين.</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لكل التطبيقات في هذا الملف.</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لـ {1} في هذا الملف.</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>عناصر PuppyMacro</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>إعادة تعيين {0}</value></data>
+  <data name="Ai_Exported_zero" xml:space="preserve"><value>صدّر {0} عنصر</value></data>
+  <data name="Ai_Exported_one" xml:space="preserve"><value>صدّر عنصرًا واحدًا</value></data>
+  <data name="Ai_Exported_two" xml:space="preserve"><value>صدّر عنصرين</value></data>
+  <data name="Ai_Exported_few" xml:space="preserve"><value>صدّر {0} عناصر</value></data>
+  <data name="Ai_Exported_many" xml:space="preserve"><value>صدّر {0} عنصرًا</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>صدّر {0} عنصر</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>استورد الحلقة {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>استورد الماكرو {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>استورد إعادة التعيين {0}</value></data>
+  <data name="Ai_ImportCount_zero" xml:space="preserve"><value>استيراد {0} عنصر</value></data>
+  <data name="Ai_ImportCount_one" xml:space="preserve"><value>استيراد عنصر واحد</value></data>
+  <data name="Ai_ImportCount_two" xml:space="preserve"><value>استيراد عنصرين</value></data>
+  <data name="Ai_ImportCount_few" xml:space="preserve"><value>استيراد {0} عناصر</value></data>
+  <data name="Ai_ImportCount_many" xml:space="preserve"><value>استيراد {0} عنصرًا</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>استيراد {0} عنصر</value></data>
+  <data name="Ai_ConfirmImport_zero" xml:space="preserve"><value>هل تريد استيراد العناصر ({0})؟</value></data>
+  <data name="Ai_ConfirmImport_one" xml:space="preserve"><value>هل تريد استيراد هذا العنصر؟</value></data>
+  <data name="Ai_ConfirmImport_two" xml:space="preserve"><value>هل تريد استيراد هذين العنصرين؟</value></data>
+  <data name="Ai_ConfirmImport_few" xml:space="preserve"><value>هل تريد استيراد هذه العناصر الـ {0}؟</value></data>
+  <data name="Ai_ConfirmImport_many" xml:space="preserve"><value>هل تريد استيراد هذه العناصر الـ {0}؟</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>هل تريد استيراد هذه العناصر الـ {0}؟</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>فتح "استيراد"</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>فتح "تصدير"</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>إضافة حلقات ووحدات ماكرو وعمليات إعادة تعيين من ملف</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>تصدير</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>حفظ الحلقات ووحدات الماكرو وعمليات إعادة التعيين في ملف لمشاركتها</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>تصدير…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>عناصر PuppyMacro (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>استيراد الحلقات ووحدات الماكرو وعمليات إعادة التعيين</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>تصدير الحلقات ووحدات الماكرو وعمليات إعادة التعيين</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>موافق</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>من {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>تعذرت قراءة الملف: {0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>التحقق من وجود تحديثات</value></data>
+  <data name="ImportItems_Button_zero" xml:space="preserve"><value>استيراد {0} عنصر</value></data>
+  <data name="ImportItems_Button_one" xml:space="preserve"><value>استيراد عنصر واحد</value></data>
+  <data name="ImportItems_Button_two" xml:space="preserve"><value>استيراد عنصرين</value></data>
+  <data name="ImportItems_Button_few" xml:space="preserve"><value>استيراد {0} عناصر</value></data>
+  <data name="ImportItems_Button_many" xml:space="preserve"><value>استيراد {0} عنصرًا</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>استيراد {0} عنصر</value></data>
+  <data name="ExportItems_Button_zero" xml:space="preserve"><value>تصدير {0} عنصر…</value></data>
+  <data name="ExportItems_Button_one" xml:space="preserve"><value>تصدير عنصر واحد…</value></data>
+  <data name="ExportItems_Button_two" xml:space="preserve"><value>تصدير عنصرين…</value></data>
+  <data name="ExportItems_Button_few" xml:space="preserve"><value>تصدير {0} عناصر…</value></data>
+  <data name="ExportItems_Button_many" xml:space="preserve"><value>تصدير {0} عنصرًا…</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>تصدير {0} عنصر…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>فشل التصدير</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>الحلقات</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>وحدات الماكرو</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>عمليات إعادة التعيين</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>اختر الحلقات ووحدات الماكرو وعمليات إعادة التعيين المراد حفظها في ملف واحد، لمشاركتها أو لاستخدامها على كمبيوتر آخر.</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>بحث</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>النوع</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>كل الأنواع</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>تحديد كل المعروض</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>المعروض: {0} · المحدد: {1}</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>ليست لديك حلقات أو وحدات ماكرو أو عمليات إعادة تعيين بعد.</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>لا يوجد ما يطابق البحث.</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>اختيار ملف آخر…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>تحديد الكل</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>تكون العناصر المستوردة معطّلة في البداية.</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>قم بتشغيل كل عنصر بعد التحقق مما يفعله.</value></data>
+  <data name="ImportItems_OtherCount_zero" xml:space="preserve"><value>{0} عنصر آخر</value></data>
+  <data name="ImportItems_OtherCount_one" xml:space="preserve"><value>عنصر واحد آخر</value></data>
+  <data name="ImportItems_OtherCount_two" xml:space="preserve"><value>عنصران آخران</value></data>
+  <data name="ImportItems_OtherCount_few" xml:space="preserve"><value>{0} عناصر أخرى</value></data>
+  <data name="ImportItems_OtherCount_many" xml:space="preserve"><value>{0} عنصرًا آخر</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} عنصر آخر</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>لا توجد عناصر</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>من PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>عناصر PuppyMacro</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>نسخة PuppyMacro الاحتياطية</value></data>
+</root>

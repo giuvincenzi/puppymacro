@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
 
@@ -54,8 +56,10 @@ public partial class MacroActionWindow
     {
         _action = action.Clone();
         // "Add press key"; "Edit click - Open inventory" (its name, or what it does when it has none).
-        string type = TypeName(_action.Type).ToLowerInvariant();
-        Title = _isNew ? "Add " + type : $"Edit {type} - {new MacroActionRowViewModel(_action).Title}";
+        Title = _isNew
+            ? Loc.Text($"ActionWindow_Add_{_action.Type}")
+            : string.Format(CultureInfo.CurrentCulture, Loc.Text($"ActionWindow_Edit_{_action.Type}"),
+                new MacroActionRowViewModel(_action).Title);
 
         ActionNameBox.Text = _action.Name;
         DelayBox.Value = _action.DelayMs;
@@ -71,16 +75,16 @@ public partial class MacroActionWindow
 
     public static string TypeName(MacroActionType type) => type switch
     {
-        MacroActionType.PressKey => "Press key",
-        MacroActionType.KeyDown => "Key down",
-        MacroActionType.KeyUp => "Key up",
-        MacroActionType.Click => "Click",
-        MacroActionType.MouseDown => "Mouse button down",
-        MacroActionType.MouseUp => "Mouse button up",
-        MacroActionType.MoveTo => "Move to",
-        MacroActionType.MovePath => "Move path",
-        MacroActionType.Scroll => "Scroll",
-        MacroActionType.PasteText => "Paste text",
+        MacroActionType.PressKey => Strings.ActionWindow_Type_PressKey,
+        MacroActionType.KeyDown => Strings.ActionWindow_Type_KeyDown,
+        MacroActionType.KeyUp => Strings.ActionWindow_Type_KeyUp,
+        MacroActionType.Click => Strings.ActionWindow_Type_Click,
+        MacroActionType.MouseDown => Strings.ActionWindow_Type_MouseDown,
+        MacroActionType.MouseUp => Strings.ActionWindow_Type_MouseUp,
+        MacroActionType.MoveTo => Strings.ActionWindow_Type_MoveTo,
+        MacroActionType.MovePath => Strings.ActionWindow_Type_MovePath,
+        MacroActionType.Scroll => Strings.ActionWindow_Type_Scroll,
+        MacroActionType.PasteText => Strings.ActionWindow_Type_PasteText,
         _ => type.ToString(),
     };
 

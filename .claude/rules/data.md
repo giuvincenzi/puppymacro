@@ -79,6 +79,13 @@ paths:
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
   loop is enabled). Keep
   the samples working when models change.
+- `AppSettings.Language`: a code of `AppLanguages.All` or null, "Use system language" (also in older files, no
+  migration: an existing user sees PuppyMacro in the Windows display language from 1.17, as decided); an unknown value
+  (a newer version's language, a hand edit) is read as null (`SettingsStore.Sanitize`). Nothing in the data depends on
+  the language: numbers and dates in files are invariant (`i18n.md`).
+- History versions and AI requests keep their texts as a `Phrase` (`SummaryPhrase`, `ChangePhrases`, `RequestPhrase`)
+  next to the English text older versions read (`Summary`, `Changes`, `Request`); files from before 1.17 have only the
+  English text (`i18n.md`).
 - AI apps: `AppSettings.AllowAiAccess` is off by default and in older files (a new field with the old behavior, no
   migration); so are its permissions' defaults in older files: `AiAskBeforeDeleting` on, `AiAskBeforeChanging` off,
   `AiAskBeforeSettings` on, `AiStartWhenNeeded` on (the bridge reads them from `settings.json` without writing it).

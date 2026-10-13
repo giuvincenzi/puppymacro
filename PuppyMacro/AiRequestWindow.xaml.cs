@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
 using PuppyMacro.Views;
@@ -21,8 +23,8 @@ public partial class AiRequestWindow
     {
         InitializeComponent();
         WindowFit.Apply(this);
-        Title = $"AI request - {app}"; // its own name in the taskbar, not the main window's
-        AskedByText.Text = $"Asked by {app}";
+        Title = string.Format(CultureInfo.CurrentCulture, Strings.AiRequest_TitleWithApp, app); // its own name in the taskbar, not the main window's
+        AskedByText.Text = string.Format(CultureInfo.CurrentCulture, Strings.AiRequest_AskedBy, app);
         HeadingText.Text = heading;
         OkButton.Content = ok;
     }
@@ -51,11 +53,11 @@ public partial class AiRequestWindow
     /// <summary>Asks for a key or combination, with the AI app's title, description and steps (numbered).</summary>
     internal static AiRequestWindow KeyRequest(string app, AiAsk ask, LoopEngine engine)
     {
-        var window = new AiRequestWindow(app, ask.Title, "OK");
+        var window = new AiRequestWindow(app, ask.Title, Strings.AiRequest_Ok);
         window.ContextText.Text = ask.Description;
         window.ContextText.Visibility = Visibility.Visible;
         window.InstructionsTitle.Visibility = Visibility.Visible;
-        window.Lines.ItemsSource = ask.Steps.Select((step, index) => $"{index + 1}. {step}").ToList();
+        window.Lines.ItemsSource = ask.Steps.Select((step, index) => string.Format(CultureInfo.CurrentCulture, Strings.AiRequest_Step, index + 1, step)).ToList();
         window.Lines.Visibility = Visibility.Visible;
         KeyCaptureField.SetEngine(window, engine); // the key field waits for keys through it
         window.KeyCard.Visibility = Visibility.Visible;

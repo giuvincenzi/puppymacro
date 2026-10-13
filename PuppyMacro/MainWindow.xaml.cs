@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
 using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
@@ -124,7 +126,7 @@ public partial class MainWindow
         {
             // The Run entry belongs to the installed app.
             StartWithWindowsSwitch.IsEnabled = false;
-            StartWithWindowsText.Text = "Not available in the development build";
+            StartWithWindowsText.Text = Strings.Settings_NotInDevBuild;
         }
         else
         {
@@ -137,12 +139,13 @@ public partial class MainWindow
         RefreshUpdateUi();
         BackupGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Backup");
         AboutGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("About");
-        DataFolderText.Text = $"Data saved in {AppPaths.DataFolder}";
+        DataFolderText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Settings_DataSavedIn, AppPaths.DataFolder);
         RemapFilterBox.SelectedIndex = 0;
         UpdateRemapState();
         FilterBox.SelectedIndex = (int)settings.Filter;
         MacroFilterBox.SelectedIndex = 0;
         ThemeComboBox.SelectedIndex = (int)settings.Theme;
+        FillLanguages();
         UpdateHotkeyLabels();
         UpdateLoopState();
         RestorePlacement();
@@ -170,8 +173,8 @@ public partial class MainWindow
         }
         catch (Win32Exception ex)
         {
-            MessageBox.Show($"Hotkeys don't work right now:\n\n{ex.Message}", "PuppyMacro",
-                MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, Strings.Main_HotkeysNotWorking, ex.Message), "PuppyMacro",
+                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, App.MessageBoxOptions);
         }
     }
 
@@ -201,7 +204,7 @@ public partial class MainWindow
             if (!_settings.TrayNoticeShown)
             {
                 _settings.TrayNoticeShown = true;
-                _tray.Notify("PuppyMacro", "PuppyMacro is still running in the system tray. Right-click its icon to exit.");
+                _tray.Notify("PuppyMacro", Strings.Tray_StillRunning);
             }
         }
         Save();
@@ -240,11 +243,11 @@ public partial class MainWindow
 
     private void ShowTrayMenu()
     {
-        var open = new MenuItem { Header = "Open PuppyMacro", FontWeight = FontWeights.SemiBold };
+        var open = new MenuItem { Header = Strings.Tray_Open, FontWeight = FontWeights.SemiBold };
         open.Click += (_, _) => ShowFromTray();
-        var stopAll = new MenuItem { Header = "Stop all", IsEnabled = _engine.AnyRunning };
+        var stopAll = new MenuItem { Header = Strings.Main_StopAll, IsEnabled = _engine.AnyRunning };
         stopAll.Click += (_, _) => _engine.StopAll();
-        var exit = new MenuItem { Header = "Exit" };
+        var exit = new MenuItem { Header = Strings.Tray_Exit };
         exit.Click += (_, _) => ExitApp();
 
         var menu = new ContextMenu { Placement = PlacementMode.MousePoint };
@@ -395,16 +398,17 @@ public partial class MainWindow
     {
         int total = _items.Count;
         int running = _items.Count(i => i.IsRunning);
-        CountText.Text = $"{total} {(total == 1 ? "loop" : "loops")}, {running} running";
+        CountText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Loops_CountLine,
+            Plurals.Format("Loops_Count", total), Plurals.Format("Main_RunningCount", running));
 
         if (total == 0)
         {
-            EmptyLoopsText.Text = "No loops yet. Select Add loop to create one.";
+            EmptyLoopsText.Text = Strings.Loops_Empty;
             EmptyLoopsText.Visibility = Visibility.Visible;
         }
         else if (_view.Count == 0)
         {
-            EmptyLoopsText.Text = "No loops match the search or filter.";
+            EmptyLoopsText.Text = Strings.Loops_NoMatch;
             EmptyLoopsText.Visibility = Visibility.Visible;
         }
         else
@@ -414,10 +418,10 @@ public partial class MainWindow
 
         bool anyRunning = _engine.AnyRunning;
         AddLoopButton.IsEnabled = !anyRunning;
-        AddLoopButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
+        AddLoopButton.ToolTip = anyRunning ? Strings.Main_StopRunningFirst : null;
         NewMacroButton.IsEnabled = !anyRunning;
         RecordMacroButton.IsEnabled = !anyRunning;
-        NewMacroButton.ToolTip = RecordMacroButton.ToolTip = anyRunning ? "Stop running loops and macros first" : null;
+        NewMacroButton.ToolTip = RecordMacroButton.ToolTip = anyRunning ? Strings.Main_StopRunningFirst : null;
         StopAllButton.Visibility = anyRunning ? Visibility.Visible : Visibility.Collapsed;
         foreach (var loop in _items)
             loop.CanEdit = !anyRunning;
@@ -459,26 +463,26 @@ public partial class MainWindow
         if (sender is not FrameworkElement button || button.Tag is not LoopItemViewModel item)
             return;
 
-        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
+        var delete = new MenuItem { Header = Strings.Card_Delete, Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteLoop(item);
 
         int index = _items.IndexOf(item);
         var moveUp = new MenuItem
         {
-            Header = "Move up",
+            Header = Strings.Card_MoveUp,
             Icon = new FontIcon { Icon = SegoeFluentIcons.Up },
             IsEnabled = index > 0,
         };
         moveUp.Click += (_, _) => MoveItem(item, index - 1);
         var moveDown = new MenuItem
         {
-            Header = "Move down",
+            Header = Strings.Card_MoveDown,
             Icon = new FontIcon { Icon = SegoeFluentIcons.Down },
             IsEnabled = index < _items.Count - 1,
         };
         moveDown.Click += (_, _) => MoveItem(item, index + 1);
 
-        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
         export.Click += (_, _) => ExportOne(item.Definition);
         var menu = new ContextMenu
         {
@@ -529,10 +533,10 @@ public partial class MainWindow
     {
         var confirm = new ContentDialog
         {
-            Title = "Delete loop",
-            Content = $"Delete \"{item.Name}\"? This cannot be undone.",
-            PrimaryButtonText = "Delete",
-            CloseButtonText = "Cancel",
+            Title = Strings.Loops_DeleteTitle,
+            Content = string.Format(CultureInfo.CurrentCulture, Strings.Main_DeleteNamedConfirm, item.Name),
+            PrimaryButtonText = Strings.Card_Delete,
+            CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Close,
         };
         ContentDialogResult result;
@@ -609,16 +613,17 @@ public partial class MainWindow
             return;
         int total = _macroItems.Count;
         int running = _macroItems.Count(m => m.IsRunning);
-        MacroCountText.Text = $"{total} {(total == 1 ? "macro" : "macros")}, {running} running";
+        MacroCountText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Macros_CountLine,
+            Plurals.Format("Macros_Count", total), Plurals.Format("Main_RunningCount", running));
 
         if (total == 0)
         {
-            EmptyMacrosText.Text = "No macros yet. Record one, or select Add macro to build it step by step.";
+            EmptyMacrosText.Text = Strings.Macros_Empty;
             EmptyMacrosText.Visibility = Visibility.Visible;
         }
         else if (_macroView.Count == 0)
         {
-            EmptyMacrosText.Text = "No macros match the search or filter.";
+            EmptyMacrosText.Text = Strings.Macros_NoMatch;
             EmptyMacrosText.Visibility = Visibility.Visible;
         }
         else
@@ -693,13 +698,13 @@ public partial class MainWindow
             return;
 
         int index = _macroItems.IndexOf(item);
-        var moveUp = new MenuItem { Header = "Move up", Icon = new FontIcon { Icon = SegoeFluentIcons.Up }, IsEnabled = index > 0 };
+        var moveUp = new MenuItem { Header = Strings.Card_MoveUp, Icon = new FontIcon { Icon = SegoeFluentIcons.Up }, IsEnabled = index > 0 };
         moveUp.Click += (_, _) => MoveMacro(item, index - 1);
-        var moveDown = new MenuItem { Header = "Move down", Icon = new FontIcon { Icon = SegoeFluentIcons.Down }, IsEnabled = index < _macroItems.Count - 1 };
+        var moveDown = new MenuItem { Header = Strings.Card_MoveDown, Icon = new FontIcon { Icon = SegoeFluentIcons.Down }, IsEnabled = index < _macroItems.Count - 1 };
         moveDown.Click += (_, _) => MoveMacro(item, index + 1);
-        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
+        var delete = new MenuItem { Header = Strings.Card_Delete, Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteMacro(item);
-        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
@@ -745,10 +750,10 @@ public partial class MainWindow
     {
         var confirm = new ContentDialog
         {
-            Title = "Delete macro",
-            Content = $"Delete \"{item.Name}\"? This cannot be undone.",
-            PrimaryButtonText = "Delete",
-            CloseButtonText = "Cancel",
+            Title = Strings.Macros_DeleteTitle,
+            Content = string.Format(CultureInfo.CurrentCulture, Strings.Main_DeleteNamedConfirm, item.Name),
+            PrimaryButtonText = Strings.Card_Delete,
+            CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Close,
         };
         ContentDialogResult result;
@@ -804,7 +809,7 @@ public partial class MainWindow
     {
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_macros.TrySave(macro, out string? error))
-            ShowSettingsError($"Could not save the macro \"{macro.Name}\": {error}");
+            ShowSettingsError(string.Format(CultureInfo.CurrentCulture, Strings.Macros_SaveFailed, macro.Name, error));
         _itemHistory?.Record(macro.Id, MacroJson.Serialize(macro), _savedBy);
     }
 
@@ -1082,6 +1087,52 @@ public partial class MainWindow
         Save();
     }
 
+    /// <summary>The Language list: Use system language, then every language by its own name, alphabetical. Each item's
+    /// Tag is its code (null for the system language).</summary>
+    private void FillLanguages()
+    {
+        LanguageComboBox.Items.Add(new ComboBoxItem { Content = Strings.Settings_LanguageSystem, Tag = null });
+        foreach (AppLanguages.Language language in AppLanguages.ForMenu())
+            LanguageComboBox.Items.Add(new ComboBoxItem { Content = language.NativeName, Tag = language.Code });
+        LanguageComboBox.SelectedItem = LanguageComboBox.Items.Cast<ComboBoxItem>()
+            .First(item => (string?)item.Tag == _settings.Language);
+    }
+
+    private async void OnLanguageChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_initializing || LanguageComboBox.SelectedItem is not ComboBoxItem item)
+            return;
+        _settings.Language = (string?)item.Tag;
+        Save();
+
+        // The texts are read once at start: a restart shows the new language. Nothing to restart when the choice gives
+        // the language in use (Italiano on an Italian Windows).
+        string language = App.LanguageFor(_settings.Language);
+        if (language == App.LanguageInUse)
+            return;
+        var restart = new ContentDialog
+        {
+            Title = Strings.LanguageRestart_Title,
+            Content = string.Format(CultureInfo.CurrentCulture, Strings.LanguageRestart_Content,
+                AppLanguages.All.First(l => l.Code == language).NativeName),
+            PrimaryButtonText = Strings.LanguageRestart_Restart,
+            CloseButtonText = Strings.LanguageRestart_Later,
+            DefaultButton = ContentDialogButton.Primary,
+        };
+        ContentDialogResult result;
+        _engine.HotkeysSuspended = true;
+        try
+        {
+            result = await restart.ShowAsync(this);
+        }
+        finally
+        {
+            _engine.HotkeysSuspended = false;
+        }
+        if (result == ContentDialogResult.Primary)
+            App.Restart();
+    }
+
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (_overlayPanelWindow == null)
@@ -1195,7 +1246,7 @@ public partial class MainWindow
         }
         if (!_settings.ShowOverlayPanel && buttons.Count == 0)
         {
-            ShowSettingsError("Nothing to place. Turn on the overlay panel or add a floating button.");
+            ShowSettingsError(Strings.Settings_NothingToPlace);
             return null;
         }
 
@@ -1365,8 +1416,10 @@ public partial class MainWindow
         OverlayModeHotkeyField.Value = _settings.OverlayModeHotkey?.Clone();
         RecordHotkeyField.Value = _settings.RecordHotkey?.Clone();
         // The hotkey in the tooltip, when there is one
-        StopAllButton.ToolTip = _settings.StopAllHotkey == null ? null : $"Stop all ({stopAll})";
-        OverlayModeButton.ToolTip = _settings.OverlayModeHotkey == null ? null : $"Enter overlay mode ({overlayMode})";
+        StopAllButton.ToolTip = _settings.StopAllHotkey == null ? null
+            : string.Format(CultureInfo.CurrentCulture, Strings.Main_StopAllTooltip, stopAll);
+        OverlayModeButton.ToolTip = _settings.OverlayModeHotkey == null ? null
+            : string.Format(CultureInfo.CurrentCulture, Strings.Main_EnterOverlayModeTooltip, overlayMode);
         _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll);
     }
 
@@ -1444,7 +1497,7 @@ public partial class MainWindow
     {
         _engine.Publish(EngineSnapshot.From(_settings, _macros));
         if (!_store.TrySave(_settings, out string? error))
-            ShowSettingsError($"Could not save your settings: {error}");
+            ShowSettingsError(string.Format(CultureInfo.CurrentCulture, Strings.Settings_SaveFailed, error));
         RecordHistory();
     }
 
@@ -1555,15 +1608,16 @@ public partial class MainWindow
             return;
         int total = _remapItems.Count;
         int enabled = _remapItems.Count(r => r.IsLoopEnabled);
-        RemapCountText.Text = $"{total} {(total == 1 ? "remap" : "remaps")}, {enabled} enabled";
+        RemapCountText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Remaps_CountLine,
+            Plurals.Format("Remaps_Count", total), Plurals.Format("Remaps_EnabledCount", enabled));
         if (total == 0)
         {
-            EmptyRemapsText.Text = "No remaps yet. Select Add remap to turn one key or button into another.";
+            EmptyRemapsText.Text = Strings.Remaps_Empty;
             EmptyRemapsText.Visibility = Visibility.Visible;
         }
         else if (_remapView.Count == 0)
         {
-            EmptyRemapsText.Text = "No remaps match the search or filter.";
+            EmptyRemapsText.Text = Strings.Remaps_NoMatch;
             EmptyRemapsText.Visibility = Visibility.Visible;
         }
         else
@@ -1601,11 +1655,11 @@ public partial class MainWindow
         if (sender is not FrameworkElement button || button.Tag is not RemapItemViewModel item)
             return;
 
-        var duplicate = new MenuItem { Header = "Duplicate", Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
+        var duplicate = new MenuItem { Header = Strings.Card_Duplicate, Icon = new FontIcon { Icon = SegoeFluentIcons.Copy } };
         duplicate.Click += (_, _) => DuplicateRemap(item);
-        var delete = new MenuItem { Header = "Delete", Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
+        var delete = new MenuItem { Header = Strings.Card_Delete, Icon = new FontIcon { Icon = SegoeFluentIcons.Delete } };
         delete.Click += (_, _) => DeleteRemap(item);
-        var export = new MenuItem { Header = "Export…", Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
+        var export = new MenuItem { Header = Strings.Share_CardExport, Icon = new FontIcon { Icon = SegoeFluentIcons.Share } };
         export.Click += (_, _) => ExportOne(item.Definition);
 
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
@@ -1659,10 +1713,10 @@ public partial class MainWindow
     {
         var confirm = new ContentDialog
         {
-            Title = "Delete remap",
-            Content = $"Delete the remap {item.SourceText} → {item.TargetText}? This cannot be undone.",
-            PrimaryButtonText = "Delete",
-            CloseButtonText = "Cancel",
+            Title = Strings.Remaps_DeleteTitle,
+            Content = string.Format(CultureInfo.CurrentCulture, Strings.Remaps_DeleteConfirm, item.SourceText, item.TargetText),
+            PrimaryButtonText = Strings.Card_Delete,
+            CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Close,
         };
         ContentDialogResult result;
@@ -1714,10 +1768,10 @@ public partial class MainWindow
         var options = new Views.ExportOptionsView(BackupService.Sizes(AppPaths.DataFolder));
         var choose = new ContentDialog
         {
-            Title = "Export",
+            Title = Strings.Export_Title,
             Content = options,
-            PrimaryButtonText = "Export…",
-            CloseButtonText = "Cancel",
+            PrimaryButtonText = Strings.Settings_ExportButton,
+            CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Primary,
         };
         ContentDialogResult answer;
@@ -1735,9 +1789,9 @@ public partial class MainWindow
 
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Title = "Export PuppyMacro data",
+            Title = Strings.Export_FileDialogTitle,
             FileName = $"PuppyMacro-{DateTime.Now:yyyy-MM-dd}{BackupService.Extension}",
-            Filter = $"PuppyMacro backup (*{BackupService.Extension})|*{BackupService.Extension}",
+            Filter = string.Format(CultureInfo.CurrentCulture, Strings.Backup_FileFilter, BackupService.Extension),
             DefaultExt = BackupService.Extension,
         };
         if (ShowUserDialog(() => dialog.ShowDialog(this)) != true)
@@ -1749,7 +1803,7 @@ public partial class MainWindow
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
         {
-            ShowSettingsError($"Export failed: {ex.Message}");
+            ShowSettingsError(string.Format(CultureInfo.CurrentCulture, Strings.Export_Failed, ex.Message));
         }
     }
 
@@ -1757,8 +1811,8 @@ public partial class MainWindow
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Import PuppyMacro data",
-            Filter = $"PuppyMacro backup (*{BackupService.Extension})|*{BackupService.Extension}",
+            Title = Strings.Backup_ImportFileDialogTitle,
+            Filter = string.Format(CultureInfo.CurrentCulture, Strings.Backup_FileFilter, BackupService.Extension),
         };
         if (ShowUserDialog(() => dialog.ShowDialog(this)) != true)
             return;
@@ -1770,18 +1824,16 @@ public partial class MainWindow
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.IO.InvalidDataException)
         {
-            ShowSettingsError($"Import failed: {ex.Message}");
+            ShowSettingsError(string.Format(CultureInfo.CurrentCulture, Strings.Backup_ImportFailed, ex.Message));
             return;
         }
 
         var confirm = new ContentDialog
         {
-            Title = "Import",
-            Content = $"This file has {PartNames(parts)}. Replace yours with them?\n\n" +
-                      "What the file does not have stays as it is. " +
-                      "Your current data is backed up to the data folder first, then PuppyMacro restarts.",
-            PrimaryButtonText = "Import and restart",
-            CloseButtonText = "Cancel",
+            Title = Strings.Backup_ImportTitle,
+            Content = string.Format(CultureInfo.CurrentCulture, Strings.Backup_ImportConfirm, PartNames(parts)),
+            PrimaryButtonText = Strings.Backup_ImportAndRestart,
+            CloseButtonText = Strings.Main_Cancel,
             DefaultButton = ContentDialogButton.Close,
         };
         ContentDialogResult answer;
@@ -1805,7 +1857,7 @@ public partial class MainWindow
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.IO.InvalidDataException)
         {
-            ShowSettingsError($"Import failed: {ex.Message}");
+            ShowSettingsError(string.Format(CultureInfo.CurrentCulture, Strings.Backup_ImportFailed, ex.Message));
             return;
         }
         _exiting = true;
@@ -1816,14 +1868,16 @@ public partial class MainWindow
     /// <summary>"loops, macros, remaps and settings, History and AI activity".</summary>
     private static string PartNames(BackupParts parts)
     {
-        var names = new List<string> { "loops, macros, remaps and settings" };
+        var names = new List<string> { Strings.Backup_PartData };
         if (parts.HasFlag(BackupParts.History))
-            names.Add("History");
+            names.Add(Strings.Backup_PartHistory);
         if (parts.HasFlag(BackupParts.AiActivity))
-            names.Add("AI activity");
+            names.Add(Strings.Backup_PartAiActivity);
         if (parts.HasFlag(BackupParts.Logs))
-            names.Add("logs");
-        return names.Count == 1 ? names[0] : string.Join(", ", names.Take(names.Count - 1)) + " and " + names[^1];
+            names.Add(Strings.Backup_PartLogs);
+        return names.Count == 1 ? names[0]
+            : string.Format(CultureInfo.CurrentCulture, Strings.Main_ListLastAnd,
+                string.Join(Strings.ListSeparator, names.Take(names.Count - 1)), names[^1]);
     }
 
     private void OnOpenDataFolderClick(object sender, RoutedEventArgs e)

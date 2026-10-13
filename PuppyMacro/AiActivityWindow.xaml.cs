@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using iNKORE.UI.WPF.Modern.Controls;
+using PuppyMacro.Resources;
 using PuppyMacro.Services.Ai;
 using PuppyMacro.Views;
 
@@ -14,9 +15,9 @@ namespace PuppyMacro;
 /// <summary>The AI page's View all: every request kept (AiActivityLog), filtered by period, app, type, result and text.</summary>
 public partial class AiActivityWindow
 {
-    private const string AllApps = "All apps";
-    private const string AllTypes = "All types";
-    private const string AllResults = "All results";
+    private static readonly string AllApps = Strings.AiActivity_AllApps;
+    private static readonly string AllTypes = Strings.AiActivity_AllTypes;
+    private static readonly string AllResults = Strings.AiActivity_AllResults;
 
     private readonly AiActivityLog _log;
     private readonly Func<AiActivity, string?> _restore;
@@ -93,7 +94,7 @@ public partial class AiActivityWindow
         var view = new ListCollectionView(rows);
         view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(AiActivityRow.DayText)));
         ActivityList.ItemsSource = view;
-        EmptyText.Text = entries.Count == 0 ? "No requests yet." : "No requests match the filters.";
+        EmptyText.Text = entries.Count == 0 ? Strings.AiActivity_NoRequests : Strings.AiActivity_NoMatch;
         EmptyText.Visibility = rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ClearButton.IsEnabled = entries.Count > 0;
         ShowDetail();
@@ -115,17 +116,18 @@ public partial class AiActivityWindow
         if (ActivityList.SelectedItem is not AiActivityRow { CanRestore: true } row)
             return;
         if (_restore(row.Entry) is string error)
-            System.Windows.MessageBox.Show(this, error, "AI activity", MessageBoxButton.OK, MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show(this, error, Strings.AiActivity_Title, MessageBoxButton.OK, MessageBoxImage.Warning,
+                MessageBoxResult.OK, App.MessageBoxOptions);
     }
 
     private async void OnClearClick(object sender, RoutedEventArgs e)
     {
         var confirm = new ContentDialog
         {
-            Title = "Clear history",
-            Content = "Delete the history of AI requests? This cannot be undone.",
-            PrimaryButtonText = "Clear",
-            CloseButtonText = "Cancel",
+            Title = Strings.AiActivity_ClearHistory,
+            Content = Strings.AiActivity_ClearConfirm,
+            PrimaryButtonText = Strings.AiActivity_Clear,
+            CloseButtonText = Strings.AiActivity_Cancel,
             DefaultButton = ContentDialogButton.Close,
         };
         if (await confirm.ShowAsync(this) == ContentDialogResult.Primary)

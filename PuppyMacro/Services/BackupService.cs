@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -108,7 +109,7 @@ internal static class BackupService
                 continue; // a folder
             string target = Path.GetFullPath(Path.Combine(root, entry.FullName));
             if (!target.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidDataException("This file is not a PuppyMacro backup.");
+                throw new InvalidDataException(Strings.Backup_NotABackup);
             var part = PartOf(entry.FullName);
             if (part != BackupParts.None && parts.HasFlag(part))
                 entries.Add((entry, target));
@@ -133,7 +134,7 @@ internal static class BackupService
     private static BackupParts ReadParts(ZipArchive zip)
     {
         if (zip.GetEntry("settings.json") == null)
-            throw new InvalidDataException("This file is not a PuppyMacro backup.");
+            throw new InvalidDataException(Strings.Backup_NotABackup);
         var manifest = zip.GetEntry(ManifestName);
         if (manifest == null)
             return BackupParts.Data;
@@ -151,7 +152,7 @@ internal static class BackupService
         }
         catch (JsonException)
         {
-            throw new InvalidDataException("This file is not a PuppyMacro backup.");
+            throw new InvalidDataException(Strings.Backup_NotABackup);
         }
     }
 

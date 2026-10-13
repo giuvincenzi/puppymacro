@@ -2,7 +2,8 @@
     x:Class="PuppyMacro.CountdownWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Recording countdown"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    Title="{x:Static r:Strings.Countdown_Title}"
     WindowStyle="None"
     AllowsTransparency="True"
     Background="Transparent"
@@ -27,7 +28,7 @@
             <TextBlock x:Name="NumberText" FontSize="200" FontWeight="SemiBold" Foreground="#CCC8C8C8" Text="3"
                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,24" />
         </Grid>
-        <TextBlock Margin="0,16,0,0" HorizontalAlignment="Center" FontSize="22" Foreground="#D9FFFFFF" Text="Recording starts…">
+        <TextBlock Margin="0,16,0,0" HorizontalAlignment="Center" FontSize="22" Foreground="#D9FFFFFF" Text="{x:Static r:Strings.Countdown_Starts}">
             <TextBlock.Effect>
                 <DropShadowEffect BlurRadius="8" ShadowDepth="2" Direction="270" Opacity="0.6" />
             </TextBlock.Effect>

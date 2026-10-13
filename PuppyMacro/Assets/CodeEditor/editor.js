@@ -1,10 +1,11 @@
 // The macro editor's Code view, inside a WebView2 (Views/MacroCodeView.xaml.cs): Monaco and a
 // Problems panel like VS Code's (Monaco has no panel of its own: it is only VS Code's editor).
-// Messages from the app: init { text, generation, schema, dark }, setText { text, generation }, format,
+// Messages from the app: init { text, generation, schema, dark, texts }, setText { text, generation }, format,
 // appMarkers { version, markers: [{ line, column, message }] }, theme { dark }, focus.
 // Messages to the app: ready, changed { text, generation, version, markers: [{ line, column, message }] }.
 // generation: which text the app last set, so it can ignore reports about older text.
 // version: Monaco's version of the text the app checked, so "No problems." is only shown for checked text.
+// texts: the page's texts in the app's language (Strings.CodeView_*); the English ones below until init.
 (function () {
     'use strict';
 
@@ -20,9 +21,30 @@
     let workerError = '';
     let selected = 0;
 
+    const texts = {
+        checking: 'Checking…',
+        noProblems: 'No problems.',
+        checkerFailed: 'The code checker could not start: {0}',
+        problems: 'Problems',
+        problemsTitle: 'PROBLEMS',
+        position: 'Ln {0}, Col {1}',
+    };
+
     const list = document.getElementById('list');
     const empty = document.getElementById('empty');
     const count = document.getElementById('count');
+
+    // A text with {0}, {1}… replaced by the values.
+    function format(text, ...values) {
+        return text.replace(/\{(\d+)\}/g, (match, index) => index < values.length ? String(values[index]) : match);
+    }
+
+    function setTexts(fromApp) {
+        Object.assign(texts, fromApp || {});
+        document.getElementById('problems').setAttribute('aria-label', texts.problems);
+        document.getElementById('problems-title').textContent = texts.problemsTitle;
+        list.setAttribute('aria-label', texts.problems);
+    }
 
     function post(message) {
         host.postMessage(message);
@@ -80,9 +102,9 @@
             message.title = marker.message;
             const position = document.createElement('span');
             position.className = 'position';
-            position.textContent = `Ln ${marker.startLineNumber}, Col ${marker.startColumn}`;
+            position.textContent = format(texts.position, marker.startLineNumber, marker.startColumn);
             row.append(icon, message, position);
-            row.setAttribute('aria-label', `${marker.message} Ln ${marker.startLineNumber}, Col ${marker.startColumn}`);
+            row.setAttribute('aria-label', `${marker.message} ${position.textContent}`);
             row.addEventListener('click', () => { select(index); reveal(marker); });
             list.append(row);
         });
@@ -92,8 +114,8 @@
         count.textContent = String(items.length);
         empty.hidden = items.length > 0;
         // "No problems." only once both checkers looked at this text: Monaco's worker and the app.
-        empty.textContent = workerError ? 'The code checker could not start: ' + workerError
-            : workerReady && checkedVersion === model.getVersionId() ? 'No problems.' : 'Checking…';
+        empty.textContent = workerError ? format(texts.checkerFailed, workerError)
+            : workerReady && checkedVersion === model.getVersionId() ? texts.noProblems : texts.checking;
     }
 
     function select(index) {
@@ -121,6 +143,7 @@
     });
 
     function init(message) {
+        setTexts(message.texts);
         generation = message.generation;
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
             validate: true,

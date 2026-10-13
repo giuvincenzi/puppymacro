@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -32,6 +33,36 @@ public partial class MouseButtonBox : UserControl
         get => (int)GetValue(VkProperty);
         set => SetValue(VkProperty, value);
     }
+
+    /// <summary>The button's name, as in the list ("Left", "Back (X1)").</summary>
+    public static string ButtonName(int vk) => vk switch
+    {
+        KeyNames.VK_RBUTTON => Strings.Mouse_Right,
+        KeyNames.VK_MBUTTON => Strings.Mouse_Middle,
+        KeyNames.VK_XBUTTON1 => Strings.Mouse_Back,
+        KeyNames.VK_XBUTTON2 => Strings.Mouse_Forward,
+        _ => Strings.Mouse_Left,
+    };
+
+    /// <summary>A click of the button ("Left click"): one text per button, as languages agree the words differently.</summary>
+    public static string ClickName(int vk) => vk switch
+    {
+        KeyNames.VK_RBUTTON => Strings.Mouse_ClickRight,
+        KeyNames.VK_MBUTTON => Strings.Mouse_ClickMiddle,
+        KeyNames.VK_XBUTTON1 => Strings.Mouse_ClickBack,
+        KeyNames.VK_XBUTTON2 => Strings.Mouse_ClickForward,
+        _ => Strings.Mouse_ClickLeft,
+    };
+
+    /// <summary>A double click of the button ("Left double click").</summary>
+    public static string DoubleClickName(int vk) => vk switch
+    {
+        KeyNames.VK_RBUTTON => Strings.Mouse_DoubleClickRight,
+        KeyNames.VK_MBUTTON => Strings.Mouse_DoubleClickMiddle,
+        KeyNames.VK_XBUTTON1 => Strings.Mouse_DoubleClickBack,
+        KeyNames.VK_XBUTTON2 => Strings.Mouse_DoubleClickForward,
+        _ => Strings.Mouse_DoubleClickLeft,
+    };
 
     /// <summary>Detect got a key instead of a mouse button: the reason.</summary>
     public event Action<string>? Rejected;
@@ -71,7 +102,7 @@ public partial class MouseButtonBox : UserControl
         if (KeyNames.IsMouse(binding.Vk))
             Vk = binding.Vk;
         else
-            Rejected?.Invoke("Use Press key for keys.");
+            Rejected?.Invoke(Strings.Mouse_UsePressKey);
     }
 
     private void Cancel()

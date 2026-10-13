@@ -1,0 +1,1057 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ListSeparator" xml:space="preserve"><value>、</value></data>
+  <data name="Day_Today" xml:space="preserve"><value>今天</value></data>
+  <data name="Day_Yesterday" xml:space="preserve"><value>昨天</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>系统</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>浅色</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>深色</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>语言</value></data>
+  <data name="Settings_LanguageDescription" xml:space="preserve"><value>更改后 PuppyMacro 将重新启动</value></data>
+  <data name="Settings_LanguageSystem" xml:space="preserve"><value>使用系统语言</value></data>
+  <data name="LanguageRestart_Title" xml:space="preserve"><value>要重新启动 PuppyMacro 吗？</value></data>
+  <data name="LanguageRestart_Content" xml:space="preserve"><value>PuppyMacro 将重新启动以显示 {0}。正在运行的循环和宏将停止。</value></data>
+  <data name="LanguageRestart_Restart" xml:space="preserve"><value>立即重新启动</value></data>
+  <data name="LanguageRestart_Later" xml:space="preserve"><value>稍后</value></data>
+  <data name="History_BeforeHistory" xml:space="preserve"><value>开始记录历史之前</value></data>
+  <data name="History_Created" xml:space="preserve"><value>已创建</value></data>
+  <data name="History_Saved" xml:space="preserve"><value>已保存</value></data>
+  <data name="History_Deleted" xml:space="preserve"><value>已删除</value></data>
+  <data name="History_Restored" xml:space="preserve"><value>已还原</value></data>
+  <data name="History_Changes_other" xml:space="preserve"><value>{0} 处更改</value></data>
+  <data name="History_ActionAdded" xml:space="preserve"><value>添加了操作 {0}</value></data>
+  <data name="History_ActionAddedNamed" xml:space="preserve"><value>添加了操作 {0}（{1}）</value></data>
+  <data name="History_ActionRemoved" xml:space="preserve"><value>删除了操作 {0}</value></data>
+  <data name="History_ActionRemovedNamed" xml:space="preserve"><value>删除了操作 {0}（{1}）</value></data>
+  <data name="History_ActionChanged" xml:space="preserve"><value>操作 {0}：{1} {2} → {3}</value></data>
+  <data name="History_ActionChangedNamed" xml:space="preserve"><value>操作 {0}（{1}）：{2} {3} → {4}</value></data>
+  <data name="History_FieldChanged" xml:space="preserve"><value>{0}：{1} → {2}</value></data>
+  <data name="History_None" xml:space="preserve"><value>无</value></data>
+  <data name="History_On" xml:space="preserve"><value>开</value></data>
+  <data name="History_Off" xml:space="preserve"><value>关</value></data>
+  <data name="History_Path_other" xml:space="preserve"><value>包含 {0} 个点的路径{1}</value></data>
+  <data name="History_CurrentVersion" xml:space="preserve"><value>{0}（当前）</value></data>
+  <data name="History_You" xml:space="preserve"><value>你</value></data>
+  <data name="History_ThisIsCurrent" xml:space="preserve"><value>这是当前版本。</value></data>
+  <data name="History_RestoreHint" xml:space="preserve"><value>“还原”会将此版本放入编辑器：选择“保存”即可保留。当前版本仍保留在历史记录中。</value></data>
+  <data name="Ai_Connected" xml:space="preserve"><value>已连接</value></data>
+  <data name="Ai_ConnectedWhileOff" xml:space="preserve"><value>在 AI 访问关闭时尝试连接</value></data>
+  <data name="Ai_CalledWhileOff" xml:space="preserve"><value>在 AI 访问关闭时调用了 {0}</value></data>
+  <data name="Ai_ReadOverview" xml:space="preserve"><value>读取了你的循环、宏和重映射</value></data>
+  <data name="Ai_ReadSettings" xml:space="preserve"><value>读取了你的设置</value></data>
+  <data name="Ai_ListedApps" xml:space="preserve"><value>列出了打开的应用</value></data>
+  <data name="Ai_ReadGuide" xml:space="preserve"><value>阅读了指南：{0}</value></data>
+  <data name="Ai_Read_loop" xml:space="preserve"><value>读取了循环 {0}</value></data>
+  <data name="Ai_Read_macro" xml:space="preserve"><value>读取了宏 {0}</value></data>
+  <data name="Ai_Read_remap" xml:space="preserve"><value>读取了重映射 {0}</value></data>
+  <data name="Ai_NewProposal_loop" xml:space="preserve"><value>新循环</value></data>
+  <data name="Ai_NewProposal_macro" xml:space="preserve"><value>新宏</value></data>
+  <data name="Ai_NewProposal_remap" xml:space="preserve"><value>新重映射</value></data>
+  <data name="Ai_ChangeProposal_loop" xml:space="preserve"><value>更改循环</value></data>
+  <data name="Ai_ChangeProposal_macro" xml:space="preserve"><value>更改宏</value></data>
+  <data name="Ai_ChangeProposal_remap" xml:space="preserve"><value>更改重映射</value></data>
+  <data name="Ai_New_loop" xml:space="preserve"><value>新建了循环 {0}</value></data>
+  <data name="Ai_New_macro" xml:space="preserve"><value>新建了宏 {0}</value></data>
+  <data name="Ai_New_remap" xml:space="preserve"><value>新建了重映射 {0}</value></data>
+  <data name="Ai_Changed_loop" xml:space="preserve"><value>更改了循环 {0}：{1}</value></data>
+  <data name="Ai_Changed_macro" xml:space="preserve"><value>更改了宏 {0}：{1}</value></data>
+  <data name="Ai_Changed_remap" xml:space="preserve"><value>更改了重映射 {0}：{1}</value></data>
+  <data name="Ai_Deleted_loop" xml:space="preserve"><value>删除了循环 {0}</value></data>
+  <data name="Ai_Deleted_macro" xml:space="preserve"><value>删除了宏 {0}</value></data>
+  <data name="Ai_Deleted_remap" xml:space="preserve"><value>删除了重映射 {0}</value></data>
+  <data name="Ai_Enabled_loop" xml:space="preserve"><value>启用了循环 {0}</value></data>
+  <data name="Ai_Enabled_macro" xml:space="preserve"><value>启用了宏 {0}</value></data>
+  <data name="Ai_Enabled_remap" xml:space="preserve"><value>启用了重映射 {0}</value></data>
+  <data name="Ai_Disabled_loop" xml:space="preserve"><value>禁用了循环 {0}</value></data>
+  <data name="Ai_Disabled_macro" xml:space="preserve"><value>禁用了宏 {0}</value></data>
+  <data name="Ai_Disabled_remap" xml:space="preserve"><value>禁用了重映射 {0}</value></data>
+  <data name="Ai_PlacedButton_loop" xml:space="preserve"><value>放置了循环 {0} 的悬浮按钮</value></data>
+  <data name="Ai_PlacedButton_macro" xml:space="preserve"><value>放置了宏 {0} 的悬浮按钮</value></data>
+  <data name="Ai_Opened_loop" xml:space="preserve"><value>打开了循环 {0}</value></data>
+  <data name="Ai_Opened_macro" xml:space="preserve"><value>打开了宏 {0}</value></data>
+  <data name="Ai_Opened_remap" xml:space="preserve"><value>打开了重映射 {0}</value></data>
+  <data name="Ai_ChangedSettings" xml:space="preserve"><value>更改了设置：{0}</value></data>
+  <data name="Ai_AskedPoint" xml:space="preserve"><value>请求选取一个点：{0}</value></data>
+  <data name="Ai_AskedPoints_other" xml:space="preserve"><value>请求选取 {0} 个点：{1}</value></data>
+  <data name="Ai_AskedApp" xml:space="preserve"><value>请求选取应用：{0}</value></data>
+  <data name="Ai_AskedKey" xml:space="preserve"><value>请求选取按键：{0}</value></data>
+  <data name="Ai_StoppedAll" xml:space="preserve"><value>停止了所有循环和宏</value></data>
+  <data name="Ai_RemapTitle" xml:space="preserve"><value>{0} → {1}</value></data>
+  <data name="Ai_RemapTitleInApp" xml:space="preserve"><value>{0} → {1}，在 {2} 中</value></data>
+  <data name="Ai_Item_loop" xml:space="preserve"><value>循环 {0}</value></data>
+  <data name="Ai_Item_macro" xml:space="preserve"><value>宏 {0}</value></data>
+  <data name="Ai_Item_remap" xml:space="preserve"><value>重映射 {0}</value></data>
+  <data name="Ai_ConfirmNew_loop" xml:space="preserve"><value>要保存这个新循环吗？</value></data>
+  <data name="Ai_ConfirmNew_macro" xml:space="preserve"><value>要保存这个新宏吗？</value></data>
+  <data name="Ai_ConfirmNew_remap" xml:space="preserve"><value>要保存这个新重映射吗？</value></data>
+  <data name="Ai_ConfirmChanges_loop" xml:space="preserve"><value>要保存对循环的这些更改吗？</value></data>
+  <data name="Ai_ConfirmChanges_macro" xml:space="preserve"><value>要保存对宏的这些更改吗？</value></data>
+  <data name="Ai_ConfirmChanges_remap" xml:space="preserve"><value>要保存对重映射的这些更改吗？</value></data>
+  <data name="Ai_ConfirmDelete_loop" xml:space="preserve"><value>要删除此循环吗？</value></data>
+  <data name="Ai_ConfirmDelete_macro" xml:space="preserve"><value>要删除此宏吗？</value></data>
+  <data name="Ai_ConfirmDelete_remap" xml:space="preserve"><value>要删除此重映射吗？</value></data>
+  <data name="Ai_ConfirmEnable_loop" xml:space="preserve"><value>要启用此循环吗？</value></data>
+  <data name="Ai_ConfirmEnable_macro" xml:space="preserve"><value>要启用此宏吗？</value></data>
+  <data name="Ai_ConfirmEnable_remap" xml:space="preserve"><value>要启用此重映射吗？</value></data>
+  <data name="Ai_ConfirmDisable_loop" xml:space="preserve"><value>要禁用此循环吗？</value></data>
+  <data name="Ai_ConfirmDisable_macro" xml:space="preserve"><value>要禁用此宏吗？</value></data>
+  <data name="Ai_ConfirmDisable_remap" xml:space="preserve"><value>要禁用此重映射吗？</value></data>
+  <data name="Ai_ConfirmSettings" xml:space="preserve"><value>要更改这些设置吗？</value></data>
+  <data name="Ai_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Ai_Delete" xml:space="preserve"><value>删除</value></data>
+  <data name="Ai_Enable" xml:space="preserve"><value>启用</value></data>
+  <data name="Ai_Disable" xml:space="preserve"><value>禁用</value></data>
+  <data name="Ai_Apply" xml:space="preserve"><value>应用</value></data>
+  <data name="Ai_SettingChange" xml:space="preserve"><value>{0}：{1} → {2}</value></data>
+  <data name="Ai_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Ai_NoneValue" xml:space="preserve"><value>无</value></data>
+  <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>无法还原以下设置：{0}</value></data>
+  <data name="AiSetting_Theme" xml:space="preserve"><value>主题</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>关闭到系统托盘</value></data>
+  <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>覆盖面板</value></data>
+  <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>在面板中单击项目</value></data>
+  <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>覆盖面板不透明度</value></data>
+  <data name="AiSetting_SoundVolume" xml:space="preserve"><value>声音音量</value></data>
+  <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>全部停止热键</value></data>
+  <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>覆盖模式热键</value></data>
+  <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>录制热键</value></data>
+  <data name="AiKind_Read" xml:space="preserve"><value>读取</value></data>
+  <data name="AiKind_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="AiKind_Interaction" xml:space="preserve"><value>交互</value></data>
+  <data name="AiKind_Change" xml:space="preserve"><value>更改</value></data>
+  <data name="AiKind_Connection" xml:space="preserve"><value>连接</value></data>
+  <data name="AiResult_Restored" xml:space="preserve"><value>已还原</value></data>
+  <data name="AiResult_Saved" xml:space="preserve"><value>已保存</value></data>
+  <data name="AiResult_SavedWithChanges" xml:space="preserve"><value>已保存（有修改）</value></data>
+  <data name="AiResult_Done" xml:space="preserve"><value>已完成</value></data>
+  <data name="AiResult_Cancelled" xml:space="preserve"><value>已取消</value></data>
+  <data name="AiResult_NoAnswer" xml:space="preserve"><value>无响应</value></data>
+  <data name="AiResult_Refused" xml:space="preserve"><value>已拒绝</value></data>
+  <data name="AiResult_Error" xml:space="preserve"><value>错误</value></data>
+  <data name="AiActivity_RestoreName" xml:space="preserve"><value>还原：{0}</value></data>
+  <data name="Main_EnterOverlayMode" xml:space="preserve"><value>进入覆盖模式</value></data>
+  <data name="Main_StopAll" xml:space="preserve"><value>全部停止</value></data>
+  <data name="Main_DevelopmentBuild" xml:space="preserve"><value>开发版本</value></data>
+  <data name="Main_FilterEnabled" xml:space="preserve"><value>已启用</value></data>
+  <data name="Main_FilterDisabled" xml:space="preserve"><value>已禁用</value></data>
+  <data name="Main_FilterRunning" xml:space="preserve"><value>正在运行</value></data>
+  <data name="Loops_Title" xml:space="preserve"><value>循环</value></data>
+  <data name="Loops_Add" xml:space="preserve"><value>添加循环</value></data>
+  <data name="Loops_Search" xml:space="preserve"><value>搜索循环</value></data>
+  <data name="Loops_FilterAll" xml:space="preserve"><value>所有循环</value></data>
+  <data name="Macros_Title" xml:space="preserve"><value>宏</value></data>
+  <data name="Macros_Add" xml:space="preserve"><value>添加宏</value></data>
+  <data name="Macros_Record" xml:space="preserve"><value>录制宏</value></data>
+  <data name="Macros_Search" xml:space="preserve"><value>搜索宏</value></data>
+  <data name="Macros_FilterAll" xml:space="preserve"><value>所有宏</value></data>
+  <data name="Remaps_Title" xml:space="preserve"><value>重映射</value></data>
+  <data name="Remaps_Add" xml:space="preserve"><value>添加重映射</value></data>
+  <data name="Remaps_Search" xml:space="preserve"><value>搜索重映射</value></data>
+  <data name="Remaps_FilterAll" xml:space="preserve"><value>所有重映射</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>设置</value></data>
+  <data name="Settings_General" xml:space="preserve"><value>常规</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>主题</value></data>
+  <data name="Settings_ThemeDescription" xml:space="preserve"><value>“系统”跟随你的 Windows 设置</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>关闭到系统托盘</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>关闭窗口后继续在系统托盘中运行</value></data>
+  <data name="Settings_StartWithWindows" xml:space="preserve"><value>随 Windows 启动</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>登录时在系统托盘中启动</value></data>
+  <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>热键和覆盖层</value></data>
+  <data name="Settings_Hotkeys" xml:space="preserve"><value>热键</value></data>
+  <data name="Settings_StopAllDescription" xml:space="preserve"><value>停止所有循环和宏</value></data>
+  <data name="Settings_OverlayMode" xml:space="preserve"><value>覆盖模式</value></data>
+  <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>打开或关闭覆盖模式</value></data>
+  <data name="Settings_Record" xml:space="preserve"><value>录制</value></data>
+  <data name="Settings_RecordDescription" xml:space="preserve"><value>开始和停止录制宏</value></data>
+  <data name="Settings_OverlayPanel" xml:space="preserve"><value>覆盖面板</value></data>
+  <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>你的循环和宏列表</value></data>
+  <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>显示覆盖面板</value></data>
+  <data name="Settings_Opacity" xml:space="preserve"><value>不透明度</value></data>
+  <data name="Settings_OverlayPanelOpacity" xml:space="preserve"><value>覆盖面板不透明度</value></data>
+  <data name="Settings_OpacityPreviewItem" xml:space="preserve"><value>左键连点</value></data>
+  <data name="Settings_PositionOnScreen" xml:space="preserve"><value>屏幕上的位置</value></data>
+  <data name="Settings_PositionOnScreenDescription" xml:space="preserve"><value>拖动面板和悬浮按钮</value></data>
+  <data name="Settings_ClickInPanel" xml:space="preserve"><value>在面板中单击项目以启动或停止</value></data>
+  <data name="Settings_ClickInPanelDescription" xml:space="preserve"><value>某些全屏应用可能会响应此单击。如果是这样，请关闭此选项，仅使用热键。</value></data>
+  <data name="Settings_Sound" xml:space="preserve"><value>声音</value></data>
+  <data name="Settings_SoundDescription" xml:space="preserve"><value>循环和宏的启动和停止声音</value></data>
+  <data name="Settings_SoundVolume" xml:space="preserve"><value>声音音量</value></data>
+  <data name="Settings_DataAndUpdates" xml:space="preserve"><value>数据和更新</value></data>
+  <data name="Settings_Backup" xml:space="preserve"><value>备份</value></data>
+  <data name="Settings_ExportOrImport" xml:space="preserve"><value>导出或导入</value></data>
+  <data name="Settings_ExportOrImportDescription" xml:space="preserve"><value>将你的数据保存到一个文件中，以保留副本或将 PuppyMacro 移到另一台电脑</value></data>
+  <data name="Settings_ExportButton" xml:space="preserve"><value>导出…</value></data>
+  <data name="Settings_ImportButton" xml:space="preserve"><value>导入…</value></data>
+  <data name="Settings_OpenDataFolder" xml:space="preserve"><value>打开数据文件夹</value></data>
+  <data name="Settings_Updates" xml:space="preserve"><value>更新</value></data>
+  <data name="Settings_WhatsNew" xml:space="preserve"><value>新增功能</value></data>
+  <data name="Settings_CheckForUpdates" xml:space="preserve"><value>自动检查更新</value></data>
+  <data name="Settings_CheckForUpdatesDescription" xml:space="preserve"><value>在 PuppyMacro 启动时以及每 12 小时</value></data>
+  <data name="Settings_About" xml:space="preserve"><value>关于</value></data>
+  <data name="Settings_UserGuide" xml:space="preserve"><value>用户指南</value></data>
+  <data name="Settings_NotInDevBuild" xml:space="preserve"><value>在开发版本中不可用</value></data>
+  <data name="Settings_DataSavedIn" xml:space="preserve"><value>数据保存在 {0}</value></data>
+  <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>热键目前无法使用：
+{0}</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro 仍在系统托盘中运行。右键单击其图标即可退出。</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>打开 PuppyMacro</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>退出</value></data>
+  <data name="Main_RunningCount_other" xml:space="preserve"><value>{0} 个正在运行</value></data>
+  <data name="Loops_Count_other" xml:space="preserve"><value>{0} 个循环</value></data>
+  <data name="Loops_CountLine" xml:space="preserve"><value>{0}，{1}</value></data>
+  <data name="Loops_Empty" xml:space="preserve"><value>还没有循环。选择“添加循环”来创建一个。</value></data>
+  <data name="Loops_NoMatch" xml:space="preserve"><value>没有与搜索或筛选条件匹配的循环。</value></data>
+  <data name="Main_StopRunningFirst" xml:space="preserve"><value>请先停止正在运行的循环和宏</value></data>
+  <data name="Card_Delete" xml:space="preserve"><value>删除</value></data>
+  <data name="Card_MoveUp" xml:space="preserve"><value>上移</value></data>
+  <data name="Card_MoveDown" xml:space="preserve"><value>下移</value></data>
+  <data name="Card_Duplicate" xml:space="preserve"><value>创建副本</value></data>
+  <data name="Main_Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Main_DeleteNamedConfirm" xml:space="preserve"><value>要删除“{0}”吗？此操作无法撤消。</value></data>
+  <data name="Loops_DeleteTitle" xml:space="preserve"><value>删除循环</value></data>
+  <data name="Macros_Count_other" xml:space="preserve"><value>{0} 个宏</value></data>
+  <data name="Macros_CountLine" xml:space="preserve"><value>{0}，{1}</value></data>
+  <data name="Macros_Empty" xml:space="preserve"><value>还没有宏。录制一个，或选择“添加宏”逐步创建。</value></data>
+  <data name="Macros_NoMatch" xml:space="preserve"><value>没有与搜索或筛选条件匹配的宏。</value></data>
+  <data name="Macros_DeleteTitle" xml:space="preserve"><value>删除宏</value></data>
+  <data name="Macros_SaveFailed" xml:space="preserve"><value>无法保存宏“{0}”：{1}</value></data>
+  <data name="Settings_NothingToPlace" xml:space="preserve"><value>没有可放置的内容。请打开覆盖面板或添加悬浮按钮。</value></data>
+  <data name="Main_StopAllTooltip" xml:space="preserve"><value>全部停止 ({0})</value></data>
+  <data name="Main_EnterOverlayModeTooltip" xml:space="preserve"><value>进入覆盖模式 ({0})</value></data>
+  <data name="Settings_SaveFailed" xml:space="preserve"><value>无法保存你的设置：{0}</value></data>
+  <data name="Remaps_Count_other" xml:space="preserve"><value>{0} 个重映射</value></data>
+  <data name="Remaps_EnabledCount_other" xml:space="preserve"><value>{0} 个已启用</value></data>
+  <data name="Remaps_CountLine" xml:space="preserve"><value>{0}，{1}</value></data>
+  <data name="Remaps_Empty" xml:space="preserve"><value>还没有重映射。选择“添加重映射”可将一个按键或按钮变成另一个。</value></data>
+  <data name="Remaps_NoMatch" xml:space="preserve"><value>没有与搜索或筛选条件匹配的重映射。</value></data>
+  <data name="Remaps_DeleteTitle" xml:space="preserve"><value>删除重映射</value></data>
+  <data name="Remaps_DeleteConfirm" xml:space="preserve"><value>要删除重映射 {0} → {1} 吗？此操作无法撤消。</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>导出</value></data>
+  <data name="Export_FileDialogTitle" xml:space="preserve"><value>导出 PuppyMacro 数据</value></data>
+  <data name="Backup_FileFilter" xml:space="preserve"><value>PuppyMacro 备份 (*{0})|*{0}</value></data>
+  <data name="Export_Failed" xml:space="preserve"><value>导出失败：{0}</value></data>
+  <data name="Backup_ImportFileDialogTitle" xml:space="preserve"><value>导入 PuppyMacro 数据</value></data>
+  <data name="Backup_ImportFailed" xml:space="preserve"><value>导入失败：{0}</value></data>
+  <data name="Backup_ImportTitle" xml:space="preserve"><value>导入</value></data>
+  <data name="Backup_ImportConfirm" xml:space="preserve"><value>此文件包含{0}。要用它们替换你现有的数据吗？
+文件中没有的内容将保持不变。你的当前数据会先备份到数据文件夹，然后 PuppyMacro 将重新启动。</value></data>
+  <data name="Backup_ImportAndRestart" xml:space="preserve"><value>导入并重新启动</value></data>
+  <data name="Backup_PartData" xml:space="preserve"><value>循环、宏、重映射和设置</value></data>
+  <data name="Backup_PartHistory" xml:space="preserve"><value>历史记录</value></data>
+  <data name="Backup_PartAiActivity" xml:space="preserve"><value>AI 活动</value></data>
+  <data name="Backup_PartLogs" xml:space="preserve"><value>日志</value></data>
+  <data name="Main_ListLastAnd" xml:space="preserve"><value>{0}和{1}</value></data>
+  <data name="Update_CheckFailed" xml:space="preserve"><value>无法检查更新。{0}</value></data>
+  <data name="Update_DownloadFailed" xml:space="preserve"><value>无法下载更新。{0}</value></data>
+  <data name="Update_NotInstalled" xml:space="preserve"><value>使用安装程序安装 PuppyMacro 以获取更新</value></data>
+  <data name="Update_DownloadingVersion" xml:space="preserve"><value>正在下载版本 {0}… {1}%</value></data>
+  <data name="Update_TryAgain" xml:space="preserve"><value>重试</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>版本 {0} 可用（你的版本为 {1}）</value></data>
+  <data name="Update_UpdateAndRestart" xml:space="preserve"><value>更新并重新启动</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>正在检查更新…</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>PuppyMacro {0} 已是最新版本。检查时间：{1}</value></data>
+  <data name="Update_CurrentVersion" xml:space="preserve"><value>PuppyMacro {0}</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>立即检查</value></data>
+  <data name="Update_BarTitle" xml:space="preserve"><value>版本 {0} 可用</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>正在下载… {0}%</value></data>
+  <data name="Rail_Pages" xml:space="preserve"><value>页面</value></data>
+  <data name="Rail_SettingsAndHelp" xml:space="preserve"><value>设置和帮助</value></data>
+  <data name="Rail_Loops" xml:space="preserve"><value>循环</value></data>
+  <data name="Rail_Macros" xml:space="preserve"><value>宏</value></data>
+  <data name="Rail_Remap" xml:space="preserve"><value>重映射</value></data>
+  <data name="Rail_Settings" xml:space="preserve"><value>设置</value></data>
+  <data name="Card_Edit" xml:space="preserve"><value>编辑</value></data>
+  <data name="Card_Enabled" xml:space="preserve"><value>已启用</value></data>
+  <data name="Card_MoreOptions" xml:space="preserve"><value>更多选项</value></data>
+  <data name="Card_Play" xml:space="preserve"><value>播放</value></data>
+  <data name="Card_Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="Export_WhatToExport" xml:space="preserve"><value>导出内容</value></data>
+  <data name="Export_Everything" xml:space="preserve"><value>全部</value></data>
+  <data name="Export_Choose" xml:space="preserve"><value>选择要导出的内容</value></data>
+  <data name="Export_PartData" xml:space="preserve"><value>循环、宏、重映射和设置</value></data>
+  <data name="Export_PartHistory" xml:space="preserve"><value>历史记录</value></data>
+  <data name="Export_PartAiActivity" xml:space="preserve"><value>AI 活动</value></data>
+  <data name="Export_PartLogs" xml:space="preserve"><value>日志</value></data>
+  <data name="Export_EverythingDescription" xml:space="preserve"><value>完全相同的副本，用于将 PuppyMacro 移到另一台电脑 · {0}</value></data>
+  <data name="Export_PartDataDescription" xml:space="preserve"><value>始终包含 · {0}</value></data>
+  <data name="Export_PartHistoryDescription" xml:space="preserve"><value>每个循环、宏和重映射的早期版本 · {0}</value></data>
+  <data name="Export_PartAiActivityDescription" xml:space="preserve"><value>AI 应用的请求，可还原 · {0}</value></data>
+  <data name="Export_PartLogsDescription" xml:space="preserve"><value>用于疑难解答 · {0}</value></data>
+  <data name="Export_SizeB" xml:space="preserve"><value>{0} 字节</value></data>
+  <data name="Export_SizeKB" xml:space="preserve"><value>{0} KB</value></data>
+  <data name="Export_SizeMB" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Export_SizeGB" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Card_ToggleWith" xml:space="preserve"><value>切换热键</value></data>
+  <data name="Card_HoldWith" xml:space="preserve"><value>按住热键</value></data>
+  <data name="Card_ToggleNoHotkey" xml:space="preserve"><value>切换，无热键</value></data>
+  <data name="Card_HoldNoHotkey" xml:space="preserve"><value>按住，无热键</value></data>
+  <data name="Card_StatusRunning" xml:space="preserve"><value>正在运行</value></data>
+  <data name="Card_StatusIdle" xml:space="preserve"><value>空闲</value></data>
+  <data name="Card_StatusDisabled" xml:space="preserve"><value>已禁用</value></data>
+  <data name="Card_StatusEnabled" xml:space="preserve"><value>已启用</value></data>
+  <data name="Loops_NoActions" xml:space="preserve"><value>没有操作</value></data>
+  <data name="Loops_ActionsSummary_other" xml:space="preserve"><value>{0} 个操作：{1}</value></data>
+  <data name="Loops_IntervalMilliseconds" xml:space="preserve"><value>{0} 毫秒</value></data>
+  <data name="Loops_IntervalSeconds" xml:space="preserve"><value>{0} 秒</value></data>
+  <data name="Loops_IntervalMinutes" xml:space="preserve"><value>{0} 分钟</value></data>
+  <data name="Loops_IntervalHours" xml:space="preserve"><value>{0} 小时</value></data>
+  <data name="Loops_HeldDown" xml:space="preserve"><value>按住 {0}</value></data>
+  <data name="Loops_KeyEvery" xml:space="preserve"><value>{0}，每 {1} 一次</value></data>
+  <data name="Loops_KeyTimesEvery_other" xml:space="preserve"><value>{1} {0} 次，每 {2}</value></data>
+  <data name="Loops_PastesEvery" xml:space="preserve"><value>每 {1} 粘贴“{0}”</value></data>
+  <data name="Macros_RepeatLoop" xml:space="preserve"><value>循环</value></data>
+  <data name="Macros_RepeatOnce" xml:space="preserve"><value>一次</value></data>
+  <data name="Macros_RepeatTimes_other" xml:space="preserve"><value>{0} 次</value></data>
+  <data name="Macros_Summary_other" xml:space="preserve"><value>{0} 个操作，{1}，重复：{2}</value></data>
+  <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} 个操作，{1}，重复：{2}，速度 ×{3}</value></data>
+  <data name="Remaps_AllApps" xml:space="preserve"><value>所有应用</value></data>
+  <data name="App_MigrationFailed" xml:space="preserve"><value>无法将你的循环和宏复制到 {0}。
+详细信息：{1}</value></data>
+  <data name="App_MacrosNotUpdated" xml:space="preserve"><value>某些宏文件无法更新到此版本。</value></data>
+  <data name="App_UnexpectedError" xml:space="preserve"><value>意外错误：
+{0}</value></data>
+  <data name="App_SettingsReset" xml:space="preserve"><value>无法读取你的设置，因此已将其重置。
+旧文件已另存为 {0}。
+详细信息：{1}</value></data>
+  <data name="App_MacroFilesSkipped" xml:space="preserve"><value>某些宏文件无法读取，已跳过（例如 {0}）。</value></data>
+  <data name="Backup_NotABackup" xml:space="preserve"><value>此文件不是 PuppyMacro 备份。</value></data>
+  <data name="AiStatus_ToolTip" xml:space="preserve"><value>已连接的 AI 应用：选择以打开 AI 页面</value></data>
+  <data name="AiStatus_Name" xml:space="preserve"><value>已连接的 AI 应用</value></data>
+  <data name="AiPage_Description" xml:space="preserve"><value>在这台电脑上通过 AI 应用（如 Claude Desktop 或 Visual Studio Code）使用 PuppyMacro。用你自己的话提出要求：AI 会创建循环、宏和重映射，你可以立即试用。</value></data>
+  <data name="AiPage_Beta" xml:space="preserve"><value>Beta 版</value></data>
+  <data name="AiPage_BetaMessage" xml:space="preserve"><value>PuppyMacro 中的 AI 应用是新功能：它们可以正常工作，但可能会发生变化，而且 AI 可能会误解请求。每次更改都保留在项目的历史记录中，因此你随时可以恢复。</value></data>
+  <data name="AiPage_Access" xml:space="preserve"><value>访问</value></data>
+  <data name="AiPage_AllowAccess" xml:space="preserve"><value>允许 AI 访问</value></data>
+  <data name="AiPage_AllowAccessDescription" xml:space="preserve"><value>这台电脑上的 AI 应用可以读取和更改你的循环、宏、重映射和设置。每次更改都保留在项目的历史记录中。</value></data>
+  <data name="AiPage_AskDelete" xml:space="preserve"><value>删除循环、宏或重映射前询问</value></data>
+  <data name="AiPage_AskDeleteName" xml:space="preserve"><value>删除前询问</value></data>
+  <data name="AiPage_AskChange" xml:space="preserve"><value>更改循环、宏或重映射前询问</value></data>
+  <data name="AiPage_AskChangeName" xml:space="preserve"><value>更改前询问</value></data>
+  <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>关闭时：AI 新建和更改的项目会立即保存，可直接试用。</value></data>
+  <data name="AiPage_AskSettings" xml:space="preserve"><value>更改设置前询问</value></data>
+  <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>主题、全局热键、覆盖面板、声音</value></data>
+  <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>在 AI 应用需要时启动 PuppyMacro</value></data>
+  <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>关闭时：PuppyMacro 关闭期间，AI 应用无法使用它，并会提示你打开它。</value></data>
+  <data name="AiPage_Apps" xml:space="preserve"><value>应用</value></data>
+  <data name="AiPage_RecentActivity" xml:space="preserve"><value>最近的活动</value></data>
+  <data name="AiPage_ViewAll" xml:space="preserve"><value>查看全部</value></data>
+  <data name="AiPage_NoActivity" xml:space="preserve"><value>还没有请求。请在上方连接一个 AI 应用，然后让它创建循环、宏或重映射。</value></data>
+  <data name="AiPage_HowToUse" xml:space="preserve"><value>如何在 PuppyMacro 中使用 AI</value></data>
+  <data name="AiApps_ConnectedSince" xml:space="preserve"><value>自 {0} 起已连接</value></data>
+  <data name="AiApps_ClaudeAdded" xml:space="preserve"><value>已添加。重新启动 Claude Desktop 以连接。</value></data>
+  <data name="AiApps_VsCodeAdded" xml:space="preserve"><value>已添加。在 Agent mode 下打开 Copilot Chat 以连接。</value></data>
+  <data name="AiApps_CodexAdded" xml:space="preserve"><value>已添加。重新启动 Codex 以连接。</value></data>
+  <data name="AiApps_InstalledNotConnected" xml:space="preserve"><value>已安装，未连接</value></data>
+  <data name="AiApps_VsCodeInstalled" xml:space="preserve"><value>已安装。使用 GitHub Copilot，以及你在其中选择的模型。</value></data>
+  <data name="AiApps_NotInstalled" xml:space="preserve"><value>未安装</value></data>
+  <data name="AiApps_Connect" xml:space="preserve"><value>连接</value></data>
+  <data name="AiApps_Remove" xml:space="preserve"><value>删除</value></data>
+  <data name="AiApps_CopyConfiguration" xml:space="preserve"><value>复制配置</value></data>
+  <data name="AiApps_ActionName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="AiApps_GetClaude" xml:space="preserve"><value>获取 Claude Desktop</value></data>
+  <data name="AiApps_GetVsCode" xml:space="preserve"><value>获取 Visual Studio Code</value></data>
+  <data name="AiApps_GetCodex" xml:space="preserve"><value>获取 Codex</value></data>
+  <data name="AiApps_OtherApps" xml:space="preserve"><value>其他应用</value></data>
+  <data name="AiApps_OthersConnected" xml:space="preserve"><value>已连接：{0}</value></data>
+  <data name="AiApps_OthersHint" xml:space="preserve"><value>任何支持本地 MCP 服务器的应用：将配置粘贴到其 MCP 设置中。</value></data>
+  <data name="AiApps_ConfigurationCopied" xml:space="preserve"><value>配置已复制。将其粘贴到 AI 应用的 MCP 设置中，然后重新启动该应用。</value></data>
+  <data name="AiApps_VsCodeDidNotOpen" xml:space="preserve"><value>Visual Studio Code 未打开：{0}</value></data>
+  <data name="AiApps_VsCodeRemoveByHand" xml:space="preserve"><value>请在 Visual Studio Code 中删除：运行“MCP: Open User Configuration”，然后删除“{0}”。</value></data>
+  <data name="AiApps_CodexBadFolder" xml:space="preserve"><value>PuppyMacro 的文件夹路径包含 Codex 设置无法保存的字符。</value></data>
+  <data name="AiApps_SettingsNotChanged" xml:space="preserve"><value>无法更改 {0} 的设置：{1}</value></data>
+  <data name="AiApps_SettingsNotObject" xml:space="preserve"><value>{0} 的设置文件不是 JSON 对象，因此 PuppyMacro 未更改它（{1}）。</value></data>
+  <data name="AiApps_SettingsKeyNotObject" xml:space="preserve"><value>在 {0} 的设置文件中，“{1}”不是对象，因此 PuppyMacro 未更改它（{2}）。</value></data>
+  <data name="AiApps_SettingsFileError" xml:space="preserve"><value>{0} 的设置文件有错误，因此 PuppyMacro 未更改它：{1}（{2}）</value></data>
+  <data name="AiApps_PipeInUse" xml:space="preserve"><value>另一个程序正在使用 PuppyMacro 的 AI 连接，因此 AI 应用无法连接。请关闭该程序，或重新启动 Windows。</value></data>
+  <data name="AiApps_CantConnect" xml:space="preserve"><value>AI 应用无法连接：{0}</value></data>
+  <data name="AiActivity_CantRestoreSettings" xml:space="preserve"><value>无法还原这些设置。</value></data>
+  <data name="AiActivity_CantRestore" xml:space="preserve"><value>无法还原此更改。</value></data>
+  <data name="AiActivity_CantRestoreReason" xml:space="preserve"><value>无法还原此更改：{0}</value></data>
+  <data name="AiActivity_Title" xml:space="preserve"><value>AI 活动</value></data>
+  <data name="AiActivity_KeptNote" xml:space="preserve"><value>保留在这台电脑上：最新的请求，最多 20 MB。</value></data>
+  <data name="AiActivity_ClearHistory" xml:space="preserve"><value>清除历史记录</value></data>
+  <data name="AiActivity_Close" xml:space="preserve"><value>关闭</value></data>
+  <data name="AiActivity_Period" xml:space="preserve"><value>时间段</value></data>
+  <data name="AiActivity_Last7Days" xml:space="preserve"><value>过去 7 天</value></data>
+  <data name="AiActivity_Last30Days" xml:space="preserve"><value>过去 30 天</value></data>
+  <data name="AiActivity_All" xml:space="preserve"><value>全部</value></data>
+  <data name="AiActivity_App" xml:space="preserve"><value>应用</value></data>
+  <data name="AiActivity_Type" xml:space="preserve"><value>类型</value></data>
+  <data name="AiActivity_Result" xml:space="preserve"><value>结果</value></data>
+  <data name="AiActivity_Search" xml:space="preserve"><value>搜索</value></data>
+  <data name="AiActivity_SearchPlaceholder" xml:space="preserve"><value>搜索活动</value></data>
+  <data name="AiActivity_AllApps" xml:space="preserve"><value>所有应用</value></data>
+  <data name="AiActivity_AllTypes" xml:space="preserve"><value>所有类型</value></data>
+  <data name="AiActivity_AllResults" xml:space="preserve"><value>所有结果</value></data>
+  <data name="AiActivity_Restore" xml:space="preserve"><value>还原</value></data>
+  <data name="AiActivity_Details" xml:space="preserve"><value>详细信息</value></data>
+  <data name="AiActivity_NoRequests" xml:space="preserve"><value>还没有请求。</value></data>
+  <data name="AiActivity_NoMatch" xml:space="preserve"><value>没有与筛选条件匹配的请求。</value></data>
+  <data name="AiActivity_ClearConfirm" xml:space="preserve"><value>要删除 AI 请求的历史记录吗？此操作无法撤消。</value></data>
+  <data name="AiActivity_Clear" xml:space="preserve"><value>清除</value></data>
+  <data name="AiActivity_Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="AiRequest_Title" xml:space="preserve"><value>AI 请求</value></data>
+  <data name="AiRequest_TitleWithApp" xml:space="preserve"><value>AI 请求 - {0}</value></data>
+  <data name="AiRequest_AskedBy" xml:space="preserve"><value>请求方：{0}</value></data>
+  <data name="AiRequest_Instructions" xml:space="preserve"><value>说明</value></data>
+  <data name="AiRequest_Step" xml:space="preserve"><value>{0}. {1}</value></data>
+  <data name="AiRequest_KeyHeader" xml:space="preserve"><value>按键或组合键</value></data>
+  <data name="AiRequest_KeyDescription" xml:space="preserve"><value>若要使用组合键，请先按住 Ctrl、Alt、Shift 或 Win。若要单独使用 Ctrl、Alt、Shift 或 Win，请按下并松开它。</value></data>
+  <data name="AiRequest_KeyPrompt" xml:space="preserve"><value>按下按键或组合键（Esc 取消）</value></data>
+  <data name="AiRequest_Ok" xml:space="preserve"><value>确定</value></data>
+  <data name="AiRequest_Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="AiRequest_NoticeWithDescription" xml:space="preserve"><value>{0}（请求方：{1}）</value></data>
+  <data name="AiRequest_NoticeAskedBy" xml:space="preserve"><value>请求方：{0}。</value></data>
+  <data name="AiReady_AppAsks" xml:space="preserve"><value>{0} 请求</value></data>
+  <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
+  <data name="AiReady_Hint" xml:space="preserve"><value>准备好后按 {0} · {1} 取消</value></data>
+  <data name="AiReady_Start" xml:space="preserve"><value>开始</value></data>
+  <data name="Pick_Title" xml:space="preserve"><value>选取一个点</value></data>
+  <data name="Pick_ClickPoint" xml:space="preserve"><value>单击光标要移动到的点</value></data>
+  <data name="Pick_Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Pick_AppTitle" xml:space="preserve"><value>选取应用</value></data>
+  <data name="Pick_ClickApp" xml:space="preserve"><value>单击该应用的一个窗口</value></data>
+  <data name="Pick_AskedBy" xml:space="preserve"><value>{0}：{1}</value></data>
+  <data name="Pick_Counter" xml:space="preserve"><value>{0} / {1}   {2}</value></data>
+  <data name="Pick_CantReadName" xml:space="preserve"><value>无法读取此应用的名称</value></data>
+  <data name="Placement_Title" xml:space="preserve"><value>调整覆盖层位置</value></data>
+  <data name="Placement_DragPanel" xml:space="preserve"><value>将面板拖到所需位置</value></data>
+  <data name="Placement_DragPanelAndButtons" xml:space="preserve"><value>将面板和按钮拖到所需位置</value></data>
+  <data name="Placement_DragButton" xml:space="preserve"><value>将按钮拖到所需位置</value></data>
+  <data name="Placement_DragButtons" xml:space="preserve"><value>将按钮拖到所需位置</value></data>
+  <data name="Placement_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Placement_Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Placement_Arrows" xml:space="preserve"><value>方向键</value></data>
+  <data name="Placement_Nudge" xml:space="preserve"><value>移动 1 像素（Shift：10）</value></data>
+  <data name="Placement_NudgeSelected" xml:space="preserve"><value>将所选项移动 1 像素（Shift：10）</value></data>
+  <data name="Placement_Selection" xml:space="preserve"><value>{0}   X {1}   Y {2}</value></data>
+  <data name="MacroEditor_EditTitle" xml:space="preserve"><value>编辑宏</value></data>
+  <data name="Editor_Name" xml:space="preserve"><value>名称</value></data>
+  <data name="MacroEditor_NamePlaceholder" xml:space="preserve"><value>例如：制作并分解</value></data>
+  <data name="Editor_Actions" xml:space="preserve"><value>操作</value></data>
+  <data name="MacroEditor_AddAction" xml:space="preserve"><value>添加操作</value></data>
+  <data name="MacroEditor_Record" xml:space="preserve"><value>录制</value></data>
+  <data name="MacroEditor_RecordActions" xml:space="preserve"><value>录制操作</value></data>
+  <data name="Editor_Test" xml:space="preserve"><value>测试</value></data>
+  <data name="MacroEditor_TestAction" xml:space="preserve"><value>测试操作</value></data>
+  <data name="MacroEditor_TestTooltip" xml:space="preserve"><value>在后面的窗口中播放一次所选操作</value></data>
+  <data name="MacroEditor_Edit" xml:space="preserve"><value>编辑</value></data>
+  <data name="MacroEditor_EditAction" xml:space="preserve"><value>编辑操作</value></data>
+  <data name="MacroEditor_Copy" xml:space="preserve"><value>复制</value></data>
+  <data name="MacroEditor_CopyTooltip" xml:space="preserve"><value>复制所选操作，以粘贴到此处或其他宏中 (Ctrl+C)</value></data>
+  <data name="MacroEditor_Paste" xml:space="preserve"><value>粘贴</value></data>
+  <data name="MacroEditor_PasteTooltip" xml:space="preserve"><value>将复制的操作粘贴到新操作的插入位置 (Ctrl+V)</value></data>
+  <data name="MacroEditor_Duplicate" xml:space="preserve"><value>创建副本</value></data>
+  <data name="MacroEditor_DuplicateTooltip" xml:space="preserve"><value>为所选操作创建副本 (Ctrl+D)</value></data>
+  <data name="MacroEditor_Group" xml:space="preserve"><value>分组</value></data>
+  <data name="MacroEditor_GroupTooltip" xml:space="preserve"><value>将所选操作放入一个组 (Ctrl+G)</value></data>
+  <data name="MacroEditor_Delete" xml:space="preserve"><value>删除</value></data>
+  <data name="MacroEditor_DeleteTooltip" xml:space="preserve"><value>删除所选操作 (Delete)</value></data>
+  <data name="MacroEditor_RenameGroup" xml:space="preserve"><value>重命名组</value></data>
+  <data name="MacroEditor_Ungroup" xml:space="preserve"><value>取消分组</value></data>
+  <data name="MacroEditor_UngroupTooltip" xml:space="preserve"><value>取消分组（保留操作）</value></data>
+  <data name="MacroEditor_ExpandAllGroups" xml:space="preserve"><value>展开所有组</value></data>
+  <data name="MacroEditor_CollapseAllGroups" xml:space="preserve"><value>折叠所有组</value></data>
+  <data name="MacroEditor_Shortcuts" xml:space="preserve"><value>快捷方式</value></data>
+  <data name="MacroEditor_CompactList" xml:space="preserve"><value>紧凑列表</value></data>
+  <data name="MacroEditor_CompactListTooltip" xml:space="preserve"><value>紧凑列表：行更小</value></data>
+  <data name="MacroEditor_DensityNormal" xml:space="preserve"><value>正常</value></data>
+  <data name="MacroEditor_DensityCompact" xml:space="preserve"><value>紧凑</value></data>
+  <data name="MacroEditor_DelayTooltip" xml:space="preserve"><value>此操作前的延迟</value></data>
+  <data name="MacroEditor_NoActions" xml:space="preserve"><value>还没有操作。录制操作，或逐个添加。</value></data>
+  <data name="Editor_Enabled" xml:space="preserve"><value>已启用</value></data>
+  <data name="MacroEditor_Repeat" xml:space="preserve"><value>重复</value></data>
+  <data name="MacroEditor_Once" xml:space="preserve"><value>一次</value></data>
+  <data name="MacroEditor_Loop" xml:space="preserve"><value>循环</value></data>
+  <data name="MacroEditor_NTimes" xml:space="preserve"><value>N 次</value></data>
+  <data name="MacroEditor_Times" xml:space="preserve"><value>次数</value></data>
+  <data name="MacroEditor_Speed" xml:space="preserve"><value>速度</value></data>
+  <data name="Editor_Activation" xml:space="preserve"><value>激活方式</value></data>
+  <data name="Editor_Toggle" xml:space="preserve"><value>切换</value></data>
+  <data name="Editor_Hold" xml:space="preserve"><value>按住</value></data>
+  <data name="Editor_Hotkey" xml:space="preserve"><value>热键</value></data>
+  <data name="Editor_HotkeyHelp" xml:space="preserve"><value>任意按键或鼠标按钮，如 F2 或 A。若要使用组合键，请先按住 Ctrl、Alt、Shift 或 Win；左键单击、右键单击、滚轮和 Esc 必须使用组合键。“按住”需要热键。</value></data>
+  <data name="Editor_Sound" xml:space="preserve"><value>声音</value></data>
+  <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>在宏启动和停止时播放</value></data>
+  <data name="Editor_SoundChoose" xml:space="preserve"><value>单击某个声音以选择它，并试听启动和停止的效果</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Editor_Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="LoopEditor_AddTitle" xml:space="preserve"><value>添加循环</value></data>
+  <data name="LoopEditor_NamePlaceholder" xml:space="preserve"><value>例如：左键连点</value></data>
+  <data name="LoopEditor_PressKey" xml:space="preserve"><value>按键</value></data>
+  <data name="LoopEditor_Click" xml:space="preserve"><value>单击</value></data>
+  <data name="LoopEditor_PasteText" xml:space="preserve"><value>粘贴文本</value></data>
+  <data name="LoopEditor_SoundDescription" xml:space="preserve"><value>在循环启动和停止时播放</value></data>
+  <data name="RemapEditor_AddTitle" xml:space="preserve"><value>添加重映射</value></data>
+  <data name="RemapEditor_WhenIPress" xml:space="preserve"><value>当我按下</value></data>
+  <data name="RemapEditor_SendInstead" xml:space="preserve"><value>改为发送</value></data>
+  <data name="RemapEditor_KeyDescription" xml:space="preserve"><value>一个按键、鼠标按钮或组合键（先按住 Ctrl、Alt、Shift 或 Win）。若要单独使用 Ctrl、Alt、Shift 或 Win，请按下并松开它。</value></data>
+  <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>按下按键或组合键（Esc 取消）</value></data>
+  <data name="RemapEditor_Note" xml:space="preserve"><value>备注（可选）</value></data>
+  <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>例如：用侧键刷新</value></data>
+  <data name="ActionWindow_Title" xml:space="preserve"><value>操作</value></data>
+  <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>在后面的窗口中播放一次此操作</value></data>
+  <data name="ActionWindow_Name" xml:space="preserve"><value>名称（可选）</value></data>
+  <data name="ActionWindow_NameDescription" xml:space="preserve"><value>在列表中以粗体显示</value></data>
+  <data name="ActionWindow_NamePlaceholder" xml:space="preserve"><value>例如：打开背包</value></data>
+  <data name="ActionWindow_Delay" xml:space="preserve"><value>延迟</value></data>
+  <data name="ActionWindow_DelayDescription" xml:space="preserve"><value>执行此操作前等待</value></data>
+  <data name="Editor_Ms" xml:space="preserve"><value>毫秒</value></data>
+  <data name="Group_Title" xml:space="preserve"><value>将操作分组</value></data>
+  <data name="Group_Name" xml:space="preserve"><value>组名称</value></data>
+  <data name="Group_NamePlaceholder" xml:space="preserve"><value>例如：打开工作台</value></data>
+  <data name="Group_Ok" xml:space="preserve"><value>分组</value></data>
+  <data name="MacroEditor_AddTitle" xml:space="preserve"><value>添加宏</value></data>
+  <data name="MacroEditor_EditNamedTitle" xml:space="preserve"><value>编辑宏 - {0}</value></data>
+  <data name="MacroEditor_SpeedValue" xml:space="preserve"><value>×{0}</value></data>
+  <data name="MacroEditor_ActionNumber" xml:space="preserve"><value>#{0}</value></data>
+  <data name="MacroEditor_ActionRange" xml:space="preserve"><value>#{0}–{1}</value></data>
+  <data name="MacroEditor_GroupInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="MacroEditor_Total" xml:space="preserve"><value>{0}，×1 速度下 {1}</value></data>
+  <data name="MacroEditor_TotalInGroups" xml:space="preserve"><value>{0}，分为 {1}，×1 速度下 {2}</value></data>
+  <data name="MacroEditor_ActionCount_other" xml:space="preserve"><value>{0} 个操作</value></data>
+  <data name="MacroEditor_GroupCount_other" xml:space="preserve"><value>{0} 个组</value></data>
+  <data name="MacroEditor_InsertAfterGroup" xml:space="preserve"><value>新操作将插入到组“{0}”之后</value></data>
+  <data name="MacroEditor_InsertAfterInGroup" xml:space="preserve"><value>新操作将插入到 #{0} 之后，位于“{1}”中</value></data>
+  <data name="MacroEditor_InsertAfter" xml:space="preserve"><value>新操作将插入到 #{0} 之后</value></data>
+  <data name="MacroEditor_InsertAtEnd" xml:space="preserve"><value>新操作将插入到末尾</value></data>
+  <data name="MacroEditor_Selected_other" xml:space="preserve"><value>已选择 {0} 个操作 · {1}</value></data>
+  <data name="MacroEditor_NoneSelected" xml:space="preserve"><value>选择操作以进行编辑、分组、复制等 · {0}</value></data>
+  <data name="MacroEditor_DelayHeader" xml:space="preserve"><value>此操作前的延迟（毫秒）</value></data>
+  <data name="Editor_Close" xml:space="preserve"><value>关闭</value></data>
+  <data name="MacroEditor_NewGroupName" xml:space="preserve"><value>组 {0}</value></data>
+  <data name="MacroEditor_HoldHint" xml:space="preserve"><value>仅在按住热键时播放。</value></data>
+  <data name="Editor_ToggleHint" xml:space="preserve"><value>按热键开始，再按一次停止。</value></data>
+  <data name="Editor_EnterName" xml:space="preserve"><value>请输入名称。</value></data>
+  <data name="MacroEditor_NoActionsError" xml:space="preserve"><value>请添加或录制至少一个操作。</value></data>
+  <data name="Editor_HoldNeedsHotkey" xml:space="preserve"><value>“按住”需要热键。请选择一个热键，或改为“切换”。</value></data>
+  <data name="LoopEditor_EditNamedTitle" xml:space="preserve"><value>编辑循环 - {0}</value></data>
+  <data name="LoopEditor_HoldHint" xml:space="preserve"><value>仅在按住热键时运行。</value></data>
+  <data name="LoopEditor_NoActionsError" xml:space="preserve"><value>请添加至少一个操作。</value></data>
+  <data name="LoopEditor_IntervalError" xml:space="preserve"><value>每个间隔必须介于 10 毫秒和 24 小时之间。</value></data>
+  <data name="LoopEditor_HotkeyIsPressed" xml:space="preserve"><value>热键不能是此循环所按的按键之一。</value></data>
+  <data name="RemapEditor_EditNamedTitle" xml:space="preserve"><value>编辑重映射 - {0}</value></data>
+  <data name="RemapEditor_EditKeysTitle" xml:space="preserve"><value>编辑重映射 - {0} → {1}</value></data>
+  <data name="RemapEditor_NoSourceError" xml:space="preserve"><value>请选择要重映射的按键、鼠标按钮或组合键。</value></data>
+  <data name="RemapEditor_NoTargetError" xml:space="preserve"><value>请选择改为发送的内容。</value></data>
+  <data name="RemapEditor_SameKeysError" xml:space="preserve"><value>发送的内容必须与按下的不同。</value></data>
+  <data name="RemapEditor_PrimaryMouseError" xml:space="preserve"><value>左键单击和右键单击只能在指定应用中重映射，以便它们在其他地方仍能正常使用。</value></data>
+  <data name="ActionWindow_Type_PressKey" xml:space="preserve"><value>按键</value></data>
+  <data name="ActionWindow_Type_KeyDown" xml:space="preserve"><value>按下按键</value></data>
+  <data name="ActionWindow_Type_KeyUp" xml:space="preserve"><value>松开按键</value></data>
+  <data name="ActionWindow_Type_Click" xml:space="preserve"><value>单击</value></data>
+  <data name="ActionWindow_Type_MouseDown" xml:space="preserve"><value>按下鼠标按钮</value></data>
+  <data name="ActionWindow_Type_MouseUp" xml:space="preserve"><value>松开鼠标按钮</value></data>
+  <data name="ActionWindow_Type_MoveTo" xml:space="preserve"><value>移动到</value></data>
+  <data name="ActionWindow_Type_MovePath" xml:space="preserve"><value>沿路径移动</value></data>
+  <data name="ActionWindow_Type_Scroll" xml:space="preserve"><value>滚动</value></data>
+  <data name="ActionWindow_Type_PasteText" xml:space="preserve"><value>粘贴文本</value></data>
+  <data name="ActionWindow_Add_PressKey" xml:space="preserve"><value>添加“按键”</value></data>
+  <data name="ActionWindow_Add_KeyDown" xml:space="preserve"><value>添加“按下按键”</value></data>
+  <data name="ActionWindow_Add_KeyUp" xml:space="preserve"><value>添加“松开按键”</value></data>
+  <data name="ActionWindow_Add_Click" xml:space="preserve"><value>添加“单击”</value></data>
+  <data name="ActionWindow_Add_MouseDown" xml:space="preserve"><value>添加“按下鼠标按钮”</value></data>
+  <data name="ActionWindow_Add_MouseUp" xml:space="preserve"><value>添加“松开鼠标按钮”</value></data>
+  <data name="ActionWindow_Add_MoveTo" xml:space="preserve"><value>添加“移动到”</value></data>
+  <data name="ActionWindow_Add_MovePath" xml:space="preserve"><value>添加“沿路径移动”</value></data>
+  <data name="ActionWindow_Add_Scroll" xml:space="preserve"><value>添加“滚动”</value></data>
+  <data name="ActionWindow_Add_PasteText" xml:space="preserve"><value>添加“粘贴文本”</value></data>
+  <data name="ActionWindow_Edit_PressKey" xml:space="preserve"><value>编辑“按键” - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyDown" xml:space="preserve"><value>编辑“按下按键” - {0}</value></data>
+  <data name="ActionWindow_Edit_KeyUp" xml:space="preserve"><value>编辑“松开按键” - {0}</value></data>
+  <data name="ActionWindow_Edit_Click" xml:space="preserve"><value>编辑“单击” - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseDown" xml:space="preserve"><value>编辑“按下鼠标按钮” - {0}</value></data>
+  <data name="ActionWindow_Edit_MouseUp" xml:space="preserve"><value>编辑“松开鼠标按钮” - {0}</value></data>
+  <data name="ActionWindow_Edit_MoveTo" xml:space="preserve"><value>编辑“移动到” - {0}</value></data>
+  <data name="ActionWindow_Edit_MovePath" xml:space="preserve"><value>编辑“沿路径移动” - {0}</value></data>
+  <data name="ActionWindow_Edit_Scroll" xml:space="preserve"><value>编辑“滚动” - {0}</value></data>
+  <data name="ActionWindow_Edit_PasteText" xml:space="preserve"><value>编辑“粘贴文本” - {0}</value></data>
+  <data name="Shortcuts_Select" xml:space="preserve"><value>选择</value></data>
+  <data name="Shortcuts_Click" xml:space="preserve"><value>单击</value></data>
+  <data name="Shortcuts_CtrlClick" xml:space="preserve"><value>将操作添加到所选内容，或将其移除</value></data>
+  <data name="Shortcuts_ShiftClick" xml:space="preserve"><value>选择截至此操作的所有操作</value></data>
+  <data name="Shortcuts_Move" xml:space="preserve"><value>移动</value></data>
+  <data name="Shortcuts_Drag" xml:space="preserve"><value>拖动</value></data>
+  <data name="Shortcuts_DragWhat" xml:space="preserve"><value>移动所选操作，包括移入或移出组</value></data>
+  <data name="Shortcuts_MoveUpDown" xml:space="preserve"><value>上移或下移所选操作</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>编辑</value></data>
+  <data name="Shortcuts_DoubleClick" xml:space="preserve"><value>双击</value></data>
+  <data name="Shortcuts_DoubleClickWhat" xml:space="preserve"><value>编辑操作；展开或折叠组</value></data>
+  <data name="Shortcuts_RightClick" xml:space="preserve"><value>右键单击</value></data>
+  <data name="Shortcuts_RightClickWhat" xml:space="preserve"><value>显示所选操作的命令</value></data>
+  <data name="Shortcuts_Group" xml:space="preserve"><value>将所选操作放入一个组</value></data>
+  <data name="Shortcuts_Duplicate" xml:space="preserve"><value>为所选操作创建副本</value></data>
+  <data name="Shortcuts_Copy" xml:space="preserve"><value>复制所选操作，以粘贴到此处或其他宏中</value></data>
+  <data name="Shortcuts_Paste" xml:space="preserve"><value>将复制的操作粘贴到新操作的插入位置</value></data>
+  <data name="Shortcuts_Delete" xml:space="preserve"><value>删除所选操作</value></data>
+  <data name="Shortcuts_Note" xml:space="preserve"><value>新操作会插入到所选操作或组之后，或插入到末尾。“测试”会在 PuppyMacro 后面的窗口中播放一次所选操作。</value></data>
+  <data name="Editor_FormView" xml:space="preserve"><value>表单视图</value></data>
+  <data name="Editor_CodeView" xml:space="preserve"><value>代码视图</value></data>
+  <data name="Editor_CodeViewTooltip" xml:space="preserve"><value>以 JSON 格式编辑。按 Ctrl+Space 显示建议</value></data>
+  <data name="Editor_History" xml:space="preserve"><value>历史记录</value></data>
+  <data name="Editor_HistoryTooltip" xml:space="preserve"><value>已保存的版本：谁更改了什么，以及还原</value></data>
+  <data name="CodeView_Format" xml:space="preserve"><value>格式化</value></data>
+  <data name="CodeView_FormatTooltip" xml:space="preserve"><value>格式化代码 (Shift+Alt+F)</value></data>
+  <data name="CodeView_Loading" xml:space="preserve"><value>正在加载代码编辑器…</value></data>
+  <data name="CodeView_EditorName" xml:space="preserve"><value>代码编辑器</value></data>
+  <data name="CodeView_Stopped" xml:space="preserve"><value>代码编辑器已停止。请关闭此窗口，然后重新打开。</value></data>
+  <data name="CodeView_NeedsWebView2" xml:space="preserve"><value>代码视图需要 Microsoft Edge WebView2 Runtime。请从 Microsoft 安装它，然后重新打开此窗口。</value></data>
+  <data name="CodeView_CouldNotStart" xml:space="preserve"><value>代码编辑器无法启动：{0}</value></data>
+  <data name="CodeView_Checking" xml:space="preserve"><value>正在检查…</value></data>
+  <data name="CodeView_NoProblems" xml:space="preserve"><value>没有问题。</value></data>
+  <data name="CodeView_CheckerFailed" xml:space="preserve"><value>代码检查器无法启动：{0}</value></data>
+  <data name="CodeView_Problems" xml:space="preserve"><value>问题</value></data>
+  <data name="CodeView_ProblemsTitle" xml:space="preserve"><value>问题</value></data>
+  <data name="CodeView_Position" xml:space="preserve"><value>行 {0}，列 {1}</value></data>
+  <data name="CodeView_FixProblems_other" xml:space="preserve"><value>请修复这 {0} 个问题，或放弃更改。</value></data>
+  <data name="CodeView_DiscardChanges" xml:space="preserve"><value>放弃更改</value></data>
+  <data name="CodeView_DiscardChangesTooltip" xml:space="preserve"><value>撤消你对代码的更改，并返回表单视图</value></data>
+  <data name="HistoryView_Empty" xml:space="preserve"><value>还没有版本：每次保存时，版本都会保留在这里。</value></data>
+  <data name="HistoryView_Versions" xml:space="preserve"><value>版本</value></data>
+  <data name="HistoryView_ChangesTitle" xml:space="preserve"><value>相对于上一版本的更改：</value></data>
+  <data name="HistoryView_Restore" xml:space="preserve"><value>还原此版本</value></data>
+  <data name="HistoryView_RestoredTitle" xml:space="preserve"><value>{0:g} 的版本已放入编辑器。</value></data>
+  <data name="HistoryView_RestoredMessage" xml:space="preserve"><value>选择“保存”以保留它，或选择“取消”保持原样。</value></data>
+  <data name="AppScope_Header" xml:space="preserve"><value>指定应用</value></data>
+  <data name="AppScope_AllApps" xml:space="preserve"><value>在所有应用中生效</value></data>
+  <data name="AppScope_App" xml:space="preserve"><value>应用</value></data>
+  <data name="AppScope_AppTooltip" xml:space="preserve"><value>应用的 .exe 名称，例如 Diablo IV.exe</value></data>
+  <data name="AppScope_Pick" xml:space="preserve"><value>选取</value></data>
+  <data name="AppScope_PickTooltip" xml:space="preserve"><value>单击该应用的一个窗口</value></data>
+  <data name="AppScope_Browse" xml:space="preserve"><value>浏览…</value></data>
+  <data name="AppScope_NoAppError" xml:space="preserve"><value>请选择它生效的应用，或关闭“指定应用”。</value></data>
+  <data name="AppScope_ChooseApp" xml:space="preserve"><value>选择它生效的应用</value></data>
+  <data name="AppScope_OnlyApp" xml:space="preserve"><value>仅在 {0} 位于前台时生效</value></data>
+  <data name="AppScope_Help" xml:space="preserve"><value>选择一个正在运行的应用、选取其窗口，或浏览找到其 .exe 文件。仅在该应用位于前台时生效。</value></data>
+  <data name="AppScope_HelpStops" xml:space="preserve"><value>选择一个正在运行的应用、选取其窗口，或浏览找到其 .exe 文件。仅在该应用位于前台时生效，切换到其他应用时会停止。</value></data>
+  <data name="AppScope_BrowseTitle" xml:space="preserve"><value>选择应用</value></data>
+  <data name="AppScope_BrowseFilter" xml:space="preserve"><value>程序 (*.exe)|*.exe</value></data>
+  <data name="OverlayOptions_Show" xml:space="preserve"><value>在覆盖层中显示</value></data>
+  <data name="OverlayOptions_ShowDescription" xml:space="preserve"><value>在覆盖面板中，或作为悬浮按钮</value></data>
+  <data name="OverlayOptions_HideWhenDisabled" xml:space="preserve"><value>禁用时隐藏</value></data>
+  <data name="OverlayOptions_HideWhenDisabledDescription" xml:space="preserve"><value>禁用期间不在覆盖层中显示</value></data>
+  <data name="OverlayOptions_PassThrough" xml:space="preserve"><value>单击也会传递到后面的应用</value></data>
+  <data name="OverlayOptions_PassThroughDescription" xml:space="preserve"><value>在覆盖层中单击它时，也会单击下方的窗口</value></data>
+  <data name="FloatingButton_Header" xml:space="preserve"><value>悬浮按钮</value></data>
+  <data name="FloatingButton_Description" xml:space="preserve"><value>一个圆形按钮，在覆盖模式下用于启动和停止，取代它在面板中的那一行</value></data>
+  <data name="FloatingButton_NeedsToggle" xml:space="preserve"><value>需要“切换”：单击可以启动和停止，但不能按住</value></data>
+  <data name="FloatingButton_Label" xml:space="preserve"><value>标签</value></data>
+  <data name="FloatingButton_Size" xml:space="preserve"><value>大小</value></data>
+  <data name="FloatingButton_Small" xml:space="preserve"><value>小</value></data>
+  <data name="FloatingButton_Medium" xml:space="preserve"><value>中</value></data>
+  <data name="FloatingButton_Large" xml:space="preserve"><value>大</value></data>
+  <data name="FloatingButton_PositionOnScreen" xml:space="preserve"><value>屏幕上的位置</value></data>
+  <data name="FloatingButton_Position" xml:space="preserve"><value>位置</value></data>
+  <data name="FloatingButton_Opacity" xml:space="preserve"><value>不透明度</value></data>
+  <data name="FloatingButton_OpacityLabel" xml:space="preserve"><value>悬浮按钮不透明度</value></data>
+  <data name="MacroEditor_ExpandGroup" xml:space="preserve"><value>展开组</value></data>
+  <data name="MacroEditor_CollapseGroup" xml:space="preserve"><value>折叠组</value></data>
+  <data name="MacroEditor_GroupAccessibleName" xml:space="preserve"><value>组 {0}，{1}</value></data>
+  <data name="MacroEditor_DelayMs" xml:space="preserve"><value>{0:0.##} 毫秒</value></data>
+  <data name="MacroEditor_RowPress" xml:space="preserve"><value>按 {0}</value></data>
+  <data name="MacroEditor_RowKeyDown" xml:space="preserve"><value>按下 {0}</value></data>
+  <data name="MacroEditor_RowKeyUp" xml:space="preserve"><value>松开 {0}</value></data>
+  <data name="MacroEditor_RowButtonDown" xml:space="preserve"><value>按下{0}</value></data>
+  <data name="MacroEditor_RowButtonUp" xml:space="preserve"><value>松开{0}</value></data>
+  <data name="MacroEditor_RowMoveSmoothly" xml:space="preserve"><value>平滑移动</value></data>
+  <data name="MacroEditor_RowScrollUp" xml:space="preserve"><value>向上滚动</value></data>
+  <data name="MacroEditor_RowScrollDown" xml:space="preserve"><value>向下滚动</value></data>
+  <data name="MacroEditor_RowScrollLeft" xml:space="preserve"><value>向左滚动</value></data>
+  <data name="MacroEditor_RowScrollRight" xml:space="preserve"><value>向右滚动</value></data>
+  <data name="MacroEditor_RowTimes_other" xml:space="preserve"><value>{1} {0} 次</value></data>
+  <data name="MacroEditor_RowHeld" xml:space="preserve"><value>按住 {0} 毫秒</value></data>
+  <data name="MacroEditor_RowAt" xml:space="preserve"><value>位于 {0}, {1}</value></data>
+  <data name="MacroEditor_RowPath_other" xml:space="preserve"><value>{0} 个点，{1}</value></data>
+  <data name="MacroEditor_RowScrollSteps_other" xml:space="preserve"><value>{0} 格</value></data>
+  <data name="MacroEditor_RowQuoted" xml:space="preserve"><value>“{0}”</value></data>
+  <data name="Action_Direction" xml:space="preserve"><value>方向</value></data>
+  <data name="Action_DirectionUp" xml:space="preserve"><value>向上</value></data>
+  <data name="Action_DirectionDown" xml:space="preserve"><value>向下</value></data>
+  <data name="Action_DirectionLeft" xml:space="preserve"><value>向左</value></data>
+  <data name="Action_DirectionRight" xml:space="preserve"><value>向右</value></data>
+  <data name="Action_Remove" xml:space="preserve"><value>删除</value></data>
+  <data name="Action_WhileLoopRuns" xml:space="preserve"><value>循环运行期间</value></data>
+  <data name="Action_Repeat" xml:space="preserve"><value>重复</value></data>
+  <data name="Action_HoldDown" xml:space="preserve"><value>按住</value></data>
+  <data name="Action_Every" xml:space="preserve"><value>频率</value></data>
+  <data name="Action_Interval" xml:space="preserve"><value>间隔</value></data>
+  <data name="Action_Unit" xml:space="preserve"><value>单位</value></data>
+  <data name="Action_UnitMs" xml:space="preserve"><value>毫秒</value></data>
+  <data name="Action_UnitS" xml:space="preserve"><value>秒</value></data>
+  <data name="Action_UnitMin" xml:space="preserve"><value>分钟</value></data>
+  <data name="Action_UnitH" xml:space="preserve"><value>小时</value></data>
+  <data name="Action_Position" xml:space="preserve"><value>位置</value></data>
+  <data name="Action_Mode" xml:space="preserve"><value>模式</value></data>
+  <data name="Action_Single" xml:space="preserve"><value>单击</value></data>
+  <data name="Action_Double" xml:space="preserve"><value>双击</value></data>
+  <data name="Action_HoldFor" xml:space="preserve"><value>按住时长</value></data>
+  <data name="Action_Times" xml:space="preserve"><value>次数</value></data>
+  <data name="Action_PauseBetween" xml:space="preserve"><value>间隔暂停</value></data>
+  <data name="Action_PauseBetweenDescription" xml:space="preserve"><value>当次数大于 1 时，每两次按下之间的暂停</value></data>
+  <data name="Action_FixedPoint" xml:space="preserve"><value>固定点</value></data>
+  <data name="Action_Text" xml:space="preserve"><value>文本</value></data>
+  <data name="Action_TextToPaste" xml:space="preserve"><value>要粘贴的文本</value></data>
+  <data name="Action_EnterBefore" xml:space="preserve"><value>粘贴前按 Enter</value></data>
+  <data name="Action_EnterAfter" xml:space="preserve"><value>粘贴后按 Enter</value></data>
+  <data name="Action_Movement" xml:space="preserve"><value>移动方式</value></data>
+  <data name="Action_Instantly" xml:space="preserve"><value>立即</value></data>
+  <data name="Action_Smoothly" xml:space="preserve"><value>平滑</value></data>
+  <data name="Action_Speed" xml:space="preserve"><value>速度</value></data>
+  <data name="Action_MovementSpeed" xml:space="preserve"><value>移动速度</value></data>
+  <data name="Action_Steps" xml:space="preserve"><value>格数</value></data>
+  <data name="Action_UseClick" xml:space="preserve"><value>鼠标按钮请使用“单击”。</value></data>
+  <data name="Action_UseMouseAction" xml:space="preserve"><value>鼠标按钮请使用“单击”或鼠标按钮操作。</value></data>
+  <data name="Action_TitlePressKey" xml:space="preserve"><value>按键</value></data>
+  <data name="Action_TitleKeyDown" xml:space="preserve"><value>按下按键</value></data>
+  <data name="Action_TitleKeyUp" xml:space="preserve"><value>松开按键</value></data>
+  <data name="Action_TitleClick" xml:space="preserve"><value>单击</value></data>
+  <data name="Action_TitleMouseDown" xml:space="preserve"><value>按下鼠标按钮</value></data>
+  <data name="Action_TitleMouseUp" xml:space="preserve"><value>松开鼠标按钮</value></data>
+  <data name="Action_TitleMoveTo" xml:space="preserve"><value>移动到</value></data>
+  <data name="Action_TitleScroll" xml:space="preserve"><value>滚动</value></data>
+  <data name="Action_TitlePasteText" xml:space="preserve"><value>粘贴文本</value></data>
+  <data name="Action_HoldButtonDescription" xml:space="preserve"><value>按钮在松开前保持按下的时长</value></data>
+  <data name="Action_HoldKeyDescription" xml:space="preserve"><value>按键在松开前保持按下的时长</value></data>
+  <data name="Action_AFixedPoint" xml:space="preserve"><value>固定点</value></data>
+  <data name="Action_WherePointerIs" xml:space="preserve"><value>指针所在位置</value></data>
+  <data name="Action_SpeedVerySlow" xml:space="preserve"><value>很慢</value></data>
+  <data name="Action_SpeedSlow" xml:space="preserve"><value>慢</value></data>
+  <data name="Action_SpeedNormal" xml:space="preserve"><value>正常</value></data>
+  <data name="Action_SpeedFast" xml:space="preserve"><value>快</value></data>
+  <data name="Action_SpeedVeryFast" xml:space="preserve"><value>很快</value></data>
+  <data name="Action_SpeedText" xml:space="preserve"><value>速度：{0}，约 {1} 秒</value></data>
+  <data name="Action_SummaryEvery" xml:space="preserve"><value>每 {0} {1}</value></data>
+  <data name="Action_SummaryTimes_other" xml:space="preserve"><value>{1} {0} 次</value></data>
+  <data name="Action_SummaryAt" xml:space="preserve"><value>位于 {0}, {1}</value></data>
+  <data name="Action_SummaryWherePointerIs" xml:space="preserve"><value>指针所在位置</value></data>
+  <data name="Action_SummaryNoKey" xml:space="preserve"><value>尚未设置按键</value></data>
+  <data name="Action_SummaryNoText" xml:space="preserve"><value>尚未设置文本</value></data>
+  <data name="Action_SummaryUntilKeyUp" xml:space="preserve"><value>{0}，直到“松开按键”</value></data>
+  <data name="Action_SummarySteps_other" xml:space="preserve"><value>{0} 格</value></data>
+  <data name="Action_SummaryText" xml:space="preserve"><value>“{0}”</value></data>
+  <data name="Action_SummaryTextThenEnter" xml:space="preserve"><value>“{0}”，然后按 Enter</value></data>
+  <data name="Action_SummaryHeldDown" xml:space="preserve"><value>{0}，在循环运行期间按住</value></data>
+  <data name="Action_ChooseKeyEach" xml:space="preserve"><value>请为每个“按键”选择一个按键。</value></data>
+  <data name="Action_ChooseKey" xml:space="preserve"><value>请选择一个按键。</value></data>
+  <data name="Action_SetFixedPoint" xml:space="preserve"><value>请为每个固定点“单击”设置位置。</value></data>
+  <data name="Action_EnterTextEach" xml:space="preserve"><value>请为每个“粘贴文本”输入文本。</value></data>
+  <data name="Action_EnterText" xml:space="preserve"><value>请输入要粘贴的文本。</value></data>
+  <data name="Action_HoldNeedsSingleKey" xml:space="preserve"><value>“按住”仅适用于单个按键。若要使用组合键，请使用“重复”。</value></data>
+  <data name="KeyField_PromptHotkey" xml:space="preserve"><value>按下热键（Esc 取消）</value></data>
+  <data name="KeyField_PromptCombination" xml:space="preserve"><value>按下按键或组合键（Esc 取消）</value></data>
+  <data name="KeyField_PromptKeyOrModifier" xml:space="preserve"><value>按下一个按键，或单独按 Ctrl、Alt、Shift 或 Win（Esc 取消）</value></data>
+  <data name="KeyField_SetHotkey" xml:space="preserve"><value>设置热键</value></data>
+  <data name="KeyField_SetKey" xml:space="preserve"><value>设置按键</value></data>
+  <data name="KeyField_ChangeHotkey" xml:space="preserve"><value>更改热键</value></data>
+  <data name="KeyField_ChangeKey" xml:space="preserve"><value>更改按键</value></data>
+  <data name="KeyField_ClearHotkey" xml:space="preserve"><value>清除热键</value></data>
+  <data name="KeyField_ClearKey" xml:space="preserve"><value>清除按键</value></data>
+  <data name="KeyField_Change" xml:space="preserve"><value>更改</value></data>
+  <data name="KeyField_Clear" xml:space="preserve"><value>清除</value></data>
+  <data name="Mouse_Button" xml:space="preserve"><value>鼠标按钮</value></data>
+  <data name="Mouse_Left" xml:space="preserve"><value>左键</value></data>
+  <data name="Mouse_Right" xml:space="preserve"><value>右键</value></data>
+  <data name="Mouse_Middle" xml:space="preserve"><value>中键</value></data>
+  <data name="Mouse_Back" xml:space="preserve"><value>后退键 (X1)</value></data>
+  <data name="Mouse_Forward" xml:space="preserve"><value>前进键 (X2)</value></data>
+  <data name="Mouse_ClickLeft" xml:space="preserve"><value>左键单击</value></data>
+  <data name="Mouse_ClickRight" xml:space="preserve"><value>右键单击</value></data>
+  <data name="Mouse_ClickMiddle" xml:space="preserve"><value>中键单击</value></data>
+  <data name="Mouse_ClickBack" xml:space="preserve"><value>后退键 (X1) 单击</value></data>
+  <data name="Mouse_ClickForward" xml:space="preserve"><value>前进键 (X2) 单击</value></data>
+  <data name="Mouse_DoubleClickLeft" xml:space="preserve"><value>左键双击</value></data>
+  <data name="Mouse_DoubleClickRight" xml:space="preserve"><value>右键双击</value></data>
+  <data name="Mouse_DoubleClickMiddle" xml:space="preserve"><value>中键双击</value></data>
+  <data name="Mouse_DoubleClickBack" xml:space="preserve"><value>后退键 (X1) 双击</value></data>
+  <data name="Mouse_DoubleClickForward" xml:space="preserve"><value>前进键 (X2) 双击</value></data>
+  <data name="Mouse_DetectTooltip" xml:space="preserve"><value>按下一个鼠标按钮以检测它</value></data>
+  <data name="Mouse_Detect" xml:space="preserve"><value>检测鼠标按钮</value></data>
+  <data name="Mouse_Prompt" xml:space="preserve"><value>按下一个鼠标按钮（Esc 取消）</value></data>
+  <data name="Mouse_UsePressKey" xml:space="preserve"><value>按键请使用“按键”。</value></data>
+  <data name="Position_X" xml:space="preserve"><value>X</value></data>
+  <data name="Position_Y" xml:space="preserve"><value>Y</value></data>
+  <data name="Position_PickOnScreen" xml:space="preserve"><value>在屏幕上选取</value></data>
+  <data name="Slider_Percent" xml:space="preserve"><value>{0}%</value></data>
+  <data name="Keys_NoHotkey" xml:space="preserve"><value>无热键</value></data>
+  <data name="Keys_Join" xml:space="preserve"><value> + </value></data>
+  <data name="Keys_None" xml:space="preserve"><value>无</value></data>
+  <data name="Keys_WheelUp" xml:space="preserve"><value>滚轮向上</value></data>
+  <data name="Keys_WheelDown" xml:space="preserve"><value>滚轮向下</value></data>
+  <data name="Keys_WheelLeft" xml:space="preserve"><value>滚轮向左</value></data>
+  <data name="Keys_WheelRight" xml:space="preserve"><value>滚轮向右</value></data>
+  <data name="Keys_Backspace" xml:space="preserve"><value>Backspace</value></data>
+  <data name="Keys_Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="Keys_Enter" xml:space="preserve"><value>Enter</value></data>
+  <data name="Keys_Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="Keys_Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Keys_Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Keys_Win" xml:space="preserve"><value>Win</value></data>
+  <data name="Keys_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Keys_CapsLock" xml:space="preserve"><value>CapsLock</value></data>
+  <data name="Keys_Esc" xml:space="preserve"><value>Esc</value></data>
+  <data name="Keys_Space" xml:space="preserve"><value>空格</value></data>
+  <data name="Keys_PageUp" xml:space="preserve"><value>PageUp</value></data>
+  <data name="Keys_PageDown" xml:space="preserve"><value>PageDown</value></data>
+  <data name="Keys_End" xml:space="preserve"><value>End</value></data>
+  <data name="Keys_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Keys_Left" xml:space="preserve"><value>向左键</value></data>
+  <data name="Keys_Up" xml:space="preserve"><value>向上键</value></data>
+  <data name="Keys_Right" xml:space="preserve"><value>向右键</value></data>
+  <data name="Keys_Down" xml:space="preserve"><value>向下键</value></data>
+  <data name="Keys_PrintScreen" xml:space="preserve"><value>PrintScreen</value></data>
+  <data name="Keys_Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Keys_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Keys_LeftWin" xml:space="preserve"><value>左 Win</value></data>
+  <data name="Keys_RightWin" xml:space="preserve"><value>右 Win</value></data>
+  <data name="Keys_NumpadDigit" xml:space="preserve"><value>小键盘 {0}</value></data>
+  <data name="Keys_NumpadMultiply" xml:space="preserve"><value>小键盘 *</value></data>
+  <data name="Keys_NumpadAdd" xml:space="preserve"><value>小键盘 +</value></data>
+  <data name="Keys_NumpadSubtract" xml:space="preserve"><value>小键盘 -</value></data>
+  <data name="Keys_NumpadDecimal" xml:space="preserve"><value>小键盘 .</value></data>
+  <data name="Keys_NumpadDivide" xml:space="preserve"><value>小键盘 /</value></data>
+  <data name="Keys_NumLock" xml:space="preserve"><value>NumLock</value></data>
+  <data name="Keys_ScrollLock" xml:space="preserve"><value>ScrollLock</value></data>
+  <data name="Keys_LeftShift" xml:space="preserve"><value>左 Shift</value></data>
+  <data name="Keys_RightShift" xml:space="preserve"><value>右 Shift</value></data>
+  <data name="Keys_LeftCtrl" xml:space="preserve"><value>左 Ctrl</value></data>
+  <data name="Keys_RightCtrl" xml:space="preserve"><value>右 Ctrl</value></data>
+  <data name="Keys_LeftAlt" xml:space="preserve"><value>左 Alt</value></data>
+  <data name="Keys_RightAlt" xml:space="preserve"><value>右 Alt</value></data>
+  <data name="Keys_EitherCtrl" xml:space="preserve"><value>左或右 Ctrl</value></data>
+  <data name="Keys_EitherAlt" xml:space="preserve"><value>左或右 Alt</value></data>
+  <data name="Keys_EitherShift" xml:space="preserve"><value>左或右 Shift</value></data>
+  <data name="Keys_EitherWin" xml:space="preserve"><value>左或右 Win</value></data>
+  <data name="Keys_Unknown" xml:space="preserve"><value>按键 0x{0:X2}</value></data>
+  <data name="Hotkey_ClickNeedsModifier" xml:space="preserve"><value>左键单击和右键单击需要搭配 Ctrl、Alt、Shift 或 Win：单独使用会阻止鼠标操作。</value></data>
+  <data name="Hotkey_WheelNeedsModifier" xml:space="preserve"><value>滚轮需要搭配 Ctrl、Alt、Shift 或 Win：单独使用会阻止滚动。</value></data>
+  <data name="Hotkey_EscNeedsModifier" xml:space="preserve"><value>Esc 需要搭配 Ctrl、Alt、Shift 或 Win。</value></data>
+  <data name="Hotkey_WheelCantHold" xml:space="preserve"><value>滚轮无法按住。请改为“切换”，或选择其他热键。</value></data>
+  <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} 已被“全部停止”使用。</value></data>
+  <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} 已被“覆盖模式”使用。</value></data>
+  <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} 已被“录制”使用。</value></data>
+  <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} 已被循环“{1}”使用。</value></data>
+  <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} 已被循环“{1}”在 {2} 中使用。</value></data>
+  <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} 已被宏“{1}”使用。</value></data>
+  <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} 已被宏“{1}”在 {2} 中使用。</value></data>
+  <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0}热键优先于重映射。</value></data>
+  <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} 已在所有应用中重映射。</value></data>
+  <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} 已在 {1} 中重映射。</value></data>
+  <data name="Sound_Chime" xml:space="preserve"><value>钟鸣</value></data>
+  <data name="Sound_Blip" xml:space="preserve"><value>哔声</value></data>
+  <data name="Sound_Pop" xml:space="preserve"><value>啵声</value></data>
+  <data name="Sound_Bell" xml:space="preserve"><value>铃铛</value></data>
+  <data name="Sound_Arcade" xml:space="preserve"><value>街机</value></data>
+  <data name="Sound_Soft" xml:space="preserve"><value>柔和</value></data>
+  <data name="Sound_Marimba" xml:space="preserve"><value>马林巴</value></data>
+  <data name="Sound_Pluck" xml:space="preserve"><value>拨弦</value></data>
+  <data name="Sound_Harp" xml:space="preserve"><value>竖琴</value></data>
+  <data name="Sound_Kalimba" xml:space="preserve"><value>卡林巴</value></data>
+  <data name="Sound_Xylophone" xml:space="preserve"><value>木琴</value></data>
+  <data name="Sound_Glock" xml:space="preserve"><value>钟琴</value></data>
+  <data name="Sound_Organ" xml:space="preserve"><value>管风琴</value></data>
+  <data name="Sound_Flute" xml:space="preserve"><value>长笛</value></data>
+  <data name="Sound_Synth" xml:space="preserve"><value>合成器</value></data>
+  <data name="Sound_Pad" xml:space="preserve"><value>合成铺底</value></data>
+  <data name="Sound_Brass" xml:space="preserve"><value>铜管</value></data>
+  <data name="Sound_Bass" xml:space="preserve"><value>贝斯</value></data>
+  <data name="Sound_Click" xml:space="preserve"><value>咔嗒</value></data>
+  <data name="Sound_Tick" xml:space="preserve"><value>滴答</value></data>
+  <data name="Sound_Knock" xml:space="preserve"><value>敲击</value></data>
+  <data name="Sound_Switch" xml:space="preserve"><value>开关</value></data>
+  <data name="Sound_Tom" xml:space="preserve"><value>通鼓</value></data>
+  <data name="Sound_Conga" xml:space="preserve"><value>康加鼓</value></data>
+  <data name="Sound_Cowbell" xml:space="preserve"><value>牛铃</value></data>
+  <data name="Sound_Triangle" xml:space="preserve"><value>三角铁</value></data>
+  <data name="Sound_Gong" xml:space="preserve"><value>锣</value></data>
+  <data name="Sound_Coin" xml:space="preserve"><value>金币</value></data>
+  <data name="Sound_Jump" xml:space="preserve"><value>跳跃</value></data>
+  <data name="Sound_Laser" xml:space="preserve"><value>激光</value></data>
+  <data name="Sound_Zap" xml:space="preserve"><value>电击</value></data>
+  <data name="Sound_Powerup" xml:space="preserve"><value>能量提升</value></data>
+  <data name="Sound_Retro" xml:space="preserve"><value>复古</value></data>
+  <data name="Sound_Fanfare" xml:space="preserve"><value>号角</value></data>
+  <data name="Sound_Twinkle" xml:space="preserve"><value>闪烁</value></data>
+  <data name="Sound_Sparkle" xml:space="preserve"><value>闪光</value></data>
+  <data name="Sound_Bubble" xml:space="preserve"><value>气泡</value></data>
+  <data name="Sound_Drop" xml:space="preserve"><value>水滴</value></data>
+  <data name="Sound_Whoosh" xml:space="preserve"><value>嗖声</value></data>
+  <data name="Sound_Whistle" xml:space="preserve"><value>口哨</value></data>
+  <data name="Sound_Chirp" xml:space="preserve"><value>鸟鸣</value></data>
+  <data name="Sound_Cricket" xml:space="preserve"><value>蟋蟀</value></data>
+  <data name="Sound_Doorbell" xml:space="preserve"><value>门铃</value></data>
+  <data name="Sound_Phone" xml:space="preserve"><value>电话</value></data>
+  <data name="Sound_Alarm" xml:space="preserve"><value>警报</value></data>
+  <data name="Sound_Modem" xml:space="preserve"><value>调制解调器</value></data>
+  <data name="Sound_Radar" xml:space="preserve"><value>雷达</value></data>
+  <data name="Sound_Sonar" xml:space="preserve"><value>声呐</value></data>
+  <data name="Sound_Echo" xml:space="preserve"><value>回声</value></data>
+  <data name="Sound_Robot" xml:space="preserve"><value>机器人</value></data>
+  <data name="Sound_Siren" xml:space="preserve"><value>警笛</value></data>
+  <data name="Sound_Hum" xml:space="preserve"><value>嗡嗡声</value></data>
+  <data name="Sound_Ripple" xml:space="preserve"><value>涟漪</value></data>
+  <data name="Sound_Wobble" xml:space="preserve"><value>摇摆</value></data>
+  <data name="Sound_Warp" xml:space="preserve"><value>曲速</value></data>
+  <data name="Sound_Ufo" xml:space="preserve"><value>飞碟</value></data>
+  <data name="Code_MustBeObject" xml:space="preserve"><value>此处必须是 JSON 对象。</value></data>
+  <data name="Code_Between" xml:space="preserve"><value>必须介于 {0} 和 {1} 之间。</value></data>
+  <data name="Code_IdCannotChange" xml:space="preserve"><value>Id 不能更改。请使用 "{0}"（按 Ctrl+Space 会建议它）。</value></data>
+  <data name="Code_UnknownSound" xml:space="preserve"><value>未知声音。请使用以下之一：{0}。</value></data>
+  <data name="Code_HoldNeedsHotkey" xml:space="preserve"><value>Hold 需要热键。请设置一个，或使用 "Toggle"。</value></data>
+  <data name="Code_HotkeyNotAKey" xml:space="preserve"><value>不是按键：请使用 1 到 254 的虚拟键码，或滚轮代码（256 向上、257 向下、258 向左、259 向右）。</value></data>
+  <data name="Code_HotkeyModifierAlone" xml:space="preserve"><value>Ctrl、Alt、Shift 和 Win 不能单独作为按键：请使用 "Ctrl"、"Alt"、"Shift" 和 "Win" 设置它们。</value></data>
+  <data name="Code_RemapChooseKey" xml:space="preserve"><value>请选择一个按键或鼠标按钮：1 到 254 的虚拟键码。</value></data>
+  <data name="Code_RemapModifierSide" xml:space="preserve"><value>单独使用 Ctrl、Alt、Shift 或 Win：请使用其左键或右键的代码（160、161 Shift；162、163 Ctrl；164、165 Alt；91、92 Win）。</value></data>
+  <data name="Code_RemapModifierNoOthers" xml:space="preserve"><value>单独使用 Ctrl、Alt、Shift 或 Win 时不能搭配其他修饰键：请将 "Ctrl"、"Alt"、"Shift" 和 "Win" 设置为 false。</value></data>
+  <data name="Code_OnlyWithModifier" xml:space="preserve"><value>仅在 "{0}": true 时可用。请删除它，或将 "{0}" 设置为 true。</value></data>
+  <data name="Code_AppExeEmpty" xml:space="preserve"><value>请写入应用的文件名，如 "notepad.exe"，或写入 null 表示所有应用。</value></data>
+  <data name="Code_AppExeNotExe" xml:space="preserve"><value>请写入应用的文件名，以 ".exe" 结尾。</value></data>
+  <data name="Code_AtMostCharacters_other" xml:space="preserve"><value>最多 {0} 个字符。</value></data>
+  <data name="Code_SetBothXY" xml:space="preserve"><value>请同时设置 X 和 Y，或都不设置（null：主屏幕的中央）。</value></data>
+  <data name="Code_FloatingNeedsToggle" xml:space="preserve"><value>需要 "Toggle"：单击可以启动和停止，但不能按住。</value></data>
+  <data name="Code_MustBeOneOf" xml:space="preserve"><value>必须是以下之一：{0}。</value></data>
+  <data name="Code_AtPath" xml:space="preserve"><value>{0}：{1}</value></data>
+  <data name="Code_InvalidJsonDetail" xml:space="preserve"><value>无效的 JSON：{0}</value></data>
+  <data name="Code_UnknownProperty" xml:space="preserve"><value>未知属性 "{0}"。</value></data>
+  <data name="Code_WrongType" xml:space="preserve"><value>此值的类型错误，或不是允许的值之一。</value></data>
+  <data name="Code_NeedsValue" xml:space="preserve"><value>此处需要一个值，不能为 null。</value></data>
+  <data name="Code_InvalidJson" xml:space="preserve"><value>无效的 JSON。</value></data>
+  <data name="Code_EnterName" xml:space="preserve"><value>请输入名称。</value></data>
+  <data name="Code_AddAction" xml:space="preserve"><value>请添加至少一个操作。</value></data>
+  <data name="Code_KeyVkOld" xml:space="preserve"><value>已不再使用：按键应放在 "Actions" 中。请删除它。</value></data>
+  <data name="Code_IntervalMsOld" xml:space="preserve"><value>已不再使用：间隔应放在 "Actions" 中。请删除它。</value></data>
+  <data name="Code_HotkeyVkOld" xml:space="preserve"><value>已不再使用：请使用 "Hotkey"。请删除它。</value></data>
+  <data name="Code_LoopChooseKey" xml:space="preserve"><value>请选择按键或鼠标按钮：1 到 254 的虚拟键码。</value></data>
+  <data name="Code_EnterText" xml:space="preserve"><value>请输入文本。</value></data>
+  <data name="Code_TextNoHold" xml:space="preserve"><value>只有“按键”和“单击”可以按住。</value></data>
+  <data name="Code_IntervalRange" xml:space="preserve"><value>间隔必须介于 10 毫秒和 24 小时之间。</value></data>
+  <data name="Code_HotkeyPressed" xml:space="preserve"><value>热键不能是此循环所按的按键之一。</value></data>
+  <data name="Code_LoopOnlyPressKeyModifiers" xml:space="preserve"><value>只有“按键”可以带 Ctrl、Alt、Shift 或 Win。请删除它。</value></data>
+  <data name="Code_ClickNoModifiers" xml:space="preserve"><value>单击不带 Ctrl、Alt、Shift 或 Win。请删除它。</value></data>
+  <data name="Code_HoldDownSingleKey" xml:space="preserve"><value>按住仅适用于单个按键。若要使用组合键，请使用 Repeat。</value></data>
+  <data name="Code_OnlyPressKeyAndClick" xml:space="preserve"><value>只有“按键”和“单击”具有此项。请删除它。</value></data>
+  <data name="Code_OnlyClick" xml:space="preserve"><value>只有“单击”具有此项。请删除它。</value></data>
+  <data name="Code_ClickCountOrNull" xml:space="preserve"><value>必须是 1（单击）、2（双击）或 null。</value></data>
+  <data name="Code_SetBothXYFixed" xml:space="preserve"><value>请同时设置 X 和 Y 作为固定点，或都不设置（null：指针所在位置）。</value></data>
+  <data name="Code_SourceVkOld" xml:space="preserve"><value>已不再使用：请使用 "Source"，如 {"Vk": 65} 表示 A。请删除它。</value></data>
+  <data name="Code_ChooseSource" xml:space="preserve"><value>请选择要重映射的按键、鼠标按钮或组合键。</value></data>
+  <data name="Code_ChooseTarget" xml:space="preserve"><value>请选择改为发送的内容。</value></data>
+  <data name="Code_TargetDifferent" xml:space="preserve"><value>发送的内容必须与按下的不同。</value></data>
+  <data name="Code_PrimaryMouseNeedsApp" xml:space="preserve"><value>左键单击和右键单击只能在指定应用中重映射，以便它们在其他地方仍能正常使用。</value></data>
+  <data name="Code_GroupNotAllowed" xml:space="preserve"><value>此操作只能位于：{0}。一个组的操作必须彼此相邻。</value></data>
+  <data name="Code_SpeedSteps" xml:space="preserve"><value>必须是 0.25、0.5、1、2 或 4。</value></data>
+  <data name="Code_GroupIdTwice" xml:space="preserve"><value>有两个组使用此 Id。</value></data>
+  <data name="Code_EnterGroupName" xml:space="preserve"><value>请输入组名称。</value></data>
+  <data name="Code_NoSuchGroup" xml:space="preserve"><value>"Groups" 中没有组使用此 Id。</value></data>
+  <data name="Code_GroupApart" xml:space="preserve"><value>一个组的操作必须彼此相邻。</value></data>
+  <data name="Code_GroupNoActions" xml:space="preserve"><value>此组没有操作：请为其添加操作 ("GroupId")，或将其删除。</value></data>
+  <data name="Code_MacroChooseKey" xml:space="preserve"><value>请选择一个按键：1 到 254 的虚拟键码。</value></data>
+  <data name="Code_UseMouseAction" xml:space="preserve"><value>鼠标按钮请使用“单击”“按下鼠标按钮”或“松开鼠标按钮”操作。</value></data>
+  <data name="Code_ChooseMouseButton" xml:space="preserve"><value>请选择一个鼠标按钮：1 左键、2 右键、4 中键、5 后退 (X1)、6 前进 (X2)。</value></data>
+  <data name="Code_KeyDownOneKey" xml:space="preserve"><value>“按下按键”和“松开按键”只接受一个按键：若要单独使用 Ctrl、Alt、Shift 或 Win，请在 "Vk" 中使用其键码（160、161 Shift；162、163 Ctrl；164、165 Alt；91、92 Win）。</value></data>
+  <data name="Code_MacroOnlyPressKeyModifiers" xml:space="preserve"><value>只有“按键”操作可以带 Ctrl、Alt、Shift 或 Win。请删除它。</value></data>
+  <data name="Code_ClickCount" xml:space="preserve"><value>必须是 1（单击）或 2（双击）。</value></data>
+  <data name="Code_PathEmpty" xml:space="preserve"><value>路径至少需要一个点。</value></data>
+  <data name="Code_PathTimes" xml:space="preserve"><value>时间必须从 0 或更大的值开始，且不能倒退。</value></data>
+  <data name="Code_EnterPasteText" xml:space="preserve"><value>请输入要粘贴的文本。</value></data>
+  <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro 覆盖面板</value></data>
+  <data name="Overlay_MovePanel" xml:space="preserve"><value>移动面板</value></data>
+  <data name="Overlay_MovePanelTip" xml:space="preserve"><value>拖动以移动面板</value></data>
+  <data name="Overlay_Exit" xml:space="preserve"><value>退出覆盖模式</value></data>
+  <data name="Overlay_ExitTip" xml:space="preserve"><value>退出覆盖模式 ({0})</value></data>
+  <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>退出并打开 PuppyMacro</value></data>
+  <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>退出覆盖模式并打开 PuppyMacro</value></data>
+  <data name="Overlay_NothingToShow" xml:space="preserve"><value>没有可显示的内容。</value></data>
+  <data name="Overlay_AllOnButtons" xml:space="preserve"><value>所有项目都在悬浮按钮上。</value></data>
+  <data name="Overlay_NothingForApp" xml:space="preserve"><value>没有适用于此应用的项目。</value></data>
+  <data name="Overlay_Macros" xml:space="preserve"><value>宏</value></data>
+  <data name="Overlay_StopAll" xml:space="preserve"><value>全部停止</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>单击以启动或停止 · 右键单击以启用或禁用</value></data>
+  <data name="Floating_WindowTitle" xml:space="preserve"><value>PuppyMacro 悬浮按钮</value></data>
+  <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>PuppyMacro 悬浮按钮：{0}</value></data>
+  <data name="Recording_Title" xml:space="preserve"><value>正在录制</value></data>
+  <data name="Recording_StartsIn" xml:space="preserve"><value>{0} 秒后开始录制</value></data>
+  <data name="Recording_SwitchHint" xml:space="preserve"><value>切换到要录制的窗口。单击尚未被录制。</value></data>
+  <data name="Recording_Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Recording_Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="Recording_Events_other" xml:space="preserve"><value>{0} 个事件</value></data>
+  <data name="Recording_PressToStop" xml:space="preserve"><value>按 {0} 停止</value></data>
+  <data name="Recording_ReadyTitle" xml:space="preserve"><value>准备录制</value></data>
+  <data name="Recording_PressOrSelect" xml:space="preserve"><value>按 {0} 或选择 {1}</value></data>
+  <data name="Recording_StartRecording" xml:space="preserve"><value>开始录制</value></data>
+  <data name="Recording_RecordMouseMovement" xml:space="preserve"><value>录制鼠标移动</value></data>
+  <data name="Recording_PromptDescription" xml:space="preserve"><value>你有 3 秒钟时间切换到要录制的窗口。你的所有按键、单击和移动都会被录制，直到你按 {0} 或选择“停止”。</value></data>
+  <data name="Countdown_Title" xml:space="preserve"><value>录制倒计时</value></data>
+  <data name="Countdown_Starts" xml:space="preserve"><value>即将开始录制…</value></data>
+  <data name="Input_CannotReadKeyboard" xml:space="preserve"><value>无法读取键盘。</value></data>
+  <data name="Input_CannotReadMouse" xml:space="preserve"><value>无法读取鼠标。</value></data>
+  <data name="ItemFile_NotItemsFile" xml:space="preserve"><value>此文件不是 PuppyMacro 项目文件。</value></data>
+  <data name="ItemFile_NewerVersion" xml:space="preserve"><value>此文件由 PuppyMacro {0} 创建，比此版本（{1}）新。请更新 PuppyMacro 以导入它。</value></data>
+  <data name="ItemFile_NewerFormat" xml:space="preserve"><value>此文件由更新版本的 PuppyMacro 创建。请更新 PuppyMacro 以导入它。</value></data>
+  <data name="ItemFile_UnnamedItem" xml:space="preserve"><value>项目 {0}</value></data>
+  <data name="ItemFile_UnknownKind" xml:space="preserve"><value>未知类型“{0}”：PuppyMacro 可导入循环、宏和重映射。</value></data>
+  <data name="ItemFile_Missing_loop" xml:space="preserve"><value>缺少循环。</value></data>
+  <data name="ItemFile_Missing_macro" xml:space="preserve"><value>缺少宏。</value></data>
+  <data name="ItemFile_Missing_remap" xml:space="preserve"><value>缺少重映射。</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>已有同名循环：已导入为“{0}”。</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>已有同名宏：已导入为“{0}”。</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} 已被此文件中的循环“{1}”使用。</value></data>
+  <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} 已被此文件中的宏“{1}”使用。</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}：导入时未设置热键。</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}：导入时未设置热键，并设为“切换”（“按住”需要热键）。</value></data>
+  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} 已被此文件中的循环“{1}”使用。热键优先于重映射。</value></data>
+  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} 已被此文件中的宏“{1}”使用。热键优先于重映射。</value></data>
+  <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} 已在此文件中为所有应用重映射。</value></data>
+  <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} 已在此文件中为 {1} 重映射。</value></data>
+  <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro 项目</value></data>
+  <data name="ItemFile_RemapFileName" xml:space="preserve"><value>重映射 {0}</value></data>
+  <data name="Ai_Exported_other" xml:space="preserve"><value>导出了 {0} 个项目</value></data>
+  <data name="Ai_Imported_loop" xml:space="preserve"><value>导入了循环 {0}</value></data>
+  <data name="Ai_Imported_macro" xml:space="preserve"><value>导入了宏 {0}</value></data>
+  <data name="Ai_Imported_remap" xml:space="preserve"><value>导入了重映射 {0}</value></data>
+  <data name="Ai_ImportCount_other" xml:space="preserve"><value>导入 {0} 个项目</value></data>
+  <data name="Ai_ConfirmImport_other" xml:space="preserve"><value>要导入这 {0} 个项目吗？</value></data>
+  <data name="Ai_Import" xml:space="preserve"><value>导入</value></data>
+  <data name="Ai_OpenedImport" xml:space="preserve"><value>打开了“导入”</value></data>
+  <data name="Ai_OpenedExport" xml:space="preserve"><value>打开了“导出”</value></data>
+  <data name="Share_Import" xml:space="preserve"><value>导入</value></data>
+  <data name="Share_ImportTooltip" xml:space="preserve"><value>从文件添加循环、宏和重映射</value></data>
+  <data name="Share_Export" xml:space="preserve"><value>导出</value></data>
+  <data name="Share_ExportTooltip" xml:space="preserve"><value>将循环、宏和重映射保存到文件，以便分享</value></data>
+  <data name="Share_CardExport" xml:space="preserve"><value>导出…</value></data>
+  <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 项目 (*{0})|*{0}</value></data>
+  <data name="Share_ImportFileTitle" xml:space="preserve"><value>导入循环、宏和重映射</value></data>
+  <data name="Share_ExportFileTitle" xml:space="preserve"><value>导出循环、宏和重映射</value></data>
+  <data name="Share_Ok" xml:space="preserve"><value>确定</value></data>
+  <data name="ImportItems_FromApp" xml:space="preserve"><value>来自 {0}</value></data>
+  <data name="ImportItems_ReadFailed" xml:space="preserve"><value>无法读取文件：{0}</value></data>
+  <data name="ImportItems_CheckForUpdates" xml:space="preserve"><value>检查更新</value></data>
+  <data name="ImportItems_Button_other" xml:space="preserve"><value>导入 {0} 个项目</value></data>
+  <data name="ExportItems_Button_other" xml:space="preserve"><value>导出 {0} 个项目…</value></data>
+  <data name="ExportItems_Failed" xml:space="preserve"><value>导出失败</value></data>
+  <data name="Share_GroupLoops" xml:space="preserve"><value>循环</value></data>
+  <data name="Share_GroupMacros" xml:space="preserve"><value>宏</value></data>
+  <data name="Share_GroupRemaps" xml:space="preserve"><value>重映射</value></data>
+  <data name="Share_GroupOther" xml:space="preserve"><value>其他</value></data>
+  <data name="Share_RemapSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="ExportItems_Intro" xml:space="preserve"><value>选择要保存到一个文件中的循环、宏和重映射，以便分享或在另一台电脑上使用。</value></data>
+  <data name="ExportItems_Search" xml:space="preserve"><value>搜索</value></data>
+  <data name="ExportItems_Kind" xml:space="preserve"><value>类型</value></data>
+  <data name="ExportItems_AllKinds" xml:space="preserve"><value>所有类型</value></data>
+  <data name="ExportItems_SelectAllShown" xml:space="preserve"><value>选择所有显示的项目</value></data>
+  <data name="ExportItems_ShownSelected" xml:space="preserve"><value>显示 {0} 个 · 已选择 {1} 个</value></data>
+  <data name="ExportItems_NoItems" xml:space="preserve"><value>你还没有循环、宏或重映射。</value></data>
+  <data name="ExportItems_NoMatch" xml:space="preserve"><value>没有与搜索匹配的内容。</value></data>
+  <data name="ImportItems_OtherFile" xml:space="preserve"><value>选择其他文件…</value></data>
+  <data name="ImportItems_SelectAll" xml:space="preserve"><value>全选</value></data>
+  <data name="ImportItems_StartDisabled" xml:space="preserve"><value>导入的项目初始为禁用状态。</value></data>
+  <data name="ImportItems_StartDisabledMessage" xml:space="preserve"><value>确认每个项目的作用后，再将其启用。</value></data>
+  <data name="ImportItems_OtherCount_other" xml:space="preserve"><value>{0} 个其他项目</value></data>
+  <data name="ImportItems_NoItems" xml:space="preserve"><value>没有项目</value></data>
+  <data name="ImportItems_FromVersion" xml:space="preserve"><value>来自 PuppyMacro {0} · {1}</value></data>
+  <data name="FileTypes_Items" xml:space="preserve"><value>PuppyMacro 项目</value></data>
+  <data name="FileTypes_Backup" xml:space="preserve"><value>PuppyMacro 备份</value></data>
+</root>

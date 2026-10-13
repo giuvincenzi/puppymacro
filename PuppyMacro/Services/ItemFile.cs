@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -37,6 +39,10 @@ internal sealed class ItemFileContent
 {
     /// <summary>Why the whole file can't be read, or null.</summary>
     public string? Error { get; init; }
+
+    /// <summary><see cref="Error"/> is because the file was made with a newer PuppyMacro (its format or its version):
+    /// updating PuppyMacro reads it.</summary>
+    public bool NeedsUpdate { get; init; }
 
     /// <summary>The PuppyMacro version that wrote it ("1.17.0"), or null.</summary>
     public string? App { get; init; }
@@ -91,18 +97,18 @@ internal static class ItemFile
         }
         catch (JsonException)
         {
-            return new ItemFileContent { Error = "This is not a PuppyMacro items file." };
+            return new ItemFileContent { Error = Strings.ItemFile_NotItemsFile };
         }
         if (root is not JsonObject file || file["Items"] is not JsonArray items
             || file["Format"] is not JsonValue formatValue || !formatValue.TryGetValue(out int format))
-            return new ItemFileContent { Error = "This is not a PuppyMacro items file." };
+            return new ItemFileContent { Error = Strings.ItemFile_NotItemsFile };
 
         string? app = file["App"] is JsonValue appValue && appValue.TryGetValue(out string? appText) ? appText : null;
         bool newer = current != null && Version.TryParse(app, out Version? made) && made > current;
-        string update = $"This file was made with PuppyMacro {app}, newer than this one ({(current == null ? "" : VersionText(current))}). " +
-                        "Update PuppyMacro to import it.";
+        string update = string.Format(CultureInfo.CurrentCulture, Strings.ItemFile_NewerVersion, app,
+            current == null ? "" : VersionText(current));
         if (format > CurrentFormat)
-            return new ItemFileContent { Error = newer ? update : "This file was made with a newer PuppyMacro. Update PuppyMacro to import it." };
+            return new ItemFileContent { Error = newer ? update : Strings.ItemFile_NewerFormat, NeedsUpdate = true };
 
         var content = new ItemFileContent { App = app };
         var taken = new Taken(settings, macros);
@@ -116,15 +122,16 @@ internal static class ItemFile
         string kindName = node is JsonObject o && o["Kind"] is JsonValue k && k.TryGetValue(out string? word) ? word : "";
         string kind = kindName.ToLowerInvariant();
         JsonObject? item = node is JsonObject entry ? entry["Item"] as JsonObject : null;
-        string title = item?["Name"] is JsonValue n && n.TryGetValue(out string? name) && name.Trim().Length > 0 ? name.Trim() : $"Item {index + 1}";
+        string title = item?["Name"] is JsonValue n && n.TryGetValue(out string? name) && name.Trim().Length > 0 ? name.Trim()
+            : string.Format(CultureInfo.CurrentCulture, Strings.ItemFile_UnnamedItem, index + 1);
 
         ItemFileEntry Unusable(string problem, string? shownTitle = null) =>
             new() { Index = index, Kind = kind.Length > 0 ? kind : "item", Title = shownTitle ?? title, Problem = update ?? problem };
 
         if (kind is not ("loop" or "macro" or "remap"))
-            return Unusable($"Unknown kind \"{kindName}\": PuppyMacro imports loops, macros and remaps.");
+            return Unusable(string.Format(CultureInfo.CurrentCulture, Strings.ItemFile_UnknownKind, kindName));
         if (item == null)
-            return Unusable($"The {kind} is missing.");
+            return Unusable(Loc.Text($"ItemFile_Missing_{kind}"));
 
         // The Code view's checks, with a new Id; the hotkeys are checked below, where they can be left out instead.
         Guid id = Guid.NewGuid();
@@ -149,14 +156,14 @@ internal static class ItemFile
             case LoopDefinition loop:
                 loop.Enabled = false;
                 loop.Name = taken.Name(loop.Name, "loop", notes, chosen);
-                loop.Hotkey = taken.Hotkey(loop.Hotkey, loop.AppExe, $"loop \"{loop.Name}\"", loop.Mode, notes, chosen, out ActivationMode loopMode);
+                loop.Hotkey = taken.Hotkey(loop.Hotkey, loop.AppExe, "loop", loop.Name, loop.Mode, notes, chosen, out ActivationMode loopMode);
                 loop.Mode = loopMode;
                 title = loop.Name;
                 break;
             case MacroDefinition macro:
                 macro.Enabled = false;
                 macro.Name = taken.Name(macro.Name, "macro", notes, chosen);
-                macro.Hotkey = taken.Hotkey(macro.Hotkey, macro.AppExe, $"macro \"{macro.Name}\"", macro.Mode, notes, chosen, out ActivationMode macroMode);
+                macro.Hotkey = taken.Hotkey(macro.Hotkey, macro.AppExe, "macro", macro.Name, macro.Mode, notes, chosen, out ActivationMode macroMode);
                 macro.Mode = macroMode;
                 title = macro.Name;
                 break;
@@ -176,7 +183,8 @@ internal static class ItemFile
     {
         private readonly HashSet<string> _loopNames = new(settings.Loops.Select(l => l.Name.Trim()), StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _macroNames = new(macros.Macros.Select(m => m.Name.Trim()), StringComparer.OrdinalIgnoreCase);
-        private readonly List<(HotkeyBinding Keys, string? App, string What)> _hotkeys = new();
+        /// <summary>The hotkeys of the file's chosen items, with the kind ("loop", "macro") and name of their item.</summary>
+        private readonly List<(HotkeyBinding Keys, string? App, string Kind, string Name)> _hotkeys = new();
         private readonly List<(HotkeyBinding Keys, string? App)> _remaps = new();
 
         public string Name(string name, string kind, List<string> notes, bool chosen)
@@ -186,13 +194,13 @@ internal static class ItemFile
             for (int n = 2; names.Contains(free); n++)
                 free = $"{name} ({n})";
             if (free != name)
-                notes.Add($"A {kind} has this name: imported as \"{free}\".");
+                notes.Add(string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_NameTaken_{kind}"), free));
             if (chosen)
                 names.Add(free);
             return free;
         }
 
-        public HotkeyBinding? Hotkey(HotkeyBinding? hotkey, string? app, string what, ActivationMode mode, List<string> notes,
+        public HotkeyBinding? Hotkey(HotkeyBinding? hotkey, string? app, string kind, string name, ActivationMode mode, List<string> notes,
             bool chosen, out ActivationMode importedMode)
         {
             importedMode = mode;
@@ -200,17 +208,20 @@ internal static class ItemFile
                 return hotkey;
             string? conflict = HotkeyConflicts.Find(hotkey, settings, macros, appExe: app)
                 ?? _hotkeys.Where(h => hotkey.Overlaps(h.Keys) && AppScope.Same(h.App, app))
-                    .Select(h => $"{KeyNames.Format(hotkey)} is already used by the {h.What} in this file.").FirstOrDefault();
+                    .Select(h => string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_HotkeyUsedInFile_{h.Kind}"),
+                        KeyNames.Format(hotkey), h.Name)).FirstOrDefault();
             if (conflict == null)
             {
                 if (chosen)
-                    _hotkeys.Add((hotkey, app, what));
+                    _hotkeys.Add((hotkey, app, kind, name));
                 return hotkey;
             }
             bool hold = mode == ActivationMode.Hold;
             if (hold)
                 importedMode = ActivationMode.Toggle;
-            notes.Add(conflict.TrimEnd('.') + ": imported without a hotkey" + (hold ? ", as Toggle (Hold needs a hotkey)." : "."));
+            // The conflict is a sentence of its own: without its full stop, it starts the note.
+            notes.Add(string.Format(CultureInfo.CurrentCulture, hold ? Strings.ItemFile_NoHotkeyToggle : Strings.ItemFile_NoHotkey,
+                conflict.TrimEnd('.', '\u3002', '\u061F')));
             return null;
         }
 
@@ -221,10 +232,12 @@ internal static class ItemFile
             string? app = remap.AppExe;
             string? clash = HotkeyConflicts.RemapClash(source, app, settings, macros, Guid.Empty)
                 ?? _hotkeys.Where(h => source.Overlaps(h.Keys) && (h.App == null || app == null || AppScope.Same(h.App, app)))
-                    .Select(h => $"{KeyNames.Format(source)} is already used by the {h.What} in this file. Hotkeys take priority over remaps.")
+                    .Select(h => string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_RemapUsedInFile_{h.Kind}"),
+                        KeyNames.Format(source), h.Name))
                     .FirstOrDefault()
                 ?? (_remaps.Any(r => source.Overlaps(r.Keys) && AppScope.Same(r.App, app))
-                    ? $"{KeyNames.Format(source)} is already remapped {(app == null ? "for all apps" : "for " + app)} in this file."
+                    ? string.Format(CultureInfo.CurrentCulture, app == null ? Strings.ItemFile_RemappedInFile : Strings.ItemFile_RemappedInFileForApp,
+                        KeyNames.Format(source), app)
                     : null);
             if (clash == null && chosen)
                 _remaps.Add((source, app));
@@ -242,22 +255,24 @@ internal static class ItemFile
 
     /// <summary>"Ctrl + J → C", and the app when it works in one.</summary>
     public static string Keys(RemapDefinition remap) =>
-        $"{KeyNames.Format(remap.Source)} → {KeyNames.Format(remap.Target)}" + (remap.AppExe == null ? "" : $" in {remap.AppExe}");
+        string.Format(CultureInfo.CurrentCulture, remap.AppExe == null ? Strings.Ai_RemapTitle : Strings.Ai_RemapTitleInApp,
+            KeyNames.Format(remap.Source), KeyNames.Format(remap.Target), remap.AppExe);
 
     /// <summary>A file name for these items: the item's name for one item, "PuppyMacro items" for more.</summary>
     public static string FileName(IReadOnlyList<object> items)
     {
-        string name = items.Count != 1 ? "PuppyMacro items" : items[0] switch
+        string name = items.Count != 1 ? Strings.ItemFile_DefaultFileName : items[0] switch
         {
             LoopDefinition loop => loop.Name,
             MacroDefinition macro => macro.Name,
-            RemapDefinition remap => remap.Note.Trim().Length > 0 ? remap.Note : "Remap " + Keys(remap),
-            _ => "PuppyMacro items",
+            RemapDefinition remap => remap.Note.Trim().Length > 0 ? remap.Note
+                : string.Format(CultureInfo.CurrentCulture, Strings.ItemFile_RemapFileName, Keys(remap)),
+            _ => Strings.ItemFile_DefaultFileName,
         };
         foreach (char bad in System.IO.Path.GetInvalidFileNameChars())
             name = name.Replace(bad, ' ');
         name = name.Replace('→', '-').Trim();
-        return (name.Length > 0 ? name : "PuppyMacro items") + Extension;
+        return (name.Length > 0 ? name : Strings.ItemFile_DefaultFileName) + Extension;
     }
 
     private static string Serialize(object item) => item switch

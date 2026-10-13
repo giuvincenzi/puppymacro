@@ -488,6 +488,11 @@ public sealed class AppSettings
     public int LoadedSchemaVersion { get; set; } = CurrentSchemaVersion;
     /// <summary>Dark by default, even when Windows uses the light theme.</summary>
     public AppTheme Theme { get; set; } = AppTheme.Dark;
+
+    /// <summary>The language of the app, a code of <c>AppLanguages.All</c> ("it"); null follows Windows' display language
+    /// (also in older files, which do not have it). Applied when PuppyMacro starts.</summary>
+    public string? Language { get; set; }
+
     public HotkeyBinding? StopAllHotkey { get; set; }
     public HotkeyBinding? OverlayModeHotkey { get; set; }
     public HotkeyBinding? RecordHotkey { get; set; }

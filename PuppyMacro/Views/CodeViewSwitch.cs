@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -105,12 +106,7 @@ internal sealed class CodeViewSwitch<T> where T : class
         }
         int problems = _code.Problems.Count;
         bool valid = _code.IsUpToDate && problems == 0;
-        _errorText.Text = problems switch
-        {
-            0 => "",
-            1 => "Fix the problem, or discard the changes.",
-            _ => $"Fix the {problems} problems, or discard the changes.",
-        };
+        _errorText.Text = problems == 0 ? "" : Plurals.Format("CodeView_FixProblems", problems);
         _errorText.Visibility = problems > 0 ? Visibility.Visible : Visibility.Collapsed;
         _save.IsEnabled = valid;
         _bar.FormEnabled = valid;
@@ -170,8 +166,8 @@ internal sealed class CodeViewSwitch<T> where T : class
         _code.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
         if (_history != null)
             _history.Visibility = view == EditorView.History ? Visibility.Visible : Visibility.Collapsed;
-        _cancel.Content = code ? "Discard changes" : _cancelContent;
-        _cancel.ToolTip = code ? "Undo your code changes and go back to Form view" : null;
+        _cancel.Content = code ? Strings.CodeView_DiscardChanges : _cancelContent;
+        _cancel.ToolTip = code ? Strings.CodeView_DiscardChangesTooltip : null;
         _validate();
     }
 }

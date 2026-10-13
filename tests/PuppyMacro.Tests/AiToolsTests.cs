@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
 using Xunit;
@@ -584,6 +586,45 @@ public class AiToolsTests : IDisposable
 
         Assert.True(result.IsError);
         Assert.Empty(_host.Applied);
+    }
+
+    [Fact]
+    public async Task The_user_sees_their_language_and_the_AI_app_gets_English()
+    {
+        // No target; Ctrl+Y, so the remap saved meanwhile (Ctrl+X) does not add a clash the first answer did not have.
+        object broken = new { item = new { Source = new { Vk = 0x59, Ctrl = true } } };
+        AiToolResult refusedInEnglish = await Call("save_remap", broken);
+        CultureInfo italian = CultureInfo.GetCultureInfo("it");
+        CultureInfo.CurrentUICulture = italian;
+        try
+        {
+            _settings.AiAskBeforeChanging = true;
+            AiToolResult saved = await Call("save_remap", CtrlXToA);
+            AiToolResult refused = await Call("save_remap", broken);
+
+            // The confirmation window and the activity: Italian.
+            Assert.Equal(Strings.ResourceManager.GetString("Ai_ConfirmNew_remap", italian), _host.Confirmed[0].Title);
+            Assert.NotEqual("Save this new remap?", _host.Confirmed[0].Title);
+            Assert.NotEqual(_log.Entries()[0].Request, _log.Entries()[0].ShownRequest);
+            // The answers: English, also the checks' problems that come from code shared with the UI.
+            Assert.StartsWith("Saved the new remap.", saved.Text);
+            Assert.Equal(refusedInEnglish.Text, refused.Text);
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
+        }
+    }
+
+    [Fact]
+    public async Task The_language_is_left_to_the_user()
+    {
+        // It applies only after a restart, which would end the AI app's connection (AiSettingsValues).
+        AiToolResult result = await Call("update_settings", new { settings = new { Language = "it" } });
+
+        Assert.True(result.IsError);
+        Assert.Empty(_host.Applied);
+        Assert.DoesNotContain("Language", (await Call("get_settings", new { })).Text);
     }
 
     [Fact]

@@ -2,7 +2,8 @@
     x:Class="PuppyMacro.Views.ExportOptionsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:r="clr-namespace:PuppyMacro.Resources">
 
     <!-- What Export saves, shown in its ContentDialog: Everything, or the parts chosen below (approved design, ui.md) -->
     <UserControl.Resources>
@@ -13,38 +14,38 @@
     </UserControl.Resources>
 
     <StackPanel>
-        <ui:RadioButtons x:Name="WhatBox" SelectedIndex="0" SelectionChanged="OnWhatChanged" AutomationProperties.Name="What to export">
-            <RadioButton x:Name="EverythingButton" AutomationProperties.Name="Everything">
+        <ui:RadioButtons x:Name="WhatBox" SelectedIndex="0" SelectionChanged="OnWhatChanged" AutomationProperties.Name="{x:Static r:Strings.Export_WhatToExport}">
+            <RadioButton x:Name="EverythingButton" AutomationProperties.Name="{x:Static r:Strings.Export_Everything}">
                 <StackPanel>
-                    <TextBlock Text="Everything" />
+                    <TextBlock Text="{x:Static r:Strings.Export_Everything}" />
                     <TextBlock x:Name="EverythingText" Style="{StaticResource Description}" />
                 </StackPanel>
             </RadioButton>
-            <RadioButton x:Name="ChooseButton" Content="Choose what to export" />
+            <RadioButton x:Name="ChooseButton" Content="{x:Static r:Strings.Export_Choose}" />
         </ui:RadioButtons>
 
         <StackPanel x:Name="PartsPanel" Margin="28,4,0,0" IsEnabled="False">
-            <CheckBox IsChecked="True" IsEnabled="False" AutomationProperties.Name="Loops, macros, remaps and settings">
+            <CheckBox IsChecked="True" IsEnabled="False" AutomationProperties.Name="{x:Static r:Strings.Export_PartData}">
                 <StackPanel>
-                    <TextBlock Text="Loops, macros, remaps and settings" />
+                    <TextBlock Text="{x:Static r:Strings.Export_PartData}" />
                     <TextBlock x:Name="DataText" Style="{StaticResource Description}" />
                 </StackPanel>
             </CheckBox>
-            <CheckBox x:Name="HistoryBox" IsChecked="True" AutomationProperties.Name="History">
+            <CheckBox x:Name="HistoryBox" IsChecked="True" AutomationProperties.Name="{x:Static r:Strings.Export_PartHistory}">
                 <StackPanel>
-                    <TextBlock Text="History" />
+                    <TextBlock Text="{x:Static r:Strings.Export_PartHistory}" />
                     <TextBlock x:Name="HistoryText" Style="{StaticResource Description}" />
                 </StackPanel>
             </CheckBox>
-            <CheckBox x:Name="AiActivityBox" IsChecked="True" AutomationProperties.Name="AI activity">
+            <CheckBox x:Name="AiActivityBox" IsChecked="True" AutomationProperties.Name="{x:Static r:Strings.Export_PartAiActivity}">
                 <StackPanel>
-                    <TextBlock Text="AI activity" />
+                    <TextBlock Text="{x:Static r:Strings.Export_PartAiActivity}" />
                     <TextBlock x:Name="AiActivityText" Style="{StaticResource Description}" />
                 </StackPanel>
             </CheckBox>
-            <CheckBox x:Name="LogsBox" IsChecked="True" AutomationProperties.Name="Logs">
+            <CheckBox x:Name="LogsBox" IsChecked="True" AutomationProperties.Name="{x:Static r:Strings.Export_PartLogs}">
                 <StackPanel>
-                    <TextBlock Text="Logs" />
+                    <TextBlock Text="{x:Static r:Strings.Export_PartLogs}" />
                     <TextBlock x:Name="LogsText" Style="{StaticResource Description}" />
                 </StackPanel>
             </CheckBox>

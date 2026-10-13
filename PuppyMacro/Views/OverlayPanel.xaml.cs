@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Controls;
 using PuppyMacro.Services;
 using System.Collections.Specialized;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Views;
 
@@ -62,7 +64,7 @@ public partial class OverlayPanel
     public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey)
     {
         StopAllHotkeyText.Text = stopAllHotkey;
-        ExitButton.ToolTip = $"Exit overlay mode ({exitHotkey})";
+        ExitButton.ToolTip = string.Format(CultureInfo.CurrentCulture, Strings.Overlay_ExitTip, exitHotkey);
     }
 
     private static readonly Brush StopRed = Frozen(0xFF, 0x99, 0xA4);
@@ -165,9 +167,9 @@ public partial class OverlayPanel
         int macros = _macros?.Count ?? 0;
         bool anyButton = HasAny(i => FloatingButtons.HasButton(i) && WorksHere(i));
         bool forOtherApps = HasAny(i => OverlayItems.IsShown(i) && !WorksHere(i));
-        EmptyText.Text = anyButton ? "Everything is on floating buttons."
-            : forOtherApps ? "Nothing for this app."
-            : "Nothing to show.";
+        EmptyText.Text = anyButton ? Strings.Overlay_AllOnButtons
+            : forOtherApps ? Strings.Overlay_NothingForApp
+            : Strings.Overlay_NothingToShow;
         EmptyText.Visibility = loops + macros == 0 ? Visibility.Visible : Visibility.Collapsed;
         MacrosHeader.Visibility = macros > 0 && loops > 0 ? Visibility.Visible : Visibility.Collapsed;
     }

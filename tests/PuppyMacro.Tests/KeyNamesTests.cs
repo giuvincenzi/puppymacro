@@ -7,9 +7,11 @@ namespace PuppyMacro.Tests;
 public class KeyNamesTests
 {
     [Theory]
-    [InlineData(0x01, "LButton")]
-    [InlineData(0x02, "RButton")]
-    [InlineData(0x05, "XButton1")]
+    [InlineData(0x01, "Left click")]
+    [InlineData(0x02, "Right click")]
+    [InlineData(0x04, "Middle click")]
+    [InlineData(0x05, "Back (X1) click")]
+    [InlineData(0x06, "Forward (X2) click")]
     [InlineData(0x0D, "Enter")]
     [InlineData(0x1B, "Esc")]
     [InlineData(0x41, "A")]
@@ -28,6 +30,8 @@ public class KeyNamesTests
         var hotkey = new HotkeyBinding { Vk = 0x78, Win = true, Shift = true, Alt = true, Ctrl = true };
 
         Assert.Equal("Ctrl + Alt + Shift + Win + F9", KeyNames.Format(hotkey));
+        // A mouse button by the name people read, not its virtual-key name (LButton).
+        Assert.Equal("Ctrl + Left click", KeyNames.Format(new HotkeyBinding { Vk = 0x01, Ctrl = true }));
     }
 
     [Fact]

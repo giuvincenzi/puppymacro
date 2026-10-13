@@ -3,27 +3,28 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf">
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:r="clr-namespace:PuppyMacro.Resources">
 
     <!-- The mouse button of a Click or Mouse button down / up, in loops and macros: the list, and Detect (an icon
          button, the target) that waits for a mouse button and selects it. While it waits, only a turning ring and the
          prompt show, as in the key field (Esc cancels). -->
     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-        <ComboBox x:Name="Box" MinWidth="140" VerticalAlignment="Center" AutomationProperties.Name="Mouse button"
+        <ComboBox x:Name="Box" MinWidth="140" VerticalAlignment="Center" AutomationProperties.Name="{x:Static r:Strings.Mouse_Button}"
                   SelectionChanged="OnSelectionChanged">
-            <ComboBoxItem Content="Left" Tag="1" />
-            <ComboBoxItem Content="Right" Tag="2" />
-            <ComboBoxItem Content="Middle" Tag="4" />
-            <ComboBoxItem Content="Back (X1)" Tag="5" />
-            <ComboBoxItem Content="Forward (X2)" Tag="6" />
+            <ComboBoxItem Content="{x:Static r:Strings.Mouse_Left}" Tag="1" />
+            <ComboBoxItem Content="{x:Static r:Strings.Mouse_Right}" Tag="2" />
+            <ComboBoxItem Content="{x:Static r:Strings.Mouse_Middle}" Tag="4" />
+            <ComboBoxItem Content="{x:Static r:Strings.Mouse_Back}" Tag="5" />
+            <ComboBoxItem Content="{x:Static r:Strings.Mouse_Forward}" Tag="6" />
         </ComboBox>
-        <Button x:Name="DetectButton" VerticalAlignment="Center" ToolTip="Press a mouse button to detect it"
-                AutomationProperties.Name="Detect the mouse button" Click="OnDetectClick">
+        <Button x:Name="DetectButton" VerticalAlignment="Center" ToolTip="{x:Static r:Strings.Mouse_DetectTooltip}"
+                AutomationProperties.Name="{x:Static r:Strings.Mouse_Detect}" Click="OnDetectClick">
             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Bullseye}" />
         </Button>
         <ikw:SimpleStackPanel x:Name="WaitPanel" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Visibility="Collapsed">
             <ui:ProgressRing x:Name="WaitRing" Width="16" Height="16" IsActive="False" />
-            <TextBlock VerticalAlignment="Center" Text="Press a mouse button (Esc cancels)" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Mouse_Prompt}" />
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
 </UserControl>

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Views;
 
@@ -20,7 +21,7 @@ public partial class ItemCardActions : UserControl
 
     public static readonly DependencyProperty EditBlockedTextProperty = DependencyProperty.Register(
         nameof(EditBlockedText), typeof(string), typeof(ItemCardActions),
-        new PropertyMetadata("Stop running loops and macros first", (d, _) => ((ItemCardActions)d).Update()));
+        new PropertyMetadata(Strings.Main_StopRunningFirst, (d, _) => ((ItemCardActions)d).Update()));
 
     public static readonly DependencyProperty IsOnProperty = DependencyProperty.Register(
         nameof(IsOn), typeof(bool), typeof(ItemCardActions),
@@ -71,12 +72,12 @@ public partial class ItemCardActions : UserControl
         PlayButton.Visibility = IsHoldMode ? Visibility.Hidden : Visibility.Visible;
         PlayIcon.Visibility = IsRunning ? Visibility.Collapsed : Visibility.Visible;
         StopIcon.Visibility = IsRunning ? Visibility.Visible : Visibility.Collapsed;
-        string play = IsRunning ? "Stop" : "Play";
+        string play = IsRunning ? Strings.Card_Stop : Strings.Card_Play;
         PlayButton.ToolTip = play;
         AutomationProperties.SetName(PlayButton, play);
         PlayButton.IsEnabled = CanPlay;
         EditButton.IsEnabled = CanEdit;
-        EditButton.ToolTip = CanEdit ? "Edit" : EditBlockedText;
+        EditButton.ToolTip = CanEdit ? Strings.Card_Edit : EditBlockedText;
         MoreButton.IsEnabled = CanMore;
     }
 

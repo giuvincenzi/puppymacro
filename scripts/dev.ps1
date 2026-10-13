@@ -27,6 +27,10 @@ dotnet build $project -c Debug
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # -Screenshots: PUPPYMACRO_SCREENSHOTS=1, inherited by PuppyMacro (no development build marks).
-if ($Screenshots) { $env:PUPPYMACRO_SCREENSHOTS = '1' }
+if ($Screenshots) {
+    $env:PUPPYMACRO_SCREENSHOTS = '1'
+    # The guide is in English: its screenshots too, whatever the language of this PC.
+    $env:PUPPYMACRO_LANGUAGE = 'en'
+}
 Start-Process -FilePath $exe
 Write-Host "Started $exe"

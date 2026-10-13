@@ -14,6 +14,7 @@ the others load when matching files are read or edited:
 | `build-and-release.md` | always | `make` commands, dev and prod builds, releases |
 | `testing.md` | always | Unit tests (`make test`) and end-to-end tests (`make e2e`) |
 | `docs.md` | always | Website, user guide in `site/` and AI tools, kept in sync with every change |
+| `i18n.md` | always | 13 languages: texts in `Strings.resx`, plurals, formats, texts kept in files, right to left |
 | `architecture.md` | `PuppyMacro/**` | Threads, engine snapshot, feature map |
 | `input.md` | input pipeline files | Hooks, modifiers, injected input, routing order |
 | `data.md` | models and storage | Data folders, settings migrations, compatibility |

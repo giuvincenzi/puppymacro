@@ -6,6 +6,7 @@
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
     xmlns:views="clr-namespace:PuppyMacro.Views"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
     Title="PuppyMacro"
     Icon="pack://application:,,,/Assets/PuppyMacro.ico"
     Width="800"
@@ -36,7 +37,9 @@
         <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Import, Export,
              Enter overlay mode and Stop all on the right before the window buttons drawn by the library (as its
              ButtonsOnTitlebar sample) ================= -->
-        <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}">
+        <!-- Left to right in every language: the window buttons the library draws stay on the right (i18n.md) -->
+        <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}"
+              FlowDirection="LeftToRight">
             <!-- The buttons' column is as wide as they are: two * columns would give it half the window, too little for
                  Import, Export and Enter overlay mode at the default 800 px -->
             <Grid.ColumnDefinitions>
@@ -62,24 +65,24 @@
             <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
                 <!-- Loops, macros and remaps shared as .puppyitems files (MainWindow.Share.cs); not the backup -->
                 <Button x:Name="ImportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="Import" ToolTip="Add loops, macros and remaps from a file" Click="OnImportItemsClick">
+                        AutomationProperties.Name="{x:Static r:Strings.Share_Import}" ToolTip="{x:Static r:Strings.Share_ImportTooltip}" Click="OnImportItemsClick">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Download}" />
-                        <TextBlock VerticalAlignment="Center" Text="Import" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Share_Import}" />
                     </StackPanel>
                 </Button>
                 <Button x:Name="ExportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="Export" ToolTip="Save loops, macros and remaps to a file, to share them" Click="OnExportItemsClick">
+                        AutomationProperties.Name="{x:Static r:Strings.Share_Export}" ToolTip="{x:Static r:Strings.Share_ExportTooltip}" Click="OnExportItemsClick">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Share}" />
-                        <TextBlock VerticalAlignment="Center" Text="Export" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Share_Export}" />
                     </StackPanel>
                 </Button>
                 <Button x:Name="OverlayModeButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="Enter overlay mode" Click="OnOverlayModeClick">
+                        AutomationProperties.Name="{x:Static r:Strings.Main_EnterOverlayMode}" Click="OnOverlayModeClick">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
-                        <TextBlock VerticalAlignment="Center" Text="Enter overlay mode" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Main_EnterOverlayMode}" />
                     </StackPanel>
                 </Button>
                 <!-- Shown only while something runs. Approved (ui.md): the accent button with its accent colors replaced by
@@ -87,7 +90,7 @@
                      accent ones are. -->
                 <Button x:Name="StopAllButton" Margin="0,9,8,0" VerticalAlignment="Top" Visibility="Collapsed"
                         WindowChrome.IsHitTestVisibleInChrome="True"
-                        Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="Stop all" Click="OnStopAllClick">
+                        Style="{StaticResource AccentButtonStyle}" AutomationProperties.Name="{x:Static r:Strings.Main_StopAll}" Click="OnStopAllClick">
                     <Button.Resources>
                         <SolidColorBrush x:Key="AccentButtonBackground" Color="{DynamicResource SystemFillColorCritical}" />
                         <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="{DynamicResource SystemFillColorCritical}" Opacity="0.9" />
@@ -95,7 +98,7 @@
                     </Button.Resources>
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static fsi:FluentSystemIcons.Stop_16_Filled}" />
-                        <TextBlock VerticalAlignment="Center" Text="Stop all" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Main_StopAll}" />
                     </StackPanel>
                 </Button>
                 <!-- The window buttons' place, 8 more px before them: 16 from our last button -->
@@ -108,7 +111,7 @@
             <!-- ================= Development build (make dev) ================= -->
             <Border x:Name="DevBuildStrip" Padding="0,3" Background="#E8822E" Visibility="Collapsed">
                 <TextBlock HorizontalAlignment="Center" FontSize="12" FontWeight="SemiBold" Foreground="#1A1A1A"
-                           Text="Development build" />
+                           Text="{x:Static r:Strings.Main_DevelopmentBuild}" />
             </Border>
 
             <!-- ================= Update available ================= -->
@@ -144,8 +147,8 @@
                      pulses slowly (still when Windows' animations are off). Shown only while one is connected, on the right, inside the content layer (the side rail runs the whole height); a click opens the AI page. ================= -->
                 <Border x:Name="AiStatusBar" DockPanel.Dock="Bottom" Height="28" Padding="16,0" BorderThickness="0,1,0,0" Visibility="Collapsed"
                         BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Background="Transparent"
-                        MouseLeftButtonUp="OnAiStatusBarClick" ToolTip="Connected AI apps: select to open the AI page"
-                        AutomationProperties.Name="Connected AI apps">
+                        MouseLeftButtonUp="OnAiStatusBarClick" ToolTip="{x:Static r:Strings.AiStatus_ToolTip}"
+                        AutomationProperties.Name="{x:Static r:Strings.AiStatus_Name}">
                     <ItemsControl x:Name="AiStatusList" HorizontalAlignment="Right" VerticalAlignment="Center" Focusable="False">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -203,9 +206,9 @@
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="Loops" />
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="{x:Static r:Strings.Loops_Title}" />
                         <Button x:Name="AddLoopButton" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                Style="{StaticResource AccentButtonStyle}" Content="Add loop"
+                                Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Loops_Add}"
                                 ToolTipService.ShowOnDisabled="True" Click="OnAddLoopClick" />
                     </Grid>
 
@@ -214,12 +217,12 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="SearchBox" ui:ControlHelper.PlaceholderText="Search loops" TextChanged="OnSearchChanged" />
+                        <TextBox x:Name="SearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Loops_Search}" TextChanged="OnSearchChanged" />
                         <ComboBox x:Name="FilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnFilterChanged">
-                            <ComboBoxItem Content="All loops" />
-                            <ComboBoxItem Content="Enabled" />
-                            <ComboBoxItem Content="Disabled" />
-                            <ComboBoxItem Content="Running" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Loops_FilterAll}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterEnabled}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterRunning}" />
                         </ComboBox>
                     </Grid>
 
@@ -323,15 +326,15 @@
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="Macros" />
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="{x:Static r:Strings.Macros_Title}" />
                         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
-                            <Button x:Name="NewMacroButton" Style="{StaticResource AccentButtonStyle}" Content="Add macro" ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
+                            <Button x:Name="NewMacroButton" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Macros_Add}" ToolTipService.ShowOnDisabled="True" Click="OnNewMacroClick" />
                             <!-- A standard button with a red dot before its text (approved, ui.md) -->
                             <Button x:Name="RecordMacroButton" Margin="8,0,0,0"
-                                    AutomationProperties.Name="Record macro" ToolTipService.ShowOnDisabled="True" Click="OnRecordMacroClick">
+                                    AutomationProperties.Name="{x:Static r:Strings.Macros_Record}" ToolTipService.ShowOnDisabled="True" Click="OnRecordMacroClick">
                                 <StackPanel Orientation="Horizontal">
                                     <ui:InfoBadge Margin="0,0,8,0" VerticalAlignment="Center" Style="{StaticResource CriticalDotInfoBadgeStyle}" />
-                                    <TextBlock Text="Record macro" />
+                                    <TextBlock Text="{x:Static r:Strings.Macros_Record}" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
@@ -342,12 +345,12 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="MacroSearchBox" ui:ControlHelper.PlaceholderText="Search macros" TextChanged="OnMacroSearchChanged" />
+                        <TextBox x:Name="MacroSearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Macros_Search}" TextChanged="OnMacroSearchChanged" />
                         <ComboBox x:Name="MacroFilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnMacroFilterChanged">
-                            <ComboBoxItem Content="All macros" />
-                            <ComboBoxItem Content="Enabled" />
-                            <ComboBoxItem Content="Disabled" />
-                            <ComboBoxItem Content="Running" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Macros_FilterAll}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterEnabled}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterRunning}" />
                         </ComboBox>
                     </Grid>
 
@@ -441,20 +444,20 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="Remap" />
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" Text="{x:Static r:Strings.Remaps_Title}" />
                         <Button HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource AccentButtonStyle}"
-                                Content="Add remap" Click="OnAddRemapClick" />
+                                Content="{x:Static r:Strings.Remaps_Add}" Click="OnAddRemapClick" />
                     </Grid>
                     <Grid Grid.Row="1" Margin="0,16,0,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="RemapSearchBox" ui:ControlHelper.PlaceholderText="Search remaps" TextChanged="OnRemapSearchChanged" />
+                        <TextBox x:Name="RemapSearchBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Remaps_Search}" TextChanged="OnRemapSearchChanged" />
                         <ComboBox x:Name="RemapFilterBox" Grid.Column="1" Margin="12,0,0,0" MinWidth="130" SelectionChanged="OnRemapFilterChanged">
-                            <ComboBoxItem Content="All remaps" />
-                            <ComboBoxItem Content="Enabled" />
-                            <ComboBoxItem Content="Disabled" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Remaps_FilterAll}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterEnabled}" />
+                            <ComboBoxItem Content="{x:Static r:Strings.Main_FilterDisabled}" />
                         </ComboBox>
                     </Grid>
                     <TextBlock x:Name="RemapCountText" Grid.Row="2" Margin="0,0,0,8" Style="{StaticResource CaptionTextBlockStyle}"
@@ -512,61 +515,61 @@
                 <!-- ================= AI page: AI apps on this PC use PuppyMacro through its MCP server (MainWindow.Ai.cs) ================= -->
                 <ui:ScrollViewerEx x:Name="AiPage" Padding="40,12,40,0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                     <ikw:SimpleStackPanel Margin="0,0,0,16" Spacing="4">
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="AI" />
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="{x:Static r:Strings.AiPage_Title}" />
                         <TextBlock Margin="0,4,0,0" MaxWidth="760" HorizontalAlignment="Left" TextWrapping="Wrap"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                   Text="Use PuppyMacro from an AI app on this PC, like Claude Desktop or Visual Studio Code. Ask in your own words: the AI makes loops, macros and remaps, and you try them right away." />
+                                   Text="{x:Static r:Strings.AiPage_Description}" />
 
                         <!-- The AI apps feature is in beta (the user asked to say so in the app) -->
                         <ui:InfoBar x:Name="AiBetaBar" Margin="0,12,0,0" Severity="Informational" IsClosable="False" IsOpen="True"
-                                    Title="Beta" AutomationProperties.Name="Beta"
-                                    Message="AI apps in PuppyMacro are new: they work, but they may change, and an AI can get a request wrong. Every change is kept in the item's History, so you can always go back." />
+                                    Title="{x:Static r:Strings.AiPage_Beta}" AutomationProperties.Name="{x:Static r:Strings.AiPage_Beta}"
+                                    Message="{x:Static r:Strings.AiPage_BetaMessage}" />
                         <ui:InfoBar x:Name="AiMessage" Margin="0,12,0,0" IsOpen="False" />
                         <!-- PuppyMacro's AI connection could not be opened (AiServer.ListenError) -->
                         <ui:InfoBar x:Name="AiConnectionError" Margin="0,12,0,0" Severity="Warning" IsClosable="False" IsOpen="False" />
 
                         <!-- Access -->
-                        <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Access" />
+                        <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.AiPage_Access}" />
                         <!-- Allow AI access, and what the AI apps may do without asking (SwitchSettingsExpander, ui.md) -->
-                        <views:SwitchSettingsExpander x:Name="AiAccessExpander" Header="Allow AI access"
-                                                      Description="AI apps on this PC can read and change your loops, macros, remaps and settings. Every change is kept in the item's History."
+                        <views:SwitchSettingsExpander x:Name="AiAccessExpander" Header="{x:Static r:Strings.AiPage_AllowAccess}"
+                                                      Description="{x:Static r:Strings.AiPage_AllowAccessDescription}"
                                                       CanExpand="{Binding IsOn, ElementName=AiAccessSwitch}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Shield}" />
                             </ui:SettingsExpander.HeaderIcon>
-                            <ui:ToggleSwitch x:Name="AiAccessSwitch" AutomationProperties.Name="Allow AI access" Toggled="OnAiAccessChanged" />
+                            <ui:ToggleSwitch x:Name="AiAccessSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_AllowAccess}" Toggled="OnAiAccessChanged" />
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Ask before deleting a loop, macro or remap">
-                                    <ui:ToggleSwitch x:Name="AiAskDeleteSwitch" AutomationProperties.Name="Ask before deleting" Toggled="OnAiPermissionChanged" />
+                                <ui:SettingsCard Header="{x:Static r:Strings.AiPage_AskDelete}">
+                                    <ui:ToggleSwitch x:Name="AiAskDeleteSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_AskDeleteName}" Toggled="OnAiPermissionChanged" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Ask before changing a loop, macro or remap"
-                                                 Description="Off: the AI's new and changed items are saved at once, ready to try.">
-                                    <ui:ToggleSwitch x:Name="AiAskChangeSwitch" AutomationProperties.Name="Ask before changing" Toggled="OnAiPermissionChanged" />
+                                <ui:SettingsCard Header="{x:Static r:Strings.AiPage_AskChange}"
+                                                 Description="{x:Static r:Strings.AiPage_AskChangeDescription}">
+                                    <ui:ToggleSwitch x:Name="AiAskChangeSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_AskChangeName}" Toggled="OnAiPermissionChanged" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Ask before changing settings" Description="Theme, global hotkeys, overlay panel, sound">
-                                    <ui:ToggleSwitch x:Name="AiAskSettingsSwitch" AutomationProperties.Name="Ask before changing settings" Toggled="OnAiPermissionChanged" />
+                                <ui:SettingsCard Header="{x:Static r:Strings.AiPage_AskSettings}" Description="{x:Static r:Strings.AiPage_AskSettingsDescription}">
+                                    <ui:ToggleSwitch x:Name="AiAskSettingsSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_AskSettings}" Toggled="OnAiPermissionChanged" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Start PuppyMacro when an AI app needs it"
-                                                 Description="Off: while PuppyMacro is closed, AI apps can't use it and tell you to open it.">
-                                    <ui:ToggleSwitch x:Name="AiStartSwitch" AutomationProperties.Name="Start PuppyMacro when an AI app needs it" Toggled="OnAiPermissionChanged" />
+                                <ui:SettingsCard Header="{x:Static r:Strings.AiPage_StartWhenNeeded}"
+                                                 Description="{x:Static r:Strings.AiPage_StartWhenNeededDescription}">
+                                    <ui:ToggleSwitch x:Name="AiStartSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_StartWhenNeeded}" Toggled="OnAiPermissionChanged" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </views:SwitchSettingsExpander>
 
                         <!-- Apps: one SettingsCard each, built in MainWindow.Ai.cs (the app's own icon from its exe) -->
-                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Apps" />
+                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.AiPage_Apps}" />
                         <ikw:SimpleStackPanel x:Name="AiAppsPanel" Spacing="4" />
 
                         <!-- Recent activity: the last requests; View all opens the AI activity window -->
                         <Grid Margin="0,29,0,5">
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Recent activity" />
-                            <Button x:Name="AiViewAllButton" HorizontalAlignment="Right" Content="View all" Click="OnAiViewAllClick" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.AiPage_RecentActivity}" />
+                            <Button x:Name="AiViewAllButton" HorizontalAlignment="Right" Content="{x:Static r:Strings.AiPage_ViewAll}" Click="OnAiViewAllClick" />
                         </Grid>
                         <Border Padding="16,8" CornerRadius="{DynamicResource ControlCornerRadius}" BorderThickness="1"
                                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
                             <Grid>
                                 <TextBlock x:Name="AiNoActivityText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                           Text="No requests yet. Connect an AI app above, then ask it to make a loop, a macro or a remap." TextWrapping="Wrap" />
+                                           Text="{x:Static r:Strings.AiPage_NoActivity}" TextWrapping="Wrap" />
                                 <ItemsControl x:Name="AiRecentList" Focusable="False">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -584,7 +587,7 @@
                                                            Text="{Binding Request}" ToolTip="{Binding Request}" />
                                                 <TextBlock Grid.Column="3" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding ResultText}" />
                                                 <!-- What the AI changed or deleted comes back as it was -->
-                                                <ui:HyperlinkButton Grid.Column="4" HorizontalAlignment="Right" Content="Restore" Tag="{Binding}"
+                                                <ui:HyperlinkButton Grid.Column="4" HorizontalAlignment="Right" Content="{x:Static r:Strings.AiActivity_Restore}" Tag="{Binding}"
                                                                     Visibility="{Binding RestoreVisibility}" Click="OnAiRestoreClick"
                                                                     AutomationProperties.Name="{Binding RestoreName}" />
                                             </Grid>
@@ -595,7 +598,7 @@
                         </Border>
 
                         <ikw:SimpleStackPanel Margin="0,12,0,0" Orientation="Horizontal" Spacing="8">
-                            <ui:HyperlinkButton Content="How to use AI with PuppyMacro" NavigateUri="https://giuvincenzi.github.io/puppymacro/guide/latest/ai.html" />
+                            <ui:HyperlinkButton Content="{x:Static r:Strings.AiPage_HowToUse}" NavigateUri="https://giuvincenzi.github.io/puppymacro/guide/latest/ai.html" />
                         </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </ui:ScrollViewerEx>
@@ -603,58 +606,65 @@
                 <!-- ================= Settings page: as the library's Gallery and Windows Settings ================= -->
                 <ui:ScrollViewerEx x:Name="SettingsPage" Padding="40,12,40,0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                     <ikw:SimpleStackPanel Margin="0,0,0,16" Spacing="4">
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Settings" />
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="{x:Static r:Strings.Settings_Title}" />
 
                         <ui:InfoBar x:Name="SettingsError" Margin="0,12,0,0" Severity="Error" IsOpen="False" />
 
                         <!-- General -->
-                        <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="General" />
-                        <ui:SettingsCard Header="Theme" Description="System follows your Windows setting">
+                        <TextBlock Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Settings_General}" />
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_Theme}" Description="{x:Static r:Strings.Settings_ThemeDescription}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Color}" />
                             </ui:SettingsCard.HeaderIcon>
                             <ComboBox x:Name="ThemeComboBox" SelectionChanged="OnThemeChanged">
-                                <ComboBoxItem Content="System" />
-                                <ComboBoxItem Content="Light" />
-                                <ComboBoxItem Content="Dark" />
+                                <ComboBoxItem Content="{x:Static r:Strings.Theme_System}" />
+                                <ComboBoxItem Content="{x:Static r:Strings.Theme_Light}" />
+                                <ComboBoxItem Content="{x:Static r:Strings.Theme_Dark}" />
                             </ComboBox>
                         </ui:SettingsCard>
-                        <ui:SettingsCard Header="Close to system tray"
-                                         Description="Keep running in the system tray when you close the window">
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_Language}" Description="{x:Static r:Strings.Settings_LanguageDescription}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <!-- Use system language, then the languages by their own name (MainWindow.FillLanguages). -->
+                            <ComboBox x:Name="LanguageComboBox" SelectionChanged="OnLanguageChanged" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_CloseToTray}"
+                                         Description="{x:Static r:Strings.Settings_CloseToTrayDescription}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.TVMonitor}" />
                             </ui:SettingsCard.HeaderIcon>
                             <ui:ToggleSwitch x:Name="CloseToTraySwitch" Toggled="OnCloseToTrayChanged" />
                         </ui:SettingsCard>
-                        <ui:SettingsCard Header="Start with Windows">
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_StartWithWindows}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.PowerButton}" />
                             </ui:SettingsCard.HeaderIcon>
                             <ui:SettingsCard.Description>
-                                <TextBlock x:Name="StartWithWindowsText" TextWrapping="Wrap" Text="Starts in the system tray when you sign in" />
+                                <TextBlock x:Name="StartWithWindowsText" TextWrapping="Wrap" Text="{x:Static r:Strings.Settings_StartWithWindowsDescription}" />
                             </ui:SettingsCard.Description>
                             <ui:ToggleSwitch x:Name="StartWithWindowsSwitch" Toggled="OnStartWithWindowsChanged" />
                         </ui:SettingsCard>
 
                         <!-- Hotkeys and overlay -->
-                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Hotkeys and overlay" />
-                        <ui:SettingsExpander x:Name="HotkeysGroup" Tag="Hotkeys" Header="Hotkeys"
+                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Settings_HotkeysAndOverlay}" />
+                        <ui:SettingsExpander x:Name="HotkeysGroup" Tag="Hotkeys" Header="{x:Static r:Strings.Settings_Hotkeys}"
                                              Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
                             </ui:SettingsExpander.HeaderIcon>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Stop all" Description="Stop every loop and macro">
+                                <ui:SettingsCard Header="{x:Static r:Strings.Main_StopAll}" Description="{x:Static r:Strings.Settings_StopAllDescription}">
                                     <views:KeyCaptureField x:Name="StopAllHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Overlay mode" Description="Toggle overlay mode">
+                                <ui:SettingsCard Header="{x:Static r:Strings.Settings_OverlayMode}" Description="{x:Static r:Strings.Settings_OverlayModeDescription}">
                                     <views:KeyCaptureField x:Name="OverlayModeHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Record" Description="Start and stop recording a macro">
+                                <ui:SettingsCard Header="{x:Static r:Strings.Settings_Record}" Description="{x:Static r:Strings.Settings_RecordDescription}">
                                     <views:KeyCaptureField x:Name="RecordHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
@@ -664,17 +674,17 @@
 
                         <!-- The panel's switch is the group's own; it opens also while off: Position on screen places the
                              floating buttons too -->
-                        <views:SwitchSettingsExpander x:Name="OverlayGroup" Tag="Overlay" Header="Overlay panel"
-                                                      Description="The list of your loops and macros" CanExpand="True"
+                        <views:SwitchSettingsExpander x:Name="OverlayGroup" Tag="Overlay" Header="{x:Static r:Strings.Settings_OverlayPanel}"
+                                                      Description="{x:Static r:Strings.Settings_OverlayPanelDescription}" CanExpand="True"
                                                       Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
-                            <ui:ToggleSwitch x:Name="ShowPanelSwitch" AutomationProperties.Name="Show the overlay panel" Toggled="OnShowPanelChanged" />
+                            <ui:ToggleSwitch x:Name="ShowPanelSwitch" AutomationProperties.Name="{x:Static r:Strings.Settings_ShowOverlayPanel}" Toggled="OnShowPanelChanged" />
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
                             </ui:SettingsExpander.HeaderIcon>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard x:Name="OpacityCard" Header="Opacity">
+                                <ui:SettingsCard x:Name="OpacityCard" Header="{x:Static r:Strings.Settings_Opacity}">
                                     <StackPanel Orientation="Horizontal">
-                                        <views:ValueSlider x:Name="OpacitySlider" Minimum="20" Maximum="100" Label="Overlay panel opacity"
+                                        <views:ValueSlider x:Name="OpacitySlider" Minimum="20" Maximum="100" Label="{x:Static r:Strings.Settings_OverlayPanelOpacity}"
                                                            ValueChanged="OnOpacityChanged" />
                                         <Border Width="132" Height="36" Margin="14,0,0,0" CornerRadius="6" Background="#3A4A5C" ClipToBounds="True">
                                             <Border x:Name="OpacityPreviewPanel" Margin="10,6,10,0" Padding="8,5" VerticalAlignment="Top"
@@ -682,34 +692,34 @@
                                                 <StackPanel>
                                                     <StackPanel Orientation="Horizontal">
                                                         <Ellipse Width="6" Height="6" Fill="#6CCB5F" VerticalAlignment="Center" />
-                                                        <TextBlock Margin="5,0,0,0" FontSize="10" Foreground="White" Text="Left click spam" />
+                                                        <TextBlock Margin="5,0,0,0" FontSize="10" Foreground="White" Text="{x:Static r:Strings.Settings_OpacityPreviewItem}" />
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Border>
                                         </Border>
                                     </StackPanel>
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Position on screen" Description="Drag the panel and the floating buttons">
-                                    <views:PlaceButton MovesOverlay="True" Text="Position on screen" Click="OnPositionOnScreenClick" />
+                                <ui:SettingsCard Header="{x:Static r:Strings.Settings_PositionOnScreen}" Description="{x:Static r:Strings.Settings_PositionOnScreenDescription}">
+                                    <views:PlaceButton MovesOverlay="True" Text="{x:Static r:Strings.Settings_PositionOnScreen}" Click="OnPositionOnScreenClick" />
                                 </ui:SettingsCard>
-                                <ui:SettingsCard x:Name="ClickInPanelCard" Header="Click items in the panel to start or stop them"
-                                                 Description="Some fullscreen apps may react to the click. If so, turn this off and use hotkeys only.">
+                                <ui:SettingsCard x:Name="ClickInPanelCard" Header="{x:Static r:Strings.Settings_ClickInPanel}"
+                                                 Description="{x:Static r:Strings.Settings_ClickInPanelDescription}">
                                     <ui:ToggleSwitch x:Name="ClickInPanelSwitch" Toggled="OnClickInPanelChanged" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </views:SwitchSettingsExpander>
 
-                        <ui:SettingsCard Header="Sound" Description="Start and stop sounds of loops and macros">
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_Sound}" Description="{x:Static r:Strings.Settings_SoundDescription}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Volume}" />
                             </ui:SettingsCard.HeaderIcon>
-                            <views:ValueSlider x:Name="VolumeSlider" Label="Sound volume"
+                            <views:ValueSlider x:Name="VolumeSlider" Label="{x:Static r:Strings.Settings_SoundVolume}"
                                                ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
                         </ui:SettingsCard>
 
                         <!-- Data and updates -->
-                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Data and updates" />
-                        <ui:SettingsExpander x:Name="BackupGroup" Tag="Backup" Header="Backup"
+                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Settings_DataAndUpdates}" />
+                        <ui:SettingsExpander x:Name="BackupGroup" Tag="Backup" Header="{x:Static r:Strings.Settings_Backup}"
                                              Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Download}" />
@@ -718,14 +728,14 @@
                                 <TextBlock x:Name="DataFolderText" TextTrimming="CharacterEllipsis" />
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="Export or import"
-                                                 Description="Save your data to one file, to keep a copy or move PuppyMacro to another PC">
+                                <ui:SettingsCard Header="{x:Static r:Strings.Settings_ExportOrImport}"
+                                                 Description="{x:Static r:Strings.Settings_ExportOrImportDescription}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="Export…" Click="OnExportClick" />
-                                        <Button Margin="8,0,0,0" Content="Import…" Click="OnImportClick" />
+                                        <Button Content="{x:Static r:Strings.Settings_ExportButton}" Click="OnExportClick" />
+                                        <Button Margin="8,0,0,0" Content="{x:Static r:Strings.Settings_ImportButton}" Click="OnImportClick" />
                                     </StackPanel>
                                 </ui:SettingsCard>
-                                <ui:SettingsCard Header="Open data folder" IsClickEnabled="True" Click="OnOpenDataFolderClick">
+                                <ui:SettingsCard Header="{x:Static r:Strings.Settings_OpenDataFolder}" IsClickEnabled="True" Click="OnOpenDataFolderClick">
                                     <ui:SettingsCard.ActionIcon>
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />
                                     </ui:SettingsCard.ActionIcon>
@@ -733,7 +743,7 @@
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
 
-                        <ui:SettingsCard Header="Updates">
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_Updates}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Sync}" />
                             </ui:SettingsCard.HeaderIcon>
@@ -745,11 +755,11 @@
                             </ui:SettingsCard.Description>
                             <!-- The library's HyperlinkButton opens its NavigateUri in the browser -->
                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                                <ui:HyperlinkButton x:Name="UpdateWhatsNew" Content="What's new" Visibility="Collapsed" />
+                                <ui:HyperlinkButton x:Name="UpdateWhatsNew" Content="{x:Static r:Strings.Settings_WhatsNew}" Visibility="Collapsed" />
                                 <Button x:Name="UpdateCardButton" Click="OnUpdateActionClick" />
                             </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
-                        <ui:SettingsCard Header="Check for updates automatically" Description="When PuppyMacro starts and every 12 hours">
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_CheckForUpdates}" Description="{x:Static r:Strings.Settings_CheckForUpdatesDescription}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Refresh}" />
                             </ui:SettingsCard.HeaderIcon>
@@ -757,7 +767,7 @@
                         </ui:SettingsCard>
 
                         <!-- About -->
-                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="About" />
+                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Settings_About}" />
                         <ui:SettingsExpander x:Name="AboutGroup" Tag="About" Header="PuppyMacro"
                                              Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
                             <ui:SettingsExpander.HeaderIcon>
@@ -767,7 +777,7 @@
                                 <TextBlock x:Name="AboutText" />
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard x:Name="UserGuideButton" Header="User guide" IsClickEnabled="True"
+                                <ui:SettingsCard x:Name="UserGuideButton" Header="{x:Static r:Strings.Settings_UserGuide}" IsClickEnabled="True"
                                                  Tag="https://giuvincenzi.github.io/puppymacro/guide/latest/" Click="OnOpenLinkClick">
                                     <ui:SettingsCard.ActionIcon>
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />

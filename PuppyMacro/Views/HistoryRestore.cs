@@ -1,7 +1,9 @@
 using System;
+using System.Globalization;
 using System.Text.Json;
 using iNKORE.UI.WPF.Modern.Controls;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -32,8 +34,8 @@ internal static class HistoryRestore
     /// <summary>The bar above the fields: the restored version waits for Save.</summary>
     public static void Notice(InfoBar bar, HistoryVersion version)
     {
-        bar.Title = $"The version of {version.Time:g} is in the editor.";
-        bar.Message = "Select Save to keep it, or Cancel to leave it as it is.";
+        bar.Title = string.Format(CultureInfo.CurrentCulture, Strings.HistoryView_RestoredTitle, version.Time);
+        bar.Message = Strings.HistoryView_RestoredMessage;
         bar.IsOpen = true;
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
@@ -56,11 +57,11 @@ internal sealed class InputHook : IDisposable
 
         _keyboardHook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_KEYBOARD_LL, _keyboardProc, module, 0);
         if (_keyboardHook == IntPtr.Zero)
-            throw new Win32Exception(Marshal.GetLastWin32Error(), "Could not read the keyboard.");
+            throw new Win32Exception(Marshal.GetLastWin32Error(), Strings.Input_CannotReadKeyboard);
 
         _mouseHook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_MOUSE_LL, _mouseProc, module, 0);
         if (_mouseHook == IntPtr.Zero)
-            throw new Win32Exception(Marshal.GetLastWin32Error(), "Could not read the mouse.");
+            throw new Win32Exception(Marshal.GetLastWin32Error(), Strings.Input_CannotReadMouse);
     }
 
     private IntPtr KeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services.Ai;
 
@@ -124,7 +126,7 @@ internal static class AiApps
             }
             catch (JsonException)
             {
-                return $"Remove it in Visual Studio Code: run \"MCP: Open User Configuration\" and delete \"{ServerName}\".";
+                return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_VsCodeRemoveByHand, ServerName);
             }
         }
         return EditJson(configPath, "Visual Studio Code", "servers", servers => servers.Remove(ServerName));
@@ -156,7 +158,7 @@ internal static class AiApps
     public static string? CodexAdd(string configPath, string exe)
     {
         if (exe.Contains('\'') || exe.Contains('\n'))
-            return "PuppyMacro's folder has a character Codex's settings can't hold.";
+            return Strings.AiApps_CodexBadFolder;
         try
         {
             List<string> lines = File.Exists(configPath) ? File.ReadAllLines(configPath).ToList() : new();
@@ -174,7 +176,7 @@ internal static class AiApps
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            return $"Codex's settings could not be changed: {ex.Message}";
+            return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_SettingsNotChanged, "Codex", ex.Message);
         }
     }
 
@@ -192,7 +194,7 @@ internal static class AiApps
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            return $"Codex's settings could not be changed: {ex.Message}";
+            return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_SettingsNotChanged, "Codex", ex.Message);
         }
     }
 
@@ -280,7 +282,7 @@ internal static class AiApps
             if (File.Exists(path) && File.ReadAllText(path).Trim().Length > 0)
             {
                 if (JsonNode.Parse(File.ReadAllText(path), documentOptions: Lenient) is not JsonObject existing)
-                    return $"{appName}'s settings file is not a JSON object, so PuppyMacro did not change it ({path}).";
+                    return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_SettingsNotObject, appName, path);
                 root = existing;
             }
             else
@@ -290,18 +292,18 @@ internal static class AiApps
             if (root[key] is null)
                 root[key] = new JsonObject();
             if (root[key] is not JsonObject servers)
-                return $"In {appName}'s settings file \"{key}\" is not an object, so PuppyMacro did not change it ({path}).";
+                return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_SettingsKeyNotObject, appName, key, path);
             change(servers);
             Write(path, root.ToJsonString(Indented));
             return null;
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException or ArgumentException)
         {
-            return $"{appName}'s settings file has an error, so PuppyMacro did not change it: {ex.Message} ({path})";
+            return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_SettingsFileError, appName, ex.Message, path);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            return $"{appName}'s settings could not be changed: {ex.Message}";
+            return string.Format(CultureInfo.CurrentCulture, Strings.AiApps_SettingsNotChanged, appName, ex.Message);
         }
     }
 

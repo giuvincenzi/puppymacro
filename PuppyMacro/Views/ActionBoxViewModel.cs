@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 
 namespace PuppyMacro.Views;
@@ -162,15 +163,15 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     /// <summary>The box's title, the type's name ("Press key", "Mouse button down").</summary>
     public string Title => Kind switch
     {
-        ActionKind.PressKey => "Press key",
-        ActionKind.KeyDown => "Key down",
-        ActionKind.KeyUp => "Key up",
-        ActionKind.Click => "Click",
-        ActionKind.MouseDown => "Mouse button down",
-        ActionKind.MouseUp => "Mouse button up",
-        ActionKind.MoveTo => "Move to",
-        ActionKind.Scroll => "Scroll",
-        _ => "Paste text",
+        ActionKind.PressKey => Strings.Action_TitlePressKey,
+        ActionKind.KeyDown => Strings.Action_TitleKeyDown,
+        ActionKind.KeyUp => Strings.Action_TitleKeyUp,
+        ActionKind.Click => Strings.Action_TitleClick,
+        ActionKind.MouseDown => Strings.Action_TitleMouseDown,
+        ActionKind.MouseUp => Strings.Action_TitleMouseUp,
+        ActionKind.MoveTo => Strings.Action_TitleMoveTo,
+        ActionKind.Scroll => Strings.Action_TitleScroll,
+        _ => Strings.Action_TitlePasteText,
     };
 
     // ---- Rows (ActionBox.xaml, in this order) ----
@@ -199,18 +200,14 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     /// <summary>Pause between counts only with more than one press.</summary>
     public bool PauseEnabled => Times > 1;
 
-    public string HoldDescription => IsClick
-        ? "How long the button stays pressed before it is released"
-        : "How long the key stays pressed before it is released";
+    public string HoldDescription => IsClick ? Strings.Action_HoldButtonDescription : Strings.Action_HoldKeyDescription;
 
     // ---- The key field (Press key: a combination; Key down / up: one key or a modifier alone) ----
 
     public bool KeyFieldKeyOnly => !IsPressKey;
     public bool KeyFieldModifierAlone => Kind is ActionKind.KeyDown or ActionKind.KeyUp;
 
-    public string KeyPrompt => IsPressKey
-        ? "Press the key or combination (Esc cancels)"
-        : "Press a key, or Ctrl, Alt, Shift or Win alone (Esc cancels)";
+    public string KeyPrompt => IsPressKey ? Strings.KeyField_PromptCombination : Strings.KeyField_PromptKeyOrModifier;
 
     // ---- Values ----
 
@@ -260,7 +257,7 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         set { _fixedPoint = value; Changed(); Changed(nameof(PointText)); Changed(nameof(Summary)); }
     }
 
-    public string PointText => _fixedPoint ? "A fixed point" : "Where the pointer is";
+    public string PointText => _fixedPoint ? Strings.Action_AFixedPoint : Strings.Action_WherePointerIs;
 
     public double X
     {
@@ -311,9 +308,16 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         get
         {
             int speed = (int)_smoothSpeed;
-            string name = speed switch { 1 => "very slow", 2 => "slow", 3 => "normal", 4 => "fast", _ => "very fast" };
+            string name = speed switch
+            {
+                1 => Strings.Action_SpeedVerySlow,
+                2 => Strings.Action_SpeedSlow,
+                3 => Strings.Action_SpeedNormal,
+                4 => Strings.Action_SpeedFast,
+                _ => Strings.Action_SpeedVeryFast,
+            };
             double seconds = MacroAction.SmoothDurationMs(speed) / 1000;
-            return $"Speed: {name}, about {seconds.ToString("0.##", CultureInfo.CurrentCulture)} s";
+            return string.Format(CultureInfo.CurrentCulture, Strings.Action_SpeedText, name, seconds.ToString("0.##", CultureInfo.CurrentCulture));
         }
     }
 
@@ -379,13 +383,36 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
 
     // ---- Summary under the title ----
 
-    private static readonly string[] UnitNames = { "ms", "s", "min", "h" };
+    /// <summary>A unit's short name, as in the Every list ("ms").</summary>
+    private static string UnitName(int index) => Math.Clamp(index, 0, 3) switch
+    {
+        0 => Strings.Action_UnitMs,
+        1 => Strings.Action_UnitS,
+        2 => Strings.Action_UnitMin,
+        _ => Strings.Action_UnitH,
+    };
 
-    private string Every => $"every {(IntervalValue ?? 0).ToString("0.##", CultureInfo.CurrentCulture)} {UnitNames[Math.Clamp(UnitIndex, 0, 3)]}";
+    private static string DirectionName(int index) => Math.Clamp(index, 0, 3) switch
+    {
+        (int)ScrollDirection.Up => Strings.Action_DirectionUp,
+        (int)ScrollDirection.Down => Strings.Action_DirectionDown,
+        (int)ScrollDirection.Left => Strings.Action_DirectionLeft,
+        _ => Strings.Action_DirectionRight,
+    };
 
-    private string TimesText => Times > 1 ? $" {Times:0} times" : "";
+    private static string Fill(string format, params object[] args) => string.Format(CultureInfo.CurrentCulture, format, args);
 
-    private string Point => $"at {Number(X, 0):0}, {Number(Y, 0):0}";
+    /// <summary>Parts of the summary joined by the language's list separator ("Left, at 640, 360, every 40 ms").</summary>
+    private static string List(params string[] parts) => string.Join(Strings.ListSeparator, parts);
+
+    private string Every => Fill(Strings.Action_SummaryEvery,
+        (IntervalValue ?? 0).ToString("0.##", CultureInfo.CurrentCulture), UnitName(UnitIndex));
+
+    /// <summary><paramref name="what"/> with the number of times when more than one ("Ctrl + C 3 times").</summary>
+    private string WithTimes(string what) => Times > 1 ? Plurals.Format("Action_SummaryTimes", (long)Math.Round(Times), what) : what;
+
+    private string Point => Fill(Strings.Action_SummaryAt,
+        Number(X, 0).ToString("0", CultureInfo.CurrentCulture), Number(Y, 0).ToString("0", CultureInfo.CurrentCulture));
 
     /// <summary>Under the title: what the action does (and, in a loop, how often).</summary>
     public string Summary
@@ -394,19 +421,22 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         {
             string what = Kind switch
             {
-                ActionKind.PressKey => _key is { IsSet: true } ? KeyNames.Format(_key) + TimesText : "No key yet",
-                ActionKind.KeyDown => _key is { IsSet: true } ? $"{KeyNames.Format(_key)}, until Key up" : "No key yet",
-                ActionKind.KeyUp => _key is { IsSet: true } ? KeyNames.Format(_key) : "No key yet",
-                ActionKind.Click => $"{MacroActionRowViewModel.ButtonName(_mouseVk)}{(_doubleClick ? " double click" : "")}{TimesText}, "
-                    + (InLoop ? (_fixedPoint ? Point : "where the pointer is") : Point),
-                ActionKind.MouseDown or ActionKind.MouseUp => $"{MacroActionRowViewModel.ButtonName(_mouseVk)}, {Point}",
-                ActionKind.MoveTo => _smooth ? "Smoothly" : "Instantly",
-                ActionKind.Scroll => $"{(ScrollDirection)Math.Clamp(_directionIndex, 0, 3)}, {Steps:0} {(Steps == 1 ? "step" : "steps")}",
-                _ => string.IsNullOrEmpty(_text) ? "No text yet" : $"\"{FirstLine(_text)}\"" + (_enterAfter ? ", then Enter" : ""),
+                ActionKind.PressKey => _key is { IsSet: true } ? WithTimes(KeyNames.Format(_key)) : Strings.Action_SummaryNoKey,
+                ActionKind.KeyDown => _key is { IsSet: true } ? Fill(Strings.Action_SummaryUntilKeyUp, KeyNames.Format(_key)) : Strings.Action_SummaryNoKey,
+                ActionKind.KeyUp => _key is { IsSet: true } ? KeyNames.Format(_key) : Strings.Action_SummaryNoKey,
+                ActionKind.Click => List(
+                    WithTimes(_doubleClick ? MouseButtonBox.DoubleClickName(_mouseVk) : MouseButtonBox.ButtonName(_mouseVk)),
+                    InLoop && !_fixedPoint ? Strings.Action_SummaryWherePointerIs : Point),
+                ActionKind.MouseDown or ActionKind.MouseUp => List(MouseButtonBox.ButtonName(_mouseVk), Point),
+                ActionKind.MoveTo => _smooth ? Strings.Action_Smoothly : Strings.Action_Instantly,
+                ActionKind.Scroll => List(DirectionName(_directionIndex), Plurals.Format("Action_SummarySteps", (long)Number(_steps, 1))),
+                _ => string.IsNullOrEmpty(_text)
+                    ? Strings.Action_SummaryNoText
+                    : Fill(_enterAfter ? Strings.Action_SummaryTextThenEnter : Strings.Action_SummaryText, FirstLine(_text)),
             };
             if (!InLoop)
                 return what;
-            return IsHolding ? $"{what}, held down while the loop runs" : $"{what}, {Every}";
+            return IsHolding ? Fill(Strings.Action_SummaryHeldDown, what) : List(what, Every);
         }
     }
 
@@ -424,15 +454,15 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         get
         {
             if (IsKeyKind && _key is not { IsSet: true })
-                return InLoop ? "Choose a key for each Press key." : "Choose a key.";
+                return InLoop ? Strings.Action_ChooseKeyEach : Strings.Action_ChooseKey;
             if (IsKeyKind && KeyNames.IsMouse(_key!.Vk))
-                return "Use a Click or Mouse button action for mouse buttons.";
+                return Strings.Action_UseMouseAction;
             if (InLoop && IsClick && _fixedPoint && (double.IsNaN(_x) || double.IsNaN(_y)))
-                return "Set the position of each Click at a fixed point.";
+                return Strings.Action_SetFixedPoint;
             if (IsText && string.IsNullOrEmpty(_text))
-                return InLoop ? "Enter the text for each Paste text." : "Enter the text to paste.";
+                return InLoop ? Strings.Action_EnterTextEach : Strings.Action_EnterText;
             if (IsHolding && _key is { HasModifiers: true })
-                return "Hold down works with a single key. For a combination, use Repeat.";
+                return Strings.Action_HoldNeedsSingleKey;
             return null;
         }
     }

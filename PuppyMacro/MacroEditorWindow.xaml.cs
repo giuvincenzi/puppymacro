@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Views;
 using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
@@ -71,7 +73,9 @@ public partial class MacroEditorWindow
         _itemId = existing?.Id ?? Guid.NewGuid();
         _placeButton = placeButton;
 
-        string title = existing == null ? "Add macro" : $"Edit macro - {existing.Name}";
+        string title = existing == null
+            ? Strings.MacroEditor_AddTitle
+            : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_EditNamedTitle, existing.Name);
         Title = title;
 
         if (recorded != null)
@@ -83,10 +87,11 @@ public partial class MacroEditorWindow
             }
         }
         ActionList.ItemsSource = _items;
-        SoundChoices.ItemsSource = SoundService.Names;
+        // The sounds by their names in the user's language; the id (the file's value) is the same position in SoundService.Names.
+        SoundChoices.ItemsSource = SoundService.DisplayNames();
         SoundChoices.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
         LoadMacro(source);
-        SoundChoicesScroll.Attach(SoundScroll, () => _soundName);
+        SoundChoicesScroll.Attach(SoundScroll, () => SoundService.DisplayName(_soundName));
 
         FloatingEditor.PositionRequested += OnFloatingPositionRequested;
         // A floating button shows only for an item shown in the overlay.
@@ -139,7 +144,7 @@ public partial class MacroEditorWindow
         TimesBox.Value = source.RepeatCount;
         TimesBox.IsEnabled = source.Repeat == RepeatMode.Times;
         int speedIndex = Array.IndexOf(MacroDefinition.SpeedSteps, source.Speed);
-        SpeedSlider.Format = v => $"×{SpeedAt(v)}";
+        SpeedSlider.Format = v => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_SpeedValue, SpeedAt(v));
         SpeedSlider.Value = speedIndex >= 0 ? speedIndex : 2;
 
         ToggleRadio.IsChecked = source.Mode == ActivationMode.Toggle;
@@ -289,22 +294,24 @@ public partial class MacroEditorWindow
         {
             int first = _list.FirstIndex(group) + 1, last = _list.LastIndex(group) + 1;
             var actions = _list.ActionsOf(group);
-            string range = first == last ? $"#{first}" : $"#{first}–{last}";
-            HeaderFor(group).Info = $"{range} · {Count(actions.Count)} · {MacroItemViewModel.FormatDuration(actions.Sum(Duration))}";
+            string range = first == last
+                ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_ActionNumber, first)
+                : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_ActionRange, first, last);
+            HeaderFor(group).Info = string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_GroupInfo,
+                range, Count(actions.Count), MacroItemViewModel.FormatDuration(actions.Sum(Duration)));
         }
         double total = _list.Actions.Sum(Duration);
-        string groups = _list.Groups.Count switch
-        {
-            0 => "",
-            1 => " in 1 group",
-            int n => $" in {n} groups",
-        };
-        TotalText.Text = $"{Count(_list.Actions.Count)}{groups}, {MacroItemViewModel.FormatDuration(total)} at ×1";
+        TotalText.Text = _list.Groups.Count == 0
+            ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_Total,
+                Count(_list.Actions.Count), MacroItemViewModel.FormatDuration(total))
+            : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_TotalInGroups,
+                Count(_list.Actions.Count), Plurals.Format("MacroEditor_GroupCount", _list.Groups.Count),
+                MacroItemViewModel.FormatDuration(total));
     }
 
     private static double Duration(MacroAction action) => action.DelayMs + action.DurationMs;
 
-    private static string Count(int actions) => $"{actions} {(actions == 1 ? "action" : "actions")}";
+    private static string Count(int actions) => Plurals.Format("MacroEditor_ActionCount", actions);
 
     /// <summary>The list items for these actions: their rows, or their group's header when it is collapsed.</summary>
     private IEnumerable<MacroEditorItem> ItemsFor(IEnumerable<MacroAction> actions, MacroGroup? into = null)
@@ -347,11 +354,11 @@ public partial class MacroEditorWindow
     private string InsertHintText() =>
         SelectedItems.LastOrDefault() switch
         {
-            MacroGroupViewModel header => $"New actions go after the group \"{header.Name}\"",
+            MacroGroupViewModel header => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_InsertAfterGroup, header.Name),
             MacroActionRowViewModel row when _list.GroupOf(row.Action) is { } group =>
-                $"New actions go after #{row.Number}, in \"{group.Name}\"",
-            MacroActionRowViewModel row => $"New actions go after #{row.Number}",
-            _ => "New actions go at the end",
+                string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_InsertAfterInGroup, row.Number, group.Name),
+            MacroActionRowViewModel row => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_InsertAfter, row.Number),
+            _ => Strings.MacroEditor_InsertAtEnd,
         };
 
     private void UpdateSelectionBar()
@@ -360,8 +367,9 @@ public partial class MacroEditorWindow
             return;
         int count = _list.Expand(SelectedActions, SelectedGroups).Count;
         bool any = count > 0;
-        SelectionText.Text = (any ? $"{Count(count)} selected" : "Select actions to edit, group, copy and more")
-                             + " · " + InsertHintText();
+        SelectionText.Text = any
+            ? Plurals.Format("MacroEditor_Selected", count, InsertHintText())
+            : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_NoneSelected, InsertHintText());
         foreach (var button in new[] { DuplicateButton, CopyButton, DeleteButton })
             button.IsEnabled = any;
         // A group alone is already a group.
@@ -485,7 +493,7 @@ public partial class MacroEditorWindow
     {
         var box = new NumberBox
         {
-            Header = "Delay before this action (ms)",
+            Header = Strings.MacroEditor_DelayHeader,
             Minimum = 0,
             Maximum = 86_400_000,
             Value = row.Action.DelayMs,
@@ -495,8 +503,8 @@ public partial class MacroEditorWindow
         {
             Title = row.Title,
             Content = box,
-            PrimaryButtonText = "Save",
-            CloseButtonText = "Cancel",
+            PrimaryButtonText = Strings.Editor_Save,
+            CloseButtonText = Strings.Editor_Cancel,
             DefaultButton = ContentDialogButton.Primary,
         };
         if (await dialog.ShowAsync(this) == ContentDialogResult.Primary)
@@ -518,18 +526,18 @@ public partial class MacroEditorWindow
         }
         UpdateSelectionBar();
         var menu = new ContextMenu { Placement = PlacementMode.MousePoint };
-        menu.Items.Add(MenuCommand("Test", SegoeFluentIcons.Play, TestActionButton.IsEnabled, OnTestActionClick, ""));
-        menu.Items.Add(MenuCommand("Edit", SegoeFluentIcons.Edit, EditActionButton.IsEnabled, OnEditActionClick, ""));
-        menu.Items.Add(MenuCommand("Duplicate", SegoeFluentIcons.Copy, DuplicateButton.IsEnabled, OnDuplicateSelectedClick, "Ctrl+D"));
+        menu.Items.Add(MenuCommand(Strings.Editor_Test, SegoeFluentIcons.Play, TestActionButton.IsEnabled, OnTestActionClick, ""));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Edit, SegoeFluentIcons.Edit, EditActionButton.IsEnabled, OnEditActionClick, ""));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Duplicate, SegoeFluentIcons.Copy, DuplicateButton.IsEnabled, OnDuplicateSelectedClick, Strings.Keys_Ctrl + "+D"));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MenuCommand("Group", SegoeFluentIcons.GroupList, GroupButton.IsEnabled, OnGroupSelectedClick, "Ctrl+G"));
-        menu.Items.Add(MenuCommand("Ungroup", SegoeFluentIcons.RemoveFrom, UngroupButton.IsEnabled, OnUngroupClick, ""));
-        menu.Items.Add(MenuCommand("Rename group", SegoeFluentIcons.Rename, RenameGroupButton.IsEnabled, OnRenameGroupClick, ""));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Group, SegoeFluentIcons.GroupList, GroupButton.IsEnabled, OnGroupSelectedClick, Strings.Keys_Ctrl + "+G"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Ungroup, SegoeFluentIcons.RemoveFrom, UngroupButton.IsEnabled, OnUngroupClick, ""));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_RenameGroup, SegoeFluentIcons.Rename, RenameGroupButton.IsEnabled, OnRenameGroupClick, ""));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MenuCommand("Copy", SegoeFluentIcons.Copy, CopyButton.IsEnabled, OnCopySelectedClick, "Ctrl+C"));
-        menu.Items.Add(MenuCommand("Paste", SegoeFluentIcons.Paste, PasteButton.IsEnabled, OnPasteClick, "Ctrl+V"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Copy, SegoeFluentIcons.Copy, CopyButton.IsEnabled, OnCopySelectedClick, Strings.Keys_Ctrl + "+C"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Paste, SegoeFluentIcons.Paste, PasteButton.IsEnabled, OnPasteClick, Strings.Keys_Ctrl + "+V"));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MenuCommand("Delete", SegoeFluentIcons.Delete, DeleteButton.IsEnabled, OnDeleteSelectedClick, "Delete"));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Delete, SegoeFluentIcons.Delete, DeleteButton.IsEnabled, OnDeleteSelectedClick, Strings.Keys_Delete));
         menu.IsOpen = true;
     }
 
@@ -560,9 +568,9 @@ public partial class MacroEditorWindow
     {
         var dialog = new ContentDialog
         {
-            Title = "Shortcuts",
+            Title = Strings.MacroEditor_Shortcuts,
             Content = new MacroShortcutsView(),
-            CloseButtonText = "Close",
+            CloseButtonText = Strings.Editor_Close,
             DefaultButton = ContentDialogButton.Close,
         };
         await dialog.ShowAsync(this);
@@ -649,7 +657,7 @@ public partial class MacroEditorWindow
 
     private void RenameGroup(MacroGroupViewModel header)
     {
-        var dialog = new GroupNameWindow("Rename group", "Save", header.Name, header.Info) { Owner = this };
+        var dialog = new GroupNameWindow(Strings.MacroEditor_RenameGroup, Strings.Editor_Save, header.Name, header.Info) { Owner = this };
         if (dialog.ShowDialog() == true && dialog.Result != null)
         {
             header.Name = dialog.Result;
@@ -684,7 +692,8 @@ public partial class MacroEditorWindow
         // A group alone is already a group.
         if (count == 0 || SelectedGroup != null)
             return;
-        var dialog = new GroupNameWindow("Group actions", "Group", $"Group {_list.Groups.Count + 1}", Count(count))
+        var dialog = new GroupNameWindow(Strings.Group_Title, Strings.Group_Ok,
+            string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_NewGroupName, _list.Groups.Count + 1), Count(count))
         {
             Owner = this,
         };
@@ -998,22 +1007,22 @@ public partial class MacroEditorWindow
         if (ActivationHint == null)
             return;
         ActivationHint.Text = IsHold
-            ? "Plays only while the hotkey is held down."
-            : "Press the hotkey to start, press it again to stop.";
+            ? Strings.MacroEditor_HoldHint
+            : Strings.Editor_ToggleHint;
     }
 
     // ================= Sound =================
 
     private void OnSoundSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (SoundChoices.SelectedItem is string name)
-            _soundName = name;
+        if (SoundChoices.SelectedIndex >= 0)
+            _soundName = SoundService.Names[SoundChoices.SelectedIndex];
     }
 
     /// <summary>A click on a sound picks it and plays it, also when it is already the chosen one.</summary>
     private void OnSoundClick(object sender, RoutedEventArgs e)
     {
-        if ((e.OriginalSource as RadioButton)?.Content is not string name)
+        if ((e.OriginalSource as RadioButton)?.Content is not string shown || SoundService.IdOf(shown) is not string name)
             return;
         _soundName = name;
         _sounds.Preview(name);
@@ -1068,13 +1077,13 @@ public partial class MacroEditorWindow
     private string? GetValidationError()
     {
         if (string.IsNullOrWhiteSpace(NameBox.Text))
-            return "Enter a name.";
+            return Strings.Editor_EnterName;
         if (_list.Actions.Count == 0)
-            return "Add or record at least one action.";
+            return Strings.MacroEditor_NoActionsError;
         if (AppScopeCard.ValidationError is string appError)
             return appError;
         if (_hotkey == null || !_hotkey.IsSet)
-            return IsHold ? "Hold needs a hotkey. Choose one or switch to Toggle." : null;
+            return IsHold ? Strings.Editor_HoldNeedsHotkey : null;
         if (HotkeyRules.Problem(_hotkey, hold: IsHold) is string problem)
             return problem;
         return HotkeyConflict(_hotkey, SelectedApp);
