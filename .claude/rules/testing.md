@@ -154,6 +154,9 @@ into, and a new test needs nothing.
     sorted the same way on every machine (`LC_ALL=C sort`), numbered from 1;
   - `pick_group_tests`: test n goes to the group of n's remainder divided by N, the remainder 0 to group N. A number has
     one remainder, so every test is in exactly one group, and the groups differ by at most one test;
+  - `minimize_other_windows`: the runner's own windows (its agent's console) can stay in front of PuppyMacro and take
+    a real mouse click (a test's "Add loop" click landed on it); they are minimized first, and the windows still shown
+    are written to the log. Press buttons with UI Automation (`Invoke`) unless the test needs a real click;
   - `run_group_tests`: `dotnet test --filter-method` with the group's tests, and a CTRF (JSON) report of what ran;
   - `keep_screenshots_of_failed_tests`: `AppSession` saves the whole screen at the end of every test, before
     PuppyMacro closes, when `E2E_SCREENSHOTS` is set (only `run_group_tests` sets it; never locally); this step keeps the

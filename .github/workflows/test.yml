@@ -154,6 +154,16 @@ jobs:
           echo "Group $GROUP of $E2E_GROUPS: $(wc -l < e2e_results/group_tests.txt) tests."
           cat e2e_results/group_tests.txt
 
+      # The runner's own windows (its agent's console) can stay in front of PuppyMacro and take a real click: the tests
+      # start from a clear desktop, as on a contributor's PC. The windows still shown are written to the log.
+      - name: minimize_other_windows
+        shell: pwsh
+        run: |
+          (New-Object -ComObject Shell.Application).MinimizeAll()
+          Start-Sleep -Seconds 2
+          Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle } |
+            ForEach-Object { Write-Host "Window still open: $($_.ProcessName): $($_.MainWindowTitle)" }
+
       - name: run_group_tests
         env:
           E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots   # AppSession saves the screen at the end of every test
