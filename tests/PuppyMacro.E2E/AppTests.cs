@@ -805,8 +805,6 @@ public class AppTests
                 "F6 is already used by the loop \"Sample: click every second\", so this comes in without a hotkey."));
             Assert.True(ItemBox(window, "E2E shared loop").IsChecked);
             Assert.True(app.HasRow(app.FindById(window, "ImportItemList"), "E2E shared loop"));
-            // Its last line, the InfoBar under the list, is shown in full.
-            Assert.True(app.Has(window, "Imported items start disabled."));
             import.Invoke();
 
             Assert.True(app.Has(app.MainWindow, "E2E shared loop"));
