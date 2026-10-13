@@ -25,6 +25,12 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     public string TargetText => KeyNames.Format(Definition.Target);
     /// <summary>The title's keys, in the accent color: the key or combination pressed, then the one it sends.</summary>
     public List<string> SourceParts => KeyNames.Parts(Definition.Source);
+    /// <summary>
+    /// No hotkey: Import took it off because it was taken. The remap can't be turned on until the user gives it one in the
+    /// editor (the card shows "No hotkey yet" and why, its switch off).
+    /// </summary>
+    public bool HasNoSource => Definition.Source is not { IsSet: true };
+    public bool HasSource => !HasNoSource;
     public List<string> TargetParts => KeyNames.Parts(Definition.Target);
     public bool IsAllApps => Definition.AppExe == null;
     public bool IsSpecificApp => Definition.AppExe != null;
@@ -33,7 +39,7 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     public bool HasNote => !string.IsNullOrWhiteSpace(Definition.Note);
     /// <summary>The row's accessible name: its note, or its keys when it has none ("J → C").</summary>
     public string AccessibleName => HasNote ? Definition.Note
-        : string.Format(CultureInfo.CurrentCulture, Strings.Ai_RemapTitle, SourceText, TargetText);
+        : string.Format(CultureInfo.CurrentCulture, Strings.Ai_RemapTitle, HasNoSource ? Strings.Remaps_NoHotkey : SourceText, TargetText);
     public string SearchText => $"{SourceText} {TargetText} {ScopeText} {Note}";
 
     public bool IsLoopEnabled

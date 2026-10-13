@@ -1,0 +1,41 @@
+<Window
+    x:Class="PuppyMacro.BackupFileWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
+    Title="PuppyMacro"
+    Icon="pack://application:,,,/Assets/PuppyMacro.ico"
+    Width="440"
+    SizeToContent="Height"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica">
+
+    <!-- A backup (.puppymacro) opened from File Explorer: it opens only from Settings › Backup, as it replaces the data. Shown
+         alone, without starting PuppyMacro (App.OnStartup); laid out as GroupNameWindow, its buttons' area with only Close -->
+    <StackPanel>
+        <Grid Margin="24,8,24,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ui:FontIcon Margin="0,2,16,0" VerticalAlignment="Top" FontSize="32"
+                         Icon="{x:Static fsi:FluentSystemIcons.ArchiveSettings_24_Regular}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            <StackPanel Grid.Column="1">
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" Text="{x:Static r:Strings.Share_DropBackupTitle}" />
+                <TextBlock x:Name="MessageText" Margin="0,8,0,0" TextWrapping="Wrap" />
+                <TextBlock x:Name="FileText" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+        </Grid>
+
+        <Border Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+            <Button MinWidth="120" HorizontalAlignment="Right" Style="{StaticResource AccentButtonStyle}"
+                    Content="{x:Static r:Strings.BackupFile_Close}" IsDefault="True" IsCancel="True" Click="OnCloseClick" />
+        </Border>
+    </StackPanel>
+</Window>

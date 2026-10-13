@@ -755,8 +755,10 @@ public class AppTests
         Assert.NotNull(app.MenuItem("Export…"));
         app.MenuItem("Move down").AsMenuItem().Invoke();
 
-        // The title bar's Export: the choice first; the file dialog comes only after its own Export…, never pressed here.
-        app.FindById(app.MainWindow, "ExportItemsButton").AsButton().Invoke();
+        // The title bar's More options › Export…: the choice first; the file dialog comes only after the dialog's own
+        // Export…, never pressed here.
+        app.FindById(app.MainWindow, "TitleMoreButton").AsButton().Invoke();
+        app.MenuItem("Export…").AsMenuItem().Invoke();
         CheckBox loop = ItemBox(app, "Sample: click every second");
         Assert.True(app.Has(app.MainWindow, "Sample: type and confirm"));
         Assert.True(app.HasRow(app.FindById(app.MainWindow, "ExportItemList"), "Sample: type and confirm"));
@@ -792,13 +794,12 @@ public class AppTests
         try
         {
             // File Explorer starts PuppyMacro with the file: this second one hands it to the running one and exits.
-            using Process second = Process.Start(AppSession.ExePath, $"\"{file}\"")!;
-            Assert.True(second.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the second PuppyMacro did not exit");
+            OpenFromFileExplorer(file);
 
             Button import = app.FindButton(app.MainWindow, "Import 2 items");
-            Assert.True(app.Has(app.MainWindow, "A macro has this name: imported as \"Sample: type and confirm (2)\"."));
+            Assert.True(app.Has(app.MainWindow, "You already have a macro with this name, so this one is called \"Sample: type and confirm (2)\"."));
             Assert.True(app.Has(app.MainWindow,
-                "F6 is already used by the loop \"Sample: click every second\": imported without a hotkey."));
+                "F6 is already used by the loop \"Sample: click every second\", so this comes in without a hotkey."));
             Assert.True(ItemBox(app, "E2E shared loop").IsChecked);
             Assert.True(app.HasRow(app.FindById(app.MainWindow, "ImportItemList"), "E2E shared loop"));
             import.Invoke();
@@ -812,6 +813,113 @@ public class AppTests
             MacroDefinition macro = Retry.WhileNull(() => AppSession.SavedMacros().FirstOrDefault(m => m.Name == "Sample: type and confirm (2)"),
                 AppSession.Timeout).Result!;
             Assert.False(macro.Enabled);
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+    }
+
+    /// <summary>Starts a second PuppyMacro with <paramref name="file"/>, as File Explorer does: it hands it over and exits.</summary>
+    private static void OpenFromFileExplorer(string file)
+    {
+        using Process second = Process.Start(AppSession.ExePath, $"\"{file}\"")!;
+        Assert.True(second.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the second PuppyMacro did not exit");
+    }
+
+    [Fact]
+    public void A_remap_whose_hotkey_is_taken_comes_in_without_one_and_its_card_says_so()
+    {
+        using var app = new AppSession();
+        // CapsLock is the source of a sample remap: this one, to F24, comes in without it.
+        string file = Path.Combine(Path.GetTempPath(), $"E2E remap {Guid.NewGuid():N}.puppyitems");
+        File.WriteAllText(file, """
+            { "Format": 1, "App": "1.17.0", "Items": [
+              { "Kind": "Remap", "Item": { "Source": { "Vk": 20 }, "Target": { "Vk": 135 }, "Note": "E2E remap" } } ] }
+            """);
+        try
+        {
+            OpenFromFileExplorer(file);
+
+            Button import = app.FindButton(app.MainWindow, "Import 1 item");
+            Assert.True(app.Has(app.MainWindow, "CapsLock is already remapped for all apps, so this comes in without a hotkey."));
+            import.Invoke();
+
+            // The Remap page opens on it: no hotkey, what to do, its switch off.
+            Assert.True(app.Has(app.MainWindow, "E2E remap"));
+            Assert.True(app.Has(app.MainWindow, "No hotkey yet"));
+            Assert.True(app.Has(app.MainWindow, "Choose a hotkey with Edit to turn it on."));
+            RemapDefinition remap = Retry.WhileNull(() => JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSession.SettingsFile),
+                Seed.JsonOptions)!.Remaps.FirstOrDefault(r => r.Note == "E2E remap"), AppSession.Timeout).Result!;
+            Assert.Null(remap.Source);
+            Assert.Equal(135, remap.Target!.Vk);
+            Assert.False(remap.Enabled);
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+    }
+
+    [Fact]
+    public void Two_files_opened_one_after_the_other_show_one_Import_with_the_last()
+    {
+        using var app = new AppSession();
+        string first = Path.Combine(Path.GetTempPath(), $"E2E first {Guid.NewGuid():N}.puppyitems");
+        string second = Path.Combine(Path.GetTempPath(), $"E2E second {Guid.NewGuid():N}.puppyitems");
+        static string Loop(string name) => $$"""
+            { "Format": 1, "App": "1.17.0", "Items": [
+              { "Kind": "Loop", "Item": { "Name": "{{name}}",
+                "Actions": [ { "Type": "Key", "KeyVk": 135, "IntervalValue": 1, "IntervalUnit": "Seconds" } ] } } ] }
+            """;
+        File.WriteAllText(first, Loop("E2E first loop"));
+        File.WriteAllText(second, Loop("E2E second loop"));
+        try
+        {
+            OpenFromFileExplorer(first);
+            Assert.NotNull(ItemBox(app, "E2E first loop"));
+
+            // The second file takes the first one's place in the same Import.
+            OpenFromFileExplorer(second);
+            Assert.NotNull(ItemBox(app, "E2E second loop"));
+            Assert.True(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf =>
+                cf.ByName("E2E first loop").And(cf.ByControlType(ControlType.CheckBox))) == null, AppSession.Timeout).Success);
+
+            app.FindButton(app.MainWindow, "Cancel").Invoke();
+
+            // Nothing waits behind it: no other Import opens.
+            Assert.False(Retry.WhileFalse(() => app.MainWindow.FindFirstDescendant(cf => cf.ByName("Import 1 item")) != null,
+                TimeSpan.FromSeconds(3)).Success);
+        }
+        finally
+        {
+            File.Delete(first);
+            File.Delete(second);
+        }
+    }
+
+    [Fact]
+    public void A_backup_opened_from_File_Explorer_only_says_where_it_opens()
+    {
+        using var app = new AppSession();
+        // Only its name matters: the window never reads it.
+        string file = Path.Combine(Path.GetTempPath(), $"E2E backup {Guid.NewGuid():N}.puppymacro");
+        File.WriteAllText(file, "not read");
+        try
+        {
+            using Process backup = Process.Start(AppSession.ExePath, $"\"{file}\"")!;
+            using var attached = FlaUI.Core.Application.Attach(backup.Id);
+            Window window = Retry.WhileNull(() => attached.GetAllTopLevelWindows(app.Automation).FirstOrDefault(w =>
+                w.FindFirstDescendant(cf => cf.ByName("Backups open from Settings")) != null), AppSession.Timeout).Result
+                ?? throw new InvalidOperationException("the backup's window did not open");
+            Assert.True(app.Has(window, "A backup replaces all your data, so you open it from Settings › Backup."));
+            Assert.True(app.Has(window, Path.GetFileName(file)));
+
+            app.FindButton(window, "Close").Invoke();
+            Assert.True(backup.WaitForExit((int)AppSession.Timeout.TotalMilliseconds), "the backup's PuppyMacro did not exit");
+            // The PuppyMacro already running is left as it was.
+            Assert.False(app.MainWindow.IsOffscreen);
+            Assert.True(app.Has(app.MainWindow, "Sample: click every second"));
         }
         finally
         {

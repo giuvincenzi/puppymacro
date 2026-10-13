@@ -285,7 +285,8 @@ internal sealed class AiTools
             new("import_items",
                 "Adds the loops, macros and remaps of a .puppyitems file's text (for example pasted by the user). Nothing is replaced: " +
                 "each gets a new Id and comes disabled (the user turns it on), a name already used gets \" (2)\", a hotkey already " +
-                "used is left out (a Hold item becomes Toggle), and a remap of a key already taken is skipped. When the file has " +
+                "used is left out (a Hold item becomes Toggle), and so is a remap's hotkey (its Source) when already taken: that remap " +
+                "can't be enabled until it gets a free one (check_hotkey, then patch_item). When the file has " +
                 "several items and the user did not say which, ask first (or all) and give their indexes in only. The user may be " +
                 "asked to confirm in PuppyMacro. open_import_window lets the user choose in PuppyMacro instead.",
                 """
@@ -633,6 +634,9 @@ internal sealed class AiTools
             return AiToolResult.Error($"No loop, macro or remap has the Id {id}.");
         if (already)
             return new AiToolResult($"{Capital(what)} is already {(enabled ? "enabled" : "disabled")}.");
+        if (enabled && found is RemapDefinition { Source: not { IsSet: true } })
+            return AiToolResult.Error($"{Capital(what)} has no hotkey (Import left it out, as it was taken), so it can't be " +
+                                      "enabled. Give it a free one first (check_hotkey, then patch_item on its Source).");
 
         string verb = enabled ? "Enable" : "Disable";
         Phrase label = About(enabled ? "Ai_Enabled" : "Ai_Disabled", found);

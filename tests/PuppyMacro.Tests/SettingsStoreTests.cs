@@ -211,12 +211,11 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
-    public void Invalid_remaps_are_removed_and_blank_app_names_mean_all_apps()
+    public void Remaps_without_a_target_are_removed_and_blank_app_names_mean_all_apps()
     {
         AppSettings settings = LoadJson("""
             {
               "Remaps": [
-                { "SourceVk": 0, "Target": { "Vk": 27 } },
                 { "SourceVk": 20 },
                 { "SourceVk": 20, "Target": { "Vk": 27 }, "AppExe": "  " }
               ]
@@ -226,6 +225,28 @@ public class SettingsStoreTests : IDisposable
         RemapDefinition remap = Assert.Single(settings.Remaps);
         Assert.Null(remap.AppExe);
         Assert.NotEqual(Guid.Empty, remap.Id);
+    }
+
+    [Fact]
+    public void A_remap_without_a_hotkey_is_kept_and_always_off()
+    {
+        // As Import leaves a remap whose hotkey was taken; an empty source too.
+        AppSettings settings = LoadJson("""
+            {
+              "Remaps": [
+                { "Target": { "Vk": 27 }, "Enabled": true },
+                { "Source": { "Vk": 0 }, "Target": { "Vk": 27 }, "Enabled": true }
+              ]
+            }
+            """, out _);
+
+        Assert.Equal(2, settings.Remaps.Count);
+        Assert.All(settings.Remaps, r =>
+        {
+            Assert.Null(r.Source);
+            Assert.False(r.Enabled);
+            Assert.Equal(27, r.Target!.Vk);
+        });
     }
 
     [Fact]

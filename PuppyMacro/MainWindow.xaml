@@ -18,7 +18,12 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:TitleBar.Height="48"
-    ui:TitleBar.MaximizeButtonAvailability="Collapsed">
+    ui:TitleBar.MaximizeButtonAvailability="Collapsed"
+    AllowDrop="True"
+    PreviewDragEnter="OnFileDragOver"
+    PreviewDragOver="OnFileDragOver"
+    PreviewDragLeave="OnFileDragLeave"
+    PreviewDrop="OnFileDrop">
 
     <Window.Resources>
         <!-- Cards of a list: 4 apart, as in Windows Settings -->
@@ -27,21 +32,21 @@
         </ItemsPanelTemplate>
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Import, Export,
-             Enter overlay mode and Stop all on the right before the window buttons drawn by the library (as its
+        <!-- ================= Title bar (approved, ui.md): 48 px as in Microsoft Store; icon and name on the left, Enter overlay
+             mode, More options (Import…, Export…) and Stop all on the right before the window buttons drawn by the library (as its
              ButtonsOnTitlebar sample) ================= -->
         <!-- Left to right in every language: the window buttons the library draws stay on the right (i18n.md) -->
         <Grid Grid.Row="0" Height="{Binding (ui:TitleBar.Height), RelativeSource={RelativeSource AncestorType=Window}}"
               FlowDirection="LeftToRight">
             <!-- The buttons' column is as wide as they are: two * columns would give it half the window, too little for
-                 Import, Export and Enter overlay mode at the default 800 px -->
+                 Enter overlay mode and Stop all at the default 800 px in some languages -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -59,31 +64,23 @@
             </StackPanel>
 
 
-            <!-- On the right: Import, Export, Enter overlay mode, Stop all, the window buttons. The buttons sit 9 px from the top: the window's
+            <!-- On the right: Enter overlay mode, More options (Import…, Export…), Stop all, the window buttons. The buttons sit 9 px from the top: the window's
                  1 px border, then 8, so they look 8 px from the top and from the bottom (their bottom line is almost the bar's
                  color), as Microsoft Store's search box -->
             <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
-                <!-- Loops, macros and remaps shared as .puppyitems files (MainWindow.Share.cs); not the backup -->
-                <Button x:Name="ImportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="{x:Static r:Strings.Share_Import}" ToolTip="{x:Static r:Strings.Share_ImportTooltip}" Click="OnImportItemsClick">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Download}" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Share_Import}" />
-                    </StackPanel>
-                </Button>
-                <Button x:Name="ExportItemsButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="{x:Static r:Strings.Share_Export}" ToolTip="{x:Static r:Strings.Share_ExportTooltip}" Click="OnExportItemsClick">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Share}" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Share_Export}" />
-                    </StackPanel>
-                </Button>
                 <Button x:Name="OverlayModeButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
                         AutomationProperties.Name="{x:Static r:Strings.Main_EnterOverlayMode}" Click="OnOverlayModeClick">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Margin="0,0,8,0" FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.MapLayers}" />
                         <TextBlock VerticalAlignment="Center" Text="{x:Static r:Strings.Main_EnterOverlayMode}" />
                     </StackPanel>
+                </Button>
+                <!-- More options: Import… and Export… of loops, macros and remaps as .puppyitems files (MainWindow.Share.cs; not
+                     the backup), in a menu (approved design B, the Design canvas "PuppyMacro Import, remap without key, title bar") -->
+                <Button x:Name="TitleMoreButton" Margin="0,9,8,0" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" ToolTip="{x:Static r:Strings.Card_MoreOptions}"
+                        Click="OnTitleMoreClick">
+                    <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.More}" />
                 </Button>
                 <!-- Shown only while something runs. Approved (ui.md): the accent button with its accent colors replaced by
                      the theme's critical one (WinUI lightweight styling), at 90% and 80% on mouse over and press as the
@@ -495,9 +492,13 @@
                                             </ui:SettingsCard.HeaderIcon>
                                             <ui:SettingsCard.Header>
                                                 <StackPanel x:Name="HeaderPanel" Orientation="Horizontal">
-                                                    <!-- The source key → the key or combination it sends, in the accent color -->
+                                                    <!-- The source key → the key or combination it sends, in the accent color; "No hotkey yet"
+                                                         for a remap Import left without one (data.md) -->
                                                     <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding SourceParts}"
-                                                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
+                                                                  ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}"
+                                                                  Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" />
+                                                    <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="{x:Static r:Strings.Remaps_NoHotkey}"
+                                                               Visibility="{Binding HasNoSource, Converter={StaticResource BoolToVisibility}}" />
                                                     <TextBlock Margin="2,0,6,0" VerticalAlignment="Center" Text="→" />
                                                     <ItemsControl VerticalAlignment="Center" Focusable="False" ItemsSource="{Binding TargetParts}"
                                                                   ItemTemplate="{StaticResource AccentKeyCapItem}" ItemsPanel="{StaticResource KeyCapRow}" />
@@ -507,13 +508,22 @@
                                                 </StackPanel>
                                             </ui:SettingsCard.Header>
                                             <ui:SettingsCard.Description>
-                                                <!-- Two text lines, as on every list page; without a note the second one stays empty but keeps its height -->
+                                                <!-- Two text lines, as on every list page; without a note the second one stays empty but keeps its height.
+                                                     Without a hotkey the second line says what to do, in the caution color (approved design B,
+                                                     the Design canvas "PuppyMacro Import, remap without key, title bar") -->
                                                 <StackPanel x:Name="DescriptionPanel">
                                                     <TextBlock x:Name="ScopeText" Text="{Binding ScopeText}" TextTrimming="CharacterEllipsis" />
-                                                    <TextBlock Text="{Binding Note}" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Note}" TextTrimming="CharacterEllipsis"
+                                                               Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" />
+                                                    <StackPanel Orientation="Horizontal" Visibility="{Binding HasNoSource, Converter={StaticResource BoolToVisibility}}">
+                                                        <ui:FontIcon Margin="0,0,6,0" VerticalAlignment="Center" FontSize="12" Icon="{x:Static ui:SegoeFluentIcons.Warning}"
+                                                                     Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+                                                        <TextBlock TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                                                   Text="{x:Static r:Strings.Remaps_NoHotkeyHint}" />
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </ui:SettingsCard.Description>
-                                            <views:ItemCardActions ShowPlay="False" IsOn="{Binding IsLoopEnabled}"
+                                            <views:ItemCardActions ShowPlay="False" IsOn="{Binding IsLoopEnabled}" CanSwitch="{Binding HasSource}"
                                                                    EditClick="OnEditRemapClick" MoreClick="OnRemapMoreClick" />
                                         </ui:SettingsCard>
                                         <DataTemplate.Triggers>
@@ -822,6 +832,29 @@
             </Grid>
             </DockPanel>
             </Border>
+        </Grid>
+        <!-- ================= A file dragged over the window (MainWindow.Share.cs; approved: the Design canvas "PuppyMacro Import,
+             remap without key, title bar") ================= -->
+        <!-- Over the whole window, title bar too: what is under it is blurred (MainWindow.Share.cs) and covered by the base color
+             at 82%; a dashed line 12 px inside the edges (a Rectangle: a Border cannot be dashed). A .puppyitems file: accent, "Drop
+             to import" and its name. A backup: neutral, where to open it, never imported here. Other files: nothing, as before. -->
+        <Grid x:Name="DropOverlay" Grid.RowSpan="3" Panel.ZIndex="100" IsHitTestVisible="False" Visibility="Collapsed">
+            <Border Background="{DynamicResource SolidBackgroundFillColorBaseBrush}" Opacity="0.82" />
+            <Rectangle x:Name="DropOverlayLine" Margin="12" RadiusX="8" RadiusY="8" StrokeThickness="2" StrokeDashArray="4 3"
+                       Stroke="{DynamicResource AccentFillColorDefaultBrush}" />
+            <StackPanel Margin="32" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!-- One FontIcon per icon: a FontIcon's Icon must never change (ui.md) -->
+                <ui:FontIcon x:Name="DropImportIcon" HorizontalAlignment="Center" FontSize="56"
+                             Icon="{x:Static fsi:FluentSystemIcons.ArrowDownload_48_Regular}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                <ui:FontIcon x:Name="DropBackupIcon" HorizontalAlignment="Center" FontSize="56" Visibility="Collapsed"
+                             Icon="{x:Static fsi:FluentSystemIcons.ArchiveSettings_24_Regular}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <TextBlock x:Name="DropTitleText" Margin="0,12,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
+                           Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock x:Name="DropDescriptionText" Margin="0,8,0,0" MaxWidth="440" HorizontalAlignment="Center" TextAlignment="Center"
+                           TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <TextBlock x:Name="DropFileText" Margin="0,8,0,0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

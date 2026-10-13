@@ -5,8 +5,10 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:r="clr-namespace:PuppyMacro.Resources">
 
-    <!-- Import's content, in its ContentDialog (approved design: the Design canvas "PuppyMacro Import and Export", A2): the
-         file, then its loops, macros and remaps by kind, each with a check box, what changes on import or why it can't -->
+    <!-- Import's content, in its ContentDialog (approved design: the Design canvas "PuppyMacro Import and Export", A2; size and
+         spacing: the canvas "PuppyMacro Import, remap without key, title bar"): the file, then its loops, macros and remaps by
+         kind, each with a check box, what changes on import or why it can't. The dialog gives it its height (DialogFill): the
+         list takes the free space, the InfoBar stays at the bottom -->
     <UserControl.Resources>
         <Style x:Key="Description" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
@@ -14,7 +16,12 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -30,14 +37,19 @@
                     Click="OnOtherFileClick" />
         </Grid>
 
-        <TextBlock x:Name="ImportErrorText" Margin="0,12,0,0" TextWrapping="Wrap" Visibility="Collapsed"
+        <TextBlock x:Name="ImportErrorText" Grid.Row="1" Margin="0,12,0,0" TextWrapping="Wrap" Visibility="Collapsed"
                    Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
 
-        <StackPanel x:Name="ImportListPanel">
-            <CheckBox x:Name="ImportSelectAllBox" Margin="0,12,0,8" Content="{x:Static r:Strings.ImportItems_SelectAll}" IsThreeState="True" Click="OnSelectAllClick" />
-            <Border BorderThickness="1" CornerRadius="4" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+        <Grid x:Name="ImportListPanel" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <CheckBox x:Name="ImportSelectAllBox" Margin="0,32,0,8" Content="{x:Static r:Strings.ImportItems_SelectAll}" IsThreeState="True" Click="OnSelectAllClick" />
+            <Border Grid.Row="1" BorderThickness="1" CornerRadius="4" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ItemsControl x:Name="ImportItemList" Margin="12,0,12,8" Focusable="False">
                         <ItemsControl.ItemContainerStyle>
                             <Style TargetType="ContentPresenter">
@@ -80,8 +92,8 @@
                     </ItemsControl>
                 </ScrollViewer>
             </Border>
-            <ui:InfoBar Margin="0,12,0,0" IsOpen="True" IsClosable="False" Severity="Informational"
+            <ui:InfoBar Grid.Row="2" Margin="0,16,0,0" IsOpen="True" IsClosable="False" Severity="Informational"
                         Title="{x:Static r:Strings.ImportItems_StartDisabled}" Message="{x:Static r:Strings.ImportItems_StartDisabledMessage}" />
-        </StackPanel>
-    </StackPanel>
+        </Grid>
+    </Grid>
 </UserControl>

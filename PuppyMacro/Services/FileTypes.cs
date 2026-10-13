@@ -9,8 +9,9 @@ namespace PuppyMacro.Services;
 
 /// <summary>
 /// PuppyMacro's files in File Explorer, in the current user's classes (no admin rights): .puppyitems (loops, macros and
-/// remaps to share) with its icon, opened by PuppyMacro on a double click (Import); .puppymacro (backup) with its icon only,
-/// as a backup is imported from Settings › Backup. Release builds set them at every start (the exe's path follows Velopack's
+/// remaps to share) with its icon, opened by PuppyMacro on a double click (Import); .puppymacro (backup) with its icon, a
+/// double click only shows a window saying it opens from Settings › Backup (<see cref="BackupFileWindow"/>), as it replaces
+/// the data. Release builds set them at every start (the exe's path follows Velopack's
 /// current folder) and remove them on uninstall; the development build never touches them.
 /// </summary>
 internal static class FileTypes
@@ -31,6 +32,7 @@ internal static class FileTypes
         (BackupService.Extension, BackupProgId),
         (BackupProgId, Strings.FileTypes_Backup),
         (BackupProgId + @"\DefaultIcon", Path.Combine(iconsFolder, "PuppyMacroBackup.ico")),
+        (BackupProgId + @"\shell\open\command", $"\"{exe}\" \"%1\""),
     };
 
     /// <summary>Sets them for this exe, and tells File Explorer when something changed.</summary>

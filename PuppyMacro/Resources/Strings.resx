@@ -343,6 +343,8 @@ What the file does not have stays as it is. Your current data is backed up to th
   <data name="Macros_SummaryWithSpeed_one" xml:space="preserve"><value>{0} action, {1}, repeat {2}, speed ×{3}</value><comment>As Macros_Summary; {3}: the speed, like "1.5".</comment></data>
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} actions, {1}, repeat {2}, speed ×{3}</value><comment>As Macros_Summary; {3}: the speed, like "1.5".</comment></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>All apps</value></data>
+  <data name="Remaps_NoHotkey" xml:space="preserve"><value>No hotkey yet</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>Choose a hotkey with Edit to turn it on.</value></data>
   <!-- ===== App.xaml.cs, Services/SettingsStore.cs, Services/MacroLibrary.cs, Services/BackupService.cs ===== -->
   <data name="App_MigrationFailed" xml:space="preserve"><value>Your loops and macros could not be copied to {0}.
 Details: {1}</value><comment>{0}: the data folder's path; {1}: the error.</comment></data>
@@ -1098,14 +1100,13 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="ItemFile_Missing_loop" xml:space="preserve"><value>The loop is missing.</value></data>
   <data name="ItemFile_Missing_macro" xml:space="preserve"><value>The macro is missing.</value></data>
   <data name="ItemFile_Missing_remap" xml:space="preserve"><value>The remap is missing.</value></data>
-  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>A loop has this name: imported as "{0}".</value><comment>{0}: the new name, "Spam (2)".</comment></data>
-  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>A macro has this name: imported as "{0}".</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>You already have a loop with this name, so this one is called "{0}".</value><comment>{0}: the new name, "Spam (2)".</comment></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>You already have a macro with this name, so this one is called "{0}".</value></data>
   <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} is already used by the loop "{1}" in this file.</value><comment>{0}: the keys; {1}: the loop's name.</comment></data>
   <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} is already used by the macro "{1}" in this file.</value></data>
-  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: imported without a hotkey.</value><comment>{0}: why the hotkey can't be used, a sentence without its full stop.</comment></data>
-  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: imported without a hotkey, as Toggle (Hold needs a hotkey).</value></data>
-  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} is already used by the loop "{1}" in this file. Hotkeys take priority over remaps.</value></data>
-  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} is already used by the macro "{1}" in this file. Hotkeys take priority over remaps.</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}, so this comes in without a hotkey.</value><comment>{0}: why the hotkey can't be used, a sentence without its full stop.</comment></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}, so this comes in without a hotkey and set to Toggle.</value></data>
+  <data name="ItemFile_RemapWithoutHotkey" xml:space="preserve"><value>This remap has no hotkey yet.</value></data>
   <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} is already remapped for all apps in this file.</value></data>
   <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} is already remapped for {1} in this file.</value><comment>{1}: an app's .exe name.</comment></data>
   <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro items</value><comment>The suggested file name when several items are exported.</comment></data>
@@ -1126,8 +1127,14 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
 
   <!-- ===== MainWindow.xaml / MainWindow.xaml.cs / MainWindow.Share.cs ===== -->
   <data name="Share_Import" xml:space="preserve"><value>Import</value><comment>The title bar's button and the title of its dialog: add loops, macros and remaps from a file.</comment></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>Import…</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>Add loops, macros and remaps from a file</value></data>
   <data name="Share_Export" xml:space="preserve"><value>Export</value><comment>The title bar's button and the title of its dialog: save loops, macros and remaps to a file.</comment></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>Export…</value></data>
+  <data name="Share_DropToImport" xml:space="preserve"><value>Drop to import</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>Backups open from Settings</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>A backup replaces all your data, so you open it from {0} › {1}.</value><comment>{0}: the Settings page's name (Settings_Title), {1}: its Backup group (Settings_Backup).</comment></data>
+  <data name="BackupFile_Close" xml:space="preserve"><value>Close</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>Save loops, macros and remaps to a file, to share them</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>Export…</value><comment>In a loop's, macro's or remap's card menu: save it to a file.</comment></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro items (*{0})|*{0}</value><comment>A file dialog filter: keep "(*{0})|*{0}" as it is. {0}: the file extension.</comment></data>

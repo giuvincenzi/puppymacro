@@ -64,17 +64,26 @@ paths:
   each `Item` exactly the Code view's JSON of that item (`CodeJson.Options`, with its Id). Import reads each item with the
   Code views' checks (`LoopJson`, `MacroJson`, `RemapJson`) and **only adds**: a new Id, `Enabled` false, a name already
   used by that kind gets " (2)", " (3)"…, a hotkey already used (`HotkeyConflicts.Find`, also by an item chosen earlier in
-  the file) is left out and a Hold item becomes Toggle (Hold needs a hotkey), a remap whose source clashes
-  (`HotkeyConflicts.RemapClash`, also with the file's earlier items) can't be imported. Raise `ItemFile.CurrentFormat` only
+  the file) is left out and a Hold item becomes Toggle (Hold needs a hotkey), and so is a remap's hotkey (`Source`) when it
+  clashes (`HotkeyConflicts.FindForRemap` and `AlreadyRemapped`, the remap editor's rule, also with the file's earlier
+  items): the remap comes in without it. A file's remap without a `Source` (exported that way) comes in without one too
+  (`RemapJson.Parse` with `withoutSource`, for Import only). Raise `ItemFile.CurrentFormat` only
   when the layout around the items changes; a file with a higher one, or an item that fails the checks in a file whose
   `App` is newer than this version, asks to update PuppyMacro. **A newer PuppyMacro must import every older `.puppyitems`
   file**: when an item field is renamed or removed, convert it in `ItemFile.Read` as `SettingsStore` does for settings.json
   (the Code views reject old fields), with a test on an old file.
+- **A remap without a hotkey** (`RemapDefinition.Source` null) exists only after an import, when its hotkey was taken.
+  `SettingsStore.Sanitize` keeps it and turns it off (it used to drop remaps without a source; a remap without a `Target` is
+  still dropped); older versions drop it. It can't be turned on until it gets a hotkey: its card's switch is disabled (`ui.md`),
+  `set_enabled` refuses it, and the engine skips it. The user opens Edit, chooses a free hotkey (the editor's usual rules,
+  which refuse a remap without one) and saves; then the switch works. Everything else keeps its rules: the editors, the Code
+  views and the AI tools' saves still refuse a remap without a hotkey (`RemapJson` without `withoutSource`), and a remap
+  without one never clashes with anything (`HotkeyBinding.Overlaps` of null is false).
 - Not in the backup: `backup-before-import-*.puppymacro` (copies of earlier data; inside a backup they would
   grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data). The
   Start with Windows Run entry is outside the data folder: Release builds set it from `StartWithWindows` at every
   start (`MainWindow`), so an import, a reinstall or another PC gets it back. So are the file types (`Services/FileTypes.cs`:
-  `.puppyitems` and `.puppymacro` in `HKCU\Software\Classes`, their icons and the open command of `.puppyitems`): Release
+  `.puppyitems` and `.puppymacro` in `HKCU\Software\Classes`, their icons and open commands): Release
   builds write them at every start, from the exe's place, and remove them on uninstall; they hold no user data.
 - Debug builds fill an empty dev data folder with disabled samples (`DevSampleData`; with `PUPPYMACRO_SCREENSHOTS=1` the first
   loop is enabled). Keep

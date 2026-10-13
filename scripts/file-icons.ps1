@@ -72,7 +72,8 @@ function Png([scriptblock]$draw, [int]$size) {
     $encoder.Frames.Add([System.Windows.Media.Imaging.BitmapFrame]::Create($bitmap))
     $stream = New-Object System.IO.MemoryStream
     $encoder.Save($stream)
-    $stream.ToArray()
+    # The comma keeps the byte[] whole: returned alone, PowerShell would unroll it into an object[] of its bytes.
+    , $stream.ToArray()
 }
 
 # An .ico with PNG images (Windows Vista and later): the header, one 16-byte entry per image, then the images.
@@ -90,8 +91,10 @@ function WriteIco([string]$name, [scriptblock]$draw) {
         $writer.Write([uint32]$images[$i].Length); $writer.Write([uint32]$offset)
         $offset += $images[$i].Length
     }
-    foreach ($image in $images) { $writer.Write($image) }
+    # [byte[]]: BinaryWriter.Write would take another array as a bool and write a single byte.
+    foreach ($image in $images) { $writer.Write([byte[]]$image) }
     $writer.Flush()
+    if ($file.Length -ne $offset) { throw "$name.ico has $($file.Length) bytes instead of $offset." }
     New-Item -ItemType Directory -Force $out | Out-Null
     [System.IO.File]::WriteAllBytes((Join-Path $out "$name.ico"), $file.ToArray())
     Write-Host "Wrote $name.ico"

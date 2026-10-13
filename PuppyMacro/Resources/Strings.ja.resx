@@ -309,6 +309,8 @@
   <data name="Macros_Summary_other" xml:space="preserve"><value>{0} 個のアクション、{1}、繰り返し: {2}</value></data>
   <data name="Macros_SummaryWithSpeed_other" xml:space="preserve"><value>{0} 個のアクション、{1}、繰り返し: {2}、速度 ×{3}</value></data>
   <data name="Remaps_AllApps" xml:space="preserve"><value>すべてのアプリ</value></data>
+  <data name="Remaps_NoHotkey" xml:space="preserve"><value>ホットキー未設定</value></data>
+  <data name="Remaps_NoHotkeyHint" xml:space="preserve"><value>[編集] でホットキーを選ぶとオンにできます。</value></data>
   <data name="App_MigrationFailed" xml:space="preserve"><value>ループとマクロを {0} にコピーできませんでした。
 詳細: {1}</value></data>
   <data name="App_MacrosNotUpdated" xml:space="preserve"><value>一部のマクロ ファイルをこのバージョン用に更新できませんでした。</value></data>
@@ -996,14 +998,13 @@
   <data name="ItemFile_Missing_loop" xml:space="preserve"><value>ループがありません。</value></data>
   <data name="ItemFile_Missing_macro" xml:space="preserve"><value>マクロがありません。</value></data>
   <data name="ItemFile_Missing_remap" xml:space="preserve"><value>リマップがありません。</value></data>
-  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>同じ名前のループがあります。「{0}」としてインポートしました。</value></data>
-  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>同じ名前のマクロがあります。「{0}」としてインポートしました。</value></data>
+  <data name="ItemFile_NameTaken_loop" xml:space="preserve"><value>同じ名前のループが既にあるため、このループの名前は「{0}」になります。</value></data>
+  <data name="ItemFile_NameTaken_macro" xml:space="preserve"><value>同じ名前のマクロが既にあるため、このマクロの名前は「{0}」になります。</value></data>
   <data name="ItemFile_HotkeyUsedInFile_loop" xml:space="preserve"><value>{0} は既にこのファイル内のループ「{1}」で使用されています。</value></data>
   <data name="ItemFile_HotkeyUsedInFile_macro" xml:space="preserve"><value>{0} は既にこのファイル内のマクロ「{1}」で使用されています。</value></data>
-  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}: ホットキーなしでインポートしました。</value></data>
-  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}: ホットキーなしで、切り替えとしてインポートしました (長押しにはホットキーが必要です)。</value></data>
-  <data name="ItemFile_RemapUsedInFile_loop" xml:space="preserve"><value>{0} は既にこのファイル内のループ「{1}」で使用されています。ホットキーはリマップより優先されます。</value></data>
-  <data name="ItemFile_RemapUsedInFile_macro" xml:space="preserve"><value>{0} は既にこのファイル内のマクロ「{1}」で使用されています。ホットキーはリマップより優先されます。</value></data>
+  <data name="ItemFile_NoHotkey" xml:space="preserve"><value>{0}。そのため、ホットキーはインポートされません。</value></data>
+  <data name="ItemFile_NoHotkeyToggle" xml:space="preserve"><value>{0}。そのため、ホットキーはインポートされず、モードは切り替えになります。</value></data>
+  <data name="ItemFile_RemapWithoutHotkey" xml:space="preserve"><value>このリマップにはまだホットキーがありません。</value></data>
   <data name="ItemFile_RemappedInFile" xml:space="preserve"><value>{0} は既にこのファイル内ですべてのアプリでリマップされています。</value></data>
   <data name="ItemFile_RemappedInFileForApp" xml:space="preserve"><value>{0} は既にこのファイル内で {1} でリマップされています。</value></data>
   <data name="ItemFile_DefaultFileName" xml:space="preserve"><value>PuppyMacro 項目</value></data>
@@ -1018,8 +1019,14 @@
   <data name="Ai_OpenedImport" xml:space="preserve"><value>[インポート] を開きました</value></data>
   <data name="Ai_OpenedExport" xml:space="preserve"><value>[エクスポート] を開きました</value></data>
   <data name="Share_Import" xml:space="preserve"><value>インポート</value></data>
+  <data name="Share_ImportMenu" xml:space="preserve"><value>インポート…</value></data>
   <data name="Share_ImportTooltip" xml:space="preserve"><value>ファイルからループ、マクロ、リマップを追加します</value></data>
   <data name="Share_Export" xml:space="preserve"><value>エクスポート</value></data>
+  <data name="Share_ExportMenu" xml:space="preserve"><value>エクスポート…</value></data>
+  <data name="Share_DropToImport" xml:space="preserve"><value>ドロップしてインポート</value></data>
+  <data name="Share_DropBackupTitle" xml:space="preserve"><value>バックアップは設定から開きます</value></data>
+  <data name="Share_DropBackupText" xml:space="preserve"><value>バックアップはすべてのデータを置き換えるため、{0} › {1} から開きます。</value></data>
+  <data name="BackupFile_Close" xml:space="preserve"><value>閉じる</value></data>
   <data name="Share_ExportTooltip" xml:space="preserve"><value>ループ、マクロ、リマップをファイルに保存して共有します</value></data>
   <data name="Share_CardExport" xml:space="preserve"><value>エクスポート…</value></data>
   <data name="Share_FileFilter" xml:space="preserve"><value>PuppyMacro 項目 (*{0})|*{0}</value></data>

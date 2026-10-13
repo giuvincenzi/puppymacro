@@ -14,7 +14,7 @@ the others load when matching files are read or edited:
 | `build-and-release.md` | always | `make` commands, dev and prod builds, releases |
 | `testing.md` | always | Unit tests (`make test`) and end-to-end tests (`make e2e`) |
 | `docs.md` | always | Website, user guide in `site/` and AI tools, kept in sync with every change |
-| `i18n.md` | always | 13 languages: texts in `Strings.resx`, plurals, formats, texts kept in files, right to left |
+| `i18n.md` | always | 13 languages: texts in `Strings.resx`, how texts are written, plurals, formats, texts kept in files, right to left |
 | `architecture.md` | `PuppyMacro/**` | Threads, engine snapshot, feature map |
 | `input.md` | input pipeline files | Hooks, modifiers, injected input, routing order |
 | `data.md` | models and storage | Data folders, settings migrations, compatibility |
@@ -52,6 +52,7 @@ loop, macro, remap, setting, History, AI activity and log. So, for every change 
   maintainer, as `github-actions[bot]` opened it), waiting for them and giving the pull request's link
   (`build-and-release.md`, "When the user asks Claude for the release pull request"). Merging it publishes the release:
   only with the user's OK. No release step runs on a contributor's PC.
-- Sharing loops, macros and remaps (`.puppyitems` files: Import and Export in the title bar) and the backup
+- Sharing loops, macros and remaps (`.puppyitems` files: Import… and Export… in the title bar's More options menu, or a file dragged onto the window) and the backup
   (Settings > Backup) stay two separate features: sharing only adds items, the backup replaces the data. A backup
-  opens only from Settings, never with a double-click in File Explorer.
+  opens only from Settings, never with a double-click in File Explorer (a double-click only shows `BackupFileWindow`, which
+  says so) or by dragging it onto the window.

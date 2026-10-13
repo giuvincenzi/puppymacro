@@ -160,7 +160,7 @@ public class ItemFileTests : IDisposable
         ItemFileContent content = Read(text);
 
         Assert.Equal("Farm (2)", content.Entries[0].Title);
-        Assert.Equal("A loop has this name: imported as \"Farm (2)\".", Assert.Single(content.Entries[0].Notes));
+        Assert.Equal("You already have a loop with this name, so this one is called \"Farm (2)\".", Assert.Single(content.Entries[0].Notes));
         Assert.Equal("farm (3)", ((LoopDefinition)content.Entries[1].Item!).Name);
         Assert.Equal("Farm", content.Entries[2].Title); // macros and loops have their own names
         Assert.Empty(content.Entries[2].Notes);
@@ -176,11 +176,11 @@ public class ItemFileTests : IDisposable
 
         var farm = (LoopDefinition)content.Entries[0].Item!;
         Assert.Null(farm.Hotkey);
-        Assert.Equal("F6 is already used by the loop \"Mine\": imported without a hotkey.", Assert.Single(content.Entries[0].Notes));
+        Assert.Equal("F6 is already used by the loop \"Mine\", so this comes in without a hotkey.", Assert.Single(content.Entries[0].Notes));
         var run = (LoopDefinition)content.Entries[1].Item!;
         Assert.Null(run.Hotkey);
         Assert.Equal(ActivationMode.Toggle, run.Mode);
-        Assert.EndsWith("imported without a hotkey, as Toggle (Hold needs a hotkey).", Assert.Single(content.Entries[1].Notes));
+        Assert.EndsWith(", so this comes in without a hotkey and set to Toggle.", Assert.Single(content.Entries[1].Notes));
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class ItemFileTests : IDisposable
 
         Assert.Equal(F8, ((LoopDefinition)content.Entries[0].Item!).Hotkey!.Vk);
         Assert.Null(((MacroDefinition)content.Entries[1].Item!).Hotkey);
-        Assert.Equal("F8 is already used by the loop \"Farm\" in this file: imported without a hotkey.", Assert.Single(content.Entries[1].Notes));
+        Assert.Equal("F8 is already used by the loop \"Farm\" in this file, so this comes in without a hotkey.", Assert.Single(content.Entries[1].Notes));
     }
 
     [Fact]
@@ -205,18 +205,46 @@ public class ItemFileTests : IDisposable
     }
 
     [Fact]
-    public void A_remap_of_a_key_already_remapped_or_used_by_a_hotkey_cannot_be_imported()
+    public void A_remap_of_a_key_already_remapped_or_used_by_a_hotkey_comes_in_without_its_hotkey()
     {
+        _settings.Loops.Add(Loop("Mine", F6));
         _settings.Remaps.Add(Remap(KeyJ, KeyC));
-        string text = ItemFile.Write(new object[] { Remap(KeyJ, 0x44), Loop("Farm", F7), Remap(F7, 0x44), Remap(0x45, 0x44), Remap(0x45, 0x46) }, This);
+        string text = ItemFile.Write(new object[]
+        {
+            Remap(KeyJ, 0x44), Loop("Farm", F7), Remap(F7, 0x44), Remap(0x45, 0x44), Remap(0x45, 0x46), Remap(F6, 0x44),
+        }, This);
 
         ItemFileContent content = Read(text);
 
-        Assert.Equal("J is already remapped for all apps.", content.Entries[0].Problem);
-        Assert.Equal("F7 is already used by the loop \"Farm\" in this file. Hotkeys take priority over remaps.", content.Entries[2].Problem);
-        Assert.True(content.Entries[3].Selected);
-        Assert.Equal("E is already remapped for all apps in this file.", content.Entries[4].Problem);
-        Assert.Equal(2, content.SelectedItems.Count());
+        Assert.All(content.Entries, e => Assert.Null(e.Problem));
+        Assert.All(content.Entries, e => Assert.True(e.Selected));
+        Assert.Equal(6, content.SelectedItems.Count());
+        Assert.Equal("J is already remapped for all apps, so this comes in without a hotkey.", Assert.Single(content.Entries[0].Notes));
+        Assert.Equal("F7 is already used by the loop \"Farm\" in this file, so this comes in without a hotkey.",
+            Assert.Single(content.Entries[2].Notes));
+        Assert.Empty(content.Entries[3].Notes);
+        Assert.Equal("E is already remapped for all apps in this file, so this comes in without a hotkey.", Assert.Single(content.Entries[4].Notes));
+        Assert.Equal("F6 is already used by the loop \"Mine\", so this comes in without a hotkey.", Assert.Single(content.Entries[5].Notes));
+        foreach (int i in new[] { 0, 2, 4, 5 })
+        {
+            var remap = (RemapDefinition)content.Entries[i].Item!;
+            Assert.Null(remap.Source);
+            Assert.NotNull(remap.Target);
+            Assert.False(remap.Enabled);
+        }
+        Assert.Equal(0x45, ((RemapDefinition)content.Entries[3].Item!).Source!.Vk);
+    }
+
+    [Fact]
+    public void A_remap_exported_without_a_hotkey_comes_in_without_one()
+    {
+        string text = ItemFile.Write(new object[] { new RemapDefinition { Target = HotkeyBinding.FromKey(KeyC) } }, This);
+
+        ItemFileEntry entry = Assert.Single(Read(text).Entries);
+
+        Assert.Null(entry.Problem);
+        Assert.Null(((RemapDefinition)entry.Item!).Source);
+        Assert.Equal("This remap has no hotkey yet.", Assert.Single(entry.Notes));
     }
 
     [Fact]

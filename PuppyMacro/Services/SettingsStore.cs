@@ -56,6 +56,26 @@ internal sealed class SettingsStore
         }
     }
 
+    /// <summary>
+    /// The settings as the file has them, never written (a backup opened from File Explorer: another PuppyMacro may be running
+    /// and own the file); a missing or unreadable file gives the defaults.
+    /// </summary>
+    public AppSettings Peek()
+    {
+        try
+        {
+            if (File.Exists(_path) && JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_path), JsonOptions) is { } settings)
+            {
+                Sanitize(settings);
+                return settings;
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        {
+        }
+        return AppSettings.CreateDefault();
+    }
+
     public bool TrySave(AppSettings settings, out string? error)
     {
         error = null;
@@ -190,9 +210,16 @@ internal sealed class SettingsStore
                 remap.Source ??= HotkeyBinding.FromKey(sourceVk);
             remap.SourceVk = null;
         }
-        settings.Remaps.RemoveAll(r => r.Source is not { IsSet: true } || r.Target is not { IsSet: true });
+        // A remap without a hotkey comes only from Import (its hotkey was taken): it stays, always off, until the user
+        // gives it one in the editor.
+        settings.Remaps.RemoveAll(r => r.Target is not { IsSet: true });
         foreach (var remap in settings.Remaps)
         {
+            if (remap.Source is not { IsSet: true })
+            {
+                remap.Source = null;
+                remap.Enabled = false;
+            }
             if (remap.Id == Guid.Empty)
                 remap.Id = Guid.NewGuid();
             remap.Note ??= "";
