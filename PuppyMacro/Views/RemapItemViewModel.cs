@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
@@ -30,6 +31,9 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     public string ScopeText => Definition.AppExe ?? Strings.Remaps_AllApps;
     public string Note => Definition.Note;
     public bool HasNote => !string.IsNullOrWhiteSpace(Definition.Note);
+    /// <summary>The row's accessible name: its note, or its keys when it has none ("J → C").</summary>
+    public string RowName => HasNote ? Definition.Note
+        : string.Format(CultureInfo.CurrentCulture, Strings.Ai_RemapTitle, SourceText, TargetText);
     public string SearchText => $"{SourceText} {TargetText} {ScopeText} {Note}";
 
     public bool IsLoopEnabled

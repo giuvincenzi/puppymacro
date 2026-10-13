@@ -132,6 +132,21 @@ public sealed class AppSession : IDisposable
     public bool Has(AutomationElement root, string name) =>
         Retry.WhileNull(() => root.FindFirstDescendant(cf => cf.ByName(name)), TimeSpan.FromSeconds(3)).Result != null;
 
+    /// <summary>
+    /// An overlay panel row by its item's name, or null after <paramref name="seconds"/>. The row's accessible name is
+    /// "name, state" (ui.md): the row is found by it, not by its texts, which UI Automation does not always show.
+    /// </summary>
+    public AutomationElement? PanelRow(AutomationElement panel, string item, double seconds = 10) =>
+        Retry.WhileNull(() => FindPanelRow(panel, item), TimeSpan.FromSeconds(seconds), ignoreException: true).Result;
+
+    /// <summary>Waits until the overlay panel row of <paramref name="item"/> shows <paramref name="state"/> ("Disabled", "Idle").</summary>
+    public bool PanelRowIs(AutomationElement panel, string item, string state) =>
+        Retry.WhileFalse(() => FindPanelRow(panel, item)?.Name == $"{item}, {state}", Timeout, ignoreException: true).Success;
+
+    private static AutomationElement? FindPanelRow(AutomationElement panel, string item) =>
+        panel.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.DataItem))
+            .FirstOrDefault(row => row.Name.StartsWith(item + ", ", StringComparison.Ordinal));
+
     /// <summary>Selects a page in the side rail (its ListView items support SelectionItem).</summary>
     public void GoTo(string page)
     {
@@ -149,15 +164,16 @@ public sealed class AppSession : IDisposable
             header.Toggle();
     }
 
-    /// <summary>The button named <paramref name="buttonName"/> on the list card showing <paramref name="itemText"/>.</summary>
+    /// <summary>
+    /// The button named <paramref name="buttonName"/> on the list card of <paramref name="itemText"/>: the row whose
+    /// accessible name it is (a loop's or macro's name, a remap's note or keys; ui.md).
+    /// </summary>
     public AutomationElement CardButton(string itemText, string buttonName)
     {
-        AutomationElement text = Find(MainWindow, itemText);
-        double y = text.BoundingRectangle.Y;
-        // The card's buttons are on the same row as its text.
-        return MainWindow
-            .FindAllDescendants(cf => cf.ByName(buttonName).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button)))
-            .First(b => Math.Abs(b.BoundingRectangle.Y + b.BoundingRectangle.Height / 2 - y) < 40);
+        AutomationElement row = Retry.WhileNull(() => MainWindow.FindFirstDescendant(
+                cf => cf.ByName(itemText).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.DataItem))), Timeout,
+            ignoreException: true).Result ?? throw new TimeoutException($"no list row \"{itemText}\". {Describe(MainWindow)}");
+        return FindButton(row, buttonName);
     }
 
     /// <summary>Opens the editor of the list item showing <paramref name="itemText"/> with its card's Edit button.</summary>

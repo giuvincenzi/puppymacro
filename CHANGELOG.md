@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+- Screen readers read the loops, macros and remaps in the lists and in the overlay panel by their name (and the
+  panel's ones with their state), not by an internal name.
+
 ## 1.17.0
 
 ### Added

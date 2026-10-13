@@ -61,6 +61,10 @@ public class OverlayTests
     private static Point CenterOf(AppSession app, AutomationElement root, string name) =>
         app.Find(root, name).BoundingRectangle.Center();
 
+    /// <summary>The middle of an overlay panel row, found by its item's name.</summary>
+    private static Point RowCenter(AppSession app, AutomationElement panel, string item) =>
+        (app.PanelRow(panel, item) ?? throw new TimeoutException($"no panel row \"{item}\"")).BoundingRectangle.Center();
+
     // The panel's title row: the title fills the space up to the move, exit and open buttons (26 wide, 6 apart).
     // UI Automation does not show the buttons (borders), so they are found from the title's right edge, in
     // device-independent pixels: the middle of the move button is 13 to its right, the exit button 45, the open button 77.
@@ -81,9 +85,9 @@ public class OverlayTests
         using var target = new TargetWindow();
         (AutomationElement panel, AutomationElement button) = EnterOverlayMode(app, target);
 
-        target.Click(CenterOf(app, panel, PanelMacro));
+        target.Click(RowCenter(app, panel, PanelMacro));
         target.WaitFor(t => t.Downs(Vk.F15).Count >= 3, 5, "clicking the macro's panel row did not start it");
-        target.Click(CenterOf(app, panel, PanelLoop));
+        target.Click(RowCenter(app, panel, PanelLoop));
         target.WaitFor(t => t.Downs(Vk.F17).Count >= 3, 5, "clicking the loop's panel row did not start it");
 
         target.Click(CenterOf(app, panel, "Stop all"));
@@ -132,7 +136,7 @@ public class OverlayTests
         using var target = new TargetWindow();
         (AutomationElement panel, AutomationElement button) = EnterOverlayMode(app, target);
 
-        Point row = CenterOf(app, panel, PanelMacro);
+        Point row = RowCenter(app, panel, PanelMacro);
         target.Click(row);
         target.WaitFor(t => t.Ups(Vk.LButton).Count == 1, 5, "the click on the row did not reach the window");
         Near(row, target.Downs(Vk.LButton)[0].Position, "click through the panel");
@@ -154,9 +158,9 @@ public class OverlayTests
         (AutomationElement panel, AutomationElement button) = EnterOverlayMode(app, target);
 
         // Panel row: disabled, it shows so and a click does nothing.
-        Point row = CenterOf(app, panel, PanelLoop);
+        Point row = RowCenter(app, panel, PanelLoop);
         target.Click(row, MouseButton.Right);
-        Assert.True(app.Has(panel, "Disabled"), "the right click did not disable the loop");
+        Assert.True(app.PanelRowIs(panel, PanelLoop, "Disabled"), "the right click did not disable the loop");
         TargetWindow.Quiet(1); // the click targets are published every 300 ms
         target.Click(row);
         TargetWindow.Quiet(1);
@@ -164,7 +168,7 @@ public class OverlayTests
 
         // Enabled again, a click starts it.
         target.Click(row, MouseButton.Right);
-        Assert.True(Retry.WhileTrue(() => app.Has(panel, "Disabled"), AppSession.Timeout).Success, "the right click did not enable the loop");
+        Assert.True(app.PanelRowIs(panel, PanelLoop, "Idle"), "the right click did not enable the loop");
         TargetWindow.Quiet(1);
         target.Click(row);
         target.WaitFor(t => t.Downs(Vk.F17).Count >= 2, 5, "clicking the enabled row did not start the loop");
@@ -199,7 +203,7 @@ public class OverlayTests
         using var target = new TargetWindow();
         (AutomationElement panel, _) = EnterOverlayMode(app, target);
 
-        Point row = CenterOf(app, panel, PanelLoop);
+        Point row = RowCenter(app, panel, PanelLoop);
         target.Click(row);
         target.WaitFor(t => t.Downs(Vk.F17).Count >= 2, 5, "clicking the row did not start the loop");
         target.WaitFor(t => t.Ups(Vk.LButton).Count == 1, 5, "the click on the row did not reach the window");
@@ -208,7 +212,7 @@ public class OverlayTests
         AssertStopped(target, Vk.F17, "the loop after the panel's Stop all");
 
         target.Click(row, MouseButton.Right);
-        Assert.True(app.Has(panel, "Disabled"), "the right click did not disable the loop");
+        Assert.True(app.PanelRowIs(panel, PanelLoop, "Disabled"), "the right click did not disable the loop");
         target.WaitFor(t => t.Ups(Vk.RButton).Count == 1, 5, "the right click on the row did not reach the window");
 
         target.Tap(Vk.F24);
@@ -237,10 +241,9 @@ public class OverlayTests
         using var target = new TargetWindow();
         (AutomationElement panel, _) = EnterOverlayMode(app, target);
 
-        Assert.True(app.Has(panel, "E2E disabled loop"));
-        Assert.True(app.Has(panel, "Disabled"));
-        Assert.False(app.Has(panel, "E2E loop hidden while disabled"));
-        Assert.False(app.Has(panel, "E2E loop not in the overlay"));
+        Assert.True(app.PanelRowIs(panel, "E2E disabled loop", "Disabled"));
+        Assert.Null(app.PanelRow(panel, "E2E loop hidden while disabled", 3));
+        Assert.Null(app.PanelRow(panel, "E2E loop not in the overlay", 3));
         Assert.Null(app.TopWindow("PuppyMacro floating button: E2E button not in the overlay"));
 
         target.Tap(Vk.F24);
@@ -267,9 +270,9 @@ public class OverlayTests
         using var target = new TargetWindow();
         (AutomationElement panel, _) = EnterOverlayMode(app, target);
 
-        Assert.True(app.Has(panel, PanelLoop));                  // all apps
-        Assert.True(app.Has(panel, "E2E loop for this app"));
-        Assert.False(app.Has(panel, "E2E loop for notepad"));
+        Assert.NotNull(app.PanelRow(panel, PanelLoop));                  // all apps
+        Assert.NotNull(app.PanelRow(panel, "E2E loop for this app"));
+        Assert.Null(app.PanelRow(panel, "E2E loop for notepad", 3));
         AutomationElement? hidden = app.TopWindow("PuppyMacro floating button: E2E button for notepad");
         Assert.True(hidden == null || hidden.IsOffscreen, "the floating button for notepad.exe is shown");
 

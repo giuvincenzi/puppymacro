@@ -429,9 +429,8 @@ public class AppTests
         // The new loop is on its button; the panel lists the samples, shown as disabled.
         AutomationElement? panel = app.TopWindow("PuppyMacro overlay panel");
         Assert.NotNull(panel);
-        Assert.True(app.Has(panel!, "Sample: click every second"));
-        Assert.True(app.Has(panel!, "Disabled"));
-        Assert.False(app.Has(panel!, "E2E F24 loop"));
+        Assert.True(app.PanelRowIs(panel!, "Sample: click every second", "Disabled"));
+        Assert.Null(app.PanelRow(panel!, "E2E F24 loop", 3));
         Assert.True(app.Has(panel!, "Stop all"));
 
         PressF24(); // the Overlay mode hotkey

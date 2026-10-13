@@ -234,6 +234,11 @@
                             <TextBlock x:Name="EmptyLoopsText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                             <ItemsControl x:Name="LoopList" ItemsPanel="{StaticResource CardListPanel}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type views:LoopItemViewModel}">
                                         <StackPanel>
@@ -362,6 +367,11 @@
                             <TextBlock x:Name="EmptyMacrosText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                             <ItemsControl x:Name="MacroList" ItemsPanel="{StaticResource CardListPanel}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type views:MacroItemViewModel}">
                                         <StackPanel>
@@ -467,6 +477,11 @@
                             <TextBlock x:Name="EmptyRemapsText" Margin="0,8,0,8" TextWrapping="Wrap" Visibility="Collapsed"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                             <ItemsControl x:Name="RemapList" ItemsPanel="{StaticResource CardListPanel}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding RowName}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type views:RemapItemViewModel}">
                                         <ui:SettingsCard>
