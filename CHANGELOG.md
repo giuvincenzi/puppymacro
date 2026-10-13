@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.17.0
+
 ### Added
 - **Share** loops, macros and remaps as a `.puppyitems` file: **Export** at the top of the window lists them, with
   search, to check the ones to save, and **Export…** in a card's menu saves one at once. **Import**, or a
