@@ -45,7 +45,8 @@ jobs:
           BEFORE: ${{ github.event.before }}
           WORKFLOW: ${{ github.workflow }}
         run: |
-          # Called by publish_release, github.workflow is the caller's: every test runs there; started by hand too.
+          # Called by publish_release, github.workflow is the caller's: every test runs there, except screenshots_test (the
+          # release's screenshots were taken by create_release_pr); started by hand, every test.
           range=()
           if [ "$WORKFLOW" = test ]; then
             case "$EVENT" in
@@ -56,6 +57,7 @@ jobs:
           unit=true
           e2e=true
           screenshots=true
+          if [ "$WORKFLOW" != test ]; then screenshots=false; fi
           if [ ${#range[@]} -gt 0 ] && files=$(git diff --name-only "${range[@]}"); then
             # The files each test project builds or reads (testing.md, "Which changes run the tests on GitHub").
             shared='^(PuppyMacro/|site/guide/[^/]+\.html$|site/guide/sections\.txt$|global\.json$|\.gitattributes$|\.github/workflows/test\.yml$)'
