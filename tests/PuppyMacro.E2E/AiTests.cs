@@ -103,6 +103,7 @@ public class AiTests
         Assert.True(app.Has(app.MainWindow, "Tried to connect while AI access was off"));
         // The status bar names the connected app (its own text: the Apps row says "Connected: …").
         Assert.True(app.Has(app.MainWindow, ClientName));
+        Assert.True(app.HasRow(app.FindById(app.MainWindow, "AiStatusList"), ClientName));
     }
 
     [Fact]
@@ -120,6 +121,7 @@ public class AiTests
         Assert.Contains("Sample: click every second", text);
         Assert.Contains("Sample: type and confirm", text);
         Assert.True(app.Has(app.MainWindow, "Read your loops, macros and remaps"));
+        Assert.True(app.HasRow(app.FindById(app.MainWindow, "AiRecentList"), ClientName, "Read your loops, macros and remaps"));
     }
 
     [Fact]
@@ -143,6 +145,7 @@ public class AiTests
         app.FindById(editor, "HistoryViewButton").Patterns.SelectionItem.Pattern.Select();
         Assert.True(app.Has(editor, ClientName));
         Assert.True(app.Has(editor, "Created (current)"));
+        Assert.True(app.HasRow(app.FindById(editor, "VersionList"), ClientName, "Created (current)"));
         app.FindById(editor, "CancelButton").AsButton().Invoke();
     }
 
@@ -274,6 +277,7 @@ public class AiTests
         Assert.True(app.Has(ready, "The E2E test checks the picker."));
         Assert.True(app.Has(ready, "1."));
         Assert.True(app.Has(ready, "Click the 2 test points"));
+        Assert.True(app.HasRow(app.FindById(ready, "StepsList"), "2. Click the 2 test points"));
         Assert.Null(Retry.WhileNull(() => app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName("Pick a point").And(cf.ByProcessId(app.ProcessId))),
             TimeSpan.FromSeconds(1)).Result); // no picker before Start
         app.FindButton(ready, "Start").Invoke();
@@ -422,6 +426,7 @@ public class AiTests
 
         Assert.True(app.Has(activity, "Read your loops, macros and remaps"));
         Assert.True(app.Has(activity, "Read the guide: Remap"));
+        Assert.True(app.HasRow(app.FindById(activity, "ActivityList"), ClientName, "Read the guide: Remap"));
         activity.Close();
     }
     private const string SharedFile = """

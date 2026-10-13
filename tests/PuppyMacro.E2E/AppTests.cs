@@ -397,6 +397,7 @@ public class AppTests
         Keyboard.Press(VirtualKeyShort.F24);
         Keyboard.Release(VirtualKeyShort.F24);
         app.Find(editor, "F24");
+        Assert.True(app.HasRow(app.FindById(editor, "ActionsList"), "Press key", "F24"));
         app.FindById(editor, "FloatingSwitch").AsToggleButton().Toggle(); // UI Automation: no click, works off screen
         return editor;
     }
@@ -758,6 +759,7 @@ public class AppTests
         app.FindById(app.MainWindow, "ExportItemsButton").AsButton().Invoke();
         CheckBox loop = ItemBox(app, "Sample: click every second");
         Assert.True(app.Has(app.MainWindow, "Sample: type and confirm"));
+        Assert.True(app.HasRow(app.FindById(app.MainWindow, "ExportItemList"), "Sample: type and confirm"));
         Assert.False(loop.IsChecked);
         Assert.False(app.FindButton(app.MainWindow, "Export 0 items…").IsEnabled);
 
@@ -798,6 +800,7 @@ public class AppTests
             Assert.True(app.Has(app.MainWindow,
                 "F6 is already used by the loop \"Sample: click every second\": imported without a hotkey."));
             Assert.True(ItemBox(app, "E2E shared loop").IsChecked);
+            Assert.True(app.HasRow(app.FindById(app.MainWindow, "ImportItemList"), "E2E shared loop"));
             import.Invoke();
 
             Assert.True(app.Has(app.MainWindow, "E2E shared loop"));

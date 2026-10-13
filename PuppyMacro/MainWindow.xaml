@@ -150,6 +150,11 @@
                         MouseLeftButtonUp="OnAiStatusBarClick" ToolTip="{x:Static r:Strings.AiStatus_ToolTip}"
                         AutomationProperties.Name="{x:Static r:Strings.AiStatus_Name}">
                     <ItemsControl x:Name="AiStatusList" HorizontalAlignment="Right" VerticalAlignment="Center" Focusable="False">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="18" />
@@ -479,7 +484,7 @@
                             <ItemsControl x:Name="RemapList" ItemsPanel="{StaticResource CardListPanel}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style TargetType="ContentPresenter">
-                                        <Setter Property="AutomationProperties.Name" Value="{Binding RowName}" />
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
                                     </Style>
                                 </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
@@ -586,6 +591,11 @@
                                 <TextBlock x:Name="AiNoActivityText" Margin="0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                            Text="{x:Static r:Strings.AiPage_NoActivity}" TextWrapping="Wrap" />
                                 <ItemsControl x:Name="AiRecentList" Focusable="False">
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="ContentPresenter">
+                                            <Setter Property="AutomationProperties.Name" Value="{Binding RecentAccessibleName}" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Margin="0,6">

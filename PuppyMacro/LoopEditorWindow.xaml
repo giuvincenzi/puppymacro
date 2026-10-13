@@ -78,6 +78,11 @@
 
                     <!-- The actions: the same box as the macro's action window (Views/ActionBox) -->
                     <ItemsControl x:Name="ActionsList">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ikw:SimpleStackPanel Spacing="4" />

@@ -32,7 +32,7 @@ public sealed class RemapItemViewModel : INotifyPropertyChanged
     public string Note => Definition.Note;
     public bool HasNote => !string.IsNullOrWhiteSpace(Definition.Note);
     /// <summary>The row's accessible name: its note, or its keys when it has none ("J → C").</summary>
-    public string RowName => HasNote ? Definition.Note
+    public string AccessibleName => HasNote ? Definition.Note
         : string.Format(CultureInfo.CurrentCulture, Strings.Ai_RemapTitle, SourceText, TargetText);
     public string SearchText => $"{SourceText} {TargetText} {ScopeText} {Note}";
 

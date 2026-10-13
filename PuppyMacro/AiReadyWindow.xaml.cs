@@ -30,9 +30,7 @@ public partial class AiReadyWindow
         AskedByText.Text = string.Format(CultureInfo.CurrentCulture, Strings.AiReady_AppAsks, app);
         TitleText.Text = ask.Title;
         DescriptionText.Text = ask.Description;
-        StepsList.ItemsSource = ask.Steps
-            .Select((text, index) => new { Number = string.Format(CultureInfo.CurrentCulture, Strings.AiReady_StepNumber, index + 1), Text = text })
-            .ToList();
+        StepsList.ItemsSource = ask.Steps.Select((text, index) => new ReadyStep(index + 1, text)).ToList();
         BuildHint();
         SourceInitialized += OnSourceInitialized;
         // Closed some other way: cancelled, so the request does not wait.
@@ -114,4 +112,21 @@ public partial class AiReadyWindow
         _grab = null;
         ((UIElement)sender).ReleaseMouseCapture();
     }
+}
+
+/// <summary>One of the AI's steps: its number in the accent color, then the step.</summary>
+internal sealed class ReadyStep
+{
+    public ReadyStep(int number, string text)
+    {
+        Number = string.Format(CultureInfo.CurrentCulture, Strings.AiReady_StepNumber, number);
+        Text = text;
+        AccessibleName = string.Format(CultureInfo.CurrentCulture, Strings.AiRequest_Step, number, text);
+    }
+
+    public string Number { get; }
+    public string Text { get; }
+
+    /// <summary>The row's accessible name: "1. step", as the request window shows the steps.</summary>
+    public string AccessibleName { get; }
 }

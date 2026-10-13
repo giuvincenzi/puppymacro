@@ -57,15 +57,40 @@ public sealed class TargetWindow : IDisposable
     private Form? _form;
     private TextBox? _text;
 
+    /// <summary>Target windows opened by this test process so far: the first one loads Windows Forms.</summary>
+    private static int _openings;
+
+    /// <summary>
+    /// How the test's target window opened, each step with its time ("opened in 420 ms, the first in this process: thread
+    /// started 2 ms, form created 380 ms, handle created 401 ms, shown 420 ms"), or how far it got when it did not open;
+    /// null when the test opened none. In the first lines of the test's .uia.txt (<see cref="AppSession"/>).
+    /// </summary>
+    internal static string? LastOpening { get; set; }
+
     public TargetWindow()
     {
         Dpi.UsePhysicalPixels();
         using var ready = new ManualResetEventSlim();
         Exception? failed = null;
+        int opening = Interlocked.Increment(ref _openings);
+        string which = opening == 1 ? "the first in this process" : $"number {opening} in this process";
+        Stopwatch time = Stopwatch.StartNew();
+        var steps = new List<string>();
+        void Step(string step)
+        {
+            lock (steps)
+                steps.Add($"{step} {time.ElapsedMilliseconds} ms");
+        }
+        string Steps()
+        {
+            lock (steps)
+                return steps.Count > 0 ? string.Join(", ", steps) : "nothing";
+        }
         _thread = new Thread(() =>
         {
             try
             {
+                Step("thread started");
                 Dpi.UsePhysicalPixels();
                 _form = new TargetForm
                 {
@@ -87,7 +112,13 @@ public sealed class TargetWindow : IDisposable
                 };
                 _form.Controls.Add(_text);
                 Application.AddMessageFilter(new Filter(this));
-                _form.Shown += (_, _) => ready.Set();
+                Step("form created");
+                _form.HandleCreated += (_, _) => Step("handle created");
+                _form.Shown += (_, _) =>
+                {
+                    Step("shown");
+                    ready.Set();
+                };
                 Application.Run(_form);
             }
             catch (Exception ex)
@@ -100,7 +131,11 @@ public sealed class TargetWindow : IDisposable
         _thread.SetApartmentState(ApartmentState.STA);
         _thread.Start();
         if (!ready.Wait(AppSession.Timeout) || failed != null)
-            throw new InvalidOperationException("The target window did not open.", failed);
+        {
+            LastOpening = $"did NOT open in {time.ElapsedMilliseconds} ms, {which}; reached: {Steps()}";
+            throw new InvalidOperationException($"The target window did not open ({which}; reached: {Steps()}).", failed);
+        }
+        LastOpening = $"opened in {time.ElapsedMilliseconds} ms, {which}: {Steps()}";
 
         Handle = OnWindowThread(() => _form!.Handle);
         Rectangle clickArea = OnWindowThread(() => new Rectangle(_form!.PointToScreen(Point.Empty), new Size(_form.ClientSize.Width, _text!.Top)));

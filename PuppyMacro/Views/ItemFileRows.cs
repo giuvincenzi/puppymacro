@@ -24,6 +24,9 @@ public abstract class ItemFileRow : INotifyPropertyChanged
 
     public string Title { get; protected set; } = "";
 
+    /// <summary>The row's accessible name: the item's name, as its check box.</summary>
+    public string AccessibleName => Title;
+
     /// <summary>What it does: the card's summary, a remap's apps and note.</summary>
     public string Summary { get; protected set; } = "";
 

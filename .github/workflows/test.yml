@@ -282,6 +282,10 @@ jobs:
                 First lines, the state at that moment:
                   Time (UTC):        when it was saved.
                   Machine memory:    percent in use, free and total physical memory, free and total paging file, in MB.
+                  Target window:     how the test's own window (TargetWindow, the one playback tests send input to) opened:
+                                     "opened in <ms> ms", or "did NOT open in <ms> ms", whether it was the first one in this
+                                     test process (the first loads Windows Forms), and each step reached with its time
+                                     (thread started, form created, handle created, shown); "not opened in this test".
                   PuppyMacro (process <id>):  "responding" or "NOT RESPONDING" (its UI thread did not handle window messages:
                                      it hung), the memory it used, its threads, and its CPU time since it started.
                 Then an empty line and what UI Automation saw of every PuppyMacro window, one element per line, indented by two
@@ -303,7 +307,7 @@ jobs:
               still open, content that is on the screen although the test did not find it.
             - failed_tests/<Class>.<Method>.uia.txt: whether the element the test looked for existed, with which name, whether
               it was offscreen, whether a window had no children (read too early); whether PuppyMacro was responding; how much
-              memory was free.
+              memory was free; how long the target window took to open, or which step it did not reach.
             - The same test when it passed (tests/ of a green run: another attempt of this run, or a recent run on main): the
               difference between its .uia.txt and the failed one can show what changed.
             - machine_state.txt: whether the machine was short of memory or had a window in front before the tests.

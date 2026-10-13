@@ -87,7 +87,7 @@
   editor or dialog: while an editor is open the main window is hidden, so it is searched among
   PuppyMacro's top-level windows) and `TopWindow` (overlay panel, floating buttons). A list's row is found by its
   accessible name (`ui.md`), never by the texts inside it: `CardButton` in the main window, `PanelRow` / `PanelRowIs`
-  in the overlay panel.
+  in the overlay panel, `HasRow` in any list.
 - A test that sends input must be harmless: input goes only to a window of the test itself.
   The UI tests use F24 (no keyboard has it). The playback tests (`Macros`, `Loops`, `Remaps`,
   `Recording`, `Overlay`) really run loops, macros and remaps against `TargetWindow`: a topmost
