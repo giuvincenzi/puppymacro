@@ -45,15 +45,14 @@ $main = WaitFor { $A::FromHandle($proc.MainWindowHandle) } 'main window'
 Start-Sleep -Seconds 2
 
 function OpenEditor($itemText, $title) {
-  $text = WaitFor { ByName $main $itemText } $itemText
-  $y = $text.Current.BoundingRectangle.Y
-  # The card's Edit button is on the same row (the main window hides while the editor is open).
-  $buttons = $main.FindAll($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
+  # The list's row is named after its item (ui.md, as the end-to-end tests' CardButton finds it); the card's Edit
+  # button is inside it. The main window hides while the editor is open.
+  $row = WaitFor { $main.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
+      (New-Object $PC($A::NameProperty, $itemText)),
+      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::DataItem))))) } "the row of $itemText"
+  $edit = WaitFor { $row.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.AndCondition(
       (New-Object $PC($A::NameProperty, 'Edit')),
-      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)))))
-  $edit = $buttons | Where-Object {
-    [Math]::Abs($_.Current.BoundingRectangle.Y + $_.Current.BoundingRectangle.Height / 2 - $y) -lt 40 } |
-    Select-Object -First 1
+      (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button))))) } "Edit of $itemText"
   $edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
   # The editor's title is "Edit loop - <its name>".
   WaitFor { $A::RootElement.FindAll($TS::Children, (New-Object $PC($A::ProcessIdProperty, $proc.Id))) |

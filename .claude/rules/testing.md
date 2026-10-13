@@ -143,8 +143,13 @@ runs `unit_test`.
 | `.gitattributes` | yes | yes | Line endings of `.cs`, `.xaml`, `.csproj` at checkout |
 | `.github/workflows/test.yml` | yes | yes | The workflow |
 
+`screenshots_test` takes the release's screenshots as `create_release_pr` does (`scripts/dev.ps1 -Screenshots`, then
+`scripts/screenshots.ps1`, at 1920 x 1080; saved only as an artifact) when `PuppyMacro/**`, `test.yml` or one of
+`scripts/dev.ps1`, `screenshots.ps1`, `screen-resolution.ps1` changes: a change that breaks them fails the pull request
+(`e2e_test` checks its result) instead of the release.
+
 Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, Markdown files,
-`LICENSE`, `Makefile`, `scripts/`, the other workflows). When the app, a test project or a test
+`LICENSE`, `Makefile`, the other `scripts/`, the other workflows). When the app, a test project or a test
 starts reading another file or folder, add it to this table and to the patterns of `decide_which_tests_run` in the
 same pull request.
 

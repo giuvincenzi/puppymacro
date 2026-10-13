@@ -75,7 +75,8 @@ tools (settings, instructions and descriptions, new tools, tests). The plan also
 - Use the exact UI texts from the XAML (button, setting and window names).
 - Screenshots: taken only by the `create_release_pr` workflow, for every release, on a GitHub Windows machine with
   its screen at 1920 x 1080 (`build-and-release.md`), and checked by the user in the release pull request: no
-  pull request retakes them and there is no `make` for them. `scripts/screenshots.ps1` takes the guide's editor
+  pull request retakes them (`screenshots_test` only checks that they can be taken, `testing.md`) and there is no `make`
+  for them. `scripts/screenshots.ps1` takes the guide's editor
   screenshots (`site/guide/img/`: `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`)
   and the home page's `site/assets/loops.png`, the whole main window with its title bar, from the development build
   started with `PUPPYMACRO_SCREENSHOTS=1` (`scripts/dev.ps1 -Screenshots`, `App.ShowsDevMarks`): the sample data, but no
