@@ -218,6 +218,7 @@ public sealed class AppSession : IDisposable
     public void Dispose()
     {
         SaveScreenshot();
+        SaveUiaTree();
         Automation.Dispose();
         if (!_app.HasExited)
             _app.Kill();
@@ -248,6 +249,54 @@ public sealed class AppSession : IDisposable
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.ExternalException or ArgumentException)
         {
             Console.Error.WriteLine($"Screenshot not saved: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// With <see cref="SaveScreenshot"/>: what UI Automation sees of every window of this PuppyMacro, as Class.Method.uia.txt,
+    /// one element per line (control type, "name", [AutomationId], offscreen), indented by depth. It tells what a screenshot
+    /// cannot: whether an element the test looked for was there, with another name, or not yet.
+    /// </summary>
+    private void SaveUiaTree()
+    {
+        string? folder = Environment.GetEnvironmentVariable("E2E_SCREENSHOTS");
+        string? type = TestContext.Current.TestClass?.TestClassName;
+        string? method = TestContext.Current.TestMethod?.MethodName;
+        if (string.IsNullOrEmpty(folder) || type == null || method == null)
+            return;
+        const int maxLines = 5000;
+        var lines = new List<string>();
+        void Write(AutomationElement element, int depth)
+        {
+            if (lines.Count >= maxLines)
+                return;
+            try
+            {
+                var p = element.Properties;
+                lines.Add($"{new string(' ', depth * 2)}{p.ControlType.ValueOrDefault} \"{p.Name.ValueOrDefault}\"" +
+                          $" [{p.AutomationId.ValueOrDefault}]{(p.IsOffscreen.ValueOrDefault ? " offscreen" : "")}");
+                foreach (AutomationElement child in element.FindAllChildren())
+                    Write(child, depth + 1);
+            }
+            catch (Exception ex) when (ex is FlaUI.Core.Exceptions.ElementNotAvailableException
+                                           or System.Runtime.InteropServices.COMException or TimeoutException)
+            {
+                lines.Add($"{new string(' ', depth * 2)}(not readable: {ex.Message})");
+            }
+        }
+        try
+        {
+            Directory.CreateDirectory(folder);
+            foreach (AutomationElement window in Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(ProcessId)))
+                Write(window, 0);
+            if (lines.Count >= maxLines)
+                lines.Add($"(cut at {maxLines} lines)");
+            File.WriteAllLines(Path.Combine(folder, $"{type}.{method}.uia.txt"), lines);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                       or System.Runtime.InteropServices.COMException or FlaUI.Core.Exceptions.ElementNotAvailableException)
+        {
+            Console.Error.WriteLine($"UI Automation tree not saved: {ex.Message}");
         }
     }
 }

@@ -170,7 +170,7 @@ jobs:
 
       - name: run_group_tests
         env:
-          E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots   # AppSession saves the screen at the end of every test
+          E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots   # AppSession saves the screen and the UI tree at the end of every test
         run: |
           mapfile -t tests < e2e_results/group_tests.txt
           if [ ${#tests[@]} -eq 0 ]; then echo "No tests in this group."; exit 0; fi
@@ -178,8 +178,9 @@ jobs:
             --results-directory "$PWD/e2e_results" --report-xunit-ctrf --report-xunit-ctrf-filename "group_$GROUP.json" \
             --filter-method "${tests[@]}"
 
-      # The screen as each failed test left it (Class.Method.png), to see why it failed; the passed tests' are dropped.
-      - name: keep_screenshots_of_failed_tests
+      # For each failed test, as it left PuppyMacro: the screen (Class.Method.png) and what UI Automation saw
+      # (Class.Method.uia.txt), in failed_tests/; the passed tests' are dropped.
+      - name: keep_failed_tests_details
         if: always()
         shell: pwsh
         run: |
@@ -187,11 +188,13 @@ jobs:
           if (-not (Test-Path $report)) { exit 0 }
           $failed = (Get-Content $report -Raw | ConvertFrom-Json).results.tests | Where-Object status -ne 'passed'
           foreach ($test in $failed) {
-            $png = Join-Path "$env:RUNNER_TEMP/e2e_screenshots" "$($test.extra.type).$($test.extra.method).png"
-            if (Test-Path $png) {
-              New-Item -ItemType Directory -Force e2e_results/screenshots | Out-Null
-              Copy-Item $png e2e_results/screenshots/
-              Write-Host "Screenshot of the failed test: screenshots/$(Split-Path $png -Leaf)"
+            foreach ($kind in 'png', 'uia.txt') {
+              $file = Join-Path "$env:RUNNER_TEMP/e2e_screenshots" "$($test.extra.type).$($test.extra.method).$kind"
+              if (Test-Path $file) {
+                New-Item -ItemType Directory -Force e2e_results/failed_tests | Out-Null
+                Copy-Item $file e2e_results/failed_tests/
+                Write-Host "Failed test: failed_tests/$(Split-Path $file -Leaf)"
+              }
             }
           }
 

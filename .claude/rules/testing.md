@@ -164,20 +164,24 @@ into, and a new test needs nothing.
     a real mouse click (a test's "Add loop" click landed on it); they are minimized first, and the windows still shown
     are written to the log. Press buttons with UI Automation (`Invoke`) unless the test needs a real click;
   - `run_group_tests`: `dotnet test --filter-method` with the group's tests, and a CTRF (JSON) report of what ran;
-  - `keep_screenshots_of_failed_tests`: `AppSession` saves the whole screen at the end of every test, before
-    PuppyMacro closes, when `E2E_SCREENSHOTS` is set (only `run_group_tests` sets it; never locally); this step keeps the
-    failed tests' ones (`screenshots/Class.Method.png`): look at them first when a test fails on GitHub;
-  - `save_group_result`: the full list, the group's list, the report and those screenshots, also when tests failed
+  - `keep_failed_tests_details`: at the end of every test, before PuppyMacro closes, `AppSession` saves the whole screen
+    (`SaveScreenshot`) and what UI Automation sees of every PuppyMacro window (`SaveUiaTree`), when `E2E_SCREENSHOTS` is
+    set (only `run_group_tests` sets it; never locally). This step keeps the failed tests' ones in `failed_tests/`;
+  - `save_group_result`: the full list, the group's list, the report and `failed_tests/`, also when tests failed
     (artifact `e2e_group_<n>`, kept 7 days: the run's page, Artifacts).
 - **`e2e_test` (the required check):** green when the end-to-end tests were not needed, or when (1) every group saw the
   same list, (2) every test ran exactly once (none missing, none in two groups), (3) every test and every group passed.
   Otherwise red, with the missing, doubled or failed tests in the run's summary.
 
-**When an end-to-end test fails on GitHub, look at its screenshot first**: on the run's page (the pull request's
-`e2e_test` check > Summary), Artifacts, `e2e_group_<n>` (the group `e2e_test`'s summary names) >
-`screenshots/Class.Method.png`, the whole screen as the test left it, before PuppyMacro closed; or
-`gh run download <run> --name e2e_group_<n>`. It shows what an error like "not found" cannot: a window of the runner in
-front, a dialog still open, content that was there but not seen. Then fix the cause, not the timeout.
+**When an end-to-end test fails on GitHub, look at what it left first**: on the run's page (the pull request's
+`e2e_test` check > Summary), Artifacts, `e2e_group_<n>` (the group `e2e_test`'s summary names) > `failed_tests/`, or
+`gh run download <run> --name e2e_group_<n>`. Two files per failed test, as the test left PuppyMacro, before it closed:
+- `Class.Method.png`: the whole screen. It shows a window of the runner in front, a dialog still open, content that is
+  on the screen;
+- `Class.Method.uia.txt`: what UI Automation saw of every PuppyMacro window, one element per line, indented by depth:
+  `ControlType "Name" [AutomationId]` and `offscreen`. It shows whether the element the test looked for was there, with
+  another name or text, offscreen, or missing (a window with no children: taken too early).
+Then fix the cause, not the timeout.
 
 **Changing the number of machines:** change only `E2E_GROUPS`. Nothing else: not the ruleset (it requires `e2e_test`,
 not the groups), not the tests. Each group costs about a minute of its own (machine, checkout, build) on top of its
