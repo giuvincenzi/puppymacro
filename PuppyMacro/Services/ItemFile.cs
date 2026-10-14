@@ -238,7 +238,7 @@ internal static class ItemFile
         public HotkeyBinding? RemapHotkey(HotkeyBinding source, string? app, List<string> notes, bool chosen)
         {
             string? conflict = HotkeyConflicts.FindForRemap(source, app, settings, macros)
-                ?? _hotkeys.Where(h => source.Overlaps(h.Keys) && (h.App == null || app == null || AppScope.Same(h.App, app)))
+                ?? _hotkeys.Where(h => source.Overlaps(h.Keys) && HotkeyConflicts.SharesApps(h.App, app))
                     .Select(h => string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_HotkeyUsedInFile_{h.Kind}"),
                         KeyNames.Format(source), h.Name))
                     .FirstOrDefault()
