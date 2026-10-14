@@ -23,12 +23,19 @@ internal static class HotkeyConflicts
             itemApp => ignoreGlobal != null || AppScope.Same(itemApp, appExe));
 
     /// <summary>
-    /// For a remap's source (a key, a combination or a modifier key alone): the hotkeys that would take it first
-    /// (hotkeys come before remaps) in the apps the remap works in (<paramref name="appExe"/>, null for all apps).
+    /// For a remap's source (a key, a combination or a modifier key alone): the hotkeys that would always take it first
+    /// (hotkeys come before remaps) for the remap's apps (<paramref name="appExe"/>, null for all apps), the global ones
+    /// and those of the items for all apps or for the same app. As between loops and macros, a remap for all apps can
+    /// share its key with an item for one app: that app's item wins while it is in front, the remap works elsewhere.
     /// </summary>
     public static string? FindForRemap(HotkeyBinding source, string? appExe, AppSettings settings, MacroLibrary macros) =>
-        Find(source, settings, macros, null, null,
-            itemApp => itemApp == null || appExe == null || AppScope.Same(itemApp, appExe));
+        Find(source, settings, macros, null, null, itemApp => SharesApps(itemApp, appExe));
+
+    /// <summary>
+    /// Whether the hotkey of an item for <paramref name="itemApp"/> takes a remap's source in every app the remap works in
+    /// (<paramref name="remapApp"/>): an item for all apps, or for the remap's own app.
+    /// </summary>
+    public static bool SharesApps(string? itemApp, string? remapApp) => itemApp == null || AppScope.Same(itemApp, remapApp);
 
     /// <summary>
     /// Why <paramref name="source"/> cannot be remapped for <paramref name="appExe"/> (null: all apps): a hotkey, or another

@@ -236,6 +236,20 @@ public class ItemFileTests : IDisposable
     }
 
     [Fact]
+    public void A_remap_for_all_apps_keeps_a_hotkey_used_only_in_one_app()
+    {
+        _settings.Loops.Add(Loop("Mine", F6, app: "game.exe"));
+        string text = ItemFile.Write(new object[] { Loop("Farm", F7, app: "game.exe"), Remap(F7, 0x44), Remap(F6, 0x44) }, This);
+
+        ItemFileContent content = Read(text);
+
+        Assert.Equal(F7, ((RemapDefinition)content.Entries[1].Item!).Source!.Vk);
+        Assert.Empty(content.Entries[1].Notes);
+        Assert.Equal(F6, ((RemapDefinition)content.Entries[2].Item!).Source!.Vk);
+        Assert.Empty(content.Entries[2].Notes);
+    }
+
+    [Fact]
     public void A_remap_exported_without_a_hotkey_comes_in_without_one()
     {
         string text = ItemFile.Write(new object[] { new RemapDefinition { Target = HotkeyBinding.FromKey(KeyC) } }, This);

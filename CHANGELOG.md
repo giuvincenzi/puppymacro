@@ -16,6 +16,10 @@
   PuppyMacro**: no hints and no **Stop all** (it stays while floating buttons are shown).
 - In **Settings › Hotkeys** the order is Open PuppyMacro, Overlay mode, Stop all, Record.
 
+### Fixed
+- A remap for all apps can use the hotkey of a loop or macro for a specific app, as two loops or macros can: in that app
+  the loop or macro starts, in the other apps the remap works. Before, the remap could not be saved.
+
 ## 1.19.0
 
 ### Changed

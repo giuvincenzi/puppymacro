@@ -67,8 +67,9 @@ paths:
   another app is skipped, so its key passes to the app. Global hotkeys (Overlay mode, Stop all, Open PuppyMacro; Record
   earlier in the routing) work in every app.
   `HotkeyConflicts`: two items can share a hotkey only when their apps differ (one may be all apps);
-  a global hotkey clashes with every item; a remap's source clashes with the hotkeys of the items that
-  work where the remap works (`FindForRemap`).
+  a global hotkey clashes with every item; a remap's source clashes with the global hotkeys and with the
+  hotkeys of the items for all apps or for the remap's own app (`FindForRemap`, `SharesApps`): a remap for all
+  apps can share its key with an item for one app, which wins only while that app is in front.
 - Mouse details (`InputHook.MouseDetail` -> `LoopEngine.OnMouseDetail`, set only while recording or
   while overlay mode publishes click targets): recording (records, never blocks; clicks on
   PuppyMacro's own windows are not recorded) → a drag of the overlay panel's Move handle (moves pass,

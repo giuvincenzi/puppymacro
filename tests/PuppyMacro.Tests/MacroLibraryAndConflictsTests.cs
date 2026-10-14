@@ -132,11 +132,12 @@ public class HotkeyConflictsTests : IDisposable
     }
 
     [Fact]
-    public void A_remap_source_clashes_with_the_hotkeys_of_the_apps_it_works_in()
+    public void A_remap_source_clashes_with_the_hotkeys_that_always_take_it_first()
     {
         _settings.Loops.Add(new LoopDefinition { Name = "Game", Hotkey = HotkeyBinding.FromKey(0x79), AppExe = "Game.exe" }); // F10
 
-        Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), null, _settings, _macros));          // all apps includes Game.exe
+        // A remap for all apps: the loop for Game.exe wins in Game.exe, the remap works in the other apps.
+        Assert.Null(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), null, _settings, _macros));
         Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), "game.exe", _settings, _macros));
         Assert.Null(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), "other.exe", _settings, _macros));
         Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x78), "other.exe", _settings, _macros));    // F9 is for all apps

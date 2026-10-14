@@ -465,6 +465,24 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void A_hotkey_for_an_app_wins_over_a_remap_for_all_apps_only_in_that_app()
+    {
+        LoopDefinition forGame = TapLoop(HotkeyBinding.FromKey(F23));
+        forGame.AppExe = "Game.exe";
+        _engine.Publish(new EngineSnapshot { Loops = new[] { forGame }, Remaps = new[] { Remap(HotkeyBinding.FromKey(F23)) } });
+
+        _engine.OnForegroundApp("Game.exe");
+        Assert.True(Press(F23));
+        Assert.True(Release(F23));
+        Assert.True(_engine.IsRunning(forGame.Id));
+
+        _engine.OnForegroundApp("other.exe"); // stops the game's loop; the key goes to the remap
+        Assert.True(Press(F23));
+        Assert.True(Release(F23));
+        Assert.False(_engine.IsRunning(forGame.Id));
+    }
+
+    [Fact]
     public void A_remap_of_a_key_alone_does_not_take_the_key_with_a_modifier()
     {
         _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(HotkeyBinding.FromKey(F23)) } });
