@@ -55,7 +55,7 @@ public partial class PlacementWindow
     /// <param name="showPanel">The overlay panel is shown in overlay mode; when false it is left out
     /// and <see cref="Result"/> stays <paramref name="start"/>.</param>
     internal PlacementWindow(IList loops, IList macros, bool showPanel, Point start, int opacity,
-        string exitHotkey, string stopAllHotkey, IReadOnlyList<PlacementButton> buttons, Guid? select = null)
+        string exitHotkey, string stopAllHotkey, string? openMainHotkey, IReadOnlyList<PlacementButton> buttons, Guid? select = null)
     {
         InitializeComponent();
         Result = start;
@@ -71,7 +71,7 @@ public partial class PlacementWindow
         {
             GhostPanel.Bind(loops, macros);
             GhostPanel.SetBackgroundOpacity(opacity);
-            GhostPanel.SetHotkeyLabels(exitHotkey, stopAllHotkey);
+            GhostPanel.SetHotkeyLabels(exitHotkey, stopAllHotkey, openMainHotkey);
             first = AddGhost(new Draggable { Element = Ghost, Outline = GhostOutline, Name = Strings.AiSetting_OverlayPanel });
             _selected = first;
             MoveTo(first, start);

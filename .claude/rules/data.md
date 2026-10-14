@@ -39,6 +39,11 @@ paths:
   rejects `SourceVk`. Hotkeys have `CtrlSide`, `AltSide`, `ShiftSide`, `WinSide`, left out when `Any`
   (either side), so older files mean either side, as before. The macro editor opens 240 px wider since
   schema 7 (120 for its right column, 120 for the list): a `MacroEditorWidth` from an older file grows by 240 once.
+- Schema 8: the Open PuppyMacro global hotkey (`AppSettings.OpenMainHotkey`, null = none: the only global hotkey that
+  can be cleared). New installs get Alt+Shift+A (`AppSettings.CreateDefault`); a file from before schema 8 gets it at start,
+  once the macros are loaded (`SettingsStore.AddOpenMainHotkey`, called by `App`, which saves the settings), unless a loop,
+  macro, remap or other global hotkey already uses it: then none, so no item loses its key (global hotkeys come first). A
+  file of schema 8 without it keeps none (the user cleared it). Older versions ignore the field.
 - Loop actions (`LoopAction`) and macro actions (`MacroAction`) share `KeyModifierFields`: `Ctrl`, `Alt`,
   `Shift`, `Win` and their sides, flat next to the key, written only when set (a macro's Press key, a loop's
   Press key). A loop's Click is a `Key` row whose `KeyVk` is a mouse button (`LoopAction.IsClick`), not a

@@ -16,7 +16,7 @@ internal static class HotkeyConflicts
     /// Global hotkeys work everywhere, so they clash with every loop and macro.
     /// </summary>
     /// <param name="ignoreId">Loop or macro being edited (its own hotkey is not a conflict).</param>
-    /// <param name="ignoreGlobal">"StopAll", "OverlayMode" or "Record" when changing that global hotkey.</param>
+    /// <param name="ignoreGlobal">"OpenMain", "OverlayMode", "StopAll" or "Record" when changing that global hotkey.</param>
     public static string? Find(HotkeyBinding binding, AppSettings settings, MacroLibrary macros,
         Guid? ignoreId = null, string? ignoreGlobal = null, string? appExe = null) =>
         Find(binding, settings, macros, ignoreId, ignoreGlobal,
@@ -69,6 +69,8 @@ internal static class HotkeyConflicts
             return Text(Strings.Hotkey_UsedByOverlayMode, name);
         if (ignoreGlobal != "Record" && binding.Overlaps(settings.RecordHotkey))
             return Text(Strings.Hotkey_UsedByRecord, name);
+        if (ignoreGlobal != "OpenMain" && binding.Overlaps(settings.OpenMainHotkey))
+            return Text(Strings.Hotkey_UsedByOpenMain, name);
 
         var loop = settings.Loops.FirstOrDefault(l => l.Id != ignoreId && binding.Overlaps(l.Hotkey) && clashesWith(l.AppExe));
         if (loop != null)

@@ -23,6 +23,9 @@ public partial class OverlayPanel
     private bool _followApp;
     private string? _app;
 
+    // The rows can be clicked (Click items in the panel to start or stop them is on).
+    private bool _clickable = true;
+
     public OverlayPanel()
     {
         InitializeComponent();
@@ -61,9 +64,12 @@ public partial class OverlayPanel
     private bool IsPanelRow(object item) =>
         item is IListItem listItem && OverlayItems.IsShown(listItem) && !FloatingButtons.HasButton(listItem) && WorksHere(listItem);
 
-    public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey)
+    /// <summary>The hotkeys shown: <paramref name="openMainHotkey"/> null or empty when Open PuppyMacro has none.</summary>
+    public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey, string? openMainHotkey)
     {
         StopAllHotkeyText.Text = stopAllHotkey;
+        OpenMainHotkeyText.Text = openMainHotkey ?? "";
+        OpenMainHotkey.Visibility = string.IsNullOrEmpty(openMainHotkey) ? Visibility.Collapsed : Visibility.Visible;
         ExitButton.ToolTip = string.Format(CultureInfo.CurrentCulture, Strings.Overlay_ExitTip, exitHotkey);
     }
 
@@ -86,7 +92,7 @@ public partial class OverlayPanel
 
     /// <summary>
     /// Stop all is red while something runs and the panel can be clicked; the move, exit and open buttons are dimmed
-    /// and the clicks hint is hidden when the panel cannot be clicked (Click items in the panel to start or stop
+    /// and the clicks hints are hidden when the panel cannot be clicked (Click items in the panel to start or stop
     /// them is off).
     /// </summary>
     public void SetState(bool anyRunning, bool clickable)
@@ -99,7 +105,9 @@ public partial class OverlayPanel
         ExitButton.Opacity = clickable ? 1 : 0.5;
         OpenButton.Opacity = clickable ? 1 : 0.5;
         MoveButton.Opacity = clickable ? 1 : 0.5;
-        ClickHint.Visibility = clickable ? Visibility.Visible : Visibility.Collapsed;
+        OpenMainButton.Opacity = clickable ? 1 : 0.5;
+        _clickable = clickable;
+        UpdateEmptyState();
     }
 
     /// <summary>Sets the panel background opacity (percent). Text is not affected.</summary>
@@ -119,7 +127,7 @@ public partial class OverlayPanel
 
     /// <summary>
     /// Screen rectangles (physical pixels) of the rows (a left click starts only enabled, not Hold ones; a right
-    /// click enables or disables any), the move, exit and open buttons and Stop all.
+    /// click enables or disables any), the move, exit and open buttons, Stop all and Open PuppyMacro.
     /// </summary>
     internal List<PanelTarget> GetClickTargets()
     {
@@ -132,6 +140,7 @@ public partial class OverlayPanel
         AddTarget(OpenButton, PanelTarget.OpenMainOverlayId, targets);
         AddTarget(MoveButton, PanelTarget.MoveOverlayId, targets);
         AddTarget(StopAllButton, PanelTarget.StopAllId, targets);
+        AddTarget(OpenMainButton, PanelTarget.OpenMainOverlayId, targets);
         return targets;
     }
 
@@ -161,17 +170,21 @@ public partial class OverlayPanel
 
     private void OnItemsChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateEmptyState();
 
+    /// <summary>
+    /// Without rows the panel says why (all on floating buttons, or nothing here yet) and shows no clicks hints; Stop all
+    /// shows while there is something to stop (rows or floating buttons). Open PuppyMacro is always there.
+    /// </summary>
     private void UpdateEmptyState()
     {
         int loops = _loops?.Count ?? 0;
         int macros = _macros?.Count ?? 0;
+        bool anyRow = loops + macros > 0;
         bool anyButton = HasAny(i => FloatingButtons.HasButton(i) && WorksHere(i));
-        bool forOtherApps = HasAny(i => OverlayItems.IsShown(i) && !WorksHere(i));
-        EmptyText.Text = anyButton ? Strings.Overlay_AllOnButtons
-            : forOtherApps ? Strings.Overlay_NothingForApp
-            : Strings.Overlay_NothingToShow;
-        EmptyText.Visibility = loops + macros == 0 ? Visibility.Visible : Visibility.Collapsed;
+        EmptyText.Text = anyButton ? Strings.Overlay_AllOnButtons : Strings.Overlay_AddToSeeHere;
+        EmptyText.Visibility = anyRow ? Visibility.Collapsed : Visibility.Visible;
         MacrosHeader.Visibility = macros > 0 && loops > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ClickHints.Visibility = anyRow && _clickable ? Visibility.Visible : Visibility.Collapsed;
+        StopAllButton.Visibility = anyRow || anyButton ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>Any loop or macro (both lists) that matches.</summary>

@@ -252,6 +252,27 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void The_Open_PuppyMacro_hotkey_asks_to_open_the_window_and_never_reaches_the_app()
+    {
+        int toggles = 0, opens = 0;
+        _engine.OverlayModeToggleRequested += () => toggles++;
+        _engine.OverlayExitAndOpenRequested += () => opens++;
+        _engine.Publish(new EngineSnapshot { OpenMain = HotkeyBinding.FromKey(F23) });
+
+        Assert.True(_engine.OnKey(F23, true, false));
+        Assert.True(_engine.OnKey(F23, false, false));
+        RunDispatcher();
+        Assert.Equal((0, 1), (toggles, opens));
+
+        // Without the hotkey the key passes.
+        _engine.Publish(new EngineSnapshot());
+        Assert.False(_engine.OnKey(F23, true, false));
+        Assert.False(_engine.OnKey(F23, false, false));
+        RunDispatcher();
+        Assert.Equal((0, 1), (toggles, opens));
+    }
+
+    [Fact]
     public void A_right_click_on_the_overlay_panel_buttons_reaches_the_app()
     {
         var requested = new System.Collections.Generic.List<Guid>();

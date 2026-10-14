@@ -129,6 +129,98 @@ public class OverlayTests
         Assert.Empty(target.Downs(Vk.LButton));
     }
 
+    private const string ClickHint = "Click to start or stop a loop or macro.";
+    private const string RightClickHint = "Right-click to enable or disable it.";
+    private const string AddToSeeHere = "Add a loop or macro to see it here.";
+
+    /// <remarks>Ends in overlay mode: the screenshot taken at the end on GitHub shows the panel.</remarks>
+    [Fact]
+    public void The_panel_shows_the_clicks_hints_then_the_items_Stop_all_and_Open_PuppyMacro_with_its_hotkey()
+    {
+        using var app = new AppSession(seed =>
+        {
+            SeedOverlay(seed, clickItemsInPanel: true);
+            seed.Settings.OpenMainHotkey = HotkeyBinding.FromKey(Vk.F14);
+        });
+        using var target = new TargetWindow();
+        (AutomationElement panel, _) = EnterOverlayMode(app, target);
+
+        Rectangle clickHint = app.Find(panel, ClickHint).BoundingRectangle;
+        Rectangle rightClickHint = app.Find(panel, RightClickHint).BoundingRectangle;
+        Rectangle row = app.PanelRow(panel, PanelLoop)!.BoundingRectangle;
+        Rectangle stopAll = app.Find(panel, "Stop all").BoundingRectangle;
+        Rectangle open = app.Find(panel, "Open PuppyMacro").BoundingRectangle;
+        Assert.True(app.Has(panel, "F14"), "the Open PuppyMacro hotkey is not shown");
+        Assert.False(app.Has(panel, AddToSeeHere));
+        // One under the other: the hints, the items, Stop all, Open PuppyMacro.
+        Assert.True(clickHint.Bottom <= rightClickHint.Top, "the hints are not one per line");
+        Assert.True(rightClickHint.Bottom <= row.Top, "the hints are not above the items");
+        Assert.True(row.Bottom <= stopAll.Top, "Stop all is not under the items");
+        Assert.True(stopAll.Bottom <= open.Top, "Open PuppyMacro is not under Stop all");
+    }
+
+    /// <remarks>Ends in overlay mode: the screenshot taken at the end on GitHub shows the empty panel.</remarks>
+    [Fact]
+    public void An_empty_panel_shows_only_what_to_do_and_Open_PuppyMacro()
+    {
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.OverlayPanelX = 80;
+            seed.Settings.OverlayPanelY = 80;
+            seed.Settings.OpenMainHotkey = HotkeyBinding.FromKey(Vk.F14);
+        });
+        using var target = new TargetWindow();
+        target.Tap(Vk.F24);
+        AutomationElement panel = app.TopWindow("PuppyMacro overlay panel") ?? throw new InvalidOperationException("no overlay panel");
+
+        Assert.True(app.Has(panel, AddToSeeHere));
+        Assert.True(app.Has(panel, "Open PuppyMacro"));
+        Assert.True(app.Has(panel, "F14"));
+        Assert.False(app.Has(panel, "Stop all"));
+        Assert.False(app.Has(panel, ClickHint));
+        Assert.False(app.Has(panel, RightClickHint));
+    }
+
+    [Fact]
+    public void Open_PuppyMacro_in_the_panel_and_its_hotkey_open_the_main_window()
+    {
+        using var app = new AppSession(seed =>
+        {
+            SeedOverlay(seed, clickItemsInPanel: true);
+            seed.Settings.OpenMainHotkey = HotkeyBinding.FromKey(Vk.F14);
+        });
+        using var target = new TargetWindow();
+        (AutomationElement panel, _) = EnterOverlayMode(app, target);
+
+        // The panel's Open PuppyMacro: as the open button in its title.
+        target.Click(CenterOf(app, panel, "Open PuppyMacro"));
+        AssertOpenedFromOverlay(app, panel, "Open PuppyMacro in the panel");
+        Assert.Empty(target.Downs(Vk.LButton)); // PuppyMacro took the click
+
+        // The hotkey in overlay mode.
+        target.Activate();
+        (panel, _) = EnterOverlayMode(app, target);
+        target.Tap(Vk.F14);
+        AssertOpenedFromOverlay(app, panel, "the Open PuppyMacro hotkey");
+
+        // The hotkey with the main window in the tray.
+        target.Activate();
+        (panel, _) = EnterOverlayMode(app, target);
+        target.Tap(Vk.F24);
+        app.AssertLeftOverlayModeInTray(panel);
+        target.Tap(Vk.F14);
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the Open PuppyMacro hotkey did not open the main window from the tray");
+    }
+
+    private static void AssertOpenedFromOverlay(AppSession app, AutomationElement panel, string what)
+    {
+        Assert.True(Retry.WhileFalse(() => !panel.IsAvailable || panel.IsOffscreen, AppSession.Timeout).Success,
+            $"{what} did not end overlay mode");
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            $"{what} did not open the main window");
+    }
+
     [Fact]
     public void With_Click_items_in_panel_off_a_click_on_a_row_reaches_the_window_and_floating_buttons_still_work()
     {

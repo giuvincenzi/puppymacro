@@ -127,6 +127,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Tasti i shpejtë për Ndal të gjitha</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Tasti i shpejtë për regjimin e mbivendosjes</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Tasti i shpejtë për regjistrimin</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Tasti i shpejtë për hapjen e PuppyMacro</value></data>
 
   <data name="AiKind_Read" xml:space="preserve"><value>Lexim</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>Ruajtje</value></data>
@@ -177,6 +178,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Aktivizo ose çaktivizo regjimin e mbivendosjes</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Regjistro</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Nis dhe ndal regjistrimin e një makroje</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>Hap PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Shfaq dritaren kryesore, edhe nga regjimi i mbivendosjes</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Paneli i mbivendosjes</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>Lista e cikleve dhe makrove tuaja</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Shfaq panelin e mbivendosjes</value></data>
@@ -866,6 +869,7 @@ Detajet: {1}</value></data>
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} përdoret tashmë nga Ndal të gjitha.</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} përdoret tashmë nga Regjimi i mbivendosjes.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} përdoret tashmë nga Regjistro.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} përdoret tashmë nga Hap PuppyMacro.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}".</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}" në {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}".</value></data>
@@ -999,12 +1003,13 @@ Detajet: {1}</value></data>
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Dil nga regjimi i mbivendosjes ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Dil dhe hap PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Dil nga regjimi i mbivendosjes dhe hap PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Nuk ka asgjë për të shfaqur.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Gjithçka është në butona notues.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Asgjë për këtë aplikacion.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>Ciklet dhe makrot që shtoni shfaqen këtu.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Makrot</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Ndal të gjitha</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Klikoni për të nisur ose ndaluar · Klikoni me të djathtën për të aktivizuar ose çaktivizuar</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>Hap PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Klikoni për të nisur ose ndaluar një cikël ose një makro.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Klikoni me të djathtën për ta aktivizuar ose çaktivizuar.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>Butoni notues i PuppyMacro</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Butoni notues i PuppyMacro: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>Regjistrimi</value></data>

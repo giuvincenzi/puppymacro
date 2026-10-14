@@ -130,6 +130,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Tasta rapidă „Opriți tot”</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Tasta rapidă Mod suprapunere</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Tasta rapidă Înregistrare</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Tasta rapidă Deschidere PuppyMacro</value></data>
 
   <data name="AiKind_Read" xml:space="preserve"><value>Citire</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>Salvare</value></data>
@@ -180,6 +181,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Activează sau dezactivează modul suprapunere</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Înregistrare</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Pornește și oprește înregistrarea unei macrocomenzi</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>Deschidere PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Afișează fereastra principală, inclusiv din modul suprapunere</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Panou de suprapunere</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>Lista buclelor și macrocomenzilor dvs.</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Afișare panou de suprapunere</value></data>
@@ -888,6 +891,7 @@ Detalii: {1}</value></data>
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} este deja utilizată de „Opriți tot”.</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} este deja utilizată de Mod suprapunere.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} este deja utilizată de Înregistrare.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} este deja utilizată de Deschidere PuppyMacro.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} este deja utilizată de bucla „{1}”.</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} este deja utilizată de bucla „{1}” în {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} este deja utilizată de macrocomanda „{1}”.</value></data>
@@ -1022,12 +1026,13 @@ Detalii: {1}</value></data>
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Ieșire din modul suprapunere ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Ieșire și deschidere PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Ieșire din modul suprapunere și deschidere PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Nimic de afișat.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Totul este pe butoane flotante.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Nimic pentru această aplicație.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>Buclele și macrocomenzile pe care le adăugați apar aici.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Macrocomenzi</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Opriți tot</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Clic pentru pornire sau oprire · Clic dreapta pentru activare sau dezactivare</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>Deschidere PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Faceți clic pentru a porni sau a opri o buclă sau o macrocomandă.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Faceți clic dreapta pentru activare sau dezactivare.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>Buton flotant PuppyMacro</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Buton flotant PuppyMacro: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>Înregistrare</value></data>

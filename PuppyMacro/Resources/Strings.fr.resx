@@ -122,6 +122,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Raccourci Tout arrêter</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Raccourci Mode superposition</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Raccourci Enregistrement</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Raccourci Ouvrir PuppyMacro</value></data>
   <data name="AiKind_Read" xml:space="preserve"><value>Lecture</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>Enregistrement</value></data>
   <data name="AiKind_Interaction" xml:space="preserve"><value>Interaction</value></data>
@@ -170,6 +171,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Activer ou désactiver le mode superposition</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Enregistrement</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Démarrer et arrêter l'enregistrement d'une macro</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>Ouvrir PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Afficher la fenêtre principale, même depuis le mode superposition</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Panneau de superposition</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>La liste de vos boucles et macros</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Afficher le panneau de superposition</value></data>
@@ -856,6 +859,7 @@ Détails : {1}</value></data>
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} est déjà utilisé par Tout arrêter.</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} est déjà utilisé par Mode superposition.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} est déjà utilisé par Enregistrement.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} est déjà utilisé par Ouvrir PuppyMacro.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} est déjà utilisé par la boucle « {1} ».</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} est déjà utilisé par la boucle « {1} » dans {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} est déjà utilisé par la macro « {1} ».</value></data>
@@ -988,12 +992,13 @@ Détails : {1}</value></data>
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Quitter le mode superposition ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Quitter et ouvrir PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Quitter le mode superposition et ouvrir PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Rien à afficher.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Tout est sur des boutons flottants.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Rien pour cette application.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>Les boucles et les macros que vous ajoutez s’affichent ici.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Macros</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Tout arrêter</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Clic pour démarrer ou arrêter · Clic droit pour activer ou désactiver</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>Ouvrir PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Cliquez pour démarrer ou arrêter une boucle ou une macro.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Cliquez avec le bouton droit pour activer ou désactiver.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>Bouton flottant PuppyMacro</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Bouton flottant PuppyMacro : {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>Enregistrement</value></data>

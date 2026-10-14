@@ -1262,7 +1262,7 @@ public partial class MainWindow
         }
 
         var placement = new PlacementWindow(_items, _macroItems, _settings.ShowOverlayPanel, PanelPosition(), _settings.OverlayPanelOpacity,
-            KeyNames.Format(_settings.OverlayModeHotkey), KeyNames.Format(_settings.StopAllHotkey), buttons, edited?.Id);
+            KeyNames.Format(_settings.OverlayModeHotkey), KeyNames.Format(_settings.StopAllHotkey), OpenMainHotkeyLabel(), buttons, edited?.Id);
         if (!(show?.Invoke(placement) ?? ShowDialogWithoutHotkeys(placement) == true))
             return null;
 
@@ -1395,10 +1395,11 @@ public partial class MainWindow
         _buttonWindows.Clear();
     }
 
-    /// <summary>The three global hotkey fields: each checks a pressed key against the rules and the other hotkeys.</summary>
+    /// <summary>The four global hotkey fields: each checks a pressed key against the rules and the other hotkeys.</summary>
     private void SetUpGlobalHotkeyFields()
     {
-        foreach (var (field, which) in new[] { (StopAllHotkeyField, "StopAll"), (OverlayModeHotkeyField, "OverlayMode"), (RecordHotkeyField, "Record") })
+        foreach (var (field, which) in new[] { (OpenMainHotkeyField, "OpenMain"), (OverlayModeHotkeyField, "OverlayMode"),
+                     (StopAllHotkeyField, "StopAll"), (RecordHotkeyField, "Record") })
             field.Validate = binding => HotkeyRules.Problem(binding, hold: false)
                 ?? HotkeyConflicts.Find(binding, _settings, _macros, ignoreGlobal: which);
     }
@@ -1407,6 +1408,14 @@ public partial class MainWindow
 
     private void OnGlobalHotkeyChanged(object? sender, EventArgs e)
     {
+        // Open PuppyMacro can be cleared (none); the others always have a hotkey.
+        if (sender == OpenMainHotkeyField)
+        {
+            _settings.OpenMainHotkey = OpenMainHotkeyField.Value is { IsSet: true } open ? open.Clone() : null;
+            UpdateHotkeyLabels();
+            Save();
+            return;
+        }
         if ((sender as KeyCaptureField)?.Value?.Clone() is not { } binding)
             return;
         if (sender == StopAllHotkeyField)
@@ -1426,13 +1435,18 @@ public partial class MainWindow
         StopAllHotkeyField.Value = _settings.StopAllHotkey?.Clone();
         OverlayModeHotkeyField.Value = _settings.OverlayModeHotkey?.Clone();
         RecordHotkeyField.Value = _settings.RecordHotkey?.Clone();
+        OpenMainHotkeyField.Value = _settings.OpenMainHotkey?.Clone();
         // The hotkey in the tooltip, when there is one
         StopAllButton.ToolTip = _settings.StopAllHotkey == null ? null
             : string.Format(CultureInfo.CurrentCulture, Strings.Main_StopAllTooltip, stopAll);
         OverlayModeButton.ToolTip = _settings.OverlayModeHotkey == null ? null
             : string.Format(CultureInfo.CurrentCulture, Strings.Main_EnterOverlayModeTooltip, overlayMode);
-        _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll);
+        _overlayPanelWindow.SetHotkeyLabels(overlayMode, stopAll, OpenMainHotkeyLabel());
     }
+
+    /// <summary>The Open PuppyMacro hotkey as the overlay panel shows it; null when it has none.</summary>
+    private string? OpenMainHotkeyLabel() =>
+        _settings.OpenMainHotkey is { IsSet: true } open ? KeyNames.Format(open) : null;
 
     private void ShowSettingsError(string message)
     {

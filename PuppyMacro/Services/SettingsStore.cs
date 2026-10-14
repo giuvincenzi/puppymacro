@@ -244,4 +244,23 @@ internal sealed class SettingsStore
 
         settings.SchemaVersion = AppSettings.CurrentSchemaVersion;
     }
+
+    /// <summary>
+    /// Schema 8 added the Open PuppyMacro hotkey: a file from before (<see cref="AppSettings.LoadedSchemaVersion"/> &lt; 8)
+    /// gets <see cref="AppSettings.DefaultOpenMainHotkey"/> unless a loop, macro, remap or other global hotkey already uses
+    /// it (global hotkeys come first, so it would take their key away): then it has none, and the user chooses one in
+    /// Settings. Called once the macros are loaded; true when it changed the settings (save them).
+    /// </summary>
+    public static bool AddOpenMainHotkey(AppSettings settings, MacroLibrary macros)
+    {
+        if (settings.LoadedSchemaVersion >= 8 || settings.OpenMainHotkey is { IsSet: true })
+            return false;
+        HotkeyBinding binding = AppSettings.DefaultOpenMainHotkey();
+        bool taken = HotkeyConflicts.Find(binding, settings, macros, ignoreGlobal: "OpenMain") != null
+            || settings.Remaps.Any(r => binding.Overlaps(r.Source));
+        if (taken)
+            return false;
+        settings.OpenMainHotkey = binding;
+        return true;
+    }
 }

@@ -119,6 +119,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>모두 중지 바로 가기 키</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>오버레이 모드 바로 가기 키</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>녹화 바로 가기 키</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>PuppyMacro 열기 바로 가기 키</value></data>
   <data name="AiKind_Read" xml:space="preserve"><value>읽기</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>저장</value></data>
   <data name="AiKind_Interaction" xml:space="preserve"><value>상호 작용</value></data>
@@ -167,6 +168,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>오버레이 모드 켜기/끄기</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>녹화</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>매크로 녹화 시작 및 중지</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>PuppyMacro 열기</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>오버레이 모드에서도 기본 창 표시</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>오버레이 패널</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>루프 및 매크로 목록</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>오버레이 패널 표시</value></data>
@@ -834,6 +837,7 @@
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0}은(는) 이미 모두 중지에 사용되고 있습니다.</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0}은(는) 이미 오버레이 모드에 사용되고 있습니다.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0}은(는) 이미 녹화에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0}은(는) 이미 PuppyMacro 열기에 사용되고 있습니다.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0}은(는) 이미 루프 "{1}"에 사용되고 있습니다.</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0}은(는) 이미 {2}의 루프 "{1}"에 사용되고 있습니다.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0}은(는) 이미 매크로 "{1}"에 사용되고 있습니다.</value></data>
@@ -965,12 +969,13 @@
   <data name="Overlay_ExitTip" xml:space="preserve"><value>오버레이 모드 종료({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>종료하고 PuppyMacro 열기</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>오버레이 모드를 종료하고 PuppyMacro 열기</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>표시할 항목이 없습니다.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>모든 항목이 플로팅 단추에 있습니다.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>이 앱에 해당하는 항목이 없습니다.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>추가한 루프와 매크로가 여기에 표시됩니다.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>매크로</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>모두 중지</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>클릭하여 시작 또는 중지 · 마우스 오른쪽 단추를 클릭하여 사용 또는 사용 안 함</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>PuppyMacro 열기</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>클릭하여 루프나 매크로를 시작하거나 중지합니다.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>마우스 오른쪽 단추를 클릭하여 사용하거나 사용하지 않도록 설정합니다.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>PuppyMacro 플로팅 단추</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>PuppyMacro 플로팅 단추: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>녹화</value></data>

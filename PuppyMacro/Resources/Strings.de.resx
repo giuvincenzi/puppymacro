@@ -122,6 +122,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Hotkey für „Alle stoppen“</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Hotkey für den Overlay-Modus</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Hotkey für „Aufnehmen“</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Hotkey für „PuppyMacro öffnen“</value></data>
   <data name="AiKind_Read" xml:space="preserve"><value>Lesen</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>Speichern</value></data>
   <data name="AiKind_Interaction" xml:space="preserve"><value>Interaktion</value></data>
@@ -170,6 +171,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Overlay-Modus ein- oder ausschalten</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Aufnehmen</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Aufnahme eines Makros starten und beenden</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>PuppyMacro öffnen</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Das Hauptfenster anzeigen, auch aus dem Overlay-Modus</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Overlay-Panel</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>Die Liste Ihrer Schleifen und Makros</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Overlay-Panel anzeigen</value></data>
@@ -856,6 +859,7 @@ Details: {1}</value></data>
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} wird bereits von „Alle stoppen“ verwendet.</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} wird bereits vom Overlay-Modus verwendet.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} wird bereits von „Aufnehmen“ verwendet.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} wird bereits von „PuppyMacro öffnen“ verwendet.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} wird bereits von der Schleife „{1}“ verwendet.</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} wird bereits von der Schleife „{1}“ in {2} verwendet.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} wird bereits vom Makro „{1}“ verwendet.</value></data>
@@ -988,12 +992,13 @@ Details: {1}</value></data>
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Overlay-Modus beenden ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Beenden und PuppyMacro öffnen</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Overlay-Modus beenden und PuppyMacro öffnen</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Nichts anzuzeigen.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Alles befindet sich auf schwebenden Schaltflächen.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Nichts für diese App.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>Hier erscheinen die Schleifen und Makros, die Sie hinzufügen.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Makros</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Alle stoppen</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Klicken zum Starten oder Stoppen · Rechtsklick zum Aktivieren oder Deaktivieren</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>PuppyMacro öffnen</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Klicken Sie, um eine Schleife oder ein Makro zu starten oder zu stoppen.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Mit einem Rechtsklick aktivieren oder deaktivieren Sie den Eintrag.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>Schwebende PuppyMacro-Schaltfläche</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Schwebende PuppyMacro-Schaltfläche: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>Aufnahme</value></data>

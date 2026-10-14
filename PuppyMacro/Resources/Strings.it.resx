@@ -127,6 +127,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Tasto di scelta rapida Arresta tutto</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Tasto di scelta rapida Modalità overlay</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Tasto di scelta rapida Registra</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Tasto di scelta rapida Apri PuppyMacro</value></data>
 
   <data name="AiKind_Read" xml:space="preserve"><value>Lettura</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>Salvataggio</value></data>
@@ -177,6 +178,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Attiva o disattiva la modalità overlay</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Registra</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Avvia e arresta la registrazione di una macro</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>Apri PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Mostra la finestra principale, anche dalla modalità overlay</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Pannello overlay</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>L'elenco dei tuoi loop e delle tue macro</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Mostra il pannello overlay</value></data>
@@ -866,6 +869,7 @@ Dettagli: {1}</value></data>
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} è già usato da Arresta tutto.</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} è già usato da Modalità overlay.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} è già usato da Registra.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} è già usato da Apri PuppyMacro.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} è già usato dal loop "{1}".</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} è già usato dal loop "{1}" in {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} è già usato dalla macro "{1}".</value></data>
@@ -999,12 +1003,13 @@ Dettagli: {1}</value></data>
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Esci dalla modalità overlay ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Esci e apri PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Esci dalla modalità overlay e apri PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Niente da mostrare.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Tutto è sui pulsanti mobili.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Niente per questa app.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>I loop e le macro che aggiungi compaiono qui.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Macro</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Arresta tutto</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Clic per avviare o arrestare · Clic destro per abilitare o disabilitare</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>Apri PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Fai clic per avviare o arrestare un loop o una macro.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Fai clic con il pulsante destro per abilitare o disabilitare.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>Pulsante mobile di PuppyMacro</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Pulsante mobile di PuppyMacro: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>Registrazione</value></data>

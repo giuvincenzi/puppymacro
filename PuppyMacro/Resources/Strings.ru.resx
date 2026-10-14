@@ -130,6 +130,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Горячая клавиша «Остановить все»</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Горячая клавиша режима наложения</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Горячая клавиша записи</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Горячая клавиша открытия PuppyMacro</value></data>
 
   <data name="AiKind_Read" xml:space="preserve"><value>Чтение</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>Сохранение</value></data>
@@ -180,6 +181,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Включить или выключить режим наложения</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Запись</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Начать и остановить запись макроса</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>Открыть PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Показать главное окно, в том числе из режима наложения</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Панель наложения</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>Список ваших циклов и макросов</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Показывать панель наложения</value></data>
@@ -888,6 +891,7 @@
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} уже используется для «Остановить все».</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} уже используется для режима наложения.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} уже используется для записи.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} уже используется для открытия PuppyMacro.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} уже используется циклом «{1}».</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} уже используется циклом «{1}» в {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} уже используется макросом «{1}».</value></data>
@@ -1022,12 +1026,13 @@
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Выйти из режима наложения ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Выйти и открыть PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Выйти из режима наложения и открыть PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Нечего показать.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Все на плавающих кнопках.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Для этого приложения ничего нет.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>Здесь появятся добавленные вами циклы и макросы.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Макросы</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Остановить все</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Щелчок — запуск или остановка · Щелчок правой кнопкой — включение или отключение</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>Открыть PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Щелкните, чтобы запустить или остановить цикл или макрос.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Щелкните правой кнопкой мыши, чтобы включить или отключить.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>Плавающая кнопка PuppyMacro</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Плавающая кнопка PuppyMacro: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>Запись</value></data>

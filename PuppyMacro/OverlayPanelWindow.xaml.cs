@@ -19,7 +19,8 @@ public partial class OverlayPanelWindow
         SourceInitialized += OnSourceInitialized;
     }
 
-    public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey) => PanelView.SetHotkeyLabels(exitHotkey, stopAllHotkey);
+    public void SetHotkeyLabels(string exitHotkey, string stopAllHotkey, string? openMainHotkey) =>
+        PanelView.SetHotkeyLabels(exitHotkey, stopAllHotkey, openMainHotkey);
 
     public void SetBackgroundOpacity(int percent) => PanelView.SetBackgroundOpacity(percent);
 

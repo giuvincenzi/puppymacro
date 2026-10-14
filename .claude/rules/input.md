@@ -64,7 +64,8 @@ paths:
   keys held by a loop → remaps.
 - Loops and macros with a Specific app (`AppExe`): `RunHotkey` first looks among the items for the app
   in front (`LoopEngine.ForegroundApp`, loops before macros), then among those for all apps; an item for
-  another app is skipped, so its key passes to the app. Global hotkeys work in every app.
+  another app is skipped, so its key passes to the app. Global hotkeys (Overlay mode, Stop all, Open PuppyMacro; Record
+  earlier in the routing) work in every app.
   `HotkeyConflicts`: two items can share a hotkey only when their apps differ (one may be all apps);
   a global hotkey clashes with every item; a remap's source clashes with the hotkeys of the items that
   work where the remap works (`FindForRemap`).
@@ -72,7 +73,8 @@ paths:
   while overlay mode publishes click targets): recording (records, never blocks; clicks on
   PuppyMacro's own windows are not recorded) → a drag of the overlay panel's Move handle (moves pass,
   the left release is blocked) → left or right press on a `PanelTarget` (skipped while
-  `HotkeysSuspended`): left, the Move handle starts the drag, Stop all, Exit and Open act, a loop or macro is
+  `HotkeysSuspended`): left, the Move handle starts the drag, Stop all, Exit and the two Open buttons (in the title and
+  Open PuppyMacro) act, a loop or macro is
   started or stopped only when `Startable` (a disabled or Hold one does nothing); right, a loop or macro
   is enabled or disabled (`OverlayEnableToggleRequested`), on the panel's own buttons the click passes.
   The press and its release are blocked, so the app in front never gets them, unless the target has

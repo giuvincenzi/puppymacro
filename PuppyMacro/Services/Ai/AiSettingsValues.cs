@@ -15,6 +15,7 @@ public sealed class AiSettingsValues
     public HotkeyBinding? StopAllHotkey { get; set; }
     public HotkeyBinding? OverlayModeHotkey { get; set; }
     public HotkeyBinding? RecordHotkey { get; set; }
+    public HotkeyBinding? OpenMainHotkey { get; set; }
     public bool? ShowOverlayPanel { get; set; }
     public bool? ClickItemsInPanel { get; set; }
     public int? OverlayPanelOpacity { get; set; }
@@ -27,6 +28,7 @@ public sealed class AiSettingsValues
         StopAllHotkey = s.StopAllHotkey?.Clone(),
         OverlayModeHotkey = s.OverlayModeHotkey?.Clone(),
         RecordHotkey = s.RecordHotkey?.Clone(),
+        OpenMainHotkey = s.OpenMainHotkey?.Clone(),
         ShowOverlayPanel = s.ShowOverlayPanel,
         ClickItemsInPanel = s.ClickItemsInPanel,
         OverlayPanelOpacity = s.OverlayPanelOpacity,

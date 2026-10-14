@@ -119,6 +119,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>全部停止热键</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>覆盖模式热键</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>录制热键</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>打开 PuppyMacro 的热键</value></data>
   <data name="AiKind_Read" xml:space="preserve"><value>读取</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>保存</value></data>
   <data name="AiKind_Interaction" xml:space="preserve"><value>交互</value></data>
@@ -167,6 +168,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>打开或关闭覆盖模式</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>录制</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>开始和停止录制宏</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>打开 PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>显示主窗口，在覆盖模式下也可以</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>覆盖面板</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>你的循环和宏列表</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>显示覆盖面板</value></data>
@@ -834,6 +837,7 @@
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} 已被“全部停止”使用。</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} 已被“覆盖模式”使用。</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} 已被“录制”使用。</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} 已被“打开 PuppyMacro”使用。</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} 已被循环“{1}”使用。</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} 已被循环“{1}”在 {2} 中使用。</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} 已被宏“{1}”使用。</value></data>
@@ -965,12 +969,13 @@
   <data name="Overlay_ExitTip" xml:space="preserve"><value>退出覆盖模式 ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>退出并打开 PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>退出覆盖模式并打开 PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>没有可显示的内容。</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>所有项目都在悬浮按钮上。</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>没有适用于此应用的项目。</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>添加的循环和宏将显示在这里。</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>宏</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>全部停止</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>单击以启动或停止 · 右键单击以启用或禁用</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>打开 PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>单击以启动或停止循环或宏。</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>右键单击以启用或禁用。</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>PuppyMacro 悬浮按钮</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>PuppyMacro 悬浮按钮：{0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>正在录制</value></data>

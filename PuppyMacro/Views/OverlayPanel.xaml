@@ -106,16 +106,28 @@
                 </Border>
             </Grid>
 
-            <TextBlock x:Name="EmptyText" Margin="2,0,0,6" FontSize="12" Foreground="#C5C5C5"
-                       Text="{x:Static r:Strings.Overlay_NothingToShow}" Visibility="Collapsed" />
+            <!-- What the clicks do, while there are rows and they can be clicked; a line under them -->
+            <Border x:Name="ClickHints" Margin="2,0,2,10" Padding="0,0,0,10" BorderThickness="0,0,0,1" BorderBrush="#1AFFFFFF">
+                <StackPanel>
+                    <TextBlock FontSize="11" Foreground="#9E9E9E" TextWrapping="Wrap" Text="{x:Static r:Strings.Overlay_ClickHint}" />
+                    <TextBlock Margin="0,2,0,0" FontSize="11" Foreground="#9E9E9E" TextWrapping="Wrap" Text="{x:Static r:Strings.Overlay_RightClickHint}" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="EmptyText" Margin="2,0,2,6" FontSize="12" Foreground="#C5C5C5" TextWrapping="Wrap"
+                       Text="{x:Static r:Strings.Overlay_AddToSeeHere}" Visibility="Collapsed" />
 
             <ItemsControl x:Name="LoopList" ItemTemplate="{StaticResource PanelRow}" ItemContainerStyle="{StaticResource PanelRowContainer}" />
 
             <TextBlock x:Name="MacrosHeader" Margin="2,4,0,6" FontSize="11" Foreground="#9E9E9E" Text="{x:Static r:Strings.Overlay_Macros}" Visibility="Collapsed" />
             <ItemsControl x:Name="MacroList" ItemTemplate="{StaticResource PanelRow}" ItemContainerStyle="{StaticResource PanelRowContainer}" />
 
-            <!-- Stop all, with its hotkey: red while something runs and it can be clicked (PanelTarget.StopAllId) -->
-            <Border x:Name="StopAllButton" Margin="0,4,0,0" Height="30" CornerRadius="5" BorderThickness="1"
+            <!-- A line between the items and the panel's own buttons -->
+            <Border Margin="0,4,0,10" Height="1" Background="#1AFFFFFF" />
+
+            <!-- Stop all, with its hotkey, while there is something to stop: red while something runs and it can be
+                 clicked (PanelTarget.StopAllId) -->
+            <Border x:Name="StopAllButton" Margin="0,0,0,6" Height="30" CornerRadius="5" BorderThickness="1"
                     Background="#0FFFFFFF" BorderBrush="#1FFFFFFF" AutomationProperties.Name="{x:Static r:Strings.Overlay_StopAll}">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Rectangle x:Name="StopAllSquare" Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="#9E9E9E" VerticalAlignment="Center" />
@@ -126,9 +138,18 @@
                 </StackPanel>
             </Border>
 
-            <!-- What the clicks do, while the rows can be clicked -->
-            <TextBlock x:Name="ClickHint" Margin="2,8,2,0" FontSize="11" Foreground="#9E9E9E" TextAlignment="Center"
-                       TextWrapping="Wrap" Text="{x:Static r:Strings.Overlay_ClickHint}" />
+            <!-- Open PuppyMacro, with its hotkey: the same as the open button in the title (PanelTarget.OpenMainOverlayId) -->
+            <Border x:Name="OpenMainButton" Height="30" CornerRadius="5" BorderThickness="1"
+                    Background="#0FFFFFFF" BorderBrush="#1FFFFFFF" AutomationProperties.Name="{x:Static r:Strings.Overlay_OpenMain}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Width="11" Height="11" Stretch="Uniform" Stroke="#C5C5C5" StrokeThickness="1.3" VerticalAlignment="Center"
+                          Data="M5,1.5 H2.5 A1,1 0 0 0 1.5,2.5 V9.5 A1,1 0 0 0 2.5,10.5 H9.5 A1,1 0 0 0 10.5,9.5 V7 M7,1.5 H10.5 V5 M10.5,1.5 L5.5,6.5" />
+                    <TextBlock Margin="8,0,8,0" FontSize="12" Foreground="#C5C5C5" Text="{x:Static r:Strings.Overlay_OpenMain}" VerticalAlignment="Center" />
+                    <Border x:Name="OpenMainHotkey" Style="{StaticResource HintKey}" MinWidth="0" VerticalAlignment="Center">
+                        <TextBlock x:Name="OpenMainHotkeyText" FontSize="11" HorizontalAlignment="Center" />
+                    </Border>
+                </StackPanel>
+            </Border>
         </StackPanel>
     </Border>
 </UserControl>

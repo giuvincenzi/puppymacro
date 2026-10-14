@@ -580,6 +580,24 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
+    public async Task The_Open_PuppyMacro_hotkey_is_read_and_changed_like_the_other_global_hotkeys()
+    {
+        _settings.OpenMainHotkey = AppSettings.DefaultOpenMainHotkey();
+
+        Assert.Contains("\"OpenMainHotkey\"", (await Call("get_settings", new { })).Text);
+        Assert.Contains("\"OpenMain\": \"Alt + Shift + A\"", (await Call("get_overview", new { })).Text);
+
+        AiToolResult clash = await Call("update_settings", new { settings = new { OpenMainHotkey = new { Vk = 0x53, Alt = true, Shift = true } } });
+        Assert.True(clash.IsError);
+        Assert.Contains("Open PuppyMacro hotkey: Alt + Shift + S is already used by Stop all.", clash.Text);
+
+        AiToolResult result = await Call("update_settings", new { settings = new { OpenMainHotkey = new { Vk = 0x7A } } });
+        Assert.StartsWith("Settings changed", result.Text);
+        Assert.Contains("Open PuppyMacro hotkey: Alt + Shift + A → F11", Assert.Single(_host.Confirmed).Lines);
+        Assert.Equal(0x7A, Assert.Single(_host.Applied).OpenMainHotkey!.Vk);
+    }
+
+    [Fact]
     public async Task Unknown_settings_are_refused()
     {
         AiToolResult result = await Call("update_settings", new { settings = new { AllowAiAccess = false } });

@@ -14,6 +14,7 @@ internal sealed class EngineSnapshot
     public HotkeyBinding? StopAll { get; init; }
     public HotkeyBinding? OverlayMode { get; init; }
     public HotkeyBinding? Record { get; init; }
+    public HotkeyBinding? OpenMain { get; init; }
     public LoopDefinition[] Loops { get; init; } = Array.Empty<LoopDefinition>();
     public MacroDefinition[] Macros { get; init; } = Array.Empty<MacroDefinition>();
     public RemapDefinition[] Remaps { get; init; } = Array.Empty<RemapDefinition>();
@@ -23,6 +24,7 @@ internal sealed class EngineSnapshot
         StopAll = settings.StopAllHotkey?.Clone(),
         OverlayMode = settings.OverlayModeHotkey?.Clone(),
         Record = settings.RecordHotkey?.Clone(),
+        OpenMain = settings.OpenMainHotkey?.Clone(),
         Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
         Macros = macros.Macros.Select(m => m.Clone()).ToArray(),
         Remaps = settings.Remaps.Where(r => r.Enabled).Select(r => r.Clone()).ToArray(),
@@ -48,7 +50,7 @@ internal readonly record struct PanelTarget(int Left, int Top, int Right, int Bo
     /// <summary>The overlay panel's exit button: leaves overlay mode, as the Overlay mode hotkey.</summary>
     public static readonly Guid ExitOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d02");
 
-    /// <summary>The overlay panel's open button: leaves overlay mode and opens the main window.</summary>
+    /// <summary>The overlay panel's open buttons (in its title and Open PuppyMacro): leave overlay mode and open the main window.</summary>
     public static readonly Guid OpenMainOverlayId = new("5c1f0a3e-0b6e-4d0c-9a37-5f1e7c2b9d04");
 
     /// <summary>The overlay panel's move handle: pressed and dragged, it moves the panel.</summary>
@@ -140,7 +142,10 @@ internal sealed class LoopEngine : IDisposable
     /// <summary>Raised (asynchronously, on the UI thread) when the overlay mode hotkey or the overlay panel's exit button is pressed.</summary>
     public event Action? OverlayModeToggleRequested;
 
-    /// <summary>Raised (asynchronously, on the UI thread) when the overlay panel's open button is pressed.</summary>
+    /// <summary>
+    /// Raised (asynchronously, on the UI thread) when the Open PuppyMacro hotkey or one of the overlay panel's open buttons
+    /// is pressed: the UI leaves overlay mode, if on, and shows the main window.
+    /// </summary>
     public event Action? OverlayExitAndOpenRequested;
 
     /// <summary>
@@ -910,6 +915,13 @@ internal sealed class LoopEngine : IDisposable
         {
             if (run)
                 StopAll();
+            return true;
+        }
+
+        if (Matches(snap.OpenMain, pressed))
+        {
+            if (run)
+                _dispatcher.InvokeAsync(() => OverlayExitAndOpenRequested?.Invoke());
             return true;
         }
 

@@ -501,6 +501,8 @@ public partial class MainWindow : IAiHost
             _settings.OverlayModeHotkey = overlay.Clone();
         if (values.RecordHotkey is { IsSet: true } record)
             _settings.RecordHotkey = record.Clone();
+        if (values.OpenMainHotkey is { IsSet: true } openMain)
+            _settings.OpenMainHotkey = openMain.Clone();
         UpdateHotkeyLabels();
         Save();
     }

@@ -119,6 +119,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>すべて停止のホットキー</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>オーバーレイ モードのホットキー</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>記録のホットキー</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>PuppyMacro を開くホットキー</value></data>
   <data name="AiKind_Read" xml:space="preserve"><value>読み取り</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>保存</value></data>
   <data name="AiKind_Interaction" xml:space="preserve"><value>操作</value></data>
@@ -167,6 +168,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>オーバーレイ モードのオンとオフを切り替えます</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>記録</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>マクロの記録を開始、停止します</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>PuppyMacro を開く</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>オーバーレイ モード中でもメイン ウィンドウを表示します</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>オーバーレイ パネル</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>ループとマクロの一覧</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>オーバーレイ パネルを表示する</value></data>
@@ -834,6 +837,7 @@
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} は既に [すべて停止] で使用されています。</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} は既に [オーバーレイ モード] で使用されています。</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} は既に [記録] で使用されています。</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} は既に [PuppyMacro を開く] で使用されています。</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} は既にループ「{1}」で使用されています。</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} は既に {2} のループ「{1}」で使用されています。</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} は既にマクロ「{1}」で使用されています。</value></data>
@@ -965,12 +969,13 @@
   <data name="Overlay_ExitTip" xml:space="preserve"><value>オーバーレイ モードを終了 ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>終了して PuppyMacro を開く</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>オーバーレイ モードを終了して PuppyMacro を開きます</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>表示するものがありません。</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>すべてフローティング ボタンにあります。</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>このアプリ用の項目はありません。</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>追加したループとマクロがここに表示されます。</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>マクロ</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>すべて停止</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>クリックで開始/停止 · 右クリックで有効/無効</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>PuppyMacro を開く</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>クリックすると、ループまたはマクロを開始または停止します。</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>右クリックすると、有効または無効にします。</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>PuppyMacro フローティング ボタン</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>PuppyMacro フローティング ボタン: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>記録中</value></data>

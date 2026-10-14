@@ -132,6 +132,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Tecla de atalho de Parar tudo</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Tecla de atalho do modo de sobreposição</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Tecla de atalho de Gravar</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Tecla de atalho de Abrir o PuppyMacro</value></data>
 
   <!-- ================= AI activity: kinds and results ================= -->
   <data name="AiKind_Read" xml:space="preserve"><value>Leitura</value></data>
@@ -184,6 +185,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Ativar ou desativar o modo de sobreposição</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Gravar</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Iniciar e parar a gravação de uma macro</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>Abrir o PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Mostrar a janela principal, também no modo de sobreposição</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Painel de sobreposição</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>A lista dos seus loops e macros</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Mostrar o painel de sobreposição</value></data>
@@ -920,6 +923,7 @@ Detalhes: {1}</value></data>
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} já é usado por Parar tudo.</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} já é usado pelo Modo de sobreposição.</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} já é usado por Gravar.</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} já é usado por Abrir o PuppyMacro.</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} já é usado pelo loop "{1}".</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} já é usado pelo loop "{1}" em {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} já é usado pela macro "{1}".</value></data>
@@ -1057,12 +1061,13 @@ Detalhes: {1}</value></data>
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Sair do modo de sobreposição ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Sair e abrir o PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Sair do modo de sobreposição e abrir o PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Nada para mostrar.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Tudo está em botões flutuantes.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Nada para este aplicativo.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>Os loops e as macros que você adicionar aparecem aqui.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Macros</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Parar tudo</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Clique para iniciar ou parar · Clique com o botão direito para habilitar ou desabilitar</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>Abrir o PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Clique para iniciar ou parar um loop ou uma macro.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Clique com o botão direito para habilitar ou desabilitar.</value></data>
   <!-- ===== FloatingButtonWindow.xaml(.cs) ===== -->
   <data name="Floating_WindowTitle" xml:space="preserve"><value>Botão flutuante do PuppyMacro</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>Botão flutuante do PuppyMacro: {0}</value></data>

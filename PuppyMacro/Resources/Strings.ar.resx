@@ -134,6 +134,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>مفتاح التشغيل السريع لإيقاف الكل</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>مفتاح التشغيل السريع لوضع التراكب</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>مفتاح التشغيل السريع للتسجيل</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>مفتاح التشغيل السريع لفتح PuppyMacro</value></data>
   <data name="AiKind_Read" xml:space="preserve"><value>قراءة</value></data>
   <data name="AiKind_Save" xml:space="preserve"><value>حفظ</value></data>
   <data name="AiKind_Interaction" xml:space="preserve"><value>تفاعل</value></data>
@@ -182,6 +183,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>تبديل وضع التراكب</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>تسجيل</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>بدء تسجيل ماكرو وإيقافه</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>فتح PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>إظهار النافذة الرئيسية، حتى من وضع التراكب</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>لوحة التراكب</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>قائمة الحلقات ووحدات الماكرو</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>إظهار لوحة التراكب</value></data>
@@ -944,6 +947,7 @@
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة "إيقاف الكل".</value></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة "وضع التراكب".</value></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة "تسجيل".</value></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة "فتح PuppyMacro".</value></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}".</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}" في {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}".</value></data>
@@ -1080,12 +1084,13 @@
   <data name="Overlay_ExitTip" xml:space="preserve"><value>الخروج من وضع التراكب ({0})</value></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>الخروج وفتح PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>الخروج من وضع التراكب وفتح PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>لا يوجد شيء لعرضه.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>كل شيء موجود على أزرار عائمة.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>لا يوجد شيء لهذا التطبيق.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>تظهر هنا الحلقات ووحدات الماكرو التي تضيفها.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>وحدات الماكرو</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>إيقاف الكل</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>انقر للبدء أو الإيقاف · انقر بزر الماوس الأيمن للتمكين أو التعطيل</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>فتح PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>انقر لبدء حلقة أو ماكرو أو لإيقاف أي منهما.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>انقر بزر الماوس الأيمن للتمكين أو التعطيل.</value></data>
   <data name="Floating_WindowTitle" xml:space="preserve"><value>زر PuppyMacro العائم</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>زر PuppyMacro العائم: {0}</value></data>
   <data name="Recording_Title" xml:space="preserve"><value>التسجيل</value></data>

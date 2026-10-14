@@ -200,8 +200,14 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     dashed) instead of its fill and border, a hollow `#9E9E9E` dot, the name and hotkey in `#8A8A8A` and
     the state "Disabled" in the usual `#C5C5C5`; a floating button with a dashed ring (`#66FFFFFF`, an
     `Ellipse` over the circle) instead of its border, the label and badge in `#8A8A8A` and its background
-    at 65% of its opacity. Under Stop all, while the panel can be clicked, the hint "Click to start or stop ·
-    Right-click to enable or disable".
+    at 65% of its opacity.
+  - The overlay panel's layout (approved: the Design canvas "Overlay panel redesign", A): under the title, while it has rows
+    and can be clicked, the clicks hints, one per line ("Click to start or stop a loop or macro.", "Right-click to enable or
+    disable it.") in `#9E9E9E` with a `#1AFFFFFF` line under them; the rows; a `#1AFFFFFF` line; **Stop all** with its
+    hotkey, shown while there is something to stop (rows or floating buttons); **Open PuppyMacro** under it, styled as Stop
+    all when nothing runs (the open icon, its text, its hotkey; no hotkey cap when it has none), the same as the open
+    button in the title. Without rows: only "Add a loop or macro to see it here." (or "Everything is on floating buttons."),
+    the line and Open PuppyMacro.
   - Specific app (`Views/AppScopeEditor`, in the loop, macro and remap editors): a
     `SwitchSettingsExpander` whose card holds the editable `ComboBox` of running apps, **Pick** (the
     `Eyedropper` icon) and **Browse…**. Pick's overlay (`PickPointWindow` with `pickApp`) outlines the
