@@ -1001,13 +1001,18 @@
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
                             </ui:SettingsExpander.HeaderIcon>
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="{x:Static r:Strings.Main_StopAll}" Description="{x:Static r:Strings.Settings_StopAllDescription}">
-                                    <views:KeyCaptureField x:Name="StopAllHotkeyField" IsHotkey="True" CanClear="False"
+                                <ui:SettingsCard Header="{x:Static r:Strings.Settings_OpenMain}" Description="{x:Static r:Strings.Settings_OpenMainDescription}">
+                                    <views:KeyCaptureField x:Name="OpenMainHotkeyField" IsHotkey="True" CanClear="True"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>
                                 <ui:SettingsCard Header="{x:Static r:Strings.Settings_OverlayMode}" Description="{x:Static r:Strings.Settings_OverlayModeDescription}">
                                     <views:KeyCaptureField x:Name="OverlayModeHotkeyField" IsHotkey="True" CanClear="False"
+                                                           ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
+                                                           Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
+                                </ui:SettingsCard>
+                                <ui:SettingsCard Header="{x:Static r:Strings.Main_StopAll}" Description="{x:Static r:Strings.Settings_StopAllDescription}">
+                                    <views:KeyCaptureField x:Name="StopAllHotkeyField" IsHotkey="True" CanClear="False"
                                                            ItemName="hotkey" ValueChanged="OnGlobalHotkeyChanged"
                                                            Started="OnGlobalHotkeyStarted" Rejected="ShowSettingsError" />
                                 </ui:SettingsCard>

@@ -161,8 +161,10 @@ Rules:
   click-through, no-activate, shown when `ShowOverlayPanel`) and the floating buttons.
   `PlacementWindow` (Position on screen, Position…) always shows the whole overlay as overlay
   mode shows it. Leaving it with its hotkey or the panel's Exit keeps the main window in the tray; the
-  panel's Open (`PanelTarget.OpenMainOverlayId` → `LoopEngine.OverlayExitAndOpenRequested` →
-  `MainWindow.ShowFromTray`), the tray icon and starting PuppyMacro again leave it and open the window.
+  panel's open button in its title and its **Open PuppyMacro** under Stop all (both `PanelTarget.OpenMainOverlayId` →
+  `LoopEngine.OverlayExitAndOpenRequested` → `MainWindow.ShowFromTray`), the Open PuppyMacro hotkey (`AppSettings.OpenMainHotkey`,
+  `EngineSnapshot.OpenMain`, the same event, also outside overlay mode), the tray icon and starting PuppyMacro again leave
+  it and open the window.
   Which loops and macros it shows: `Views/OverlayItems.IsShown` (`ShowInOverlay` on, and
   enabled or `HideInOverlayWhenDisabled` off); disabled ones are shown as disabled and a left click on
   them does nothing. A right click on a row or a floating button enables or disables the item

@@ -199,6 +199,8 @@ public partial class App : Application
         warning ??= macroWarning;
         if (settings.LoadedSchemaVersion < 6 && !macros.FillButtonOpacity(settings.OverlayPanelOpacity))
             warning ??= Strings.App_MacrosNotUpdated;
+        if (SettingsStore.AddOpenMainHotkey(settings, macros))
+            store.TrySave(settings, out _);
 
         // Keep the Run entry pointing at this exe (new versions live in new folders).
         // The development build never touches it: the entry belongs to the installed app.

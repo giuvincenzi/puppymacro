@@ -31,8 +31,65 @@ public class SettingsStoreTests : IDisposable
         Assert.True(settings.StopAllHotkey!.SameAs(new HotkeyBinding { Vk = 0x53, Alt = true, Shift = true }));      // Alt+Shift+S
         Assert.True(settings.OverlayModeHotkey!.SameAs(new HotkeyBinding { Vk = 0x57, Alt = true, Shift = true }));  // Alt+Shift+W
         Assert.Equal(AppSettings.DefaultRecordVk, settings.RecordHotkey!.Vk);
+        Assert.True(settings.OpenMainHotkey!.SameAs(new HotkeyBinding { Vk = 0x41, Alt = true, Shift = true }));    // Alt+Shift+A
         Assert.True(settings.ShowOverlayPanel);
         Assert.Single(settings.Loops);
+    }
+
+    /// <summary>A settings.json of schema 7 with <paramref name="items"/> in it, loaded, then the macros' step at start.</summary>
+    private AppSettings LoadSchema7(string items, MacroDefinition? macro = null)
+    {
+        AppSettings settings = LoadJson($$"""
+            {
+              "SchemaVersion": 7,
+              "StopAllHotkey": { "Vk": 83, "Alt": true, "Shift": true },
+              "OverlayModeHotkey": { "Vk": 87, "Alt": true, "Shift": true },
+              "RecordHotkey": { "Vk": 119 },
+              {{items}}
+            }
+            """, out string? warning);
+        Assert.Null(warning);
+        Assert.Null(settings.OpenMainHotkey);
+        var macros = new MacroLibrary(_folder.File("macros"));
+        if (macro != null)
+            Assert.True(macros.TrySave(macro, out _));
+        macros.Load(settings.MacroOrder, out _);
+        bool changed = SettingsStore.AddOpenMainHotkey(settings, macros);
+        Assert.Equal(settings.OpenMainHotkey != null, changed);
+        return settings;
+    }
+
+    [Fact]
+    public void Schema_8_gives_older_files_Open_PuppyMacro_on_Alt_Shift_A_when_nothing_uses_it()
+    {
+        AppSettings settings = LoadSchema7("\"Loops\": []");
+
+        Assert.True(settings.OpenMainHotkey!.SameAs(AppSettings.DefaultOpenMainHotkey()));
+        Assert.Equal(AppSettings.CurrentSchemaVersion, settings.SchemaVersion);
+    }
+
+    [Fact]
+    public void Schema_8_leaves_Open_PuppyMacro_without_a_hotkey_when_a_loop_macro_or_remap_uses_Alt_Shift_A()
+    {
+        const string altShiftA = "{ \"Vk\": 65, \"Alt\": true, \"Shift\": true }";
+        Assert.Null(LoadSchema7($"\"Loops\": [{{ \"Name\": \"Attack\", \"Hotkey\": {altShiftA} }}]").OpenMainHotkey);
+        Assert.Null(LoadSchema7($"\"Remaps\": [{{ \"Source\": {altShiftA}, \"Target\": {{ \"Vk\": 27 }} }}]").OpenMainHotkey);
+        // A macro for one app only: the global hotkey would still take its key there.
+        Assert.Null(LoadSchema7("\"Loops\": []", new MacroDefinition
+        {
+            Name = "Craft", AppExe = "game.exe", Hotkey = AppSettings.DefaultOpenMainHotkey(),
+        }).OpenMainHotkey);
+    }
+
+    [Fact]
+    public void A_newer_file_without_Open_PuppyMacro_keeps_none()
+    {
+        AppSettings settings = LoadJson($$"""{ "SchemaVersion": {{AppSettings.CurrentSchemaVersion}}, "Loops": [] }""", out _);
+        var macros = new MacroLibrary(_folder.File("macros"));
+        macros.Load(settings.MacroOrder, out _);
+
+        Assert.False(SettingsStore.AddOpenMainHotkey(settings, macros)); // the user cleared it
+        Assert.Null(settings.OpenMainHotkey);
     }
 
     [Fact]

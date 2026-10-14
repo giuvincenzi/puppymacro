@@ -59,7 +59,8 @@
   (`PuppyMacro/bin/Debug/...`) in English (`PUPPYMACRO_LANGUAGE`, `new AppSession(language: "ar")` for another one),
   so every test starts from the sample data and finds controls by their English texts on any PC. `new AppSession(seed => ...)`
   starts it from the data the test writes instead (`Seed`: the app's models, referenced by the
-  project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18).
+  project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18, no Open PuppyMacro: a test that needs it
+  sets one, as `OverlayTests` sets F14).
 - They run on GitHub in the `test` workflow, split over several machines at once (`e2e_group_1`, `e2e_group_2`, …;
   "End-to-end tests in groups" below), checked by the job `e2e_test`: on every pull request (a required check for
   merging into `main`), on every push to `main` and in `publish_release` before every release (it stops when they

@@ -70,7 +70,7 @@ public class MacroLibraryTests : IDisposable
 public class HotkeyConflictsTests : IDisposable
 {
     private readonly TempFolder _folder = new();
-    private readonly AppSettings _settings = AppSettings.CreateDefault(); // Stop all Alt+Shift+S, Overlay mode Alt+Shift+W, Record F8, a loop on F9
+    private readonly AppSettings _settings = AppSettings.CreateDefault(); // Stop all Alt+Shift+S, Overlay mode Alt+Shift+W, Record F8, Open PuppyMacro Alt+Shift+A, a loop on F9
     private readonly MacroLibrary _macros;
     private readonly MacroDefinition _macro = new() { Name = "Craft", Hotkey = new HotkeyBinding { Vk = 0x75, Ctrl = true } };
 
@@ -92,6 +92,11 @@ public class HotkeyConflictsTests : IDisposable
         Assert.Equal("Alt + Shift + S is already used by Stop all.", Find(AppSettings.DefaultStopAllHotkey()));
         Assert.Equal("Alt + Shift + W is already used by Overlay mode.", Find(AppSettings.DefaultOverlayModeHotkey()));
         Assert.Equal("F8 is already used by Record.", Find(HotkeyBinding.FromKey(0x77)));
+        Assert.Equal("Alt + Shift + A is already used by Open PuppyMacro.", Find(AppSettings.DefaultOpenMainHotkey()));
+        Assert.Null(Find(AppSettings.DefaultOpenMainHotkey(), ignoreGlobal: "OpenMain"));
+        // With no Open PuppyMacro hotkey nothing clashes with it.
+        _settings.OpenMainHotkey = null;
+        Assert.Null(Find(AppSettings.DefaultOpenMainHotkey()));
         Assert.Null(Find(AppSettings.DefaultStopAllHotkey(), ignoreGlobal: "StopAll"));
         Assert.Null(Find(AppSettings.DefaultOverlayModeHotkey(), ignoreGlobal: "OverlayMode"));
     }

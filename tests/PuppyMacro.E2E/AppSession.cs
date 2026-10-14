@@ -395,7 +395,7 @@ public sealed class AppSession : IDisposable
 /// <summary>
 /// The data a test starts from, written to the dev data folder before the app starts (the samples
 /// are added only to an empty folder). Global hotkeys are F keys, as tests cannot press modifiers:
-/// Stop all F19, Overlay mode F24, Record F18.
+/// Stop all F19, Overlay mode F24, Record F18, no Open PuppyMacro (a test that needs it sets one, as OverlayTests' F14).
 /// </summary>
 public sealed class Seed
 {

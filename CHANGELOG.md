@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Added
+- **Open PuppyMacro** hotkey (**Settings › Hotkeys**, Alt + Shift + A, first of the global hotkeys): it shows PuppyMacro's
+  window, also from the system tray, and leaves overlay mode when it is on. After the update it gets Alt + Shift + A unless
+  a loop, macro or remap of yours already uses it; then it has none until you choose one. It can be cleared.
+- The overlay panel has **Open PuppyMacro** under **Stop all**, with its hotkey: the same as the open button at its top right.
+
+### Changed
+- The overlay panel's hints are at the top, one per line: "Click to start or stop a loop or macro." and "Right-click to
+  enable or disable it.", with a line under them; another line separates the loops and macros from **Stop all** and
+  **Open PuppyMacro**.
+- An overlay panel with no loop or macro to list says "Add a loop or macro to see it here." and shows only **Open
+  PuppyMacro**: no hints and no **Stop all** (it stays while floating buttons are shown).
+- In **Settings › Hotkeys** the order is Open PuppyMacro, Overlay mode, Stop all, Record.
+
 ## 1.19.0
 
 ### Changed

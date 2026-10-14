@@ -369,7 +369,8 @@ internal sealed class AiTools
             }),
             GlobalHotkeys = new
             {
-                StopAll = Keys(s.StopAllHotkey), OverlayMode = Keys(s.OverlayModeHotkey), Record = Keys(s.RecordHotkey),
+                OpenMain = Keys(s.OpenMainHotkey), OverlayMode = Keys(s.OverlayModeHotkey), StopAll = Keys(s.StopAllHotkey),
+                Record = Keys(s.RecordHotkey),
             },
         };
         return JsonSerializer.Serialize(overview, AnswerOptions);
@@ -723,6 +724,7 @@ internal sealed class AiTools
             StopAllHotkey = wanted.StopAllHotkey != null ? now.StopAllHotkey : null,
             OverlayModeHotkey = wanted.OverlayModeHotkey != null ? now.OverlayModeHotkey : null,
             RecordHotkey = wanted.RecordHotkey != null ? now.RecordHotkey : null,
+            OpenMainHotkey = wanted.OpenMainHotkey != null ? now.OpenMainHotkey : null,
             ShowOverlayPanel = wanted.ShowOverlayPanel != null ? now.ShowOverlayPanel : null,
             ClickItemsInPanel = wanted.ClickItemsInPanel != null ? now.ClickItemsInPanel : null,
             OverlayPanelOpacity = wanted.OverlayPanelOpacity != null ? now.OverlayPanelOpacity : null,
@@ -784,6 +786,7 @@ internal sealed class AiTools
         var newHotkeys = new List<(Phrase Name, HotkeyBinding Value)>();
         foreach (var (name, which, value, current) in new[]
                  {
+                     (Phrase.Of("AiSetting_OpenMainHotkey"), "OpenMain", wanted.OpenMainHotkey, s.OpenMainHotkey),
                      (Phrase.Of("AiSetting_StopAllHotkey"), "StopAll", wanted.StopAllHotkey, s.StopAllHotkey),
                      (Phrase.Of("AiSetting_OverlayModeHotkey"), "OverlayMode", wanted.OverlayModeHotkey, s.OverlayModeHotkey),
                      (Phrase.Of("AiSetting_RecordHotkey"), "Record", wanted.RecordHotkey, s.RecordHotkey),

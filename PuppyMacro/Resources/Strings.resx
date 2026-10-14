@@ -132,6 +132,7 @@
   <data name="AiSetting_StopAllHotkey" xml:space="preserve"><value>Stop all hotkey</value></data>
   <data name="AiSetting_OverlayModeHotkey" xml:space="preserve"><value>Overlay mode hotkey</value></data>
   <data name="AiSetting_RecordHotkey" xml:space="preserve"><value>Record hotkey</value></data>
+  <data name="AiSetting_OpenMainHotkey" xml:space="preserve"><value>Open PuppyMacro hotkey</value></data>
 
   <!-- ================= AI activity: kinds and results ================= -->
   <data name="AiKind_Read" xml:space="preserve"><value>Read</value></data>
@@ -184,6 +185,8 @@
   <data name="Settings_OverlayModeDescription" xml:space="preserve"><value>Toggle overlay mode</value></data>
   <data name="Settings_Record" xml:space="preserve"><value>Record</value></data>
   <data name="Settings_RecordDescription" xml:space="preserve"><value>Start and stop recording a macro</value></data>
+  <data name="Settings_OpenMain" xml:space="preserve"><value>Open PuppyMacro</value></data>
+  <data name="Settings_OpenMainDescription" xml:space="preserve"><value>Show the main window, also from overlay mode</value></data>
   <data name="Settings_OverlayPanel" xml:space="preserve"><value>Overlay panel</value></data>
   <data name="Settings_OverlayPanelDescription" xml:space="preserve"><value>The list of your loops and macros</value></data>
   <data name="Settings_ShowOverlayPanel" xml:space="preserve"><value>Show the overlay panel</value></data>
@@ -922,6 +925,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Hotkey_UsedByStopAll" xml:space="preserve"><value>{0} is already used by Stop all.</value><comment>{0}: the keys ("Ctrl + F9").</comment></data>
   <data name="Hotkey_UsedByOverlayMode" xml:space="preserve"><value>{0} is already used by Overlay mode.</value><comment>{0}: the keys.</comment></data>
   <data name="Hotkey_UsedByRecord" xml:space="preserve"><value>{0} is already used by Record.</value><comment>{0}: the keys.</comment></data>
+  <data name="Hotkey_UsedByOpenMain" xml:space="preserve"><value>{0} is already used by Open PuppyMacro.</value><comment>{0}: the keys.</comment></data>
   <data name="Hotkey_UsedByLoop" xml:space="preserve"><value>{0} is already used by the loop "{1}".</value><comment>{0}: the keys; {1}: the loop's name.</comment></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} is already used by the loop "{1}" in {2}.</value><comment>{0}: the keys; {1}: the loop's name; {2}: an app's .exe name.</comment></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} is already used by the macro "{1}".</value><comment>{0}: the keys; {1}: the macro's name.</comment></data>
@@ -1059,12 +1063,13 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Overlay_ExitTip" xml:space="preserve"><value>Exit overlay mode ({0})</value><comment>{0}: the Overlay mode hotkey, like Alt + Shift + W.</comment></data>
   <data name="Overlay_ExitAndOpen" xml:space="preserve"><value>Exit and open PuppyMacro</value></data>
   <data name="Overlay_ExitAndOpenTip" xml:space="preserve"><value>Exit overlay mode and open PuppyMacro</value></data>
-  <data name="Overlay_NothingToShow" xml:space="preserve"><value>Nothing to show.</value></data>
   <data name="Overlay_AllOnButtons" xml:space="preserve"><value>Everything is on floating buttons.</value></data>
-  <data name="Overlay_NothingForApp" xml:space="preserve"><value>Nothing for this app.</value></data>
+  <data name="Overlay_AddToSeeHere" xml:space="preserve"><value>Add a loop or macro to see it here.</value></data>
   <data name="Overlay_Macros" xml:space="preserve"><value>Macros</value></data>
   <data name="Overlay_StopAll" xml:space="preserve"><value>Stop all</value></data>
-  <data name="Overlay_ClickHint" xml:space="preserve"><value>Click to start or stop · Right-click to enable or disable</value></data>
+  <data name="Overlay_OpenMain" xml:space="preserve"><value>Open PuppyMacro</value></data>
+  <data name="Overlay_ClickHint" xml:space="preserve"><value>Click to start or stop a loop or macro.</value></data>
+  <data name="Overlay_RightClickHint" xml:space="preserve"><value>Right-click to enable or disable it.</value></data>
   <!-- ===== FloatingButtonWindow.xaml(.cs) ===== -->
   <data name="Floating_WindowTitle" xml:space="preserve"><value>PuppyMacro floating button</value></data>
   <data name="Floating_WindowTitleNamed" xml:space="preserve"><value>PuppyMacro floating button: {0}</value><comment>{0}: the loop's or macro's name.</comment></data>

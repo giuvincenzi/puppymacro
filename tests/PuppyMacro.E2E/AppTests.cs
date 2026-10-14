@@ -368,6 +368,26 @@ public class AppTests
     /// Alt+Shift+W, cannot be pressed by a test: PuppyMacro reads Ctrl, Alt, Shift and Win only from
     /// real key presses, never from simulated ones.
     /// </summary>
+    [Fact]
+    public void Settings_Hotkeys_starts_with_Open_PuppyMacro_whose_hotkey_can_be_changed_and_is_saved()
+    {
+        using var app = new AppSession();
+        app.GoTo("Settings");
+        app.Expand("HotkeysGroup");
+
+        // Open PuppyMacro, Overlay mode, Stop all, Record: one under the other.
+        int[] tops = new[] { "OpenMainHotkeyField", "OverlayModeHotkeyField", "StopAllHotkeyField", "RecordHotkeyField" }
+            .Select(id => app.FindById(app.MainWindow, id).BoundingRectangle.Top).ToArray();
+        Assert.Equal(tops.OrderBy(t => t), tops);
+
+        // Alt + Shift + A at first (the samples' settings are a new install's); changed to F24, it is saved.
+        app.Find(app.FindById(app.MainWindow, "OpenMainHotkeyField"), "Change hotkey").AsButton().Invoke();
+        app.Find(app.MainWindow, "Press the hotkey (Esc cancels)");
+        PressF24();
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Replace(" ", "").Replace("\r", "").Replace("\n", "")
+            .Contains("\"OpenMainHotkey\":{\"Vk\":135,"), AppSession.Timeout).Success, "the Open PuppyMacro hotkey is not F24");
+    }
+
     private static void SetOverlayModeHotkeyToF24(AppSession app)
     {
         app.GoTo("Settings");

@@ -503,7 +503,7 @@ public sealed class LoopDefinition
 /// <summary>Everything persisted in settings.json.</summary>
 public sealed class AppSettings
 {
-    public const int CurrentSchemaVersion = 7;
+    public const int CurrentSchemaVersion = 8;
     public const int DefaultRecordVk = 0x77;    // F8
 
     /// <summary>Stop all for new installs: Alt+Shift+S. Existing files keep their hotkey.</summary>
@@ -511,6 +511,12 @@ public sealed class AppSettings
 
     /// <summary>Overlay mode for new installs: Alt+Shift+W. Existing files keep their hotkey.</summary>
     public static HotkeyBinding DefaultOverlayModeHotkey() => new() { Vk = 0x57, Alt = true, Shift = true };
+
+    /// <summary>
+    /// Open PuppyMacro: Alt+Shift+A, for new installs and, when no loop, macro or remap uses it, for files from before
+    /// schema 8 (<c>SettingsStore.AddOpenMainHotkey</c>).
+    /// </summary>
+    public static HotkeyBinding DefaultOpenMainHotkey() => new() { Vk = 0x41, Alt = true, Shift = true };
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
 
@@ -527,6 +533,9 @@ public sealed class AppSettings
     public HotkeyBinding? StopAllHotkey { get; set; }
     public HotkeyBinding? OverlayModeHotkey { get; set; }
     public HotkeyBinding? RecordHotkey { get; set; }
+
+    /// <summary>Opens the main window, also leaving overlay mode, as the overlay panel's Open PuppyMacro. Null: none.</summary>
+    public HotkeyBinding? OpenMainHotkey { get; set; }
 
     /// <summary>Order of the macros (files in the macros folder).</summary>
     public List<Guid> MacroOrder { get; set; } = new();
@@ -646,6 +655,7 @@ public sealed class AppSettings
             StopAllHotkey = DefaultStopAllHotkey(),
             OverlayModeHotkey = DefaultOverlayModeHotkey(),
             RecordHotkey = HotkeyBinding.FromKey(DefaultRecordVk),
+            OpenMainHotkey = DefaultOpenMainHotkey(),
         };
         settings.Loops.Add(new LoopDefinition
         {
