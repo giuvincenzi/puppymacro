@@ -628,6 +628,8 @@
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>アプリのウィンドウをクリックします</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>参照…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>動作させるアプリを選ぶか、[特定のアプリ] をオフにしてください。</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} 動作させるアプリを選ぶか、ホットキーを変更してください。</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} 動作させるアプリを選ぶか、キーを変更してください。</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>動作させるアプリを選択</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>{0} が前面にあるときだけ動作します</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>実行中のアプリを選ぶか、そのウィンドウを選択するか、.exe を参照してください。そのアプリが前面にあるときだけ動作します。</value></data>

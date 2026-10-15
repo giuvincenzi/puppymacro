@@ -671,6 +671,8 @@
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Щелкните окно приложения</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Обзор…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Выберите приложение, в котором это работает, или отключите «Определенное приложение».</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Выберите приложение, в котором это работает, или измените горячую клавишу.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Выберите приложение, в котором это работает, или измените клавишу.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Выберите приложение, в котором это работает</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Работает, только когда {0} на переднем плане</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Выберите запущенное приложение, укажите его окно или найдите его .exe-файл. Работает, только когда это приложение на переднем плане.</value></data>

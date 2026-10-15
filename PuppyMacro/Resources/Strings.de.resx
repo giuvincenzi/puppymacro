@@ -645,6 +645,8 @@ Details: {1}</value></data>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Klicken Sie auf ein Fenster der App</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Durchsuchen…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Wählen Sie die App aus, in der es funktioniert, oder deaktivieren Sie „Bestimmte App“.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Wählen Sie die App aus, in der es funktioniert, oder ändern Sie den Hotkey.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Wählen Sie die App aus, in der es funktioniert, oder ändern Sie die Taste.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>App auswählen, in der es funktioniert</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Funktioniert nur, solange {0} im Vordergrund ist</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Wählen Sie eine laufende App aus, wählen Sie ihr Fenster aus, oder suchen Sie ihre .exe-Datei. Es funktioniert nur, solange diese App im Vordergrund ist.</value></data>

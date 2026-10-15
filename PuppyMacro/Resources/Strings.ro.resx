@@ -671,6 +671,8 @@ Detalii: {1}</value></data>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Faceți clic pe o fereastră a aplicației</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Răsfoire…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Alegeți aplicația în care funcționează sau dezactivați Aplicație specifică.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Alegeți aplicația în care funcționează sau schimbați tasta rapidă.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Alegeți aplicația în care funcționează sau schimbați tasta.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Alegeți aplicația în care funcționează</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Funcționează doar cât timp {0} este în prim-plan</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Alegeți o aplicație în execuție, alegeți fereastra acesteia sau răsfoiți după fișierul .exe. Funcționează doar cât timp aplicația este în prim-plan.</value></data>

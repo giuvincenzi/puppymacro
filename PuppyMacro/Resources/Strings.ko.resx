@@ -628,6 +628,8 @@
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>앱의 창을 클릭하세요</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>찾아보기…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>작동할 앱을 선택하거나 특정 앱을 끄세요.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} 작동할 앱을 선택하거나 바로 가기 키를 변경하세요.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} 작동할 앱을 선택하거나 키를 변경하세요.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>작동할 앱 선택</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>{0}이(가) 앞에 있을 때만 작동</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>실행 중인 앱을 선택하거나, 앱의 창을 고르거나, .exe 파일을 찾아보세요. 해당 앱이 앞에 있을 때만 작동합니다.</value></data>

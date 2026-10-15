@@ -697,6 +697,8 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Click a window of the app</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Browse…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Choose the app it works in, or turn off Specific app.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Choose the app it works in, or change the hotkey.</value><comment>{0}: one of the "is already used by" sentences.</comment></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Choose the app it works in, or change the key.</value><comment>{0}: a sentence saying that a hotkey or another remap already takes these keys.</comment></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Choose the app it works in</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Works only while {0} is in front</value><comment>{0}: the app's .exe name.</comment></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Choose a running app, pick its window, or browse for its .exe. It works only while that app is in front.</value><comment>For remaps.</comment></data>

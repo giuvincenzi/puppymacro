@@ -654,6 +654,8 @@ Detajet: {1}</value></data>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Klikoni një dritare të aplikacionit</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Shfleto…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Zgjidhni aplikacionin ku funksionon, ose çaktivizoni Aplikacion specifik.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Zgjidhni aplikacionin ku funksionon, ose ndryshoni tastin e shpejtë.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Zgjidhni aplikacionin ku funksionon, ose ndryshoni tastin.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Zgjidhni aplikacionin ku funksionon</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Funksionon vetëm kur {0} është përpara</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Zgjidhni një aplikacion në ekzekutim, zgjidhni dritaren e tij ose shfletoni për skedarin e tij .exe. Funksionon vetëm kur ai aplikacion është përpara.</value></data>
