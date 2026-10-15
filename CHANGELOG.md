@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.21.0
+
 ### Changed
 - In the loop, macro and remap editors, with **Specific app** on and no app chosen, the error now also says which item
   already uses the hotkey (or the remap's keys) in all apps, since turning off **Specific app** would not help then.
