@@ -645,6 +645,8 @@ Détails : {1}</value></data>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Cliquez sur une fenêtre de l'application</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Parcourir…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Choisissez l'application dans laquelle cela fonctionne, ou désactivez Application spécifique.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Choisissez l'application dans laquelle cela fonctionne, ou changez de raccourci.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Choisissez l'application dans laquelle cela fonctionne, ou changez de touche.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Choisissez l'application dans laquelle cela fonctionne</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Fonctionne uniquement quand {0} est au premier plan</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Choisissez une application en cours d'exécution, sélectionnez sa fenêtre ou recherchez son fichier .exe. Cela fonctionne uniquement quand cette application est au premier plan.</value></data>

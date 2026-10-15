@@ -646,6 +646,8 @@ Detalles: {1}</value></data>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Haz clic en una ventana de la aplicación</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Examinar…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Elige la aplicación en la que funciona o desactiva Aplicación específica.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Elige la aplicación en la que funciona o cambia la tecla de acceso rápido.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Elige la aplicación en la que funciona o cambia la tecla.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Elige la aplicación en la que funciona</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Solo funciona mientras {0} está en primer plano</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Elige una aplicación en ejecución, selecciona su ventana o busca su .exe. Solo funciona mientras esa aplicación está en primer plano.</value></data>

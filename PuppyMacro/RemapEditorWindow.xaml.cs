@@ -144,7 +144,12 @@ public partial class RemapEditorWindow
             return Strings.RemapEditor_SameKeysError;
 
         if (AppScopeCard.ValidationError is string appError)
-            return appError;
+        {
+            // Turning off Specific app would not help when the keys are taken for all apps: say by what.
+            return SourceClash(source, null) is string clash
+                ? string.Format(CultureInfo.CurrentCulture, Strings.AppScope_NoAppKeyUsed, clash)
+                : appError;
+        }
         string? app = AppScopeCard.AppExe;
         if (KeyNames.IsPrimaryMouse(source.Vk) && !source.HasModifiers && app == null)
             return Strings.RemapEditor_PrimaryMouseError;

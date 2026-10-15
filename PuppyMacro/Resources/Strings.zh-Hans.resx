@@ -628,6 +628,8 @@
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>单击该应用的一个窗口</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>浏览…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>请选择它生效的应用，或关闭“指定应用”。</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0}请选择它生效的应用，或更改热键。</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0}请选择它生效的应用，或更改按键。</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>选择它生效的应用</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>仅在 {0} 位于前台时生效</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>选择一个正在运行的应用、选取其窗口，或浏览找到其 .exe 文件。仅在该应用位于前台时生效。</value></data>

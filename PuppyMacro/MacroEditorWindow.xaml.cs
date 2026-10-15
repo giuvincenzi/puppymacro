@@ -1081,7 +1081,7 @@ public partial class MacroEditorWindow
         if (_list.Actions.Count == 0)
             return Strings.MacroEditor_NoActionsError;
         if (AppScopeCard.ValidationError is string appError)
-            return appError;
+            return NoAppError(appError);
         if (_hotkey == null || !_hotkey.IsSet)
             return IsHold ? Strings.Editor_HoldNeedsHotkey : null;
         if (HotkeyRules.Problem(_hotkey, hold: IsHold) is string problem)
@@ -1139,6 +1139,15 @@ public partial class MacroEditorWindow
 
     private string? HotkeyConflict(HotkeyBinding binding, string? appExe) =>
         HotkeyConflicts.Find(binding, _settings, _macros, _editingId, appExe: appExe);
+
+    /// <summary>
+    /// Specific app is on with no app chosen: when the hotkey is taken for all apps, turning off Specific app would not
+    /// help, so the error names what uses it.
+    /// </summary>
+    private string NoAppError(string appError) =>
+        _hotkey is { IsSet: true } && HotkeyConflict(_hotkey, null) is string conflict
+            ? string.Format(CultureInfo.CurrentCulture, Strings.AppScope_NoAppHotkeyUsed, conflict)
+            : appError;
 
     private void OnAppScopeChanged(object? sender, EventArgs e) => Validate();
 

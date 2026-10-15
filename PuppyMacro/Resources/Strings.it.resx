@@ -654,6 +654,8 @@ Dettagli: {1}</value></data>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Fai clic su una finestra dell'app</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Sfoglia…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Scegli l'app in cui funziona, oppure disattiva App specifica.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Scegli l'app in cui funziona oppure cambia il tasto di scelta rapida.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Scegli l'app in cui funziona oppure cambia il tasto.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Scegli l'app in cui funziona</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Funziona solo mentre {0} è in primo piano</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Scegli un'app in esecuzione, seleziona la sua finestra o cerca il suo .exe. Funziona solo mentre quell'app è in primo piano.</value></data>

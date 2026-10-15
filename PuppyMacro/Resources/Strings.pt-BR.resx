@@ -695,6 +695,8 @@ Detalhes: {1}</value></data>
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>Clique em uma janela do aplicativo</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>Procurar…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>Escolha o aplicativo em que funciona ou desative Aplicativo específico.</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} Escolha o aplicativo em que funciona ou mude a tecla de atalho.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} Escolha o aplicativo em que funciona ou mude a tecla.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>Escolha o aplicativo em que funciona</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>Funciona somente enquanto {0} estiver em primeiro plano</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>Escolha um aplicativo em execução, selecione a janela dele ou procure o .exe. Funciona somente enquanto esse aplicativo estiver em primeiro plano.</value></data>

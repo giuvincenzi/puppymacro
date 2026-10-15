@@ -713,6 +713,8 @@
   <data name="AppScope_PickTooltip" xml:space="preserve"><value>انقر على نافذة من نوافذ التطبيق</value></data>
   <data name="AppScope_Browse" xml:space="preserve"><value>استعراض…</value></data>
   <data name="AppScope_NoAppError" xml:space="preserve"><value>اختر التطبيق الذي يعمل فيه، أو أوقف تشغيل "تطبيق محدد".</value></data>
+  <data name="AppScope_NoAppHotkeyUsed" xml:space="preserve"><value>{0} اختر التطبيق الذي يعمل فيه، أو غيّر مفتاح التشغيل السريع.</value></data>
+  <data name="AppScope_NoAppKeyUsed" xml:space="preserve"><value>{0} اختر التطبيق الذي يعمل فيه، أو غيّر المفتاح.</value></data>
   <data name="AppScope_ChooseApp" xml:space="preserve"><value>اختر التطبيق الذي يعمل فيه</value></data>
   <data name="AppScope_OnlyApp" xml:space="preserve"><value>يعمل فقط عندما يكون {0} في المقدمة</value></data>
   <data name="AppScope_Help" xml:space="preserve"><value>اختر تطبيقًا قيد التشغيل، أو اختر نافذته، أو استعرض للوصول إلى ملف .exe الخاص به. يعمل فقط عندما يكون هذا التطبيق في المقدمة.</value></data>
