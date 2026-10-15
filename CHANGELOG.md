@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.22.0
+
 ### Changed
 - Loops, macros and remaps follow the same rule for their keys: two can share them only when they work in different apps,
   or one in an app and the other in all apps, and the one for the app in front wins, whatever its kind. A remap for an
