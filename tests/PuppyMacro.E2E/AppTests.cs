@@ -662,20 +662,21 @@ public class AppTests
     [Fact]
     public void Specific_app_without_an_app_names_what_uses_the_hotkey_in_all_apps()
     {
-        LoopDefinition here = Playback.Loop("E2E app loop", Vk.F24, Playback.Every(Vk.F24, 1, IntervalUnit.Seconds));
+        // F22: the seeded data gives F24 to Overlay mode.
+        LoopDefinition here = Playback.Loop("E2E app loop", Vk.F22, Playback.Every(Vk.F24, 1, IntervalUnit.Seconds));
         here.AppExe = "e2e-app.exe";
         using var app = new AppSession(seed => seed.Settings.Loops.AddRange(new[]
         {
-            Playback.Loop("E2E all apps loop", Vk.F24, Playback.Every(Vk.F24, 1, IntervalUnit.Seconds)),
+            Playback.Loop("E2E all apps loop", Vk.F22, Playback.Every(Vk.F24, 1, IntervalUnit.Seconds)),
             here,
         }));
         app.GoTo("Loops");
         app.EditItem("E2E app loop");
         Window editor = app.Dialog("Edit loop");
 
-        // Without an app, turning off Specific app would not help: the error names the loop that has F24 for all apps.
+        // Without an app, turning off Specific app would not help: the error names the loop that has F22 for all apps.
         app.FindById(editor, "AppBox").AsComboBox().EditableText = "";
-        app.Find(editor, "F24 is already used by the loop \"E2E all apps loop\". Choose the app it works in, or change the hotkey.");
+        app.Find(editor, "F22 is already used by the loop \"E2E all apps loop\". Choose the app it works in, or change the hotkey.");
         Assert.False(app.FindById(editor, "SaveButton").IsEnabled);
 
         app.FindById(editor, "AppBox").AsComboBox().EditableText = "e2e-app";
