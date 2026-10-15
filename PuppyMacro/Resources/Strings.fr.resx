@@ -866,6 +866,8 @@ Détails : {1}</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} est déjà utilisé par la boucle « {1} » dans {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} est déjà utilisé par la macro « {1} ».</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} est déjà utilisé par la macro « {1} » dans {2}.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} est déjà utilisé par le remappage « {1} ».</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} est déjà utilisé par le remappage « {1} » dans {2}.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Les raccourcis sont prioritaires sur les remappages.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} est déjà remappé pour toutes les applications.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} est déjà remappé pour {1}.</value></data>

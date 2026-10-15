@@ -866,6 +866,8 @@ Details: {1}</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} wird bereits von der Schleife „{1}“ in {2} verwendet.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} wird bereits vom Makro „{1}“ verwendet.</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} wird bereits vom Makro „{1}“ in {2} verwendet.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} wird bereits von der Neuzuordnung „{1}“ verwendet.</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} wird bereits von der Neuzuordnung „{1}“ in {2} verwendet.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Hotkeys haben Vorrang vor Neuzuordnungen.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} ist bereits für alle Apps neu zugeordnet.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} ist bereits für {1} neu zugeordnet.</value></data>

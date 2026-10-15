@@ -954,6 +954,8 @@
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الحلقة "{1}" في {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}".</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة الماكرو "{1}" في {2}.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة إعادة التعيين "{1}".</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} مستخدم بالفعل بواسطة إعادة التعيين "{1}" في {2}.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} لمفاتيح التشغيل السريع الأولوية على عمليات إعادة التعيين.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لكل التطبيقات.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>تمت بالفعل إعادة تعيين {0} لـ {1}.</value></data>

@@ -844,6 +844,8 @@
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} は既に {2} のループ「{1}」で使用されています。</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} は既にマクロ「{1}」で使用されています。</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} は既に {2} のマクロ「{1}」で使用されています。</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} は既にリマップ「{1}」で使用されています。</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} は既に {2} のリマップ「{1}」で使用されています。</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} ホットキーはリマップより優先されます。</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} は既にすべてのアプリでリマップされています。</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} は既に {1} でリマップされています。</value></data>

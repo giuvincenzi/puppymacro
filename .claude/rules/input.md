@@ -61,15 +61,18 @@ paths:
 - Routing order in `LoopEngine.OnKey`: modifiers (`OnModifier`) → AI ready keys → key capture → record hotkey/recording →
   key-up handling (swallowed ups, remap ups, Hold release, keys held by a loop) → auto-repeat →
   global hotkeys, loop and macro hotkeys (`RunHotkey`, skipped while `HotkeysSuspended`) →
-  keys held by a loop → remaps.
+  keys held by a loop → remaps. When a remap for the app in front has the key (`FindRemap`, looked up first), `RunHotkey`
+  skips the loops and macros for all apps: the one for the app wins, of any kind. For the same apps hotkeys still come
+  before remaps (only data from before 1.22 can have both).
 - Loops and macros with a Specific app (`AppExe`): `RunHotkey` first looks among the items for the app
   in front (`LoopEngine.ForegroundApp`, loops before macros), then among those for all apps; an item for
   another app is skipped, so its key passes to the app. Global hotkeys (Overlay mode, Stop all, Open PuppyMacro; Record
   earlier in the routing) work in every app.
-  `HotkeyConflicts`: two items can share a hotkey only when their apps differ (one may be all apps);
-  a global hotkey clashes with every item; a remap's source clashes with the global hotkeys and with the
-  hotkeys of the items for all apps or for the remap's own app (`FindForRemap`, `SharesApps`): a remap for all
-  apps can share its key with an item for one app, which wins only while that app is in front.
+  `HotkeyConflicts`: **one rule for loops, macros and remaps**: two of them can share keys only when their apps differ
+  (one may be all apps: the one for the app in front wins there, whatever its kind); two for all apps or for the same app
+  clash, also with one of them disabled. A global hotkey clashes with every loop, macro and remap. `Find` (a loop's, a
+  macro's or a global hotkey) checks the global hotkeys, loops, macros and remaps; `FindForRemap` (a remap's source) the
+  global hotkeys, loops and macros, and `AlreadyRemapped` the other remaps.
 - Mouse details (`InputHook.MouseDetail` -> `LoopEngine.OnMouseDetail`, set only while recording or
   while overlay mode publishes click targets): recording (records, never blocks; clicks on
   PuppyMacro's own windows are not recorded) → a drag of the overlay panel's Move handle (moves pass,

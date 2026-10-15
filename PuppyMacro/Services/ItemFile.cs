@@ -215,7 +215,8 @@ internal static class ItemFile
             string? conflict = HotkeyConflicts.Find(hotkey, settings, macros, appExe: app)
                 ?? _hotkeys.Where(h => hotkey.Overlaps(h.Keys) && AppScope.Same(h.App, app))
                     .Select(h => string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_HotkeyUsedInFile_{h.Kind}"),
-                        KeyNames.Format(hotkey), h.Name)).FirstOrDefault();
+                        KeyNames.Format(hotkey), h.Name)).FirstOrDefault()
+                ?? RemappedInFile(hotkey, app);
             if (conflict == null)
             {
                 if (chosen)
@@ -233,20 +234,17 @@ internal static class ItemFile
 
         /// <summary>
         /// A remap's hotkey (its source), or null when the remap editor would refuse it (<see cref="HotkeyConflicts.RemapClash"/>:
-        /// a hotkey takes it first, or another remap has it), also against the file's earlier items.
+        /// a hotkey for the same apps has it, or another remap), also against the file's earlier items.
         /// </summary>
         public HotkeyBinding? RemapHotkey(HotkeyBinding source, string? app, List<string> notes, bool chosen)
         {
             string? conflict = HotkeyConflicts.FindForRemap(source, app, settings, macros)
-                ?? _hotkeys.Where(h => source.Overlaps(h.Keys) && HotkeyConflicts.SharesApps(h.App, app))
+                ?? _hotkeys.Where(h => source.Overlaps(h.Keys) && AppScope.Same(h.App, app))
                     .Select(h => string.Format(CultureInfo.CurrentCulture, Loc.Text($"ItemFile_HotkeyUsedInFile_{h.Kind}"),
                         KeyNames.Format(source), h.Name))
                     .FirstOrDefault()
                 ?? HotkeyConflicts.AlreadyRemapped(source, app, settings, Guid.Empty)
-                ?? (_remaps.Any(r => source.Overlaps(r.Keys) && AppScope.Same(r.App, app))
-                    ? string.Format(CultureInfo.CurrentCulture, app == null ? Strings.ItemFile_RemappedInFile : Strings.ItemFile_RemappedInFileForApp,
-                        KeyNames.Format(source), app)
-                    : null);
+                ?? RemappedInFile(source, app);
             if (conflict == null)
             {
                 if (chosen)
@@ -256,6 +254,13 @@ internal static class ItemFile
             notes.Add(string.Format(CultureInfo.CurrentCulture, Strings.ItemFile_NoHotkey, conflict.TrimEnd('.', '\u3002', '\u061F')));
             return null;
         }
+
+        /// <summary>A remap chosen earlier in the file with these keys for the same apps, as a sentence, or null.</summary>
+        private string? RemappedInFile(HotkeyBinding keys, string? app) =>
+            _remaps.Any(r => keys.Overlaps(r.Keys) && AppScope.Same(r.App, app))
+                ? string.Format(CultureInfo.CurrentCulture, app == null ? Strings.ItemFile_RemappedInFile : Strings.ItemFile_RemappedInFileForApp,
+                    KeyNames.Format(keys), app)
+                : null;
     }
 
     public static string KindName(object item) => item switch

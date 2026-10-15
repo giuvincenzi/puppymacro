@@ -844,6 +844,8 @@
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} 已被循环“{1}”在 {2} 中使用。</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} 已被宏“{1}”使用。</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} 已被宏“{1}”在 {2} 中使用。</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} 已被重映射“{1}”使用。</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} 已被重映射“{1}”在 {2} 中使用。</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0}热键优先于重映射。</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} 已在所有应用中重映射。</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} 已在 {1} 中重映射。</value></data>

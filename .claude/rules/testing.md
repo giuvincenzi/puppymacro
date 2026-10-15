@@ -18,7 +18,7 @@
   the defaults, a newer version's view), a copy's name (`ItemNamesTests`: "Name (2)", a numbered name counts on), macro groups
   and the editor's operations
   (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
-  the options shared by loop and macro actions (`ActionOptionsTests`: combinations, Hold for, Times, double click, fixed point, older files, Code view checks), `HotkeyConflicts` (also per app, for remap sources and for modifier sides), `HotkeyRules`, which items the overlay shows
+  the options shared by loop and macro actions (`ActionOptionsTests`: combinations, Hold for, Times, double click, fixed point, older files, Code view checks), `HotkeyConflicts` (also per app, for remap sources, for loop and macro hotkeys against remaps and for modifier sides), `HotkeyRules`, which items the overlay shows
   (`OverlayItems`, `FloatingButtons`), `ModifierTracker`, `KeyNames`, `HotkeyBinding` (`Matches`, `Overlaps`, sides), what the key
   field shows and its side items (`KeyCaptureField.DisplayParts`, `SideChoices`, `WithSide`), loop intervals, `FloatingButton` (labels,
   sanitizing, opacity, old files), the Code views' checks and schemas (`MacroJson`, `LoopJson`,

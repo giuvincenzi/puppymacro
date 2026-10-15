@@ -127,4 +127,22 @@ public class RemapTests
         Assert.Empty(target.Downs(Vk.F13));
         Assert.Empty(target.Downs(Vk.F20));
     }
+
+    [Fact]
+    public void A_remap_for_the_app_in_front_wins_over_a_loop_for_all_apps()
+    {
+        string thisApp = Path.GetFileName(Environment.ProcessPath)!; // the target window's process
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.Remaps.Add(Remap(Vk.F20, Key(Vk.F21), appExe: thisApp));
+            seed.Settings.Loops.Add(Loop("E2E all apps loop", Vk.F20, Every(Vk.F15, 300)));
+        });
+        using var target = new TargetWindow();
+
+        target.Tap(Vk.F20);
+        target.WaitFor(t => t.Ups(Vk.F21).Count == 1, 5, $"the remap for {thisApp} did not win over the loop for all apps");
+        TargetWindow.Quiet(1);
+        Assert.Empty(target.Downs(Vk.F15)); // the loop did not start
+        Assert.Empty(target.Downs(Vk.F20));
+    }
 }

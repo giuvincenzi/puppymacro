@@ -930,6 +930,8 @@ Detalhes: {1}</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} já é usado pelo loop "{1}" em {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} já é usado pela macro "{1}".</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} já é usado pela macro "{1}" em {2}.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} já é usado pelo remapeamento "{1}".</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} já é usado pelo remapeamento "{1}" em {2}.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} As teclas de atalho têm prioridade sobre os remapeamentos.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} já está remapeado para todos os aplicativos.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} já está remapeado para {1}.</value></data>

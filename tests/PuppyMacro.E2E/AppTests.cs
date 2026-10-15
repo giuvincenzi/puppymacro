@@ -686,6 +686,36 @@ public class AppTests
     }
 
     [Fact]
+    public void A_loop_cannot_take_the_keys_of_a_remap_for_the_same_apps()
+    {
+        LoopDefinition here = Playback.Loop("E2E app loop", Vk.F22, Playback.Every(Vk.F24, 1, IntervalUnit.Seconds));
+        here.AppExe = "e2e-app.exe";
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.Remaps.Add(new RemapDefinition
+            {
+                Source = HotkeyBinding.FromKey(Vk.F22), Target = HotkeyBinding.FromKey(Vk.F23), Note = "E2E all apps remap",
+            });
+            seed.Settings.Loops.Add(here);
+        });
+        app.GoTo("Loops");
+        app.EditItem("E2E app loop");
+        Window editor = app.Dialog("Edit loop");
+
+        // For one app it shares the key with the remap for all apps; without an app, the error names the remap.
+        Assert.True(app.FindById(editor, "SaveButton").IsEnabled);
+        app.FindById(editor, "AppBox").AsComboBox().EditableText = "";
+        app.Find(editor, "F22 is already used by the remap \"E2E all apps remap\". Choose the app it works in, or change the hotkey.");
+        Assert.False(app.FindById(editor, "SaveButton").IsEnabled);
+
+        // For all apps it cannot be saved: the remap would never work.
+        app.FindById(editor, "AppSwitch").AsToggleButton().Toggle();
+        app.Find(editor, "F22 is already used by the remap \"E2E all apps remap\".");
+        Assert.False(app.FindById(editor, "SaveButton").IsEnabled);
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+    }
+
+    [Fact]
     public void The_key_field_menu_sets_the_side_of_a_modifier()
     {
         using var app = new AppSession();

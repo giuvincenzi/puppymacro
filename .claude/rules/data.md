@@ -68,8 +68,9 @@ paths:
   saves them anywhere). JSON: `{"Format": 1, "App": "1.17.0", "Items": [{"Kind": "Loop" | "Macro" | "Remap", "Item": {...}}]}`,
   each `Item` exactly the Code view's JSON of that item (`CodeJson.Options`, with its Id). Import reads each item with the
   Code views' checks (`LoopJson`, `MacroJson`, `RemapJson`) and **only adds**: a new Id, `Enabled` false, a name already
-  used by that kind gets " (2)", " (3)"…, a hotkey already used (`HotkeyConflicts.Find`, also by an item chosen earlier in
-  the file) is left out and a Hold item becomes Toggle (Hold needs a hotkey), and so is a remap's hotkey (`Source`) when it
+  used by that kind gets " (2)", " (3)"…, a hotkey already used (`HotkeyConflicts.Find`, the user's remaps too, also by an
+  item or a remap chosen earlier in the file, for the same apps) is left out and a Hold item becomes Toggle (Hold needs a
+  hotkey), and so is a remap's hotkey (`Source`) when it
   clashes (`HotkeyConflicts.FindForRemap` and `AlreadyRemapped`, the remap editor's rule, also with the file's earlier
   items): the remap comes in without it. A file's remap without a `Source` (exported that way) comes in without one too
   (`RemapJson.Parse` with `withoutSource`, for Import only). Raise `ItemFile.CurrentFormat` only

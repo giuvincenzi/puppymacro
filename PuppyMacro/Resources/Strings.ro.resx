@@ -898,6 +898,8 @@ Detalii: {1}</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} este deja utilizată de bucla „{1}” în {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} este deja utilizată de macrocomanda „{1}”.</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} este deja utilizată de macrocomanda „{1}” în {2}.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} este deja utilizată de remaparea „{1}”.</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} este deja utilizată de remaparea „{1}” în {2}.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Tastele rapide au prioritate față de remapări.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} este deja remapată pentru toate aplicațiile.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} este deja remapată pentru {1}.</value></data>
