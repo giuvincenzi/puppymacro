@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" || exit 0; if ! git fetch --all --prune --quiet; then echo 'git fetch failed: main may be out of date.'; exit 0; fi; b=$(git branch --show-current); if [ \"$b\" != main ]; then echo \"This checkout is on '$b', not main: main was not updated. Tell the user before starting.\"; elif [ -n \"$(git status --porcelain)\" ]; then echo 'main has local changes: it was not updated. Tell the user before starting.'; elif git merge --ff-only --quiet origin/main 2>/dev/null; then echo 'main is up to date with origin/main.'; else echo 'main cannot fast-forward to origin/main: it was not updated. Tell the user before starting.'; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

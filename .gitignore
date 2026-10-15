@@ -19,5 +19,6 @@ _site/
 
 # Local data (now stored in %AppData%\PuppyMacro, kept here only by old versions)
 settings.json
+!.claude/settings.json
 settings.invalid.json
 macros/

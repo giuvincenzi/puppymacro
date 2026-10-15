@@ -10,7 +10,7 @@ the others load when matching files are read or edited:
 | Rule | Loads | Topic |
 |---|---|---|
 | `working-rules.md` | always | How to work on this project |
-| `git-workflow.md` | always | A worktree per change, pull requests, protected `main` |
+| `git-workflow.md` | always | `main` updated at session start, a worktree per change, pull requests, protected `main` |
 | `build-and-release.md` | always | `make` commands, dev and prod builds, releases |
 | `testing.md` | always | Unit tests (`make test`) and end-to-end tests (`make e2e`) |
 | `docs.md` | always | Website, user guide in `site/` and AI tools, kept in sync with every change |
