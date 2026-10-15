@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.20.0
+
 ### Added
 - **Open PuppyMacro** hotkey (**Settings › Hotkeys**, Alt + Shift + A, first of the global hotkeys): it shows PuppyMacro's
   window, also from the system tray, and leaves overlay mode when it is on. After the update it gets Alt + Shift + A unless
