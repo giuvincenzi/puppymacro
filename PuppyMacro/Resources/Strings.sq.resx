@@ -876,6 +876,8 @@ Detajet: {1}</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} përdoret tashmë nga cikli "{1}" në {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}".</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} përdoret tashmë nga makroja "{1}" në {2}.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} përdoret tashmë nga ricaktimi "{1}".</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} përdoret tashmë nga ricaktimi "{1}" në {2}.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Tastet e shpejta kanë përparësi ndaj ricaktimeve.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} është ricaktuar tashmë për të gjitha aplikacionet.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} është ricaktuar tashmë për {1}.</value></data>

@@ -132,7 +132,7 @@ public class HotkeyConflictsTests : IDisposable
     }
 
     [Fact]
-    public void A_remap_source_clashes_with_the_hotkeys_that_always_take_it_first()
+    public void A_remap_source_clashes_with_the_hotkeys_for_the_same_apps()
     {
         _settings.Loops.Add(new LoopDefinition { Name = "Game", Hotkey = HotkeyBinding.FromKey(0x79), AppExe = "Game.exe" }); // F10
 
@@ -140,7 +140,34 @@ public class HotkeyConflictsTests : IDisposable
         Assert.Null(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), null, _settings, _macros));
         Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), "game.exe", _settings, _macros));
         Assert.Null(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x79), "other.exe", _settings, _macros));
-        Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x78), "other.exe", _settings, _macros));    // F9 is for all apps
+        // A remap for an app and the loop for all apps on F9: the remap wins in its app, the loop in the other apps.
+        Assert.Null(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x78), "other.exe", _settings, _macros));
+        Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x78), null, _settings, _macros));
+        // Global hotkeys work everywhere: they clash with a remap for any app.
+        Assert.NotNull(HotkeyConflicts.FindForRemap(HotkeyBinding.FromKey(0x77), "other.exe", _settings, _macros));    // F8, Record
+    }
+
+    [Fact]
+    public void A_loop_or_macro_hotkey_clashes_with_the_remaps_for_the_same_apps()
+    {
+        var leftAltF13 = new HotkeyBinding { Vk = 0x7C, Alt = true, AltSide = ModifierSide.Left };
+        _settings.Remaps.Add(new RemapDefinition { Source = leftAltF13, Target = HotkeyBinding.FromKey(0x24), Note = "Desktop Left" });
+        _settings.Remaps.Add(new RemapDefinition { Source = HotkeyBinding.FromKey(0x7A), Target = HotkeyBinding.FromKey(0x7B), AppExe = "Game.exe", Enabled = false });
+        var altF13 = new HotkeyBinding { Vk = 0x7C, Alt = true }; // either Alt: it overlaps the left one
+
+        // Both for all apps: a conflict that names the remap by its note.
+        Assert.Equal("Alt + F13 is already used by the remap \"Desktop Left\".", Find(altF13));
+        // One for an app and one for all apps: allowed, both ways.
+        Assert.Null(Find(altF13, appExe: "Diablo IV.exe"));
+        Assert.Null(Find(HotkeyBinding.FromKey(0x7A)));
+        // Both for the same app (any case), also with the remap disabled: a conflict that names it by its keys.
+        Assert.Equal("F11 is already used by the remap \"F11 → F12\" in Game.exe.", Find(HotkeyBinding.FromKey(0x7A), appExe: "GAME.EXE"));
+        Assert.Null(Find(HotkeyBinding.FromKey(0x7A), appExe: "other.exe"));
+        // Global hotkeys work everywhere: they clash with a remap for any app.
+        Assert.NotNull(Find(HotkeyBinding.FromKey(0x7A), ignoreGlobal: "StopAll"));
+        Assert.NotNull(Find(altF13, ignoreGlobal: "OpenMain"));
+        // The right Alt is another key press.
+        Assert.Null(Find(new HotkeyBinding { Vk = 0x7C, Alt = true, AltSide = ModifierSide.Right }));
     }
 
     [Fact]

@@ -876,6 +876,8 @@ Dettagli: {1}</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} è già usato dal loop "{1}" in {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} è già usato dalla macro "{1}".</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} è già usato dalla macro "{1}" in {2}.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} è già usato dalla rimappatura "{1}".</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} è già usato dalla rimappatura "{1}" in {2}.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} I tasti di scelta rapida hanno la priorità sulle rimappature.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} è già rimappato per tutte le app.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} è già rimappato per {1}.</value></data>

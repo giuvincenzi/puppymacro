@@ -844,6 +844,8 @@
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0}은(는) 이미 {2}의 루프 "{1}"에 사용되고 있습니다.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0}은(는) 이미 매크로 "{1}"에 사용되고 있습니다.</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0}은(는) 이미 {2}의 매크로 "{1}"에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0}은(는) 이미 다시 매핑 "{1}"에 사용되고 있습니다.</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0}은(는) 이미 {2}의 다시 매핑 "{1}"에 사용되고 있습니다.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} 바로 가기 키가 다시 매핑보다 우선합니다.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0}은(는) 이미 모든 앱에서 다시 매핑되어 있습니다.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0}은(는) 이미 {1}에서 다시 매핑되어 있습니다.</value></data>

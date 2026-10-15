@@ -867,6 +867,8 @@ Detalles: {1}</value></data>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} ya se usa en el bucle "{1}" en {2}.</value></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} ya se usa en la macro "{1}".</value></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} ya se usa en la macro "{1}" en {2}.</value></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} ya se usa en la reasignación "{1}".</value></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} ya se usa en la reasignación "{1}" en {2}.</value></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Las teclas de acceso rápido tienen prioridad sobre las reasignaciones.</value></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} ya está reasignada para todas las aplicaciones.</value></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} ya está reasignada para {1}.</value></data>

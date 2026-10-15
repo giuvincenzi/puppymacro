@@ -798,8 +798,11 @@ internal sealed class LoopEngine : IDisposable
             }
 
             var pressed = CurrentBinding(vk);
+            // A remap for the app in front wins over the loops and macros for all apps, as an item for that app does.
+            var remap = FindRemap(snap, pressed);
+            bool remapForApp = remap is { AppExe: not null, Target.IsSet: true };
 
-            if (!_hotkeysSuspended && RunHotkey(snap, pressed, canHold: true, run: true))
+            if (!_hotkeysSuspended && RunHotkey(snap, pressed, canHold: true, run: true, allApps: !remapForApp))
             {
                 _heldHotkeys.Add(vk);
                 return Block();
@@ -815,7 +818,6 @@ internal sealed class LoopEngine : IDisposable
 
             // Remaps: an app-specific remap wins over an "all apps" one. A source with modifiers (Alt + A): the
             // modifiers held for it are released first, so the app gets only the target.
-            var remap = FindRemap(snap, pressed);
             if (remap?.Target is { IsSet: true } target)
             {
                 _activeRemaps[vk] = target;
@@ -900,9 +902,10 @@ internal sealed class LoopEngine : IDisposable
     /// <summary>
     /// Finds the global, loop or macro hotkey that matches <paramref name="pressed"/> and, with
     /// <paramref name="run"/>, runs it. Without <paramref name="canHold"/> (the wheel, which has
-    /// no release) Hold loops and macros are skipped. Called with the lock held.
+    /// no release) Hold loops and macros are skipped; without <paramref name="allApps"/> (a remap for the app in front
+    /// has the key) the loops and macros for all apps are. Called with the lock held.
     /// </summary>
-    private bool RunHotkey(EngineSnapshot snap, HotkeyBinding pressed, bool canHold, bool run)
+    private bool RunHotkey(EngineSnapshot snap, HotkeyBinding pressed, bool canHold, bool run, bool allApps = true)
     {
         if (Matches(snap.OverlayMode, pressed))
         {
@@ -926,7 +929,7 @@ internal sealed class LoopEngine : IDisposable
         }
 
         // A loop or macro for the app in front wins over one for all apps; one for another app lets the key pass.
-        foreach (bool forAllApps in new[] { false, true })
+        foreach (bool forAllApps in allApps ? new[] { false, true } : new[] { false })
         {
             bool Usable(string? appExe) => forAllApps ? appExe == null : appExe != null && AppScope.Same(appExe, _foregroundApp);
 

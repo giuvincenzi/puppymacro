@@ -431,6 +431,24 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
+    public async Task A_loop_on_the_keys_of_a_remap_for_the_same_apps_is_refused_as_in_the_editor()
+    {
+        _settings.Remaps.Add(new RemapDefinition { Source = CtrlX, Target = HotkeyBinding.FromKey(0x42), Note = "Cut" });
+        object Spam(string? app) => new
+        {
+            item = new { Name = "Spam", AppExe = app, Hotkey = new { Vk = 0x58, Ctrl = true }, Actions = new[] { new { Type = "Key", KeyVk = 0x87, IntervalValue = 100 } } },
+        };
+
+        AiToolResult refused = await Call("save_loop", Spam(null));
+        AiToolResult forGame = await Call("save_loop", Spam("game.exe")); // the remap for all apps works in the other apps
+
+        Assert.True(refused.IsError);
+        Assert.Contains("Ctrl + X is already used by the remap \"Cut\".", refused.Text);
+        Assert.False(forGame.IsError);
+        Assert.Single(_host.Saved);
+    }
+
+    [Fact]
     public async Task With_ask_before_changing_the_user_sees_the_changes_first()
     {
         _settings.AiAskBeforeChanging = true;

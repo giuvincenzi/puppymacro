@@ -483,6 +483,20 @@ public sealed class LoopEngineTests : IDisposable
     }
 
     [Fact]
+    public void A_remap_for_an_app_not_in_front_leaves_the_key_to_a_hotkey_for_all_apps()
+    {
+        // In its own app the remap wins (end-to-end RemapTests: the window in front cannot be set here).
+        LoopDefinition everywhere = TapLoop(HotkeyBinding.FromKey(F23));
+        RemapDefinition forGame = Remap(HotkeyBinding.FromKey(F23));
+        forGame.AppExe = "PuppyMacro test app that never runs.exe";
+        _engine.Publish(new EngineSnapshot { Loops = new[] { everywhere }, Remaps = new[] { forGame } });
+
+        Assert.True(Press(F23));
+        Assert.True(Release(F23));
+        Assert.True(_engine.IsRunning(everywhere.Id));
+    }
+
+    [Fact]
     public void A_remap_of_a_key_alone_does_not_take_the_key_with_a_modifier()
     {
         _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(HotkeyBinding.FromKey(F23)) } });

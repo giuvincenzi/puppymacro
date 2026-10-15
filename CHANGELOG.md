@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Changed
+- Loops, macros and remaps follow the same rule for their keys: two can share them only when they work in different apps,
+  or one in an app and the other in all apps, and the one for the app in front wins, whatever its kind. A remap for an
+  app can now use the hotkey of a loop or macro for all apps: in that app the remap works, in the others the loop or macro.
+
+### Fixed
+- A loop's or macro's hotkey could take the keys of a remap for the same apps, which then stopped working. The editors,
+  Import and AI apps now refuse it and name the remap, also with **Specific app** on and no app chosen. A global hotkey
+  can no longer take the keys of a remap either.
+
 ## 1.21.0
 
 ### Changed

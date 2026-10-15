@@ -236,6 +236,47 @@ public class ItemFileTests : IDisposable
     }
 
     [Fact]
+    public void A_loop_or_macro_comes_in_without_a_hotkey_a_remap_has_for_the_same_apps()
+    {
+        _settings.Remaps.Add(Remap(F6, 0x44, "Mine"));
+        string text = ItemFile.Write(new object[]
+        {
+            Remap(F7, 0x44), Loop("Farm", F7), Macro("Craft", F6), Loop("Game", F6, app: "game.exe"), Loop("Other", F7, app: "game.exe"),
+        }, This);
+
+        ItemFileContent content = Read(text);
+
+        Assert.Equal("F7 is already remapped for all apps in this file, so this comes in without a hotkey.", Assert.Single(content.Entries[1].Notes));
+        Assert.Null(((LoopDefinition)content.Entries[1].Item!).Hotkey);
+        Assert.Equal("F6 is already used by the remap \"Mine\", so this comes in without a hotkey.", Assert.Single(content.Entries[2].Notes));
+        Assert.Null(((MacroDefinition)content.Entries[2].Item!).Hotkey);
+        // For an app: the remaps for all apps work in the other apps.
+        Assert.Equal(F6, ((LoopDefinition)content.Entries[3].Item!).Hotkey!.Vk);
+        Assert.Empty(content.Entries[3].Notes);
+        Assert.Equal(F7, ((LoopDefinition)content.Entries[4].Item!).Hotkey!.Vk);
+        Assert.Empty(content.Entries[4].Notes);
+    }
+
+    [Fact]
+    public void A_remap_for_an_app_keeps_a_hotkey_used_for_all_apps()
+    {
+        _settings.Loops.Add(Loop("Mine", F6));
+        RemapDefinition mineForGame = Remap(F6, 0x44);
+        mineForGame.AppExe = "game.exe";
+        RemapDefinition fileForGame = Remap(F7, 0x44);
+        fileForGame.AppExe = "game.exe";
+        string text = ItemFile.Write(new object[] { mineForGame, Loop("Farm", F7), fileForGame }, This);
+
+        ItemFileContent content = Read(text);
+
+        Assert.Equal(F6, ((RemapDefinition)content.Entries[0].Item!).Source!.Vk);
+        Assert.Empty(content.Entries[0].Notes);
+        Assert.Equal(F7, ((LoopDefinition)content.Entries[1].Item!).Hotkey!.Vk);
+        Assert.Equal(F7, ((RemapDefinition)content.Entries[2].Item!).Source!.Vk);
+        Assert.Empty(content.Entries[2].Notes);
+    }
+
+    [Fact]
     public void A_remap_for_all_apps_keeps_a_hotkey_used_only_in_one_app()
     {
         _settings.Loops.Add(Loop("Mine", F6, app: "game.exe"));

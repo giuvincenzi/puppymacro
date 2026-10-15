@@ -932,6 +932,8 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Hotkey_UsedByLoopInApp" xml:space="preserve"><value>{0} is already used by the loop "{1}" in {2}.</value><comment>{0}: the keys; {1}: the loop's name; {2}: an app's .exe name.</comment></data>
   <data name="Hotkey_UsedByMacro" xml:space="preserve"><value>{0} is already used by the macro "{1}".</value><comment>{0}: the keys; {1}: the macro's name.</comment></data>
   <data name="Hotkey_UsedByMacroInApp" xml:space="preserve"><value>{0} is already used by the macro "{1}" in {2}.</value><comment>{0}: the keys; {1}: the macro's name; {2}: an app's .exe name.</comment></data>
+  <data name="Hotkey_UsedByRemap" xml:space="preserve"><value>{0} is already used by the remap "{1}".</value><comment>{0}: the keys; {1}: the remap's note, or its keys ("J → C").</comment></data>
+  <data name="Hotkey_UsedByRemapInApp" xml:space="preserve"><value>{0} is already used by the remap "{1}" in {2}.</value><comment>{0}: the keys; {1}: the remap's note, or its keys; {2}: an app's .exe name.</comment></data>
   <data name="Hotkey_TakesPriorityOverRemaps" xml:space="preserve"><value>{0} Hotkeys take priority over remaps.</value><comment>{0}: one of the "is already used by" sentences.</comment></data>
   <data name="Hotkey_AlreadyRemapped" xml:space="preserve"><value>{0} is already remapped for all apps.</value><comment>{0}: the keys.</comment></data>
   <data name="Hotkey_AlreadyRemappedInApp" xml:space="preserve"><value>{0} is already remapped for {1}.</value><comment>{0}: the keys; {1}: an app's .exe name.</comment></data>
