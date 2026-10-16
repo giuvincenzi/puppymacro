@@ -85,8 +85,6 @@ try {
     New-Item -ItemType Directory -Path $Output | Out-Null
     Copy-Item (Join-Path $chrome 'assets') (Join-Path $Output 'assets') -Recurse
     Copy-Item (Join-Path $chrome 'favicon.ico') $Output
-    # Google Search Console's verification file: it must stay at the site root, or the site loses its verification.
-    Get-ChildItem (Join-Path $chrome 'google*.html') | Copy-Item -Destination $Output
 
     $header = Read-Text (Join-Path $chrome '_header.html')
     $footer = Read-Text (Join-Path $chrome '_footer.html')

@@ -32,8 +32,8 @@ The site is in Google Search Console (a "URL prefix" property for `https://giuvi
 maintainer's account) and in Bing Webmaster Tools (imported from Search Console). What `scripts/site.ps1` writes for
 them, with `$SiteUrl` as the one place the site's address is written:
 
-- `site/google146096d896bf870a.html`: Search Console's verification file, copied to the site root. Never delete or
-  rename it: the property stays verified only while Google finds it.
+- The `google-site-verification` meta tag in `site/index.html`: Search Console's verification (method "HTML tag").
+  Never delete or change it: the property stays verified only while Google finds it on the home.
 - `sitemap.xml` at the site root: the home and the newest guide's pages (submitted in Search Console). A project site
   on `github.io` cannot have a `robots.txt` of its own (it would be at `giuvincenzi.github.io/robots.txt`).
 - `<link rel="canonical">` in every page: a guide page of any version points to the same page of the newest guide (or
