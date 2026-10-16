@@ -31,6 +31,7 @@ jobs:
       unit: ${{ steps.decide.outputs.unit }}
       e2e: ${{ steps.decide.outputs.e2e }}
       screenshots: ${{ steps.decide.outputs.screenshots }}
+      readme_and_mcp_registry: ${{ steps.decide.outputs.readme_and_mcp_registry }}
       e2e_groups: ${{ steps.groups.outputs.e2e_groups }}
     steps:
       - name: checkout_code
@@ -57,6 +58,7 @@ jobs:
           unit=true
           e2e=true
           screenshots=true
+          readme_and_mcp_registry=true
           if [ "$WORKFLOW" != test ]; then screenshots=false; fi
           if [ ${#range[@]} -gt 0 ] && files=$(git diff --name-only "${range[@]}"); then
             # The files each test project builds or reads (testing.md, "Which changes run the tests on GitHub").
@@ -64,19 +66,23 @@ jobs:
             unit=false
             e2e=false
             screenshots=false
+            readme_and_mcp_registry=false
             if grep -E "$shared|^tests/PuppyMacro\.Tests/" <<< "$files" | grep -qvx 'site/guide/_page\.html'; then unit=true; fi
             if grep -E "$shared|^tests/PuppyMacro\.E2E/|^PuppyMacro\.sln$" <<< "$files" | grep -qvx 'site/guide/_page\.html'; then e2e=true; fi
             # The app and the scripts that take the release's screenshots (create_release_pr's take_screenshots).
             if grep -qE '^(PuppyMacro/|scripts/(dev|screenshots|screen-resolution)\.ps1$|\.github/workflows/test\.yml$)' <<< "$files"; then screenshots=true; fi
+            # The README's title and description, and the MCP Registry entry, both made from site/home/en.json.
+            if grep -qE '^(README\.md|site/home/en\.json|scripts/(check-readme|mcp-server-json)\.ps1|PuppyMacro/Version\.props|\.github/workflows/test\.yml)$' <<< "$files"; then readme_and_mcp_registry=true; fi
             # The merge of a release pull request: publish_release runs the tests on this commit.
-            if [ "$EVENT" = push ] && grep -qx 'PuppyMacro/Version.props' <<< "$files"; then unit=false; e2e=false; screenshots=false; fi
+            if [ "$EVENT" = push ] && grep -qx 'PuppyMacro/Version.props' <<< "$files"; then unit=false; e2e=false; screenshots=false; readme_and_mcp_registry=false; fi
           fi
           {
             echo "unit=$unit"
             echo "e2e=$e2e"
             echo "screenshots=$screenshots"
+            echo "readme_and_mcp_registry=$readme_and_mcp_registry"
           } >> "$GITHUB_OUTPUT"
-          echo "Unit tests: $unit. End-to-end tests: $e2e. Screenshots: $screenshots (testing.md)." >> "$GITHUB_STEP_SUMMARY"
+          echo "Unit tests: $unit. End-to-end tests: $e2e. Screenshots: $screenshots. README and MCP Registry entry: $readme_and_mcp_registry (testing.md)." >> "$GITHUB_STEP_SUMMARY"
 
       # E2E_GROUPS (6) -> [1,2,3,4,5,6], the matrix of e2e_group: a matrix cannot read env, so the number is written once
       # at the top and turned into the list here.
@@ -370,13 +376,57 @@ jobs:
             site/assets/loops.png
           retention-days: 7
 
+  # The README says the title and description of site/home/en.json, and PuppyMacro's MCP Registry entry, built as
+  # publish_release builds it, passes the registry's own validation (nothing is published). discoverability.md.
+  readme_and_mcp_registry_test:
+    needs: decide_which_tests_run
+    if: needs.decide_which_tests_run.outputs.readme_and_mcp_registry == 'true'
+    runs-on: ubuntu-latest
+    env:
+      # The same pinned mcp-publisher as publish_release's publish_mcp_registry: change both (build-and-release.md).
+      MCP_PUBLISHER_VERSION: v1.8.1
+      MCP_PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+
+      - name: check_readme_title_and_description
+        shell: pwsh
+        run: ./scripts/check-readme.ps1
+
+      - name: build_mcp_registry_entry
+        shell: pwsh
+        run: ./scripts/mcp-server-json.ps1 -Output "$env:RUNNER_TEMP/server.json"
+
+      - name: install_mcp_publisher
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/mcp-publisher.tar.gz" \
+            "https://github.com/modelcontextprotocol/registry/releases/download/$MCP_PUBLISHER_VERSION/mcp-publisher_linux_amd64.tar.gz"
+          echo "$MCP_PUBLISHER_SHA256  $RUNNER_TEMP/mcp-publisher.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/mcp-publisher.tar.gz" -C "$RUNNER_TEMP" mcp-publisher
+
+      - name: validate_mcp_registry_entry
+        run: |
+          cat "$RUNNER_TEMP/server.json"
+          "$RUNNER_TEMP/mcp-publisher" validate "$RUNNER_TEMP/server.json"
+
   # The required check: green only when every end-to-end test ran exactly once and passed, or when none was needed, and
-  # the screenshots were taken (screenshots_test) when needed.
+  # the screenshots were taken (screenshots_test) and the README and the MCP Registry entry checked
+  # (readme_and_mcp_registry_test) when needed.
   e2e_test:
-    needs: [decide_which_tests_run, e2e_group, screenshots_test]
+    needs: [decide_which_tests_run, e2e_group, screenshots_test, readme_and_mcp_registry_test]
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: check_readme_and_mcp_registry
+        env:
+          RESULT: ${{ needs.readme_and_mcp_registry_test.result }}
+        run: |
+          if [ "$RESULT" != success ] && [ "$RESULT" != skipped ]; then
+            echo "::error::readme_and_mcp_registry_test: $RESULT (the README's title and description, or the MCP Registry entry)."; exit 1
+          fi
+          echo "README and MCP Registry entry: $RESULT." >> "$GITHUB_STEP_SUMMARY"
+
       - name: check_screenshots
         env:
           SCREENSHOTS: ${{ needs.screenshots_test.result }}

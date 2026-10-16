@@ -183,10 +183,13 @@ Rules:
   of the moment; `Loc`, English for AI apps), `App.ApplyLanguage`, Settings › Language in `MainWindow`.
 - Tray and startup: `Services/TrayIcon.cs` (Shell_NotifyIcon), `StartupService.cs`
   (HKCU Run key, `--tray`). Uninstall removes the Run key (Velopack hook in `App.Main`); Release builds set it
-  from `StartWithWindows` at every start, so it follows the setting after an import or a reinstall.
+  from `StartWithWindows` at every start, so it follows the setting after an import or a reinstall. The user Run key
+  cannot start a program as administrator, so Start with Windows never starts PuppyMacro elevated.
 - Backup: `Services/BackupService.cs` (export and import of the data folder, `data.md`), `Views/ExportOptionsView`
   (Export's choices, in a `ContentDialog`); the Import confirmation names the file's parts.
-- Sharing (not the backup, the user's choice: two separate features): `.puppyitems` files (`Services/ItemFile.cs`, `data.md`),
+- Sharing (not the backup, the user's choice: two separate features; sharing only adds items, the backup replaces the
+  data; a backup opens only from Settings, never with a double-click in File Explorer or by dragging it onto the window):
+  `.puppyitems` files (`Services/ItemFile.cs`, `data.md`),
   `MainWindow.Share.cs`: Import and Export in the title bar's More options menu (`ItemsWindow`, a window of its own opened
   as the editors through `ShowDialogWithoutHotkeys`, the main window hidden meanwhile; for an AI app through `ShowForAi`; with
   `Views/ImportItemsView` and `Views/ExportItemsView`, rows in `Views/ItemFileRows.cs`), Export in each card's menu (`ExportOne`,
@@ -218,6 +221,9 @@ Rules:
   item saved before the history existed also keeps its earlier version. The editors of a saved item get a third view,
   History (`ViewSwitchBar` / `CodeViewSwitch`, `EditorView`; `EnableHistory`): Restore puts the version in the fields
   (`HistoryRestore`) and the `NoticeBar` says to Save.
+- AI apps reach PuppyMacro only through MCP from an app installed on the PC (Claude Desktop, VS Code, Codex…):
+  claude.ai, ChatGPT and other apps on the web cannot reach a program on the PC without a relay on the internet, which
+  the project would have to host and secure. Not planned. PuppyMacro has no AI of its own and no API keys.
 - AI apps (MCP, `Services/Ai/`): an AI app on the PC starts `PuppyMacro.exe --mcp` (`AiBridge`, run in `App.Main` before
   Velopack and WPF: no window, no update applied). The bridge only copies stdin/stdout to the running PuppyMacro's named
   pipe (`AiPipe`: one per Windows user and per build, the development build has its own; current user only; elevated, a

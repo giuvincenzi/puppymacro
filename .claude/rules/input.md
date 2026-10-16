@@ -6,6 +6,7 @@ paths:
 
 # Input model
 
+- If the target app runs as administrator, PuppyMacro must run as administrator too.
 - Keys and mouse buttons are Windows **virtual-key codes** everywhere (mouse: 1 LButton,
   2 RButton, 4 MButton, 5 XButton1, 6 XButton2). Display names: `KeyNames`.
 - The scroll wheel as a hotkey key has its own codes outside the virtual-key range (keyboard

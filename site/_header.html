@@ -1,12 +1,13 @@
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="{{ROOT}}./"><img src="{{ROOT}}assets/logo.png" alt="">PuppyMacro</a>
-    <nav class="site-nav" aria-label="Main">
-      <a href="{{ROOT}}./#features">Features</a>
-      <a href="{{ROOT}}guide/latest/"{{GUIDE_CURRENT}}>Guide</a>
-      <a href="{{ROOT}}./#privacy">Privacy</a>
+    <a class="brand" href="{{HOME}}"><img src="{{ROOT}}assets/logo.png" alt="">PuppyMacro</a>
+    <nav class="site-nav" aria-label="{{NAV_LABEL}}">
+      <a href="{{HOME}}#features">{{NAV_FEATURES}}</a>
+      <a href="{{ROOT}}guide/latest/"{{GUIDE_CURRENT}}>{{NAV_GUIDE}}</a>
+      <a href="{{HOME}}#privacy">{{NAV_PRIVACY}}</a>
       <a href="https://github.com/giuvincenzi/puppymacro">GitHub</a>
-      <a class="button button-primary button-small" href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">Download</a>
+{{LANGUAGE_MENU}}
+      <a class="button button-primary button-small" href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">{{NAV_DOWNLOAD}}</a>
     </nav>
   </div>
 </header>

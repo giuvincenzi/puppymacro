@@ -159,7 +159,13 @@ runs `unit_test`.
 (`e2e_test` checks its result) instead of the release. Not when `publish_release` calls the tests: the release's screenshots
 were taken by `create_release_pr`, and a machine problem there would block the release for nothing in the app.
 
-Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, Markdown files,
+`readme_and_mcp_registry_test` (on Linux, quick) checks that `README.md` says the title and description of
+`site/home/en.json` (`scripts/check-readme.ps1`) and builds the MCP Registry entry as `publish_release` does
+(`scripts/mcp-server-json.ps1`) and validates it with the registry's own `mcp-publisher validate`, publishing nothing
+(`discoverability.md`). It runs when `README.md`, `site/home/en.json`, one of those two scripts, `PuppyMacro/Version.props`
+or `test.yml` changes, and when `publish_release` calls the tests; `e2e_test` checks its result, so it blocks the merge.
+
+Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, the other Markdown files,
 `LICENSE`, `Makefile`, the other `scripts/`, the other workflows). When the app, a test project or a test
 starts reading another file or folder, add it to this table and to the patterns of `decide_which_tests_run` in the
 same pull request.

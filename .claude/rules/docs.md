@@ -3,14 +3,16 @@
 Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built by
 `scripts/site.ps1`, published to GitHub Pages by the `publish_release` workflow (job `publish_site`).
 
-- `site/index.html`: home (features, privacy). `{{VERSION}}` is the latest
-  released version.
+- `site/index.html`: the home page (features, privacy), a template filled once per language with the texts of
+  `site/home/<code>.json` (`{{key}}`, `{{attr:key}}` in attributes, `{{json:key}}` in JSON). `{{VERSION}}` is the latest
+  released version. The home is in the app's 13 languages, the guide only in English (`discoverability.md`).
 - `site/_header.html`, `site/_footer.html`: shared header and footer (`{{ROOT}}` is the path
-  to the site root).
+  to the site root, `{{HOME}}` the page's own home; their texts come from the page's language).
 - `site/guide/sections.txt`: guide sections in order (`file|Title`). One file per section,
   `site/guide/<file>.html`, with the section content only; `site/guide/_page.html` is the
   page around it (sticky sidebar, version select, previous/next).
-- `site/guide/img/`: guide screenshots. `site/assets/`: style, script, logo, home screenshot.
+- `site/guide/img/`: guide screenshots. `site/assets/`: style, script, logo, home screenshot, the language menu's flags
+  (`flags/`).
 
 ## Versions and publishing
 
@@ -26,33 +28,23 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
   Released versions are added only when git is available to Windows PowerShell (in WSL it
   usually is not).
 
-## Search engines
-
-The site is in Google Search Console (a "URL prefix" property for `https://giuvincenzi.github.io/puppymacro/`, the
-maintainer's account) and in Bing Webmaster Tools (imported from Search Console). What `scripts/site.ps1` writes for
-them, with `$SiteUrl` as the one place the site's address is written:
-
-- The `google-site-verification` meta tag in `site/index.html`: Search Console's verification (method "HTML tag").
-  Never delete or change it: the property stays verified only while Google finds it on the home.
-- `sitemap.xml` at the site root: the home and the newest guide's pages (submitted in Search Console). A project site
-  on `github.io` cannot have a `robots.txt` of its own (it would be at `giuvincenzi.github.io/robots.txt`).
-- `<link rel="canonical">` in every page: a guide page of any version points to the same page of the newest guide (or
-  to itself when the newest guide has no such section), so search engines show the newest guide and not older copies.
-- Link previews (Open Graph: title, description, `assets/loops.png`) and, on the home, the `SoftwareApplication`
-  structured data (name, Windows 10 and 11, free, version, download link). Keep them true to the app as the home's
-  texts are.
-
 ## README
 
-`README.md` holds only: the links (website, download, user guide), a short description of
-the app, the download, "Development: see `.claude/rules/`" and the license with the list of
-third-party components the app ships (NuGet packages in `PuppyMacro/PuppyMacro.csproj` and their
-dependencies, files in `PuppyMacro/Assets/`), with the attribution their licenses ask for. Everything for
-developers goes in `.claude/rules/`; how to use the app goes in the user guide.
+`README.md` holds only, nothing that repeats the website:
+
+- centered: the logo, the name, the slogan, and one line of links with their icons: 🌐 Website · 📖 User guide ·
+  ⬇️ Download for Windows;
+- the title and description (`discoverability.md`), between its "Title and description" comments, checked by the test
+  workflow; then one line on AI apps (they build loops, macros and remaps through MCP, with the app installed);
+- "Development": see `.claude/rules/`;
+- "License", with the list of third-party components the app ships (NuGet packages in `PuppyMacro/PuppyMacro.csproj` and
+  their dependencies, files in `PuppyMacro/Assets/`), with the attribution their licenses ask for.
+
+Everything for developers goes in `.claude/rules/`; how to use the app goes in the user guide.
 
 ## Every user-visible change updates the documentation
 
-The app is translated (`i18n.md`); the website and the guide are only in English and use the English UI texts.
+The app and the home page are translated (`i18n.md`); the guide is only in English and uses the English UI texts.
 
 In the same change as the code, for a new feature, changed behavior, new or renamed setting
 or UI text:
@@ -61,7 +53,9 @@ or UI text:
 
 - update the matching file in `site/guide/` (new feature: new file and a line in
   `sections.txt`);
-- update the feature cards in `site/index.html` when the feature list changes;
+- update the feature cards in `site/index.html` when the feature list changes; a new or changed text of the home goes
+  in `site/home/en.json` and every translation in the same change;
+- when what PuppyMacro does changes, check that the title and description still say it (`discoverability.md`);
 - add a line under `## Unreleased` in `CHANGELOG.md`, in the right subsection (see
   `build-and-release.md`);
 - screenshots: every release retakes all of them (below); a **new** screenshot is added to `scripts/screenshots.ps1`
