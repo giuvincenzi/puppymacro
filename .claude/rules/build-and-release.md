@@ -112,15 +112,20 @@ it does (the workflow the phase, the job the action).
 
 | Workflow | Starts | Jobs |
 |---|---|---|
-| `test` | every pull request and push to `main`; `workflow_dispatch` (`gh workflow run test.yml --ref <branch>`); `workflow_call` (`publish_release`) | `decide_which_tests_run`, then when needed `unit_test` and `e2e_group_1` … `e2e_group_N` (`E2E_GROUPS` machines at once), and `screenshots_test`, then `e2e_test`, which checks every end-to-end test ran once and passed and the screenshots were taken (`testing.md`) |
+| `test` | every pull request and push to `main`; `workflow_dispatch` (`gh workflow run test.yml --ref <branch>`); `workflow_call` (`publish_release`) | `decide_which_tests_run`, then when needed `unit_test` and `e2e_group_1` … `e2e_group_N` (`E2E_GROUPS` machines at once), `screenshots_test` and `readme_and_mcp_registry_test`, then `e2e_test`, which checks every end-to-end test ran once and passed, the screenshots were taken and the README and the MCP Registry entry passed (`testing.md`) |
 | `create_release_pr` | only by hand (`workflow_dispatch`) on `main` | `prepare_and_open_pr` |
-| `publish_release` | a push to `main` that changes `PuppyMacro/Version.props` | `run_tests` (calls `test`), `publish_app`, `publish_site` |
+| `publish_release` | a push to `main` that changes `PuppyMacro/Version.props` | `run_tests` (calls `test`), `publish_app`, `publish_site`, `publish_mcp_registry` |
 
 - Repository settings they need (Settings > Actions > General > Workflow permissions): the default token stays read
   only (each workflow declares its own `permissions`), and **Allow GitHub Actions to create and approve pull requests**
   is on, for `create_release_pr`.
 - The ruleset "Protect main" requires the checks `unit_test` and `e2e_test` (`git-workflow.md`): renaming those jobs
   needs the ruleset changed in the same moment, or no pull request can be merged.
+- `mcp-publisher`, the official MCP Registry's tool (`publish_mcp_registry` publishes with it, `readme_and_mcp_registry_test`
+  validates with it, `discoverability.md`), is **pinned** like ssign: `MCP_PUBLISHER_VERSION` and `MCP_PUBLISHER_SHA256`
+  (its `linux_amd64` archive) in both workflows, downloaded from its GitHub release only when the SHA-256 matches.
+  Updating it: read the new release's changes, take the SHA-256 from its `registry_<version>_checksums.txt`, change both
+  values in both workflows.
 
 ## Releases
 
@@ -156,7 +161,8 @@ runtime (`App.DisplayTitle`). It has a file of its own so that only a release ch
    workflow because that commit changes `PuppyMacro/Version.props` (`paths`); for any other push it does not start at
    all. Its jobs: `run_tests` (the `test` workflow), `publish_app` (`read_version_and_notes` from `Version.props` and
    the CHANGELOG section, `build_signed_installer` with `scripts/build.ps1`, `publish_github_release`: the GitHub
-   Release, GitHub creates the tag `vX.Y.Z` on the merge commit), then `publish_site` (`docs.md`).
+   Release, GitHub creates the tag `vX.Y.Z` on the merge commit), then `publish_site` (`docs.md`) and
+   `publish_mcp_registry` (the MCP Registry entry with this version, `discoverability.md`).
 
 A failed job is retried with **Re-run failed jobs** on its run.
 

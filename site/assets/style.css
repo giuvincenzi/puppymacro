@@ -68,6 +68,57 @@ kbd {
 .site-nav a:not(.button) { color: var(--muted); text-decoration: none; }
 .site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--text); }
 
+/* Round flags (assets/flags, flag-icons) and the letter used for Arabic, which no single country's flag stands for */
+.flag {
+  width: 24px; height: 24px; flex: none; border-radius: 50%; object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+.flag-letter {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #2b3a44; color: var(--text); font-size: 14px; line-height: 1;
+}
+
+/* Language menu of the home pages: the current language in the bar, the languages in a grid below it */
+.language-menu { position: relative; }
+.language-menu summary {
+  display: flex; align-items: center; gap: 8px; list-style: none; cursor: pointer;
+  min-height: 36px; padding: 0 10px 0 6px; border-radius: 999px;
+  background: var(--surface); border: 1px solid #343846; color: var(--text); font-size: 15px;
+}
+.language-menu summary::-webkit-details-marker { display: none; }
+.language-menu summary:hover, .language-menu[open] summary { border-color: #4a5063; }
+.language-menu summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.language-menu summary svg { width: 14px; height: 14px; }
+.language-popup {
+  position: absolute; top: calc(100% + 8px); inset-inline-end: 0; z-index: 20;
+  width: min(440px, calc(100vw - 32px)); padding: 14px; border-radius: 14px;
+  background: var(--surface); border: 1px solid #343846; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+.language-popup p { margin: 0 6px 10px; font-size: 13px; color: var(--faint); }
+.language-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+.site-nav .language-grid a {
+  display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 10px;
+  border-radius: 10px; color: var(--muted); text-decoration: none;
+}
+.site-nav .language-grid a:hover { color: var(--text); background: #232630; }
+.site-nav .language-grid a[aria-current="true"] { color: var(--text); background: #262933; }
+.language-grid .flag { width: 30px; height: 30px; }
+.language-grid a[aria-current="true"] .flag { box-shadow: 0 0 0 2px var(--accent); }
+.language-grid .flag-letter { font-size: 16px; }
+@media (max-width: 520px) {
+  .language-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The banner that offers the home page in the browser's language (site.js) */
+.language-banner { background: var(--step); border-bottom: 1px solid #2c4a5e; }
+.language-banner .wrap {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+  padding-top: 10px; padding-bottom: 10px; font-size: 15px;
+}
+.language-banner .flag { width: 22px; height: 22px; }
+.language-banner-text { flex: 1 1 240px; }
+.language-banner button { font: inherit; background: transparent; cursor: pointer; }
+
 /* Buttons */
 .button {
   display: inline-flex; align-items: center; gap: 10px;
@@ -119,7 +170,7 @@ kbd {
 .card svg { width: 24px; height: 24px; }
 /* A small label after a card's title ("MCP ready"), like the hero's badge */
 .card h3 .tag {
-  margin-left: 8px; vertical-align: 2px;
+  margin-inline-start: 8px; vertical-align: 2px;
   font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--accent-text); border: 1px solid #2b4a5c; border-radius: 999px; padding: 2px 8px;
 }
@@ -128,7 +179,7 @@ kbd {
 .panel h2 { margin: 0 0 12px; font-size: 26px; }
 .panel h3 { margin: 20px 0 8px; font-size: 18px; font-family: var(--body); }
 .panel p, .panel li { color: var(--muted); font-size: 15px; }
-.panel ul { margin: 0; padding-left: 20px; }
+.panel ul { margin: 0; padding-inline-start: 20px; }
 
 /* Footer */
 .site-footer { border-top: 1px solid #23262f; }
@@ -180,9 +231,23 @@ kbd {
   .guide-sidebar { position: static; max-width: none; }
   .site-header { position: static; }
 }
-.shot { margin: 20px 0; max-width: 560px; }
-.shot img { border-radius: 10px; border: 1px solid #2a2d37; }
+/* Screenshots: the whole width of the text, centered; a click shows them at full size (site.js) */
+.shot { margin: 24px auto; text-align: center; }
+.shot img { margin: 0 auto; border-radius: 10px; border: 1px solid #2a2d37; }
 .shot figcaption { margin-top: 8px; font-size: 14px; color: var(--faint); }
+.zoomable { cursor: zoom-in; }
+.zoom { padding: 0; border: 0; background: transparent; max-width: 100vw; max-height: 100vh; overflow: visible; }
+.zoom::backdrop { background: rgba(8, 9, 12, 0.88); }
+.zoom img {
+  max-width: 95vw; max-height: 92vh; width: auto; height: auto;
+  border-radius: 10px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6); cursor: zoom-out;
+}
+.zoom-close {
+  position: fixed; top: 16px; inset-inline-end: 16px; width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); color: var(--text); border: 1px solid #343846; font-size: 18px; cursor: pointer;
+}
+.zoom-close:hover { border-color: #4a5063; }
 .note {
   background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
   padding: 14px 18px; margin: 16px 0; font-size: 15px; color: var(--muted);

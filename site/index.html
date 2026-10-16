@@ -1,39 +1,69 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{LANG}}" dir="{{DIR}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PuppyMacro: input automation for Windows</title>
-<meta name="description" content="PuppyMacro repeats keys and texts, plays back recorded macros and remaps keys on Windows 10 and 11. Free and open source.">
-<link rel="icon" href="favicon.ico">
+<title>PuppyMacro: {{attr:title}}</title>
+<meta name="description" content="{{attr:description}}">
+<link rel="canonical" href="{{PAGE_URL}}">
+{{ALTERNATES}}
+<meta name="google-site-verification" content="izcMzKCqhRpELTNI0qlVtWqDrhyMRP3TKZz9_3LpJi8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PuppyMacro">
+<meta property="og:title" content="PuppyMacro: {{attr:title}}">
+<meta property="og:description" content="{{attr:description}}">
+<meta property="og:url" content="{{PAGE_URL}}">
+<meta property="og:image" content="{{SITE_URL}}assets/loops.png">
+<meta property="og:image:alt" content="{{attr:screenshot_alt}}">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PuppyMacro",
+  "description": {{json:description}},
+  "inLanguage": "{{LANG}}",
+  "url": "{{PAGE_URL}}",
+  "image": "{{SITE_URL}}assets/loops.png",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Windows 10, Windows 11",
+  "softwareVersion": "{{VERSION}}",
+  "downloadUrl": "https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe",
+  "license": "https://github.com/giuvincenzi/puppymacro/blob/main/LICENSE",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<link rel="icon" href="{{ROOT}}favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="{{ROOT}}assets/style.css">
 </head>
-<body>
+<body data-zoom-close="{{attr:zoom_close}}">
 
 {{HEADER}}
+
+{{BANNER}}
 
 <main>
   <section class="hero">
     <div class="wrap">
       <div class="hero-text">
-        <span class="badge">Free · Open source · Windows 10 / 11</span>
-        <h1>A good puppy for everything you repeat.</h1>
-        <p>Loops, recorded macros and key remaps, with an overlay that never steals focus from your game or any fullscreen app.</p>
+        <span class="badge">{{badge}}</span>
+        <h1 lang="en" dir="ltr">{{slogan}}</h1>
+        <p>{{summary}}</p>
         <div class="actions">
           <a class="button button-primary" href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>
-            Download for Windows
+            {{download_button}}
           </a>
-          <a class="button button-secondary" href="guide/latest/">Read the guide</a>
+          <a class="button button-secondary" href="{{ROOT}}guide/latest/" hreflang="en">{{guide_button}}</a>
         </div>
-        <span class="fine-print">Version {{VERSION}} · updates itself · installs without administrator rights · <a href="https://github.com/giuvincenzi/puppymacro/releases">all releases</a></span>
+        <span class="fine-print">{{fine_print}}</span>
       </div>
       <div class="hero-shot">
         <div class="window">
-          <img src="assets/loops.png" alt="The Loops page of PuppyMacro with three loops">
+          <img src="{{ROOT}}assets/loops.png" alt="{{attr:screenshot_alt}}">
         </div>
       </div>
     </div>
@@ -41,52 +71,52 @@
 
   <section id="features" class="section">
     <div class="wrap">
-      <h2>Everything you repeat, in one place</h2>
+      <h2>{{features_title}}</h2>
       <div class="cards">
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
-          <h3>Your AI builds it <span class="tag">MCP ready</span><span class="tag">Beta</span></h3>
-          <p>Connect your AI app, like Claude, and just ask: "make a macro that…". Done.</p>
+          <h3>{{ai_title}} <span class="tag">{{ai_tag_mcp}}</span><span class="tag">{{ai_tag_beta}}</span></h3>
+          <p>{{ai_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>
-          <h3>Loops</h3>
-          <p>Press a key or a combination like Ctrl+C, click (also double, at a fixed point), keep a key or button held down, or paste a text, every 10 ms to 24 h. Several actions, each on its own timer.</p>
+          <h3>{{loops_title}}</h3>
+          <p>{{loops_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="#5bc8ff"/></svg>
-          <h3>Macros</h3>
-          <p>Record keys, clicks, scroll and mouse movement, then edit every step, in a list or as code with suggestions and live checks. Play once, N times or in a loop, at ×0.25 to ×4 speed.</p>
+          <h3>{{macros_title}}</h3>
+          <p>{{macros_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14l-3-3M20 16H6l3 3"/></svg>
-          <h3>Remap</h3>
-          <p>A key, a mouse button or a combination like Alt+J sends another key, button or combination, in all apps or only in the app you choose. Ctrl, Alt, Shift and Win can be remapped too, left and right apart.</p>
+          <h3>{{remap_title}}</h3>
+          <p>{{remap_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>
-          <h3>Overlay mode</h3>
-          <p>A small always-on-top panel over your game or fullscreen app, and round floating buttons you place anywhere, each with its own opacity. Use both or only the buttons. They show what works in the app in front. Click them to start or stop without the app losing focus.</p>
+          <h3>{{overlay_title}}</h3>
+          <p>{{overlay_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4M7 13h2M14 9h3"/></svg>
-          <h3>Hotkeys</h3>
-          <p>Any key, mouse button or combination with Ctrl, Alt, Shift or Win, also Ctrl+click or Alt+scroll wheel. Toggle or Hold, in all apps or only in the app you choose. Stop all, Overlay mode and Record are one shortcut away.</p>
+          <h3>{{hotkeys_title}}</h3>
+          <p>{{hotkeys_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
-          <h3>Always up to date</h3>
-          <p>PuppyMacro checks for new versions and updates itself with one click. Your loops, macros and remaps stay.</p>
+          <h3>{{updates_title}}</h3>
+          <p>{{updates_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6M9 14l3 3 3-3"/></svg>
-          <h3>Share</h3>
-          <p>Export the loops, macros and remaps you choose to one file, and import a friend's with a double-click. Nothing of yours is replaced: imported items come new and disabled.</p>
+          <h3>{{share_title}}</h3>
+          <p>{{share_text}}</p>
         </div>
         <div class="card">
           <svg viewBox="0 0 24 24" fill="none" stroke="#5bc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg>
-          <h3>Your language</h3>
-          <p>In your Windows language, or the one you choose: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 and 中文.</p>
+          <h3>{{language_title}}</h3>
+          <p>{{language_text}}</p>
         </div>
       </div>
     </div>
@@ -95,9 +125,9 @@
   <section id="privacy" class="section">
     <div class="wrap">
       <div class="panel">
-        <h2>Privacy</h2>
-        <p>PuppyMacro does not collect or send personal data. With <strong>Check for updates automatically</strong> (on by default), it contacts GitHub when it starts and every 12 hours to check for and download updates; the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub General Privacy Statement</a> applies to those requests. Turn it off in Settings > Data and updates.</p>
-        <p>PuppyMacro sends nothing to AI services. With <strong>Allow AI access</strong> on (off by default), the AI apps on your PC that you connect can read your loops, macros, remaps and settings through PuppyMacro: what they read goes to that app's provider, under its own privacy policy.</p>
+        <h2>{{privacy_title}}</h2>
+        <p>{{privacy_updates}}</p>
+        <p>{{privacy_ai}}</p>
       </div>
     </div>
   </section>
@@ -105,5 +135,6 @@
 
 {{FOOTER}}
 
+<script src="{{ROOT}}assets/site.js"></script>
 </body>
 </html>

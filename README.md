@@ -1,21 +1,23 @@
-# PuppyMacro
+<p align="center"><img src="https://raw.githubusercontent.com/giuvincenzi/puppymacro/main/site/assets/logo.png" width="96" alt=""></p>
+<h1 align="center">PuppyMacro</h1>
+<p align="center"><i>A good puppy for everything you repeat.</i></p>
+<p align="center">
+  <a href="https://github.com/giuvincenzi/puppymacro/releases/latest"><img src="https://badgen.net/github/tag/giuvincenzi/puppymacro?label=version" alt="Latest version"></a>
+  <a href="https://github.com/giuvincenzi/puppymacro/actions/workflows/test.yml?query=branch%3Amain"><img src="https://badgen.net/github/checks/giuvincenzi/puppymacro/main?label=CI" alt="CI"></a>
+  <a href="LICENSE"><img src="https://badgen.net/badge/license/MIT/blue" alt="MIT license"></a>
+  <img src="https://badgen.net/badge/Windows/10%20%7C%2011/blue" alt="Windows 10 and 11">
+</p>
+<p align="center">
+  🌐 <a href="https://giuvincenzi.github.io/puppymacro/">Website</a> ·
+  📖 <a href="https://giuvincenzi.github.io/puppymacro/guide/latest/">User guide</a> ·
+  ⬇️ <a href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">Download for Windows</a>
+</p>
 
-**[Website](https://giuvincenzi.github.io/puppymacro/)** ·
-**[Download for Windows](https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe)** ·
-**[User guide](https://giuvincenzi.github.io/puppymacro/guide/latest/)**
+<!-- Title and description: written once in site/home/en.json, checked by the test workflow (readme_and_mcp_registry_test) -->
+Macros, auto clicker and key remapper for Windows. Loops, recorded macros and key remaps, with an always-on-top overlay to start and stop them without leaving the app you are using. Free and open source.
+<!-- End of title and description -->
 
-PuppyMacro automates keyboard and mouse input on Windows 10 and 11: loops that repeat keys and
-texts, recorded macros you can edit (also as code), key and mouse button remaps, and an overlay to
-start and stop them without leaving your game or fullscreen app. AI apps on your PC (Claude Desktop,
-Visual Studio Code, Codex and other MCP apps) can prepare them for you. Free and open source.
-
-## Download
-
-Download [PuppyMacro-win-Setup.exe](https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe)
-and run it. It installs PuppyMacro for your Windows user (Windows 10 or 11, x64, no
-administrator rights) and PuppyMacro then updates itself. How to use it: the
-[user guide](https://giuvincenzi.github.io/puppymacro/guide/latest/). Changes in each version:
-[CHANGELOG.md](CHANGELOG.md).
+AI apps on your PC can build them through MCP, with the PuppyMacro app installed.
 
 ## Development
 

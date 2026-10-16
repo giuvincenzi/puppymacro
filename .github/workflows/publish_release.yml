@@ -1,4 +1,5 @@
-# Publishes a release: the tests, the signed installer with the GitHub Release and its tag vX.Y.Z, then the website.
+# Publishes a release: the tests, the signed installer with the GitHub Release and its tag vX.Y.Z, then the website and
+# the MCP Registry entry.
 # Starts on a push to main that changes PuppyMacro/Version.props: GitHub compares the files of the pushed commit with
 # `paths`, so only the merge of the release pull request (create_release_pr) starts it; no other pull request can change
 # that file (the test workflow's block_version_change). A failed job is retried with "Re-run failed jobs" on its run.
@@ -105,3 +106,36 @@ jobs:
       - name: deploy_to_github_pages
         id: deploy
         uses: actions/deploy-pages@v5
+
+  # PuppyMacro's entry in the official MCP Registry, with this release's version (discoverability.md): a published version
+  # can never be changed, so every release publishes its own. The registry trusts GitHub's OIDC token for the
+  # io.github.giuvincenzi/* names: no secret.
+  publish_mcp_registry:
+    needs: publish_app
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # the OIDC token mcp-publisher logs in with
+    env:
+      # The same pinned mcp-publisher as the test workflow's readme_and_mcp_registry_test: change both (build-and-release.md).
+      MCP_PUBLISHER_VERSION: v1.8.1
+      MCP_PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+
+      - name: build_mcp_registry_entry
+        shell: pwsh
+        run: ./scripts/mcp-server-json.ps1 -Output "$env:RUNNER_TEMP/server.json"
+
+      - name: install_mcp_publisher
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/mcp-publisher.tar.gz" \
+            "https://github.com/modelcontextprotocol/registry/releases/download/$MCP_PUBLISHER_VERSION/mcp-publisher_linux_amd64.tar.gz"
+          echo "$MCP_PUBLISHER_SHA256  $RUNNER_TEMP/mcp-publisher.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/mcp-publisher.tar.gz" -C "$RUNNER_TEMP" mcp-publisher
+
+      - name: publish_to_mcp_registry
+        run: |
+          "$RUNNER_TEMP/mcp-publisher" login github-oidc
+          "$RUNNER_TEMP/mcp-publisher" publish "$RUNNER_TEMP/server.json"

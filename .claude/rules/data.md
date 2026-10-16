@@ -55,7 +55,7 @@ paths:
 - `AppExe` (Specific app) on loops, macros and remaps: an .exe file name or null (all apps). Files
   without it work in all apps; an empty value is saved as null (`AppScope.Normalize`, in
   `SettingsStore`, `MacroLibrary.Sanitize` and the Code views).
-- Export / Import (`BackupService`, `CLAUDE.md`: a backup is an identical copy): a `.puppymacro` zip of the data
+- Export / Import (`BackupService`, "A backup is an identical copy" below): a `.puppymacro` zip of the data
   folder, paths relative to it, with `puppymacro-backup.json` listing its parts (`BackupParts`: Data, History,
   AiActivity, Logs; `PartOf` decides by path: `history\` History, `ai-activity.json` AI activity, `logs\` Logs,
   everything else Data, so a new file is Data). Export takes Data always and the parts chosen in
@@ -119,3 +119,17 @@ paths:
   who, summary, changes, the item's JSON, `Deleted`. Not user data: a missing or unreadable file is an empty history.
   PuppyMacro's entry in the AI apps' own settings is named `puppymacro` (`puppymacro-dev` for the development build, so
   it never replaces the installed one's) and starts `AppPaths.ExecutablePath` (Velopack's `current` folder) with `--mcp`.
+
+## A backup is an identical copy
+
+A user who exports with **Everything** and imports on another PC must get the same PuppyMacro: every
+loop, macro, remap, setting, History, AI activity and log. So, for every change that adds or moves data:
+
+- All user data and state lives in the data folder (`AppPaths.DataFolder`). `BackupService` exports
+  the whole folder, so a new file there is in the backup with no code change: put it in the right
+  part (`BackupService.PartOf`: Data, unless it is History, AI activity or logs; a new kind of
+  data that users may want to leave out gets a new part and a checkbox in `Views/ExportOptionsView`).
+- Anything kept outside the data folder (registry, `%LocalAppData%`, other apps' files) must be
+  rebuilt from the data on start or after an import (as the Start with Windows Run entry is), or be
+  listed above under "Not in the backup" with the reason (only caches and copies).
+- Add a case to `BackupServiceTests` for every new file or folder.
