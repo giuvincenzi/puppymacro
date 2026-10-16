@@ -16,6 +16,8 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 if (-not $Output) { $Output = if ($Preview) { 'site-preview' } else { '_site' } }
 $utf8 = New-Object System.Text.UTF8Encoding $false
+# Where GitHub Pages publishes the site: canonical links, link previews and sitemap.xml need absolute URLs.
+$SiteUrl = 'https://giuvincenzi.github.io/puppymacro/'
 
 function Read-Text([string]$path) { [System.IO.File]::ReadAllText($path, $utf8) }
 function Write-Text([string]$path, [string]$text) {
@@ -83,6 +85,8 @@ try {
     New-Item -ItemType Directory -Path $Output | Out-Null
     Copy-Item (Join-Path $chrome 'assets') (Join-Path $Output 'assets') -Recurse
     Copy-Item (Join-Path $chrome 'favicon.ico') $Output
+    # Google Search Console's verification file: it must stay at the site root, or the site loses its verification.
+    Get-ChildItem (Join-Path $chrome 'google*.html') | Copy-Item -Destination $Output
 
     $header = Read-Text (Join-Path $chrome '_header.html')
     $footer = Read-Text (Join-Path $chrome '_footer.html')
@@ -91,8 +95,13 @@ try {
     $homePage = (Read-Text (Join-Path $chrome 'index.html')).
         Replace('{{HEADER}}', $header.Replace('{{ROOT}}', '').Replace('{{GUIDE_CURRENT}}', '')).
         Replace('{{FOOTER}}', $footer).
-        Replace('{{VERSION}}', $latest)
+        Replace('{{VERSION}}', $latest).
+        Replace('{{SITE_URL}}', $SiteUrl)
     Write-Text (Join-Path $Output 'index.html') $homePage
+
+    # The newest guide: guide/latest/ opens it, every version's page points to its page as the canonical one (so search
+    # engines show the newest guide, not an older copy of it) and sitemap.xml lists its pages.
+    $newest = if ($Preview) { $guides[0] } else { $guides | Where-Object Name -eq $latest }
 
     $guideHeader = $header.Replace('{{ROOT}}', '../../').Replace('{{GUIDE_CURRENT}}', ' aria-current="page"')
     foreach ($g in $guides) {
@@ -114,6 +123,7 @@ try {
             $pager = @()
             if ($i -gt 0) { $p = $sections[$i - 1]; $pager += "      <a class=""prev"" href=""$($p.Slug).html""><span>Previous</span>$(Encode $p.Title)</a>" }
             if ($i -lt $sections.Count - 1) { $n = $sections[$i + 1]; $pager += "      <a class=""next"" href=""$($n.Slug).html""><span>Next</span>$(Encode $n.Title)</a>" }
+            $canonicalVersion = if ($newest.Sections.Slug -contains $s.Slug) { $newest.Name } else { $g.Name }
             $content = (Read-Text (Join-Path $g.Dir "guide/$($s.Slug).html")).TrimEnd()
             $content = ($content -split "`n" | ForEach-Object { if ($_.Trim()) { "    $_" } else { '' } }) -join "`n"
             $page = $template.
@@ -122,6 +132,8 @@ try {
                 Replace('{{SECTION_LINKS}}', ($links -join "`n")).
                 Replace('{{PAGER}}', ($pager -join "`n")).
                 Replace('{{CONTENT}}', $content).
+                Replace('{{CANONICAL}}', "${SiteUrl}guide/$canonicalVersion/$($s.Slug).html").
+                Replace('{{SITE_URL}}', $SiteUrl).
                 Replace('{{TITLE}}', (Encode $s.Title)).
                 Replace('{{VERSION}}', $g.Name)
             Write-Text (Join-Path $out "$($s.Slug).html") $page
@@ -130,12 +142,19 @@ try {
     }
 
     # guide/latest/ always opens the newest released guide (the preview opens "next").
-    $newest = if ($Preview) { $guides[0] } else { $guides | Where-Object Name -eq $latest }
     foreach ($s in $newest.Sections) {
         Write-Text (Join-Path $Output "guide/latest/$($s.Slug).html") (Redirect "../$($newest.Name)/$($s.Slug).html")
     }
     Write-Text (Join-Path $Output 'guide/latest/index.html') (Redirect "../$($newest.Name)/")
     Write-Text (Join-Path $Output 'guide/index.html') (Redirect 'latest/')
+
+    # sitemap.xml: the pages search engines should read, the home page and the newest guide (submitted in Google Search
+    # Console and Bing Webmaster Tools; a project site has no robots.txt of its own to name it).
+    $urls = @($SiteUrl) + @($newest.Sections | ForEach-Object { "${SiteUrl}guide/$($newest.Name)/$($_.Slug).html" })
+    $entries = $urls | ForEach-Object { "  <url><loc>$(Encode $_)</loc></url>" }
+    Write-Text (Join-Path $Output 'sitemap.xml') (
+        "<?xml version=""1.0"" encoding=""UTF-8""?>`n" +
+        "<urlset xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">`n" + ($entries -join "`n") + "`n</urlset>`n")
 
     Write-Host "Site built in $(Join-Path $root $Output): guide versions $(($guides.Name) -join ', ')"
 }

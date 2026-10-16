@@ -26,6 +26,22 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
   Released versions are added only when git is available to Windows PowerShell (in WSL it
   usually is not).
 
+## Search engines
+
+The site is in Google Search Console (a "URL prefix" property for `https://giuvincenzi.github.io/puppymacro/`, the
+maintainer's account) and in Bing Webmaster Tools (imported from Search Console). What `scripts/site.ps1` writes for
+them, with `$SiteUrl` as the one place the site's address is written:
+
+- `site/google146096d896bf870a.html`: Search Console's verification file, copied to the site root. Never delete or
+  rename it: the property stays verified only while Google finds it.
+- `sitemap.xml` at the site root: the home and the newest guide's pages (submitted in Search Console). A project site
+  on `github.io` cannot have a `robots.txt` of its own (it would be at `giuvincenzi.github.io/robots.txt`).
+- `<link rel="canonical">` in every page: a guide page of any version points to the same page of the newest guide (or
+  to itself when the newest guide has no such section), so search engines show the newest guide and not older copies.
+- Link previews (Open Graph: title, description, `assets/loops.png`) and, on the home, the `SoftwareApplication`
+  structured data (name, Windows 10 and 11, free, version, download link). Keep them true to the app as the home's
+  texts are.
+
 ## README
 
 `README.md` holds only: the links (website, download, user guide), a short description of
