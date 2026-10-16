@@ -231,9 +231,23 @@ kbd {
   .guide-sidebar { position: static; max-width: none; }
   .site-header { position: static; }
 }
-.shot { margin: 20px 0; max-width: 560px; }
-.shot img { border-radius: 10px; border: 1px solid #2a2d37; }
+/* Screenshots: the whole width of the text, centered; a click shows them at full size (site.js) */
+.shot { margin: 24px auto; text-align: center; }
+.shot img { margin: 0 auto; border-radius: 10px; border: 1px solid #2a2d37; }
 .shot figcaption { margin-top: 8px; font-size: 14px; color: var(--faint); }
+.zoomable { cursor: zoom-in; }
+.zoom { padding: 0; border: 0; background: transparent; max-width: 100vw; max-height: 100vh; overflow: visible; }
+.zoom::backdrop { background: rgba(8, 9, 12, 0.88); }
+.zoom img {
+  max-width: 95vw; max-height: 92vh; width: auto; height: auto;
+  border-radius: 10px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6); cursor: zoom-out;
+}
+.zoom-close {
+  position: fixed; top: 16px; inset-inline-end: 16px; width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); color: var(--text); border: 1px solid #343846; font-size: 18px; cursor: pointer;
+}
+.zoom-close:hover { border-color: #4a5063; }
 .note {
   background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
   padding: 14px 18px; margin: 16px 0; font-size: 15px; color: var(--muted);

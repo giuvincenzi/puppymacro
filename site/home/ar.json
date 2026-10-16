@@ -17,6 +17,7 @@
   "guide_button": "قراءة الدليل (بالإنجليزية)",
   "fine_print": "الإصدار {version} · يحدّث نفسه تلقائيًا · يُثبَّت دون صلاحيات المسؤول · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">كل الإصدارات</a>",
   "screenshot_alt": "صفحة الحلقات في PuppyMacro وفيها ثلاث حلقات",
+  "zoom_close": "إغلاق",
   "features_title": "كل ما تكرره، في مكان واحد",
   "ai_title": "دع AI ينشئه لك",
   "ai_tag_mcp": "يدعم MCP",

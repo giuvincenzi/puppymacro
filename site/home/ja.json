@@ -17,6 +17,7 @@
   "guide_button": "ガイドを読む (英語)",
   "fine_print": "バージョン {version} · 自動で更新 · 管理者権限なしでインストール · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">すべてのリリース</a>",
   "screenshot_alt": "3 つのループが表示された PuppyMacro のループ ページ",
+  "zoom_close": "閉じる",
   "features_title": "繰り返しの操作は、すべてここで",
   "ai_title": "AI が作ってくれる",
   "ai_tag_mcp": "MCP 対応",

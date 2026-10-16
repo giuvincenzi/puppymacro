@@ -1,5 +1,6 @@
 # The create_release_pr workflow's take_screenshots: retakes the editor screenshots of the user guide (site/guide/img:
-# loop-editor.png, macro-editor.png, macro-editor-code.png, remap-editor.png) and the home page's (site/assets/loops.png)
+# loop-editor.png, macro-editor.png, macro-editor-code.png, remap-editor.png; the main window on the AI page, ai-page.png)
+# and the home page's (site/assets/loops.png)
 # from the running development build (started before with scripts/dev.ps1 -Screenshots: PUPPYMACRO_SCREENSHOTS=1, so it
 # shows the sample data and no development build marks), on a screen of 1920 x 1080 (scripts/screen-resolution.ps1).
 # It drives the UI with UI Automation: do not use the mouse or keyboard while it runs. At the end (also after an
@@ -188,6 +189,15 @@ for ($pass = 0; $pass -lt 3; $pass++) {
 $main.SetFocus()
 Start-Sleep -Milliseconds 800
 SaveWindow $h (Join-Path (Split-Path -Parent $PSScriptRoot) 'site/assets/loops.png')
+
+# The guide's AI page (ai.html, "Set it up"): the same window and size on the AI page, as this machine shows it.
+$aiPage = WaitFor { ByName $main 'AI' } 'AI page'
+$aiPage.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+Start-Sleep -Seconds 1
+WaitFor { ByName $main 'Allow AI access' } 'the AI page shown' | Out-Null
+$main.SetFocus()
+Start-Sleep -Milliseconds 800
+SaveWindow $h (Join-Path $OutDir 'ai-page.png')
 $transform.Resize($restoreWidth, $restoreHeight)
 
 ClosePuppyMacro

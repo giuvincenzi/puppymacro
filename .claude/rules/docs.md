@@ -87,12 +87,16 @@ tools (settings, instructions and descriptions, new tools, tests). The plan also
   its screen at 1920 x 1080 (`build-and-release.md`), and checked by the user in the release pull request: no
   pull request retakes them (`screenshots_test` only checks that they can be taken, `testing.md`) and there is no `make`
   for them. `scripts/screenshots.ps1` takes the guide's editor
-  screenshots (`site/guide/img/`: `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`)
+  screenshots (`site/guide/img/`: `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`;
+  `ai-page.png`, the main window on the AI page as the GitHub machine shows it, with no AI app installed)
   and the home page's `site/assets/loops.png`, the whole main window with its title bar, from the development build
   started with `PUPPYMACRO_SCREENSHOTS=1` (`scripts/dev.ps1 -Screenshots`, `App.ShowsDevMarks`): the sample data, but no
   strip and no DEV, and the first sample loop enabled, so every screenshot looks like a release. Each window is
   captured alone (`PrintWindow`: nothing behind it shows), with its rounded corners transparent, at 100% scale, in
   Windows' default accent color. Never show personal data, user names or other windows. A new screenshot is added
   there, taken the same way.
+- A screenshot in the guide is a `<figure class="shot">` (the image with `alt`, a `<figcaption>`): centered, as wide as
+  the text. Every screenshot of the site (those figures and the home's window) opens at full size with a click, Enter or
+  Space (`site.js`); every guide version uses the latest `site.js`, so the older guides get it too.
 - The download link is `https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe`:
   keep the Setup file name stable.

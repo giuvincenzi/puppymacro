@@ -6,6 +6,49 @@ if (versionSelect) {
   });
 }
 
+// Screenshots (the guide's figures, the home's window): a click, Enter or Space shows the image at full size, as far as
+// the screen allows; a click, Esc or the close button closes it. Every guide version uses this script, so all of them
+// get it.
+const zoomables = document.querySelectorAll('.shot img, .hero-shot img');
+if (zoomables.length && typeof HTMLDialogElement === 'function') {
+  const dialog = document.createElement('dialog');
+  dialog.className = 'zoom';
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'zoom-close';
+  close.textContent = '✕';
+  close.setAttribute('aria-label', document.body.dataset.zoomClose || 'Close');
+  const big = document.createElement('img');
+  dialog.append(close, big);
+  document.body.append(dialog);
+  let opener = null;
+  dialog.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => {
+    big.removeAttribute('src');
+    if (opener) opener.focus();
+  });
+  zoomables.forEach((image) => {
+    image.classList.add('zoomable');
+    image.tabIndex = 0;
+    image.setAttribute('role', 'button');
+    image.setAttribute('aria-haspopup', 'dialog');
+    const open = () => {
+      opener = image;
+      big.src = image.currentSrc || image.src;
+      big.alt = image.alt;
+      dialog.showModal();
+      close.focus();
+    };
+    image.addEventListener('click', open);
+    image.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        open();
+      }
+    });
+  });
+}
+
 // Home pages: the language the visitor chose (from the menu or the banner), remembered in this browser only.
 const languageKey = 'puppymacro.language';
 function readLanguage() {
