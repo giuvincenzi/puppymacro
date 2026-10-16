@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+- The website's home page is in all 13 languages of the app, and its screenshots open at full size with a click.
+- The user guide shows the AI page and no longer says the overlay is hidden over apps in exclusive fullscreen.
+
 ## 1.22.0
 
 ### Changed
