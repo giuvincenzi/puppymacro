@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Stopping a loop or macro while it pastes a text no longer loses the paste or pastes the previous clipboard.
+
 ## 1.23.0
 
 ### Changed
