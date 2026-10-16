@@ -237,11 +237,13 @@ internal sealed class MacroRunner
         var previous = _paster.Replace(a.Text);
         try
         {
+            // Once Ctrl+V is sent the paste always completes, as a loop's (ActionRunner.PasteText): a stop skips only
+            // Enter after, never the waits before the clipboard is restored.
             InputSender.SendPasteShortcut();
-            _timer!.Wait(40, _stop);
-            if (a.EnterAfter)
+            _timer!.WaitFully(40);
+            if (a.EnterAfter && !_stop.WaitOne(0))
                 InputSender.Tap(KeyNames.VK_RETURN, hold, _timer!, _stop);
-            _timer!.Wait(150, _stop);
+            _timer!.WaitFully(150);
         }
         finally
         {

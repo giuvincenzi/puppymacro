@@ -33,6 +33,9 @@ paths:
   macro's modifiers already down from a Key down are left as they are. Without modifiers the old `Tap`
   runs. Hold down holds a key or button alone, never a combination (an injected modifier held for the
   whole loop would reach every key the user types).
+- A paste (a loop's or a macro's Paste text), once Ctrl+V is sent, always completes: stopping does not cut the waits
+  before the clipboard is restored (`PreciseTimer.WaitFully`), otherwise the target would read the restored clipboard
+  or nothing; a stop skips only Enter after.
 - A loop's Click with a fixed point moves there first (skipped when the point is on PuppyMacro, as macro
   clicks); without one it clicks where the pointer is, skipped over PuppyMacro, as before.
 - Before a loop sends a key, physically held modifiers are released (so the target gets

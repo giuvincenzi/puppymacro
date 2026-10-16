@@ -52,6 +52,21 @@ internal sealed class PreciseTimer : IDisposable
         return signaled != 0;
     }
 
+    /// <summary>Waits for <paramref name="milliseconds"/> whatever happens meanwhile: for the steps that must finish once
+    /// started, such as a paste before its clipboard is restored.</summary>
+    public void WaitFully(double milliseconds)
+    {
+        if (milliseconds <= 0)
+            return;
+        long dueTime = -(long)(milliseconds * 10_000); // negative = relative, in 100 ns units
+        if (!NativeMethods.SetWaitableTimer(_handle.SafeWaitHandle, ref dueTime, 0, IntPtr.Zero, IntPtr.Zero, false))
+        {
+            Thread.Sleep((int)Math.Ceiling(milliseconds));
+            return;
+        }
+        _handle.WaitOne();
+    }
+
     public void Dispose() => _handle.Dispose();
 }
 
@@ -237,14 +252,16 @@ internal sealed class ActionRunner
         var previous = _paster.Replace(_action.Text);
         try
         {
+            // Once Ctrl+V is sent the paste always completes: a stop meanwhile must not restore the clipboard before the
+            // target has read it (the paste would be lost or paste the previous clipboard). A stop skips only Enter after.
             InputSender.SendPasteShortcut();
-            timer.Wait(PasteSettleMs, _stop);
+            timer.WaitFully(PasteSettleMs);
 
-            if (_action.EnterAfter)
+            if (_action.EnterAfter && !_stop.WaitOne(0))
                 InputSender.Tap(KeyNames.VK_RETURN, holdMs, timer, _stop);
 
             // Give the target time to read the clipboard before restoring it.
-            timer.Wait(ClipboardRestoreDelayMs, _stop);
+            timer.WaitFully(ClipboardRestoreDelayMs);
         }
         finally
         {

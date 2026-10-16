@@ -30,17 +30,11 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
 
 ## README
 
-`README.md` holds only, nothing that repeats the website:
-
-- centered: the logo, the name, the slogan, and one line of links with their icons: 🌐 Website · 📖 User guide ·
-  ⬇️ Download for Windows;
-- the title and description (`discoverability.md`), between its "Title and description" comments, checked by the test
-  workflow; then one line on AI apps (they build loops, macros and remaps through MCP, with the app installed);
-- "Development": see `.claude/rules/`;
-- "License", with the list of third-party components the app ships (NuGet packages in `PuppyMacro/PuppyMacro.csproj` and
-  their dependencies, files in `PuppyMacro/Assets/`), with the attribution their licenses ask for.
-
-Everything for developers goes in `.claude/rules/`; how to use the app goes in the user guide.
+`README.md` is short: it presents PuppyMacro and links to the website, the user guide and the download, and never
+repeats what the website or the guide already say. Its title and description come from `site/home/en.json` and are
+checked by the test workflow (`discoverability.md`). It ends with "Development" (see `.claude/rules/`) and "License",
+with the third-party components the app ships (NuGet packages in `PuppyMacro/PuppyMacro.csproj` and their dependencies,
+files in `PuppyMacro/Assets/`) and the attribution their licenses ask for.
 
 ## Every user-visible change updates the documentation
 
