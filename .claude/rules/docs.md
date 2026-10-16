@@ -4,10 +4,9 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
 `scripts/site.ps1`, published to GitHub Pages by the `publish_release` workflow (job `publish_site`).
 
 - `site/index.html`: the home page (features, privacy), a template filled once per language with the texts of
-  `site/home/<code>.json` (`{{key}}`, `{{attr:key}}` in attributes, `{{json:key}}` in JSON). `{{VERSION}}` is the latest
-  released version. The home is in the app's 13 languages, the guide only in English (`discoverability.md`).
-- `site/_header.html`, `site/_footer.html`: shared header and footer (`{{ROOT}}` is the path
-  to the site root, `{{HOME}}` the page's own home; their texts come from the page's language).
+  `site/home/<code>.json` (placeholders: `scripts/site.ps1`). The home is translated, the guide only in English
+  (`discoverability.md`).
+- `site/_header.html`, `site/_footer.html`: shared header and footer, with the texts of the page's language.
 - `site/guide/sections.txt`: guide sections in order (`file|Title`). One file per section,
   `site/guide/<file>.html`, with the section content only; `site/guide/_page.html` is the
   page around it (sticky sidebar, version select, previous/next).
@@ -80,15 +79,10 @@ tools (settings, instructions and descriptions, new tools, tests). The plan also
 - Screenshots: taken only by the `create_release_pr` workflow, for every release, on a GitHub Windows machine with
   its screen at 1920 x 1080 (`build-and-release.md`), and checked by the user in the release pull request: no
   pull request retakes them (`screenshots_test` only checks that they can be taken, `testing.md`) and there is no `make`
-  for them. `scripts/screenshots.ps1` takes the guide's editor
-  screenshots (`site/guide/img/`: `loop-editor.png`, `macro-editor.png`, `macro-editor-code.png`, `remap-editor.png`;
-  `ai-page.png`, the main window on the AI page as the GitHub machine shows it, with no AI app installed)
-  and the home page's `site/assets/loops.png`, the whole main window with its title bar, from the development build
-  started with `PUPPYMACRO_SCREENSHOTS=1` (`scripts/dev.ps1 -Screenshots`, `App.ShowsDevMarks`): the sample data, but no
-  strip and no DEV, and the first sample loop enabled, so every screenshot looks like a release. Each window is
-  captured alone (`PrintWindow`: nothing behind it shows), with its rounded corners transparent, at 100% scale, in
-  Windows' default accent color. Never show personal data, user names or other windows. A new screenshot is added
-  there, taken the same way.
+  for them. `scripts/screenshots.ps1` holds the list and takes them from the development build started with
+  `PUPPYMACRO_SCREENSHOTS=1` (`scripts/dev.ps1 -Screenshots`): the sample data, no development marks, so every
+  screenshot looks like a release. Each window is captured alone, at 100% scale, in Windows' default accent color.
+  Never show personal data, user names or other windows. A new screenshot is added there, taken the same way.
 - A screenshot in the guide is a `<figure class="shot">` (the image with `alt`, a `<figcaption>`): centered, as wide as
   the text. Every screenshot of the site (those figures and the home's window) opens at full size with a click, Enter or
   Space (`site.js`); every guide version uses the latest `site.js`, so the older guides get it too.

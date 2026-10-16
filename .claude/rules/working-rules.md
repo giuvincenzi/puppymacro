@@ -1,11 +1,11 @@
 # Working rules
 
-- **English only in the project**: code, identifiers, comments, XAML text, UI labels,
-  tooltips, messages, README, CHANGELOG, rules.
+- **English only in the project**: code, identifiers, comments, the English source texts in
+  `Strings.resx` (translations follow `i18n.md`), README, CHANGELOG, rules.
 - **Ask before changing code.** Describe what you want to change and why, wait for an
   explicit OK, then write the code. This applies to small fixes and refactors too.
   For a user-visible change the description includes the documentation checklist of
-  `docs.md` (guide, home feature cards, CHANGELOG, new screenshots, AI tools), item by item.
+  `docs.md`, item by item.
 - **UI changes: visual proposals first.** For any change to the UI, before writing code:
   1. Describe in text what would change, then ask the user whether they want visual
      proposals.
@@ -40,9 +40,11 @@
 
 ## Keeping the rules up to date
 
-- A change that adds something developers must know (a new system or feature area, a new
-  convention, a decision, a new test category or file layout) updates `.claude/rules/` in the
-  same pull request (a new rule file also gets its line in the list of `.claude/CLAUDE.md`).
+- Update a rule when what it says changes or becomes false, or when the change brings a new
+  decision or convention, in the same pull request (a new rule file also gets its line in the
+  list of `.claude/CLAUDE.md`). Do not add text that restates behavior the code already has, or
+  lists that a file already holds (packages, keys, files): a rule must not need updating each
+  time the code grows.
 - The plan given before implementing lists the rule files to add or change and what changes,
   next to the documentation checklist of `docs.md`, or says "no rule changes" with the reason.
 - Rules record decisions the user approved. Change a rule only when the user approved the

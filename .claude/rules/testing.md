@@ -2,50 +2,15 @@
 
 ## Unit tests: `make test`
 
-- `tests/PuppyMacro.Tests`: xUnit v3 (`xunit.v3.mtp-v2`) on Microsoft Testing Platform
-  (`global.json` sets the `dotnet test` runner). It references the app project; the app's
-  `internal` types are visible through `InternalsVisibleTo`.
+- `tests/PuppyMacro.Tests`: xUnit v3 on Microsoft Testing Platform (`global.json` sets the runner). It references the
+  app; the app's `internal` types are visible to it.
 - `make test` runs `dotnet test` in **Release**: the code users get, and a running dev build
   (which locks `bin/Debug`) does not block it.
-- They run on GitHub in the `test` workflow, job `unit_test` (`.github/workflows/test.yml`): on every pull request
-  and every push to `main` (a required check for merging), and in `publish_release` before a release is built (it
-  stops when they fail). The push of a release merge (it changes `PuppyMacro/Version.props`) skips them, as
-  `publish_release` runs them on that commit.
-- Covered: settings loading and migrations (`SettingsStore`), Export and Import (`BackupServiceTests`: every part, the
-  identical copy, partial files, older files, refused files), macros from recorded events
-  (`MacroBuilder`), `MacroLibrary`, the list pages' groups (`PageViewsTests`: when they show, All apps first then the apps by
-  name, the user's order inside, the table's own order, the search), each list page's view in the settings (`SettingsStoreTests`:
-  the defaults, a newer version's view), a copy's name (`ItemNamesTests`: "Name (2)", a numbered name counts on), macro groups
-  and the editor's operations
-  (`MacroEditList`), the single-action test macro (`MacroDefinition.ForTest`),
-  the options shared by loop and macro actions (`ActionOptionsTests`: combinations, Hold for, Times, double click, fixed point, older files, Code view checks), `HotkeyConflicts` (also per app, for remap sources, for loop and macro hotkeys against remaps and for modifier sides), `HotkeyRules`, which items the overlay shows
-  (`OverlayItems`, `FloatingButtons`), `ModifierTracker`, `KeyNames`, `HotkeyBinding` (`Matches`, `Overlaps`, sides), what the key
-  field shows and its side items (`KeyCaptureField.DisplayParts`, `SideChoices`, `WithSide`), loop intervals, `FloatingButton` (labels,
-  sanitizing, opacity, old files), the Code views' checks and schemas (`MacroJson`, `LoopJson`,
-  `RemapJson`, `CodeSchema`, the groups an action can be in), `LoopEngine`'s input decisions (keys
-  held by a Hold down loop, wheel hotkeys, hotkey capture, the overlay panel's Stop all, Exit, Open and Move, right
-  clicks on the overlay's items, disabled items and clicks that pass through,
-  hotkeys of items for a specific app and their stop when another app comes in front, through
-  `OnForegroundApp`, hotkeys and remaps with modifier sides, remaps from a combination or of a modifier
-  alone, AltGr's fake Ctrl, capture of a modifier alone),
-  driven through `OnKey` / `OnWheel` / `OnMouseDetail` without hooks (also the AI ready keys), the History
-  (`ItemHistoryTests`: created, changes, no version for no change, the version before the history, 50 kept, deleted and
-  restored, actions added and removed), the AI tools (`AiToolsTests`, with `FakeAiHost` as the app and the user: access
-  off, reads, saves checked like the editors and saved at once, each permission, Restore data, "waiting" and
-  `wait_for_user`, the ready window before picks, settings, help, the message while PuppyMacro is closed;
-  `AiTools.WaitStep` is short there; the language is left to the user; `AiJsonTests`: compact JSON read back as the same item, every JSON Patch operation and
-  its errors, `SetWhere`; `AiCallLogTests`; the size limits of the activity and the History), the AI apps'
-  settings files (`AiAppsTests`: Claude Desktop with its Microsoft Store copy, VS Code's link and `mcp.json`, Codex's
-  `config.toml`, never replacing a file with an error), `AiActivityLog` (requests as phrases, older files) and `AllowAiAccess` in older files, `.puppyitems`
-  files (`ItemFileTests`: written and read back as new disabled items, refused files, a newer format or version, an item with
-  problems, names with a number, hotkeys left out also between the file's items, remaps coming in without a hotkey taken or
-  missing, the chosen items only, file names; the AI tools `export_items`, `import_items`, `open_import_window`, `open_export_window` in `AiToolsTests`), the file
-  types' registry keys (`FileTypesTests`, under a test key in `HKCU\Software\PuppyMacroTests`, deleted after; also that
-  every image of the file icons is a PNG of its size), the XAML files
-  (`ControlResourcesTests`: every `NumberBox` in a `SettingsCard` sets its `MinWidth`, `ui.md`), the languages (`LanguageTests`:
-  the menu's order, which language and format each setting and Windows give, Gregorian dates in Arabic, every plural rule;
-  `ResourcesTests`: every `Strings.<code>.resx` has every text with the same placeholders and its plural forms, the global words as they are (none of the global labels), no text written in the XAML (only resources, global words, single letters or digits, F keys), distinct sound
-  names, and every key the code names exists, `i18n.md`) and the History's phrases and older files (`ItemHistoryTests`).
+- On GitHub they are the required check `unit_test` ("Which changes run the tests on GitHub" below), and
+  `publish_release` runs them before a release is built.
+- One test class per area, named `<Area>Tests`. The AI tools are tested with `FakeAiHost` as the app and the user
+  (`AiTools.WaitStep` is short there); the file types' registry keys under a test key in `HKCU\Software\PuppyMacroTests`,
+  deleted after.
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a
   test of another language sets it itself.
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
@@ -54,34 +19,20 @@
 
 ## End-to-end tests: `make e2e`
 
-- `tests/PuppyMacro.E2E`: xUnit v3 + FlaUI (UIA3). `AppSession` closes any running PuppyMacro,
-  deletes `%AppData%\PuppyMacro Dev` and starts the development build
-  (`PuppyMacro/bin/Debug/...`) in English (`PUPPYMACRO_LANGUAGE`, `new AppSession(language: "ar")` for another one),
-  so every test starts from the sample data and finds controls by their English texts on any PC. `new AppSession(seed => ...)`
-  starts it from the data the test writes instead (`Seed`: the app's models, referenced by the
-  project; no samples, global hotkeys Stop all F19, Overlay mode F24, Record F18, no Open PuppyMacro: a test that needs it
-  sets one, as `OverlayTests` sets F14).
-- They run on GitHub in the `test` workflow, split over several machines at once (`e2e_group_1`, `e2e_group_2`, …;
-  "End-to-end tests in groups" below), checked by the job `e2e_test`: on every pull request (a required check for
-  merging into `main`), on every push to `main` and in `publish_release` before every release (it stops when they
-  fail). The push of a release merge skips them, as `publish_release` runs them on that commit: the job
-  `decide_which_tests_run` skips only when `github.workflow` is `test` (called by `publish_release` it is
-  `publish_release`, the caller's github context). The runner's screen is 1024x768: do not click controls that may be off
-  screen there (for example the title bar of a tall window); use UI Automation patterns
+- `tests/PuppyMacro.E2E`: xUnit v3 + FlaUI (UIA3). `AppSession` closes any running PuppyMacro and starts the development
+  build on a fresh dev data folder with the samples, in English, so every test starts from the same data and finds
+  controls by their English texts on any PC (another language through its constructor). With `Seed` it starts from the
+  data the test writes instead, with no samples; a test that needs a global hotkey `Seed` leaves out sets it.
+- On GitHub they are the required check `e2e_test` ("Which changes run the tests on GitHub" and "End-to-end tests in
+  groups" below), and `publish_release` runs them before a release. The runner's screen is 1024x768: do not click
+  controls that may be off screen there (for example the title bar of a tall window); use UI Automation patterns
   instead (`Window.Close()`, `Invoke`).
 - `make e2e` runs them locally; it builds the dev build first. On one machine tests run one at a time (one
   PuppyMacro at a time): they share its desktop, mouse, keyboard, window in front and PuppyMacro's data folder.
-- Every test class has a category, `[Trait("Category", ...)]`: `UI` (`AppTests`: windows, pages, each list page's view (its
-  default, the List, Table and Grid buttons, the view saved and kept, an item opened with a click in every view),
-  editors, Export's choices, Export of items with search (from the title bar's More options), a `.puppyitems` file opened
-  while PuppyMacro runs (a second `PuppyMacro.exe` with its path, as File Explorer starts it; the file dialogs are never
-  opened), a remap imported without its hotkey and its card, two files opened one after the other (one Import, the last
-  file), a backup opened the same way (only its window, Close, the running PuppyMacro untouched; Open Settings, the running
-  PuppyMacro on Settings › Backup); dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably), `Macros` (`MacroActionTests`, `MacroRunTests`), `Loops`, `Remaps`, `Recording`,
-  `Overlay`, `AI` (`AiTests`: the test is the AI app, it starts `PuppyMacro.exe --mcp` with the MCP SDK's
-  `StdioClientTransport` as "E2E test client", calls the tools and answers in PuppyMacro's windows (the ready window with
-  Start, never Enter; `import_items`, `export_items` and the Import window opened by `open_import_window`); its remaps use F22 and F23, the key it presses is F22, the points it clicks are on the picker, which
-  covers the screen).
+- Every test class has a category, `[Trait("Category", ...)]`: `UI`, `Macros`, `Loops`, `Remaps`, `Recording`,
+  `Overlay`, `AI`. Dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably. In
+  `AI` the test is the AI app: it starts `PuppyMacro.exe --mcp`, calls the tools and answers in PuppyMacro's windows
+  (the ready window with Start, never Enter); its keys are F22 and F23.
   `make e2e category=Macros` runs only one category: use it while working on that
   feature; before pushing, and on GitHub, all of them run.
 - They take over the desktop: windows open and close, the mouse moves, keys are pressed.
@@ -89,37 +40,28 @@
   brings PuppyMacro to the front) on a contributor's PC without asking first**: they cannot
   use the PC meanwhile, and their input can make the tests fail. Unit tests (`make test`) run
   in the background and can be run any time.
-- Find controls by their UI text (`Find`) or by `x:Name` (`FindById`). Wait with `Retry` and
-  check `.Success`, never fixed sleeps. A UI Automation timeout ("Operation timed out", PuppyMacro's UI thread busy) is
-  one more try, not a failure (`AppSession.NotYet`, in the helpers that look for an element or a window). Other `AppSession` helpers: `GoTo` (a side rail page),
-  `Expand` (a Settings `SettingsExpander` by `x:Name`, through its `ExpanderToggleButton`: it has
-  no ExpandCollapse pattern), `ItemRow` (an item of a list page, in List, Table or Grid), `CardButton` (its Play, Stop or More
-  options), `EditItem` (opens its editor with a real click near the item's left end: the library's `SettingsCard` has no
-  Invoke pattern), `ViewButton` (a page's List, Table or Grid button), `Dialog` (an
-  editor or dialog: while an editor is open the main window is hidden, so it is searched among
-  PuppyMacro's top-level windows) and `TopWindow` (overlay panel, floating buttons). A list's row is found by its
-  accessible name (`ui.md`), never by the texts inside it: `CardButton` in the main window, `PanelRow` / `PanelRowIs`
-  in the overlay panel, `HasRow` in any list.
+- Use the `AppSession` helpers. Find controls by their UI text (`Find`) or by `x:Name` (`FindById`). Wait with `Retry`
+  and check `.Success`, never fixed sleeps. A UI Automation timeout (PuppyMacro's UI thread busy) is one more try, not
+  a failure (`AppSession.NotYet`). A list's row is found by its accessible name (`ui.md`), never by the texts inside it.
+  While an editor is open the main window is hidden, so editors and dialogs are searched among PuppyMacro's top-level
+  windows.
 - A test that sends input must be harmless: input goes only to a window of the test itself.
   The UI tests use F24 (no keyboard has it). The playback tests (`Macros`, `Loops`, `Remaps`,
-  `Recording`, `Overlay`) really run loops, macros and remaps against `TargetWindow`: a topmost
-  window of the test process at a fixed place inside the 1024x768 screen (its `Activate` puts it on top before its click and
-  checks the click point is its own: PuppyMacro's main window covers that whole screen), which logs every key,
-  button, wheel and move it receives with the time, and has a text box for pasted text. Its
-  `Tap` / `Press` / `Click` check first that it is in front (`RequireForeground`), and every point
-  a macro clicks or moves to is inside it (`TargetWindow.PointAt`, physical pixels). Hotkeys and
-  sent keys are F13 to F24 (`Vk`); other keys (Ctrl+A, Enter, pasted text) only inside it. The
+  `Recording`, `Overlay`) really run loops, macros and remaps against `TargetWindow`, a topmost window of the test
+  process that logs the input it receives (PuppyMacro's main window covers the whole 1024x768 screen, so it checks
+  that a click point is its own). Its `Tap` / `Press` / `Click` check first that it is in front
+  (`RequireForeground`), and every point a macro clicks or moves to is inside it (`TargetWindow.PointAt`, physical
+  pixels). Hotkeys and sent keys are F13 to F24 (`Vk`); other keys (Ctrl+A, Enter, pasted text) only inside it. The
   overlay panel and floating buttons are placed over it, so a click PuppyMacro does not take lands
-  on it. Times are checked with wide margins (`Playback.About`: 60% to 160% plus 250 ms), as the
+  on it. Times are checked with wide margins (`Playback.About`), as the
   GitHub machines are slow; `TargetWindow.Quiet` waits a fixed time only to check that nothing
   more happens (a stopped loop presses nothing).
 - In the playback tests, a UI Automation Invoke on the main window (a card's Play, Stop all) brings
   PuppyMacro to the front, as a user's click does. `Playback.PressCard` / `InvokeInMainWindow` bring
   the target window back right after; an item started that way waits about a second before its
   first input (what it sends before goes to PuppyMacro). Hotkeys do not change the window in front.
-- `WindowsFormsReady` (an xUnit assembly fixture, once per test process before its first test) builds the target window's
-  form without showing it: the first target window of a process spent up to 7 s on GitHub preparing Windows Forms inside
-  the test's 10 s wait, and sometimes did not open. Each `.uia.txt` says how long both took (`Target window:`).
+- `WindowsFormsReady` (an xUnit assembly fixture) prepares Windows Forms before a process's first test: otherwise the
+  first target window spent most of the test's wait on it on GitHub, and sometimes did not open.
 - FlaUI's `Mouse.MoveTo` sets the cursor position, which the low-level mouse hook never sees: moves
   that PuppyMacro must notice (recording) use `TargetWindow.MoveMouse` (SendInput). A floating
   button is clicked on its label: its window also holds the hotkey badge, so the window's middle
@@ -132,15 +74,13 @@
 
 ## Which changes run the tests on GitHub
 
-On a pull request or a push to `main`, the `test` workflow's first job, `decide_which_tests_run` (on Linux, quick),
-looks once at the changed files and tells which tests can change their result: a file the build of the projects reads,
-a file the tests read while running, or the workflow itself. `unit_test` and the end-to-end groups run only when
-needed; otherwise they are skipped (their Windows machine never starts): a job skipped by its `if` counts as passing
-for a required check, and `e2e_test` passes when the end-to-end tests were not needed. Called by `publish_release` (except `screenshots_test`) or started by hand (`workflow_dispatch`:
-`gh workflow run test.yml --ref <branch>`), every test runs. `unit_test`'s first step,
-`block_version_change`, fails a pull request whose branch is not `release/…` when it changes
-`PuppyMacro/Version.props` (`build-and-release.md`): that file is under `PuppyMacro/`, so such a pull request always
-runs `unit_test`.
+On a pull request or a push to `main`, the `test` workflow's first job, `decide_which_tests_run`, looks at the changed
+files and tells which tests can change their result: a file the build of the projects reads, a file the tests read while
+running, or the workflow itself. The other tests are skipped: a job skipped by its `if` counts as passing for a
+required check, and `e2e_test` passes when the end-to-end tests were not needed. Called by `publish_release` or started
+by hand (`gh workflow run test.yml --ref <branch>`), every test runs. The push of a release merge skips them, as
+`publish_release` runs them on that commit. A pull request whose branch is not `release/…`
+fails when it changes `PuppyMacro/Version.props` (`build-and-release.md`).
 
 | Changed file | `unit_test` | end-to-end | Why |
 |---|---|---|---|
@@ -153,17 +93,13 @@ runs `unit_test`.
 | `.gitattributes` | yes | yes | Line endings of `.cs`, `.xaml`, `.csproj` at checkout |
 | `.github/workflows/test.yml` | yes | yes | The workflow |
 
-`screenshots_test` takes the release's screenshots as `create_release_pr` does (`scripts/dev.ps1 -Screenshots`, then
-`scripts/screenshots.ps1`, at 1920 x 1080; saved only as an artifact) when `PuppyMacro/**`, `test.yml` or one of
-`scripts/dev.ps1`, `screenshots.ps1`, `screen-resolution.ps1` changes: a change that breaks them fails the pull request
-(`e2e_test` checks its result) instead of the release. Not when `publish_release` calls the tests: the release's screenshots
-were taken by `create_release_pr`, and a machine problem there would block the release for nothing in the app.
+`screenshots_test` takes the release's screenshots as `create_release_pr` does (saved only as an artifact) when a file
+they depend on changes: a change that breaks them fails the pull request (`e2e_test` checks its result) instead of the
+release. Not when `publish_release` calls the tests: the release's screenshots were taken by `create_release_pr`, and a
+machine problem there would block the release for nothing in the app.
 
-`readme_and_mcp_registry_test` (on Linux, quick) checks that `README.md` says the title and description of
-`site/home/en.json` (`scripts/check-readme.ps1`) and builds the MCP Registry entry as `publish_release` does
-(`scripts/mcp-server-json.ps1`) and validates it with the registry's own `mcp-publisher validate`, publishing nothing
-(`discoverability.md`). It runs when `README.md`, `site/home/en.json`, one of those two scripts, `PuppyMacro/Version.props`
-or `test.yml` changes, and when `publish_release` calls the tests; `e2e_test` checks its result, so it blocks the merge.
+`readme_and_mcp_registry_test` checks the README against the home page's texts and validates the MCP Registry entry,
+publishing nothing (`discoverability.md`); `e2e_test` checks its result, so it blocks the merge.
 
 Nothing else is read by the builds or the tests (`.claude/`, the rest of `site/`, the other Markdown files,
 `LICENSE`, `Makefile`, the other `scripts/`, the other workflows). When the app, a test project or a test
@@ -176,35 +112,22 @@ checks"), while a job or step skipped by `if` counts as passing.
 
 ## End-to-end tests in groups
 
-On GitHub the end-to-end tests run on **`E2E_GROUPS` Windows machines at once** (7 today), written once at the top of
+On GitHub the end-to-end tests run on **`E2E_GROUPS` Windows machines at once**, written once at the top of
 `.github/workflows/test.yml`. Every test runs in every pull request, exactly once; each machine runs its share one at a
 time, as on a contributor's PC. The groups do not follow the categories: they stay even whatever the categories grow
 into, and a new test needs nothing.
 
-- **`decide_which_tests_run`, step `list_e2e_groups`:** turns `E2E_GROUPS` into the list `[1, 2, …, N]` (a matrix cannot
-  read `env`).
-- **`e2e_group` (one job, copied by the matrix into `e2e_group_1` … `e2e_group_N`, `fail-fast: false` so every broken test
-  shows):**
-  - `build_dev_app`: the E2E project, with the development build it starts;
-  - `list_e2e_tests`: every test by its full name (`PuppyMacro.E2E.Class.Method`, from `dotnet test --list-tests`),
-    sorted the same way on every machine (`LC_ALL=C sort`), numbered from 1;
-  - `pick_group_tests`: test n goes to the group of n's remainder divided by N, the remainder 0 to group N. A number has
-    one remainder, so every test is in exactly one group, and the groups differ by at most one test;
-  - `minimize_other_windows`: the runner's own windows (its agent's console) can stay in front of PuppyMacro and take
-    a real mouse click (a test's "Add loop" click landed on it), so they are minimized first. Press buttons with UI
-    Automation (`Invoke`) unless the test needs a real click;
-  - `log_machine_state`: the machine before the tests (memory, CPU, windows still shown);
-  - `run_group_tests`: `dotnet test --filter-method` with the group's tests and a CTRF report; with `E2E_SCREENSHOTS` set
-    (only here, never locally), `AppSession` saves at the end of every test the screen, the machine's state and what UI
-    Automation sees (`SaveScreenshot`, `SaveUiaTree`, `MachineState`);
-  - `keep_tests_details`: those files of every test in the artifact, the failed tests' ones also apart;
-  - `describe_group_result`: the artifact's `README.txt`;
-  - `save_group_result`: the artifact **`e2e_group_<n>_attempt_<a>`** (`<a>`: the run's attempt, so a "Re-run failed jobs"
-    does not mix with the failed one), also when tests failed, kept 7 days.
+- Every machine lists the tests by full name, sorted the same way, numbered from 1; test n goes to the group of n
+  modulo N (0 to group N). So every test is in exactly one group, and the groups differ by at most one test.
+- The runner's own windows can stay in front of PuppyMacro and take a real mouse click (a test's "Add loop" click landed
+  on one), so they are minimized first. Press buttons with UI Automation (`Invoke`) unless the test needs a real click.
+- With `E2E_SCREENSHOTS` set (only on GitHub, never locally), `AppSession` saves at the end of every test the screen,
+  the machine's state and what UI Automation sees.
+- Each group saves the artifact **`e2e_group_<n>_attempt_<a>`** (`<a>`: the run's attempt, so a "Re-run failed jobs"
+  does not mix with the failed one), also when tests failed.
 - **`e2e_test` (the required check):** takes each group's newest attempt, then is green when the end-to-end tests were
-  not needed, or when (1) every group saw the same list, (2) every test ran exactly once (none missing, none in two
-  groups), (3) every test and every group passed. Otherwise red, with the missing, doubled or failed tests in the run's
-  summary.
+  not needed, or when every group saw the same list, every test ran exactly once and every test and group passed.
+  Otherwise red, with the missing, doubled or failed tests in the run's summary.
 
 **When an end-to-end test fails on GitHub**, start from the test's code and the line that failed. Each group's artifact
 (the run's page > Artifacts, or `gh run download <run> --name e2e_group_<n>_attempt_<a>`) holds what helps understand
@@ -213,9 +136,8 @@ why: screenshots, the UI Automation tree and the machine's state of every test, 
 `describe_group_result` of `test.yml`, the one description of the artifact (change it there when the artifact changes).
 
 **Changing the number of machines:** change only `E2E_GROUPS`. Nothing else: not the ruleset (it requires `e2e_test`,
-not the groups), not the tests. Each group costs about a minute of its own (machine, checkout, build) on top of its
-tests (about 7 s each), so more groups help less and less: with 66 tests, 7 groups take about 2 to 2.5 minutes, 10
-about 2.
+not the groups), not the tests. Each group adds about a minute of fixed cost (machine, checkout, build), so more
+groups help less and less.
 GitHub runs at most 20 jobs at once for the whole account (all pull requests and workflows together): the jobs over it
 wait in a queue, they do not fail. Never rename `e2e_test` without changing the ruleset in the same moment
 (`build-and-release.md`).

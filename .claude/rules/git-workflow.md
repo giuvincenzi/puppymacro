@@ -2,12 +2,10 @@
 
 ## `main` up to date at the start of every session
 
-A `SessionStart` hook (`.claude/settings.json`) runs `git fetch --all --prune` and, when the checkout is on `main` with
-no local changes, fast-forwards it to `origin/main` (`git merge --ff-only`: never a merge commit). On another branch, with
-local changes or when `main` cannot fast-forward, it changes nothing and prints why: Claude tells the user before
-starting. It runs at startup, `/resume` and `/clear`. The command is POSIX shell: Claude Code runs hooks with `sh` on
-Linux and WSL and with Git Bash on Windows (without Git Bash, with PowerShell, where this hook fails without blocking
-the session).
+A `SessionStart` hook (`.claude/settings.json`) fetches and fast-forwards `main` to `origin/main` only when it is safe
+(on `main`, no local changes, never a merge commit). Otherwise it changes nothing and prints why: Claude tells the user
+before starting. The command must stay POSIX shell: Claude Code runs hooks with `sh` on Linux and WSL and with Git Bash
+on Windows (without Git Bash, with PowerShell, where this hook fails without blocking the session).
 
 ## Every change in its own worktree
 
