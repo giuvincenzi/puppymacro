@@ -241,6 +241,39 @@ public class ConditionCheckerTests : IDisposable
         Assert.Equal(0, _screen.Listening);
     }
 
+    [Fact]
+    public void A_place_found_in_an_earlier_round_is_forgotten_when_the_condition_is_not_found_now()
+    {
+        var a = new MacroCondition { Kind = ConditionKind.Image, Name = "A" };
+        var b = new MacroCondition { Kind = ConditionKind.Image, Name = "B" };
+        var other = Guid.NewGuid();
+        var block = new MacroIf { Conditions = { a, b }, Match = ConditionMatch.Any };
+        var found = new Dictionary<Guid, Point> { [a.Id] = new(1, 1), [other] = new(9, 9) };
+
+        // This round only B is on the screen.
+        MacroRunner.KeepFound(found, block, new ConditionResult(true, false, new Dictionary<Guid, Point> { [b.Id] = new(5, 5) }));
+
+        Assert.False(found.ContainsKey(a.Id));
+        Assert.Equal(new Point(5, 5), found[b.Id]);
+        Assert.Equal(new Point(9, 9), found[other]); // another If's
+    }
+
+    [Fact]
+    public void Up_to_shorter_than_the_first_image_still_looks_once()
+    {
+        using var picture = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(255));
+        var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 5, Y = 5, Color = "#FFFFFF" };
+        var block = If(ConditionWait.UpTo, white);
+        block.WaitSeconds = 0.1;
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(400, TestContext.Current.CancellationToken);
+            _screen.Show(picture); // the first image comes after the 0.1 s of the wait
+        }, TestContext.Current.CancellationToken);
+
+        Assert.True(Check(block).Met);
+    }
+
     /// <summary>One monitor of 640 × 400 at the desktop's origin, showing a picture; the software renderer as its card.</summary>
     private sealed class FakeScreen : IScreen, IDisposable
     {
@@ -300,6 +333,7 @@ public class ConditionCheckerTests : IDisposable
             public long Version => Interlocked.Read(ref screen._version);
             public GpuMatcher? Gpu => screen.Gpu;
             public bool Software => true;
+            public bool Failed => false;
 
             public GpuMatcher.GpuBuffer? Picture(Rect area)
             {

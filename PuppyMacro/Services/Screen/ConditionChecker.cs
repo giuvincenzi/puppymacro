@@ -38,6 +38,9 @@ internal sealed class ConditionChecker : IDisposable
     /// <summary>A condition checked once still waits this long for the first image of a monitor that just started.</summary>
     public const int FirstImageMs = 1000;
 
+    /// <summary>How often a capture that gave up is tried again while a condition waits for it.</summary>
+    public const int RestartMs = 2000;
+
     /// <summary>The sizes tried with "A little bigger or smaller", the image's own first.</summary>
     public static readonly double[] NearbyScales = { 1.0, 0.95, 1.05, 0.9, 1.1, 0.85, 1.15 };
 
@@ -86,14 +89,32 @@ internal sealed class ConditionChecker : IDisposable
             };
             double gapMs = _checksPerSecond == 0 ? 0 : 1000.0 / _checksPerSecond;
             var seen = new long[looks.Count];
-            double lastCheck = double.NegativeInfinity;
+            double lastCheck = double.NegativeInfinity, lastRestart = 0;
             while (true)
             {
-                bool ready = looks.All(l => l.Watch == null || l.Watch.Version != 0);
-                bool changed = looks.Select((l, i) => l.Watch != null && l.Watch.Version != seen[i]).Any(c => c);
                 double now = clock.Elapsed.TotalMilliseconds;
-                if ((ready && (changed || double.IsNegativeInfinity(lastCheck)) && now - lastCheck >= gapMs)
-                    || (block.Wait == ConditionWait.Once && now >= limitMs))
+                // A capture that gave up or whose monitor changed: a new watch, at most every RestartMs, gets a new one.
+                if (now - lastRestart >= RestartMs && looks.Any(l => l.Watch is { Failed: true }))
+                {
+                    lastRestart = now;
+                    for (int i = 0; i < looks.Count; i++)
+                    {
+                        if (looks[i].Watch is not { Failed: true } failed)
+                            continue;
+                        failed.Dispose();
+                        looks[i].Watch = _screen.Start(looks[i].Area);
+                        seen[i] = 0;
+                    }
+                }
+                // Ready when every capture gave its first image; one that has none (gone, failed) does not hold the others
+                // back: its conditions are simply not true.
+                bool ready = looks.All(l => l.Watch is not { Version: 0, Failed: false });
+                bool changed = looks.Select((l, i) => l.Watch != null && l.Watch.Version != seen[i]).Any(c => c);
+                bool firstWait = double.IsNegativeInfinity(lastCheck);
+                // The first check waits for the first images, up to FirstImageMs, whatever the wait: an Up to shorter than
+                // the capture's start still looks once.
+                bool mustCheck = firstWait && now >= FirstImageMs;
+                if ((ready && (changed || firstWait) && now - lastCheck >= gapMs) || mustCheck)
                 {
                     for (int i = 0; i < looks.Count; i++)
                         seen[i] = looks[i].Watch?.Version ?? 0;
@@ -105,10 +126,11 @@ internal sealed class ConditionChecker : IDisposable
                         return new ConditionResult(false, false, found);
                 }
                 now = clock.Elapsed.TotalMilliseconds;
-                if (now >= limitMs && block.Wait == ConditionWait.UpTo)
+                if (block.Wait == ConditionWait.UpTo && now >= limitMs && !double.IsNegativeInfinity(lastCheck))
                     return new ConditionResult(false, false, new Dictionary<Guid, Point>());
                 // Wait for a new image, the next allowed check or the end of the wait, whichever comes first.
-                double next = Math.Min(limitMs - now, changed && ready ? Math.Max(1, gapMs - (now - lastCheck)) : 250);
+                double left = (block.Wait == ConditionWait.UpTo && !double.IsNegativeInfinity(lastCheck) ? limitMs : double.PositiveInfinity) - now;
+                double next = Math.Min(left, changed && ready ? Math.Max(1, gapMs - (now - lastCheck)) : 250);
                 int timeout = (int)Math.Clamp(Math.Ceiling(next), 1, 250);
                 if (WaitHandle.WaitAny(new[] { stop, waiter }, timeout) == 0)
                     return ConditionResult.Stop;

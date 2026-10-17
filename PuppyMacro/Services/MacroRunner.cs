@@ -133,11 +133,22 @@ internal sealed class MacroRunner
         MacroTrace.Write($"If: met {result.Met}, stopped {result.Stopped} -> {(result.Met ? $"Then ({block.Then.Count} actions)" : block.OnFail == ConditionFail.Else ? $"Else ({block.Else.Count} actions)" : "stop")}");
         if (result.Stopped)
             return false;
-        foreach (var (id, point) in result.Found)
-            _found[id] = point;
+        KeepFound(_found, block, result);
         if (result.Met)
             return Play(block.Then);
         return block.OnFail == ConditionFail.Else && Play(block.Else);
+    }
+
+    /// <summary>
+    /// Keeps where this If's conditions found their image or text: only what this check found. A condition of this If not
+    /// found now (one of Any's) has no place any more, not the one an earlier round found.
+    /// </summary>
+    internal static void KeepFound(Dictionary<Guid, OpenCvSharp.Point> found, MacroIf block, ConditionResult result)
+    {
+        foreach (var condition in block.Conditions)
+            found.Remove(condition.Id);
+        foreach (var (id, point) in result.Found)
+            found[id] = point;
     }
 
     /// <summary>

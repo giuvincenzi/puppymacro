@@ -120,6 +120,8 @@ public partial class MacroEditorWindow
         {
             if (HistoryRestore.Read<MacroDefinition>(version, _itemId) is not { } macro)
                 return;
+            // The images of that version's conditions come back from the History, as the AI activity's Restore does.
+            history.RestoreImages(_itemId, MacroJson.Serialize(macro));
             LoadMacro(macro);
             _code.ShowFormView();
             HistoryRestore.Notice(NoticeBar, version);

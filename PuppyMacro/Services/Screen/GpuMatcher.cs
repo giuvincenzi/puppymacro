@@ -25,7 +25,7 @@ internal sealed unsafe class GpuMatcher : IDisposable
           uint IW; uint IH; uint TW; uint TH;
           uint OX; uint OY; uint OW; uint OH;
           float TN; float N; uint F; uint SCRGB;
-          float WHITE; float P0; float P1; float P2;
+          float WHITE; uint ROT; uint DW; uint DH;
         };
         Texture2D<float4> Src : register(t0);
         StructuredBuffer<uint> Img : register(t1);
@@ -46,7 +46,13 @@ internal sealed unsafe class GpuMatcher : IDisposable
         [numthreads(16,16,1)]
         void Convert(uint3 id : SV_DispatchThreadID) {
           if (id.x >= OW || id.y >= OH) return;
-          float4 v = Src.Load(int3(OX + id.x, OY + id.y, 0));
+          // The frame is the monitor's image before Windows rotates it (DXGI_MODE_ROTATION: 2 = 90, 3 = 180, 4 = 270 degrees
+          // clockwise): the desktop point dx, dy of a monitor DW x DH is read where it is in the frame.
+          uint dx = OX + id.x, dy = OY + id.y, tx = dx, ty = dy;
+          if (ROT == 2) { tx = dy; ty = DW - 1 - dx; }
+          else if (ROT == 3) { tx = DW - 1 - dx; ty = DH - 1 - dy; }
+          else if (ROT == 4) { tx = DH - 1 - dy; ty = dx; }
+          float4 v = Src.Load(int3(tx, ty, 0));
           float3 rgb = SCRGB ? srgb(v.rgb * (80.0 / WHITE)) : v.rgb;
           Dst[id.y * OW + id.x] = packBgr(rgb.bgr * 255);
         }
@@ -297,7 +303,10 @@ internal sealed unsafe class GpuMatcher : IDisposable
         public uint IW, IH, TW, TH, OX, OY, OW, OH;
         public float TN, N;
         public uint F, ScRgb;
-        public float White, P0, P1, P2;
+        public float White;
+
+        /// <summary>The monitor's rotation (DXGI_MODE_ROTATION) and its size on the desktop, for Convert.</summary>
+        public uint Rot, DW, DH;
     }
 
     private void Set(Parameters p)
@@ -335,6 +344,37 @@ internal sealed unsafe class GpuMatcher : IDisposable
         }
     }
 
+    /// <summary>
+    /// A BGR picture as a captured frame would be on the card (a BGRA8 texture and its view), for the unit tests of
+    /// <see cref="Convert"/>. The caller releases both (<see cref="Release"/>).
+    /// </summary>
+    internal (ID3D11Texture2D Texture, ID3D11ShaderResourceView View) Frame(Mat bgr)
+    {
+        lock (_sync)
+        {
+            using Mat bgra = bgr.CvtColor(ColorConversionCodes.BGR2BGRA);
+            using Mat continuous = bgra.IsContinuous() ? bgra : bgra.Clone();
+            var d = new D3D11_TEXTURE2D_DESC
+            {
+                Width = (uint)continuous.Width,
+                Height = (uint)continuous.Height,
+                MipLevels = 1,
+                ArraySize = 1,
+                Format = Windows.Win32.Graphics.Dxgi.Common.DXGI_FORMAT.DXGI_FORMAT_B8G8R8A8_UNORM,
+                SampleDesc = new Windows.Win32.Graphics.Dxgi.Common.DXGI_SAMPLE_DESC { Count = 1 },
+                Usage = D3D11_USAGE.D3D11_USAGE_DEFAULT,
+                BindFlags = D3D11_BIND_FLAG.D3D11_BIND_SHADER_RESOURCE,
+            };
+            var initial = new D3D11_SUBRESOURCE_DATA { pSysMem = (void*)continuous.Data, SysMemPitch = (uint)(continuous.Width * 4) };
+            ID3D11Texture2D_unmanaged* made;
+            _device.CreateTexture2D(&d, &initial, &made);
+            var texture = Take<ID3D11Texture2D>(made);
+            ID3D11ShaderResourceView_unmanaged* view;
+            _device.CreateShaderResourceView(texture, null, &view);
+            return (texture, Take<ID3D11ShaderResourceView>(view));
+        }
+    }
+
     /// <summary>A picture on the card back as BGR.</summary>
     public Mat Download(GpuBuffer image)
     {
@@ -354,14 +394,18 @@ internal sealed unsafe class GpuMatcher : IDisposable
     /// also when Windows' HDR is on) is turned to sRGB with Windows' SDR white level, so images and colors taken in one
     /// mode match in the other.
     /// </summary>
-    internal GpuBuffer Convert(ID3D11ShaderResourceView frame, bool scRgb, float sdrWhiteNits, Rect part)
+    internal GpuBuffer Convert(ID3D11ShaderResourceView frame, bool scRgb, float sdrWhiteNits, Rect part, uint rotation = 1, int monitorWidth = 0, int monitorHeight = 0)
     {
         lock (_sync)
         {
             var image = Create(part.Width * part.Height, 4);
             image.W = part.Width;
             image.H = part.Height;
-            Set(new Parameters { OX = (uint)part.X, OY = (uint)part.Y, OW = (uint)part.Width, OH = (uint)part.Height, ScRgb = scRgb ? 1u : 0, White = sdrWhiteNits });
+            Set(new Parameters
+            {
+                OX = (uint)part.X, OY = (uint)part.Y, OW = (uint)part.Width, OH = (uint)part.Height, ScRgb = scRgb ? 1u : 0, White = sdrWhiteNits,
+                Rot = rotation, DW = (uint)monitorWidth, DH = (uint)monitorHeight,
+            });
             _context.CSSetShader(_convert, null, 0);
             _context.CSSetShaderResources(0, 1, new[] { frame });
             _context.CSSetUnorderedAccessViews(0, 1, new[] { image.Write }, null);

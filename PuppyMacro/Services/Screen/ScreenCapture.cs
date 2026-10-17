@@ -47,6 +47,9 @@ internal interface IScreenWatch : IDisposable
 
     /// <summary>A part of the last image as a BGR picture, in SDR colors; null before the first image.</summary>
     Mat? Copy(Rect area);
+
+    /// <summary>The capture gave up (errors in a row) or its monitor changed: a new watch gets a new capture.</summary>
+    bool Failed { get; }
 }
 
 /// <summary>
@@ -276,6 +279,9 @@ internal sealed unsafe class ScreenCapture : IScreen
         public long Version { get; private set; }
         public bool ScRgb => _format == DXGI_FORMAT.DXGI_FORMAT_R16G16B16A16_FLOAT;
         public float SdrWhite { get; private set; } = 80;
+
+        /// <summary>How Windows rotates the monitor's image (DXGI_MODE_ROTATION; 1 = not rotated).</summary>
+        public uint Rotation { get; private set; } = 1;
         public ID3D11ShaderResourceView? Frame => _view;
 
         /// <summary>Why the capture stopped trying (logged too), or null while it works or tries.</summary>
@@ -566,6 +572,8 @@ internal sealed unsafe class ScreenCapture : IScreen
                     return Failure;
                 }
                 SdrWhite = SdrWhiteNits(_deviceName);
+                _duplication!.GetDesc(out DXGI_OUTDUPL_DESC description);
+                Rotation = (uint)description.Rotation;
                 return null;
             }
             catch (Exception ex)
@@ -679,6 +687,8 @@ internal sealed unsafe class ScreenCapture : IScreen
         /// <summary>Windows' HDR is on for this monitor.</summary>
         public bool Hdr => _monitor.Hdr;
 
+        public bool Failed => _monitor.Failure != null;
+
         /// <summary>
         /// A part of the last frame (desktop coordinates, clipped to the monitor) as a picture on the card, in SDR colors.
         /// Null before the first frame. Disposed by the caller.
@@ -694,7 +704,8 @@ internal sealed unsafe class ScreenCapture : IScreen
             {
                 if (_monitor.Frame is not { } frame)
                     return null;
-                return gpu.Convert(frame, _monitor.ScRgb, _monitor.SdrWhite, new Rect(part.X - Bounds.X, part.Y - Bounds.Y, part.Width, part.Height));
+                return gpu.Convert(frame, _monitor.ScRgb, _monitor.SdrWhite, new Rect(part.X - Bounds.X, part.Y - Bounds.Y, part.Width, part.Height),
+                    _monitor.Rotation, Bounds.Width, Bounds.Height);
             }
         }
 

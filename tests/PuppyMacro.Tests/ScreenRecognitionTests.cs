@@ -147,4 +147,38 @@ public class ScreenRecognitionTests : IDisposable
         Assert.Equal((place.X, place.Y), (gpu.X, gpu.Y));
         Assert.Equal((place.X, place.Y), (cpu.X, cpu.Y));
     }
+
+    [Theory]
+    [InlineData(1u, null)]
+    [InlineData(2u, RotateFlags.Rotate90Clockwise)]
+    [InlineData(3u, RotateFlags.Rotate180)]
+    [InlineData(4u, RotateFlags.Rotate90Counterclockwise)]
+    public void A_rotated_monitor_is_read_as_the_desktop_shows_it(uint rotation, RotateFlags? turn)
+    {
+        // Windows gives the monitor's image before its rotation; the desktop shows it turned clockwise by 90, 180 or 270.
+        using Mat frame = Picture(60, 40, 8);
+        using Mat desktop = new Mat();
+        if (turn is { } t)
+            Cv2.Rotate(frame, desktop, t);
+        else
+            frame.CopyTo(desktop);
+        var (texture, view) = _gpu.Frame(frame);
+        try
+        {
+            var part = new Rect(5, 7, desktop.Width - 12, desktop.Height - 9);
+            using var converted = _gpu.Convert(view, scRgb: false, 80, part, rotation, desktop.Width, desktop.Height);
+            using Mat back = _gpu.Download(converted);
+            using Mat expected = new Mat(desktop, part);
+            using var difference = new Mat();
+
+            Cv2.Absdiff(expected, back, difference);
+
+            Assert.Equal(0, Cv2.CountNonZero(difference.Reshape(1)));
+        }
+        finally
+        {
+            GpuMatcher.Release(view);
+            GpuMatcher.Release(texture);
+        }
+    }
 }
