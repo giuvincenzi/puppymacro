@@ -163,7 +163,8 @@ $rows = $list.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [S
 $rows[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
 $edit = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'EditActionButton'))) } 'EditActionButton'
 $edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-$condition = WaitFor { $A::RootElement.FindAll($TS::Children, (New-Object $PC($A::ProcessIdProperty, $proc.Id))) |
+# UI Automation shows a window under the window that owns it: the condition window is inside the macro editor.
+$condition = WaitFor { $editor.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window))) |
     Where-Object { $_.Current.Name.StartsWith('Edit condition - ') } | Select-Object -First 1 } 'Edit condition'
 Start-Sleep -Seconds 2 # its check of the screen
 Capture $condition (Join-Path $OutDir 'condition-editor.png')
