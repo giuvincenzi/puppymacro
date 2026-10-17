@@ -170,13 +170,13 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public double X
     {
         get => _x;
-        set { _x = value; Changed(nameof(X), nameof(Summary)); }
+        set { if (_x.Equals(value)) return; _x = value; Changed(nameof(X), nameof(Summary)); }
     }
 
     public double Y
     {
         get => _y;
-        set { _y = value; Changed(nameof(Y), nameof(Summary)); }
+        set { if (_y.Equals(value)) return; _y = value; Changed(nameof(Y), nameof(Summary)); }
     }
 
     public string Color
@@ -397,6 +397,12 @@ public sealed class ConditionViewModel : ConditionEditorItem
 
     public bool ResultNotMet => !_resultMet;
 
+    /// <summary>The properties that only show the last check or the expander's state, not what the condition checks.</summary>
+    internal static readonly HashSet<string> ShownOnly = new()
+    {
+        nameof(Result), nameof(HasResult), nameof(ResultMet), nameof(ResultNotMet), nameof(IsExpanded),
+    };
+
     internal void ShowReport(ConditionReport report)
     {
         ResultMet = report.Met;
@@ -541,8 +547,8 @@ public sealed class IfViewModel : ConditionEditorItem
     {
         condition.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName is not (nameof(ConditionViewModel.Result) or nameof(ConditionViewModel.HasResult)
-                or nameof(ConditionViewModel.ResultMet) or nameof(ConditionViewModel.IsExpanded)))
+            // What the check showed, or opening the condition, is no change of the condition (it would check again, forever).
+            if (!ConditionViewModel.ShownOnly.Contains(e.PropertyName ?? ""))
                 ConditionChanged?.Invoke(condition);
         };
         Conditions.Add(condition);
