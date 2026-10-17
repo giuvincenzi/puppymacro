@@ -148,9 +148,13 @@
                                       AutomationProperties.Name="{x:Static r:Strings.Condition_Language}" />
                         </ui:SettingsCard>
 
-                        <!-- What PuppyMacro sees now, after a change or Test -->
+                        <!-- What PuppyMacro sees now, after a change or Test; Check again looks at the screen again -->
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_Now}" Description="{Binding Result}"
                                          Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
+                            <Button Tag="{Binding}" Click="OnCheckAgainClick"
+                                    ToolTip="{x:Static r:Strings.Condition_CheckAgain}" AutomationProperties.Name="{x:Static r:Strings.Condition_CheckAgain}">
+                                <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Refresh}" />
+                            </Button>
                             <ui:SettingsCard.HeaderIcon>
                                 <Grid>
                                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Completed}" Foreground="{DynamicResource SystemFillColorSuccessBrush}"

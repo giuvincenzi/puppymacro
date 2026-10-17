@@ -181,6 +181,13 @@ public partial class ConditionsEditor : UserControl
         _checkLater.Start();
     }
 
+    /// <summary>Check again: this condition, on the screen as it is now.</summary>
+    private void OnCheckAgainClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is ConditionViewModel condition)
+            _ = CheckAsync(new System.Collections.Generic.List<ConditionViewModel> { condition });
+    }
+
     /// <summary>Checks every condition now (Test).</summary>
     public Task CheckAllAsync() => Model is { } model ? CheckAsync(model.Conditions.ToList()) : Task.CompletedTask;
 

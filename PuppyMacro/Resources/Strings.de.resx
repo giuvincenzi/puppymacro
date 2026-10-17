@@ -1272,4 +1272,5 @@ Details: {1}</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Aktion</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Bedingung</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Text auf dem Bildschirm (OCR)</value></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Erneut prüfen</value></data>
 </root>

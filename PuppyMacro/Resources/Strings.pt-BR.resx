@@ -1346,4 +1346,5 @@ Detalhes: {1}</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Ação</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condição</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Texto na tela (OCR)</value></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Verificar novamente</value></data>
 </root>

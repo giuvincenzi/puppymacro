@@ -1360,4 +1360,5 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Action</value><comment>Label under the + of the macro editor's button that adds an action (short: the button's name is Add action)</comment></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condition</value><comment>Label under the + of the macro editor's button that adds a condition (short: the button's name is Add condition)</comment></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Text on screen (OCR)</value><comment>The Text on screen condition in the Add condition menus: OCR, text recognition, stays as it is</comment></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Check again</value><comment>Button (an icon) on the card that says what PuppyMacro sees now: looks at the screen again</comment></data>
 </root>

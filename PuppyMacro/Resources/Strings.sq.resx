@@ -1283,4 +1283,5 @@ Detajet: {1}</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Veprim</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Kusht</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Tekst në ekran (OCR)</value></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Kontrollo përsëri</value></data>
 </root>

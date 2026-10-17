@@ -1239,4 +1239,5 @@
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>동작</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>조건</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>화면의 텍스트(OCR)</value></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>다시 확인</value></data>
 </root>
