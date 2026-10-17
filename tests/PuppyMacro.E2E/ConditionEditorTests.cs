@@ -1,5 +1,8 @@
+using System.Drawing;
 using System.Linq;
+using System.Threading;
 using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Input;
 using FlaUI.Core.Tools;
 using PuppyMacro.Models;
 using Xunit;
@@ -83,6 +86,83 @@ public class ConditionEditorTests
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the Color box not found").Result!.AsTextBox();
         Assert.Equal("#3BD16F", color.Text);
         app.FindById(condition, "CancelButton").AsButton().Invoke();
+    }
+
+    /// <summary>An If with a pixel condition in a macro of its own, its condition window open.</summary>
+    private static (AppSession App, Window Editor, Window Condition) OpenPixelIf(string macroName)
+    {
+        MacroAction ifAction = new()
+        {
+            Type = MacroActionType.If,
+            Name = "E2E check",
+            If = new MacroIf { Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, X = 10, Y = 20, Color = "#3BD16F", Tolerance = 5 } } },
+        };
+        var app = new AppSession(seed => seed.Macros.Add(Macro(macroName, null, ifAction)));
+        app.GoTo("Macros");
+        app.EditItem(macroName);
+        Window editor = app.Dialog("Edit macro");
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("1. E2E check")), AppSession.Timeout).Success);
+        list.Items.First(i => i.Name.StartsWith("1. E2E check")).Select();
+        app.Find(editor, "Edit action").AsButton().Invoke();
+        return (app, editor, ChildDialog(editor, "Edit condition"));
+    }
+
+    [Fact]
+    public void An_opened_condition_is_not_checked_until_Check_again()
+    {
+        var (app, _, condition) = OpenPixelIf("E2E check again");
+        using (app)
+        {
+            app.Find(condition, "Not checked yet. Check it on the screen with the button.");
+
+            app.FindButton(condition, "Check again").Invoke();
+
+            Assert.True(Retry.WhileFalse(() => condition.FindFirstDescendant(cf => cf.ByName("Not checked yet. Check it on the screen with the button.")) == null
+                    && condition.FindFirstDescendant(cf => cf.ByText("The pixel doesn't match now.", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring)) != null,
+                AppSession.Timeout).Success, "Check again did not check the pixel");
+            app.FindById(condition, "CancelButton").AsButton().Invoke();
+        }
+    }
+
+    [Fact]
+    public void An_image_is_taken_on_the_screen_after_a_Retry()
+    {
+        using var app = new AppSession(seed => seed.Macros.Add(Macro("E2E take image", null, Press(Vk.F24))));
+        app.GoTo("Macros");
+        app.EditItem("E2E take image");
+        Window editor = app.Dialog("Edit macro");
+        app.FindById(editor, "AddConditionButton").AsButton().Invoke();
+        app.MenuItem("Image on screen").AsMenuItem().Invoke();
+        Window condition = ChildDialog(editor, "Add condition");
+
+        app.Find(condition, "Take on screen").AsButton().Invoke();
+        AutomationElement picker = app.TopWindow("Take the image") ?? throw new Xunit.Sdk.XunitException("the picker did not open");
+        Drag(new Point(200, 200), new Point(300, 260));
+        app.FindButton(picker, "Retry").Invoke();
+        Assert.True(Retry.WhileFalse(() => picker.FindFirstDescendant(cf => cf.ByName("Take image"))?.IsOffscreen != false, AppSession.Timeout).Success,
+            "Retry left the rectangle's buttons");
+        Drag(new Point(220, 220), new Point(320, 280));
+        app.FindButton(picker, "Take image").Invoke();
+
+        Assert.True(Retry.WhileNull(() => condition.FindFirstDescendant(cf => cf.ByText("pixels, taken at", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring)),
+            AppSession.Timeout).Success, "the image is not in the condition");
+        app.Find(condition, "Take another image");
+    }
+
+    /// <summary>Drags with the left button, with moves the window sees (SendInput, not only the cursor's place).</summary>
+    private static void Drag(Point from, Point to)
+    {
+        Native.MoveCursor(from.X, from.Y);
+        Thread.Sleep(100);
+        Mouse.Down(MouseButton.Left);
+        for (int step = 1; step <= 10; step++)
+        {
+            Native.MoveCursor(from.X + (to.X - from.X) * step / 10, from.Y + (to.Y - from.Y) * step / 10);
+            Thread.Sleep(20);
+        }
+        Mouse.Up(MouseButton.Left);
+        Thread.Sleep(200);
     }
 
     [Fact]
