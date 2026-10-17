@@ -74,7 +74,8 @@ paths:
   stays.
 - `logs\ai-calls.jsonl` in the data folder (`AiCallLog`, size limit there): one JSON line per tool call of an AI app,
   for debugging only. Never the arguments or answers. Not user data: a missing or unreadable file or line is skipped.
-  `logs\` is for debugging logs only.
+  `logs\` is for debugging logs only; `logs\screen-capture.log` holds the screen capture's errors (`CaptureLog`, size
+  limit there).
 - The images of the macros' conditions: `images\{sha256}.png` in the data folder (`ImageStore`), part Data. A macro
   names them by that Id; an image no macro uses is deleted when a macro is saved, and the History keeps a copy of every
   image its versions use, so Restore brings it back. `.puppyitems` files carry the images of their macros.

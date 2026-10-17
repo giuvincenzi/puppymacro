@@ -122,6 +122,11 @@ Rules:
     the same capture, with HDR turned to SDR colors, so what is picked is what is found.
   - The capture's Direct3D and DXGI objects are created and used only on MTA threads (`ScreenCapture.Mta`): they cannot
     be marshaled between apartments, and a call from the UI thread to one made on another thread crashes the process.
+  - Each monitor has its own capture thread and its own Direct3D device, made from the adapter the monitor is connected
+    to; every use of a device, the duplication's too, is under its lock. After an error the capture waits longer each
+    time and gives up after a few errors in a row (`CaptureRetry`), logged in `logs\screen-capture.log`: a duplication
+    made again and again without a pause, with several threads on one device, came before a blue screen on a PC with two
+    monitors.
   - The same search runs on the graphics card (compute shaders) or on the processor (OpenCV) with the same results
     (unit tested on WARP); `ConditionChecker` chooses by the area's size unless Settings › Screen recognition forces one.
   - While a condition looks at the screen, and a few seconds after, PuppyMacro's windows are left out of every screen

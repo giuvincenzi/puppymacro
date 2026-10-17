@@ -101,7 +101,7 @@ internal sealed unsafe class ScreenCapture : IScreen
         lock (_sync)
         {
             if (_monitors.Count == 0)
-                _monitors.AddRange(Mta(() => MonitorCapture.All(this).ToList()));
+                _monitors.AddRange(Mta(() => MonitorCapture.All(this)));
             var center = new Point(area.X + area.Width / 2, area.Y + area.Height / 2);
             var monitor = _monitors.FirstOrDefault(m => m.Bounds.Contains(center)) ?? _monitors.FirstOrDefault(m => m.Bounds.IntersectsWith(area));
             if (monitor != null)
@@ -159,10 +159,9 @@ internal sealed unsafe class ScreenCapture : IScreen
             _linger?.Dispose();
             _linger = null;
             // Monitors may change before the next watch: they are taken again then.
+            // Each monitor releases its device and its DXGI objects.
             foreach (var m in _monitors)
                 m.Dispose();
-            foreach (var gpu in _monitors.Select(m => m.Gpu).Distinct())
-                gpu.Dispose();
             _monitors.Clear();
         }
         ActiveChanged?.Invoke(false);
@@ -193,27 +192,44 @@ internal sealed unsafe class ScreenCapture : IScreen
 
     // ================= One monitor =================
 
+    /// <summary>
+    /// The capture of one monitor, on its own thread with its own Direct3D device, made from the adapter the monitor is
+    /// connected to (Microsoft's Desktop Duplication sample keeps one device per output thread; DuplicateOutput needs the
+    /// device of the output's own adapter). Every use of the device, the duplication's too, is under the device's lock.
+    /// After an error it waits longer each time, and gives up after <see cref="CaptureRetry.MaxFailures"/> errors in a row:
+    /// a duplication made again and again can exhaust the system's memory (reported with NVIDIA's drivers).
+    /// </summary>
     private sealed class MonitorCapture : IDisposable
     {
+        /// <summary>How long one AcquireNextFrame waits, holding the device's lock.</summary>
+        private const uint AcquireMs = 10;
+
         private readonly ScreenCapture _owner;
         private readonly string _deviceName;
+        private readonly IDXGIFactory1 _factory;
+        private readonly IDXGIAdapter1 _adapter;
+        private readonly IDXGIOutput5 _output;
+        private readonly CaptureRetry _retry = new();
         private Thread? _thread;
         private int _users;
         private volatile bool _stop;
-        private IDXGIOutput5? _output;
         private IDXGIOutputDuplication? _duplication;
         private ID3D11Texture2D? _copy;
         private ID3D11ShaderResourceView? _view;
         private DXGI_FORMAT _format;
         private uint _width, _height;
 
-        private MonitorCapture(ScreenCapture owner, string deviceName, Rect bounds, GpuMatcher gpu, bool software)
+        private MonitorCapture(ScreenCapture owner, string deviceName, Rect bounds, bool software,
+            IDXGIFactory1 factory, IDXGIAdapter1 adapter, IDXGIOutput5 output, GpuMatcher gpu)
         {
             _owner = owner;
             _deviceName = deviceName;
             Bounds = bounds;
-            Gpu = gpu;
             Software = software;
+            _factory = factory;
+            _adapter = adapter;
+            _output = output;
+            Gpu = gpu;
         }
 
         public Rect Bounds { get; }
@@ -227,32 +243,81 @@ internal sealed unsafe class ScreenCapture : IScreen
         public float SdrWhite { get; private set; } = 80;
         public ID3D11ShaderResourceView? Frame => _view;
 
-        /// <summary>Every monitor on the desktop with a device of its own card.</summary>
-        public static IEnumerable<MonitorCapture> All(ScreenCapture owner)
+        /// <summary>Why the capture stopped trying (logged too), or null while it works or tries.</summary>
+        public string? Failure { get; private set; }
+
+        /// <summary>Every monitor on the desktop, each with a device of its own. A monitor that can't get one is logged and left out.</summary>
+        public static List<MonitorCapture> All(ScreenCapture owner)
         {
-            var devices = new Dictionary<long, GpuMatcher>();
-            foreach (var output in Outputs())
+            var monitors = new List<MonitorCapture>();
+            foreach (var info in Outputs())
             {
-                long key = ((long)output.Adapter.HighPart << 32) | output.Adapter.LowPart;
-                if (!devices.TryGetValue(key, out var gpu))
+                try
                 {
-                    try
-                    {
-                        PInvoke.D3D11CreateDevice(output.AdapterObject, D3D_DRIVER_TYPE.D3D_DRIVER_TYPE_UNKNOWN, HMODULE.Null, 0, null,
-                            PInvoke.D3D11_SDK_VERSION, out ID3D11Device device, out _, out ID3D11DeviceContext context).ThrowOnFailure();
-                        devices[key] = gpu = GpuMatcher.On(output.CardName, device, context);
-                    }
-                    catch (Exception ex) when (ex is COMException or InvalidOperationException)
-                    {
-                        continue;
-                    }
+                    if (Create(owner, info) is { } monitor)
+                        monitors.Add(monitor);
                 }
-                yield return new MonitorCapture(owner, output.DeviceName, output.Bounds, gpu, output.Software);
+                catch (Exception ex) when (ex is COMException or InvalidOperationException or InvalidCastException)
+                {
+                    CaptureLog.Write($"{info.DeviceName}: no device on {info.CardName}: {Describe(ex)}");
+                }
+            }
+            return monitors;
+        }
+
+        /// <summary>The monitor's adapter and output, from one factory of its own, and a device made from that adapter.</summary>
+        private static MonitorCapture? Create(ScreenCapture owner, OutputInfo info)
+        {
+            Guid factoryId = typeof(IDXGIFactory1).GUID;
+            PInvoke.CreateDXGIFactory1(&factoryId, out object factoryObject).ThrowOnFailure();
+            var factory = (IDXGIFactory1)factoryObject;
+            IDXGIAdapter1? keptAdapter = null;
+            IDXGIOutput5? keptOutput = null;
+            try
+            {
+                for (uint a = 0; keptOutput == null; a++)
+                {
+                    IDXGIAdapter1? adapter = null;
+                    try { factory.EnumAdapters1(a, out adapter); } catch (COMException) { break; }
+                    if (adapter == null)
+                        break;
+                    for (uint o = 0; ; o++)
+                    {
+                        IDXGIOutput? output = null;
+                        try { adapter.EnumOutputs(o, out output); } catch (COMException) { break; }
+                        if (output == null)
+                            break;
+                        if (keptOutput == null && output.GetDesc().DeviceName.ToString() == info.DeviceName && output is IDXGIOutput5 output5)
+                        {
+                            keptOutput = output5;
+                            keptAdapter = adapter;
+                            continue;
+                        }
+                        Free(output);
+                    }
+                    if (keptAdapter != adapter)
+                        Free(adapter);
+                }
+                if (keptAdapter == null || keptOutput == null)
+                    throw new InvalidOperationException("the monitor is not there any more, or Windows is older than 10 version 1703");
+                PInvoke.D3D11CreateDevice(keptAdapter, D3D_DRIVER_TYPE.D3D_DRIVER_TYPE_UNKNOWN, HMODULE.Null, 0, null,
+                    PInvoke.D3D11_SDK_VERSION, out ID3D11Device device, out _, out ID3D11DeviceContext context).ThrowOnFailure();
+                var gpu = GpuMatcher.On(info.CardName, device, context);
+                return new MonitorCapture(owner, info.DeviceName, info.Bounds, info.Software, factory, keptAdapter, keptOutput, gpu);
+            }
+            catch
+            {
+                Free(keptOutput);
+                Free(keptAdapter);
+                Free(factory);
+                throw;
             }
         }
 
-        public sealed record OutputInfo(string DeviceName, Rect Bounds, LUID Adapter, IDXGIAdapter1 AdapterObject, string CardName, bool Software);
+        /// <summary>A monitor as DXGI lists it; nothing of DXGI is kept.</summary>
+        public sealed record OutputInfo(string DeviceName, Rect Bounds, string CardName, bool Software);
 
+        /// <summary>The monitors attached to the desktop. Every DXGI object it opens is released before it returns.</summary>
         public static List<OutputInfo> Outputs()
         {
             var list = new List<OutputInfo>();
@@ -260,35 +325,65 @@ internal sealed unsafe class ScreenCapture : IScreen
             if (PInvoke.CreateDXGIFactory1(&factoryId, out object factoryObject).Failed)
                 return list;
             var factory = (IDXGIFactory1)factoryObject;
-            for (uint a = 0; ; a++)
+            try
             {
-                IDXGIAdapter1? adapter = null;
-                try { factory.EnumAdapters1(a, out adapter); } catch (COMException) { break; }
-                if (adapter == null)
-                    break;
-                var card = adapter.GetDesc1();
-                bool software = ((uint)card.Flags & (uint)DXGI_ADAPTER_FLAG.DXGI_ADAPTER_FLAG_SOFTWARE) != 0;
-                for (uint o = 0; ; o++)
+                for (uint a = 0; ; a++)
                 {
-                    IDXGIOutput? output = null;
-                    try { adapter.EnumOutputs(o, out output); } catch (COMException) { break; }
-                    if (output == null)
+                    IDXGIAdapter1? adapter = null;
+                    try { factory.EnumAdapters1(a, out adapter); } catch (COMException) { break; }
+                    if (adapter == null)
                         break;
-                    var d = output.GetDesc();
-                    if (!d.AttachedToDesktop)
-                        continue;
-                    var r = d.DesktopCoordinates;
-                    list.Add(new OutputInfo(d.DeviceName.ToString(), new Rect(r.left, r.top, r.right - r.left, r.bottom - r.top),
-                        card.AdapterLuid, adapter, card.Description.ToString(), software));
+                    try
+                    {
+                        var card = adapter.GetDesc1();
+                        bool software = ((uint)card.Flags & (uint)DXGI_ADAPTER_FLAG.DXGI_ADAPTER_FLAG_SOFTWARE) != 0;
+                        for (uint o = 0; ; o++)
+                        {
+                            IDXGIOutput? output = null;
+                            try { adapter.EnumOutputs(o, out output); } catch (COMException) { break; }
+                            if (output == null)
+                                break;
+                            try
+                            {
+                                var d = output.GetDesc();
+                                if (!d.AttachedToDesktop)
+                                    continue;
+                                var r = d.DesktopCoordinates;
+                                list.Add(new OutputInfo(d.DeviceName.ToString(), new Rect(r.left, r.top, r.right - r.left, r.bottom - r.top),
+                                    card.Description.ToString(), software));
+                            }
+                            finally
+                            {
+                                Free(output);
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        Free(adapter);
+                    }
                 }
+            }
+            finally
+            {
+                Free(factory);
             }
             return list;
         }
 
+        /// <summary>Releases a COM object now, not when the garbage collector gets to it.</summary>
+        private static void Free(object? com)
+        {
+            if (com != null && Marshal.IsComObject(com))
+                Marshal.FinalReleaseComObject(com);
+        }
+
+        private static string Describe(Exception ex) => ex is COMException com ? $"0x{com.HResult:X8} {com.Message.Trim()}" : ex.Message;
+
         public void Start()
         {
             _users++;
-            if (_thread != null)
+            if (_thread != null || Failure != null)
                 return;
             _stop = false;
             _thread = new Thread(Run) { IsBackground = true, Name = "PuppyMacro screen", Priority = ThreadPriority.AboveNormal };
@@ -302,107 +397,120 @@ internal sealed unsafe class ScreenCapture : IScreen
         {
             while (!_stop)
             {
-                if (_duplication == null && !Open())
+                if (_duplication == null && Open() is { } refused)
                 {
-                    Thread.Sleep(250);
+                    if (GiveUpAfter("start", refused))
+                        return;
                     continue;
                 }
-                IDXGIResource? resource = null;
-                DXGI_OUTDUPL_FRAME_INFO info = default;
-                try
+                bool gotFrame = false, newImage = false;
+                Exception? error = null;
+                lock (Gpu.Sync)
                 {
-                    _duplication!.AcquireNextFrame(100, out info, out resource);
+                    IDXGIResource? resource = null;
+                    try
+                    {
+                        _duplication!.AcquireNextFrame(AcquireMs, out DXGI_OUTDUPL_FRAME_INFO info, out resource);
+                        gotFrame = true;
+                        // A frame that only moved the mouse pointer has no new image (the first one can even be empty).
+                        if (info.LastPresentTime != 0 && resource is ID3D11Texture2D texture)
+                            newImage = Keep(texture);
+                    }
+                    catch (COMException e) when (e.HResult == unchecked((int)0x887A0027)) // DXGI_ERROR_WAIT_TIMEOUT: nothing changed
+                    {
+                    }
+                    catch (Exception e)
+                    {
+                        // Access lost (a display mode or HDR change, the lock screen) or another error.
+                        error = e;
+                    }
+                    finally
+                    {
+                        Free(resource);
+                        if (gotFrame)
+                        {
+                            try { _duplication?.ReleaseFrame(); }
+                            catch (COMException e) { error ??= e; }
+                        }
+                    }
                 }
-                catch (COMException e) when (e.HResult == unchecked((int)0x887A0027)) // DXGI_ERROR_WAIT_TIMEOUT: nothing changed
+                if (error != null)
                 {
+                    CloseDuplication();
+                    if (GiveUpAfter("read", Describe(error)))
+                        return;
                     continue;
                 }
-                catch (Exception)
-                {
-                    // Access lost (a display mode or HDR change) or refused: start again.
-                    Close();
-                    continue;
-                }
-                try
-                {
-                    // A frame that only moved the mouse pointer has no new image (the first one can even be empty).
-                    if (info.LastPresentTime != 0 && resource is ID3D11Texture2D texture)
-                        Keep(texture);
-                }
-                finally
-                {
-                    if (resource != null)
-                        Marshal.ReleaseComObject(resource);
-                    try { _duplication?.ReleaseFrame(); } catch (COMException) { }
-                }
+                _retry.Succeeded();
+                if (newImage)
+                    _owner.NewFrame();
+                else
+                    Thread.Sleep(4); // the others using the card get the lock between two waits
             }
         }
 
-        /// <summary>Copies the new frame into the texture the conditions read, under the card's lock.</summary>
-        private void Keep(ID3D11Texture2D texture)
+        /// <summary>Logs an error and waits before the next try; true when it gave up (logged too).</summary>
+        private bool GiveUpAfter(string what, string error)
+        {
+            int delay = _retry.Failed();
+            CaptureLog.Write($"{_deviceName}: could not {what} the capture: {error} (error {_retry.Failures} in a row)");
+            if (_retry.GaveUp)
+            {
+                Failure = error;
+                CaptureLog.Write($"{_deviceName}: gave up after {_retry.Failures} errors in a row");
+                return true;
+            }
+            for (int waited = 0; waited < delay && !_stop; waited += 50)
+                Thread.Sleep(50);
+            return false;
+        }
+
+        /// <summary>Copies the new frame into the texture the conditions read. Under the device's lock.</summary>
+        private bool Keep(ID3D11Texture2D texture)
         {
             texture.GetDesc(out D3D11_TEXTURE2D_DESC d);
-            lock (Gpu.Sync)
+            if (_copy == null || d.Format != _format || d.Width != _width || d.Height != _height)
             {
-                if (_copy == null || d.Format != _format || d.Width != _width || d.Height != _height)
-                {
-                    ReleaseCopy();
-                    var copy = d;
-                    copy.Usage = D3D11_USAGE.D3D11_USAGE_DEFAULT;
-                    copy.BindFlags = D3D11_BIND_FLAG.D3D11_BIND_SHADER_RESOURCE;
-                    copy.CPUAccessFlags = 0;
-                    copy.MiscFlags = 0;
-                    copy.MipLevels = 1;
-                    copy.ArraySize = 1;
-                    Gpu.Device.CreateTexture2D(copy, null, out _copy);
-                    ID3D11ShaderResourceView_unmanaged* view;
-                    Gpu.Device.CreateShaderResourceView(_copy, null, &view);
-                    _view = GpuMatcher.Take<ID3D11ShaderResourceView>(view);
-                    _format = d.Format;
-                    _width = d.Width;
-                    _height = d.Height;
-                }
-                Gpu.Context.CopyResource(_copy, texture);
-                Version++;
+                ReleaseCopy();
+                var copy = d;
+                copy.Usage = D3D11_USAGE.D3D11_USAGE_DEFAULT;
+                copy.BindFlags = D3D11_BIND_FLAG.D3D11_BIND_SHADER_RESOURCE;
+                copy.CPUAccessFlags = 0;
+                copy.MiscFlags = 0;
+                copy.MipLevels = 1;
+                copy.ArraySize = 1;
+                Gpu.Device.CreateTexture2D(copy, null, out _copy);
+                ID3D11ShaderResourceView_unmanaged* view;
+                Gpu.Device.CreateShaderResourceView(_copy, null, &view);
+                _view = GpuMatcher.Take<ID3D11ShaderResourceView>(view);
+                _format = d.Format;
+                _width = d.Width;
+                _height = d.Height;
             }
-            _owner.NewFrame();
+            Gpu.Context.CopyResource(_copy, texture);
+            Version++;
+            return true;
         }
 
         /// <summary>
-        /// Starts the duplication: 16-bit floats are asked first, so an HDR screen keeps its colors (turned to SDR colors by
-        /// <see cref="GpuMatcher.Convert"/>); Windows gives 8 bits when it prefers. False while Windows refuses.
+        /// Starts the duplication on the monitor's own output: 16-bit floats are asked first, so an HDR screen keeps its colors
+        /// (turned to SDR colors by <see cref="GpuMatcher.Convert"/>); Windows gives 8 bits when it prefers. Null when it
+        /// started, otherwise the error.
         /// </summary>
-        private bool Open()
+        private string? Open()
         {
             try
             {
-                var output = Outputs().FirstOrDefault(o => o.DeviceName == _deviceName);
-                if (output == null)
-                    return false;
-                for (uint o = 0; ; o++)
-                {
-                    IDXGIOutput? candidate = null;
-                    try { output.AdapterObject.EnumOutputs(o, out candidate); } catch (COMException) { break; }
-                    if (candidate == null)
-                        break;
-                    if (candidate.GetDesc().DeviceName.ToString() == _deviceName)
-                    {
-                        _output = (IDXGIOutput5)candidate;
-                        break;
-                    }
-                }
-                if (_output == null)
-                    return false;
                 ReadOnlySpan<DXGI_FORMAT> formats = stackalloc[] { DXGI_FORMAT.DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT.DXGI_FORMAT_B8G8R8A8_UNORM };
                 lock (Gpu.Sync)
                     _output.DuplicateOutput1(Gpu.Device, 0, formats, out _duplication);
                 SdrWhite = SdrWhiteNits(_deviceName);
-                return true;
+                return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _duplication = null;
-                return false;
+                return Describe(ex);
             }
         }
 
@@ -424,22 +532,18 @@ internal sealed unsafe class ScreenCapture : IScreen
 
         private void ReleaseCopy()
         {
-            if (_view != null)
-                Marshal.ReleaseComObject(_view);
-            if (_copy != null)
-                Marshal.ReleaseComObject(_copy);
+            Free(_view);
+            Free(_copy);
             _view = null;
             _copy = null;
         }
 
-        private void Close()
+        private void CloseDuplication()
         {
             lock (Gpu.Sync)
             {
-                if (_duplication != null)
-                    Marshal.ReleaseComObject(_duplication);
+                Free(_duplication);
                 _duplication = null;
-                _output = null;
                 ReleaseCopy();
             }
         }
@@ -449,7 +553,11 @@ internal sealed unsafe class ScreenCapture : IScreen
             _stop = true;
             _thread?.Join(2000);
             _thread = null;
-            Close();
+            CloseDuplication();
+            Gpu.Dispose();
+            Free(_output);
+            Free(_adapter);
+            Free(_factory);
         }
 
         /// <summary>Windows' "SDR content brightness" of a monitor in nits (80 = the standard, also without HDR).</summary>
