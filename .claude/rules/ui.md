@@ -181,6 +181,12 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   - Sound in the loop and macro editors: the sounds' `RadioButtons` sit in a standard `ScrollViewer` with a maximum
     height, so the long list scrolls on its own instead of making the whole editor scroll. `Views/SoundChoicesScroll`
     scrolls it to the chosen sound each time it is shown.
+  - Conditions on the screen (approved: the Design canvas "Macro Conditions", option B, made with the current UI's
+    controls): in the macro editor an If is a row with **Then** and **Else** rows under it, their actions indented one
+    step more; **Add condition** next to Add action. The condition window is the action window with the conditions as
+    `SettingsExpander`s and a card that says what PuppyMacro sees now; the text recognition note is an `InfoBar` above the
+    cards. `ScreenPickWindow` (pick a pixel with the enlarged pixels around the pointer, take an image, draw an area) is
+    drawn over a still picture of the screen, with the overlays' fixed dark look.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set hotkey" / "Set key"
   button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no other button); set, the keys as accent

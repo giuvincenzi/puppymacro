@@ -75,6 +75,9 @@ paths:
 - `logs\ai-calls.jsonl` in the data folder (`AiCallLog`, size limit there): one JSON line per tool call of an AI app,
   for debugging only. Never the arguments or answers. Not user data: a missing or unreadable file or line is skipped.
   `logs\` is for debugging logs only.
+- The images of the macros' conditions: `images\{sha256}.png` in the data folder (`ImageStore`), part Data. A macro
+  names them by that Id; an image no macro uses is deleted when a macro is saved, and the History keeps a copy of every
+  image its versions use, so Restore brings it back. `.puppyitems` files carry the images of their macros.
 - History: `history\{id}.json` in the data folder, one per loop, macro or remap (`ItemHistory`, size limit
   `ItemHistory.MaxBytes` per item). Not user data: a missing or unreadable file is an empty history.
 - PuppyMacro's entry in the AI apps' own settings is named `puppymacro` (`puppymacro-dev` for the development build, so

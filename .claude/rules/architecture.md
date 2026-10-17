@@ -10,7 +10,11 @@ paths:
 - .NET 10 (`win-x64`, framework-dependent), WPF, with **iNKORE.UI.WPF.Modern** for every control (`ui.md`). Its
   license asks for the attribution in `README.md`.
 - The NuGet packages are in `PuppyMacro/PuppyMacro.csproj`; **a new NuGet package needs the user's approval**. The MCP
-  SDK is used through its core only: no generic host. Win32 through P/Invoke in `Native/NativeMethods.cs`.
+  SDK is used through its core only: no generic host. Win32 through P/Invoke in `Native/NativeMethods.cs`; DXGI, Direct3D 11
+  and Display Config (screen recognition) through CsWin32, which generates them from `NativeMethods.txt` at build time
+  (a build-time package only).
+- **OpenCV** through OpenCvSharp, for the screen recognition on the processor; its license asks for the attribution in
+  `README.md`.
 - **Monaco editor** (MIT, the editor of VS Code), only the files JSON needs, in `Assets/Monaco` with its license (the
   version is in the files' headers); `Assets/CodeEditor` is the page around it. To update it, copy the same files from
   the npm package's `min/vs`. The loader's `vs` path must be an absolute address: the JSON worker (suggestions, schema
@@ -43,6 +47,7 @@ PuppyMacro/                     App, MainWindow and the other windows
 | `InputThread` | `WH_KEYBOARD_LL` / `WH_MOUSE_LL` hooks + message loop, desktop-switch and foreground WinEvent hooks |
 | `Injector` | Input sent on behalf of the hook (remap targets, menu mask key), in order |
 | One per running loop row (`ActionRunner`) / per running macro (`MacroRunner`) | Timing with `PreciseTimer` (high-resolution waitable timer) and `SendInput` |
+| One per monitor a macro's condition looks at (`ScreenCapture`) | Desktop Duplication: copies each new frame on the monitor's graphics card |
 | Thread pool (`AiServer`) | The AI pipe's accept loop and one MCP session per connected AI app; the tools reach the UI only through `IAiHost.Ui` |
 
 Rules:
@@ -111,6 +116,17 @@ Rules:
   - A `.puppyitems` path given to a new process while PuppyMacro runs is handed over on `Services/OpenFileChannel.cs`
     (a named pipe, current user only, one per build).
   - Windows refuses drops from File Explorer while PuppyMacro runs as administrator.
+- Conditions on the screen (`Services/Screen/`): an If in a macro checks a pixel, images or a text, waits, then plays
+  Then or Else (`ConditionChecker`, from `MacroRunner`). Decisions:
+  - The screen is read as the conditions see it everywhere: the pickers (`ScreenPickWindow`) take pixels and images from
+    the same capture, with HDR turned to SDR colors, so what is picked is what is found.
+  - The same search runs on the graphics card (compute shaders) or on the processor (OpenCV) with the same results
+    (unit tested on WARP); `ConditionChecker` chooses by the area's size unless Settings › Screen recognition forces one.
+  - While a condition looks at the screen, and a few seconds after, PuppyMacro's windows are left out of every screen
+    capture (`CaptureExclusion`, Windows 10 2004 and later), so a condition never sees PuppyMacro: only then, as the
+    user's own screenshots and recordings lose PuppyMacro's windows too.
+  - No recognition inside apps that block screen capture or run in exclusive fullscreen: they show black (the condition window
+    says so).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version. It is
   recorded in one place, `MainWindow.Save()` and `SaveMacro`, so every path is covered (editors, switches, the overlay's

@@ -28,6 +28,8 @@
   "loops_text": "Press a key or a combination like Ctrl+C, click (also double, at a fixed point), keep a key or button held down, or paste a text, every 10 ms to 24 h. Several actions, each on its own timer.",
   "macros_title": "Macros",
   "macros_text": "Record keys, clicks, scroll and mouse movement, then edit every step, in a list or as code with suggestions and live checks. Play once, N times or in a loop, at ×0.25 to ×4 speed.",
+  "conditions_title": "Conditions on the screen",
+  "conditions_text": "A macro can wait for a pixel's color, an image or a text on the screen, then click where it was found, or do something else when it does not show up. Fast, also with HDR.",
   "remap_title": "Remap",
   "remap_text": "A key, a mouse button or a combination like Alt+J sends another key, button or combination, in all apps or only in the app you choose. Ctrl, Alt, Shift and Win can be remapped too, left and right apart.",
   "overlay_title": "Overlay mode",

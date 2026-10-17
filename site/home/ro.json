@@ -27,6 +27,8 @@
   "loops_text": "Apasă o tastă sau o combinație precum Ctrl+C, face clic (și dublu clic, într-un punct fix), ține apăsată o tastă sau un buton ori lipește un text, la intervale de la 10 ms la 24 h. Mai multe acțiuni, fiecare cu propriul interval.",
   "macros_title": "Macrocomenzi",
   "macros_text": "Înregistrați taste, clicuri, defilare și mișcări ale mouse-ului, apoi editați fiecare pas, într-o listă sau ca cod, cu sugestii și verificări pe loc. Redați o dată, de N ori sau în buclă, la viteze de la ×0,25 la ×4.",
+  "conditions_title": "Condiții pe ecran",
+  "conditions_text": "O macrocomandă poate aștepta culoarea unui pixel, o imagine sau un text pe ecran, apoi poate face clic acolo unde l-a găsit sau poate face altceva dacă nu apare. Rapid, și cu HDR.",
   "remap_title": "Remapare",
   "remap_text": "O tastă, un buton al mouse-ului sau o combinație precum Alt+J trimite altă tastă, alt buton sau altă combinație, în toate aplicațiile sau doar în cea aleasă. Și tastele Ctrl, Alt, Shift și Win pot fi remapate, separat pentru stânga și dreapta.",
   "overlay_title": "Mod suprapunere",

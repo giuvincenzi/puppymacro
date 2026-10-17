@@ -1,5 +1,5 @@
 # The create_release_pr workflow's take_screenshots: retakes the editor screenshots of the user guide (site/guide/img:
-# loop-editor.png, macro-editor.png, macro-editor-code.png, remap-editor.png; the main window on the AI page, ai-page.png)
+# loop-editor.png, macro-editor.png, macro-editor-code.png, condition-editor.png, remap-editor.png; the main window on the AI page, ai-page.png)
 # and the home page's (site/assets/loops.png)
 # from the running development build (started before with scripts/dev.ps1 -Screenshots: PUPPYMACRO_SCREENSHOTS=1, so it
 # shows the sample data and no development build marks), on a screen of 1920 x 1080 (scripts/screen-resolution.ps1).
@@ -155,6 +155,21 @@ $code.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Patter
 WaitFor { ByName $editor 'No problems.' } 'the Code view checked' | Out-Null
 Start-Sleep -Seconds 1
 Capture $editor (Join-Path $OutDir 'macro-editor-code.png')
+
+# The condition window of the sample's If: its row selected, then Edit action.
+$editor = OpenEditor 'Sample: accept when ready' 'Edit macro'
+$list = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'ActionList'))) } 'ActionList'
+$rows = $list.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
+$rows[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$edit = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'EditActionButton'))) } 'EditActionButton'
+$edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+$condition = WaitFor { $A::RootElement.FindAll($TS::Children, (New-Object $PC($A::ProcessIdProperty, $proc.Id))) |
+    Where-Object { $_.Current.Name.StartsWith('Edit condition - ') } | Select-Object -First 1 } 'Edit condition'
+Start-Sleep -Seconds 2 # its check of the screen
+Capture $condition (Join-Path $OutDir 'condition-editor.png')
+# Then the macro editor under it closes too.
+$editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'CancelButton'))).GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Start-Sleep -Milliseconds 800
 
 $remaps = WaitFor { ByName $main 'Remap' } 'Remap page'
 $remaps.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()

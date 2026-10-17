@@ -27,6 +27,8 @@
   "loops_text": "Ripeti un tasto o una combinazione come Ctrl+C, un clic (anche doppio, in un punto fisso), un tasto o un pulsante tenuto premuto, o un testo da incollare, da ogni 10 ms a ogni 24 h. Più azioni, ognuna con il proprio intervallo.",
   "macros_title": "Macro",
   "macros_text": "Registra tasti, clic, scorrimento e movimenti del mouse, poi modifica ogni passaggio, in un elenco o come codice con suggerimenti e controlli in tempo reale. Riproducila una volta, N volte o in loop, a velocità da ×0,25 a ×4.",
+  "conditions_title": "Condizioni sullo schermo",
+  "conditions_text": "Una macro può aspettare il colore di un pixel, un'immagine o un testo sullo schermo, poi fare clic dove li trova, oppure fare altro se non compaiono. È veloce, anche con l'HDR.",
   "remap_title": "Rimappa",
   "remap_text": "Un tasto, un pulsante del mouse o una combinazione come Alt+J invia un altro tasto, pulsante o combinazione, in tutte le app o solo in quella che scegli. Puoi rimappare anche Ctrl, Alt, Maiusc e Win, sinistro e destro separatamente.",
   "overlay_title": "Modalità overlay",

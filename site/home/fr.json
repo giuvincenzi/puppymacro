@@ -27,6 +27,8 @@
   "loops_text": "Répétez une touche ou une combinaison comme Ctrl+C, un clic (double aussi, à un point fixe), une touche ou un bouton maintenu enfoncé, ou un texte à coller, avec un intervalle de 10 ms à 24 h. Plusieurs actions, chacune à son propre rythme.",
   "macros_title": "Macros",
   "macros_text": "Enregistrez les touches, les clics, le défilement et les mouvements de la souris, puis modifiez chaque étape, dans une liste ou sous forme de code avec suggestions et vérifications en direct. Rejouez une fois, N fois ou en boucle, à une vitesse de ×0,25 à ×4.",
+  "conditions_title": "Conditions à l'écran",
+  "conditions_text": "Une macro peut attendre la couleur d'un pixel, une image ou un texte à l'écran, puis cliquer là où il se trouve, ou faire autre chose s'il n'apparaît pas. Rapide, même avec le HDR.",
   "remap_title": "Remapper",
   "remap_text": "Une touche, un bouton de la souris ou une combinaison comme Alt+J envoie une autre touche, un autre bouton ou une autre combinaison, dans toutes les applications ou seulement dans celle de votre choix. Ctrl, Alt, Maj et Win peuvent aussi être remappées, gauche et droite séparément.",
   "overlay_title": "Mode superposition",

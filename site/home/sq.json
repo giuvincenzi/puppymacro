@@ -27,6 +27,8 @@
   "loops_text": "Shtyp një tast ose një kombinim si Ctrl+C, klikon (edhe dy herë, në një pikë fikse), mban shtypur një tast ose buton, ose ngjit një tekst, me intervale nga 10 ms deri në 24 orë. Disa veprime, secili me kohëmatësin e vet.",
   "macros_title": "Makrot",
   "macros_text": "Regjistroni tastet, klikimet, lëvizjet e rrotës dhe të miut, pastaj redaktoni çdo hap, në listë ose si kod, me sugjerime dhe kontrolle në çast. Luajini një herë, N herë ose në cikël, me shpejtësi nga ×0,25 deri në ×4.",
+  "conditions_title": "Kushte në ekran",
+  "conditions_text": "Një makro mund të presë ngjyrën e një pikseli, një imazh ose një tekst në ekran, pastaj të klikojë aty ku u gjet, ose të bëjë diçka tjetër kur nuk shfaqet. E shpejtë, edhe me HDR.",
   "remap_title": "Ricakto",
   "remap_text": "Një tast, një buton i miut ose një kombinim si Alt+J dërgon një tast, buton ose kombinim tjetër, në të gjitha aplikacionet ose vetëm në atë që zgjidhni. Edhe Ctrl, Alt, Shift dhe Win mund të ricaktohen, majtas dhe djathtas veçmas.",
   "overlay_title": "Regjimi i mbivendosjes",

@@ -27,6 +27,8 @@
   "loops_text": "Repite una tecla o una combinación como Ctrl+C, un clic (también doble, en un punto fijo), una tecla o un botón mantenidos presionados, o un texto para pegar, con un intervalo de 10 ms a 24 h. Varias acciones, cada una con su propio temporizador.",
   "macros_title": "Macros",
   "macros_text": "Graba teclas, clics, desplazamiento y movimientos del mouse, y luego edita cada paso, en una lista o como código con sugerencias y comprobaciones en tiempo real. Reprodúcela una vez, N veces o en bucle, a una velocidad de ×0,25 a ×4.",
+  "conditions_title": "Condiciones en la pantalla",
+  "conditions_text": "Una macro puede esperar el color de un píxel, una imagen o un texto en la pantalla y hacer clic donde aparece, o hacer otra cosa si no aparece. Es rápida, también con HDR.",
   "remap_title": "Reasignar",
   "remap_text": "Una tecla, un botón del mouse o una combinación como Alt+J envía otra tecla, botón o combinación, en todas las aplicaciones o solo en la que elijas. También puedes reasignar Ctrl, Alt, Mayús y Win, la izquierda y la derecha por separado.",
   "overlay_title": "Modo de superposición",

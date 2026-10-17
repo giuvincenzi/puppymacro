@@ -8,7 +8,12 @@
   (which locks `bin/Debug`) does not block it.
 - On GitHub they are the required check `unit_test` ("Which changes run the tests on GitHub" below), and
   `publish_release` runs them before a release is built.
-- One test class per area, named `<Area>Tests`. The AI tools are tested with `FakeAiHost` as the app and the user
+- One test class per area, named `<Area>Tests`. The screen recognition is tested without a screen: the graphics card's
+  search on WARP (the software renderer, on every PC and on GitHub) against the processor's, and the conditions on a
+  fake `IScreen`. Their speed on a real screen is measured by hand with the development build started with
+  `PUPPYMACRO_BENCH=1` (a table of image and area sizes, processor and graphics card, text recognition) or
+  `PUPPYMACRO_BENCH=load-gpu` / `load-cpu` (a search 30 times a second for a minute, to watch an app's frame rate):
+  `Services/Screen/RecognitionBench.cs`, results in a text file it opens. The AI tools are tested with `FakeAiHost` as the app and the user
   (`AiTools.WaitStep` is short there); the file types' registry keys under a test key in `HKCU\Software\PuppyMacroTests`,
   deleted after.
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a

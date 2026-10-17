@@ -27,6 +27,8 @@
   "loops_text": "Wiederholen Sie eine Taste oder eine Kombination wie Strg+C, einen Klick (auch doppelt, an einer festen Stelle), eine gedrückt gehaltene Taste oder Maustaste oder einen Text zum Einfügen, im Abstand von 10 ms bis 24 h. Mehrere Aktionen, jede mit eigenem Timer.",
   "macros_title": "Makros",
   "macros_text": "Zeichnen Sie Tasten, Klicks, Scrollen und Mausbewegungen auf, und bearbeiten Sie dann jeden Schritt, in einer Liste oder als Code mit Vorschlägen und Live-Prüfung. Einmal, N-mal oder endlos abspielen, mit ×0,25 bis ×4 Geschwindigkeit.",
+  "conditions_title": "Bedingungen auf dem Bildschirm",
+  "conditions_text": "Ein Makro kann auf eine Pixelfarbe, ein Bild oder einen Text auf dem Bildschirm warten und dann dort klicken, wo es gefunden wurde, oder etwas anderes tun, wenn nichts erscheint. Schnell, auch mit HDR.",
   "remap_title": "Neu zuordnen",
   "remap_text": "Eine Taste, eine Maustaste oder eine Kombination wie Alt+J sendet eine andere Taste, Maustaste oder Kombination, in allen Apps oder nur in der App Ihrer Wahl. Auch Strg, Alt, Umschalt und Win lassen sich neu zuordnen, links und rechts getrennt.",
   "overlay_title": "Overlay-Modus",

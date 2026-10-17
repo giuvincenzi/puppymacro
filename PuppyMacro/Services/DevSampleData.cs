@@ -104,6 +104,28 @@ internal static class DevSampleData
                     new MacroAction { Type = MacroActionType.Scroll, ScrollDirection = ScrollDirection.Down, ScrollSteps = 3, DelayMs = 300 },
                 },
             },
+            new()
+            {
+                // An If on the screen (the guide's condition-editor.png): a green pixel, then Enter, otherwise Esc.
+                Name = "Sample: accept when ready",
+                Enabled = false,
+                Actions =
+                {
+                    new MacroAction
+                    {
+                        Type = MacroActionType.If,
+                        Name = "Match ready",
+                        If = new MacroIf
+                        {
+                            Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, X = 960, Y = 1010, Color = "#3BD16F", Tolerance = 5 } },
+                            Wait = ConditionWait.UpTo,
+                            WaitSeconds = 30,
+                            Then = { new MacroAction { Type = MacroActionType.PressKey, Vk = Enter, DelayMs = 100 } },
+                            Else = { new MacroAction { Type = MacroActionType.PressKey, Vk = Escape } },
+                        },
+                    },
+                },
+            },
         };
         foreach (MacroDefinition macro in samples)
         {

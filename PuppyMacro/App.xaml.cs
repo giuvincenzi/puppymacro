@@ -95,6 +95,15 @@ public partial class App : Application
             return;
         }
 
+#if DEBUG
+        // The screen recognition's tuning bench (development build only): measures, writes the results, opens them, exits.
+        if (Environment.GetEnvironmentVariable(Services.Screen.RecognitionBench.Variable) is { Length: > 0 } bench)
+        {
+            Services.Screen.RecognitionBench.Run(bench);
+            return;
+        }
+#endif
+
         // Handles install, update and uninstall hooks (it exits the process for those),
         // and applies an update that was downloaded but not applied yet.
         VelopackApp.Build()

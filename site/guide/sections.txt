@@ -2,6 +2,7 @@
 install|Install and update
 loops|Loops
 macros|Macros
+conditions|Conditions on the screen
 remap|Remap
 ai|AI apps
 overlay-mode|Overlay mode
