@@ -68,6 +68,7 @@ internal static class CodeSchema
 
         ["MacroCondition.Id"] = "Referenced by FoundId of the mouse actions in Then. A new one for a new condition.",
         ["MacroCondition.Kind"] = "Pixel: a pixel has a color. Image: an image is on the screen. Text: a text is on the screen (Windows' text recognition, slower).",
+        ["MacroCondition.Not"] = "True when what it looks for is not there: Pixel, the pixel has another color; Image, none of the images is on the screen; Text, the text is not on the screen. Its If's Up to then waits for it to go away. A condition with Not gives no place to FoundId. False by default.",
         ["MacroCondition.Name"] = "Image, Text: a name of your choice, unique in the macro, shown where the actions use what it found.",
         ["MacroCondition.X"] = "Pixel: the pixel's screen position, in physical pixels.",
         ["MacroCondition.Y"] = "Pixel: the pixel's screen position, in physical pixels.",

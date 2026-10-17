@@ -158,7 +158,8 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
 
     /// <summary>The action goes where its condition found something, not to a fixed point.</summary>
     public bool UsesFound => _foundId != null && HasFounds;
-    public bool ShowFixedPoint => !UsesFound;
+    /// <summary>Inside an If's Then with Fixed point chosen: the Point card under Position.</summary>
+    public bool ShowFixedPoint => HasFounds && !UsesFound;
 
     public double OffsetX
     {

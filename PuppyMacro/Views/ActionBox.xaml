@@ -96,16 +96,16 @@
                     <views:PositionPicker X="{Binding X}" Y="{Binding Y}" />
                 </ui:SettingsCard>
 
-                <!-- Macro, inside an If's Then: a fixed point or where a condition found its image or text (approved: the
-                     Design canvas "Macro Conditions", Click where it was found), then how far from its center -->
+                <!-- Macro, inside an If's Then: Position chooses a fixed point or where a condition found its image or text, then
+                     either the point or how far from the found center -->
                 <ui:SettingsCard Header="{x:Static r:Strings.Action_Position}" Description="{x:Static r:Strings.Action_PositionDescription}"
                                  Visibility="{Binding ShowFoundPosition, Converter={StaticResource BoolToVisibility}}">
-                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="16">
-                        <views:PositionPicker X="{Binding X}" Y="{Binding Y}"
-                                              Visibility="{Binding ShowFixedPoint, Converter={StaticResource BoolToVisibility}}" />
-                        <ComboBox x:Name="PositionChoice" VerticalAlignment="Center" MinWidth="200" ItemsSource="{Binding PositionChoices}"
-                                  SelectedIndex="{Binding PositionIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Position}" />
-                    </ikw:SimpleStackPanel>
+                    <ComboBox x:Name="PositionChoice" MinWidth="200" ItemsSource="{Binding PositionChoices}"
+                              SelectedIndex="{Binding PositionIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Position}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Point}"
+                                 Visibility="{Binding ShowFixedPoint, Converter={StaticResource BoolToVisibility}}">
+                    <views:PositionPicker X="{Binding X}" Y="{Binding Y}" />
                 </ui:SettingsCard>
                 <ui:SettingsCard Header="{x:Static r:Strings.Action_MoveFromCenter}" Description="{x:Static r:Strings.Action_MoveFromCenterDescription}"
                                  Visibility="{Binding UsesFound, Converter={StaticResource BoolToVisibility}}">

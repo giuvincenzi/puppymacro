@@ -274,9 +274,9 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
 
     private static string ConditionPhrase(MacroCondition c) => c.Kind switch
     {
-        ConditionKind.Pixel => Fill(Strings.MacroEditor_RowIfPixel, c.X, c.Y, c.Color ?? ""),
-        ConditionKind.Image => Fill(Strings.MacroEditor_RowIfImage, c.Name ?? ""),
-        _ => Fill(Strings.MacroEditor_RowIfText, Shorten(c.Text ?? "")),
+        ConditionKind.Pixel => Fill(c.Not ? Strings.MacroEditor_RowIfPixelNot : Strings.MacroEditor_RowIfPixel, c.X, c.Y, c.Color ?? ""),
+        ConditionKind.Image => Fill(c.Not ? Strings.MacroEditor_RowIfImageNot : Strings.MacroEditor_RowIfImage, c.Name ?? ""),
+        _ => Fill(c.Not ? Strings.MacroEditor_RowIfTextNot : Strings.MacroEditor_RowIfText, Shorten(c.Text ?? "")),
     };
 
     /// <summary>"Press A 3 times": the action repeated, when it is.</summary>

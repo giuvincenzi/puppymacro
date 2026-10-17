@@ -126,6 +126,26 @@ public class ConditionEditorTests
     }
 
     [Fact]
+    public void A_condition_can_be_true_when_it_is_not_there()
+    {
+        var (app, editor, condition) = OpenPixelIf("E2E not there");
+        using (app)
+        {
+            ComboBox trueWhen = Retry.WhileNull(() => condition.FindFirstDescendant(cf => cf.ByName("True when").And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.ComboBox))),
+                AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the True when list not found").Result!.AsComboBox();
+            trueWhen.Expand();
+            trueWhen.Select("The pixel doesn't have this color");
+            trueWhen.Collapse();
+            app.Find(condition, "10, 20 isn't #3BD16F, with 5% tolerance");
+            app.FindById(condition, "SaveButton").AsButton().Invoke();
+
+            app.FindById(editor, "SaveButton").AsButton().Invoke();
+            Assert.True(Retry.WhileFalse(() => AppSession.SavedMacros().Any(m => m.Name == "E2E not there" && m.Actions[0].If!.Conditions[0].Not),
+                AppSession.Timeout).Success, "the condition was not saved with Not");
+        }
+    }
+
+    [Fact]
     public void An_image_is_taken_on_the_screen_after_a_Retry()
     {
         using var app = new AppSession(seed => seed.Macros.Add(Macro("E2E take image", null, Press(Vk.F24))));

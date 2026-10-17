@@ -1002,6 +1002,7 @@ Détails : {1}</value></data>
   <data name="Code_TextArea" xml:space="preserve"><value>Texte à l'écran cherche dans une zone que vous dessinez ou sur tout l'écran.</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Seuls Clic, Bouton de la souris enfoncé, Bouton de la souris relâché et Déplacer vers peuvent aller là où quelque chose a été trouvé.</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>Cette action va là où une condition a trouvé son image ou son texte, mais elle n'est pas dans le Then de cette condition. Placez-la dedans, ou choisissez un point fixe.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Cette action va là où une condition a trouvé son image ou son texte, mais cette condition est vraie quand il n'est pas à l'écran, donc elle ne trouve aucun endroit. Choisissez un point fixe.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Panneau de superposition PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Déplacer le panneau</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Faites glisser pour déplacer le panneau</value></data>
@@ -1140,6 +1141,7 @@ Détails : {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro ne peut pas voir l'écran pour le moment. Réessayez dans un instant.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Point fixe</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Point</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Là où se trouve {0}</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>Dans un If, l'action peut aller là où une condition a trouvé son image ou son texte, quel que soit son emplacement cette fois-ci.</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>Décalage depuis le centre</value></data>
@@ -1223,6 +1225,18 @@ Détails : {1}</value></data>
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Capturez l'image à l'écran.</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Contient « {0} », {1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exactement « {0} », {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>Vraie quand</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>Une condition peut aussi être vraie quand quelque chose n'est pas là, par exemple pour attendre qu'une fenêtre se ferme.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>Le pixel a cette couleur</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>Le pixel n'a pas cette couleur</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>L'image est à l'écran</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>L'image n'est pas à l'écran</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>Le texte est à l'écran</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>Le texte n'est pas à l'écran</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} n'est pas {2}, avec une tolérance de {3} %</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} n'est pas à l'écran, {1}, ressemblance de {2} %</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Ne contient pas « {0} », {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Pas exactement « {0} », {1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>Écrivez le texte à trouver.</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>autour de l'endroit de la capture</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>sur tout l'écran</value></data>
@@ -1248,6 +1262,9 @@ Détails : {1}</value></data>
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>le pixel en {0}, {1} est {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} est à l'écran</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>« {0} » est à l'écran</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>le pixel en {0}, {1} n'est pas {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} n'est pas à l'écran</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>« {0} » n'est pas à l'écran</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>là où se trouve {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>quand les conditions sont vraies</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>quand elles ne le sont pas</value></data>
@@ -1276,5 +1293,6 @@ Détails : {1}</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Réessayer</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Pas encore vérifiée. Vérifiez-la à l'écran avec le bouton.</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Une action de Then va là où {0} a été trouvé. Modifiez d'abord cette action, puis supprimez la condition.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Une action de Then va là où {0} a été trouvé, donc cette condition doit être vraie quand il est à l'écran. Modifiez d'abord cette action.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Deux conditions ont le même Id. Donnez à chacune le sien.</value></data>
 </root>

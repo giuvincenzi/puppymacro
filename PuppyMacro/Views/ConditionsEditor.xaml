@@ -55,6 +55,12 @@
                         <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
                     </Button>
                     <ui:SettingsExpander.Items>
+                        <!-- True when what it looks for is there, or when it is not -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_TrueWhen}" Description="{x:Static r:Strings.Condition_TrueWhenDescription}">
+                            <ComboBox MinWidth="200" ItemsSource="{Binding NotChoices}" SelectedIndex="{Binding NotIndex, Mode=TwoWay}"
+                                      Tag="{Binding}" SelectionChanged="OnNotChanged" AutomationProperties.Name="{x:Static r:Strings.Condition_TrueWhen}" />
+                        </ui:SettingsCard>
+
                         <!-- Image and Text: the name the actions in Then use -->
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_Name}" Description="{x:Static r:Strings.Condition_NameDescription}"
                                          Visibility="{Binding Finds, Converter={StaticResource BoolToVisibility}}">

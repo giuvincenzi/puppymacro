@@ -174,6 +174,58 @@ public class ConditionCheckerTests : IDisposable
     }
 
     [Fact]
+    public void A_condition_with_Not_is_true_when_it_is_not_there_and_finds_no_place()
+    {
+        using var source = Picture(FakeScreen.Width, FakeScreen.Height, 7);
+        var image = Take(source, new Rect(100, 100, 40, 40));
+        var notThere = ImageCondition(SearchArea.Screen, image);
+        notThere.Not = true;
+        var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 1, Y = 1, Color = "#FFFFFF", Not = true };
+        var black = new MacroCondition { Kind = ConditionKind.Pixel, X = 1, Y = 1, Color = "#000000", Not = true };
+        using var empty = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(0));
+        _screen.Show(empty);
+
+        var result = Check(If(ConditionWait.Once, notThere, white));
+        Assert.True(result.Met);
+        Assert.Empty(result.Found);
+        Assert.False(Check(If(ConditionWait.Once, black)).Met);
+
+        _screen.Show(source);
+        Assert.False(Check(If(ConditionWait.Once, notThere)).Met);
+    }
+
+    [Fact]
+    public void A_condition_with_Not_is_never_true_where_the_screen_cannot_be_seen()
+    {
+        using var empty = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(0));
+        _screen.Show(empty);
+        // On no monitor: nothing can be seen there, so it is not known that the color is not there.
+        var offScreen = new MacroCondition { Kind = ConditionKind.Pixel, X = 5000, Y = 5000, Color = "#FFFFFF", Not = true };
+
+        Assert.False(Check(If(ConditionWait.Once, offScreen)).Met);
+    }
+
+    [Fact]
+    public void Up_to_with_Not_waits_for_it_to_go_away()
+    {
+        using var shown = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(255));
+        using var gone = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(0));
+        _screen.Show(shown);
+        var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 5, Y = 5, Color = "#FFFFFF", Not = true };
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(300, TestContext.Current.CancellationToken);
+            _screen.Show(gone);
+        }, TestContext.Current.CancellationToken);
+
+        var clock = Stopwatch.StartNew();
+        var result = Check(If(ConditionWait.UpTo, white));
+
+        Assert.True(result.Met);
+        Assert.InRange(clock.ElapsedMilliseconds, 250, 1900);
+    }
+
+    [Fact]
     public void Up_to_waits_for_the_screen_to_show_it()
     {
         using var empty = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(0));

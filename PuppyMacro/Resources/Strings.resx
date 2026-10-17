@@ -1072,6 +1072,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Code_TextArea" xml:space="preserve"><value>Text on screen looks in an area you draw or in the whole screen.</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Only Click, Mouse button down, Mouse button up and Move to can go where something was found.</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>This action goes where a condition found its image or text, but it isn't inside that condition's Then. Move it inside, or choose a fixed point.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>This action goes where a condition found its image or text, but that condition is true when it isn't on the screen, so it finds no place. Choose a fixed point.</value><comment>Code view check: an action uses where a condition found something, but that condition is true when it is not on the screen</comment></data>
   <!-- ===== Views/OverlayPanel.xaml(.cs), OverlayPanelWindow.xaml ===== -->
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro overlay panel</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Move the panel</value></data>
@@ -1225,6 +1226,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value><comment>Next to the enlarged pixels: {0} the color (#RRGGBB), {1} X, {2} Y</comment></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro can't see the screen right now. Try again in a moment.</value><comment>The screen could not be captured for a pick</comment></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Fixed point</value><comment>Position choice of a mouse action: the X and Y written in the action</comment></data>
+  <data name="Action_Point" xml:space="preserve"><value>Point</value><comment>Header of the card with X, Y and Pick on screen under Position, when Fixed point is chosen</comment></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Where {0} was found</value><comment>Position choice of a mouse action inside an If: {0} the name of the condition (an image or a text)</comment></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>Inside an If, the action can go where a condition found its image or text, wherever it is this time.</value><comment>Description of the Position card of a mouse action inside an If</comment></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>Move from the center</value><comment>Card header: how far from the center of what was found the action goes</comment></data>
@@ -1311,6 +1313,18 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Take the image on the screen.</value><comment>Under an image condition without an image</comment></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Contains “{0}”, {1}</value><comment>Under a text condition: {0} the text, {1} where it looks</comment></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exactly “{0}”, {1}</value><comment>Under a text condition: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>True when</value><comment>Card header at the top of a condition: whether it is true when what it looks for is there or when it is not</comment></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>A condition can also be true when something isn't there, for example to wait until a window closes.</value><comment>Description of the True when card</comment></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>The pixel has this color</value><comment>True when choice of a pixel condition</comment></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>The pixel doesn't have this color</value><comment>True when choice of a pixel condition</comment></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>The image is on the screen</value><comment>True when choice of an image condition</comment></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>The image isn't on the screen</value><comment>True when choice of an image condition</comment></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>The text is on the screen</value><comment>True when choice of a text condition</comment></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>The text isn't on the screen</value><comment>True when choice of a text condition</comment></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} isn't {2}, with {3}% tolerance</value><comment>Under a pixel condition true when the pixel has another color: {0} X, {1} Y, {2} color, {3} tolerance</comment></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} isn't on the screen, {1}, {2}% similar</value><comment>Under an image condition true when the image is not on the screen: {0} its name, {1} where it looks, {2} similarity</comment></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Doesn't contain “{0}”, {1}</value><comment>Under a text condition true when the text is not on the screen: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Not exactly “{0}”, {1}</value><comment>Under a text condition (Exact) true when the text is not on the screen: {0} the text, {1} where it looks</comment></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>Write the text to find.</value><comment>Under a text condition without text</comment></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>around where it was taken</value><comment>Part of a summary: where the image is looked for</comment></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>on the whole screen</value><comment>Part of a summary: where it is looked for</comment></data>
@@ -1336,6 +1350,9 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>the pixel at {0}, {1} is {2}</value><comment>Detail of an If row: {0} X, {1} Y, {2} color</comment></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} is on the screen</value><comment>Detail of an If row: {0} the image condition's name</comment></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>“{0}” is on the screen</value><comment>Detail of an If row: {0} the text</comment></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>the pixel at {0}, {1} isn't {2}</value><comment>Detail of an If row whose pixel condition is true when the pixel has another color: {0} X, {1} Y, {2} color</comment></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} isn't on the screen</value><comment>Detail of an If row whose image condition is true when the image is not on the screen: {0} the condition's name</comment></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>“{0}” isn't on the screen</value><comment>Detail of an If row whose text condition is true when the text is not on the screen: {0} the text</comment></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>where {0} was found</value><comment>Detail of a mouse action row: {0} the condition whose image or text it goes to</comment></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>when the conditions are true</value><comment>What Then means, after its name</comment></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>when they aren't</value><comment>What Else means, after its name</comment></data>
@@ -1364,5 +1381,6 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Retry</value><comment>Button on the full-screen pick: removes the rectangle drawn so it can be drawn again</comment></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Not checked yet. Check it on the screen with the button.</value><comment>The card that says what PuppyMacro sees now, before the first check</comment></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>An action in Then goes where {0} was found. Change that action first, then remove the condition.</value><comment>Shown when removing a condition that an action uses: {0} the condition's name. Then is a global word</comment></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>An action in Then goes where {0} was found, so this condition must be true when it's on the screen. Change that action first.</value><comment>Shown when choosing that a condition is true when it isn't on the screen while an action uses where it was found: {0} the condition's name. Then is a global word</comment></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Two conditions have the same Id. Give each one its own.</value><comment>Code view check: two conditions share an Id</comment></data>
 </root>

@@ -98,6 +98,18 @@ public partial class ConditionsEditor : UserControl
         Changed?.Invoke();
     }
 
+    private void OnNotChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ComboBox { SelectedIndex: 1, Tag: ConditionViewModel condition } || Model is not { } model)
+            return;
+        // An action in Then goes where it was found: true when it is not there, it would find no place for that action.
+        if (!model.UsedByThen.Contains(condition.Id))
+            return;
+        Dispatcher.BeginInvoke(() => condition.Not = false);
+        MessageBox.Show(Window.GetWindow(this), string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Condition_UsedByThenNot, condition.Name.Trim()),
+            Strings.Condition_TrueWhen, MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, App.MessageBoxOptions);
+    }
+
     private void OnRemoveImageClick(object sender, RoutedEventArgs e)
     {
         if ((sender as FrameworkElement)?.Tag is not ConditionImageViewModel image || Model is not { } model)

@@ -1094,6 +1094,7 @@
   <data name="Code_TextArea" xml:space="preserve"><value>يبحث "نص على الشاشة" في منطقة ترسمها أنت أو في الشاشة كلها.</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>لا يمكن الانتقال إلى مكان العثور على شيء إلا لـ"نقر" و"ضغط زر الماوس لأسفل" و"تحرير زر الماوس" و"الانتقال إلى".</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>ينتقل هذا الإجراء إلى حيث وجد شرطٌ صورته أو نصه، لكنه ليس داخل Then الخاص بذلك الشرط. انقله إلى الداخل أو اختر نقطة ثابتة.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>ينتقل هذا الإجراء إلى حيث وجد شرطٌ صورته أو نصه، لكن ذلك الشرط يتحقق عند عدم ظهوره على الشاشة، لذا لا يجد أي مكان. اختر نقطة ثابتة.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>لوحة تراكب PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>نقل اللوحة</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>اسحب لنقل اللوحة</value></data>
@@ -1260,6 +1261,7 @@
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>يتعذر على PuppyMacro رؤية الشاشة الآن. حاول مرة أخرى بعد قليل.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>نقطة ثابتة</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>النقطة</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>حيث تم العثور على {0}</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>داخل If، يمكن أن ينتقل الإجراء إلى حيث عثر شرطٌ على صورته أو نصه، أينما كان موضعه هذه المرة.</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>الإزاحة من المركز</value></data>
@@ -1347,6 +1349,18 @@
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>التقط الصورة من الشاشة.</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>يحتوي على "{0}"، {1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>"{0}" بالضبط، {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>يتحقق عندما</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>يمكن أن يتحقق الشرط أيضًا عندما لا يكون شيء ما موجودًا، مثلاً لانتظار إغلاق نافذة.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>البكسل بهذا اللون</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>البكسل ليس بهذا اللون</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>الصورة على الشاشة</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>الصورة ليست على الشاشة</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>النص على الشاشة</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>النص ليس على الشاشة</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}، {1} لونه ليس {2}، مع تفاوت {3}%</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>عدم ظهور {0} على الشاشة، {1}، تشابه {2}%</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>لا يحتوي على "{0}"، {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>ليس "{0}" بالضبط، {1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>اكتب النص المراد البحث عنه.</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>حول مكان الالتقاط</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>في الشاشة كلها</value></data>
@@ -1380,6 +1394,9 @@
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>البكسل عند {0}، {1} لونه {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} على الشاشة</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>"{0}" على الشاشة</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>البكسل عند {0}، {1} لونه ليس {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>عدم ظهور {0} على الشاشة</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>عدم ظهور "{0}" على الشاشة</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>حيث تم العثور على {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>عند تحقق الشروط</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>عند عدم تحققها</value></data>
@@ -1408,5 +1425,6 @@
   <data name="ScreenPick_Retry" xml:space="preserve"><value>إعادة المحاولة</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>لم يتم التحقق بعد. تحقق منه على الشاشة باستخدام الزر.</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>يذهب إجراء في Then إلى حيث وُجد "{0}". غيّر هذا الإجراء أولاً، ثم أزل الشرط.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>يذهب إجراء في Then إلى حيث وُجد "{0}"، لذا يجب أن يتحقق هذا الشرط عند ظهوره على الشاشة. غيّر هذا الإجراء أولاً.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>لشرطين نفس Id. امنح كل شرط Id خاصاً به.</value></data>
 </root>

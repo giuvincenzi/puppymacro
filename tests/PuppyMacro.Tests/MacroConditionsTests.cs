@@ -225,6 +225,32 @@ public class MacroConditionsTests : IDisposable
     }
 
     [Fact]
+    public void A_condition_with_Not_gives_no_place_to_go_and_needs_its_name_still()
+    {
+        var image = Image("Accept button", ImageA);
+        image.Not = true;
+        var macro = Macro(If(image, then: new[] { Click(image.Id) }));
+
+        Assert.Contains(Problems(macro), p => p.Message.EndsWith(Resources.Strings.Code_FoundNot));
+        Assert.DoesNotContain(Problems(macro), p => p.Message.EndsWith(Resources.Strings.Code_FoundOutside));
+        Assert.Empty(Problems(Macro(If(image, then: new[] { Press() }))));
+        image.Name = "";
+        Assert.Contains(Problems(Macro(If(image))), p => p.Message.EndsWith(Resources.Strings.Code_EnterConditionName));
+    }
+
+    [Fact]
+    public void Not_is_saved_only_when_set_and_older_files_have_it_off()
+    {
+        var condition = new MacroCondition { Kind = ConditionKind.Pixel, X = 1, Y = 2, Color = "#000000" };
+        Assert.DoesNotContain("\"Not\"", System.Text.Json.JsonSerializer.Serialize(condition, CodeJson.Options));
+        condition.Not = true;
+        string json = System.Text.Json.JsonSerializer.Serialize(condition, CodeJson.Options);
+        Assert.Contains("\"Not\": true", json);
+        Assert.True(System.Text.Json.JsonSerializer.Deserialize<MacroCondition>(json, CodeJson.Options)!.Not);
+        Assert.False(System.Text.Json.JsonSerializer.Deserialize<MacroCondition>("{\"Kind\":\"Pixel\"}", CodeJson.Options)!.Not);
+    }
+
+    [Fact]
     public void Only_mouse_actions_go_where_something_was_found()
     {
         var image = Image("A", ImageA);

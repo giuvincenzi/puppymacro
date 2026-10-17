@@ -115,6 +115,13 @@ public sealed class MacroCondition
 
     public ConditionKind Kind { get; set; }
 
+    /// <summary>
+    /// True when what it looks for is not there: the pixel has another color, the image or the text is not on the screen.
+    /// It finds no place for the actions in Then. False in older files.
+    /// </summary>
+    [JsonIgnore(Condition = Default)]
+    public bool Not { get; set; }
+
     /// <summary>Image and Text: the name the actions in Then use for where it was found.</summary>
     [JsonIgnore(Condition = Null)]
     public string? Name { get; set; }
@@ -177,9 +184,13 @@ public sealed class MacroCondition
     [JsonIgnore(Condition = Null)]
     public string? Language { get; set; }
 
-    /// <summary>Whether a mouse action can use where it was found.</summary>
+    /// <summary>Image and Text: it has a name and looks in an area.</summary>
     [JsonIgnore]
     public bool Finds => Kind is ConditionKind.Image or ConditionKind.Text;
+
+    /// <summary>Whether a mouse action in Then can go where it was found: not when it is true for not being there.</summary>
+    [JsonIgnore]
+    public bool GivesPlace => Finds && !Not;
 
     public MacroCondition Clone()
     {

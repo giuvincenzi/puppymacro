@@ -86,7 +86,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
     private string _name;
     private double _x, _y, _tolerance, _similarity;
     private string _color;
-    private bool _nearbySizes, _matchCase, _isExpanded = true;
+    private bool _not, _nearbySizes, _matchCase, _isExpanded = true;
     private int _areaX, _areaY, _areaWidth, _areaHeight;
     private SearchArea _area;
     private string _text;
@@ -100,6 +100,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
         _condition = condition.Clone();
         _store = store;
         _name = condition.Name ?? "";
+        _not = condition.Not;
         _x = condition.X;
         _y = condition.Y;
         _color = condition.Color ?? "";
@@ -167,6 +168,35 @@ public sealed class ConditionViewModel : ConditionEditorItem
     {
         get => _isExpanded;
         set { _isExpanded = value; Changed(); }
+    }
+
+    // ---- True when (it is there, or it is not) ----
+
+    /// <summary>The True when list: what it looks for is there, or it is not.</summary>
+    public IReadOnlyList<string> NotChoices => Kind switch
+    {
+        ConditionKind.Pixel => new[] { Strings.Condition_PixelHas, Strings.Condition_PixelHasNot },
+        ConditionKind.Image => new[] { Strings.Condition_ImageIs, Strings.Condition_ImageIsNot },
+        _ => new[] { Strings.Condition_TextIs, Strings.Condition_TextIsNot },
+    };
+
+    /// <summary>True when what it looks for is not there; it then gives no place to the actions in Then.</summary>
+    public bool Not
+    {
+        get => _not;
+        set
+        {
+            if (_not == value)
+                return;
+            _not = value;
+            Changed(nameof(Not), nameof(NotIndex), nameof(Summary));
+        }
+    }
+
+    public int NotIndex
+    {
+        get => _not ? 1 : 0;
+        set => Not = value == 1;
     }
 
     // ---- Name (Image and Text) ----
@@ -370,14 +400,20 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public string Summary => Kind switch
     {
         ConditionKind.Pixel => MacroJson.IsColor(_color.Trim().ToUpperInvariant())
-            ? Fill(Strings.Condition_PixelSummary, _x, _y, _color.Trim().ToUpperInvariant(), _tolerance)
+            ? Fill(_not ? Strings.Condition_PixelSummaryNot : Strings.Condition_PixelSummary, _x, _y, _color.Trim().ToUpperInvariant(), _tolerance)
             : Strings.Condition_PixelNotPicked,
         ConditionKind.Image => !HasImages
             ? Strings.Condition_ImageNotTaken
-            : Fill(Strings.Condition_ImageSummary, NameOrKind, AreaName, _similarity),
+            : Fill(_not ? Strings.Condition_ImageSummaryNot : Strings.Condition_ImageSummary, NameOrKind, AreaName, _similarity),
         _ => string.IsNullOrWhiteSpace(_text)
             ? Strings.Condition_TextNotWritten
-            : Fill(_textMatch == TextMatch.Exact ? Strings.Condition_TextSummaryExact : Strings.Condition_TextSummaryContains, _text.Trim(), AreaName),
+            : Fill((_textMatch == TextMatch.Exact, _not) switch
+            {
+                (true, false) => Strings.Condition_TextSummaryExact,
+                (true, true) => Strings.Condition_TextSummaryExactNot,
+                (false, false) => Strings.Condition_TextSummaryContains,
+                _ => Strings.Condition_TextSummaryContainsNot,
+            }, _text.Trim(), AreaName),
     };
 
     private string NameOrKind => string.IsNullOrWhiteSpace(_name) ? Title : _name.Trim();
@@ -429,7 +465,10 @@ public sealed class ConditionViewModel : ConditionEditorItem
 
     internal void ShowReport(ConditionReport report)
     {
-        ResultMet = report.Met;
+        // What it saw is the same; whether that makes the condition true depends on True when. A screen it could not
+        // see never makes it true.
+        bool seen = !report.NoLanguage && !report.NoMonitor;
+        ResultMet = _not ? seen && !report.Met : report.Met;
         Result = report switch
         {
             { NoLanguage: true } => Fill(Strings.Condition_NoLanguage, TextReader.NativeName(_language ?? "")),
@@ -496,6 +535,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
     {
         var c = _condition.Clone();
         c.Name = Finds ? _name.Trim() : null;
+        c.Not = _not;
         c.X = c.Y = 0;
         c.Color = null;
         c.Tolerance = 0;

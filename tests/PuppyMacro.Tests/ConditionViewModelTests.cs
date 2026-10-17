@@ -49,4 +49,23 @@ public class ConditionViewModelTests
         Assert.Equal("#000000", condition.ToModel().Color);
         Assert.Equal(10, condition.ToModel().Tolerance);
     }
+
+    [Fact]
+    public void Not_turns_what_it_saw_into_the_opposite_and_is_saved()
+    {
+        var (block, condition) = Pixel();
+        int changes = 0;
+        block.ConditionChanged += _ => changes++;
+
+        condition.NotIndex = 1;
+
+        Assert.True(changes > 0, "Not is no change");
+        Assert.True(condition.ToModel().Not);
+        condition.ShowReport(new ConditionReport(false, Color: "#000000"));
+        Assert.True(condition.ResultMet);
+        condition.ShowReport(new ConditionReport(true, Color: "#3BD16F"));
+        Assert.False(condition.ResultMet);
+        condition.ShowReport(new ConditionReport(false, NoMonitor: true));
+        Assert.False(condition.ResultMet);
+    }
 }

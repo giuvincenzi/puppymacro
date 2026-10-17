@@ -979,6 +979,7 @@
   <data name="Code_TextArea" xml:space="preserve"><value>“屏幕上的文本”会在你绘制的区域或整个屏幕中查找。</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>只有“单击”、“按下鼠标按钮”、“松开鼠标按钮”和“移动到”可以前往找到内容的位置。</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>此操作会前往某个条件找到其图像或文本的位置，但它不在该条件的 Then 中。请将它移到里面，或选择一个固定位置。</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>此操作会前往某个条件找到其图像或文本的位置，但该条件在它不在屏幕上时成立，因此找不到位置。请选择一个固定位置。</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro 覆盖面板</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>移动面板</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>拖动以移动面板</value></data>
@@ -1110,6 +1111,7 @@
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro 暂时无法获取屏幕画面。请稍后再试。</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>固定点</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>坐标</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>找到 {0} 的位置</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>在 If 中，操作可以前往条件找到其图像或文本的位置，无论这次它出现在哪里。</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>相对中心偏移</value></data>
@@ -1192,6 +1194,18 @@
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>请从屏幕截取图像。</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>包含“{0}”，{1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>完全为“{0}”，{1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>成立条件</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>条件也可以在某样东西不存在时成立，例如等待某个窗口关闭。</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>像素是此颜色</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>像素不是此颜色</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>图像在屏幕上</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>图像不在屏幕上</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>文本在屏幕上</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>文本不在屏幕上</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} 处不为 {2}，容差 {3}%</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} 不在屏幕上，{1}，相似度 {2}%</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>不包含“{0}”，{1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>不完全为“{0}”，{1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>请输入要查找的文本。</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>在截取位置附近</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>在整个屏幕上</value></data>
@@ -1215,6 +1229,9 @@
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>{0}, {1} 处的像素为 {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} 在屏幕上</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>“{0}”在屏幕上</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>{0}, {1} 处的像素不为 {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} 不在屏幕上</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>“{0}”不在屏幕上</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>找到 {0} 的位置</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>条件满足时</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>条件不满足时</value></data>
@@ -1243,5 +1260,6 @@
   <data name="ScreenPick_Retry" xml:space="preserve"><value>重试</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>尚未检查。请使用按钮在屏幕上检查。</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Then 中的一个操作会移到找到“{0}”的位置。请先更改该操作，再删除此条件。</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Then 中的一个操作会移到找到“{0}”的位置，因此此条件必须在它出现在屏幕上时成立。请先更改该操作。</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>有两个条件的 Id 相同。请为每个条件设置各自的 Id。</value></data>
 </root>

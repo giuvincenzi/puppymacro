@@ -110,7 +110,7 @@ internal static class MacroJson
         if (ReferenceEquals(current, target))
         {
             foreach (var block in path)
-                foreach (var condition in block.Conditions.Where(c => c.Finds))
+                foreach (var condition in block.Conditions.Where(c => c.GivesPlace))
                     found[condition.Id] = condition.Name ?? "";
             return true;
         }
@@ -197,10 +197,11 @@ internal static class MacroJson
 
     /// <summary>
     /// Checks every action of <paramref name="list"/> (at <paramref name="path"/>, "Actions" or "Actions[2].If.Then"),
-    /// also inside Then and Else. <paramref name="found"/>: the conditions an action here can use where they found something.
+    /// also inside Then and Else. <paramref name="found"/>: the conditions an action here can use where they found something;
+    /// <paramref name="notThere"/>: the conditions around it that are true when what they look for is not there.
     /// </summary>
     private static void CheckActions(List<MacroAction> list, string path, Dictionary<Guid, string> found, Func<string, bool>? hasImage,
-        CodeJson.Checker check, bool single)
+        CodeJson.Checker check, bool single, HashSet<Guid>? notThere = null)
     {
         for (int i = 0; i < list.Count; i++)
         {
@@ -211,6 +212,8 @@ internal static class MacroJson
             {
                 if (a.Type is not (MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo))
                     check.Add($"{prefix}FoundId", Strings.Code_FoundOnlyMouse);
+                else if (notThere?.Contains(foundId) == true)
+                    check.Add($"{prefix}FoundId", Strings.Code_FoundNot);
                 else if (!found.TryGetValue(foundId, out _))
                     check.Add($"{prefix}FoundId", Strings.Code_FoundOutside);
                 check.Range($"{prefix}FoundOffsetX", a.FoundOffsetX, Coordinate);
@@ -234,10 +237,12 @@ internal static class MacroJson
             if (block.Wait == ConditionWait.UpTo)
                 check.Range($"{prefix}If.WaitSeconds", block.WaitSeconds, WaitSeconds);
             var inside = new Dictionary<Guid, string>(found);
-            foreach (var condition in block.Conditions.Where(c => c.Finds))
+            foreach (var condition in block.Conditions.Where(c => c.GivesPlace))
                 inside[condition.Id] = condition.Name ?? "";
-            CheckActions(block.Then, $"{prefix}If.Then", inside, hasImage, check, single: false);
-            CheckActions(block.Else, $"{prefix}If.Else", found, hasImage, check, single: false);
+            var notInside = new HashSet<Guid>(notThere ?? new HashSet<Guid>());
+            notInside.UnionWith(block.Conditions.Where(c => c.Not).Select(c => c.Id));
+            CheckActions(block.Then, $"{prefix}If.Then", inside, hasImage, check, single: false, notInside);
+            CheckActions(block.Else, $"{prefix}If.Else", found, hasImage, check, single: false, notThere);
         }
     }
 

@@ -979,6 +979,7 @@
   <data name="Code_TextArea" xml:space="preserve"><value>[画面上のテキスト] は、描いた範囲または画面全体を探します。</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>見つかった場所へ移動できるのは、[クリック]、[マウス ボタン ダウン]、[マウス ボタン アップ]、[移動] だけです。</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>このアクションは条件が画像やテキストを見つけた場所へ移動しますが、その条件の Then の中にありません。中へ移動するか、固定の位置を選んでください。</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>このアクションは条件が画像やテキストを見つけた場所へ移動しますが、その条件は画面にないときに成立するため、場所が見つかりません。固定の位置を選んでください。</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro オーバーレイ パネル</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>パネルを移動</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>ドラッグしてパネルを移動します</value></data>
@@ -1110,6 +1111,7 @@
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro は現在画面を取得できません。しばらくしてからもう一度お試しください。</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>固定位置</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>座標</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>{0} が見つかった場所</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>If の中では、条件が画像やテキストを見つけた場所へアクションを移動できます。その場所が毎回変わってもかまいません。</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>中心からのずれ</value></data>
@@ -1192,6 +1194,18 @@
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>画面から画像を取り込んでください。</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>「{0}」を含む、{1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>「{0}」と完全に一致、{1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>成立するとき</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>何かが表示されていないときに成立させることもできます。たとえば、ウィンドウが閉じるまで待つときに使います。</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>ピクセルがこの色</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>ピクセルがこの色ではない</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>画像が画面にある</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>画像が画面にない</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>テキストが画面にある</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>テキストが画面にない</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} の色が {2} ではない (許容範囲 {3}%)</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} が画面にない、{1}、類似度 {2}%</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>「{0}」を含まない、{1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>「{0}」と完全には一致しない、{1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>探すテキストを入力してください。</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>取り込んだ場所の周辺</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>画面全体</value></data>
@@ -1215,6 +1229,9 @@
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>{0}, {1} のピクセルが {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} が画面にある</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>「{0}」が画面にある</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>{0}, {1} のピクセルが {2} ではない</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} が画面にない</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>「{0}」が画面にない</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>{0} が見つかった場所</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>条件が満たされたとき</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>満たされないとき</value></data>
@@ -1243,5 +1260,6 @@
   <data name="ScreenPick_Retry" xml:space="preserve"><value>やり直す</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>まだ確認していません。ボタンで画面上を確認してください。</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Then 内のアクションが「{0}」が見つかった場所を使っています。先にそのアクションを変更してから条件を削除してください。</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Then 内のアクションが「{0}」が見つかった場所を使っているため、この条件は画面にあるときに成立する必要があります。先にそのアクションを変更してください。</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>2 つの条件の Id が同じです。それぞれに別の Id を付けてください。</value></data>
 </root>

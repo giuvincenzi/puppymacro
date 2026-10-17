@@ -59,9 +59,9 @@ internal sealed class AiTools
         "For each point, also give what it is (label, or labels for pick_points): it is shown next to the cursor while the " +
         "user picks it. Write the title, description, steps and labels in the language the user writes to you in.\n" +
         "- Macros can look at the screen: an action of Type If checks its conditions (a pixel's color, an image or a text on " +
-        "the screen; all of them or any one), waiting as it says (once, up to some seconds, or as long as it takes), then " +
+        "the screen, or with Not that it is not there, for example to wait until something goes away; all of them or any one), waiting as it says (once, up to some seconds, or as long as it takes), then " +
         "plays its Then actions, or its Else actions or stops the macro. A Click, Mouse button down / up or Move to inside " +
-        "Then can go where an Image or Text condition found its match (FoundId: the condition's Id, plus FoundOffsetX/Y), " +
+        "Then can go where an Image or Text condition without Not found its match (FoundId: the condition's Id, plus FoundOffsetX/Y), " +
         "wherever it is that time. Get the values from the user's screen with pick_pixel (a pixel and its color), take_image " +
         "(an image: PuppyMacro keeps it and gives its Id) and draw_area (a search area), never by guessing; get_schema gives " +
         "the fields and their usual values. The macro's ChecksPerSecond limits how often the conditions look while they wait.\n" +

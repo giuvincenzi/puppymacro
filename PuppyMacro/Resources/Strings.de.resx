@@ -1002,6 +1002,7 @@ Details: {1}</value></data>
   <data name="Code_TextArea" xml:space="preserve"><value>„Text auf dem Bildschirm“ sucht in einem Bereich, den Sie zeichnen, oder auf dem ganzen Bildschirm.</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Nur „Klicken“, „Maustaste herunterdrücken“, „Maustaste loslassen“ und „Bewegen zu“ können dorthin gehen, wo etwas gefunden wurde.</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>Diese Aktion geht dorthin, wo eine Bedingung ihr Bild oder ihren Text gefunden hat, steht aber nicht in deren Then. Verschieben Sie sie dorthin, oder wählen Sie einen festen Punkt.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Diese Aktion geht dorthin, wo eine Bedingung ihr Bild oder ihren Text gefunden hat. Diese Bedingung ist aber erfüllt, wenn es nicht auf dem Bildschirm ist, und findet daher keine Stelle. Wählen Sie einen festen Punkt.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro-Overlay-Panel</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Panel verschieben</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Ziehen, um das Panel zu verschieben</value></data>
@@ -1140,6 +1141,7 @@ Details: {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro kann den Bildschirm gerade nicht erfassen. Versuchen Sie es gleich noch einmal.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Fester Punkt</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Punkt</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Wo {0} gefunden wurde</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>In einer If-Aktion kann die Aktion dorthin gehen, wo eine Bedingung ihr Bild oder ihren Text gefunden hat, ganz gleich, wo es diesmal ist.</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>Versatz von der Mitte</value></data>
@@ -1223,6 +1225,18 @@ Details: {1}</value></data>
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Nehmen Sie das Bild vom Bildschirm auf.</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Enthält „{0}“, {1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Genau „{0}“, {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>Erfüllt, wenn</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>Eine Bedingung kann auch erfüllt sein, wenn etwas nicht da ist, zum Beispiel um zu warten, bis sich ein Fenster schließt.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>Das Pixel hat diese Farbe</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>Das Pixel hat nicht diese Farbe</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>Das Bild ist auf dem Bildschirm</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>Das Bild ist nicht auf dem Bildschirm</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>Der Text ist auf dem Bildschirm</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>Der Text ist nicht auf dem Bildschirm</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} ist nicht {2}, mit {3} % Toleranz</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} ist nicht auf dem Bildschirm, {1}, {2} % Ähnlichkeit</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Enthält nicht „{0}“, {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Nicht genau „{0}“, {1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>Geben Sie den zu suchenden Text ein.</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>rund um die Aufnahmestelle</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>auf dem ganzen Bildschirm</value></data>
@@ -1248,6 +1262,9 @@ Details: {1}</value></data>
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>das Pixel bei {0}, {1} ist {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} ist auf dem Bildschirm</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>„{0}“ ist auf dem Bildschirm</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>das Pixel bei {0}, {1} ist nicht {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} ist nicht auf dem Bildschirm</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>„{0}“ ist nicht auf dem Bildschirm</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>wo {0} gefunden wurde</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>wenn die Bedingungen erfüllt sind</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>wenn nicht</value></data>
@@ -1276,5 +1293,6 @@ Details: {1}</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Wiederholen</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Noch nicht geprüft. Prüfe sie mit der Schaltfläche auf dem Bildschirm.</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Eine Aktion in Then geht dorthin, wo {0} gefunden wurde. Ändere zuerst diese Aktion und entferne dann die Bedingung.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Eine Aktion in Then geht dorthin, wo {0} gefunden wurde. Diese Bedingung muss daher erfüllt sein, wenn es auf dem Bildschirm ist. Ändere zuerst diese Aktion.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Zwei Bedingungen haben dieselbe Id. Gib jeder ihre eigene.</value></data>
 </root>

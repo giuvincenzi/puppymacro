@@ -3,8 +3,8 @@
 ## Unreleased
 
 ### Added
-- Macros can look at the screen: an **If** checks a pixel's color, an image or a text on the screen (one or all of
-  them), waits for them as long as you choose, then plays its **Then** actions, or its **Else** actions or stops the
+- Macros can look at the screen: an **If** checks a pixel's color, an image or a text on the screen, or that it is not
+  there (one or all of them), waits for them as long as you choose, then plays its **Then** actions, or its **Else** actions or stops the
   macro. A click inside Then can go where the image or text was found. The condition window says what PuppyMacro sees
   as you change it, and takes pixels, images and areas from the screen. **Settings > Screen recognition** chooses the
   graphics card or the processor, and AI apps can pick pixels, take images and draw areas too.

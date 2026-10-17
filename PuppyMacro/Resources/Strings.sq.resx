@@ -1013,6 +1013,7 @@ Detajet: {1}</value></data>
   <data name="Code_TextArea" xml:space="preserve"><value>Tekst në ekran kërkon në një zonë që vizatoni ju ose në gjithë ekranin.</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Vetëm Klikim, Butoni i miut poshtë, Butoni i miut lart dhe Zhvendos te mund të shkojnë aty ku u gjet diçka.</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>Ky veprim shkon aty ku një kusht gjeti imazhin ose tekstin e tij, por nuk është brenda Then të atij kushti. Zhvendoseni brenda ose zgjidhni një pikë fikse.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Ky veprim shkon aty ku një kusht gjeti imazhin ose tekstin e tij, por ai kusht është i vërtetë kur nuk është në ekran, prandaj nuk gjen asnjë vend. Zgjidhni një pikë fikse.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Paneli i mbivendosjes së PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Zhvendos panelin</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Zvarriteni për të zhvendosur panelin</value></data>
@@ -1151,6 +1152,7 @@ Detajet: {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro nuk e sheh dot ekranin tani. Provoni sërish pas pak.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Pikë fikse</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Pika</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Aty ku u gjet {0}</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>Brenda një If, veprimi mund të shkojë aty ku një kusht gjeti imazhin ose tekstin e tij, kudo që të ndodhet këtë herë.</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>Zhvendosje nga qendra</value></data>
@@ -1234,6 +1236,18 @@ Detajet: {1}</value></data>
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Kapni imazhin në ekran.</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Përmban "{0}", {1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Pikërisht "{0}", {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>E vërtetë kur</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>Një kusht mund të jetë i vërtetë edhe kur diçka nuk është aty, për shembull për të pritur derisa të mbyllet një dritare.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>Pikseli ka këtë ngjyrë</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>Pikseli nuk ka këtë ngjyrë</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>Imazhi është në ekran</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>Imazhi nuk është në ekran</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>Teksti është në ekran</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>Teksti nuk është në ekran</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} nuk është {2}, me tolerancë {3}%</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} nuk është në ekran, {1}, ngjashmëri {2}%</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Nuk përmban "{0}", {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Jo pikërisht "{0}", {1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>Shkruani tekstin që do të kërkohet.</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>rreth vendit ku u kap</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>në gjithë ekranin</value></data>
@@ -1259,6 +1273,9 @@ Detajet: {1}</value></data>
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>pikseli në {0}, {1} është {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} është në ekran</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>"{0}" është në ekran</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>pikseli në {0}, {1} nuk është {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} nuk është në ekran</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>"{0}" nuk është në ekran</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>aty ku u gjet {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>kur kushtet plotësohen</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>kur nuk plotësohen</value></data>
@@ -1287,5 +1304,6 @@ Detajet: {1}</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Provo përsëri</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Ende e pakontrolluar. Kontrollojeni në ekran me butonin.</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Një veprim në Then shkon aty ku u gjet {0}. Ndryshoni fillimisht atë veprim, pastaj hiqni kushtin.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Një veprim në Then shkon aty ku u gjet {0}, prandaj ky kusht duhet të jetë i vërtetë kur është në ekran. Ndryshoni fillimisht atë veprim.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dy kushte kanë të njëjtin Id. Jepini secilit Id-në e vet.</value></data>
 </root>

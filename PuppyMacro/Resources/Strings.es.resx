@@ -1003,6 +1003,7 @@ Detalles: {1}</value></data>
   <data name="Code_TextArea" xml:space="preserve"><value>Texto en la pantalla busca en un área que dibujas tú o en toda la pantalla.</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Solo Clic, Presionar botón del mouse sin soltar, Soltar botón del mouse y Mover a pueden ir adonde se encontró algo.</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>Esta acción va adonde una condición encontró su imagen o su texto, pero no está dentro del Then de esa condición. Muévela adentro o elige un punto fijo.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Esta acción va adonde una condición encontró su imagen o su texto, pero esa condición se cumple cuando no está en la pantalla, así que no encuentra ningún lugar. Elige un punto fijo.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Panel de superposición de PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Mover el panel</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Arrastra para mover el panel</value></data>
@@ -1141,6 +1142,7 @@ Detalles: {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro no puede ver la pantalla en este momento. Inténtalo de nuevo dentro de un momento.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Punto fijo</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Punto</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Donde se encuentre {0}</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>Dentro de un If, la acción puede ir adonde una condición encontró su imagen o su texto, esté donde esté esta vez.</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>Desplazamiento desde el centro</value></data>
@@ -1224,6 +1226,18 @@ Detalles: {1}</value></data>
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Captura la imagen en la pantalla.</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Contiene "{0}", {1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exactamente "{0}", {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>Se cumple cuando</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>Una condición también puede cumplirse cuando algo no está, por ejemplo para esperar a que se cierre una ventana.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>El píxel tiene este color</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>El píxel no tiene este color</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>La imagen está en la pantalla</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>La imagen no está en la pantalla</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>El texto está en la pantalla</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>El texto no está en la pantalla</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} no es {2}, con un {3}% de tolerancia</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} no está en la pantalla, {1}, {2}% de similitud</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>No contiene "{0}", {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>No exactamente "{0}", {1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>Escribe el texto que hay que buscar.</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>alrededor de donde se capturó</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>en toda la pantalla</value></data>
@@ -1249,6 +1263,9 @@ Detalles: {1}</value></data>
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>el píxel en {0}, {1} es {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} está en la pantalla</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>"{0}" está en la pantalla</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>el píxel en {0}, {1} no es {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} no está en la pantalla</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>"{0}" no está en la pantalla</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>donde se encuentre {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>cuando se cumplen las condiciones</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>cuando no se cumplen</value></data>
@@ -1277,5 +1294,6 @@ Detalles: {1}</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Reintentar</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Aún no se ha comprobado. Compruébala en la pantalla con el botón.</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Una acción de Then va donde se encontró {0}. Cambia primero esa acción y luego quita la condición.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Una acción de Then va donde se encontró {0}, así que esta condición debe cumplirse cuando está en la pantalla. Cambia primero esa acción.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dos condiciones tienen el mismo Id. Dale a cada una el suyo.</value></data>
 </root>

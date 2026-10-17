@@ -1036,6 +1036,7 @@
   <data name="Code_TextArea" xml:space="preserve"><value>«Текст на экране» ищет в нарисованной вами области или на всем экране.</value></data>
   <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Туда, где что-то найдено, могут перейти только «Щелчок», «Зажать кнопку мыши», «Отпустить кнопку мыши» и «Переместить в точку».</value></data>
   <data name="Code_FoundOutside" xml:space="preserve"><value>Это действие переходит туда, где условие нашло свое изображение или текст, но оно находится не в Then этого условия. Переместите его туда или выберите фиксированную точку.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Это действие переходит туда, где условие нашло свое изображение или текст, но это условие выполняется, когда этого нет на экране, поэтому места оно не находит. Выберите фиксированную точку.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Панель наложения PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Переместить панель</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Перетащите, чтобы переместить панель</value></data>
@@ -1181,6 +1182,7 @@
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>Сейчас PuppyMacro не видит экран. Повторите попытку чуть позже.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Фиксированная точка</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Точка</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Там, где найдено «{0}»</value></data>
   <data name="Action_PositionDescription" xml:space="preserve"><value>Внутри If действие может переходить туда, где условие нашло свое изображение или текст, где бы оно ни оказалось на этот раз.</value></data>
   <data name="Action_MoveFromCenter" xml:space="preserve"><value>Смещение от центра</value></data>
@@ -1265,6 +1267,18 @@
   <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Захватите изображение с экрана.</value></data>
   <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Содержит «{0}», {1}</value></data>
   <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Точно «{0}», {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>Выполняется, когда</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>Условие может выполняться и тогда, когда чего-то нет, например чтобы дождаться закрытия окна.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>Пиксель этого цвета</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>Пиксель другого цвета</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>Изображение на экране</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>Изображения нет на экране</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>Текст на экране</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>Текста нет на экране</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1}: не {2}, допуск {3}%</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>«{0}» нет на экране, {1}, сходство {2}%</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Не содержит «{0}», {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Не точно «{0}», {1}</value></data>
   <data name="Condition_TextNotWritten" xml:space="preserve"><value>Введите текст для поиска.</value></data>
   <data name="Condition_AreaAroundShort" xml:space="preserve"><value>вокруг места захвата</value></data>
   <data name="Condition_AreaScreenShort" xml:space="preserve"><value>на всем экране</value></data>
@@ -1292,6 +1306,9 @@
   <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>пиксель в точке {0}, {1}: {2}</value></data>
   <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>«{0}» на экране</value></data>
   <data name="MacroEditor_RowIfText" xml:space="preserve"><value>«{0}» на экране</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>пиксель в точке {0}, {1}: не {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>«{0}» нет на экране</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>«{0}» нет на экране</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>туда, где найдено «{0}»</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>когда условия выполнены</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>когда не выполнены</value></data>
@@ -1320,5 +1337,6 @@
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Повторить</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Ещё не проверено. Проверьте на экране с помощью кнопки.</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Действие в Then переходит туда, где найдено «{0}». Сначала измените это действие, затем удалите условие.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Действие в Then переходит туда, где найдено «{0}», поэтому это условие должно выполняться, когда оно на экране. Сначала измените это действие.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>У двух условий одинаковый Id. Задайте каждому свой.</value></data>
 </root>

@@ -180,7 +180,7 @@ internal sealed class ConditionChecker : IDisposable
                     }
                     case ConditionKind.Image:
                     {
-                        var (met, at, score) = FindImage(look.Watch, area, look.Image!, condition);
+                        var (_, met, at, score) = FindImage(look.Watch, area, look.Image!, condition);
                         if (met && (!report.Met || score > report.Score) || !report.Met && score > report.Score)
                             report = new ConditionReport(met, met ? at : null, score, Black: black);
                         else if (black)
@@ -215,26 +215,32 @@ internal sealed class ConditionChecker : IDisposable
         return max < 8;
     }
 
-    /// <summary>All or Any of the conditions; the places found are those of the conditions found true.</summary>
+    /// <summary>
+    /// All or Any of the conditions; the places found are those of the conditions found true. A condition true for not
+    /// being there is true only when every place it looks at was seen, so a screen it could not see never makes it true.
+    /// </summary>
     private bool Evaluate(MacroIf block, List<Look> looks, Dictionary<Guid, Point> found)
     {
         bool any = false, all = true;
         foreach (var condition in block.Conditions)
         {
-            bool met = false;
+            bool there = false, seenAll = true, looked = false;
             Point? best = null;
             double bestScore = double.NegativeInfinity;
             foreach (var look in looks.Where(l => l.Condition == condition))
             {
-                var (ok, at, score) = Check(look);
+                var (seen, ok, at, score) = Check(look);
+                seenAll &= seen;
+                looked = true;
                 if (ok && score > bestScore)
                 {
-                    met = true;
+                    there = true;
                     best = at;
                     bestScore = score;
                 }
             }
-            if (met && best is { } point && condition.Finds)
+            bool met = condition.Not ? looked && seenAll && !there : there;
+            if (met && best is { } point && condition.GivesPlace)
                 found[condition.Id] = point;
             any |= met;
             all &= met;
@@ -277,13 +283,14 @@ internal sealed class ConditionChecker : IDisposable
         return new Rect(image.X - margin, image.Y - margin, mat.Width + 2 * margin, mat.Height + 2 * margin);
     }
 
-    private (bool Met, Point At, double Score) Check(Look look)
+    /// <summary>One place checked now: whether PuppyMacro could see it, whether what it looks for is there, where and how similar.</summary>
+    private (bool Seen, bool Met, Point At, double Score) Check(Look look)
     {
         if (look.Watch is not { } watch)
-            return (false, default, 0);
+            return (false, false, default, 0);
         Rect area = look.Area.Intersect(watch.Bounds);
         if (area.Width <= 0 || area.Height <= 0)
-            return (false, default, 0);
+            return (false, false, default, 0);
         var c = look.Condition;
         switch (c.Kind)
         {
@@ -291,11 +298,11 @@ internal sealed class ConditionChecker : IDisposable
             {
                 using var pixel = watch.Copy(area);
                 if (pixel == null)
-                    return (false, default, 0);
+                    return (false, false, default, 0);
                 var seen = pixel.At<Vec3b>(0, 0);
                 bool met = PixelMatches(seen, c.Color, c.Tolerance);
                 MacroTrace.Write($"  pixel {c.X},{c.Y}: {ScreenSnapshot.Hex(seen)}, wanted {c.Color} ±{c.Tolerance}% -> {met} (frame {watch.Version})");
-                return (met, new Point(c.X, c.Y), 1);
+                return (true, met, new Point(c.X, c.Y), 1);
             }
             case ConditionKind.Image:
                 return FindImage(watch, area, look.Image!, c);
@@ -303,14 +310,14 @@ internal sealed class ConditionChecker : IDisposable
             {
                 using var picture = watch.Copy(area);
                 if (picture == null || string.IsNullOrWhiteSpace(c.Text))
-                    return (false, default, 0);
+                    return (false, false, default, 0);
                 var lines = TextReader.Read(picture, c.Language);
                 if (TextReader.Find(lines, c.Text, c.TextMatch, c.MatchCase) is not { } r)
-                    return (false, default, 0);
-                return (true, new Point(area.X + r.X + r.Width / 2, area.Y + r.Y + r.Height / 2), 1);
+                    return (true, false, default, 0);
+                return (true, true, new Point(area.X + r.X + r.Width / 2, area.Y + r.Y + r.Height / 2), 1);
             }
         }
-        return (false, default, 0);
+        return (false, false, default, 0);
     }
 
     /// <summary>Whether red, green and blue are each within <paramref name="tolerance"/> percent of 255 of the color.</summary>
@@ -325,7 +332,7 @@ internal sealed class ConditionChecker : IDisposable
             && Math.Abs(bgr.Item0 - (rgb & 0xFF)) <= most;
     }
 
-    private (bool Met, Point At, double Score) FindImage(IScreenWatch watch, Rect area, ConditionImage image, MacroCondition c)
+    private (bool Seen, bool Met, Point At, double Score) FindImage(IScreenWatch watch, Rect area, ConditionImage image, MacroCondition c)
     {
         double need = Math.Clamp(c.Similarity, 50, 100) / 100.0;
         // The image at its own size decides the device: one that can't be shrunk (calibration factor 1) is searched brute
@@ -342,7 +349,7 @@ internal sealed class ConditionChecker : IDisposable
             else
                 onProcessor = watch.Copy(area);
             if (onCard == null && onProcessor == null)
-                return (false, default, 0);
+                return (false, false, default, 0);
 
             var best = ImageMatch.None;
             Size bestSize = default;
@@ -372,8 +379,8 @@ internal sealed class ConditionChecker : IDisposable
                     break;
             }
             if (!best.Found(need))
-                return (false, default, best.Score);
-            return (true, new Point(area.X + best.X + bestSize.Width / 2, area.Y + best.Y + bestSize.Height / 2), best.Score);
+                return (true, false, default, best.Score);
+            return (true, true, new Point(area.X + best.X + bestSize.Width / 2, area.Y + best.Y + bestSize.Height / 2), best.Score);
         }
         finally
         {
