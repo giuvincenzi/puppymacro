@@ -78,8 +78,15 @@ internal partial class ScreenPickWindow
     public static ScreenPickWindow? Ask(Window owner, ScreenPickMode mode, out string? error)
     {
         error = null;
-        double left = owner.Left;
-        owner.Left = SystemParameters.VirtualScreenLeft - owner.ActualWidth - 200;
+        // The window and the windows under it (the macro editor) leave the screen.
+        var moved = new List<(Window Window, double Left)>();
+        for (Window? w = owner; w != null; w = w.Owner)
+        {
+            if (!w.IsVisible)
+                continue;
+            moved.Add((w, w.Left));
+            w.Left = SystemParameters.VirtualScreenLeft - w.ActualWidth - 200;
+        }
         try
         {
             // Let the window move before the picture is taken.
@@ -89,7 +96,8 @@ internal partial class ScreenPickWindow
         }
         finally
         {
-            owner.Left = left;
+            foreach (var (window, place) in moved)
+                window.Left = place;
             owner.Activate();
         }
     }

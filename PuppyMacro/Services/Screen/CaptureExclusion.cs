@@ -26,12 +26,21 @@ internal static class CaptureExclusion
                 if (_active && sender is Window w)
                     Apply(w, true);
             }));
-        ScreenCapture.Shared.ActiveChanged += active => dispatcher.InvokeAsync(() =>
+        // At once, before the capture starts: from another thread it waits for the UI thread (half a second at most).
+        ScreenCapture.Shared.ActiveChanged += active =>
         {
-            _active = active;
-            foreach (Window w in Application.Current.Windows)
-                Apply(w, active);
-        });
+            if (dispatcher.CheckAccess())
+                ApplyAll(active);
+            else
+                dispatcher.Invoke(() => ApplyAll(active), DispatcherPriority.Send, System.Threading.CancellationToken.None, TimeSpan.FromMilliseconds(500));
+        };
+    }
+
+    private static void ApplyAll(bool active)
+    {
+        _active = active;
+        foreach (Window w in Application.Current.Windows)
+            Apply(w, active);
     }
 
     private static void Apply(Window window, bool exclude)

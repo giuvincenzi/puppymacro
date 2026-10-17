@@ -85,26 +85,37 @@ internal sealed unsafe class ScreenCapture : IScreen
     /// </summary>
     public IScreenWatch? Start(Rect area)
     {
-        bool started;
-        MonitorCapture? monitor;
+        bool first;
+        lock (_sync)
+        {
+            first = _watchers == 0 && !_lingering;
+            _watchers++;
+            _linger?.Dispose();
+            _linger = null;
+            _lingering = false;
+        }
+        // PuppyMacro's windows leave the capture before it starts, so its first frames do not show them.
+        if (first)
+            ActiveChanged?.Invoke(true);
         lock (_sync)
         {
             if (_monitors.Count == 0)
                 _monitors.AddRange(MonitorCapture.All(this));
             var center = new Point(area.X + area.Width / 2, area.Y + area.Height / 2);
-            monitor = _monitors.FirstOrDefault(m => m.Bounds.Contains(center)) ?? _monitors.FirstOrDefault(m => m.Bounds.IntersectsWith(area));
-            if (monitor == null)
-                return null;
-            monitor.Start();
-            _linger?.Dispose();
-            _linger = null;
-            started = _watchers == 0 && !_lingering;
-            _lingering = false;
-            _watchers++;
+            var monitor = _monitors.FirstOrDefault(m => m.Bounds.Contains(center)) ?? _monitors.FirstOrDefault(m => m.Bounds.IntersectsWith(area));
+            if (monitor != null)
+            {
+                monitor.Start();
+                return new Watch(this, monitor);
+            }
+            // No monitor there: as if the watch ended at once.
+            if (--_watchers == 0)
+            {
+                _lingering = true;
+                _linger = new Timer(_ => Close(), null, LingerMs, Timeout.Infinite);
+            }
+            return null;
         }
-        if (started)
-            ActiveChanged?.Invoke(true);
-        return new Watch(this, monitor);
     }
 
     private bool _lingering;

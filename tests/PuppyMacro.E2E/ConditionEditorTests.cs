@@ -54,6 +54,38 @@ public class ConditionEditorTests
     }
 
     [Fact]
+    public void An_If_opens_its_condition_window_with_its_conditions_from_the_list()
+    {
+        MacroAction ifAction = new()
+        {
+            Type = MacroActionType.If,
+            Name = "E2E ready",
+            If = new MacroIf
+            {
+                Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, X = 10, Y = 20, Color = "#3BD16F", Tolerance = 5 } },
+                Wait = ConditionWait.UpTo,
+                WaitSeconds = 30,
+                Then = { Press(Vk.F24) },
+            },
+        };
+        using var app = new AppSession(seed => seed.Macros.Add(Macro("E2E edit if", null, ifAction)));
+        app.GoTo("Macros");
+        app.EditItem("E2E edit if");
+        Window editor = app.Dialog("Edit macro");
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("1. E2E ready")), AppSession.Timeout).Success,
+            $"no If row. Rows: {string.Join(" | ", list.Items.Select(i => i.Name))}");
+        list.Items.First(i => i.Name.StartsWith("1. E2E ready")).Select();
+
+        app.Find(editor, "Edit action").AsButton().Invoke();
+        Window condition = ChildDialog(editor, "Edit condition");
+        TextBox color = Retry.WhileNull(() => condition.FindFirstDescendant(cf => cf.ByName("Color").And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Edit))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the Color box not found").Result!.AsTextBox();
+        Assert.Equal("#3BD16F", color.Text);
+        app.FindById(condition, "CancelButton").AsButton().Invoke();
+    }
+
+    [Fact]
     public void Settings_has_Screen_recognition()
     {
         using var app = new AppSession();
