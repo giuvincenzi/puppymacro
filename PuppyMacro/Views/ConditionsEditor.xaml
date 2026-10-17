@@ -186,7 +186,7 @@
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Photo2}" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{x:Static r:Strings.Condition_Text}" Click="OnAddTextClick">
+                        <MenuItem Header="{x:Static r:Strings.Condition_TextMenu}" Click="OnAddTextClick">
                             <MenuItem.Icon>
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.ScanText_20_Regular}" />
                             </MenuItem.Icon>

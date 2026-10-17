@@ -1270,4 +1270,7 @@ Detalles: {1}</value></data>
   <data name="Ai_AskedPixel" xml:space="preserve"><value>Pidió un píxel: {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>Pidió una imagen: {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>Pidió un área de búsqueda: {0}</value></data>
+  <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Acción</value></data>
+  <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condición</value></data>
+  <data name="Condition_TextMenu" xml:space="preserve"><value>Texto en la pantalla (OCR)</value></data>
 </root>

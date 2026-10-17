@@ -36,6 +36,9 @@ public partial class MacroActionWindow
         IReadOnlyDictionary<Guid, string>? found = null, ImageStore? images = null, RecognitionDevice device = RecognitionDevice.Automatic)
     {
         InitializeComponent();
+        // An If's window holds its conditions and when its Then runs: it opens taller (WindowFit keeps it on the screen).
+        if (action.Type == MacroActionType.If)
+            Height = 1000;
         WindowFit.Apply(this);
         _engine = engine;
         _found = found ?? new Dictionary<Guid, string>();

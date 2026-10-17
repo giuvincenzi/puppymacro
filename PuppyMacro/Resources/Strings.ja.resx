@@ -1236,4 +1236,7 @@
   <data name="Ai_AskedPixel" xml:space="preserve"><value>ピクセルの指定を求めました: {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>画像の取り込みを求めました: {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>検索範囲の指定を求めました: {0}</value></data>
+  <data name="MacroEditor_ActionButton" xml:space="preserve"><value>アクション</value></data>
+  <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>条件</value></data>
+  <data name="Condition_TextMenu" xml:space="preserve"><value>画面上のテキスト (OCR)</value></data>
 </root>

@@ -560,7 +560,7 @@ public partial class MacroEditorWindow
                      (ConditionKind.Text, FluentSystemIcons.ScanText_20_Regular),
                  })
         {
-            var item = new MenuItem { Header = ConditionViewModel.KindName(kind), Icon = new FontIcon { Icon = icon } };
+            var item = new MenuItem { Header = ConditionViewModel.MenuName(kind), Icon = new FontIcon { Icon = icon } };
             item.Click += (_, _) => AddCondition(kind);
             menu.Items.Add(item);
         }

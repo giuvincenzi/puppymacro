@@ -144,6 +144,9 @@ public sealed class ConditionViewModel : ConditionEditorItem
     /// <summary>The word a new condition's name starts with ("Image 1").</summary>
     public static string KindShortName(ConditionKind kind) => kind == ConditionKind.Text ? Strings.Condition_TextShort : Strings.Condition_ImageShort;
 
+    /// <summary>The kind's name in the Add condition menus: Text on screen says it reads with OCR.</summary>
+    public static string MenuName(ConditionKind kind) => kind == ConditionKind.Text ? Strings.Condition_TextMenu : KindName(kind);
+
     public static string KindName(ConditionKind kind) => kind switch
     {
         ConditionKind.Image => Strings.Condition_Image,

@@ -1269,4 +1269,7 @@ Détails : {1}</value></data>
   <data name="Ai_AskedPixel" xml:space="preserve"><value>A demandé un pixel : {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>A demandé une image : {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>A demandé une zone de recherche : {0}</value></data>
+  <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Action</value></data>
+  <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condition</value></data>
+  <data name="Condition_TextMenu" xml:space="preserve"><value>Texte à l'écran (OCR)</value></data>
 </root>

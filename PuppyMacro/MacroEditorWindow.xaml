@@ -83,7 +83,8 @@
                         <ui:CommandBar.Content>
                             <StackPanel Orientation="Horizontal">
                                 <!-- The main command in the accent color (approved, ui.md: an AppBarButton has no accent style) -->
-                                <ui:AppBarButton x:Name="AddActionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_AddAction}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                <ui:AppBarButton x:Name="AddActionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_ActionButton}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                 AutomationProperties.Name="{x:Static r:Strings.MacroEditor_AddAction}" ToolTip="{x:Static r:Strings.MacroEditor_AddAction}"
                                                  Click="OnAddActionClick">
                                     <ui:AppBarButton.Icon>
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
@@ -91,10 +92,11 @@
                                 </ui:AppBarButton>
                                 <!-- An If: its conditions on the screen, with Then and Else (approved: the Design canvas "Macro
                                      Conditions"), in the accent color as Add action -->
-                                <ui:AppBarButton x:Name="AddConditionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.Condition_Add}"
+                                <ui:AppBarButton x:Name="AddConditionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_ConditionButton}"
+                                                 AutomationProperties.Name="{x:Static r:Strings.Condition_Add}" ToolTip="{x:Static r:Strings.Condition_Add}"
                                                  Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Click="OnAddConditionClick">
                                     <ui:AppBarButton.Icon>
-                                        <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.BranchFork_20_Regular}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
                                     </ui:AppBarButton.Icon>
                                 </ui:AppBarButton>
                                 <!-- A red record dot (approved, ui.md: the theme's critical color, as the InfoBadge's) -->
