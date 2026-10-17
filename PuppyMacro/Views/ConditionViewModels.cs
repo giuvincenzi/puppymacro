@@ -193,7 +193,14 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public double Tolerance
     {
         get => _tolerance;
-        set { _tolerance = Math.Clamp(Math.Round(value), 0, 100); Changed(nameof(Tolerance), nameof(Summary)); }
+        set
+        {
+            double v = Math.Clamp(Math.Round(value), 0, 100);
+            if (v == _tolerance)
+                return; // the slider showing the value is no change
+            _tolerance = v;
+            Changed(nameof(Tolerance), nameof(Summary));
+        }
     }
 
     // ---- Image ----
@@ -221,7 +228,14 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public double Similarity
     {
         get => _similarity;
-        set { _similarity = Math.Clamp(Math.Round(value), 50, 100); Changed(nameof(Similarity), nameof(Summary)); }
+        set
+        {
+            double v = Math.Clamp(Math.Round(value), 50, 100);
+            if (v == _similarity)
+                return;
+            _similarity = v;
+            Changed(nameof(Similarity), nameof(Summary));
+        }
     }
 
     // ---- Search area (Image and Text) ----

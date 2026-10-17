@@ -166,7 +166,11 @@ $edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invo
 # UI Automation shows a window under the window that owns it: the condition window is inside the macro editor.
 $condition = WaitFor { $editor.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window))) |
     Where-Object { $_.Current.Name.StartsWith('Edit condition - ') } | Select-Object -First 1 } 'Edit condition'
-Start-Sleep -Seconds 2 # its check of the screen
+# Test checks the condition on the screen and shows what PuppyMacro sees. While a condition looks at the screen, and a few
+# seconds after, PuppyMacro's windows are left out of every capture (PrintWindow too): wait until they are back.
+$test = WaitFor { $condition.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'TestButton'))) } 'TestButton'
+$test.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Start-Sleep -Seconds 9
 Capture $condition (Join-Path $OutDir 'condition-editor.png')
 # Then the macro editor under it closes too.
 $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'CancelButton'))).GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
