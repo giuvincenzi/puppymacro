@@ -2,11 +2,10 @@
 <h1 align="center">PuppyMacro</h1>
 <p align="center"><i>A good puppy for everything you repeat.</i></p>
 <p align="center">
-  <a href="https://github.com/giuvincenzi/puppymacro/releases/latest"><img src="https://badgen.net/github/tag/giuvincenzi/puppymacro?label=version" alt="Latest version"></a>
-  <a href="https://github.com/giuvincenzi/puppymacro/actions/workflows/test.yml?query=branch%3Amain"><img src="https://badgen.net/github/checks/giuvincenzi/puppymacro/main?label=CI" alt="CI"></a>
-  <a href="LICENSE"><img src="https://badgen.net/badge/license/MIT/blue" alt="MIT license"></a>
-  <img src="https://badgen.net/badge/Windows/10%20%7C%2011/blue" alt="Windows 10 and 11">
   <a href="https://mcpservers.org/servers/giuvincenzi/puppymacro"><img src="https://mcpservers.org/badge.svg" alt="Listed on mcpservers.org"></a>
+  <a href="https://github.com/giuvincenzi/puppymacro/releases/latest"><img src="https://badgen.net/github/tag/giuvincenzi/puppymacro?label=version" alt="Latest version"></a>
+  <a href="LICENSE"><img src="https://badgen.net/badge/license/MIT/blue" alt="MIT license"></a>
+  <a href="https://github.com/giuvincenzi/puppymacro/actions/workflows/test.yml?query=branch%3Amain"><img src="https://badgen.net/github/checks/giuvincenzi/puppymacro/main?label=CI" alt="CI"></a>
 </p>
 <p align="center">
   🌐 <a href="https://giuvincenzi.github.io/puppymacro/">Website</a> ·
