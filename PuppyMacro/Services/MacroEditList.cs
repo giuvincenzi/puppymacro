@@ -148,9 +148,29 @@ internal sealed class MacroEditList
             copy.Id = newGroups[group.Id];
             Groups.Add(copy);
         }
+        RenameConditions(inserted, All);
         list.InsertRange(OutsideGroups(list, Math.Clamp(index, 0, list.Count), into), inserted);
         Normalize();
         return inserted;
+    }
+
+    /// <summary>
+    /// The inserted conditions whose name the macro already has get the name of a copy, "Image 1 (2)" (names are unique in
+    /// a macro: the actions name them for "Where … was found").
+    /// </summary>
+    private static void RenameConditions(List<MacroAction> inserted, IEnumerable<MacroAction> existing)
+    {
+        var taken = existing.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
+            .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var condition in MacroDefinition.Walk(inserted).SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()))
+        {
+            if (!condition.Finds || string.IsNullOrWhiteSpace(condition.Name))
+                continue;
+            if (taken.Contains(condition.Name.Trim()))
+                condition.Name = ItemNames.Copy(condition.Name, taken);
+            taken.Add(condition.Name.Trim());
+        }
     }
 
     /// <summary>New ids for the conditions of the inserted Ifs, and the inserted actions that used them follow.</summary>
@@ -341,5 +361,6 @@ internal sealed class MacroEditList
         return index;
     }
 
-    private void Normalize() => MacroDefinition.NormalizeGroups(Actions, Groups);
+    /// <summary>Every group's actions together, one group per list (after an action's window changed an If's groups).</summary>
+    public void Normalize() => MacroDefinition.NormalizeGroups(Actions, Groups);
 }

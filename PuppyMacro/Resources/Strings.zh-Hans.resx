@@ -1242,4 +1242,6 @@
   <data name="Condition_CheckAgain" xml:space="preserve"><value>重新检查</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>重试</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>尚未检查。请使用按钮在屏幕上检查。</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Then 中的一个操作会移到找到“{0}”的位置。请先更改该操作，再删除此条件。</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>有两个条件的 Id 相同。请为每个条件设置各自的 Id。</value></data>
 </root>

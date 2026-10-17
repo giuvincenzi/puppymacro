@@ -369,14 +369,39 @@ public class MacroConditionsTests : IDisposable
     }
 
     [Fact]
-    public void An_image_taken_in_an_editor_and_not_saved_goes()
+    public void An_image_taken_and_not_saved_stays_while_held_and_goes_after()
     {
         var library = new MacroLibrary(Macros, ImagesFolder);
         string taken = library.Images.Add(Png(3));
+        var editor = new object();
+        library.Images.HoldAlso(editor, taken);
 
-        library.ReleaseUnusedImages(new[] { taken });
+        // Another macro is saved meanwhile: the image an open editor took stays.
+        library.TrySave(Macro(Press()), out _);
+        library.ReleaseUnusedImages();
+        Assert.True(library.Images.Has(taken));
 
+        library.Images.Unhold(editor);
+        library.ReleaseUnusedImages();
         Assert.False(library.Images.Has(taken));
+    }
+
+    [Fact]
+    public void A_macro_whose_file_could_not_be_deleted_keeps_its_images()
+    {
+        var library = new MacroLibrary(Macros, ImagesFolder);
+        string id = library.Images.Add(Png(4));
+        var macro = Macro(If(Image("A", id)));
+        library.TrySave(macro, out _);
+        string file = System.IO.Path.Combine(Macros, macro.Id + ".json");
+
+        using (System.IO.File.Open(file, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None))
+        {
+            library.Delete(macro);
+            library.ReleaseUnusedImages();
+        }
+
+        Assert.True(library.Images.Has(id)); // the macro comes back at the next start, with its image
     }
 
     [Fact]
@@ -446,5 +471,30 @@ public class MacroConditionsTests : IDisposable
         var content = ItemFile.Read(text, new AppSettings(), new MacroLibrary(Macros, ImagesFolder), new Version(1, 24, 0));
 
         Assert.NotNull(content.Entries.Single().Problem);
+    }
+
+    [Fact]
+    public void A_pasted_If_whose_condition_name_the_macro_has_gets_the_name_of_a_copy()
+    {
+        var list = new MacroEditList(new[] { If(Image("Button", ImageA)) }, Array.Empty<MacroGroup>());
+        var block = list.Copy(list.Actions, Array.Empty<MacroGroup>());
+
+        var pasted = list.Insert(block, list.Actions.Count, null);
+
+        Assert.Equal("Button (2)", pasted[0].If!.Conditions[0].Name);
+        Assert.Equal("Button", list.Actions[0].If!.Conditions[0].Name);
+    }
+
+    [Fact]
+    public void Two_conditions_with_one_Id_are_refused()
+    {
+        var first = Image("A", ImageA);
+        var second = Image("B", ImageA);
+        second.Id = first.Id;
+        var macro = Macro(If(first), If(second));
+
+        MacroJson.Parse(MacroJson.Serialize(macro), macro.Id, (_, _) => null, out var problems);
+
+        Assert.Contains(problems, p => p.Message.EndsWith(PuppyMacro.Resources.Strings.Code_ConditionIdTwice));
     }
 }

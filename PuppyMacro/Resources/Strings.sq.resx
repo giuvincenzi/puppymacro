@@ -1286,4 +1286,6 @@ Detajet: {1}</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Kontrollo përsëri</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Provo përsëri</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Ende e pakontrolluar. Kontrollojeni në ekran me butonin.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Një veprim në Then shkon aty ku u gjet {0}. Ndryshoni fillimisht atë veprim, pastaj hiqni kushtin.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dy kushte kanë të njëjtin Id. Jepini secilit Id-në e vet.</value></data>
 </root>

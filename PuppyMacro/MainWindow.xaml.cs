@@ -1554,6 +1554,8 @@ public partial class MainWindow
             _itemHistory.Seed(macro.Id, MacroJson.Serialize(macro));
         foreach (RemapDefinition remap in _settings.Remaps)
             _itemHistory.Seed(remap.Id, RemapJson.Serialize(remap));
+        // Images no macro uses (taken and not saved, from an earlier session): the History keeps its own copies.
+        _macros.ReleaseUnusedImages();
     }
 
     /// <summary>

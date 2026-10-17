@@ -1407,4 +1407,6 @@
   <data name="Condition_CheckAgain" xml:space="preserve"><value>التحقق مرة أخرى</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>إعادة المحاولة</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>لم يتم التحقق بعد. تحقق منه على الشاشة باستخدام الزر.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>يذهب إجراء في Then إلى حيث وُجد "{0}". غيّر هذا الإجراء أولاً، ثم أزل الشرط.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>لشرطين نفس Id. امنح كل شرط Id خاصاً به.</value></data>
 </root>

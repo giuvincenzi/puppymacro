@@ -1242,4 +1242,6 @@
   <data name="Condition_CheckAgain" xml:space="preserve"><value>다시 확인</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>다시 시도</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>아직 확인하지 않았습니다. 버튼으로 화면에서 확인하세요.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Then의 동작이 "{0}"을(를) 찾은 위치로 이동합니다. 먼저 그 동작을 변경한 다음 조건을 제거하세요.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>두 조건의 Id가 같습니다. 각각 고유한 Id를 지정하세요.</value></data>
 </root>

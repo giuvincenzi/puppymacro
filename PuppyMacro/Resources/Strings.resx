@@ -1363,4 +1363,6 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Check again</value><comment>Button (an icon) on the card that says what PuppyMacro sees now: looks at the screen again</comment></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Retry</value><comment>Button on the full-screen pick: removes the rectangle drawn so it can be drawn again</comment></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Not checked yet. Check it on the screen with the button.</value><comment>The card that says what PuppyMacro sees now, before the first check</comment></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>An action in Then goes where {0} was found. Change that action first, then remove the condition.</value><comment>Shown when removing a condition that an action uses: {0} the condition's name. Then is a global word</comment></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Two conditions have the same Id. Give each one its own.</value><comment>Code view check: two conditions share an Id</comment></data>
 </root>

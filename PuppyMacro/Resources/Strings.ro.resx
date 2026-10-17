@@ -1319,4 +1319,6 @@ Detalii: {1}</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Verificare din nou</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Reîncercare</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Nu a fost verificată încă. Verificați-o pe ecran cu butonul.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>O acțiune din Then merge în locul găsit de {0}. Modificați mai întâi acea acțiune, apoi eliminați condiția.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Două condiții au același Id. Dați fiecăreia propriul Id.</value></data>
 </root>

@@ -27,9 +27,8 @@ internal sealed class MacroLibrary
     /// <summary>The images of the Image conditions, in the data folder next to the macros.</summary>
     public ImageStore Images { get; }
 
-    // The images each saved macro uses, and the ones a save or a deletion left unused (deleted by ReleaseUnusedImages).
+    // The images each saved macro uses (the others are deleted by ReleaseUnusedImages).
     private readonly Dictionary<Guid, HashSet<string>> _imagesOf = new();
-    private readonly HashSet<string> _released = new(StringComparer.Ordinal);
 
     public List<MacroDefinition> Macros { get; private set; } = new();
 
@@ -94,10 +93,7 @@ internal sealed class MacroLibrary
             string temp = path + ".tmp";
             File.WriteAllText(temp, JsonSerializer.Serialize(macro, JsonOptions));
             File.Move(temp, path, overwrite: true);
-            var now = ImageStore.IdsIn(macro);
-            if (_imagesOf.TryGetValue(macro.Id, out var before))
-                _released.UnionWith(before.Except(now));
-            _imagesOf[macro.Id] = now;
+            _imagesOf[macro.Id] = ImageStore.IdsIn(macro);
             return true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -110,34 +106,50 @@ internal sealed class MacroLibrary
     public void Delete(MacroDefinition macro)
     {
         Macros.Remove(macro);
-        if (_imagesOf.Remove(macro.Id, out var images))
-            _released.UnionWith(images);
         try
         {
             File.Delete(PathFor(macro.Id));
+            _imagesOf.Remove(macro.Id);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // Leftover file: it would come back on next start, but the order list no longer has it.
+            // Leftover file: it would come back on next start, but the order list no longer has it. Its images stay for it.
         }
     }
 
     /// <summary>
-    /// Deletes the images that saves and deletions left unused and no other macro uses. Called after the History recorded
-    /// the change, so the version before it still found its images to keep a copy of. Also deletes <paramref name="taken"/>
-    /// when no macro uses them: images an editor took and the user did not save.
+    /// Deletes every image of the folder that no saved macro uses and nothing holds (<see cref="ImageStore.Hold"/>): those a
+    /// save or a deletion left unused, those taken and never saved, those of an import not taken. Called after the History
+    /// recorded the change, so the version before it still found its images to keep a copy of.
     /// </summary>
-    public void ReleaseUnusedImages(IEnumerable<string>? taken = null)
+    public void ReleaseUnusedImages()
     {
-        if (taken != null)
-            _released.UnionWith(taken);
-        var used = _imagesOf.Values.SelectMany(s => s).ToHashSet(StringComparer.Ordinal);
-        foreach (string id in _released.Where(id => !used.Contains(id)).ToList())
+        var keep = _imagesOf.Values.SelectMany(s => s).ToHashSet(StringComparer.Ordinal);
+        keep.UnionWith(Images.Held());
+        foreach (string id in Images.All().Where(id => !keep.Contains(id)))
             Images.Delete(id);
-        _released.Clear();
     }
 
     private string PathFor(Guid id) => Path.Combine(_folder, $"{id}.json");
+
+    /// <summary>Empty entries a file edited by hand can have (null in a list): left out, also inside Then and Else.</summary>
+    private static void RemoveEmpty(List<MacroAction> actions)
+    {
+        actions.RemoveAll(a => a == null);
+        foreach (var action in actions)
+        {
+            if (action.If is not { } block)
+                continue;
+            block.Conditions ??= new();
+            block.Conditions.RemoveAll(c => c == null);
+            foreach (var condition in block.Conditions)
+                condition.Images?.RemoveAll(i => i == null);
+            block.Then ??= new();
+            block.Else ??= new();
+            RemoveEmpty(block.Then);
+            RemoveEmpty(block.Else);
+        }
+    }
 
     private static void Sanitize(MacroDefinition macro)
     {
@@ -157,6 +169,7 @@ internal sealed class MacroLibrary
         macro.AppExe = AppScope.Normalize(macro.AppExe);
         if (!MacroDefinition.ChecksPerSecondSteps.Contains(macro.ChecksPerSecond))
             macro.ChecksPerSecond = MacroDefinition.DefaultChecksPerSecond;
+        RemoveEmpty(macro.Actions);
         foreach (var action in macro.AllActions.ToList())
         {
             if (action.Type == MacroActionType.If)

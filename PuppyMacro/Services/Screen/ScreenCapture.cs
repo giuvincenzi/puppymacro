@@ -501,8 +501,9 @@ internal sealed unsafe class ScreenCapture : IScreen
                 _retry.Succeeded();
                 if (newImage)
                     _owner.NewFrame();
-                else
-                    Thread.Sleep(4); // the others using the card get the lock between two waits
+                // The others using the card get the lock between two waits, also when the screen changes all the time (a
+                // game): the lock is not fair, and this thread would take it back at once.
+                Thread.Sleep(newImage ? 1 : 4);
             }
         }
 

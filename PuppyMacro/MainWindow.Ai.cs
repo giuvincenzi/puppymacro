@@ -570,8 +570,16 @@ public partial class MainWindow : IAiHost
             pick = new AiScreenPick(pixel.X, pixel.Y, 1, 1, Color: pixel.Color);
         else if (answer == AiAnswer.Done && picker.PickedArea is { } area)
             pick = new AiScreenPick(area.Area.X, area.Area.Y, area.Area.Width, area.Area.Height,
-                ImageId: area.Png is { } png ? _macros.Images.Add(png) : null);
+                ImageId: area.Png is { } png ? TakeForAi(png) : null);
         return Task.FromResult((pick == null && answer == AiAnswer.Done ? AiAnswer.Cancelled : answer, pick));
+    }
+
+    /// <summary>An image an AI app took: held until PuppyMacro closes, so it is there when the AI saves the macro that uses it.</summary>
+    private string TakeForAi(byte[] png)
+    {
+        string id = _macros.Images.Add(png);
+        _macros.Images.HoldAlso(typeof(AiTools), id);
+        return id;
     }
 
     Task<(AiAnswer Answer, HotkeyBinding? Keys)> IAiHost.CaptureKeys(string app, AiAsk ask)

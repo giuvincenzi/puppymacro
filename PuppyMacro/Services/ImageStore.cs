@@ -11,8 +11,9 @@ namespace PuppyMacro.Services;
 /// <summary>
 /// The images of the macros' Image conditions: <c>images\{id}.png</c> in the data folder, where the id is the SHA-256
 /// of the PNG file (the same image taken twice is one file). A macro names its images by id. An image is deleted when
-/// no macro uses it any more (<see cref="MacroLibrary.ReleaseUnusedImages"/>); the History and the AI activity keep a
-/// copy of the images of their versions, so Restore brings them back.
+/// no saved macro uses it and nothing holds it (<see cref="MacroLibrary.ReleaseUnusedImages"/>): an editor still open,
+/// the editor's copied actions, an AI app that took it. The History keeps a copy of the images of its versions, so its
+/// Restore (and the AI activity's, which goes through the History) brings them back.
 /// </summary>
 internal sealed partial class ImageStore
 {
@@ -23,6 +24,57 @@ internal sealed partial class ImageStore
     public static string IdOf(byte[] png) => Convert.ToHexString(SHA256.HashData(png)).ToLowerInvariant();
 
     public string PathOf(string id) => Path.Combine(Folder, id + ".png");
+
+    private readonly Dictionary<object, HashSet<string>> _held = new();
+
+    /// <summary>
+    /// Keeps <paramref name="ids"/> from being deleted for <paramref name="holder"/> (an editor, the copied actions, an AI
+    /// app's take) until <see cref="Unhold"/>; holding again replaces what it held.
+    /// </summary>
+    public void Hold(object holder, IEnumerable<string> ids)
+    {
+        lock (_held)
+            _held[holder] = ids.ToHashSet(StringComparer.Ordinal);
+    }
+
+    /// <summary>Adds one image to what <paramref name="holder"/> holds.</summary>
+    public void HoldAlso(object holder, string id)
+    {
+        lock (_held)
+        {
+            if (!_held.TryGetValue(holder, out var ids))
+                _held[holder] = ids = new HashSet<string>(StringComparer.Ordinal);
+            ids.Add(id);
+        }
+    }
+
+    public void Unhold(object holder)
+    {
+        lock (_held)
+            _held.Remove(holder);
+    }
+
+    /// <summary>The images something holds now.</summary>
+    public HashSet<string> Held()
+    {
+        lock (_held)
+            return _held.Values.SelectMany(h => h).ToHashSet(StringComparer.Ordinal);
+    }
+
+    /// <summary>The ids of every image kept in the folder.</summary>
+    public List<string> All()
+    {
+        try
+        {
+            return Directory.Exists(Folder)
+                ? Directory.EnumerateFiles(Folder, "*.png").Select(Path.GetFileNameWithoutExtension).OfType<string>().Where(MacroJson.IsImageId).ToList()
+                : new List<string>();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return new List<string>();
+        }
+    }
 
     public bool Has(string id) => MacroJson.IsImageId(id) && File.Exists(PathOf(id));
 

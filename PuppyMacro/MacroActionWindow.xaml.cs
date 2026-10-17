@@ -24,6 +24,7 @@ public partial class MacroActionWindow
     private IfViewModel? _if;
     private readonly IReadOnlyDictionary<Guid, string> _found;
     private readonly ImageStore? _images;
+    private readonly IReadOnlyCollection<string> _otherConditionNames;
     private bool _ready;
 
     /// <param name="allowedGroups">The groups the action can be in (<see cref="MacroJson.AllowedGroupIds"/>), for its Code view.</param>
@@ -33,8 +34,10 @@ public partial class MacroActionWindow
     /// <param name="device">Where an If's images are searched while editing (Settings › Screen recognition).</param>
     internal MacroActionWindow(LoopEngine engine, MacroAction action, bool isNew,
         IReadOnlyList<Guid?> allowedGroups, IReadOnlyDictionary<Guid, string> groupNames,
-        IReadOnlyDictionary<Guid, string>? found = null, ImageStore? images = null, RecognitionDevice device = RecognitionDevice.Automatic)
+        IReadOnlyDictionary<Guid, string>? found = null, ImageStore? images = null, RecognitionDevice device = RecognitionDevice.Automatic,
+        IReadOnlyCollection<string>? otherConditionNames = null)
     {
+        _otherConditionNames = otherConditionNames ?? Array.Empty<string>();
         InitializeComponent();
         // An If's window holds its conditions and when its Then runs: it opens taller (WindowFit keeps it on the screen).
         if (action.Type == MacroActionType.If)
@@ -91,7 +94,7 @@ public partial class MacroActionWindow
         Conditions.Visibility = isIf ? Visibility.Visible : Visibility.Collapsed;
         if (_if != null)
             _if.PropertyChanged -= OnIfChanged;
-        _if = isIf ? new IfViewModel(_action.If ?? new MacroIf(), _images) : null;
+        _if = isIf ? new IfViewModel(_action.If ?? new MacroIf(), _images) { OtherNames = _otherConditionNames } : null;
         if (_if != null)
         {
             _if.PropertyChanged += OnIfChanged;

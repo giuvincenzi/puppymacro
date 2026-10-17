@@ -77,18 +77,25 @@ public partial class ConditionsEditor : UserControl
         for (int n = 1; ; n++)
         {
             string name = string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Condition_NewName, kindName, n);
-            if (!model.Conditions.Any(c => string.Equals(c.Name.Trim(), name, StringComparison.CurrentCultureIgnoreCase)))
+            if (!model.Conditions.Any(c => string.Equals(c.Name.Trim(), name, StringComparison.CurrentCultureIgnoreCase))
+                && !model.OtherNames.Contains(name, StringComparer.CurrentCultureIgnoreCase))
                 return name;
         }
     }
 
     private void OnRemoveConditionClick(object sender, RoutedEventArgs e)
     {
-        if (Model is { } model && (sender as FrameworkElement)?.Tag is ConditionViewModel condition)
+        if (Model is not { } model || (sender as FrameworkElement)?.Tag is not ConditionViewModel condition)
+            return;
+        // An action in Then goes where it was found: removing it would leave that action without a place.
+        if (model.UsedByThen.Contains(condition.Id))
         {
-            model.Conditions.Remove(condition);
-            Changed?.Invoke();
+            MessageBox.Show(Window.GetWindow(this), string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Condition_UsedByThen, condition.Name.Trim()),
+                Strings.Condition_Remove, MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, App.MessageBoxOptions);
+            return;
         }
+        model.Conditions.Remove(condition);
+        Changed?.Invoke();
     }
 
     private void OnRemoveImageClick(object sender, RoutedEventArgs e)
@@ -109,7 +116,7 @@ public partial class ConditionsEditor : UserControl
             return;
         var pick = ScreenPickWindow.Ask(window, ScreenPickMode.Pixel, out string? error);
         if (error != null)
-            ShowError(error);
+            ShowError(error, Strings.ScreenPick_PixelTitle);
         if (pick?.PickedPixel is not { } pixel)
             return;
         condition.X = pixel.X;
@@ -124,11 +131,13 @@ public partial class ConditionsEditor : UserControl
             return;
         var pick = ScreenPickWindow.Ask(window, ScreenPickMode.Image, out string? error);
         if (error != null)
-            ShowError(error);
+            ShowError(error, Strings.ScreenPick_ImageTitle);
         if (pick?.PickedArea is not { Png: { } png } taken)
             return;
-        // The image goes in the store at once (the Code view checks it is there); one no macro uses is deleted on the next save.
+        // The image goes in the store at once (the Code view checks it is there), held for the macro editor until it closes:
+        // then one no saved macro uses is deleted at the next save or start.
         string id = store.Add(png);
+        store.HoldAlso(Window.GetWindow(this) is { } own ? own.Owner ?? own : this, id);
         condition.Images.Add(new ConditionImageViewModel(new ConditionImage { Id = id, X = taken.Area.X, Y = taken.Area.Y }, store));
         CheckSoon(condition);
         Changed?.Invoke();
@@ -140,7 +149,7 @@ public partial class ConditionsEditor : UserControl
             return;
         var pick = ScreenPickWindow.Ask(window, ScreenPickMode.Area, out string? error);
         if (error != null)
-            ShowError(error);
+            ShowError(error, Strings.ScreenPick_AreaTitle);
         if (pick?.PickedArea is { } area)
         {
             condition.SetArea(area.Area);
@@ -148,8 +157,8 @@ public partial class ConditionsEditor : UserControl
         }
     }
 
-    private void ShowError(string message) =>
-        MessageBox.Show(Window.GetWindow(this), message, Strings.ScreenPick_PixelTitle, MessageBoxButton.OK, MessageBoxImage.Warning,
+    private void ShowError(string message, string title) =>
+        MessageBox.Show(Window.GetWindow(this), message, title, MessageBoxButton.OK, MessageBoxImage.Warning,
             MessageBoxResult.OK, App.MessageBoxOptions);
 
     // ================= Sliders (ValueSlider has no binding) =================
@@ -215,12 +224,21 @@ public partial class ConditionsEditor : UserControl
                     continue;
                 }
                 var toCheck = condition.ToModel();
-                var report = await Task.Run(() =>
+                try
                 {
-                    using var checker = new ConditionChecker(ScreenCapture.Shared, model.Store, device, 0);
-                    return checker.Inspect(toCheck);
-                });
-                condition.ShowReport(report);
+                    var report = await Task.Run(() =>
+                    {
+                        using var checker = new ConditionChecker(ScreenCapture.Shared, model.Store, device, 0);
+                        return checker.Inspect(toCheck);
+                    });
+                    condition.ShowReport(report);
+                }
+                catch (Exception ex) when (ex is not OutOfMemoryException)
+                {
+                    // One check that fails (the screen went away meanwhile) leaves the others to be checked.
+                    CaptureLog.Write($"a condition's check failed: {ex.Message}");
+                    condition.ClearReport();
+                }
             }
         }
         finally

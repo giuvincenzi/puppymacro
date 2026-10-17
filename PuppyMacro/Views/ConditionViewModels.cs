@@ -140,6 +140,9 @@ public sealed class ConditionViewModel : ConditionEditorItem
     };
 
     public ConditionKind Kind => _condition.Kind;
+
+    /// <summary>The condition's Id, which "Where … was found" names.</summary>
+    public Guid Id => _condition.Id;
     public bool IsPixel => Kind == ConditionKind.Pixel;
     public bool IsImage => Kind == ConditionKind.Image;
     public bool IsText => Kind == ConditionKind.Text;
@@ -483,8 +486,9 @@ public sealed class ConditionViewModel : ConditionEditorItem
         _ when Finds && string.IsNullOrWhiteSpace(_name) => Strings.Code_EnterConditionName,
         ConditionKind.Pixel when !MacroJson.IsColor(_color.Trim().ToUpperInvariant()) => Strings.Code_ConditionColor,
         ConditionKind.Image when !HasImages => Strings.Code_TakeImage,
+        ConditionKind.Image when Images.Any(i => i.Preview == null) => Strings.Code_ImageMissing,
         ConditionKind.Text when string.IsNullOrWhiteSpace(_text) => Strings.Code_EnterConditionText,
-        _ when _area != SearchArea.Around && (_areaWidth < MacroJson.AreaSize.Min || _areaHeight < MacroJson.AreaSize.Min) => Strings.Condition_DrawArea,
+        _ when Finds && _area != SearchArea.Around && (_areaWidth < MacroJson.AreaSize.Min || _areaHeight < MacroJson.AreaSize.Min) => Strings.Condition_DrawArea,
         _ => null,
     };
 
@@ -549,6 +553,9 @@ public sealed class IfViewModel : ConditionEditorItem
         Store = store;
         foreach (var condition in block.Conditions)
             Add(new ConditionViewModel(condition, store) { IsExpanded = false });
+        foreach (var action in MacroDefinition.Walk(block.Then))
+            if (action.FoundId is Guid used)
+                UsedByThen.Add(used);
         _matchIndex = (int)block.Match;
         _waitIndex = (int)block.Wait;
         _waitSeconds = block.WaitSeconds > 0 ? block.WaitSeconds : 5;
@@ -559,6 +566,12 @@ public sealed class IfViewModel : ConditionEditorItem
     }
 
     internal ImageStore? Store { get; }
+
+    /// <summary>The conditions an action in this If's Then goes to ("Where … was found"): they can't be removed.</summary>
+    internal HashSet<Guid> UsedByThen { get; } = new();
+
+    /// <summary>The names of the macro's other conditions, so a new one gets a name of its own.</summary>
+    internal IReadOnlyCollection<string> OtherNames { get; set; } = Array.Empty<string>();
 
     public ObservableCollection<ConditionViewModel> Conditions { get; } = new();
 

@@ -1276,4 +1276,6 @@ Detalles: {1}</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Volver a comprobar</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Reintentar</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Aún no se ha comprobado. Compruébala en la pantalla con el botón.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Una acción de Then va donde se encontró {0}. Cambia primero esa acción y luego quita la condición.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dos condiciones tienen el mismo Id. Dale a cada una el suyo.</value></data>
 </root>

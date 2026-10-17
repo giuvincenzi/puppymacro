@@ -104,7 +104,12 @@ public partial class MacroEditorWindow
         Validate();
         Closing += (_, _) => RememberSize();
         KeyCaptureField.SetEngine(this, _engine); // the hotkey field waits for keys through it
-        Closed += (_, _) => _engine.CancelCapture();
+        Closed += (_, _) =>
+        {
+            _engine.CancelCapture();
+            // Images its conditions took are not held any more: the save that follows keeps those the macro uses.
+            _macros.Images.Unhold(this);
+        };
         Loaded += (_, _) => Activate(); // e.g. right after a recording, with the main window just restored
     }
 
@@ -549,7 +554,10 @@ public partial class MacroEditorWindow
     /// <summary>The action window for an action of <paramref name="list"/> at <paramref name="index"/>.</summary>
     private MacroActionWindow ActionWindow(MacroAction action, bool isNew, List<MacroAction> list, int index) =>
         new(_engine, action, isNew, MacroJson.AllowedGroupIds(list, index, replacing: !isNew), GroupNames(),
-            MacroJson.FoundAt(_list.Actions, list), _macros.Images, _settings.RecognitionDevice) { Owner = this };
+            MacroJson.FoundAt(_list.Actions, list), _macros.Images, _settings.RecognitionDevice,
+            // The other Ifs' condition names (not this one's own), so a new condition gets a name of its own.
+            _list.All.Where(a => !ReferenceEquals(a, action)).SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
+                .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim()).ToList()) { Owner = this };
 
     /// <summary>Add condition: the three kinds, each opens the condition window with one condition of it.</summary>
     private void OnAddConditionClick(object sender, RoutedEventArgs e)
@@ -623,6 +631,8 @@ public partial class MacroEditorWindow
             return;
         // GroupId: the same, or another one allowed by the Code view (the groups stay together).
         list[index] = edited;
+        // The action's Code view may have moved Then's or Else's actions between groups.
+        _list.Normalize();
         _rowOf.Remove(row.Action);
         _rowOf[edited] = row;
         row.Replace(edited);
@@ -865,6 +875,8 @@ public partial class MacroEditorWindow
         if (block.IsEmpty)
             return;
         s_clipboard = block;
+        // The copied Ifs' images stay while they can be pasted, even if their macro is deleted meanwhile.
+        _macros.Images.Hold(typeof(MacroEditorWindow), ImageStore.IdsIn(new MacroDefinition { Actions = block.Actions }));
         UpdateSelectionBar();
     }
 
@@ -1043,6 +1055,9 @@ public partial class MacroEditorWindow
             default:
                 return null;
         }
+        // An If never goes inside its own Then or Else.
+        if (moved.Any(a => MacroDefinition.Lists(new List<MacroAction> { a }).Skip(1).Any(l => ReferenceEquals(l, target.List))))
+            return null;
         // Groups are never nested.
         return target.Into != null && payload.Groups.Count > 0 ? null : target;
     }
@@ -1268,6 +1283,10 @@ public partial class MacroEditorWindow
             .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim()).ToList();
         if (names.Count != names.Distinct(StringComparer.CurrentCultureIgnoreCase).Count())
             return Strings.Code_ConditionNameTwice;
+        // An image a condition names that PuppyMacro does not have (an If pasted after its macro and image were deleted).
+        if (_list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).SelectMany(c => c.Images ?? new List<ConditionImage>())
+            .Any(i => !_macros.Images.Has(i.Id)))
+            return Strings.Code_ImageMissing;
         foreach (var action in _list.All)
         {
             if (action.FoundId is not Guid id || _list.ListOf(action) is not { } list || MacroJson.FoundAt(_list.Actions, list).ContainsKey(id))

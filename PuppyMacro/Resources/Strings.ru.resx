@@ -1319,4 +1319,6 @@
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Проверить снова</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Повторить</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Ещё не проверено. Проверьте на экране с помощью кнопки.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Действие в Then переходит туда, где найдено «{0}». Сначала измените это действие, затем удалите условие.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>У двух условий одинаковый Id. Задайте каждому свой.</value></data>
 </root>

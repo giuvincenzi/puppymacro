@@ -558,7 +558,8 @@ internal sealed class AiTools
         object? parsed = typeof(T) == typeof(LoopDefinition)
             ? LoopJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems)
             : typeof(T) == typeof(MacroDefinition)
-                ? MacroJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems)
+                ? MacroJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems,
+                    _host.Macros.Images.Has)
                 : RemapJson.Parse(text, itemId, (b, a) => HotkeyConflicts.RemapClash(b, a, _host.Settings, _host.Macros, itemId), out problems);
         return parsed is T ok
             ? (ok, null, existing == null ? null : Serialize(existing))

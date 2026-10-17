@@ -285,7 +285,20 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
     private static string Fill(string text, params object[] values) => string.Format(CultureInfo.CurrentCulture, text, values);
 
     /// <summary>The name of the condition a mouse action goes to (set by the editor), for its detail.</summary>
-    public string FoundName { get; set; } = "";
+    public string FoundName
+    {
+        get => _foundName;
+        set
+        {
+            if (_foundName == value)
+                return;
+            _foundName = value;
+            OnPropertyChanged(nameof(Detail));
+            OnPropertyChanged(nameof(AccessibleName));
+        }
+    }
+
+    private string _foundName = "";
 
     public void Replace(MacroAction action)
     {

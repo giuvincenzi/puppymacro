@@ -313,6 +313,9 @@ internal static class MacroJson
                 var condition = block.Conditions[c];
                 if (condition.Finds && !string.IsNullOrWhiteSpace(condition.Name) && !names.Add(condition.Name.Trim()))
                     check.Add($"{prefix}If.Conditions[{c}].Name", Strings.Code_ConditionNameTwice);
+                // An Id is what "Where … was found" names: two conditions with one Id can't be told apart.
+                if (!names.Add("id:" + condition.Id.ToString("N")))
+                    check.Add($"{prefix}If.Conditions[{c}].Id", Strings.Code_ConditionIdTwice);
             }
             CheckNames(block.Then, $"{prefix}If.Then", names, check);
             CheckNames(block.Else, $"{prefix}If.Else", names, check);

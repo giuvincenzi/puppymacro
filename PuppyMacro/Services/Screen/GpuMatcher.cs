@@ -270,11 +270,29 @@ internal sealed unsafe class GpuMatcher : IDisposable
     }
 
     /// <summary>A buffer of this role and size kept for the next calls (scores, blocks, shrunk images).</summary>
+    private const int MaxPooled = 48;
+
     private GpuBuffer Pooled(string role, int count, int stride)
     {
         if (!_pool.TryGetValue((role, count, stride), out var buffer))
             _pool[(role, count, stride)] = buffer = Create(count, stride);
         return buffer;
+    }
+
+    /// <summary>
+    /// One buffer per size: areas of many sizes (images moving near the edges) would keep them all, so past a few dozen
+    /// they all go and are made again as needed. Only before a search, when none of them is in use.
+    /// </summary>
+    private void TrimPool()
+    {
+        if (_pool.Count < MaxPooled)
+            return;
+        foreach (var old in _pool.Values)
+            old.Dispose();
+        _pool.Clear();
+        foreach (var staging in _staging.Values)
+            Marshal.ReleaseComObject(staging);
+        _staging.Clear();
     }
 
     private T[] ReadBack<T>(GpuBuffer buffer, int count) where T : unmanaged
@@ -535,6 +553,7 @@ internal sealed unsafe class GpuMatcher : IDisposable
     {
         lock (_sync)
         {
+            TrimPool();
             if (!_prepared.TryGetValue(image, out var prepared))
                 _prepared[image] = prepared = Prepare(image, calibration);
             Rect a = (area ?? new Rect(0, 0, picture.W, picture.H)).Intersect(new Rect(0, 0, picture.W, picture.H));

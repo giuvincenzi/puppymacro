@@ -1286,4 +1286,6 @@ Dettagli: {1}</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Controlla di nuovo</value></data>
   <data name="ScreenPick_Retry" xml:space="preserve"><value>Riprova</value></data>
   <data name="Condition_NotChecked" xml:space="preserve"><value>Non ancora controllata. Controllala sullo schermo con il pulsante.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Un'azione in Then va dove è stato trovato {0}. Cambia prima quell'azione, poi rimuovi la condizione.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Due condizioni hanno lo stesso Id. Dai a ciascuna il suo.</value></data>
 </root>
