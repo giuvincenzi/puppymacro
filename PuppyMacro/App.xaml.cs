@@ -84,6 +84,29 @@ public partial class App : Application
     /// <summary>The mutex a running PuppyMacro holds (one at a time; the AI bridge checks it to know PuppyMacro is open).</summary>
     public const string SingleInstanceName = "PuppyMacro.SingleInstance";
 
+    /// <summary>
+    /// Asks Windows never to slow PuppyMacro down for power: no EcoQoS (slower cores and clock, less even timings) and its
+    /// timer resolution kept also while its windows are hidden in the tray (Windows 11 may ignore it otherwise). The
+    /// documented opt-out of SetProcessInformation; idle, PuppyMacro uses no processor, so it costs no battery then.
+    /// </summary>
+    private static void KeepFullSpeed()
+    {
+        var state = new NativeMethods.PROCESS_POWER_THROTTLING_STATE
+        {
+            Version = NativeMethods.PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+            ControlMask = NativeMethods.PROCESS_POWER_THROTTLING_EXECUTION_SPEED | NativeMethods.PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION,
+            StateMask = 0,
+        };
+        // The timer flag is from Windows 11: when Windows refuses the pair, the speed alone.
+        if (!NativeMethods.SetProcessInformation(NativeMethods.GetCurrentProcess(), NativeMethods.ProcessPowerThrottling, ref state,
+                (uint)System.Runtime.InteropServices.Marshal.SizeOf<NativeMethods.PROCESS_POWER_THROTTLING_STATE>()))
+        {
+            state.ControlMask = NativeMethods.PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
+            NativeMethods.SetProcessInformation(NativeMethods.GetCurrentProcess(), NativeMethods.ProcessPowerThrottling, ref state,
+                (uint)System.Runtime.InteropServices.Marshal.SizeOf<NativeMethods.PROCESS_POWER_THROTTLING_STATE>());
+        }
+    }
+
     [STAThread]
     private static void Main()
     {
@@ -115,6 +138,7 @@ public partial class App : Application
             })
             .Run();
 
+        KeepFullSpeed();
         var app = new App();
         app.InitializeComponent();
         app.Run();

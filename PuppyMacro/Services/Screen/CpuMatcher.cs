@@ -10,7 +10,14 @@ internal readonly record struct ImageMatch(int X, int Y, double Score)
 {
     public static readonly ImageMatch None = new(-1, -1, -1);
 
-    public bool Found(double need) => X >= 0 && Score >= need;
+    /// <summary>
+    /// Whether it is similar enough, in whole percent as the user chooses and reads it: the score is computed in 32-bit
+    /// floats, so an identical image gives 0.99997, which must count as the 100% it shows.
+    /// </summary>
+    public bool Found(double need) => X >= 0 && Percent(Score) >= Percent(need);
+
+    /// <summary>A score (0 to 1) in whole percent, rounded as it is shown.</summary>
+    public static int Percent(double score) => (int)Math.Round(Math.Max(0, score) * 100, MidpointRounding.AwayFromZero);
 
     /// <summary>
     /// The better of two: the more similar; equally similar (a repeated piece), the higher on the screen, then the more to

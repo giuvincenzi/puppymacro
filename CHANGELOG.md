@@ -9,6 +9,10 @@
   as you change it, and takes pixels, images and areas from the screen. **Settings > Screen recognition** chooses the
   graphics card or the processor, and AI apps can pick pixels, take images and draw areas too.
 
+### Changed
+- PuppyMacro asks Windows not to slow it down to save power (efficiency mode), so loops, macros and screen checks keep
+  their timing also while it waits in the tray.
+
 ### Fixed
 - Stopping a loop or macro while it pastes a text no longer loses the paste or pastes the previous clipboard.
 

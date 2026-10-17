@@ -51,6 +51,9 @@ PuppyMacro/                     App, MainWindow and the other windows
 | Thread pool (`AiServer`) | The AI pipe's accept loop and one MCP session per connected AI app; the tools reach the UI only through `IAiHost.Ui` |
 
 Rules:
+- At start `App.KeepFullSpeed` opts PuppyMacro out of Windows' power throttling (`SetProcessInformation`,
+  `ProcessPowerThrottling`: no EcoQoS, timer resolution kept while its windows are hidden): its timings must not depend
+  on whether a window is visible.
 - **Never block the input thread** and never touch WPF objects from it. The hook only
   decides (block or not) and posts work. Windows silently skips, then removes, hooks that
   are too slow.

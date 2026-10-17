@@ -493,7 +493,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
         Result = null;
     }
 
-    private static double Percent(double score) => Math.Max(0, Math.Round(score * 100));
+    private static double Percent(double score) => ImageMatch.Percent(score);
 
     /// <summary>How far the color seen is from the condition's, in percent (the largest of red, green and blue).</summary>
     private double Difference(string? seen)

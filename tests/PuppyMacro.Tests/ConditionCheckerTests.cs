@@ -107,6 +107,30 @@ public class ConditionCheckerTests : IDisposable
         Assert.Equal(new Point(220 + 24, 160 + 16), result.Found[condition.Id]);
     }
 
+    [Theory]
+    [InlineData(0.99997, 1.0, true)]
+    [InlineData(0.896, 0.9, true)]
+    [InlineData(0.894, 0.9, false)]
+    [InlineData(0.995, 1.0, true)]
+    [InlineData(0.9949, 1.0, false)]
+    public void Similarity_counts_in_whole_percent_as_it_is_shown(double score, double need, bool found)
+    {
+        Assert.Equal(found, new ImageMatch(0, 0, score).Found(need));
+    }
+
+    [Fact]
+    public void An_identical_image_is_found_at_100_percent()
+    {
+        using var picture = Picture(FakeScreen.Width, FakeScreen.Height, 8);
+        var image = Take(picture, new Rect(300, 200, 48, 32));
+        _screen.Show(picture);
+        var condition = ImageCondition(SearchArea.Around, image);
+        condition.Similarity = 100;
+
+        Assert.True(Check(If(ConditionWait.Once, condition)).Met);
+        Assert.True(Check(If(ConditionWait.Once, condition), RecognitionDevice.Gpu).Met);
+    }
+
     [Fact]
     public void Around_does_not_look_far_from_where_the_image_was_taken()
     {
