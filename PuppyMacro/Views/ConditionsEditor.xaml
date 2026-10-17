@@ -91,19 +91,22 @@
                         </ui:SettingsCard>
 
                         <!-- Image -->
-                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Images}" Description="{x:Static r:Strings.Condition_ImagesDescription}"
-                                         ContentAlignment="Vertical" HorizontalContentAlignment="Left"
+                        <!-- The button on the right as in every card; the images under the description -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Images}"
                                          Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
-                            <StackPanel>
-                                <ItemsControl ItemsSource="{Binding Images}" ItemTemplate="{StaticResource ImageTile}" Focusable="False">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
-                                <views:PlaceButton HorizontalAlignment="Left" Text="{Binding TakeText}" Tag="{Binding}" Click="OnTakeImageClick" />
-                            </StackPanel>
+                            <ui:SettingsCard.Description>
+                                <StackPanel>
+                                    <TextBlock TextWrapping="Wrap" Text="{x:Static r:Strings.Condition_ImagesDescription}" />
+                                    <ItemsControl Margin="0,12,0,0" ItemsSource="{Binding Images}" ItemTemplate="{StaticResource ImageTile}" Focusable="False">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ui:SettingsCard.Description>
+                            <views:PlaceButton Text="{Binding TakeText}" Tag="{Binding}" Click="OnTakeImageClick" />
                         </ui:SettingsCard>
 
                         <!-- Image and Text: where to look -->
@@ -149,8 +152,8 @@
                         </ui:SettingsCard>
 
                         <!-- What PuppyMacro sees now, after a change or Test; Check again looks at the screen again -->
-                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Now}" Description="{Binding Result}"
-                                         Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Now}" Description="{Binding NowText}"
+                                         Visibility="{Binding ShowNow, Converter={StaticResource BoolToVisibility}}">
                             <Button Tag="{Binding}" Click="OnCheckAgainClick"
                                     ToolTip="{x:Static r:Strings.Condition_CheckAgain}" AutomationProperties.Name="{x:Static r:Strings.Condition_CheckAgain}">
                                 <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Refresh}" />
@@ -161,6 +164,8 @@
                                                  Visibility="{Binding ResultMet, Converter={StaticResource BoolToVisibility}}" />
                                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Warning}" Foreground="{DynamicResource SystemFillColorCautionBrush}"
                                                  Visibility="{Binding ResultNotMet, Converter={StaticResource BoolToVisibility}}" />
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Info}"
+                                                 Visibility="{Binding NotChecked, Converter={StaticResource BoolToVisibility}}" />
                                 </Grid>
                             </ui:SettingsCard.HeaderIcon>
                         </ui:SettingsCard>

@@ -119,6 +119,12 @@ public sealed class ConditionViewModel : ConditionEditorItem
             Images.Add(new ConditionImageViewModel(image, store));
         Images.CollectionChanged += (_, _) => ImagesChanged();
         ImagesChanged();
+        // Whether the card shows follows what the condition has (a color, an image, a text with its area).
+        PropertyChanged += (_, e) =>
+        {
+            if (!ShownOnly.Contains(e.PropertyName ?? ""))
+                Changed(nameof(ShowNow));
+        };
         // The whole screen of a new condition: the monitor around it.
         if (_area == SearchArea.Screen && _areaWidth <= 0)
             SetArea(ScreenAround());
@@ -386,10 +392,21 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public string? Result
     {
         get => _result;
-        private set { _result = value; Changed(nameof(Result), nameof(HasResult)); }
+        private set { _result = value; Changed(nameof(Result), nameof(HasResult), nameof(NotChecked), nameof(NowText), nameof(ShowNow)); }
     }
 
     public bool HasResult => _result != null;
+
+    /// <summary>
+    /// The card shows once there is something to check, also before the first check (opening a condition does not check
+    /// it: the user does with Check again, or by changing it).
+    /// </summary>
+    public bool ShowNow => HasResult || CanCheck;
+
+    public bool NotChecked => !HasResult;
+
+    /// <summary>What the last check saw, or that there was none yet.</summary>
+    public string NowText => _result ?? Strings.Condition_NotChecked;
 
     /// <summary>The last check found the condition true.</summary>
     public bool ResultMet
@@ -398,12 +415,13 @@ public sealed class ConditionViewModel : ConditionEditorItem
         private set { _resultMet = value; Changed(nameof(ResultMet), nameof(ResultNotMet)); }
     }
 
-    public bool ResultNotMet => !_resultMet;
+    public bool ResultNotMet => HasResult && !_resultMet;
 
     /// <summary>The properties that only show the last check or the expander's state, not what the condition checks.</summary>
     internal static readonly HashSet<string> ShownOnly = new()
     {
         nameof(Result), nameof(HasResult), nameof(ResultMet), nameof(ResultNotMet), nameof(IsExpanded),
+        nameof(ShowNow), nameof(NotChecked), nameof(NowText),
     };
 
     internal void ShowReport(ConditionReport report)
@@ -427,7 +445,11 @@ public sealed class ConditionViewModel : ConditionEditorItem
         };
     }
 
-    internal void ClearReport() => Result = null;
+    internal void ClearReport()
+    {
+        ResultMet = false;
+        Result = null;
+    }
 
     private static double Percent(double score) => Math.Max(0, Math.Round(score * 100));
 

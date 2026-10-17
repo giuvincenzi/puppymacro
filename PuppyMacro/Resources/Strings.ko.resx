@@ -1240,4 +1240,6 @@
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>조건</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>화면의 텍스트(OCR)</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>다시 확인</value></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>다시 시도</value></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>아직 확인하지 않았습니다. 버튼으로 화면에서 확인하세요.</value></data>
 </root>

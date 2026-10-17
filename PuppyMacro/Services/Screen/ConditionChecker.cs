@@ -270,7 +270,10 @@ internal sealed class ConditionChecker : IDisposable
                 using var pixel = watch.Copy(area);
                 if (pixel == null)
                     return (false, default, 0);
-                return (PixelMatches(pixel.At<Vec3b>(0, 0), c.Color, c.Tolerance), new Point(c.X, c.Y), 1);
+                var seen = pixel.At<Vec3b>(0, 0);
+                bool met = PixelMatches(seen, c.Color, c.Tolerance);
+                MacroTrace.Write($"  pixel {c.X},{c.Y}: {ScreenSnapshot.Hex(seen)}, wanted {c.Color} ±{c.Tolerance}% -> {met} (frame {watch.Version})");
+                return (met, new Point(c.X, c.Y), 1);
             }
             case ConditionKind.Image:
                 return FindImage(watch, area, look.Image!, c);

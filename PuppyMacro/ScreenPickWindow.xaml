@@ -31,6 +31,8 @@
         </Border>
         <ikw:SimpleStackPanel x:Name="SelectionButtons" Orientation="Horizontal" Spacing="8" Cursor="Arrow" Visibility="Collapsed">
             <Button x:Name="UseButton" Style="{StaticResource AccentButtonStyle}" Click="OnUseClick" />
+            <!-- Draw the rectangle again, on the same picture of the screen -->
+            <Button x:Name="RetryButton" Content="{x:Static r:Strings.ScreenPick_Retry}" Click="OnRetryClick" />
             <Button Content="{x:Static r:Strings.Pick_Cancel}" Click="OnCancelClick" />
         </ikw:SimpleStackPanel>
 

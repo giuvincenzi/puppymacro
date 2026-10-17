@@ -278,6 +278,16 @@ internal partial class ScreenPickWindow
 
     private void OnCancelClick(object sender, RoutedEventArgs e) => DialogResult = false;
 
+    /// <summary>Retry: the rectangle goes, the same picture stays, and the user drags again.</summary>
+    private void OnRetryClick(object sender, RoutedEventArgs e)
+    {
+        _drawn = null;
+        Selection.Visibility = Visibility.Collapsed;
+        SizeLabel.Visibility = Visibility.Collapsed;
+        SelectionButtons.Visibility = Visibility.Collapsed;
+        Focus();
+    }
+
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)

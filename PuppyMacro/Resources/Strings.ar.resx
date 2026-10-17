@@ -1405,4 +1405,6 @@
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>شرط</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>نص على الشاشة (OCR)</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>التحقق مرة أخرى</value></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>إعادة المحاولة</value></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>لم يتم التحقق بعد. تحقق منه على الشاشة باستخدام الزر.</value></data>
 </root>

@@ -1347,4 +1347,6 @@ Detalhes: {1}</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condição</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Texto na tela (OCR)</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Verificar novamente</value></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>Tentar novamente</value></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>Ainda não verificada. Verifique-a na tela com o botão.</value></data>
 </root>

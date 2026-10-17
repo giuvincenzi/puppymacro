@@ -1273,4 +1273,6 @@ Details: {1}</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Bedingung</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Text auf dem Bildschirm (OCR)</value></data>
   <data name="Condition_CheckAgain" xml:space="preserve"><value>Erneut prüfen</value></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>Wiederholen</value></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>Noch nicht geprüft. Prüfe sie mit der Schaltfläche auf dem Bildschirm.</value></data>
 </root>

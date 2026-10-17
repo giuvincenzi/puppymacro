@@ -70,6 +70,7 @@ internal sealed class MacroRunner
     {
         try
         {
+            MacroTrace.Write($"Macro {_macro.Name} starts");
             using var timer = PreciseTimer.Create();
             _timer = timer;
 
@@ -91,9 +92,11 @@ internal sealed class MacroRunner
         catch (Exception ex)
         {
             Debug.WriteLine($"Macro thread failed: {ex}");
+            MacroTrace.Write($"Macro failed: {ex}");
         }
         finally
         {
+            MacroTrace.Write($"Macro {_macro.Name} ends (stopped by the user {_stopRequested})");
             ReleaseHeld();
             _checker?.Dispose();
             Exited?.Invoke(this);
@@ -105,7 +108,17 @@ internal sealed class MacroRunner
     {
         foreach (var action in actions)
         {
-            if (!Wait(action.DelayMs) || !Execute(action))
+            MacroTrace.Write($"Action {action.Type}: waits {action.DelayMs} ms");
+            if (!Wait(action.DelayMs))
+            {
+                MacroTrace.Write("  stopped while waiting");
+                return false;
+            }
+            NativeMethods.GetCursorPos(out var before);
+            bool keepGoing = Execute(action);
+            NativeMethods.GetCursorPos(out var after);
+            MacroTrace.Write($"  done (X {action.X}, Y {action.Y}): cursor {before.X},{before.Y} -> {after.X},{after.Y}, goes on {keepGoing}");
+            if (!keepGoing)
                 return false;
         }
         return true;
@@ -115,7 +128,9 @@ internal sealed class MacroRunner
     private bool If(MacroIf block)
     {
         _checker ??= new ConditionChecker(_screen, _images, _device, _macro.ChecksPerSecond);
+        MacroTrace.Write($"If: {block.Conditions.Count} condition(s), {block.Match}, wait {block.Wait} {block.WaitSeconds} s");
         var result = _checker.Check(block, _stop);
+        MacroTrace.Write($"If: met {result.Met}, stopped {result.Stopped} -> {(result.Met ? $"Then ({block.Then.Count} actions)" : block.OnFail == ConditionFail.Else ? $"Else ({block.Else.Count} actions)" : "stop")}");
         if (result.Stopped)
             return false;
         foreach (var (id, point) in result.Found)
