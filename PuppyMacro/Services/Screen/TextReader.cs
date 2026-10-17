@@ -48,6 +48,37 @@ internal static class TextReader
         });
     }
 
+    /// <summary>Whether Windows can read a language on this PC (null: Windows' languages).</summary>
+    public static bool CanRead(string? language)
+    {
+        if (language == null)
+            return Engine(null) != null;
+        try
+        {
+            return OcrEngine.IsLanguageSupported(new Language(language));
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>A language's name in its own language ("Italiano"), for the editor's list.</summary>
+    public static string NativeName(string tag)
+    {
+        try
+        {
+            return new Language(tag).NativeName;
+        }
+        catch (ArgumentException)
+        {
+            return tag;
+        }
+    }
+
+    /// <summary>The language Windows reads when a condition has none.</summary>
+    public static string? WindowsLanguage => Engine(null)?.RecognizerLanguage.LanguageTag;
+
     /// <summary>A word read on the picture: its text and its rectangle on the picture.</summary>
     internal readonly record struct Word(string Text, Rect Bounds);
 

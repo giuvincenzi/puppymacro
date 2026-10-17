@@ -1098,4 +1098,142 @@
   <data name="Main_ViewGrid" xml:space="preserve"><value>网格</value></data>
   <data name="Table_State" xml:space="preserve"><value>状态</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>编辑</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>选取像素</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>单击要检查的像素。它的颜色也会一并获取。</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>截取图像</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>拖动框住要查找的图像。再次拖动可以更改。</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>绘制搜索区域</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>拖动框出 PuppyMacro 要查找的区域。区域越小，速度越快。</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>截取图像</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>使用此区域</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro 暂时无法获取屏幕画面。请稍后再试。</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>固定点</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>找到 {0} 的位置</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>在 If 中，操作可以前往条件找到其图像或文本的位置，无论这次它出现在哪里。</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>相对中心偏移</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>向右和向下偏移的像素数。使用负数可向左或向上偏移。</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>向右的像素数</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>向下的像素数</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>找到 {0} 的位置</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>添加条件</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>编辑条件 - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>像素颜色</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>屏幕上的图像</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>屏幕上的文本</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>图像</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>文本</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>条件</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>添加条件</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>请使用“添加条件”添加条件。</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>删除条件</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>删除图像</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>名称</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Then 中的操作会通过此名称前往找到它的位置。</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>像素</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>颜色</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>选取像素时从屏幕获取。</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>容差</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>屏幕上的颜色允许相差多少。为 0% 时，只有完全相同的颜色才算匹配。</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>图像</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>只要其中一张图像出现在屏幕上，条件即满足。</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>从屏幕截取</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>再截取一张图像</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} 像素，截取于 {2}, {3}</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro 没有此图像。请重新截取。</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>搜索区域</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>截取位置附近</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>整个屏幕</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>我绘制的区域</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>在截取图像的位置附近查找，速度很快。即使图像稍有移动，也能找到。</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>请使用“在屏幕上绘制”绘制区域。</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>位于 {0}, {1}，{2} × {3} 像素。区域越小，速度越快。</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>在屏幕上绘制</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>请使用“在屏幕上绘制”绘制搜索区域。</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>稍大或稍小也能找到</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>即使应用中显示的图像放大或缩小了最多 15%，也能找到。查找会花更长时间。</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>相似度</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>屏幕内容与图像需要有多相似。如果图像会因光线或特效等发生变化，请稍微调低。</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>文本</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>匹配方式</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>找到的文本前后是否可以有其他文字。</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>包含此文本</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>与这些文字完全一致</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>区分大小写</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>语言</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>屏幕上文本的语言。列表中显示的是这台电脑上的 Windows 能够识别的语言。</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Windows 语言</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Windows 语言（{0}）</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>当前屏幕</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro 使用 Windows 的文本识别来读取文本，这比查找图像慢。当文字不变、但字体、颜色或背景等外观会变化时使用它。请尽量缩小搜索区域。</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>何时运行 Then</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>在所有条件都满足时运行 Then，或在任意一个条件满足时立即运行。</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>全部满足</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>满足任意一个</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>等待</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>等待期间，屏幕每次变化时 PuppyMacro 都会重新检查。</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>只检查一次</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>最多</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>一直等到满足为止</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>等待秒数</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>请输入要等待的秒数，范围为 0.1 到 86,400。</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>如果不满足条件</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>检查一次后立即执行。</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>等待 {0} 秒后执行。</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>宏会一直等待，直到条件满足或你将其停止。</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>运行 Else 中的操作</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>停止宏</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>立即在屏幕上检查条件，不运行任何操作</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} 处为 {2}，容差 {3}%</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>请在屏幕上选取像素。</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}，{1}，相似度 {2}%</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>请从屏幕截取图像。</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>包含“{0}”，{1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>完全为“{0}”，{1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>请输入要查找的文本。</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>在截取位置附近</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>在整个屏幕上</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>在绘制的区域中</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>像素当前匹配。颜色为 {0}。</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>像素当前不匹配。颜色为 {0}，相差 {1}%，超过了 {2}% 的容差。</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>当前在 {0}, {1} 处找到，相似度 {2}%。</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>图像当前不在屏幕上。最接近的匹配相似度为 {0}%，而此条件需要 {1}%。</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>当前在 {0}, {1} 处找到。</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>“{0}”当前不在屏幕上。PuppyMacro 在搜索区域中读取到的是“{1}”。</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>“{0}”当前不在屏幕上。PuppyMacro 在搜索区域中没有读取到任何文本。</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro 在此区域只能看到黑色。该应用可能阻止了屏幕捕获，或者正在以独占全屏模式运行。请尝试它的无边框窗口或窗口模式。</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>这台电脑上的 Windows 无法识别{0}文本。请在 Windows 设置的“时间和语言” › “语言和区域”中添加该语言，然后回到这里重新选择。</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>搜索区域位于当前未连接的屏幕上。请在现有的屏幕上重新绘制区域。</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>还没有条件</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} 个条件，全部满足</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} 个条件，满足一个即可</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>只检查一次</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>最多等待 {0} 秒</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>一直等到满足为止</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>{0}, {1} 处的像素为 {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} 在屏幕上</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>“{0}”在屏幕上</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>找到 {0} 的位置</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>条件满足时</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>条件不满足时</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · 还没有操作。请先选中它，再添加操作。</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>新操作将插入到 #{1} 的 {0} 末尾</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>{0} 至 {1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} 或更长</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>操作 #{0} 会前往找到 {1} 的位置，但它已不在该条件的 Then 中。请将它移回里面，或选择一个固定位置。</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>每秒检查次数</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>等待期间，条件每秒检查屏幕的次数。次数越少，留给其他程序的计算机资源越多；次数越多，越能及早发现变化。</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>每一帧</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>屏幕识别</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>查找图像时使用</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>选择“自动”时，大区域使用显卡，小区域使用处理器，这通常是最快的方式。</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>自动</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>显卡</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>处理器</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>请求选取一个像素：{0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>请求截取一张图像：{0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>请求绘制搜索区域：{0}</value></data>
 </root>

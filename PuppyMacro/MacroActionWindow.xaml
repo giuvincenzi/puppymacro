@@ -57,6 +57,10 @@
                  loop row (Views/ActionBox) -->
             <ScrollViewer x:Name="FormBody" VerticalScrollBarVisibility="Auto">
                 <ikw:SimpleStackPanel Margin="24,4,24,12" Spacing="4">
+                    <!-- An If with a Text condition: text recognition is slower than looking for an image (approved: above
+                         the cards, outside them) -->
+                    <ui:InfoBar x:Name="TextNotice" Margin="0,0,0,8" Severity="Informational" IsClosable="False" IsOpen="False"
+                                Message="{x:Static r:Strings.Condition_TextNotice}" />
                     <ui:SettingsCard Header="{x:Static r:Strings.ActionWindow_Name}" Description="{x:Static r:Strings.ActionWindow_NameDescription}">
                         <TextBox x:Name="ActionNameBox" Width="260" MaxLength="100" AutomationProperties.Name="{x:Static r:Strings.Editor_Name}"
                                  ui:ControlHelper.PlaceholderText="{x:Static r:Strings.ActionWindow_NamePlaceholder}" />
@@ -69,6 +73,8 @@
                         </ikw:SimpleStackPanel>
                     </ui:SettingsCard>
                     <views:ActionBox x:Name="Box" Margin="0,12,0,0" Rejected="ShowError" />
+                    <!-- An If: its conditions and when its Then runs -->
+                    <views:ConditionsEditor x:Name="Conditions" Visibility="Collapsed" />
                 </ikw:SimpleStackPanel>
             </ScrollViewer>
         </Grid>

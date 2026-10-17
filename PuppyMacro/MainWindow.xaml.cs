@@ -144,6 +144,7 @@ public partial class MainWindow
         FilterBox.SelectedIndex = (int)settings.Filter;
         MacroFilterBox.SelectedIndex = 0;
         ThemeComboBox.SelectedIndex = (int)settings.Theme;
+        RecognitionDeviceComboBox.SelectedIndex = (int)settings.RecognitionDevice;
         FillLanguages();
         UpdateHotkeyLabels();
         UpdateLoopState();
@@ -1097,6 +1098,14 @@ public partial class MainWindow
             return;
         _settings.Theme = (AppTheme)ThemeComboBox.SelectedIndex;
         App.ApplyTheme(_settings.Theme);
+        Save();
+    }
+
+    private void OnRecognitionDeviceChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_initializing || RecognitionDeviceComboBox.SelectedIndex < 0)
+            return;
+        _settings.RecognitionDevice = (RecognitionDevice)RecognitionDeviceComboBox.SelectedIndex;
         Save();
     }
 

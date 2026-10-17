@@ -35,7 +35,7 @@
                     <ComboBoxItem Content="{x:Static r:Strings.Action_DirectionRight}" />
                 </ComboBox>
                 <views:PositionPicker VerticalAlignment="Center" X="{Binding X}" Y="{Binding Y}"
-                                      Visibility="{Binding IsMoveTo, Converter={StaticResource BoolToVisibility}}" />
+                                      Visibility="{Binding ShowHeaderPoint, Converter={StaticResource BoolToVisibility}}" />
                 <Button VerticalAlignment="Center" ToolTip="{x:Static r:Strings.Action_Remove}" AutomationProperties.Name="{x:Static r:Strings.Action_Remove}" Click="OnRemoveClick"
                         Visibility="{Binding InLoop, Converter={StaticResource BoolToVisibility}}">
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
@@ -94,6 +94,29 @@
                 <!-- Macro: where the button is pressed, first -->
                 <ui:SettingsCard Header="{x:Static r:Strings.Action_Position}" Visibility="{Binding ShowPositionFirst, Converter={StaticResource BoolToVisibility}}">
                     <views:PositionPicker X="{Binding X}" Y="{Binding Y}" />
+                </ui:SettingsCard>
+
+                <!-- Macro, inside an If's Then: a fixed point or where a condition found its image or text (approved: the
+                     Design canvas "Macro Conditions", Click where it was found), then how far from its center -->
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_Position}" Description="{x:Static r:Strings.Action_PositionDescription}"
+                                 Visibility="{Binding ShowFoundPosition, Converter={StaticResource BoolToVisibility}}">
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+                        <views:PositionPicker X="{Binding X}" Y="{Binding Y}"
+                                              Visibility="{Binding ShowFixedPoint, Converter={StaticResource BoolToVisibility}}" />
+                        <ComboBox x:Name="PositionChoice" VerticalAlignment="Center" MinWidth="200" ItemsSource="{Binding PositionChoices}"
+                                  SelectedIndex="{Binding PositionIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Position}" />
+                    </ikw:SimpleStackPanel>
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Action_MoveFromCenter}" Description="{x:Static r:Strings.Action_MoveFromCenterDescription}"
+                                 Visibility="{Binding UsesFound, Converter={StaticResource BoolToVisibility}}">
+                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_X}" />
+                        <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                      Value="{Binding OffsetX, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_MoveRight}" />
+                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_Y}" />
+                        <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                      Value="{Binding OffsetY, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_MoveDown}" />
+                    </ikw:SimpleStackPanel>
                 </ui:SettingsCard>
 
                 <!-- Macro: single or double click, before Hold for -->

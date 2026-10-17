@@ -21,6 +21,9 @@ public sealed class AiSettingsValues
     public int? OverlayPanelOpacity { get; set; }
     public int? SoundVolume { get; set; }
 
+    /// <summary>Where the macros' conditions look for images (Settings › Screen recognition).</summary>
+    public RecognitionDevice? RecognitionDevice { get; set; }
+
     internal static AiSettingsValues From(AppSettings s) => new()
     {
         Theme = s.Theme,
@@ -33,5 +36,6 @@ public sealed class AiSettingsValues
         ClickItemsInPanel = s.ClickItemsInPanel,
         OverlayPanelOpacity = s.OverlayPanelOpacity,
         SoundVolume = s.SoundVolume,
+        RecognitionDevice = s.RecognitionDevice,
     };
 }

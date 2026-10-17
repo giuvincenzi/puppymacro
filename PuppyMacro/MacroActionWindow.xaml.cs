@@ -21,16 +21,27 @@ public partial class MacroActionWindow
     private readonly CodeViewSwitch<MacroAction> _code;
     private MacroAction _action;
     private ActionBoxViewModel _box = null!;
+    private IfViewModel? _if;
+    private readonly IReadOnlyDictionary<Guid, string> _found;
+    private readonly ImageStore? _images;
     private bool _ready;
 
     /// <param name="allowedGroups">The groups the action can be in (<see cref="MacroJson.AllowedGroupIds"/>), for its Code view.</param>
     /// <param name="groupNames">The macro's group names, by id.</param>
+    /// <param name="found">The conditions whose image or text the action can go to (<see cref="MacroJson.FoundAt"/>).</param>
+    /// <param name="images">The conditions' images.</param>
+    /// <param name="device">Where an If's images are searched while editing (Settings › Screen recognition).</param>
     internal MacroActionWindow(LoopEngine engine, MacroAction action, bool isNew,
-        IReadOnlyList<Guid?> allowedGroups, IReadOnlyDictionary<Guid, string> groupNames)
+        IReadOnlyList<Guid?> allowedGroups, IReadOnlyDictionary<Guid, string> groupNames,
+        IReadOnlyDictionary<Guid, string>? found = null, ImageStore? images = null, RecognitionDevice device = RecognitionDevice.Automatic)
     {
         InitializeComponent();
         WindowFit.Apply(this);
         _engine = engine;
+        _found = found ?? new Dictionary<Guid, string>();
+        _images = images;
+        Conditions.Device = device;
+        Conditions.Changed += Validate;
         KeyCaptureField.SetEngine(this, engine); // the key field waits for keys through it
         _isNew = isNew;
         _action = action.Clone();
@@ -40,7 +51,8 @@ public partial class MacroActionWindow
 
         _code = new CodeViewSwitch<MacroAction>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForAction(allowedGroups, groupNames, action.GroupId), FormAction, MacroJson.Serialize,
-            (string text, out List<CodeProblem> problems) => MacroJson.ParseAction(text, allowedGroups, groupNames, out problems),
+            (string text, out List<CodeProblem> problems) => MacroJson.ParseAction(text, allowedGroups, groupNames, out problems,
+                _found, images == null ? null : images.Has),
             LoadAction, Validate);
         _code.Opening += () => _engine.CancelCapture();
 
@@ -66,12 +78,31 @@ public partial class MacroActionWindow
         if (_box != null)
             _box.PropertyChanged -= OnBoxChanged;
         _box = new ActionBoxViewModel(_action) { IsExpanded = true };
+        _box.SetFounds(_found);
         _box.PropertyChanged += OnBoxChanged;
         Box.DataContext = _box;
+
+        // An If shows its conditions instead of the box.
+        bool isIf = _action.Type == MacroActionType.If;
+        Box.Visibility = isIf ? Visibility.Collapsed : Visibility.Visible;
+        Conditions.Visibility = isIf ? Visibility.Visible : Visibility.Collapsed;
+        if (_if != null)
+            _if.PropertyChanged -= OnIfChanged;
+        _if = isIf ? new IfViewModel(_action.If ?? new MacroIf(), _images) : null;
+        if (_if != null)
+        {
+            _if.PropertyChanged += OnIfChanged;
+            _if.ConditionChanged += _ => Validate();
+            _if.Conditions.CollectionChanged += (_, _) => Validate();
+            TestButton.ToolTip = Strings.Condition_TestTooltip;
+        }
+        Conditions.DataContext = _if;
         Validate();
     }
 
     private void OnBoxChanged(object? sender, PropertyChangedEventArgs e) => Validate();
+
+    private void OnIfChanged(object? sender, PropertyChangedEventArgs e) => Validate();
 
     public static string TypeName(MacroActionType type) => type switch
     {
@@ -85,10 +116,11 @@ public partial class MacroActionWindow
         MacroActionType.MovePath => Strings.ActionWindow_Type_MovePath,
         MacroActionType.Scroll => Strings.ActionWindow_Type_Scroll,
         MacroActionType.PasteText => Strings.ActionWindow_Type_PasteText,
+        MacroActionType.If => Strings.Macro_If,
         _ => type.ToString(),
     };
 
-    private string? GetValidationError() => _box.Problem;
+    private string? GetValidationError() => _if != null ? _if.Problem : _box.Problem;
 
     private void Validate()
     {
@@ -100,6 +132,7 @@ public partial class MacroActionWindow
             return;
         }
         string? error = GetValidationError();
+        TextNotice.IsOpen = _if?.HasText == true;
         if (error == null)
             ErrorText.Visibility = Visibility.Collapsed;
         else
@@ -135,6 +168,13 @@ public partial class MacroActionWindow
     /// <summary>Plays the action as it is now in the window, also before it is saved.</summary>
     private void OnTestClick(object sender, RoutedEventArgs e)
     {
+        if (_if != null)
+        {
+            // An If is checked on the screen, not played: its Then would send input to the window behind.
+            if (!_code.IsCode)
+                _ = Conditions.CheckAllAsync();
+            return;
+        }
         if ((_code.IsCode ? _code.Read() : BuildAction(TestButton)) is { } action)
             ActionTestSession.Run(_engine, action, this);
     }
@@ -154,7 +194,9 @@ public partial class MacroActionWindow
     /// <summary>The action as the Form view's fields describe it, also when they are not valid yet.</summary>
     private MacroAction FormAction()
     {
-        var a = _box.ToMacroAction(_action);
+        var a = _if != null ? _action.Clone() : _box.ToMacroAction(_action);
+        if (_if != null)
+            a.If = _if.ToModel(_action.If ?? new MacroIf());
         a.Name = ActionNameBox.Text.Trim();
         a.DelayMs = double.IsNaN(DelayBox.Value) ? 0 : Math.Max(0, Math.Round(DelayBox.Value));
         return a;

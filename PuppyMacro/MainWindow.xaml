@@ -1069,6 +1069,20 @@
                                                ValueChanged="OnVolumeChanged" PreviewMouseLeftButtonUp="OnVolumeReleased" />
                         </ui:SettingsCard>
 
+                        <!-- Screen recognition: how the macros' conditions look at the screen -->
+                        <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Settings_ScreenRecognition}" />
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_RecognitionDevice}" Description="{x:Static r:Strings.Settings_RecognitionDeviceDescription}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Photo2}" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <ComboBox x:Name="RecognitionDeviceComboBox" SelectionChanged="OnRecognitionDeviceChanged"
+                                      AutomationProperties.Name="{x:Static r:Strings.Settings_RecognitionDevice}">
+                                <ComboBoxItem Content="{x:Static r:Strings.Settings_RecognitionAutomatic}" />
+                                <ComboBoxItem Content="{x:Static r:Strings.Settings_RecognitionGpu}" />
+                                <ComboBoxItem Content="{x:Static r:Strings.Settings_RecognitionCpu}" />
+                            </ComboBox>
+                        </ui:SettingsCard>
+
                         <!-- Data and updates -->
                         <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Settings_DataAndUpdates}" />
                         <ui:SettingsExpander x:Name="BackupGroup" Tag="Backup" Header="{x:Static r:Strings.Settings_Backup}"

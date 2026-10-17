@@ -89,6 +89,14 @@
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
                                     </ui:AppBarButton.Icon>
                                 </ui:AppBarButton>
+                                <!-- An If: its conditions on the screen, with Then and Else (approved: the Design canvas "Macro
+                                     Conditions"), in the accent color as Add action -->
+                                <ui:AppBarButton x:Name="AddConditionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.Condition_Add}"
+                                                 Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Click="OnAddConditionClick">
+                                    <ui:AppBarButton.Icon>
+                                        <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.BranchFork_20_Regular}" />
+                                    </ui:AppBarButton.Icon>
+                                </ui:AppBarButton>
                                 <!-- A red record dot (approved, ui.md: the theme's critical color, as the InfoBadge's) -->
                                 <ui:AppBarButton Label="{x:Static r:Strings.MacroEditor_Record}" VerticalAlignment="Center" AutomationProperties.Name="{x:Static r:Strings.MacroEditor_RecordActions}" ToolTip="{x:Static r:Strings.MacroEditor_RecordActions}" Click="OnRecordClick">
                                     <ui:AppBarButton.Icon>
@@ -225,7 +233,7 @@
                             <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
                             <!-- A group: open / close, its name and what it holds -->
                             <DataTemplate DataType="{x:Type views:MacroGroupViewModel}">
-                                <Grid>
+                                <Grid Margin="{Binding IndentMargin}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -259,23 +267,30 @@
                                         <Run Text="  " />
                                         <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info, Mode=OneWay}" />
                                     </TextBlock>
-                                    <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="-12,0,-12,0" BorderThickness="0,1,0,0"
+                                    <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="{Binding DividerMargin}" BorderThickness="0,1,0,0"
+                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
+                                </Grid>
+                            </DataTemplate>
+                            <!-- An If's Then or Else: its name (a global word) and when it runs; its actions are indented under it -->
+                            <DataTemplate DataType="{x:Type views:MacroBranchViewModel}">
+                                <Grid Margin="{Binding IndentMargin}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                        <Run FontWeight="SemiBold" Text="{Binding Name, Mode=OneWay}" />
+                                        <Run Text="  " />
+                                        <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <Border Grid.Row="1" Margin="{Binding DividerMargin}" BorderThickness="0,1,0,0"
                                             BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
                                 </Grid>
                             </DataTemplate>
                             <!-- An action: its icon, its name or description and its details, its delay -->
                             <DataTemplate DataType="{x:Type views:MacroActionRowViewModel}">
-                                <Grid>
-                                    <Grid.Style>
-                                        <Style TargetType="Grid">
-                                            <Style.Triggers>
-                                                <!-- The actions of a group are indented under it -->
-                                                <DataTrigger Binding="{Binding IsInGroup}" Value="True">
-                                                    <Setter Property="Margin" Value="24,0,0,0" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Grid.Style>
+                                <!-- The actions of a group, a Then or an Else are indented under it -->
+                                <Grid Margin="{Binding IndentMargin}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -296,6 +311,8 @@
                                                      Visibility="{Binding IsScrollIcon, Converter={StaticResource BoolToVisibility}}" />
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
                                                      Visibility="{Binding IsTextIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.BranchFork_20_Regular}"
+                                                     Visibility="{Binding IsIfIcon, Converter={StaticResource BoolToVisibility}}" />
                                     </Grid>
                                     <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
                                         <Run Text="{Binding Title, Mode=OneWay}">
@@ -316,20 +333,8 @@
                                     <TextBlock Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" ToolTip="{x:Static r:Strings.MacroEditor_DelayTooltip}"
                                                Text="{Binding DelayText}" />
-                                    <Border Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="0,1,0,0"
-                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <!-- Out of the item's 12 px padding, and of the group indent -->
-                                                <Setter Property="Margin" Value="-12,0,-12,0" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsInGroup}" Value="True">
-                                                        <Setter Property="Margin" Value="-36,0,-12,0" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                    </Border>
+                                    <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="{Binding DividerMargin}" BorderThickness="0,1,0,0"
+                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
                                 </Grid>
                             </DataTemplate>
                         </ResourceDictionary>
@@ -363,6 +368,12 @@
                     <ui:SettingsCard Header="{x:Static r:Strings.MacroEditor_Speed}">
                         <!-- The index of MacroDefinition.SpeedSteps; its text is the speed (×0.25 to ×4) -->
                         <views:ValueSlider x:Name="SpeedSlider" Minimum="0" Maximum="4" Step="1" Label="{x:Static r:Strings.MacroEditor_Speed}" />
+                    </ui:SettingsCard>
+
+                    <!-- Shown when the macro has an If: how often its conditions look at the screen -->
+                    <ui:SettingsCard x:Name="ChecksCard" Header="{x:Static r:Strings.MacroEditor_ChecksPerSecond}"
+                                     Description="{x:Static r:Strings.MacroEditor_ChecksPerSecondDescription}" Visibility="Collapsed">
+                        <ComboBox x:Name="ChecksBox" MinWidth="160" AutomationProperties.Name="{x:Static r:Strings.MacroEditor_ChecksPerSecond}" />
                     </ui:SettingsCard>
 
                     <ui:SettingsCard Header="{x:Static r:Strings.Editor_Activation}" ContentAlignment="Vertical" HorizontalContentAlignment="Left">

@@ -1169,4 +1169,148 @@ Detalii: {1}</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Grilă</value></data>
   <data name="Table_State" xml:space="preserve"><value>Stare</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Editare</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Alegeți pixelul</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Faceți clic pe pixelul de verificat. Se preia și culoarea lui.</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Capturați imaginea</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Glisați în jurul imaginii de căutat. Glisați din nou pentru a o schimba.</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Desenați zona de căutare</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Glisați peste zona în care caută PuppyMacro. Cu cât zona este mai mică, cu atât căutarea este mai rapidă.</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Capturare imagine</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Utilizați această zonă</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro nu poate vedea ecranul acum. Încercați din nou peste câteva momente.</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Punct fix</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Locul găsit de {0}</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Într-un If, acțiunea poate merge acolo unde o condiție și-a găsit imaginea sau textul, oriunde s-ar afla de data aceasta.</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Deplasare față de centru</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Pixeli spre dreapta și în jos. Utilizați numere negative pentru a merge spre stânga sau în sus.</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Pixeli spre dreapta</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Pixeli în jos</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>la locul găsit de {0}</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Adăugare condiție</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Editare condiție - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Culoare pixel</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Imagine pe ecran</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Text pe ecran</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Imagine</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Text</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Condiții</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Adăugare condiție</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Adăugați o condiție cu Adăugare condiție.</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Eliminare condiție</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Eliminare imagine</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Acțiunile din Then utilizează acest nume pentru a merge la locul găsit.</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Pixel</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Culoare</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Preluată de pe ecran când alegeți pixelul.</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Toleranță</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>Cât de mult poate diferi culoarea de pe ecran. La 0%, contează doar exact aceeași culoare.</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Imagini</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>Condiția este adevărată când una dintre ele apare pe ecran.</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Capturare de pe ecran</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Capturare altă imagine</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} pixeli, capturată la {2}, {3}</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro nu are această imagine. Capturați-o din nou.</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Zonă de căutare</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>În jurul locului unde a fost capturată</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>Tot ecranul</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>O zonă pe care o desenez</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Lângă locul unde a fost capturată imaginea, ceea ce este rapid. Imaginea este găsită chiar dacă se mută puțin.</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Desenați zona cu Desenare pe ecran.</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>La {0}, {1}, {2} × {3} pixeli. Cu cât zona este mai mică, cu atât căutarea este mai rapidă.</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Desenare pe ecran</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Desenați zona de căutare cu Desenare pe ecran.</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>Puțin mai mare sau mai mică</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>Găsește imaginea și când aplicația o afișează puțin mai mare sau mai mică, cu până la 15%. Durează mai mult.</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Asemănare</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>Cât de mult trebuie să semene ecranul cu imaginea. Micșorați puțin valoarea dacă imaginea se schimbă, de exemplu din cauza luminii sau a efectelor.</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Text</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Potrivire</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Dacă textul găsit poate avea și alte cuvinte în jurul lui.</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Conține textul</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Exact aceste cuvinte</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Potrivire litere mari și mici</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Limbă</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>Limba textului de pe ecran. Lista arată limbile pe care Windows le poate citi pe acest PC.</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Limba Windows</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Limba Windows ({0})</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Acum pe ecran</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro citește textul cu recunoașterea textului din Windows, care este mai lentă decât căutarea unei imagini. Utilizați-o când cuvintele rămân aceleași, dar aspectul lor se schimbă, de exemplu fontul, culoarea sau fundalul. Păstrați zona de căutare mică.</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>Când se execută Then</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Then se execută când toate condițiile sunt adevărate sau imediat ce una dintre ele este adevărată.</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>Toate sunt adevărate</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>Una dintre ele este adevărată</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Așteptare</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>În timp ce așteaptă, PuppyMacro verifică din nou de fiecare dată când se schimbă ecranul.</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Verificare o singură dată</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Până la</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>Cât este nevoie</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Secunde de așteptare</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Introduceți câte secunde să se aștepte, între 0,1 și 86.400.</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>Dacă condițiile nu sunt adevărate</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Imediat după o singură verificare.</value></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>După {0} secundă de așteptare.</value></data>
+  <data name="Condition_IfNotTrueAfter_few" xml:space="preserve"><value>După {0} secunde de așteptare.</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>După {0} de secunde de așteptare.</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>Macrocomanda așteaptă până când sunt adevărate sau până când o opriți.</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Executare acțiuni din Else</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Oprire macrocomandă</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Verifică acum condițiile pe ecran, fără a executa nicio acțiune</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} este {2}, cu o toleranță de {3}%</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Alegeți pixelul de pe ecran.</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, asemănare de {2}%</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Capturați imaginea de pe ecran.</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Conține „{0}”, {1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exact „{0}”, {1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Scrieți textul de căutat.</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>în jurul locului unde a fost capturată</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>pe tot ecranul</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>în zona desenată</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>Pixelul se potrivește acum. Culoarea lui este {0}.</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>Pixelul nu se potrivește acum. Culoarea lui este {0}, cu o diferență de {1}%, mai mare decât toleranța de {2}%.</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>Găsită acum la {0}, {1}, cu o asemănare de {2}%.</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>Imaginea nu este pe ecran acum. Cea mai apropiată potrivire are o asemănare de {0}%, iar această condiție necesită {1}%.</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>Găsit acum la {0}, {1}.</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>„{0}” nu este pe ecran acum. PuppyMacro a citit „{1}” în zona de căutare.</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>„{0}” nu este pe ecran acum. PuppyMacro nu a citit niciun text în zona de căutare.</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro vede doar negru în această zonă. Este posibil ca aplicația să blocheze captura de ecran sau să ruleze pe ecran complet exclusiv. Încercați modul fără margini sau modul fereastră al aplicației.</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows nu poate citi text în {0} pe acest PC. Adăugați limba în Setări Windows, la Timp &amp; limbă › Limbă &amp; regiune, apoi alegeți-o din nou aici.</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>Zona de căutare se află pe un ecran care nu este conectat acum. Desenați din nou zona pe un ecran pe care îl aveți.</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>nicio condiție încă</value></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} condiție, toate adevărate</value></data>
+  <data name="MacroEditor_RowIfAll_few" xml:space="preserve"><value>{0} condiții, toate adevărate</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} de condiții, toate adevărate</value></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} condiție, ajunge una</value></data>
+  <data name="MacroEditor_RowIfAny_few" xml:space="preserve"><value>{0} condiții, ajunge una</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} de condiții, ajunge una</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>verifică o dată</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>așteaptă până la {0} s</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>așteaptă cât este nevoie</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>pixelul de la {0}, {1} este {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} este pe ecran</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>„{0}” este pe ecran</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>la locul găsit de {0}</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>când condițiile sunt adevărate</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>când nu sunt</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · nicio acțiune încă. Selectați această ramură, apoi adăugați acțiuni.</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Acțiunile noi se adaugă la sfârșitul ramurii {0} din #{1}</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>între {0} și {1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} sau mai mult</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>Acțiunea #{0} merge la locul găsit de {1}, dar nu se mai află în Then-ul acelei condiții. Mutați-o înapoi înăuntru sau alegeți un punct fix.</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Verificări pe secundă</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>De câte ori pe secundă verifică condițiile ecranul cât timp așteaptă. Mai puține verificări lasă mai multe resurse ale computerului pentru alte programe, iar mai multe verificări observă mai repede o schimbare.</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>Fiecare cadru</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Recunoaștere ecran</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Căutare imagini cu</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automat utilizează placa grafică pentru zone mari și procesorul pentru zone mici, ceea ce este de obicei cel mai rapid.</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automat</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Placă grafică</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Procesor</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>A cerut un pixel: {0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>A cerut o imagine: {0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>A cerut o zonă de căutare: {0}</value></data>
 </root>

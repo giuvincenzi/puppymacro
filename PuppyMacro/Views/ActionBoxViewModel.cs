@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -108,7 +110,69 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         _smoothSpeed = Math.Clamp(action.SmoothSpeed, 1, 5);
         _directionIndex = (int)action.ScrollDirection;
         _steps = Math.Max(1, action.ScrollSteps);
+        _foundId = action.FoundId;
+        _offsetX = action.FoundOffsetX;
+        _offsetY = action.FoundOffsetY;
     }
+
+    // ---- Where a condition found something (a mouse action inside an If's Then) ----
+
+    private IReadOnlyList<(Guid Id, string Name)> _founds = Array.Empty<(Guid, string)>();
+    private Guid? _foundId;
+    private double _offsetX, _offsetY;
+
+    /// <summary>
+    /// The conditions whose image or text this action can go to (those of the Ifs whose Then holds it), by Id with their
+    /// names. Without any, the action has only its fixed point.
+    /// </summary>
+    public void SetFounds(IReadOnlyDictionary<Guid, string> found)
+    {
+        _founds = found.Select(f => (f.Key, f.Value)).ToList();
+        if (_foundId is Guid id && !found.ContainsKey(id))
+            _foundId = null; // its condition is not around it any more: the point it had stays
+        foreach (string name in new[]
+        {
+            nameof(HasFounds), nameof(PositionChoices), nameof(PositionIndex), nameof(UsesFound), nameof(ShowFixedPoint),
+            nameof(ShowPositionFirst), nameof(ShowFoundPosition), nameof(ShowHeaderPoint), nameof(Summary),
+        })
+            Changed(name);
+    }
+
+    public bool HasFounds => _founds.Count > 0 && InMacro && (IsMouseKind || IsMoveTo);
+
+    /// <summary>The Position list: Fixed point, then "Where … was found" for each condition.</summary>
+    public IReadOnlyList<string> PositionChoices =>
+        new[] { Strings.Action_PositionFixed }
+            .Concat(_founds.Select(f => Fill(Strings.Action_PositionFound, f.Name))).ToList();
+
+    public int PositionIndex
+    {
+        get => _foundId is Guid id ? _founds.ToList().FindIndex(f => f.Id == id) + 1 : 0;
+        set
+        {
+            _foundId = value > 0 && value <= _founds.Count ? _founds[value - 1].Id : null;
+            foreach (string name in new[] { nameof(PositionIndex), nameof(UsesFound), nameof(ShowFixedPoint), nameof(Summary) })
+                Changed(name);
+        }
+    }
+
+    /// <summary>The action goes where its condition found something, not to a fixed point.</summary>
+    public bool UsesFound => _foundId != null && HasFounds;
+    public bool ShowFixedPoint => !UsesFound;
+
+    public double OffsetX
+    {
+        get => _offsetX;
+        set { _offsetX = value; Changed(); Changed(nameof(Summary)); }
+    }
+
+    public double OffsetY
+    {
+        get => _offsetY;
+        set { _offsetY = value; Changed(); Changed(nameof(Summary)); }
+    }
+
+    private string FoundName => _founds.FirstOrDefault(f => f.Id == _foundId).Name ?? "";
 
     /// <summary>A new loop row of <paramref name="kind"/>: Press key waits for its key at once.</summary>
     public static ActionBoxViewModel NewLoopRow(ActionKind kind)
@@ -183,7 +247,13 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
 
     public bool ShowRun => InLoop && PressOrClick;
     public bool ShowEvery => InLoop && !IsHolding;
-    public bool ShowPositionFirst => InMacro && IsMouseKind;
+    public bool ShowPositionFirst => InMacro && IsMouseKind && !HasFounds;
+
+    /// <summary>A macro's mouse action or Move to inside an If's Then: Position chooses a fixed point or where it was found.</summary>
+    public bool ShowFoundPosition => HasFounds;
+
+    /// <summary>Move to's point in the box's header, when there is nothing else to choose.</summary>
+    public bool ShowHeaderPoint => IsMoveTo && !HasFounds;
     public bool ShowModeFirst => InMacro && IsClick;
     public bool ShowHoldFor => PressOrClick && !IsHolding;
     public bool ShowModeAfterHold => InLoop && IsClick && !IsHolding;
@@ -411,8 +481,9 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     /// <summary><paramref name="what"/> with the number of times when more than one ("Ctrl + C 3 times").</summary>
     private string WithTimes(string what) => Times > 1 ? Plurals.Format("Action_SummaryTimes", (long)Math.Round(Times), what) : what;
 
-    private string Point => Fill(Strings.Action_SummaryAt,
-        Number(X, 0).ToString("0", CultureInfo.CurrentCulture), Number(Y, 0).ToString("0", CultureInfo.CurrentCulture));
+    private string Point => UsesFound
+        ? Fill(Strings.Action_SummaryWhereFound, FoundName)
+        : Fill(Strings.Action_SummaryAt, Number(X, 0).ToString("0", CultureInfo.CurrentCulture), Number(Y, 0).ToString("0", CultureInfo.CurrentCulture));
 
     /// <summary>The loop editor row's accessible name: the title and the summary.</summary>
     public string AccessibleName => AccessibleNames.Join(Title, Summary);
@@ -431,7 +502,8 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
                     WithTimes(_doubleClick ? MouseButtonBox.DoubleClickName(_mouseVk) : MouseButtonBox.ButtonName(_mouseVk)),
                     InLoop && !_fixedPoint ? Strings.Action_SummaryWherePointerIs : Point),
                 ActionKind.MouseDown or ActionKind.MouseUp => List(MouseButtonBox.ButtonName(_mouseVk), Point),
-                ActionKind.MoveTo => _smooth ? Strings.Action_Smoothly : Strings.Action_Instantly,
+                ActionKind.MoveTo => UsesFound ? List(_smooth ? Strings.Action_Smoothly : Strings.Action_Instantly, Point)
+                    : _smooth ? Strings.Action_Smoothly : Strings.Action_Instantly,
                 ActionKind.Scroll => List(DirectionName(_directionIndex), Plurals.Format("Action_SummarySteps", (long)Number(_steps, 1))),
                 _ => string.IsNullOrEmpty(_text)
                     ? Strings.Action_SummaryNoText
@@ -538,6 +610,9 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         {
             a.X = (int)Number(_x, 0);
             a.Y = (int)Number(_y, 0);
+            a.FoundId = UsesFound ? _foundId : null;
+            a.FoundOffsetX = UsesFound ? (int)Number(_offsetX, 0) : 0;
+            a.FoundOffsetY = UsesFound ? (int)Number(_offsetY, 0) : 0;
         }
         if (IsMoveTo)
         {

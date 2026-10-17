@@ -1213,4 +1213,148 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Grid</value><comment>A view of the Loops, Macros and Remap pages: tiles.</comment></data>
   <data name="Table_State" xml:space="preserve"><value>State</value><comment>A column of the tables: Running, Idle, Disabled…</comment></data>
   <data name="Card_Edit" xml:space="preserve"><value>Edit</value><comment>The first command of a loop's, macro's or remap's More options menu: opens its editor.</comment></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Pick the pixel</value><comment>Title of the full-screen window that picks a pixel</comment></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Click the pixel to check. Its color is taken too.</value><comment>Instructions while picking a pixel</comment></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Take the image</value><comment>Title of the full-screen window that takes an image</comment></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Drag around the image to look for. Drag again to change it.</value><comment>Instructions while taking an image</comment></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Draw the search area</value><comment>Title of the full-screen window that draws a search area</comment></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Drag the area where PuppyMacro looks. A smaller area is faster.</value><comment>Instructions while drawing a search area</comment></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Take image</value><comment>Button: takes the rectangle drawn as the image to look for</comment></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Use this area</value><comment>Button: uses the rectangle drawn as the search area</comment></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value><comment>Size of the rectangle drawn: {0} width, {1} height, in pixels</comment></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value><comment>Next to the enlarged pixels: {0} the color (#RRGGBB), {1} X, {2} Y</comment></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro can't see the screen right now. Try again in a moment.</value><comment>The screen could not be captured for a pick</comment></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Fixed point</value><comment>Position choice of a mouse action: the X and Y written in the action</comment></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Where {0} was found</value><comment>Position choice of a mouse action inside an If: {0} the name of the condition (an image or a text)</comment></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Inside an If, the action can go where a condition found its image or text, wherever it is this time.</value><comment>Description of the Position card of a mouse action inside an If</comment></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Move from the center</value><comment>Card header: how far from the center of what was found the action goes</comment></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Pixels to the right and down. Use negative numbers to go left or up.</value><comment>Description of Move from the center</comment></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Pixels to the right</value><comment>Accessible name of the X field of Move from the center</comment></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Pixels down</value><comment>Accessible name of the Y field of Move from the center</comment></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>where {0} was found</value><comment>Part of an action's summary: {0} the name of the condition whose image or text it goes to</comment></data>
+  <data name="Macro_If" xml:space="preserve"><value>If</value><comment>GLOBAL. The If action of a macro (the user's choice: If, Then and Else stay as they are in every language)</comment></data>
+  <data name="Macro_Then" xml:space="preserve"><value>Then</value><comment>GLOBAL. The actions an If runs when its conditions are true</comment></data>
+  <data name="Macro_Else" xml:space="preserve"><value>Else</value><comment>GLOBAL. The actions an If runs when its conditions are not true</comment></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Add condition</value><comment>Title of the window that adds an If</comment></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Edit condition - {0}</value><comment>Title of the window that edits an If: {0} its name or what it checks</comment></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Pixel color</value><comment>A kind of condition: the color of one pixel</comment></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Image on screen</value><comment>A kind of condition: an image shown on the screen</comment></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Text on screen</value><comment>A kind of condition: a text shown on the screen</comment></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Image</value><comment>The start of a new image condition's name, as in "Image 1"</comment></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Text</value><comment>The start of a new text condition's name, as in "Text 1"</comment></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value><comment>A new condition's name: {0} Image or Text, {1} a number</comment></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Conditions</value><comment>Section title in the condition window, and the card choosing All or Any</comment></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Add condition</value><comment>Button that adds a condition, with the three kinds in its menu</comment></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Add a condition with Add condition.</value><comment>Shown while an If has no conditions</comment></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Remove condition</value><comment>Button that removes a condition</comment></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Remove image</value><comment>Button that removes one image of an image condition</comment></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Name</value><comment>Card header of an image or text condition's name</comment></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>The actions in Then use this name to go where it was found.</value><comment>Description of a condition's name</comment></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Pixel</value><comment>Card header: the point whose color is checked</comment></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Color</value><comment>Card header: the pixel's color</comment></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Taken from the screen when you pick the pixel.</value><comment>Description of the pixel's color</comment></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Tolerance</value><comment>Card header: how much the color may differ</comment></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>How much the color on the screen may differ. At 0% only the same color counts.</value><comment>Description of Tolerance</comment></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Images</value><comment>Card header: the images an image condition looks for</comment></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>The condition is true when one of them is on the screen.</value><comment>Description of Images</comment></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Take on screen</value><comment>Button that takes the image to look for from the screen</comment></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Take another image</value><comment>Button that adds another image the condition can find</comment></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} pixels, taken at {2}, {3}</value><comment>Under an image: {0} width, {1} height, {2} X, {3} Y where it was taken</comment></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro doesn't have this image. Take it again.</value><comment>Under an image that is not in PuppyMacro's data</comment></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Search area</value><comment>Card header: where the image or the text is looked for</comment></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>Around where it was taken</value><comment>Search area choice</comment></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>The whole screen</value><comment>Search area choice</comment></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>An area I draw</value><comment>Search area choice</comment></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Near where the image was taken, which is fast. It still finds the image if it moves a little.</value><comment>Description of Search area: Around where it was taken</comment></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Draw the area with Draw on screen.</value><comment>Description of Search area before an area is drawn</comment></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>At {0}, {1}, {2} × {3} pixels. A smaller area is faster.</value><comment>Description of Search area: {0} X, {1} Y, {2} width, {3} height</comment></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Draw on screen</value><comment>Button that draws the search area on the screen</comment></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Draw the search area with Draw on screen.</value><comment>Problem: the condition has no area to look in</comment></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>A little bigger or smaller</value><comment>Card header: also finds the image from 85% to 115% of its size</comment></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>Finds the image also when the app shows it a little bigger or smaller, up to 15%. It takes longer.</value><comment>Description of A little bigger or smaller</comment></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Similarity</value><comment>Card header: how closely the screen must look like the image</comment></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>How closely the screen must look like the image. Lower it a little if the image changes, for example with light or effects.</value><comment>Description of Similarity</comment></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Text</value><comment>Card header: the text to find</comment></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Match</value><comment>Card header: whether the text found may have other words around it</comment></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Whether the text found may have other words around it.</value><comment>Description of Match</comment></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Contains the text</value><comment>Match choice</comment></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Exactly these words</value><comment>Match choice</comment></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Match uppercase and lowercase</value><comment>Card header of a switch</comment></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Language</value><comment>Card header: the language of the text on the screen</comment></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>The language of the text on the screen. The list shows the languages Windows can read on this PC.</value><comment>Description of Language</comment></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Windows language</value><comment>Language choice: the language Windows uses</comment></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Windows language ({0})</value><comment>Language choice: {0} the name of the language Windows uses</comment></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Now on the screen</value><comment>Card header: what PuppyMacro sees now for this condition</comment></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro reads the text with Windows' text recognition, which is slower than looking for an image. Use it when the words stay the same but their look changes, like the font, color or background. Keep the search area small.</value><comment>Shown in the condition window when it has a Text condition</comment></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>When to run Then</value><comment>Section title. Then is a global word: keep it as it is</comment></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Run Then when all the conditions are true, or as soon as one of them is.</value><comment>Description of the card choosing All or Any. Then is a global word</comment></data>
+  <data name="Condition_All" xml:space="preserve"><value>All of them are true</value><comment>Choice: every condition must be true</comment></data>
+  <data name="Condition_Any" xml:space="preserve"><value>One of them is true</value><comment>Choice: one condition is enough</comment></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Wait</value><comment>Card header: how long the macro waits for the conditions</comment></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>While it waits, PuppyMacro checks again every time the screen changes.</value><comment>Description of Wait</comment></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Check once</value><comment>Wait choice: no waiting</comment></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Up to</value><comment>Wait choice, followed by a number of seconds</comment></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>As long as it takes</value><comment>Wait choice: until the conditions are true or the macro is stopped</comment></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Seconds to wait</value><comment>Accessible name of the seconds field of Wait</comment></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Enter how many seconds to wait, from 0.1 to 86,400.</value><comment>Problem: the seconds to wait are not valid</comment></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>If the conditions aren't true</value><comment>Card header: what happens when the conditions are not true</comment></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Right after checking once.</value><comment>Description of If the conditions aren't true, with Check once</comment></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>After waiting {0} second.</value><comment>Description of If the conditions aren't true: {0} seconds</comment></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>After waiting {0} seconds.</value><comment>Description of If the conditions aren't true: {0} seconds</comment></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>The macro waits until they are true or you stop it.</value><comment>Description of If the conditions aren't true, with As long as it takes</comment></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Run the Else actions</value><comment>Choice: run the actions in Else. Else is a global word</comment></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Stop the macro</value><comment>Choice: the macro ends there</comment></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Checks the conditions on the screen now, without running any action</value><comment>Tooltip of Test in the condition window</comment></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} is {2}, with {3}% tolerance</value><comment>Under a pixel condition: {0} X, {1} Y, {2} color, {3} tolerance</comment></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Pick the pixel on the screen.</value><comment>Under a pixel condition without a color</comment></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, {2}% similar</value><comment>Under an image condition: {0} its name, {1} where it looks, {2} similarity</comment></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Take the image on the screen.</value><comment>Under an image condition without an image</comment></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Contains “{0}”, {1}</value><comment>Under a text condition: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exactly “{0}”, {1}</value><comment>Under a text condition: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Write the text to find.</value><comment>Under a text condition without text</comment></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>around where it was taken</value><comment>Part of a summary: where the image is looked for</comment></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>on the whole screen</value><comment>Part of a summary: where it is looked for</comment></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>in the area drawn</value><comment>Part of a summary: where it is looked for</comment></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>The pixel matches now. It is {0}.</value><comment>What PuppyMacro sees now: {0} the color</comment></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>The pixel doesn't match now. It is {0}, which differs by {1}%, more than the {2}% tolerance.</value><comment>What PuppyMacro sees now: {0} color, {1} difference, {2} tolerance</comment></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>Found now at {0}, {1}, {2}% similar.</value><comment>What PuppyMacro sees now: {0} X, {1} Y of the center, {2} similarity</comment></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>The image isn't on the screen now. The closest match is {0}% similar, and this condition needs {1}%.</value><comment>What PuppyMacro sees now: {0} best similarity, {1} the similarity needed</comment></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>Found now at {0}, {1}.</value><comment>What PuppyMacro sees now: {0} X, {1} Y of the text's center</comment></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>“{0}” isn't on the screen now. PuppyMacro read “{1}” in the search area.</value><comment>What PuppyMacro sees now: {0} the text looked for, {1} the text read</comment></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>“{0}” isn't on the screen now. PuppyMacro read no text in the search area.</value><comment>What PuppyMacro sees now: {0} the text looked for</comment></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro sees only black in this area. The app may block screen capture, or it may run in exclusive fullscreen. Try its borderless or windowed mode.</value><comment>What PuppyMacro sees now</comment></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows can't read {0} text on this PC. Add the language in Windows Settings, under Time &amp; language › Language &amp; region, then choose it here again.</value><comment>{0} the language's name</comment></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>The search area is on a screen that isn't connected now. Draw the area again on a screen you have.</value><comment>What PuppyMacro sees now</comment></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>no conditions yet</value><comment>Detail of an If row without conditions</comment></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} condition, all true</value><comment>Detail of an If row: {0} conditions that must all be true</comment></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} conditions, all true</value><comment>Detail of an If row: {0} conditions that must all be true</comment></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} condition, one is enough</value><comment>Detail of an If row: {0} conditions, one of them true is enough</comment></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} conditions, one is enough</value><comment>Detail of an If row: {0} conditions, one of them true is enough</comment></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>checks once</value><comment>Detail of an If row: it does not wait</comment></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>waits up to {0} s</value><comment>Detail of an If row: {0} seconds</comment></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>waits as long as it takes</value><comment>Detail of an If row</comment></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>the pixel at {0}, {1} is {2}</value><comment>Detail of an If row: {0} X, {1} Y, {2} color</comment></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} is on the screen</value><comment>Detail of an If row: {0} the image condition's name</comment></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>“{0}” is on the screen</value><comment>Detail of an If row: {0} the text</comment></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>where {0} was found</value><comment>Detail of a mouse action row: {0} the condition whose image or text it goes to</comment></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>when the conditions are true</value><comment>What Then means, after its name</comment></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>when they aren't</value><comment>What Else means, after its name</comment></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value><comment>Details of a Then or Else: {0} when it runs, {1} how many actions ("3 actions")</comment></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · no actions yet. Select it, then add them.</value><comment>Details of an empty Then or Else: {0} when it runs</comment></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>New actions go at the end of {0} of #{1}</value><comment>{0} Then or Else (global words), {1} the number of its If</comment></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>{0} to {1}</value><comment>How long the macro takes with conditions: {0} the shortest, {1} the longest</comment></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} or more</value><comment>How long the macro takes when a condition waits as long as it takes: {0} the shortest</comment></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>Action #{0} goes where {1} was found, but it isn't inside that condition's Then anymore. Move it back inside, or choose a fixed point.</value><comment>{0} the action's number, {1} the condition's name. Then is a global word</comment></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Checks per second</value><comment>Card header in the macro editor, shown when the macro has an If</comment></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>How many times a second the conditions look at the screen while they wait. Fewer checks leave more of the computer to other programs, more checks notice a change sooner.</value><comment>Description of Checks per second</comment></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>Every frame</value><comment>Checks per second choice: every time the screen shows a new image</comment></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Screen recognition</value><comment>Settings section about how the macros' conditions look at the screen</comment></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Look for images with</value><comment>Settings card: where the images of the macros' conditions are searched</comment></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automatic uses the graphics card for large areas and the processor for small ones, which is usually the fastest.</value><comment>Description of Look for images with</comment></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automatic</value><comment>Choice of Look for images with</comment></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Graphics card</value><comment>Choice of Look for images with</comment></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Processor</value><comment>Choice of Look for images with</comment></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>Asked for a pixel: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>Asked for an image: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>Asked for a search area: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
 </root>

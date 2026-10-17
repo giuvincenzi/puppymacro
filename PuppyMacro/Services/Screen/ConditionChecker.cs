@@ -16,6 +16,13 @@ internal sealed record ConditionResult(bool Met, bool Stopped, IReadOnlyDictiona
 }
 
 /// <summary>
+/// One condition checked now, with what PuppyMacro saw (the editor's messages): the pixel's color, the image's best
+/// similarity, the text read, or why it could not look.
+/// </summary>
+internal sealed record ConditionReport(bool Met, Point? At = null, double Score = 0, string? Color = null, string? Read = null,
+    bool Black = false, bool NoMonitor = false, bool NoLanguage = false);
+
+/// <summary>
 /// Checks the conditions of a macro's If on the screen, for one macro run: the images are read and prepared once and kept
 /// until <see cref="Dispose"/>. Checks run at each new image of the screen, at most <c>ChecksPerSecond</c> times a second
 /// (0: every image); the macro's Speed does not change the wait.
@@ -113,6 +120,77 @@ internal sealed class ConditionChecker : IDisposable
             foreach (var look in looks)
                 look.Watch?.Dispose();
         }
+    }
+
+    /// <summary>Checks one condition on the screen now and says what it saw (the editor's live check and Test).</summary>
+    public ConditionReport Inspect(MacroCondition condition)
+    {
+        if (condition.Kind == ConditionKind.Text && !TextReader.CanRead(condition.Language))
+            return new ConditionReport(false, NoLanguage: true);
+        var looks = Places(condition).ToList();
+        if (looks.Count == 0)
+            return new ConditionReport(false);
+        try
+        {
+            foreach (var look in looks)
+                look.Watch = _screen.Start(look.Area);
+            if (looks.All(l => l.Watch == null))
+                return new ConditionReport(false, NoMonitor: true);
+            var clock = Stopwatch.StartNew();
+            while (clock.ElapsedMilliseconds < FirstImageMs && looks.Any(l => l.Watch is { Version: 0 }))
+                Thread.Sleep(15);
+
+            var report = new ConditionReport(false);
+            foreach (var look in looks.Where(l => l.Watch != null))
+            {
+                Rect area = look.Area.Intersect(look.Watch!.Bounds);
+                using var picture = look.Watch.Copy(area);
+                if (picture == null)
+                    continue;
+                bool black = IsBlack(picture);
+                switch (condition.Kind)
+                {
+                    case ConditionKind.Pixel:
+                    {
+                        var color = picture.At<Vec3b>(0, 0);
+                        return new ConditionReport(PixelMatches(color, condition.Color, condition.Tolerance), new Point(condition.X, condition.Y),
+                            Color: ScreenSnapshot.Hex(color));
+                    }
+                    case ConditionKind.Image:
+                    {
+                        var (met, at, score) = FindImage(look.Watch, area, look.Image!, condition);
+                        if (met && (!report.Met || score > report.Score) || !report.Met && score > report.Score)
+                            report = new ConditionReport(met, met ? at : null, score, Black: black);
+                        else if (black)
+                            report = report with { Black = true };
+                        break;
+                    }
+                    case ConditionKind.Text:
+                    {
+                        var lines = TextReader.Read(picture, condition.Language);
+                        string read = string.Join(" ", lines.Select(l => string.Join(" ", l.Select(w => w.Text))));
+                        var found = string.IsNullOrWhiteSpace(condition.Text) ? null
+                            : TextReader.Find(lines, condition.Text, condition.TextMatch, condition.MatchCase);
+                        Point? at = found is { } r ? new Point(area.X + r.X + r.Width / 2, area.Y + r.Y + r.Height / 2) : null;
+                        return new ConditionReport(found != null, at, Read: read, Black: black);
+                    }
+                }
+            }
+            return report;
+        }
+        finally
+        {
+            foreach (var look in looks)
+                look.Watch?.Dispose();
+        }
+    }
+
+    /// <summary>Nothing but black: the app hides itself from screen capture, or runs in exclusive fullscreen.</summary>
+    private static bool IsBlack(Mat picture)
+    {
+        using var gray = picture.Channels() == 1 ? picture.Clone() : picture.CvtColor(ColorConversionCodes.BGR2GRAY);
+        Cv2.MinMaxLoc(gray, out _, out double max);
+        return max < 8;
     }
 
     /// <summary>All or Any of the conditions; the places found are those of the conditions found true.</summary>

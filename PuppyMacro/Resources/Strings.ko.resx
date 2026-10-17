@@ -1098,4 +1098,142 @@
   <data name="Main_ViewGrid" xml:space="preserve"><value>그리드</value></data>
   <data name="Table_State" xml:space="preserve"><value>상태</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>편집</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>픽셀 고르기</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>확인할 픽셀을 클릭하세요. 해당 픽셀의 색도 함께 가져옵니다.</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>이미지 캡처</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>찾을 이미지를 둘러싸도록 끌어서 선택하세요. 다시 끌면 바꿀 수 있습니다.</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>검색 영역 그리기</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>PuppyMacro가 찾을 영역을 끌어서 지정하세요. 영역이 작을수록 빠릅니다.</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>이미지 캡처</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>이 영역 사용</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>지금은 PuppyMacro가 화면을 가져올 수 없습니다. 잠시 후 다시 시도하세요.</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>고정 지점</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>{0}을(를) 찾은 위치</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>If 안에서는 조건이 이미지나 텍스트를 찾은 위치로 동작이 이동할 수 있습니다. 그 위치가 매번 달라져도 됩니다.</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>중심에서 이동</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>오른쪽과 아래쪽으로 이동할 픽셀 수입니다. 왼쪽이나 위쪽으로 이동하려면 음수를 사용하세요.</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>오른쪽 픽셀 수</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>아래쪽 픽셀 수</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>{0}을(를) 찾은 위치</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>조건 추가</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>조건 편집 - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>픽셀 색</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>화면의 이미지</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>화면의 텍스트</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>이미지</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>텍스트</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>조건</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>조건 추가</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>[조건 추가]로 조건을 추가하세요.</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>조건 제거</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>이미지 제거</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>이름</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Then의 동작은 이 이름을 사용해 찾은 위치로 이동합니다.</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>픽셀</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>색</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>픽셀을 고를 때 화면에서 가져옵니다.</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>허용 오차</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>화면의 색이 얼마나 달라도 되는지 지정합니다. 0%이면 같은 색만 일치하는 것으로 봅니다.</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>이미지</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>이미지 중 하나가 화면에 있으면 조건이 충족됩니다.</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>화면에서 캡처</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>다른 이미지 캡처</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1}픽셀, {2}, {3}에서 캡처함</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro에 이 이미지가 없습니다. 다시 캡처하세요.</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>검색 영역</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>캡처한 위치 주변</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>화면 전체</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>직접 그린 영역</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>이미지를 캡처한 위치 근처에서 찾으므로 빠릅니다. 이미지가 조금 움직여도 찾을 수 있습니다.</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>[화면에 그리기]로 영역을 그리세요.</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>위치 {0}, {1}, 크기 {2} × {3}픽셀. 영역이 작을수록 빠릅니다.</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>화면에 그리기</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>[화면에 그리기]로 검색 영역을 그리세요.</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>조금 더 크거나 작아도 찾기</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>앱에서 이미지가 최대 15%까지 더 크거나 작게 표시되어도 찾습니다. 시간이 더 걸립니다.</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>유사도</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>화면이 이미지와 얼마나 비슷해야 하는지 지정합니다. 조명이나 효과 등으로 이미지가 달라진다면 조금 낮추세요.</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>텍스트</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>일치 방식</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>찾은 텍스트 앞뒤에 다른 단어가 있어도 되는지 지정합니다.</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>텍스트 포함</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>이 단어와 정확히 일치</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>대/소문자 구분</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>언어</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>화면에 있는 텍스트의 언어입니다. 목록에는 이 PC의 Windows가 읽을 수 있는 언어가 표시됩니다.</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Windows 언어</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Windows 언어({0})</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>현재 화면</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro는 Windows의 텍스트 인식으로 텍스트를 읽으므로 이미지를 찾는 것보다 느립니다. 글꼴, 색, 배경 같은 모양은 바뀌어도 단어는 그대로인 경우에 사용하세요. 검색 영역은 작게 유지하세요.</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>Then 실행 시점</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>모든 조건이 충족될 때, 또는 조건 중 하나라도 충족되는 즉시 Then을 실행합니다.</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>모두 충족</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>하나라도 충족</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>대기</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>대기하는 동안 PuppyMacro는 화면이 바뀔 때마다 다시 확인합니다.</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>한 번만 확인</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>최대</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>충족될 때까지</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>대기할 시간(초)</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>대기할 시간을 0.1초에서 86,400초 사이로 입력하세요.</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>조건이 충족되지 않으면</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>한 번 확인한 직후.</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>{0}초 동안 기다린 후.</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>조건이 충족되거나 매크로를 중지할 때까지 매크로가 기다립니다.</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Else 동작 실행</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>매크로 중지</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>동작을 실행하지 않고 지금 화면에서 조건을 확인합니다</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1}의 색이 {2}, 허용 오차 {3}%</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>화면에서 픽셀을 고르세요.</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, 유사도 {2}%</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>화면에서 이미지를 캡처하세요.</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>"{0}" 포함, {1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>"{0}"와(과) 정확히 일치, {1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>찾을 텍스트를 입력하세요.</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>캡처한 위치 주변</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>화면 전체</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>그린 영역</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>지금 픽셀이 일치합니다. 색은 {0}입니다.</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>지금 픽셀이 일치하지 않습니다. 색은 {0}이며, 차이가 {1}%로 허용 오차 {2}%를 넘습니다.</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>지금 {0}, {1}에서 찾았습니다(유사도 {2}%).</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>지금 화면에 이미지가 없습니다. 가장 비슷한 부분의 유사도는 {0}%이며, 이 조건에는 {1}%가 필요합니다.</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>지금 {0}, {1}에서 찾았습니다.</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>지금 화면에 "{0}"이(가) 없습니다. PuppyMacro가 검색 영역에서 읽은 텍스트는 "{1}"입니다.</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>지금 화면에 "{0}"이(가) 없습니다. PuppyMacro가 검색 영역에서 텍스트를 읽지 못했습니다.</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro에는 이 영역이 검은색으로만 보입니다. 앱이 화면 캡처를 차단하거나 독점 전체 화면으로 실행 중일 수 있습니다. 테두리 없는 창 모드나 창 모드를 사용해 보세요.</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>이 PC의 Windows는 {0} 텍스트를 읽을 수 없습니다. Windows 설정의 [시간 및 언어] › [언어 및 지역]에서 언어를 추가한 다음, 여기서 다시 선택하세요.</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>검색 영역이 지금 연결되지 않은 화면에 있습니다. 사용 중인 화면에서 영역을 다시 그리세요.</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>아직 조건 없음</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>조건 {0}개, 모두 충족</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>조건 {0}개, 하나만 충족해도 됨</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>한 번 확인</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>최대 {0}초 대기</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>충족될 때까지 대기</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>{0}, {1}의 픽셀이 {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0}이(가) 화면에 있음</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>"{0}"이(가) 화면에 있음</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>{0}을(를) 찾은 위치</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>조건이 충족될 때</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>충족되지 않을 때</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · 아직 동작이 없습니다. 선택한 다음 동작을 추가하세요.</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>새 동작은 #{1}의 {0} 끝에 들어갑니다</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>{0}~{1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} 이상</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>동작 #{0}은(는) {1}을(를) 찾은 위치로 가지만, 이제 그 조건의 Then 안에 있지 않습니다. 다시 안으로 옮기거나 고정된 위치를 고르세요.</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>초당 확인 횟수</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>대기하는 동안 조건이 1초에 몇 번 화면을 확인할지 지정합니다. 횟수가 적을수록 다른 프로그램이 컴퓨터를 더 많이 사용할 수 있고, 많을수록 변화를 더 빨리 알아챕니다.</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>모든 프레임</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>화면 인식</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>이미지 검색에 사용할 장치</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>자동을 선택하면 넓은 영역에는 그래픽 카드를, 좁은 영역에는 프로세서를 사용합니다. 대개 이 방법이 가장 빠릅니다.</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>자동</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>그래픽 카드</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>프로세서</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>픽셀 요청함: {0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>이미지 요청함: {0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>검색 영역 요청함: {0}</value></data>
 </root>

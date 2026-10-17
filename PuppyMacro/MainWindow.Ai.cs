@@ -498,6 +498,8 @@ public partial class MainWindow : IAiHost
             OpacitySlider.Value = opacity;
         if (values.SoundVolume is int volume)
             VolumeSlider.Value = volume;
+        if (values.RecognitionDevice is RecognitionDevice device)
+            RecognitionDeviceComboBox.SelectedIndex = (int)device;
         if (values.StopAllHotkey is { IsSet: true } stopAll)
             _settings.StopAllHotkey = stopAll.Clone();
         if (values.OverlayModeHotkey is { IsSet: true } overlay)
@@ -555,6 +557,21 @@ public partial class MainWindow : IAiHost
         var picker = new PickPointWindow(pickApp: true, askedBy: app, reason: message);
         AiAnswer answer = ShowForAi(picker);
         return Task.FromResult((answer, answer == AiAnswer.Done ? picker.ResultApp : null));
+    }
+
+    Task<(AiAnswer Answer, AiScreenPick? Pick)> IAiHost.PickOnScreen(string app, string message, AiScreenPickKind kind)
+    {
+        var mode = kind switch { AiScreenPickKind.Image => ScreenPickMode.Image, AiScreenPickKind.Area => ScreenPickMode.Area, _ => ScreenPickMode.Pixel };
+        if (ScreenPickWindow.Create(mode, out _, app, message) is not { } picker)
+            return Task.FromResult<(AiAnswer, AiScreenPick?)>((AiAnswer.Cancelled, null));
+        AiAnswer answer = ShowForAi(picker);
+        AiScreenPick? pick = null;
+        if (answer == AiAnswer.Done && picker.PickedPixel is { } pixel)
+            pick = new AiScreenPick(pixel.X, pixel.Y, 1, 1, Color: pixel.Color);
+        else if (answer == AiAnswer.Done && picker.PickedArea is { } area)
+            pick = new AiScreenPick(area.Area.X, area.Area.Y, area.Area.Width, area.Area.Height,
+                ImageId: area.Png is { } png ? _macros.Images.Add(png) : null);
+        return Task.FromResult((pick == null && answer == AiAnswer.Done ? AiAnswer.Cancelled : answer, pick));
     }
 
     Task<(AiAnswer Answer, HotkeyBinding? Keys)> IAiHost.CaptureKeys(string app, AiAsk ask)
@@ -668,7 +685,7 @@ public partial class MainWindow : IAiHost
     private AiAnswer ShowForAi(Window dialog)
     {
         // The picker and the placement screen cover the screen, are topmost and must stay so, and activate themselves.
-        if (dialog is not (PickPointWindow or PlacementWindow))
+        if (dialog is not (PickPointWindow or PlacementWindow or ScreenPickWindow))
         {
             dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             AiWindow.BringToFront(dialog);

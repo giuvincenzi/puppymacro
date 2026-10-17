@@ -1139,4 +1139,145 @@ Detajet: {1}</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Rrjetë</value></data>
   <data name="Table_State" xml:space="preserve"><value>Gjendja</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Redakto</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Zgjidhni pikselin</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Klikoni pikselin që do të kontrollohet. Merret edhe ngjyra e tij.</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Kapni imazhin</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Zvarritni rreth imazhit që do të kërkohet. Zvarritni sërish për ta ndryshuar.</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Vizatoni zonën e kërkimit</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Zvarritni mbi zonën ku do të kërkojë PuppyMacro. Sa më e vogël zona, aq më i shpejtë kërkimi.</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Kap imazhin</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Përdor këtë zonë</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro nuk e sheh dot ekranin tani. Provoni sërish pas pak.</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Pikë fikse</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Aty ku u gjet {0}</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Brenda një If, veprimi mund të shkojë aty ku një kusht gjeti imazhin ose tekstin e tij, kudo që të ndodhet këtë herë.</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Zhvendosje nga qendra</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Piksela djathtas dhe poshtë. Përdorni numra negativë për të shkuar majtas ose lart.</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Piksela djathtas</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Piksela poshtë</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>aty ku u gjet {0}</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Shto kusht</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Redakto kushtin - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Ngjyra e pikselit</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Imazh në ekran</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Tekst në ekran</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Imazh</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Tekst</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Kushtet</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Shto kusht</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Shtoni një kusht me Shto kusht.</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Hiq kushtin</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Hiq imazhin</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Veprimet në Then e përdorin këtë emër për të shkuar aty ku u gjet.</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Pikseli</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Ngjyra</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Merret nga ekrani kur zgjidhni pikselin.</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Toleranca</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>Sa mund të ndryshojë ngjyra në ekran. Në 0% vlen vetëm e njëjta ngjyrë.</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Imazhet</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>Kushti plotësohet kur njëri prej tyre shfaqet në ekran.</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Kap nga ekrani</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Kap një imazh tjetër</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} piksela, kapur në {2}, {3}</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro nuk e ka këtë imazh. Kapeni sërish.</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Zona e kërkimit</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>Rreth vendit ku u kap</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>I gjithë ekrani</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>Një zonë që vizatoj unë</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Pranë vendit ku u kap imazhi, gjë që është e shpejtë. Imazhi gjendet edhe nëse lëviz pak.</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Vizatoni zonën me Vizato në ekran.</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>Në {0}, {1}, {2} × {3} piksela. Sa më e vogël zona, aq më i shpejtë kërkimi.</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Vizato në ekran</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Vizatoni zonën e kërkimit me Vizato në ekran.</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>Pak më i madh ose më i vogël</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>E gjen imazhin edhe kur aplikacioni e shfaq pak më të madh ose më të vogël, deri në 15%. Kërkon më shumë kohë.</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Ngjashmëria</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>Sa shumë duhet t'i ngjajë ekrani imazhit. Uleni pak nëse imazhi ndryshon, për shembull nga drita ose efektet.</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Teksti</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Përputhja</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Nëse teksti i gjetur mund të ketë fjalë të tjera përreth.</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Përmban tekstin</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Pikërisht këto fjalë</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Dallo shkronjat e mëdha nga të voglat</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Gjuha</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>Gjuha e tekstit në ekran. Lista tregon gjuhët që Windows mund të lexojë në këtë PC.</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Gjuha e Windows</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Gjuha e Windows ({0})</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Tani në ekran</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro e lexon tekstin me njohjen e tekstit të Windows, që është më e ngadaltë se kërkimi i një imazhi. Përdoreni kur fjalët mbeten të njëjta, por pamja e tyre ndryshon, si fonti, ngjyra ose sfondi. Mbajeni të vogël zonën e kërkimit.</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>Kur të ekzekutohet Then</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Ekzekuto Then kur plotësohen të gjitha kushtet, ose sapo të plotësohet njëri prej tyre.</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>Plotësohen të gjitha</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>Plotësohet njëri prej tyre</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Pritja</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>Gjatë pritjes, PuppyMacro kontrollon sërish sa herë që ndryshon ekrani.</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Kontrollo një herë</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Deri në</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>Sa të jetë e nevojshme</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Sekondat e pritjes</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Shkruani sa sekonda të pritet, nga 0,1 deri në 86 400.</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>Nëse kushtet nuk plotësohen</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Menjëherë pas kontrollit të vetëm.</value></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>Pasi pret {0} sekondë.</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>Pasi pret {0} sekonda.</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>Makroja pret derisa të plotësohen ose derisa ta ndalni.</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Ekzekuto veprimet e Else</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Ndal makron</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Kontrollon tani kushtet në ekran, pa ekzekutuar asnjë veprim</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} është {2}, me tolerancë {3}%</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Zgjidhni pikselin në ekran.</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, ngjashmëri {2}%</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Kapni imazhin në ekran.</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Përmban "{0}", {1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Pikërisht "{0}", {1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Shkruani tekstin që do të kërkohet.</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>rreth vendit ku u kap</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>në gjithë ekranin</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>në zonën e vizatuar</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>Pikseli përputhet tani. Është {0}.</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>Pikseli nuk përputhet tani. Është {0}, që ndryshon me {1}%, më shumë se toleranca prej {2}%.</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>U gjet tani në {0}, {1}, ngjashmëri {2}%.</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>Imazhi nuk është në ekran tani. Përputhja më e afërt ka ngjashmëri {0}%, ndërsa ky kusht kërkon {1}%.</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>U gjet tani në {0}, {1}.</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>"{0}" nuk është në ekran tani. PuppyMacro lexoi "{1}" në zonën e kërkimit.</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>"{0}" nuk është në ekran tani. PuppyMacro nuk lexoi asnjë tekst në zonën e kërkimit.</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro sheh vetëm të zezë në këtë zonë. Aplikacioni mund ta bllokojë kapjen e ekranit ose mund të jetë në ekran të plotë ekskluziv. Provoni modalitetin pa korniza ose në dritare.</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows nuk mund të lexojë tekst në {0} në këtë PC. Shtoni gjuhën te Cilësimet e Windows, në Koha dhe gjuha › Gjuha dhe rajoni, pastaj zgjidheni sërish këtu.</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>Zona e kërkimit është në një ekran që nuk është i lidhur tani. Vizatojeni sërish zonën në një ekran që keni.</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>ende pa kushte</value></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} kusht, duhen të gjitha</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} kushte, duhen të gjitha</value></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} kusht, mjafton njëri</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} kushte, mjafton njëri</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>kontrollon një herë</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>pret deri në {0} s</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>pret sa të jetë e nevojshme</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>pikseli në {0}, {1} është {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} është në ekran</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>"{0}" është në ekran</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>aty ku u gjet {0}</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>kur kushtet plotësohen</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>kur nuk plotësohen</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · ende pa veprime. Përzgjidheni, pastaj shtojini.</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Veprimet e reja shkojnë në fund të {0} te #{1}</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>{0} deri në {1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} ose më shumë</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>Veprimi #{0} shkon aty ku u gjet {1}, por nuk është më brenda Then të atij kushti. Zhvendoseni sërish brenda ose zgjidhni një pikë fikse.</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Kontrolle në sekondë</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>Sa herë në sekondë i shohin ekranin kushtet gjatë pritjes. Me më pak kontrolle u mbetet më shumë kompjuter programeve të tjera, me më shumë kontrolle një ndryshim vihet re më shpejt.</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>Çdo kuadër</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Njohja e ekranit</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Kërko imazhet me</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automatike përdor kartën grafike për zonat e mëdha dhe procesorin për të voglat, që zakonisht është më e shpejta.</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automatike</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Karta grafike</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Procesori</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>Kërkoi një piksel: {0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>Kërkoi një imazh: {0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>Kërkoi një zonë kërkimi: {0}</value></data>
 </root>

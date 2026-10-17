@@ -1128,4 +1128,145 @@ Détails : {1}</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Grille</value></data>
   <data name="Table_State" xml:space="preserve"><value>État</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Modifier</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Choisir le pixel</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Cliquez sur le pixel à vérifier. Sa couleur est aussi relevée.</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Capturer l'image</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Faites glisser autour de l'image à rechercher. Faites glisser à nouveau pour la changer.</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Tracer la zone de recherche</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Faites glisser pour tracer la zone où PuppyMacro cherche. Plus la zone est petite, plus la recherche est rapide.</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Capturer l'image</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Utiliser cette zone</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro ne peut pas voir l'écran pour le moment. Réessayez dans un instant.</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Point fixe</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Là où se trouve {0}</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Dans un If, l'action peut aller là où une condition a trouvé son image ou son texte, quel que soit son emplacement cette fois-ci.</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Décalage depuis le centre</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Pixels vers la droite et vers le bas. Utilisez des nombres négatifs pour aller vers la gauche ou vers le haut.</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Pixels vers la droite</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Pixels vers le bas</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>là où se trouve {0}</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Ajouter une condition</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Modifier la condition - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Couleur du pixel</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Image à l'écran</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Texte à l'écran</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Image</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Texte</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Conditions</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Ajouter une condition</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Ajoutez une condition avec Ajouter une condition.</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Supprimer la condition</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Supprimer l'image</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Les actions de Then utilisent ce nom pour aller à l'emplacement trouvé.</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Pixel</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Couleur</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Relevée à l'écran quand vous choisissez le pixel.</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Tolérance</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>Écart permis avec la couleur affichée à l'écran. À 0 %, seule une couleur identique compte.</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Images</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>La condition est vraie quand l'une d'elles est à l'écran.</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Capturer à l'écran</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Capturer une autre image</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} pixels, capturée en {2}, {3}</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro n'a pas cette image. Capturez-la à nouveau.</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Zone de recherche</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>Autour de l'endroit de la capture</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>Tout l'écran</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>Une zone que je trace</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Près de l'endroit où l'image a été capturée, ce qui est rapide. L'image est trouvée même si elle se déplace un peu.</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Tracez la zone avec Tracer à l'écran.</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>En {0}, {1}, {2} × {3} pixels. Plus la zone est petite, plus la recherche est rapide.</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Tracer à l'écran</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Tracez la zone de recherche avec Tracer à l'écran.</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>Un peu plus grande ou plus petite</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>Trouve aussi l'image quand l'application l'affiche un peu plus grande ou plus petite, jusqu'à 15 %. La recherche prend plus de temps.</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Ressemblance</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>Degré de ressemblance requis entre l'écran et l'image. Baissez-le un peu si l'image change, par exemple avec la lumière ou des effets.</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Texte</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Correspondance</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Indique si le texte trouvé peut être entouré d'autres mots.</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Contient le texte</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Exactement ces mots</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Respecter la casse</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Langue</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>La langue du texte à l'écran. La liste affiche les langues que Windows peut lire sur ce PC.</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Langue de Windows</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Langue de Windows ({0})</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Actuellement à l'écran</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro lit le texte avec la reconnaissance de texte de Windows, plus lente que la recherche d'une image. Utilisez-la quand les mots restent les mêmes mais que leur apparence change, comme la police, la couleur ou l'arrière-plan. Gardez une petite zone de recherche.</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>Quand exécuter Then</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Exécuter Then quand toutes les conditions sont vraies, ou dès que l'une d'elles l'est.</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>Toutes sont vraies</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>L'une d'elles est vraie</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Attente</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>Pendant l'attente, PuppyMacro vérifie à nouveau à chaque changement de l'écran.</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Vérifier une fois</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Jusqu'à</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>Aussi longtemps que nécessaire</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Secondes d'attente</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Entrez le nombre de secondes d'attente, de 0,1 à 86 400.</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>Si les conditions ne sont pas vraies</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Juste après une seule vérification.</value></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>Après {0} seconde d'attente.</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>Après {0} secondes d'attente.</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>La macro attend qu'elles soient vraies ou que vous l'arrêtiez.</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Exécuter les actions de Else</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Arrêter la macro</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Vérifie maintenant les conditions à l'écran, sans exécuter aucune action</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} est {2}, avec une tolérance de {3} %</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Choisissez le pixel à l'écran.</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, ressemblance de {2} %</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Capturez l'image à l'écran.</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Contient « {0} », {1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exactement « {0} », {1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Écrivez le texte à trouver.</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>autour de l'endroit de la capture</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>sur tout l'écran</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>dans la zone tracée</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>Le pixel correspond maintenant. Sa couleur est {0}.</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>Le pixel ne correspond pas maintenant. Sa couleur est {0}, avec un écart de {1} %, supérieur à la tolérance de {2} %.</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>Image trouvée en {0}, {1}, avec une ressemblance de {2} %.</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>L'image n'est pas à l'écran pour le moment. La correspondance la plus proche a une ressemblance de {0} %, alors que cette condition demande {1} %.</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>Texte trouvé en {0}, {1}.</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>« {0} » n'est pas à l'écran pour le moment. PuppyMacro a lu « {1} » dans la zone de recherche.</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>« {0} » n'est pas à l'écran pour le moment. PuppyMacro n'a lu aucun texte dans la zone de recherche.</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro ne voit que du noir dans cette zone. L'application bloque peut-être la capture d'écran, ou s'exécute en plein écran exclusif. Essayez son mode fenêtré sans bordure ou fenêtré.</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows ne peut pas lire le texte en {0} sur ce PC. Ajoutez la langue dans les Paramètres de Windows, sous Heure et langue › Langue et région, puis choisissez-la à nouveau ici.</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>La zone de recherche se trouve sur un écran qui n'est plus connecté. Tracez à nouveau la zone sur un écran disponible.</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>aucune condition pour l'instant</value></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} condition, toutes vraies</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} conditions, toutes vraies</value></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} condition, une seule suffit</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} conditions, une seule suffit</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>vérifie une fois</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>attend jusqu'à {0} s</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>attend aussi longtemps que nécessaire</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>le pixel en {0}, {1} est {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} est à l'écran</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>« {0} » est à l'écran</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>là où se trouve {0}</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>quand les conditions sont vraies</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>quand elles ne le sont pas</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · aucune action pour l'instant. Sélectionnez la branche, puis ajoutez-les.</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Les nouvelles actions vont à la fin de {0} de #{1}</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>de {0} à {1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} ou plus</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>L'action #{0} va là où se trouve {1}, mais elle n'est plus dans le Then de cette condition. Remettez-la dedans ou choisissez un point fixe.</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Vérifications par seconde</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>Nombre de fois par seconde où les conditions regardent l'écran pendant l'attente. Moins de vérifications laissent plus de ressources aux autres programmes, plus de vérifications repèrent un changement plus tôt.</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>À chaque image</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Reconnaissance de l'écran</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Rechercher les images avec</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automatique utilise la carte graphique pour les grandes zones et le processeur pour les petites, ce qui est généralement le plus rapide.</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automatique</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Carte graphique</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Processeur</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>A demandé un pixel : {0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>A demandé une image : {0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>A demandé une zone de recherche : {0}</value></data>
 </root>

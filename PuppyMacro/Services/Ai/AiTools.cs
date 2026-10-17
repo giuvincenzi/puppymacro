@@ -49,7 +49,7 @@ internal sealed class AiTools
         "what they say. They are saved at once and kept in the item's History in PuppyMacro, where the user can restore " +
         "any version. Some may wait for the user's OK in PuppyMacro, as the user chose in PuppyMacro's AI settings: the " +
         "answer then says whether the user confirmed or cancelled. After a change, tell the user to try it.\n" +
-        "- pick_point, pick_points, pick_app and capture_hotkey ask the user to click points on the screen, click a window " +
+        "- pick_point, pick_points, pick_app, capture_hotkey, pick_pixel, take_image and draw_area ask the user to click points on the screen, click a window " +
         "of an app, or press keys. Use them instead of guessing coordinates, app names or key codes. First explain in the " +
         "chat what the user will have to do; then call the tool. PuppyMacro shows a window in the middle of the screen, on " +
         "top of everything, and waits until the user is ready (Enter or Start) before the user picks, so they can first open " +
@@ -58,6 +58,13 @@ internal sealed class AiTools
         "in order; PuppyMacro numbers them). For PuppyMacro's own screens, take the steps from the user guide (get_help). " +
         "For each point, also give what it is (label, or labels for pick_points): it is shown next to the cursor while the " +
         "user picks it. Write the title, description, steps and labels in the language the user writes to you in.\n" +
+        "- Macros can look at the screen: an action of Type If checks its conditions (a pixel's color, an image or a text on " +
+        "the screen; all of them or any one), waiting as it says (once, up to some seconds, or as long as it takes), then " +
+        "plays its Then actions, or its Else actions or stops the macro. A Click, Mouse button down / up or Move to inside " +
+        "Then can go where an Image or Text condition found its match (FoundId: the condition's Id, plus FoundOffsetX/Y), " +
+        "wherever it is that time. Get the values from the user's screen with pick_pixel (a pixel and its color), take_image " +
+        "(an image: PuppyMacro keeps it and gives its Id) and draw_area (a search area), never by guessing; get_schema gives " +
+        "the fields and their usual values. The macro's ChecksPerSecond limits how often the conditions look while they wait.\n" +
         "- place_floating_button gives a Toggle loop or macro a floating button for overlay mode and opens the screen where " +
         "the user places it, with your title, description and steps. open_item opens an item in PuppyMacro's editor, for the " +
         "user to look at or change it themselves.\n" +
@@ -305,6 +312,24 @@ internal sealed class AiTools
             new("pick_app", "Shows the user your title, description and steps, waits until they are ready, then they click a window of an app: its .exe name, for AppExe." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickApp(a, app, c)),
+            new("pick_pixel",
+                "For a macro's Pixel color condition: shows the user your title, description and steps, waits until they are ready, " +
+                "then they click a pixel on a still picture of the screen. Answers X, Y and Color (#RRGGBB), as the condition takes them." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickOnScreen(a, app, AiScreenPickKind.Pixel, c)),
+            new("take_image",
+                "For a macro's Image on screen condition: shows the user your title, description and steps, waits until they are ready, " +
+                "then they drag around the image on a still picture of the screen. PuppyMacro keeps the image: answers its Id, X and Y " +
+                "(where it was taken), for an entry of the condition's Images, and its Width and Height. Ask for a small, distinctive " +
+                "image (a button or an icon, not a whole window)." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickOnScreen(a, app, AiScreenPickKind.Image, c)),
+            new("draw_area",
+                "For an Image or Text condition's search area (Area Drawn): shows the user your title, description and steps, waits " +
+                "until they are ready, then they drag the area on a still picture of the screen. Answers AreaX, AreaY, AreaWidth and " +
+                "AreaHeight." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickOnScreen(a, app, AiScreenPickKind.Area, c)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),
@@ -729,6 +754,7 @@ internal sealed class AiTools
             ClickItemsInPanel = wanted.ClickItemsInPanel != null ? now.ClickItemsInPanel : null,
             OverlayPanelOpacity = wanted.OverlayPanelOpacity != null ? now.OverlayPanelOpacity : null,
             SoundVolume = wanted.SoundVolume != null ? now.SoundVolume : null,
+            RecognitionDevice = wanted.RecognitionDevice != null ? now.RecognitionDevice : null,
         };
     }
 
@@ -760,6 +786,15 @@ internal sealed class AiTools
         static PhraseArg Percent(int value) => Phrase.Of("Ai_Percent", value.ToString(CultureInfo.InvariantCulture));
         static PhraseArg Theme(AppTheme value) => Phrase.Of($"Theme_{value}");
 
+        static PhraseArg Device(RecognitionDevice value) => Phrase.Of(value switch
+        {
+            RecognitionDevice.Gpu => "Settings_RecognitionGpu",
+            RecognitionDevice.Cpu => "Settings_RecognitionCpu",
+            _ => "Settings_RecognitionAutomatic",
+        });
+
+        if (wanted.RecognitionDevice is RecognitionDevice device && device != s.RecognitionDevice)
+            changes.Add(new(Phrase.Of("Settings_RecognitionDevice"), Device(s.RecognitionDevice), Device(device)));
         if (wanted.Theme is AppTheme theme && theme != s.Theme)
             changes.Add(new(Phrase.Of("AiSetting_Theme"), Theme(s.Theme), Theme(theme)));
         if (wanted.CloseToTray is bool tray && tray != s.CloseToTray)
@@ -873,6 +908,41 @@ internal sealed class AiTools
             var (answer, exe) = await _host.PickApp(app, ask.Title);
             Log(app, AiActivityKind.Interaction, label, answer, exe ?? "");
             return Answered(answer, JsonSerializer.Serialize(new { AppExe = exe }, AnswerOptions));
+        }, cancel).ConfigureAwait(false);
+    }
+
+    /// <summary>The ready window, then the pick on a still picture of the screen (pick_pixel, take_image, draw_area).</summary>
+    private async Task<AiToolResult> PickOnScreen(JsonElement args, string app, AiScreenPickKind kind, CancellationToken cancel)
+    {
+        AiAsk ask = Asking(args);
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+        Phrase label = Phrase.Of(kind switch
+        {
+            AiScreenPickKind.Image => "Ai_AskedImage",
+            AiScreenPickKind.Area => "Ai_AskedArea",
+            _ => "Ai_AskedPixel",
+        }, ask.Title);
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer ready = await _host.Ready(app, ask);
+            if (ready != AiAnswer.Done)
+            {
+                Log(app, AiActivityKind.Interaction, label, ready, "");
+                return Answered(ready, "");
+            }
+            if (BusyNow() is AiToolResult busyNow)
+                return busyNow;
+            var (answer, pick) = await _host.PickOnScreen(app, ask.Title, kind);
+            string text = pick == null ? "" : kind switch
+            {
+                AiScreenPickKind.Pixel => JsonSerializer.Serialize(new { pick.X, pick.Y, pick.Color }),
+                AiScreenPickKind.Image => JsonSerializer.Serialize(new { Id = pick.ImageId, pick.X, pick.Y, pick.Width, pick.Height }),
+                _ => JsonSerializer.Serialize(new { AreaX = pick.X, AreaY = pick.Y, AreaWidth = pick.Width, AreaHeight = pick.Height }),
+            };
+            Log(app, AiActivityKind.Interaction, label, answer,
+                pick == null ? "" : kind == AiScreenPickKind.Pixel ? $"{pick.X}, {pick.Y} {pick.Color}" : $"{pick.X}, {pick.Y}, {pick.Width} × {pick.Height}");
+            return Answered(answer, text);
         }, cancel).ConfigureAwait(false);
     }
 

@@ -417,6 +417,9 @@ public sealed class Seed
 
     public List<MacroDefinition> Macros { get; } = new();
 
+    /// <summary>Images of the macros' conditions, by their Id (the SHA-256 of the PNG), written in the data folder's images folder.</summary>
+    public Dictionary<string, byte[]> Images { get; } = new();
+
     internal void Write()
     {
         Directory.CreateDirectory(AppSession.MacrosFolder);
@@ -424,5 +427,9 @@ public sealed class Seed
         File.WriteAllText(AppSession.SettingsFile, JsonSerializer.Serialize(Settings, JsonOptions));
         foreach (MacroDefinition macro in Macros)
             File.WriteAllText(Path.Combine(AppSession.MacrosFolder, macro.Id + ".json"), JsonSerializer.Serialize(macro, JsonOptions));
+        string images = Path.Combine(AppSession.DataFolder, "images");
+        Directory.CreateDirectory(images);
+        foreach (var (id, png) in Images)
+            File.WriteAllBytes(Path.Combine(images, id + ".png"), png);
     }
 }

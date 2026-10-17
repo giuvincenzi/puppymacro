@@ -113,6 +113,15 @@ internal sealed class FakeAiHost : IAiHost
     public Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message) =>
         Task.FromResult<(AiAnswer, string?)>((AiAnswer.Done, "notepad.exe"));
 
+    /// <summary>As the window: a pixel at 640, 360 (#3BD16F), an image of 40 × 20 taken at 100, 200, an area at 10, 20, 300 × 200.</summary>
+    public Task<(AiAnswer Answer, AiScreenPick? Pick)> PickOnScreen(string app, string message, AiScreenPickKind kind) =>
+        Task.FromResult<(AiAnswer, AiScreenPick?)>((AiAnswer.Done, kind switch
+        {
+            AiScreenPickKind.Pixel => new AiScreenPick(640, 360, 1, 1, Color: "#3BD16F"),
+            AiScreenPickKind.Image => new AiScreenPick(100, 200, 40, 20, ImageId: Macros.Images.Add(new byte[] { 1, 2, 3 })),
+            _ => new AiScreenPick(10, 20, 300, 200),
+        }));
+
     public Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, AiAsk ask) =>
         Task.FromResult<(AiAnswer, HotkeyBinding?)>((AiAnswer.Done, new HotkeyBinding { Vk = 0x58, Ctrl = true }));
 
@@ -818,6 +827,32 @@ public class AiToolsTests : IDisposable
 
         Assert.Contains("notepad.exe", app.Text);
         Assert.StartsWith(KeyNames.Format(CtrlX), keys.Text);
+    }
+
+    [Fact]
+    public async Task Screen_picks_give_a_pixel_and_its_color_an_image_kept_by_PuppyMacro_and_an_area()
+    {
+        AiToolResult pixel = await Call("pick_pixel", Asking);
+        AiToolResult image = await Call("take_image", Asking);
+        AiToolResult area = await Call("draw_area", Asking);
+
+        Assert.False(pixel.IsError || image.IsError || area.IsError);
+        Assert.Equal("{\"X\":640,\"Y\":360,\"Color\":\"#3BD16F\"}", pixel.Text);
+        string id = JsonDocument.Parse(image.Text).RootElement.GetProperty("Id").GetString()!;
+        Assert.True(_host.Macros.Images.Has(id));
+        Assert.Contains("\"X\":100,\"Y\":200,\"Width\":40,\"Height\":20", image.Text);
+        Assert.Equal("{\"AreaX\":10,\"AreaY\":20,\"AreaWidth\":300,\"AreaHeight\":200}", area.Text);
+    }
+
+    [Fact]
+    public async Task Screen_recognition_is_a_setting_AI_apps_read_and_change()
+    {
+        AiToolResult read = await Call("get_settings", new { });
+        AiToolResult changed = await Call("update_settings", new { settings = new { RecognitionDevice = "Cpu" } });
+
+        Assert.Contains("\"RecognitionDevice\"", read.Text);
+        Assert.False(changed.IsError, changed.Text);
+        Assert.Equal(RecognitionDevice.Cpu, _host.Applied.Last().RecognitionDevice);
     }
 
     [Fact]

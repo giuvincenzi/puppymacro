@@ -1,0 +1,233 @@
+<UserControl
+    x:Class="PuppyMacro.Views.ConditionsEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:fsi="clr-namespace:iNKORE.UI.WPF.Modern.Common.IconKeys;assembly=iNKORE.UI.WPF.Modern"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    xmlns:r="clr-namespace:PuppyMacro.Resources">
+
+    <!-- An If's conditions and when its Then runs (DataContext: IfViewModel), in the macro's action window (approved: the
+         Design canvas "Macro Conditions", Edit condition). Each condition is a SettingsExpander with one card per option;
+         its last card says what PuppyMacro sees now. -->
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SubtleButtons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate x:Key="ImageTile" DataType="{x:Type views:ConditionImageViewModel}">
+                <Grid Margin="0,0,12,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <Border Padding="8" CornerRadius="4" BorderThickness="1" HorizontalAlignment="Left"
+                                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
+                            <Image Source="{Binding Preview}" MaxWidth="320" MaxHeight="120" Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="{Binding Description}" />
+                        </Border>
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Text="{Binding Description}" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Top" Tag="{Binding}" Click="OnRemoveImageClick"
+                            ToolTip="{x:Static r:Strings.Condition_RemoveImage}" AutomationProperties.Name="{x:Static r:Strings.Condition_RemoveImage}"
+                            Visibility="{Binding CanRemove, Converter={StaticResource BoolToVisibility}}">
+                        <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                    </Button>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="Condition" DataType="{x:Type views:ConditionViewModel}">
+                <ui:SettingsExpander Margin="0,0,0,4" Header="{Binding Title}" Description="{Binding Summary}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
+                                     AutomationProperties.Name="{Binding Title}">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <Grid>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Eyedropper}" Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}" />
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Photo2}" Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}" />
+                            <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.ScanText_20_Regular}" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
+                        </Grid>
+                    </ui:SettingsExpander.HeaderIcon>
+                    <Button Tag="{Binding}" Click="OnRemoveConditionClick"
+                            ToolTip="{x:Static r:Strings.Condition_Remove}" AutomationProperties.Name="{x:Static r:Strings.Condition_Remove}">
+                        <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                    </Button>
+                    <ui:SettingsExpander.Items>
+                        <!-- Image and Text: the name the actions in Then use -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Name}" Description="{x:Static r:Strings.Condition_NameDescription}"
+                                         Visibility="{Binding Finds, Converter={StaticResource BoolToVisibility}}">
+                            <TextBox Width="260" MaxLength="100" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     AutomationProperties.Name="{x:Static r:Strings.Condition_Name}" />
+                        </ui:SettingsCard>
+
+                        <!-- Pixel -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_PixelCard}" Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_X}" />
+                                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                              Value="{Binding X, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Position_X}" />
+                                <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_Y}" />
+                                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                              Value="{Binding Y, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Position_Y}" />
+                                <views:PlaceButton Margin="8,0,0,0" VerticalAlignment="Center" Text="{x:Static r:Strings.Position_PickOnScreen}"
+                                                   Tag="{Binding}" Click="OnPickPixelClick" />
+                            </ikw:SimpleStackPanel>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Color}" Description="{x:Static r:Strings.Condition_ColorDescription}"
+                                         Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <Border Width="32" Height="32" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource ControlStrongStrokeColorDefaultBrush}"
+                                        Background="{Binding Swatch}" />
+                                <TextBox Width="110" MaxLength="7" Text="{Binding Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         AutomationProperties.Name="{x:Static r:Strings.Condition_Color}" />
+                            </ikw:SimpleStackPanel>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Tolerance}" Description="{x:Static r:Strings.Condition_ToleranceDescription}"
+                                         Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}">
+                            <views:ValueSlider Minimum="0" Maximum="100" Step="1" Label="{x:Static r:Strings.Condition_Tolerance}"
+                                               Tag="Tolerance" Loaded="OnSliderLoaded" ValueChanged="OnSliderChanged" />
+                        </ui:SettingsCard>
+
+                        <!-- Image -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Images}" Description="{x:Static r:Strings.Condition_ImagesDescription}"
+                                         ContentAlignment="Vertical" HorizontalContentAlignment="Left"
+                                         Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
+                            <StackPanel>
+                                <ItemsControl ItemsSource="{Binding Images}" ItemTemplate="{StaticResource ImageTile}" Focusable="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <views:PlaceButton HorizontalAlignment="Left" Text="{Binding TakeText}" Tag="{Binding}" Click="OnTakeImageClick" />
+                            </StackPanel>
+                        </ui:SettingsCard>
+
+                        <!-- Image and Text: where to look -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_SearchArea}" Description="{Binding AreaText}"
+                                         Visibility="{Binding Finds, Converter={StaticResource BoolToVisibility}}">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <views:PlaceButton VerticalAlignment="Center" Text="{x:Static r:Strings.Condition_DrawOnScreen}" Tag="{Binding}" Click="OnDrawAreaClick"
+                                                   Visibility="{Binding IsDrawn, Converter={StaticResource BoolToVisibility}}" />
+                                <ComboBox MinWidth="200" ItemsSource="{Binding AreaChoices}" SelectedIndex="{Binding AreaIndex, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Condition_SearchArea}" />
+                            </ikw:SimpleStackPanel>
+                        </ui:SettingsCard>
+
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_NearbySizes}" Description="{x:Static r:Strings.Condition_NearbySizesDescription}"
+                                         Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
+                            <ui:ToggleSwitch IsOn="{Binding NearbySizes, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_NearbySizes}" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Similarity}" Description="{x:Static r:Strings.Condition_SimilarityDescription}"
+                                         Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
+                            <views:ValueSlider Minimum="50" Maximum="100" Step="1" Label="{x:Static r:Strings.Condition_Similarity}"
+                                               Tag="Similarity" Loaded="OnSliderLoaded" ValueChanged="OnSliderChanged" />
+                        </ui:SettingsCard>
+
+                        <!-- Text -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_TextCard}" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                            <TextBox Width="300" MaxLength="200" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     AutomationProperties.Name="{x:Static r:Strings.Condition_TextCard}" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Match}" Description="{x:Static r:Strings.Condition_MatchDescription}"
+                                         Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                            <ComboBox MinWidth="200" SelectedIndex="{Binding TextMatchIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_Match}">
+                                <ComboBoxItem Content="{x:Static r:Strings.Condition_MatchContains}" />
+                                <ComboBoxItem Content="{x:Static r:Strings.Condition_MatchExact}" />
+                            </ComboBox>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_MatchCase}" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                            <ui:ToggleSwitch IsOn="{Binding MatchCase, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_MatchCase}" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Language}" Description="{x:Static r:Strings.Condition_LanguageDescription}"
+                                         Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
+                            <ComboBox MinWidth="200" ItemsSource="{Binding LanguageChoices}" SelectedIndex="{Binding LanguageIndex, Mode=TwoWay}"
+                                      AutomationProperties.Name="{x:Static r:Strings.Condition_Language}" />
+                        </ui:SettingsCard>
+
+                        <!-- What PuppyMacro sees now, after a change or Test -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Now}" Description="{Binding Result}"
+                                         Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <Grid>
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Completed}" Foreground="{DynamicResource SystemFillColorSuccessBrush}"
+                                                 Visibility="{Binding ResultMet, Converter={StaticResource BoolToVisibility}}" />
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Warning}" Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                                 Visibility="{Binding ResultNotMet, Converter={StaticResource BoolToVisibility}}" />
+                                </Grid>
+                            </ui:SettingsCard.HeaderIcon>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <ikw:SimpleStackPanel Spacing="4">
+        <Grid Margin="0,12,0,4">
+            <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Condition_Conditions}" />
+            <ui:DropDownButton x:Name="AddButton" HorizontalAlignment="Right" AutomationProperties.Name="{x:Static r:Strings.Condition_Add}">
+                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                    <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                    <TextBlock Text="{x:Static r:Strings.Condition_Add}" />
+                </ikw:SimpleStackPanel>
+                <ui:DropDownButton.Flyout>
+                    <ui:MenuFlyout Placement="Bottom">
+                        <MenuItem Header="{x:Static r:Strings.Condition_Pixel}" Click="OnAddPixelClick">
+                            <MenuItem.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Eyedropper}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{x:Static r:Strings.Condition_Image}" Click="OnAddImageClick">
+                            <MenuItem.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Photo2}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{x:Static r:Strings.Condition_Text}" Click="OnAddTextClick">
+                            <MenuItem.Icon>
+                                <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.ScanText_20_Regular}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ui:MenuFlyout>
+                </ui:DropDownButton.Flyout>
+            </ui:DropDownButton>
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding Conditions}" ItemTemplate="{StaticResource Condition}" Focusable="False" />
+        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="{x:Static r:Strings.Condition_NoneYet}"
+                   Visibility="{Binding HasNoConditions, Converter={StaticResource BoolToVisibility}}" />
+
+        <TextBlock Margin="0,16,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Condition_WhenThen}" />
+        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Conditions}" Description="{x:Static r:Strings.Condition_MatchAllAnyDescription}"
+                         Visibility="{Binding ShowMatch, Converter={StaticResource BoolToVisibility}}">
+            <ComboBox MinWidth="220" SelectedIndex="{Binding MatchIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_Conditions}">
+                <ComboBoxItem Content="{x:Static r:Strings.Condition_All}" />
+                <ComboBoxItem Content="{x:Static r:Strings.Condition_Any}" />
+            </ComboBox>
+        </ui:SettingsCard>
+        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Wait}" Description="{x:Static r:Strings.Condition_WaitDescription}">
+            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                <ComboBox MinWidth="200" SelectedIndex="{Binding WaitIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_Wait}">
+                    <ComboBoxItem Content="{x:Static r:Strings.Condition_WaitOnce}" />
+                    <ComboBoxItem Content="{x:Static r:Strings.Condition_WaitUpTo}" />
+                    <ComboBoxItem Content="{x:Static r:Strings.Condition_WaitForever}" />
+                </ComboBox>
+                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0.1" Maximum="86400"
+                              Value="{Binding WaitSeconds, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_WaitSecondsName}"
+                              Visibility="{Binding ShowSeconds, Converter={StaticResource BoolToVisibility}}" />
+                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Action_UnitS}"
+                           Visibility="{Binding ShowSeconds, Converter={StaticResource BoolToVisibility}}" />
+            </ikw:SimpleStackPanel>
+        </ui:SettingsCard>
+        <ui:SettingsCard Header="{Binding OnFailHeader}" Description="{Binding OnFailDescription}">
+            <ComboBox MinWidth="220" SelectedIndex="{Binding OnFailIndex, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_IfNotTrue}">
+                <ComboBoxItem Content="{x:Static r:Strings.Condition_RunElse}" />
+                <ComboBoxItem Content="{x:Static r:Strings.Condition_StopMacro}" />
+            </ComboBox>
+        </ui:SettingsCard>
+    </ikw:SimpleStackPanel>
+</UserControl>

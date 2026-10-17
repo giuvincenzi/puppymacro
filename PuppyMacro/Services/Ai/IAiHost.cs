@@ -81,6 +81,12 @@ internal interface IAiHost
 
     Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message);
 
+    /// <summary>
+    /// The user picks on a still picture of the screen, as the macros' conditions see it: a pixel and its color, an image to
+    /// look for (added to the images of the conditions), or a search area.
+    /// </summary>
+    Task<(AiAnswer Answer, AiScreenPick? Pick)> PickOnScreen(string app, string message, AiScreenPickKind kind);
+
     /// <summary>The user presses a key or combination in a window that shows the AI's title, description and steps.</summary>
     Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, AiAsk ask);
 
@@ -109,3 +115,12 @@ internal interface IAiHost
 
 /// <summary>What an AI app asks the user to do: a short title, why (description) and the steps, shown numbered.</summary>
 public sealed record AiAsk(string Title, string Description, IReadOnlyList<string> Steps);
+
+/// <summary>What <see cref="IAiHost.PickOnScreen"/> asks for.</summary>
+internal enum AiScreenPickKind { Pixel, Image, Area }
+
+/// <summary>
+/// A pick on the screen (physical pixels): a pixel (X, Y, its Color, size 1 × 1), an image (where it was taken, its size and
+/// ImageId in the store) or an area.
+/// </summary>
+internal sealed record AiScreenPick(int X, int Y, int Width, int Height, string? Color = null, string? ImageId = null);
