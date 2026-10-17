@@ -4,10 +4,14 @@ using System.Diagnostics;
 using System.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Services.Screen;
 
 namespace PuppyMacro.Services;
 
-/// <summary>Plays a macro on its own thread: every action after its delay, scaled by the macro speed.</summary>
+/// <summary>
+/// Plays a macro on its own thread: every action after its delay, scaled by the macro speed. An If checks its conditions
+/// on the screen (the speed does not change that wait), then plays Then or Else, or ends the macro.
+/// </summary>
 internal sealed class MacroRunner
 {
     private const double DoubleClickGapMs = 60;
@@ -20,11 +24,22 @@ internal sealed class MacroRunner
     private readonly HashSet<int> _held = new();
     private volatile bool _stopRequested;
     private PreciseTimer? _timer;
+    private readonly ImageStore? _images;
+    private readonly RecognitionDevice _device;
+    private readonly IScreen _screen;
+    private ConditionChecker? _checker;
 
-    public MacroRunner(MacroDefinition macro, ClipboardPaster paster)
+    // Where the conditions checked so far found their image or text, for the mouse actions that use it.
+    private readonly Dictionary<Guid, OpenCvSharp.Point> _found = new();
+
+    public MacroRunner(MacroDefinition macro, ClipboardPaster paster, ImageStore? images = null,
+        RecognitionDevice device = RecognitionDevice.Automatic, IScreen? screen = null)
     {
         _macro = macro.Clone();
         _paster = paster;
+        _images = images;
+        _device = device;
+        _screen = screen ?? ScreenCapture.Shared;
     }
 
     /// <summary>Raised on the runner thread when playback ends (finished, stopped or failed).</summary>
@@ -67,11 +82,8 @@ internal sealed class MacroRunner
 
             for (int round = 0; round < repeats && !_stopRequested; round++)
             {
-                foreach (var action in _macro.Actions)
-                {
-                    if (!Wait(action.DelayMs) || !Execute(action))
-                        return;
-                }
+                if (!Play(_macro.Actions))
+                    return;
                 if (_macro.Actions.Count == 0 && !Wait(100))
                     return; // empty macro in loop mode: do not spin
             }
@@ -83,8 +95,45 @@ internal sealed class MacroRunner
         finally
         {
             ReleaseHeld();
+            _checker?.Dispose();
             Exited?.Invoke(this);
         }
+    }
+
+    /// <summary>Plays a list of actions (the macro's, a Then or an Else). False when the macro ends here.</summary>
+    private bool Play(List<MacroAction> actions)
+    {
+        foreach (var action in actions)
+        {
+            if (!Wait(action.DelayMs) || !Execute(action))
+                return false;
+        }
+        return true;
+    }
+
+    /// <summary>Checks an If's conditions, then plays Then or Else, or ends the macro (Stop the macro).</summary>
+    private bool If(MacroIf block)
+    {
+        _checker ??= new ConditionChecker(_screen, _images, _device, _macro.ChecksPerSecond);
+        var result = _checker.Check(block, _stop);
+        if (result.Stopped)
+            return false;
+        foreach (var (id, point) in result.Found)
+            _found[id] = point;
+        if (result.Met)
+            return Play(block.Then);
+        return block.OnFail == ConditionFail.Else && Play(block.Else);
+    }
+
+    /// <summary>
+    /// The point of a mouse action: its own, or where its condition found the image or text, moved by the offset. Null
+    /// when that condition found nothing (one of Any's that was not true): the action is skipped.
+    /// </summary>
+    private (int X, int Y)? PointOf(MacroAction a)
+    {
+        if (a.FoundId is not { } id)
+            return (a.X, a.Y);
+        return _found.TryGetValue(id, out var p) ? (p.X + a.FoundOffsetX, p.Y + a.FoundOffsetY) : null;
     }
 
     /// <summary>Waits <paramref name="ms"/> at ×1 speed. Returns false if stopped.</summary>
@@ -93,8 +142,19 @@ internal sealed class MacroRunner
     private bool Execute(MacroAction a)
     {
         double hold = Math.Max(1, a.HoldMs / Speed);
+        if (a.Type is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo
+            && a.FoundId != null)
+        {
+            if (PointOf(a) is not { } point)
+                return true;
+            a = a.Clone();
+            (a.X, a.Y) = point;
+        }
         switch (a.Type)
         {
+            case MacroActionType.If:
+                return a.If == null || If(a.If);
+
             case MacroActionType.PressKey:
                 for (int r = 0; r < Math.Max(1, a.Repeat); r++)
                 {

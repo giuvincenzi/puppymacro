@@ -210,6 +210,7 @@ public partial class App : Application
         if (!IsDevBuild)
             FileTypes.Register();
 
+        Services.Screen.CaptureExclusion.Start(Dispatcher);
         var window = new MainWindow(store, settings, macros);
         MainWindow = window;
         ApplyTheme(settings.Theme);

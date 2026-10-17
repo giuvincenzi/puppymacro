@@ -19,6 +19,10 @@ internal sealed class EngineSnapshot
     public MacroDefinition[] Macros { get; init; } = Array.Empty<MacroDefinition>();
     public RemapDefinition[] Remaps { get; init; } = Array.Empty<RemapDefinition>();
 
+    /// <summary>The images of the macros' conditions, and where they are searched (Settings › Screen recognition).</summary>
+    public ImageStore? Images { get; init; }
+    public RecognitionDevice RecognitionDevice { get; init; }
+
     public static EngineSnapshot From(AppSettings settings, MacroLibrary macros) => new()
     {
         StopAll = settings.StopAllHotkey?.Clone(),
@@ -28,6 +32,8 @@ internal sealed class EngineSnapshot
         Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
         Macros = macros.Macros.Select(m => m.Clone()).ToArray(),
         Remaps = settings.Remaps.Where(r => r.Enabled).Select(r => r.Clone()).ToArray(),
+        Images = macros.Images,
+        RecognitionDevice = settings.RecognitionDevice,
     };
 }
 
@@ -276,7 +282,7 @@ internal sealed class LoopEngine : IDisposable
         {
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return;
-            var runner = new MacroRunner(macro, _paster);
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice);
             runner.Exited += OnMacroExited;
             _runningMacros[macro.Id] = runner;
             runner.Start();
@@ -292,7 +298,7 @@ internal sealed class LoopEngine : IDisposable
     /// </summary>
     public void TestMacroAction(MacroAction action, Action finished)
     {
-        var runner = new MacroRunner(MacroDefinition.ForTest(action), _paster);
+        var runner = new MacroRunner(MacroDefinition.ForTest(action), _paster, _snapshot.Images, _snapshot.RecognitionDevice);
         runner.Exited += _ => _dispatcher.InvokeAsync(finished);
         runner.Start();
     }
