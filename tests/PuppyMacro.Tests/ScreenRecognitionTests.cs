@@ -125,4 +125,26 @@ public class ScreenRecognitionTests : IDisposable
 
         Assert.Equal(0, Cv2.CountNonZero(difference.Reshape(1)));
     }
+
+    [Fact]
+    public void A_large_search_runs_in_bands_and_finds_the_same_place()
+    {
+        // Noise without blur: no detail survives shrinking, so the whole search is at full size, more work than one dispatch may do.
+        var bytes = new byte[1200 * 700 * 3];
+        new Random(7).NextBytes(bytes);
+        using var picture = new Mat(700, 1200, MatType.CV_8UC3);
+        System.Runtime.InteropServices.Marshal.Copy(bytes, 0, picture.Data, bytes.Length);
+        var place = new Rect(901, 517, 48, 40);
+        using Mat image = new Mat(picture, place).Clone();
+        var calibration = Calibration.Of(image, 0.9);
+        double work = (1200.0 - 48 + 1) * (700 - 40 + 1) * 48 * 40;
+
+        var gpu = OnGpu(picture, image);
+        var cpu = CpuMatcher.Find(picture, image, calibration, 0.9);
+
+        Assert.Equal(1, calibration.Factor);
+        Assert.True(work > GpuMatcher.MaxWorkPerDispatch * 10, "the search fits in one dispatch: no bands to test");
+        Assert.Equal((place.X, place.Y), (gpu.X, gpu.Y));
+        Assert.Equal((place.X, place.Y), (cpu.X, cpu.Y));
+    }
 }

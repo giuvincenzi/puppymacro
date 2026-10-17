@@ -156,7 +156,20 @@ internal sealed unsafe class GpuMatcher : IDisposable
     internal object Sync => _sync;
 
     /// <summary>On a device that exists already (a monitor's capture).</summary>
-    internal static GpuMatcher On(string name, ID3D11Device device, ID3D11DeviceContext context) => new(name, device, context);
+    internal static GpuMatcher On(string name, ID3D11Device device, ID3D11DeviceContext context)
+    {
+        try
+        {
+            return new GpuMatcher(name, device, context);
+        }
+        catch
+        {
+            // Not made: its device is not kept by anyone.
+            Release(context);
+            Release(device);
+            throw;
+        }
+    }
 
     /// <summary>On the software renderer (no graphics card): the tests, and machines without one.</summary>
     public static GpuMatcher Warp()
@@ -181,11 +194,24 @@ internal sealed unsafe class GpuMatcher : IDisposable
         {
             HRESULT hr = PInvoke.D3DCompile(s, (nuint)source.Length, default, null, null, new PCSTR(e), new PCSTR(t), 1u << 15, 0, out code, out errors);
             if (hr.Failed)
-                throw new InvalidOperationException($"Shader {entry}: " + Marshal.PtrToStringAnsi((nint)errors.GetBufferPointer()));
+            {
+                string message = errors == null ? hr.ToString() : Marshal.PtrToStringAnsi((nint)errors.GetBufferPointer()) ?? "";
+                Release(code);
+                Release(errors);
+                throw new InvalidOperationException($"Shader {entry}: " + message);
+            }
         }
-        ID3D11ComputeShader_unmanaged* p;
-        _device.CreateComputeShader(code.GetBufferPointer(), code.GetBufferSize(), null, &p);
-        return Take<ID3D11ComputeShader>(p);
+        try
+        {
+            ID3D11ComputeShader_unmanaged* p;
+            _device.CreateComputeShader(code.GetBufferPointer(), code.GetBufferSize(), null, &p);
+            return Take<ID3D11ComputeShader>(p);
+        }
+        finally
+        {
+            Release(code);
+            Release(errors);
+        }
     }
 
     // ================= Buffers =================
@@ -471,18 +497,19 @@ internal sealed unsafe class GpuMatcher : IDisposable
             if (a.Width < image.Width || a.Height < image.Height)
                 return ImageMatch.None;
             if (prepared.Coarse == null)
-                return BestInBlocks(Scores(picture, prepared.Full, prepared.FullNorm, a.X, a.Y, a.Width - image.Width + 1, a.Height - image.Height + 1),
-                    a.Width - image.Width + 1, a.Height - image.Height + 1, a.X, a.Y);
+                return Best(FullBlocks(picture, prepared, a.X, a.Y, a.Width - image.Width + 1, a.Height - image.Height + 1));
 
             int f = prepared.Calibration.Factor;
             int sx = a.X / f, sy = a.Y / f;
             int sw = a.Width / f - prepared.CoarseW + 1, sh = a.Height / f - prepared.CoarseH + 1;
             if (sw <= 0 || sh <= 0)
                 return ImageMatch.None;
-            GpuBuffer coarseScores = CoarseScores(picture, prepared, sx, sy, sw, sh);
+            GpuBuffer source = CoarseSource(picture, prepared);
+            long coarseWork = (long)prepared.CoarseW * prepared.CoarseH;
             // The blocks' best above the coarse threshold, best first, apart from each other by half the image.
             var candidates = new List<(int X, int Y)>();
-            foreach (var block in Blocks(coarseScores, sw, sh).Where(b => b.Score >= calibration.CoarseMin).OrderByDescending(b => b.Score))
+            foreach (var block in Banded(sw, sh, coarseWork, (y0, rows) => CoarseScores(source, prepared, sx, sy + y0, sw, rows))
+                         .Where(b => b.Score >= calibration.CoarseMin).OrderByDescending(b => b.Score))
             {
                 if (candidates.Count >= CpuMatcher.MaxCandidates)
                     break;
@@ -499,10 +526,46 @@ internal sealed unsafe class GpuMatcher : IDisposable
                 int ow = x1 - x0 - image.Width + 1, oh = y1 - y0 - image.Height + 1;
                 if (ow <= 0 || oh <= 0)
                     continue;
-                best = ImageMatch.Best(best, BestInBlocks(Scores(picture, prepared.Full, prepared.FullNorm, x0, y0, ow, oh), ow, oh, x0, y0));
+                best = ImageMatch.Best(best, Best(FullBlocks(picture, prepared, x0, y0, ow, oh)));
             }
             return best;
         }
+    }
+
+    /// <summary>
+    /// The most work one dispatch may do (positions × template pixels). A long dispatch keeps the graphics card busy for
+    /// everything else and, after about 2 seconds, Windows resets its driver (TDR; several in a row can stop Windows with a
+    /// blue screen): a search over a large area with a large template runs in bands of rows, each one read back before the
+    /// next starts.
+    /// </summary>
+    public const double MaxWorkPerDispatch = 5e7;
+
+    /// <summary>The best of every 16 × 16 block of a score map made band by band: <paramref name="run"/> scores rows y0 to y0 + rows.</summary>
+    private List<(float Score, int X, int Y)> Banded(int width, int height, long workPerPosition, Func<int, int, GpuBuffer> run)
+    {
+        int rows = (int)Math.Clamp(MaxWorkPerDispatch / Math.Max(1.0, (double)width * workPerPosition), 1, height);
+        var all = new List<(float, int, int)>();
+        for (int y0 = 0; y0 < height; y0 += rows)
+        {
+            int band = Math.Min(rows, height - y0);
+            foreach (var (score, x, y) in Blocks(run(y0, band), width, band))
+                all.Add((score, x, y + y0));
+        }
+        return all;
+    }
+
+    /// <summary>The full-size scores at ox + x, oy + y (x &lt; ow, y &lt; oh), band by band, as block bests in picture coordinates.</summary>
+    private List<(float Score, int X, int Y)> FullBlocks(GpuBuffer picture, Prepared prepared, int ox, int oy, int ow, int oh) =>
+        Banded(ow, oh, (long)prepared.Full.W * prepared.Full.H, (y0, rows) => Scores(picture, prepared.Full, prepared.FullNorm, ox, oy + y0, ow, rows))
+            .Select(b => (b.Score, b.X + ox, b.Y + oy)).ToList();
+
+    private static ImageMatch Best(List<(float Score, int X, int Y)> blocks)
+    {
+        var best = ImageMatch.None;
+        foreach (var (score, x, y) in blocks)
+            if (score > -1.5)
+                best = ImageMatch.Best(best, new ImageMatch(x, y, score));
+        return best;
     }
 
     private GpuBuffer Scores(GpuBuffer picture, GpuBuffer template, float norm, int ox, int oy, int ow, int oh)
@@ -517,36 +580,34 @@ internal sealed unsafe class GpuMatcher : IDisposable
         return scores;
     }
 
-    private GpuBuffer CoarseScores(GpuBuffer picture, Prepared prepared, int sx, int sy, int sw, int sh)
+    /// <summary>The picture shrunk by the calibration's factor, in gray or in color: made once per search.</summary>
+    private GpuBuffer CoarseSource(GpuBuffer picture, Prepared prepared)
     {
         int f = prepared.Calibration.Factor, gw = picture.W / f, gh = picture.H / f;
-        var scores = Pooled("coarse scores", sw * sh, 4);
+        var shrunk = Pooled(prepared.Calibration.Gray ? "gray" : "small", gw * gh, 4);
+        shrunk.W = gw;
+        shrunk.H = gh;
+        Set(new Parameters { IW = (uint)picture.W, IH = (uint)picture.H, OW = (uint)gw, OH = (uint)gh, F = (uint)f });
         if (prepared.Calibration.Gray)
-        {
-            var gray = Pooled("gray", gw * gh, 4);
-            Set(new Parameters { IW = (uint)picture.W, IH = (uint)picture.H, OW = (uint)gw, OH = (uint)gh, F = (uint)f });
-            Run(_downGray, gw, gh, new[] { picture.Read }, 1, gray.Write, 3);
-            Set(new Parameters
-            {
-                IW = (uint)gw, IH = (uint)gh, TW = (uint)prepared.CoarseW, TH = (uint)prepared.CoarseH,
-                OX = (uint)sx, OY = (uint)sy, OW = (uint)sw, OH = (uint)sh, TN = prepared.CoarseNorm, N = prepared.Coarse!.Kept,
-            });
-            Run(_matchGray, sw, sh, new[] { gray.Read, prepared.Coarse.Read }, 4, scores.Write, 1);
-        }
+            Run(_downGray, gw, gh, new[] { picture.Read }, 1, shrunk.Write, 3);
         else
+            Run(_down, gw, gh, new[] { picture.Read }, 1, shrunk.Write, 0);
+        return shrunk;
+    }
+
+    /// <summary>The coarse scores at sx + x, sy + y (x &lt; sw, y &lt; sh) on <see cref="CoarseSource"/>'s picture.</summary>
+    private GpuBuffer CoarseScores(GpuBuffer source, Prepared prepared, int sx, int sy, int sw, int sh)
+    {
+        var scores = Pooled("coarse scores", sw * sh, 4);
+        Set(new Parameters
         {
-            var small = Pooled("small", gw * gh, 4);
-            small.W = gw;
-            small.H = gh;
-            Set(new Parameters { IW = (uint)picture.W, IH = (uint)picture.H, OW = (uint)gw, OH = (uint)gh, F = (uint)f });
-            Run(_down, gw, gh, new[] { picture.Read }, 1, small.Write, 0);
-            Set(new Parameters
-            {
-                IW = (uint)gw, IH = (uint)gh, TW = (uint)prepared.CoarseW, TH = (uint)prepared.CoarseH,
-                OX = (uint)sx, OY = (uint)sy, OW = (uint)sw, OH = (uint)sh, TN = prepared.CoarseNorm, N = prepared.Coarse!.Kept,
-            });
-            Run(_match, sw, sh, new[] { small.Read, prepared.Coarse.Read }, 1, scores.Write, 1);
-        }
+            IW = (uint)source.W, IH = (uint)source.H, TW = (uint)prepared.CoarseW, TH = (uint)prepared.CoarseH,
+            OX = (uint)sx, OY = (uint)sy, OW = (uint)sw, OH = (uint)sh, TN = prepared.CoarseNorm, N = prepared.Coarse!.Kept,
+        });
+        if (prepared.Calibration.Gray)
+            Run(_matchGray, sw, sh, new[] { source.Read, prepared.Coarse.Read }, 4, scores.Write, 1);
+        else
+            Run(_match, sw, sh, new[] { source.Read, prepared.Coarse.Read }, 1, scores.Write, 1);
         return scores;
     }
 
@@ -573,15 +634,6 @@ internal sealed unsafe class GpuMatcher : IDisposable
         return result;
     }
 
-    private ImageMatch BestInBlocks(GpuBuffer scores, int width, int height, int ox, int oy)
-    {
-        var best = ImageMatch.None;
-        foreach (var (score, x, y) in Blocks(scores, width, height))
-            if (score > -1.5)
-                best = ImageMatch.Best(best, new ImageMatch(ox + x, oy + y, score));
-        return best;
-    }
-
     public void Dispose()
     {
         lock (_sync)
@@ -595,6 +647,24 @@ internal sealed unsafe class GpuMatcher : IDisposable
             foreach (var staging in _staging.Values)
                 Marshal.ReleaseComObject(staging);
             _staging.Clear();
+            // The matcher owns its device: released now, not when the garbage collector gets to it.
+            try
+            {
+                _context.ClearState();
+                _context.Flush();
+            }
+            catch (COMException)
+            {
+            }
+            foreach (object com in new object[] { _convert, _down, _downGray, _match, _matchGray, _tileMax, _parameters, _context, _device })
+                Release(com);
         }
+    }
+
+    /// <summary>Releases a COM object now.</summary>
+    internal static void Release(object? com)
+    {
+        if (com != null && Marshal.IsComObject(com))
+            Marshal.FinalReleaseComObject(com);
     }
 }

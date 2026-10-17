@@ -306,7 +306,11 @@ internal sealed class ConditionChecker : IDisposable
     private (bool Met, Point At, double Score) FindImage(IScreenWatch watch, Rect area, ConditionImage image, MacroCondition c)
     {
         double need = Math.Clamp(c.Similarity, 50, 100) / 100.0;
-        var gpu = UseGpu(watch, area) ? watch.Gpu : null;
+        // The image at its own size decides the device: one that can't be shrunk (calibration factor 1) is searched brute
+        // force, which OpenCV does far faster on the processor (with the Fourier transform) than the shaders.
+        var own = Image(image.Id, 1.0);
+        bool shrinks = own != null && CalibrationOf(own, need).Factor > 1;
+        var gpu = UseGpu(watch, area, shrinks) ? watch.Gpu : null;
         GpuMatcher.GpuBuffer? onCard = null;
         Mat? onProcessor = null;
         try
@@ -325,8 +329,7 @@ internal sealed class ConditionChecker : IDisposable
                 var mat = Image(image.Id, scale);
                 if (mat == null)
                     continue;
-                if (!_calibrations.TryGetValue((mat, need), out var cal))
-                    _calibrations[(mat, need)] = cal = Calibration.Of(mat, need);
+                var cal = CalibrationOf(mat, need);
                 ImageMatch match;
                 if (onCard != null)
                 {
@@ -357,12 +360,19 @@ internal sealed class ConditionChecker : IDisposable
         }
     }
 
-    private bool UseGpu(IScreenWatch watch, Rect area) => watch.Gpu != null && _device switch
+    private bool UseGpu(IScreenWatch watch, Rect area, bool shrinks) => watch.Gpu != null && _device switch
     {
         RecognitionDevice.Cpu => false,
         RecognitionDevice.Gpu => true,
-        _ => !watch.Software && (long)area.Width * area.Height > GpuFromPixels,
+        _ => !watch.Software && shrinks && (long)area.Width * area.Height > GpuFromPixels,
     };
+
+    private Calibration CalibrationOf(Mat mat, double need)
+    {
+        if (!_calibrations.TryGetValue((mat, need), out var calibration))
+            _calibrations[(mat, need)] = calibration = Calibration.Of(mat, need);
+        return calibration;
+    }
 
     /// <summary>An image of the store at a size, read once per run; null when the store has not it.</summary>
     private Mat? Image(string id, double scale)

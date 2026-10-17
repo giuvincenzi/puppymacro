@@ -125,7 +125,8 @@ internal static class AiJson
             : new List<(string Name, JsonNode? Value)>();
         var changes = set.EnumerateObject().Select(p => (p.Name, Value: JsonNode.Parse(p.Value.GetRawText()))).ToList();
         int count = 0;
-        foreach (JsonObject action in AllActions(actions))
+        // The actions as they are before any change: a new value can hold actions (an If's Then), never walked into.
+        foreach (JsonObject action in AllActions(actions).ToList())
         {
             if (groupId != null && !string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase))
                 continue;

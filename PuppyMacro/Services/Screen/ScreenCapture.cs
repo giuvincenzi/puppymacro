@@ -77,7 +77,8 @@ internal sealed unsafe class ScreenCapture : IScreen
 
     public bool Active
     {
-        get { lock (_sync) return _watchers > 0; }
+        // Also while a capture lingers after the last condition: it still runs.
+        get { lock (_sync) return _watchers > 0 || _lingering; }
     }
 
     /// <summary>
@@ -100,15 +101,26 @@ internal sealed unsafe class ScreenCapture : IScreen
             ActiveChanged?.Invoke(true);
         lock (_sync)
         {
-            if (_monitors.Count == 0)
-                _monitors.AddRange(Mta(() => MonitorCapture.All(this)));
-            var center = new Point(area.X + area.Width / 2, area.Y + area.Height / 2);
-            var monitor = _monitors.FirstOrDefault(m => m.Bounds.Contains(center)) ?? _monitors.FirstOrDefault(m => m.Bounds.IntersectsWith(area));
-            if (monitor != null)
+            MonitorCapture? monitor = null;
+            try
             {
-                monitor.Start();
-                return new Watch(this, monitor);
+                Mta(() =>
+                {
+                    RefreshMonitors();
+                    return 0;
+                });
+                var center = new Point(area.X + area.Width / 2, area.Y + area.Height / 2);
+                monitor = _monitors.FirstOrDefault(m => m.Bounds.Contains(center)) ?? _monitors.FirstOrDefault(m => m.Bounds.IntersectsWith(area));
+                monitor?.Start();
             }
+            catch (Exception ex) when (ex is COMException or InvalidOperationException or InvalidCastException)
+            {
+                // Logged, and as if no monitor were there: the count of watches must come back down.
+                CaptureLog.Write($"could not start the capture: {ex.Message}");
+                monitor = null;
+            }
+            if (monitor != null)
+                return new Watch(this, monitor);
             // No monitor there: as if the watch ended at once.
             if (--_watchers == 0)
             {
@@ -120,6 +132,29 @@ internal sealed unsafe class ScreenCapture : IScreen
     }
 
     private bool _lingering;
+
+    /// <summary>
+    /// The monitors as they are now, under <see cref="_sync"/>: a monitor that is not in use any more and changed (its place
+    /// or size in the desktop), went away or gave up is released, and a new or changed one gets a capture of its own. One
+    /// in use keeps running as it is until it is free: Windows lets a process duplicate a monitor only once.
+    /// </summary>
+    private void RefreshMonitors()
+    {
+        var now = MonitorCapture.Outputs();
+        foreach (var monitor in _monitors.ToList())
+        {
+            bool same = now.Any(o => o.DeviceName == monitor.DeviceName && o.Bounds == monitor.Bounds);
+            if (monitor.InUse || (same && monitor.Failure == null))
+                continue;
+            monitor.Dispose();
+            _monitors.Remove(monitor);
+        }
+        foreach (var output in now.Where(o => !_monitors.Any(m => m.DeviceName == o.DeviceName)))
+        {
+            if (MonitorCapture.For(this, output) is { } monitor)
+                _monitors.Add(monitor);
+        }
+    }
 
     /// <summary>
     /// Runs <paramref name="work"/> on a multithreaded-apartment thread. The capture's Direct3D and DXGI objects are created
@@ -247,22 +282,38 @@ internal sealed unsafe class ScreenCapture : IScreen
         public string? Failure { get; private set; }
 
         /// <summary>Every monitor on the desktop, each with a device of its own. A monitor that can't get one is logged and left out.</summary>
-        public static List<MonitorCapture> All(ScreenCapture owner)
+        /// <summary>A capture of one monitor with a device of its own; null (logged) when it can't get one.</summary>
+        public static MonitorCapture? For(ScreenCapture owner, OutputInfo info)
         {
-            var monitors = new List<MonitorCapture>();
-            foreach (var info in Outputs())
+            try
             {
-                try
-                {
-                    if (Create(owner, info) is { } monitor)
-                        monitors.Add(monitor);
-                }
-                catch (Exception ex) when (ex is COMException or InvalidOperationException or InvalidCastException)
-                {
-                    CaptureLog.Write($"{info.DeviceName}: no device on {info.CardName}: {Describe(ex)}");
-                }
+                return Create(owner, info);
             }
-            return monitors;
+            catch (Exception ex) when (ex is COMException or InvalidOperationException or InvalidCastException)
+            {
+                CaptureLog.Write($"{info.DeviceName}: no device on {info.CardName}: {Describe(ex)}");
+                return null;
+            }
+        }
+
+        /// <summary>The monitor's name in Windows ("\\.\DISPLAY1").</summary>
+        public string DeviceName => _deviceName;
+
+        /// <summary>A condition, a picker or the bench looks at it.</summary>
+        public bool InUse => _users > 0;
+
+        /// <summary>The monitor is still where it was when its capture was made (a display change moves or resizes it).</summary>
+        private bool StillThere()
+        {
+            try
+            {
+                var r = _output.GetDesc().DesktopCoordinates;
+                return r.left == Bounds.X && r.top == Bounds.Y && r.right - r.left == Bounds.Width && r.bottom - r.top == Bounds.Height;
+            }
+            catch (COMException)
+            {
+                return false;
+            }
         }
 
         /// <summary>The monitor's adapter and output, from one factory of its own, and a device made from that adapter.</summary>
@@ -395,7 +446,7 @@ internal sealed unsafe class ScreenCapture : IScreen
 
         private void Run()
         {
-            while (!_stop)
+            while (!_stop && Failure == null)
             {
                 if (_duplication == null && Open() is { } refused)
                 {
@@ -504,6 +555,16 @@ internal sealed unsafe class ScreenCapture : IScreen
                 ReadOnlySpan<DXGI_FORMAT> formats = stackalloc[] { DXGI_FORMAT.DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT.DXGI_FORMAT_B8G8R8A8_UNORM };
                 lock (Gpu.Sync)
                     _output.DuplicateOutput1(Gpu.Device, 0, formats, out _duplication);
+                if (!StillThere())
+                {
+                    // The display changed: this capture's coordinates are old. It stops and is made again once free.
+                    lock (Gpu.Sync)
+                        Free(_duplication);
+                    _duplication = null;
+                    Failure = "the monitor moved, changed its size or is gone";
+                    CaptureLog.Write($"{_deviceName}: {Failure}");
+                    return Failure;
+                }
                 SdrWhite = SdrWhiteNits(_deviceName);
                 return null;
             }

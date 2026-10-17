@@ -26,13 +26,20 @@ internal static class CaptureExclusion
                 if (_active && sender is Window w)
                     Apply(w, true);
             }));
-        // At once, before the capture starts: from another thread it waits for the UI thread (half a second at most).
+        // Each notification applies the capture's state as it is when it runs, not the one it carried: one that comes late or
+        // out of order can never leave the windows excluded (or not) against the capture. BeginInvoke is never dropped (an
+        // Invoke with a timeout is, when the UI thread is busy). Before a capture starts, the thread that starts it waits for it
+        // half a second at most, so the first frames do not show PuppyMacro's windows.
         ScreenCapture.Shared.ActiveChanged += active =>
         {
             if (dispatcher.CheckAccess())
-                ApplyAll(active);
-            else
-                dispatcher.Invoke(() => ApplyAll(active), DispatcherPriority.Send, System.Threading.CancellationToken.None, TimeSpan.FromMilliseconds(500));
+            {
+                ApplyAll(ScreenCapture.Shared.Active);
+                return;
+            }
+            var operation = dispatcher.BeginInvoke(() => ApplyAll(ScreenCapture.Shared.Active), DispatcherPriority.Send);
+            if (active)
+                operation.Wait(TimeSpan.FromMilliseconds(500));
         };
     }
 

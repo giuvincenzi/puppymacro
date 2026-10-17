@@ -35,8 +35,17 @@ internal sealed class ScreenSnapshot : IDisposable
                 Thread.Sleep(15);
             foreach (var (bounds, watch) in watches)
             {
-                if (watch?.Copy(bounds) is { } picture)
-                    monitors.Add((bounds, picture));
+                // The part the capture really has (its monitor may have changed since the list was read), and only a
+                // picture of exactly that size: Pixel and Part read it by these bounds.
+                if (watch == null)
+                    continue;
+                Rect part = bounds.Intersect(watch.Bounds);
+                if (part.Width <= 0 || part.Height <= 0 || watch.Copy(part) is not { } picture)
+                    continue;
+                if (picture.Width == part.Width && picture.Height == part.Height)
+                    monitors.Add((part, picture));
+                else
+                    picture.Dispose();
             }
         }
         finally

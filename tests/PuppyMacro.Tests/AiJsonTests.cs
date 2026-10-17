@@ -190,4 +190,32 @@ public class AiJsonTests
         Assert.Equal(3, count);
         Assert.Equal(1200, result["Actions"]![1]!["If"]!["Else"]![0]!["DelayMs"]!.GetValue<double>());
     }
+
+    [Fact]
+    public void SetWhere_never_walks_into_the_value_it_writes()
+    {
+        var macro = new MacroDefinition
+        {
+            Name = "M",
+            Actions =
+            {
+                new MacroAction
+                {
+                    Type = MacroActionType.If,
+                    If = new MacroIf { Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, Color = "#000000" } } },
+                },
+            },
+        };
+        var document = System.Text.Json.Nodes.JsonNode.Parse(MacroJson.Serialize(macro))!;
+        // The new If holds another If, which the same "where" matches: it is written, never changed again (that recursed
+        // without end and killed the process).
+        string nested = "{\"Conditions\": [], \"Then\": [{\"Type\": \"If\", \"If\": {\"Conditions\": [], \"Then\": [], \"Else\": []}}], \"Else\": []}";
+        using var where = System.Text.Json.JsonDocument.Parse("{\"Type\": \"If\"}");
+        using var set = System.Text.Json.JsonDocument.Parse("{\"If\": " + nested + "}");
+
+        var (result, count) = AiJson.SetWhere(document, where.RootElement, set.RootElement, null);
+
+        Assert.Equal(1, count);
+        Assert.Equal("If", result["Actions"]![0]!["If"]!["Then"]![0]!["Type"]!.GetValue<string>());
+    }
 }
