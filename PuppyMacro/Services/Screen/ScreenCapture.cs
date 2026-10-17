@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using OpenCvSharp;
 using Windows.Win32;
 using Windows.Win32.Devices.Display;
@@ -100,7 +101,7 @@ internal sealed unsafe class ScreenCapture : IScreen
         lock (_sync)
         {
             if (_monitors.Count == 0)
-                _monitors.AddRange(MonitorCapture.All(this));
+                _monitors.AddRange(Mta(() => MonitorCapture.All(this).ToList()));
             var center = new Point(area.X + area.Width / 2, area.Y + area.Height / 2);
             var monitor = _monitors.FirstOrDefault(m => m.Bounds.Contains(center)) ?? _monitors.FirstOrDefault(m => m.Bounds.IntersectsWith(area));
             if (monitor != null)
@@ -119,6 +120,21 @@ internal sealed unsafe class ScreenCapture : IScreen
     }
 
     private bool _lingering;
+
+    /// <summary>
+    /// Runs <paramref name="work"/> on a multithreaded-apartment thread. The capture's Direct3D and DXGI objects are created
+    /// and used only there: they cannot be marshaled between apartments, and a call from the UI thread (a single-threaded
+    /// apartment) to one made on a capture thread, or the other way round, crashes the process.
+    /// </summary>
+    internal static T Mta<T>(Func<T> work) =>
+        Thread.CurrentThread.GetApartmentState() == ApartmentState.STA ? Task.Run(work).GetAwaiter().GetResult() : work();
+
+    /// <summary>Fails clearly instead of crashing: the capture's objects are used only from MTA threads (<see cref="Mta{T}"/>).</summary>
+    internal static void RequireMta()
+    {
+        if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+            throw new InvalidOperationException("The screen capture's graphics card objects are used only from MTA threads.");
+    }
 
     private void Release(MonitorCapture monitor)
     {
@@ -500,6 +516,7 @@ internal sealed unsafe class ScreenCapture : IScreen
         /// </summary>
         public GpuMatcher.GpuBuffer? Picture(Rect area)
         {
+            RequireMta();
             Rect part = area.Intersect(Bounds);
             if (part.Width <= 0 || part.Height <= 0)
                 return null;
@@ -512,11 +529,11 @@ internal sealed unsafe class ScreenCapture : IScreen
             }
         }
 
-        public Mat? Copy(Rect area)
+        public Mat? Copy(Rect area) => Mta(() =>
         {
             using var picture = Picture(area);
             return picture == null ? null : _monitor.Gpu.Download(picture);
-        }
+        });
 
         public void Dispose()
         {

@@ -120,6 +120,8 @@ Rules:
   Then or Else (`ConditionChecker`, from `MacroRunner`). Decisions:
   - The screen is read as the conditions see it everywhere: the pickers (`ScreenPickWindow`) take pixels and images from
     the same capture, with HDR turned to SDR colors, so what is picked is what is found.
+  - The capture's Direct3D and DXGI objects are created and used only on MTA threads (`ScreenCapture.Mta`): they cannot
+    be marshaled between apartments, and a call from the UI thread to one made on another thread crashes the process.
   - The same search runs on the graphics card (compute shaders) or on the processor (OpenCV) with the same results
     (unit tested on WARP); `ConditionChecker` chooses by the area's size unless Settings › Screen recognition forces one.
   - While a condition looks at the screen, and a few seconds after, PuppyMacro's windows are left out of every screen

@@ -99,7 +99,8 @@ public partial class App : Application
         // The screen recognition's tuning bench (development build only): measures, writes the results, opens them, exits.
         if (Environment.GetEnvironmentVariable(Services.Screen.RecognitionBench.Variable) is { Length: > 0 } bench)
         {
-            Services.Screen.RecognitionBench.Run(bench);
+            // On an MTA thread, as the capture's graphics card objects must be (ScreenCapture.Mta).
+            System.Threading.Tasks.Task.Run(() => Services.Screen.RecognitionBench.Run(bench)).GetAwaiter().GetResult();
             return;
         }
 #endif
