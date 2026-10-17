@@ -77,7 +77,8 @@ paths:
   `logs\` is for debugging logs only; `logs\screen-capture.log` holds the screen capture's errors (`CaptureLog`, size
   limit there).
 - The images of the macros' conditions: `images\{sha256}.png` in the data folder (`ImageStore`), part Data. A macro
-  names them by that Id; an image no macro uses is deleted when a macro is saved, and the History keeps a copy of every
+  names them by that Id. An image no saved macro uses and nothing holds (an open editor, the editor's copied actions, an
+  AI app's take: `ImageStore.Hold`) is deleted at the next save of a macro or at start; the History keeps a copy of every
   image its versions use, so Restore brings it back. `.puppyitems` files carry the images of their macros.
 - History: `history\{id}.json` in the data folder, one per loop, macro or remap (`ItemHistory`, size limit
   `ItemHistory.MaxBytes` per item). Not user data: a missing or unreadable file is an empty history.

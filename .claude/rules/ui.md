@@ -183,7 +183,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     scrolls it to the chosen sound each time it is shown.
   - Conditions on the screen (approved: the Design canvas "Macro Conditions", option B, made with the current UI's
     controls): in the macro editor an If is a row with **Then** and **Else** rows under it, their actions indented one
-    step more; **Add condition** next to Add action. The condition window is the action window with the conditions as
+    step more; **+ Action** and **+ Condition** on the left of the bar, the same + icon and a short name under it (the
+    user's choice; the tooltips say Add action and Add condition). The condition window is the action window with the conditions as
     `SettingsExpander`s and a card that says what PuppyMacro sees now; the text recognition note is an `InfoBar` above the
     cards. `ScreenPickWindow` (pick a pixel with the enlarged pixels around the pointer, take an image, draw an area) is
     drawn over a still picture of the screen, with the overlays' fixed dark look.
