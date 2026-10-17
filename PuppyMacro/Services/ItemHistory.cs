@@ -56,6 +56,13 @@ public sealed class HistoryVersion
     public string Json { get; set; } = "";
 
     public bool Deleted { get; set; }
+
+    /// <summary>
+    /// The images its JSON names, as Base64 by id (macros' Image conditions). Each image is in one version of the file only:
+    /// the oldest that names it (<see cref="ItemHistory"/> keeps it so when old versions go).
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, string>? Images { get; set; }
 }
 
 /// <summary>
@@ -80,11 +87,34 @@ internal sealed class ItemHistory
     private readonly long _maxBytes;
     private readonly Dictionary<Guid, string> _current = new();
 
-    public ItemHistory(string folder, Func<DateTime>? now = null, long maxBytes = MaxBytes)
+    private readonly ImageStore? _images;
+
+    /// <param name="images">Where the macros' images are: each version keeps a copy of the images it names, for Restore.</param>
+    public ItemHistory(string folder, Func<DateTime>? now = null, long maxBytes = MaxBytes, ImageStore? images = null)
     {
         _folder = folder;
         _now = now ?? (() => DateTime.Now);
         _maxBytes = maxBytes;
+        _images = images;
+    }
+
+    /// <summary>
+    /// Puts back the images an item's JSON names (a version being restored, an AI change being undone) from the item's
+    /// History, when they are no longer kept.
+    /// </summary>
+    public void RestoreImages(Guid id, string json)
+    {
+        if (_images == null)
+            return;
+        var needed = ImageStore.IdsIn(json);
+        if (needed.Count == 0)
+            return;
+        var found = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var version in Versions(id))
+            foreach (var (image, base64) in version.Images ?? new Dictionary<string, string>())
+                if (needed.Contains(image))
+                    found.TryAdd(image, base64);
+        _images.Restore(found);
     }
 
     /// <summary>The ids whose current JSON is known (seeded or recorded).</summary>
@@ -175,11 +205,43 @@ internal sealed class ItemHistory
             Directory.CreateDirectory(_folder);
             string path = PathOf(id);
             string temp = path + ".tmp";
-            File.WriteAllText(temp, JsonSerializer.Serialize(Newest(versions), FileOptions));
+            Share(versions);
+            var kept = Newest(versions);
+            Share(kept, versions);
+            File.WriteAllText(temp, JsonSerializer.Serialize(kept, FileOptions));
             File.Move(temp, path, overwrite: true);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
+        }
+    }
+
+    /// <summary>
+    /// Gives each image the versions name to the oldest of <paramref name="versions"/> that names it, once, from the
+    /// images the file already had (<paramref name="pool"/>) or from the images folder.
+    /// </summary>
+    private void Share(List<HistoryVersion> versions, List<HistoryVersion>? pool = null)
+    {
+        var known = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var version in pool ?? versions)
+            foreach (var (image, base64) in version.Images ?? new Dictionary<string, string>())
+                known.TryAdd(image, base64);
+        foreach (var version in versions)
+            version.Images = null;
+        var given = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var version in versions)
+        {
+            foreach (string image in ImageStore.IdsIn(version.Json))
+            {
+                if (!given.Add(image))
+                    continue;
+                string? base64 = known.TryGetValue(image, out string? had) ? had
+                    : _images?.Read(image) is { } png ? Convert.ToBase64String(png) : null;
+                if (base64 == null)
+                    continue;
+                version.Images ??= new Dictionary<string, string>(StringComparer.Ordinal);
+                version.Images[image] = base64;
+            }
         }
     }
 
@@ -256,7 +318,10 @@ internal sealed class ItemHistory
                 if (index >= Math.Min(beforeCount, afterCount))
                     continue; // added or removed above
                 Phrase what = ActionPhrase("History_ActionChanged", index, afterActions![index]);
-                what.Args!.AddRange(new[] { (PhraseArg)Label(action.Groups[2].Value), old ?? none, now ?? none });
+                string field = action.Groups[2].Value;
+                if (field.StartsWith("If.", StringComparison.Ordinal))
+                    field = field[3..]; // "Then[0].DelayMs", "Conditions[1].Similarity"
+                what.Args!.AddRange(new[] { (PhraseArg)Label(field), old ?? none, now ?? none });
                 changes.Add(what);
             }
             else if (!key.StartsWith("Actions", StringComparison.Ordinal) && key != "Id") // actions: added or removed above

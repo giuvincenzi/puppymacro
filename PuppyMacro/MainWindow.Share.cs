@@ -143,6 +143,8 @@ public partial class MainWindow
         }
 
         List<object> items = view.ChosenItems();
+        if (view.FileContent is { } content)
+            ItemFile.AddImages(content, _macros);
         SavingAs(app ?? ItemHistory.You, () =>
         {
             foreach (object item in items)
@@ -225,7 +227,7 @@ public partial class MainWindow
             return false;
         try
         {
-            File.WriteAllText(dialog.FileName, ItemFile.Write(items, ItemFile.AppVersion));
+            File.WriteAllText(dialog.FileName, ItemFile.Write(items, ItemFile.AppVersion, _macros.Images));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

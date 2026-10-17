@@ -966,6 +966,19 @@
   <data name="Code_PathEmpty" xml:space="preserve"><value>경로에는 점이 하나 이상 필요합니다.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>시간은 0 이상에서 시작해야 하며 뒤로 갈 수 없습니다.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>붙여넣을 텍스트를 입력하세요.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>조건은 If 동작에만 있습니다. If를 제거하거나 Type을 If로 바꾸세요.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>If 동작에는 If 안에 조건과 동작이 있어야 합니다.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>조건을 하나 이상 추가하세요.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>조건에 이름을 지정하세요. 그러면 Then의 동작이 찾은 위치를 클릭할 수 있습니다.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>이 매크로의 다른 조건에 같은 이름이 있습니다. 조건마다 다른 이름을 지정하세요.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>색은 #과 16진수 6자리로 쓰세요(예: #3BD16F).</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>[화면에서 캡처]로 찾을 이미지를 캡처하세요.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>초당 검사 횟수로 10, 30, 60 중 하나를 고르거나, 모든 프레임을 검사하려면 0을 고르세요.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro에 이 이미지가 없습니다. [화면에서 캡처]로 다시 캡처하세요.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>찾을 텍스트를 입력하세요.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>[화면의 텍스트]는 직접 그린 영역이나 화면 전체에서 찾습니다.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>찾은 위치로 갈 수 있는 동작은 [클릭], [마우스 단추 누름], [마우스 단추 놓음], [이동]뿐입니다.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>이 동작은 조건이 이미지나 텍스트를 찾은 위치로 가지만, 그 조건의 Then 안에 있지 않습니다. 안으로 옮기거나 고정된 위치를 고르세요.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro 오버레이 패널</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>패널 이동</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>끌어서 패널 이동</value></data>

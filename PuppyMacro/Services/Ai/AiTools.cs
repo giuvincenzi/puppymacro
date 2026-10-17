@@ -1029,7 +1029,7 @@ internal sealed class AiTools
         (string? text, string? unknown, int count) = await _host.Ui(() =>
         {
             (List<object> items, string? missing) = ItemsByIds(ids);
-            return Task.FromResult(missing != null ? (null, missing, 0) : ((string?)ItemFile.Write(items, ItemFile.AppVersion), (string?)null, items.Count));
+            return Task.FromResult(missing != null ? (null, missing, 0) : ((string?)ItemFile.Write(items, ItemFile.AppVersion, _host.Macros.Images), (string?)null, items.Count));
         }).ConfigureAwait(false);
         if (unknown != null)
             return AiToolResult.Error($"No loop, macro or remap has the Id {unknown}. get_overview lists them.");
@@ -1068,6 +1068,7 @@ internal sealed class AiTools
                 return busyNow;
             // Read again: meanwhile the user may have taken a name or a hotkey.
             ItemFileContent now = Loc.English(() => ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only));
+            ItemFile.AddImages(now, _host.Macros);
             var lines = new List<string>();
             foreach (ItemFileEntry entry in now.Entries.Where(e => e.Selected))
             {

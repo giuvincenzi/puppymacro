@@ -1059,6 +1059,19 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Code_PathEmpty" xml:space="preserve"><value>A path needs at least one point.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Times must start at 0 or more and never go back.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Enter the text to paste.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Only an If action has conditions. Remove If, or change Type to If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>An If action needs its conditions and actions in If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Add at least one condition.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Give the condition a name, so the actions in Then can click where it was found.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>Another condition of this macro has the same name. Give each one its own name.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Write the color as # and six hexadecimal digits, like #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Take the image to look for with Take on screen.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Choose 10, 30 or 60 checks a second, or 0 for every frame.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro doesn't have this image. Take it again with Take on screen.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Enter the text to look for.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Text on screen looks in an area you draw or in the whole screen.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Only Click, Mouse button down, Mouse button up and Move to can go where something was found.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>This action goes where a condition found its image or text, but it isn't inside that condition's Then. Move it inside, or choose a fixed point.</value></data>
   <!-- ===== Views/OverlayPanel.xaml(.cs), OverlayPanelWindow.xaml ===== -->
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro overlay panel</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Move the panel</value></data>

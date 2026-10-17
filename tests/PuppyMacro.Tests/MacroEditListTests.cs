@@ -370,4 +370,84 @@ public class MacroGroupsTests : IDisposable
 
         Assert.Equal("Group", Assert.Single(Assert.Single(library.Macros).Groups).Name);
     }
+
+    // ================= Then and Else =================
+
+    private static MacroAction IfWith(string name, params MacroAction[] then)
+    {
+        var condition = new MacroCondition { Kind = ConditionKind.Image, Name = name };
+        return new MacroAction { Type = MacroActionType.If, Name = name, If = new MacroIf { Conditions = { condition }, Then = then.ToList() } };
+    }
+
+    private static MacroAction Key(string name) => new() { Type = MacroActionType.PressKey, Name = name };
+
+    [Fact]
+    public void Actions_move_into_then_and_an_if_never_into_itself()
+    {
+        MacroAction a = Key("a"), b = Key("b");
+        var check = IfWith("If", a);
+        var list = new MacroEditList(new[] { check, b }, System.Array.Empty<MacroGroup>());
+
+        Assert.True(list.Move(new[] { b }, System.Array.Empty<MacroGroup>(), check.If!.Then, 0, null));
+        Assert.Equal(new[] { b, a }, check.If.Then);
+        Assert.False(list.Move(new[] { check }, System.Array.Empty<MacroGroup>(), check.If.Then, 1, null));
+        Assert.Equal(1, list.DepthOf(a));
+    }
+
+    [Fact]
+    public void Copying_an_if_gives_new_condition_ids_and_its_clicks_follow_them()
+    {
+        var click = new MacroAction { Type = MacroActionType.Click, Vk = 1 };
+        var check = IfWith("If", click);
+        click.FoundId = check.If!.Conditions[0].Id;
+        var list = new MacroEditList(new[] { check }, System.Array.Empty<MacroGroup>());
+
+        var pasted = list.Insert(list.Copy(new[] { check }, System.Array.Empty<MacroGroup>()), 1, null).Single();
+
+        Guid newId = pasted.If!.Conditions[0].Id;
+        Assert.NotEqual(check.If.Conditions[0].Id, newId);
+        Assert.Equal(newId, pasted.If.Then[0].FoundId);
+        Assert.Equal(check.If.Conditions[0].Id, click.FoundId);
+    }
+
+    [Fact]
+    public void Selecting_an_if_takes_its_branches_with_it()
+    {
+        MacroAction a = Key("a");
+        var check = IfWith("If", a);
+        var list = new MacroEditList(new[] { check, Key("b") }, System.Array.Empty<MacroGroup>());
+
+        Assert.Equal(new[] { check }, list.Expand(new[] { check, a }, System.Array.Empty<MacroGroup>()));
+        list.Remove(new[] { check }, System.Array.Empty<MacroGroup>());
+        Assert.Equal(new[] { "b" }, list.All.Select(x => x.Name));
+    }
+
+    [Fact]
+    public void Alt_Up_at_the_top_of_then_leaves_it_before_its_if_and_Alt_Down_after_it()
+    {
+        MacroAction a = Key("a"), b = Key("b");
+        var check = IfWith("If", a, b);
+        var list = new MacroEditList(new[] { check }, System.Array.Empty<MacroGroup>());
+
+        list.MoveUp(new[] { a }, System.Array.Empty<MacroGroup>());
+        Assert.Equal(new[] { "a", "If" }, list.Actions.Select(x => x.Name));
+
+        list.MoveDown(new[] { b }, System.Array.Empty<MacroGroup>());
+        Assert.Equal(new[] { "a", "If", "b" }, list.Actions.Select(x => x.Name));
+        Assert.Empty(check.If!.Then);
+    }
+
+    [Fact]
+    public void A_group_never_spans_two_lists()
+    {
+        MacroAction a = Key("a"), b = Key("b"), c = Key("c");
+        var check = IfWith("If", a);
+        var list = new MacroEditList(new[] { b, check, c }, System.Array.Empty<MacroGroup>());
+
+        Assert.False(list.CanGroup(new[] { a, b }, System.Array.Empty<MacroGroup>()));
+        Assert.Null(list.Group(new[] { a, b }, System.Array.Empty<MacroGroup>(), "G"));
+        Assert.True(list.CanGroup(new[] { b, c }, System.Array.Empty<MacroGroup>()));
+        Assert.NotNull(list.Group(new[] { a }, System.Array.Empty<MacroGroup>(), "Inside"));
+        Assert.Equal(check.If!.Then, list.ListOf(list.Groups.Single()));
+    }
 }

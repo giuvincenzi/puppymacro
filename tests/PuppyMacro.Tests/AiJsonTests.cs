@@ -159,4 +159,35 @@ public class AiJsonTests
 
         Assert.Contains(reason, error.Message);
     }
+
+    [Fact]
+    public void SetWhere_also_changes_the_actions_inside_then_and_else()
+    {
+        var macro = new MacroDefinition
+        {
+            Name = "M",
+            Actions =
+            {
+                new MacroAction { Type = MacroActionType.PressKey, Vk = 65, DelayMs = 800 },
+                new MacroAction
+                {
+                    Type = MacroActionType.If,
+                    If = new MacroIf
+                    {
+                        Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, Color = "#000000" } },
+                        Then = { new MacroAction { Type = MacroActionType.PressKey, Vk = 66, DelayMs = 800 } },
+                        Else = { new MacroAction { Type = MacroActionType.PressKey, Vk = 67, DelayMs = 800 } },
+                    },
+                },
+            },
+        };
+        var document = System.Text.Json.Nodes.JsonNode.Parse(MacroJson.Serialize(macro))!;
+        using var where = System.Text.Json.JsonDocument.Parse("{\"DelayMs\": 800}");
+        using var set = System.Text.Json.JsonDocument.Parse("{\"DelayMs\": 1200}");
+
+        var (result, count) = AiJson.SetWhere(document, where.RootElement, set.RootElement, null);
+
+        Assert.Equal(3, count);
+        Assert.Equal(1200, result["Actions"]![1]!["If"]!["Else"]![0]!["DelayMs"]!.GetValue<double>());
+    }
 }

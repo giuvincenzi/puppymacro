@@ -53,6 +53,42 @@ internal static class CodeSchema
         ["MacroAction.Text"] = "PasteText: the text to paste.",
         ["MacroAction.EnterBefore"] = "PasteText: press Enter before pasting.",
         ["MacroAction.EnterAfter"] = "PasteText: press Enter after pasting.",
+        ["MacroAction.If"] = "If: its conditions, how long it waits for them, and the actions of Then and Else. Only on If actions.",
+        ["MacroAction.FoundId"] = "Click, MouseDown, MouseUp, MoveTo inside an If's Then: the Id of an Image or Text condition of that If (or of an If around it); the action goes to the center of what it found, moved by FoundOffsetX and FoundOffsetY, instead of X, Y. Null = X, Y.",
+        ["MacroAction.FoundOffsetX"] = "With FoundId: pixels to the right of the center of what was found (negative: to the left).",
+        ["MacroAction.FoundOffsetY"] = "With FoundId: pixels below the center of what was found (negative: above).",
+
+        ["MacroIf.Conditions"] = "What to check on the screen. At least one.",
+        ["MacroIf.Match"] = "All: Then runs when every condition is true. Any: when at least one is.",
+        ["MacroIf.Wait"] = "Once: checks once, without waiting. UpTo: checks every time the screen changes, up to WaitSeconds. Forever: waits as long as it takes.",
+        ["MacroIf.WaitSeconds"] = "With Wait UpTo: the longest wait, in seconds. The macro's Speed does not change it.",
+        ["MacroIf.OnFail"] = "When the conditions are not true in time: Else runs the Else actions, then the macro goes on; Stop stops the macro.",
+        ["MacroIf.Then"] = "Actions run when the conditions are true, then the macro goes on after the If.",
+        ["MacroIf.Else"] = "Actions run when the conditions are not true in time (OnFail Else).",
+
+        ["MacroCondition.Id"] = "Referenced by FoundId of the mouse actions in Then. A new one for a new condition.",
+        ["MacroCondition.Kind"] = "Pixel: a pixel has a color. Image: an image is on the screen. Text: a text is on the screen (Windows' text recognition, slower).",
+        ["MacroCondition.Name"] = "Image, Text: a name of your choice, unique in the macro, shown where the actions use what it found.",
+        ["MacroCondition.X"] = "Pixel: the pixel's screen position, in physical pixels.",
+        ["MacroCondition.Y"] = "Pixel: the pixel's screen position, in physical pixels.",
+        ["MacroCondition.Color"] = "Pixel: the color, as # and six hexadecimal digits (#3BD16F).",
+        ["MacroCondition.Tolerance"] = "Pixel: how much red, green and blue may each differ from Color, in percent of 255; 0 = exactly Color. Usually 5.",
+        ["MacroCondition.Images"] = "Image: the images to look for, taken by the user in PuppyMacro (only the user can take one). True when one of them is on the screen; the first found is where the actions in Then go.",
+        ["MacroCondition.NearbySizes"] = "Image: also look for the images a little bigger or smaller (85% to 115%), for things that change size (zoom, distance). Slower.",
+        ["ConditionImage.Id"] = "The image's id (64 hexadecimal digits).",
+        ["ConditionImage.X"] = "Where the image was taken (its top-left corner), in physical pixels; Area Around looks near it.",
+        ["ConditionImage.Y"] = "Where the image was taken (its top-left corner), in physical pixels.",
+        ["MacroDefinition.ChecksPerSecond"] = "How many times a second its screen conditions look while they wait: 10, 30, 60, or 0 for every new frame. More checks notice changes sooner and use more of the computer.",
+        ["MacroCondition.Area"] = "Image, Text: where to look. Around (Image only): a little larger than where each image was taken (it does not follow a window that moves). Drawn: the area AreaX, AreaY, AreaWidth, AreaHeight. Screen: the whole screen with those bounds. A smaller area is faster.",
+        ["MacroCondition.AreaX"] = "Area Drawn or Screen: left edge, in physical pixels.",
+        ["MacroCondition.AreaY"] = "Area Drawn or Screen: top edge, in physical pixels.",
+        ["MacroCondition.AreaWidth"] = "Area Drawn or Screen: width, in physical pixels.",
+        ["MacroCondition.AreaHeight"] = "Area Drawn or Screen: height, in physical pixels.",
+        ["MacroCondition.Similarity"] = "Image: how closely the screen must look like the image, in percent. Usually 90.",
+        ["MacroCondition.Text"] = "Text: the text to look for.",
+        ["MacroCondition.TextMatch"] = "Text: Contains (other words may be around it) or Exact (a line with only this text).",
+        ["MacroCondition.MatchCase"] = "Text: uppercase and lowercase must match.",
+        ["MacroCondition.Language"] = "Text: the language of the text, as a tag like \"en-US\" (one of the languages Windows can read on this PC); null = Windows' language.",
 
         ["MacroGroup.Id"] = "Referenced by the actions' GroupId.",
         ["MacroGroup.Name"] = "Name shown in the editor.",
@@ -137,6 +173,19 @@ internal static class CodeSchema
         ["MacroAction.Y"] = MacroJson.Coordinate,
         ["MacroAction.SmoothSpeed"] = MacroJson.SmoothSpeed,
         ["MacroAction.ScrollSteps"] = MacroJson.ScrollSteps,
+        ["MacroAction.FoundOffsetX"] = MacroJson.Coordinate,
+        ["MacroAction.FoundOffsetY"] = MacroJson.Coordinate,
+        ["MacroIf.WaitSeconds"] = MacroJson.WaitSeconds,
+        ["MacroCondition.X"] = MacroJson.Coordinate,
+        ["MacroCondition.Y"] = MacroJson.Coordinate,
+        ["MacroCondition.Tolerance"] = MacroJson.Tolerance,
+        ["MacroCondition.Similarity"] = MacroJson.Similarity,
+        ["ConditionImage.X"] = MacroJson.Coordinate,
+        ["ConditionImage.Y"] = MacroJson.Coordinate,
+        ["MacroCondition.AreaX"] = MacroJson.Coordinate,
+        ["MacroCondition.AreaY"] = MacroJson.Coordinate,
+        ["MacroCondition.AreaWidth"] = MacroJson.AreaSize,
+        ["MacroCondition.AreaHeight"] = MacroJson.AreaSize,
         ["FloatingButton.Opacity"] = (AppSettings.MinOpacity, AppSettings.MaxOpacity),
         ["PathPoint.T"] = (0, double.MaxValue),
         ["LoopAction.KeyVk"] = (0, 254),
@@ -161,6 +210,7 @@ internal static class CodeSchema
         [MacroActionType.MovePath] = "Follow a recorded mouse path (Path).",
         [MacroActionType.Scroll] = "Turn the scroll wheel ScrollSteps notches in ScrollDirection.",
         [MacroActionType.PasteText] = "Paste Text, with Enter before or after if set.",
+        [MacroActionType.If] = "Check the screen (If.Conditions), waiting as If.Wait says, then run If.Then, or If.Else (or stop) when the conditions are not true in time.",
     };
 
     /// <summary>A whole macro: its Id is the only value allowed, and suggested.</summary>
@@ -268,6 +318,9 @@ internal static class CodeSchema
             }
             switch (key)
             {
+                case "MacroDefinition.ChecksPerSecond":
+                    schema["enum"] = new JsonArray(MacroDefinition.ChecksPerSecondSteps.Select(c => (JsonNode)JsonValue.Create(c)).ToArray());
+                    break;
                 case "MacroDefinition.Speed":
                     schema["enum"] = new JsonArray(MacroDefinition.SpeedSteps.Select(s => (JsonNode)JsonValue.Create(s)).ToArray());
                     break;

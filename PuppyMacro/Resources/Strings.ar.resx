@@ -1081,6 +1081,19 @@
   <data name="Code_PathEmpty" xml:space="preserve"><value>يحتاج المسار إلى نقطة واحدة على الأقل.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>يجب أن تبدأ الأوقات من 0 أو أكثر وألا تعود إلى الخلف أبدًا.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>أدخل النص المراد لصقه.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>الإجراء If فقط هو الذي يحتوي على شروط. أزل If أو اجعل Type هو If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>يحتاج الإجراء If إلى شروطه وإجراءاته داخل If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>أضف شرطاً واحداً على الأقل.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>أعطِ الشرط اسماً لكي تتمكن الإجراءات في Then من النقر حيث وُجد.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>يوجد شرط آخر في هذا الماكرو بالاسم نفسه. أعطِ كل شرط اسماً خاصاً به.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>اكتب اللون على شكل # متبوعة بستة أرقام سداسية عشرية، مثل ‎#3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>التقط الصورة التي تريد البحث عنها باستخدام "الالتقاط من الشاشة".</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>اختر 10 أو 30 أو 60 فحصاً في الثانية، أو 0 لفحص كل إطار.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>لا يملك PuppyMacro هذه الصورة. التقطها مرة أخرى باستخدام "الالتقاط من الشاشة".</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>أدخل النص المراد البحث عنه.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>يبحث "نص على الشاشة" في منطقة ترسمها أنت أو في الشاشة كلها.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>لا يمكن الانتقال إلى مكان العثور على شيء إلا لـ"نقر" و"ضغط زر الماوس لأسفل" و"تحرير زر الماوس" و"الانتقال إلى".</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>ينتقل هذا الإجراء إلى حيث وجد شرطٌ صورته أو نصه، لكنه ليس داخل Then الخاص بذلك الشرط. انقله إلى الداخل أو اختر نقطة ثابتة.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>لوحة تراكب PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>نقل اللوحة</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>اسحب لنقل اللوحة</value></data>

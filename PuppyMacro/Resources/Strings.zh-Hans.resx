@@ -966,6 +966,19 @@
   <data name="Code_PathEmpty" xml:space="preserve"><value>路径至少需要一个点。</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>时间必须从 0 或更大的值开始，且不能倒退。</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>请输入要粘贴的文本。</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>只有 If 操作才有条件。请删除 If，或将 Type 设为 If。</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>If 操作需要在 If 中包含其条件和操作。</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>请至少添加一个条件。</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>请为条件命名，这样 Then 中的操作就能单击找到它的位置。</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>此宏的另一个条件使用了相同的名称。请为每个条件取不同的名称。</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>请将颜色写成 # 加六位十六进制数字，例如 #3BD16F。</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>请使用“从屏幕截取”截取要查找的图像。</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>请选择每秒检查 10、30 或 60 次，或选择 0 以检查每一帧。</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro 没有此图像。请使用“从屏幕截取”重新截取。</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>请输入要查找的文本。</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>“屏幕上的文本”会在你绘制的区域或整个屏幕中查找。</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>只有“单击”、“按下鼠标按钮”、“松开鼠标按钮”和“移动到”可以前往找到内容的位置。</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>此操作会前往某个条件找到其图像或文本的位置，但它不在该条件的 Then 中。请将它移到里面，或选择一个固定位置。</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro 覆盖面板</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>移动面板</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>拖动以移动面板</value></data>

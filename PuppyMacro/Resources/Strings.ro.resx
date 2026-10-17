@@ -1023,6 +1023,19 @@ Detalii: {1}</value></data>
   <data name="Code_PathEmpty" xml:space="preserve"><value>Un traseu necesită cel puțin un punct.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Timpii trebuie să înceapă de la 0 sau mai mult și să nu scadă niciodată.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Introduceți textul de lipit.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Doar o acțiune If are condiții. Eliminați If sau setați Type la If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>O acțiune If are nevoie de condițiile și acțiunile ei în If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Adăugați cel puțin o condiție.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Dați un nume condiției, ca acțiunile din Then să poată face clic acolo unde a fost găsită.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>O altă condiție a acestei macrocomenzi are același nume. Dați fiecăreia un nume propriu.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Scrieți culoarea ca # urmat de șase cifre hexazecimale, de exemplu #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Capturați imaginea de căutat cu Capturare de pe ecran.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Alegeți 10, 30 sau 60 de verificări pe secundă sau 0 pentru fiecare cadru.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro nu are această imagine. Capturați-o din nou cu Capturare de pe ecran.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Introduceți textul de căutat.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Text pe ecran caută într-o zonă pe care o desenați sau pe tot ecranul.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Doar Clic, Buton mouse apăsat, Buton mouse eliberat și Mutare la pot merge acolo unde s-a găsit ceva.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Această acțiune merge acolo unde o condiție și-a găsit imaginea sau textul, dar nu se află în Then-ul acelei condiții. Mutați-o înăuntru sau alegeți un punct fix.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Panou de suprapunere PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Mutare panou</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Glisați pentru a muta panoul</value></data>

@@ -1057,6 +1057,19 @@ Detalhes: {1}</value></data>
   <data name="Code_PathEmpty" xml:space="preserve"><value>Um caminho precisa de pelo menos um ponto.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Os tempos devem começar em 0 ou mais e nunca voltar atrás.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Insira o texto a colar.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Só uma ação If tem condições. Remova If ou mude Type para If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>Uma ação If precisa das suas condições e ações em If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Adicione pelo menos uma condição.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Dê um nome à condição, para que as ações em Then possam clicar onde ela foi encontrada.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>Outra condição desta macro tem o mesmo nome. Dê a cada uma um nome próprio.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Escreva a cor como # seguido de seis dígitos hexadecimais, por exemplo #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Capture a imagem a procurar com Capturar da tela.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Escolha 10, 30 ou 60 verificações por segundo, ou 0 para verificar cada quadro.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>O PuppyMacro não tem esta imagem. Capture-a de novo com Capturar da tela.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Insira o texto a procurar.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Texto na tela procura em uma área que você desenha ou na tela inteira.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Só Clique, Botão do mouse pressionado, Botão do mouse liberado e Mover para podem ir aonde algo foi encontrado.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Esta ação vai aonde uma condição encontrou sua imagem ou seu texto, mas não está dentro do Then dessa condição. Mova-a para dentro ou escolha um ponto fixo.</value></data>
   <!-- ===== Views/OverlayPanel.xaml(.cs), OverlayPanelWindow.xaml ===== -->
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Painel de sobreposição do PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Mover o painel</value></data>

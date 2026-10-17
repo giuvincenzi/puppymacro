@@ -966,6 +966,19 @@
   <data name="Code_PathEmpty" xml:space="preserve"><value>パスには 1 つ以上の点が必要です。</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>時間は 0 以上から始まり、前に戻らない必要があります。</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>貼り付けるテキストを入力してください。</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>条件を持てるのは If アクションだけです。If を削除するか、Type を If にしてください。</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>If アクションには、If の中に条件とアクションが必要です。</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>条件を 1 つ以上追加してください。</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>条件に名前を付けてください。Then のアクションが、見つかった場所をクリックできるようになります。</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>このマクロの別の条件に同じ名前があります。それぞれ別の名前を付けてください。</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>色は # と 6 桁の 16 進数で入力してください (例: #3BD16F)。</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>[画面から切り取り] で、探す画像を取り込んでください。</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>1 秒あたりのチェック回数として 10、30、60 のいずれか、またはすべてのフレームをチェックする 0 を選んでください。</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro にこの画像がありません。[画面から切り取り] でもう一度取り込んでください。</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>探すテキストを入力してください。</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>[画面上のテキスト] は、描いた範囲または画面全体を探します。</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>見つかった場所へ移動できるのは、[クリック]、[マウス ボタン ダウン]、[マウス ボタン アップ]、[移動] だけです。</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>このアクションは条件が画像やテキストを見つけた場所へ移動しますが、その条件の Then の中にありません。中へ移動するか、固定の位置を選んでください。</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro オーバーレイ パネル</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>パネルを移動</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>ドラッグしてパネルを移動します</value></data>

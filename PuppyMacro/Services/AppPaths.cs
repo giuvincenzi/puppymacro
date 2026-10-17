@@ -18,6 +18,9 @@ internal static class AppPaths
 
     public static string MacrosFolder => Path.Combine(DataFolder, "macros");
 
+    /// <summary>The images of the macros' Image conditions (<c>ImageStore</c>): images\{id}.png, next to the macros.</summary>
+    public static string ImagesFolder => Path.Combine(DataFolder, "images");
+
     /// <summary>The History of each loop, macro and remap (<c>ItemHistory</c>): history\{id}.json.</summary>
     public static string HistoryFolder => Path.Combine(DataFolder, "history");
 

@@ -389,6 +389,9 @@ public partial class MainWindow : IAiHost
                 };
                 if (item == null)
                     return Strings.AiActivity_CantRestore;
+                // The images of the version before the change: the item's History keeps them.
+                if (item is MacroDefinition && entry.ItemId is Guid restoredId)
+                    _itemHistory?.RestoreImages(restoredId, entry.Before);
                 SaveItem(item);
             }
         }

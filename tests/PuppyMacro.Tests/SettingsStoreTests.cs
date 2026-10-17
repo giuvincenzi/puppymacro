@@ -214,6 +214,22 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Image_search_runs_automatically_in_older_files_and_with_an_unknown_value()
+    {
+        AppSettings older = LoadJson("""{ "SchemaVersion": 8 }""", out string? warning);
+        Assert.Null(warning);
+        Assert.Equal(RecognitionDevice.Automatic, older.RecognitionDevice);
+
+        AppSettings unknown = LoadJson("""{ "SchemaVersion": 8, "SoundVolume": 40, "RecognitionDevice": "Npu" }""", out warning);
+        Assert.Null(warning);
+        Assert.Equal(40, unknown.SoundVolume);
+        Assert.Equal(RecognitionDevice.Automatic, unknown.RecognitionDevice);
+
+        AppSettings gpu = LoadJson("""{ "SchemaVersion": 8, "RecognitionDevice": "Gpu" }""", out _);
+        Assert.Equal(RecognitionDevice.Gpu, gpu.RecognitionDevice);
+    }
+
+    [Fact]
     public void Each_list_page_keeps_its_view_and_older_or_unknown_values_get_the_page_default()
     {
         AppSettings older = LoadJson("""{ "SchemaVersion": 7 }""", out string? warning);

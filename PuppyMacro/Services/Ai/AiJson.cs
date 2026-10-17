@@ -125,7 +125,7 @@ internal static class AiJson
             : new List<(string Name, JsonNode? Value)>();
         var changes = set.EnumerateObject().Select(p => (p.Name, Value: JsonNode.Parse(p.Value.GetRawText()))).ToList();
         int count = 0;
-        foreach (JsonObject action in actions.OfType<JsonObject>())
+        foreach (JsonObject action in AllActions(actions))
         {
             if (groupId != null && !string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase))
                 continue;
@@ -142,6 +142,21 @@ internal static class AiJson
         if (count == 0)
             throw new FormatException("no action matches. get_item shows the actions.");
         return (root, count);
+    }
+
+    /// <summary>Every action of a macro's JSON, also those inside an If's Then and Else.</summary>
+    private static IEnumerable<JsonObject> AllActions(JsonArray actions)
+    {
+        foreach (JsonObject action in actions.OfType<JsonObject>().ToList())
+        {
+            yield return action;
+            if (action["If"] is not JsonObject block)
+                continue;
+            foreach (string branch in new[] { "Then", "Else" })
+                if (block[branch] is JsonArray inner)
+                    foreach (JsonObject each in AllActions(inner))
+                        yield return each;
+        }
     }
 
     private static void Apply(JsonNode root, string op, string path, JsonElement operation)

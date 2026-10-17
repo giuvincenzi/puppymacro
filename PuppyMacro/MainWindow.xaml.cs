@@ -784,7 +784,8 @@ public partial class MainWindow
         _engine.StopMacro(item.Definition.Id);
         _macros.Delete(item.Definition);
         _macroItems.Remove(item);
-        SaveMacroOrder();
+        SaveMacroOrder(); // records the deletion in the History, which keeps the images
+        _macros.ReleaseUnusedImages();
         RefreshMacros();
         _overlayPanelWindow.RefreshList();
     }
@@ -818,6 +819,7 @@ public partial class MainWindow
         if (!_macros.TrySave(macro, out string? error))
             ShowSettingsError(string.Format(CultureInfo.CurrentCulture, Strings.Macros_SaveFailed, macro.Name, error));
         _itemHistory?.Record(macro.Id, MacroJson.Serialize(macro), _savedBy);
+        _macros.ReleaseUnusedImages();
     }
 
     private void SaveMacroOrder()
@@ -1536,7 +1538,7 @@ public partial class MainWindow
 
     private void InitializeHistory()
     {
-        _itemHistory = new ItemHistory(AppPaths.HistoryFolder);
+        _itemHistory = new ItemHistory(AppPaths.HistoryFolder, images: _macros.Images);
         foreach (LoopDefinition loop in _settings.Loops)
             _itemHistory.Seed(loop.Id, LoopJson.Serialize(loop));
         foreach (MacroDefinition macro in _macros.Macros)

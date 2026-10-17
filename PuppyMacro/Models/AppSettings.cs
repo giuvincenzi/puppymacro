@@ -76,6 +76,31 @@ public sealed class ItemsLayoutConverter : JsonConverter<ItemsLayout>
         writer.WriteStringValue(value.ToString());
 }
 
+/// <summary>Where the screen conditions of macros look for images (Settings › Screen recognition).</summary>
+public enum RecognitionDevice
+{
+    /// <summary>The graphics card for large areas, the processor for small ones and when there is no graphics card.</summary>
+    Automatic,
+    Gpu,
+    Cpu,
+}
+
+/// <summary>
+/// Reads an enum by name; a name this version does not know (a newer version's value) gives the enum's first value
+/// instead of an error, so it never makes the whole settings file unreadable.
+/// </summary>
+public sealed class KnownEnumConverter<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
+{
+    public override TEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        reader.TokenType == JsonTokenType.String && Enum.TryParse(reader.GetString(), ignoreCase: true, out TEnum value)
+            && Enum.IsDefined(value)
+            ? value
+            : default;
+
+    public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.ToString());
+}
+
 /// <summary>Which Ctrl, Alt, Shift or Win of a hotkey counts: either one, or only the left or the right one.</summary>
 public enum ModifierSide
 {
@@ -590,6 +615,10 @@ public sealed class AppSettings
     public ItemsLayout MacrosLayout { get; set; } = ItemsLayout.Table;
     [JsonConverter(typeof(ItemsLayoutConverter))]
     public ItemsLayout RemapsLayout { get; set; } = ItemsLayout.List;
+
+    /// <summary>Where the macros' screen conditions look for images; older files and unknown values: Automatic.</summary>
+    [JsonConverter(typeof(KnownEnumConverter<RecognitionDevice>))]
+    public RecognitionDevice RecognitionDevice { get; set; }
 
     /// <summary>Opacity range of the overlay panel and of the floating buttons, in percent.</summary>
     public const int MinOpacity = 20;

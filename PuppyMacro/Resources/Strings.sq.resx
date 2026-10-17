@@ -1000,6 +1000,19 @@ Detajet: {1}</value></data>
   <data name="Code_PathEmpty" xml:space="preserve"><value>Një shteg ka nevojë për të paktën një pikë.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Kohët duhet të nisin nga 0 ose më shumë dhe të mos kthehen kurrë pas.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Shkruani tekstin për t'u ngjitur.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Vetëm një veprim If ka kushte. Hiqni If ose vendosni Type në If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>Një veprim If ka nevojë për kushtet dhe veprimet e tij në If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Shtoni të paktën një kusht.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Jepini kushtit një emër, që veprimet në Then të mund të klikojnë aty ku u gjet.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>Një kusht tjetër i këtij makroje ka të njëjtin emër. Jepini secilit një emër të vetin.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Shkruajeni ngjyrën si # e ndjekur nga gjashtë shifra heksadecimale, p.sh. #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Kapni imazhin që do të kërkohet me Kap nga ekrani.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Zgjidhni 10, 30 ose 60 kontrolle në sekondë, ose 0 për çdo kuadër.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro nuk e ka këtë imazh. Kapeni sërish me Kap nga ekrani.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Shkruani tekstin që do të kërkohet.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Tekst në ekran kërkon në një zonë që vizatoni ju ose në gjithë ekranin.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Vetëm Klikim, Butoni i miut poshtë, Butoni i miut lart dhe Zhvendos te mund të shkojnë aty ku u gjet diçka.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Ky veprim shkon aty ku një kusht gjeti imazhin ose tekstin e tij, por nuk është brenda Then të atij kushti. Zhvendoseni brenda ose zgjidhni një pikë fikse.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Paneli i mbivendosjes së PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Zhvendos panelin</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Zvarriteni për të zhvendosur panelin</value></data>

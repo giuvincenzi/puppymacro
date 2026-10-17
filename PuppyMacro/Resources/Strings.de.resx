@@ -989,6 +989,19 @@ Details: {1}</value></data>
   <data name="Code_PathEmpty" xml:space="preserve"><value>Ein Pfad benötigt mindestens einen Punkt.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Die Zeiten müssen bei 0 oder höher beginnen und dürfen nie zurückgehen.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Geben Sie den einzufügenden Text ein.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Nur eine If-Aktion hat Bedingungen. Entfernen Sie If, oder setzen Sie Type auf If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>Eine If-Aktion braucht ihre Bedingungen und Aktionen in If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Fügen Sie mindestens eine Bedingung hinzu.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Geben Sie der Bedingung einen Namen, damit die Aktionen in Then dort klicken können, wo sie gefunden wurde.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>Eine andere Bedingung dieses Makros hat denselben Namen. Geben Sie jeder einen eigenen Namen.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Schreiben Sie die Farbe als # mit sechs Hexadezimalziffern, zum Beispiel #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Nehmen Sie das gesuchte Bild mit „Vom Bildschirm aufnehmen“ auf.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Wählen Sie 10, 30 oder 60 Prüfungen pro Sekunde, oder 0 für jedes Einzelbild.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro hat dieses Bild nicht. Nehmen Sie es mit „Vom Bildschirm aufnehmen“ erneut auf.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Geben Sie den zu suchenden Text ein.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>„Text auf dem Bildschirm“ sucht in einem Bereich, den Sie zeichnen, oder auf dem ganzen Bildschirm.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Nur „Klicken“, „Maustaste herunterdrücken“, „Maustaste loslassen“ und „Bewegen zu“ können dorthin gehen, wo etwas gefunden wurde.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Diese Aktion geht dorthin, wo eine Bedingung ihr Bild oder ihren Text gefunden hat, steht aber nicht in deren Then. Verschieben Sie sie dorthin, oder wählen Sie einen festen Punkt.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro-Overlay-Panel</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Panel verschieben</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Ziehen, um das Panel zu verschieben</value></data>

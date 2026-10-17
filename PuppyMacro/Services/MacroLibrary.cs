@@ -17,7 +17,19 @@ internal sealed class MacroLibrary
 
     private readonly string _folder;
 
-    public MacroLibrary(string folder) => _folder = folder;
+    /// <param name="imagesFolder">Where the images are; by default "images" next to <paramref name="folder"/>.</param>
+    public MacroLibrary(string folder, string? imagesFolder = null)
+    {
+        _folder = folder;
+        Images = new ImageStore(imagesFolder ?? Path.Combine(Path.GetDirectoryName(Path.GetFullPath(folder)) ?? folder, "images"));
+    }
+
+    /// <summary>The images of the Image conditions, in the data folder next to the macros.</summary>
+    public ImageStore Images { get; }
+
+    // The images each saved macro uses, and the ones a save or a deletion left unused (deleted by ReleaseUnusedImages).
+    private readonly Dictionary<Guid, HashSet<string>> _imagesOf = new();
+    private readonly HashSet<string> _released = new(StringComparer.Ordinal);
 
     public List<MacroDefinition> Macros { get; private set; } = new();
 
@@ -39,6 +51,7 @@ internal sealed class MacroLibrary
                     {
                         Sanitize(macro);
                         loaded.Add(macro);
+                        _imagesOf[macro.Id] = ImageStore.IdsIn(macro);
                     }
                 }
                 catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
@@ -81,6 +94,10 @@ internal sealed class MacroLibrary
             string temp = path + ".tmp";
             File.WriteAllText(temp, JsonSerializer.Serialize(macro, JsonOptions));
             File.Move(temp, path, overwrite: true);
+            var now = ImageStore.IdsIn(macro);
+            if (_imagesOf.TryGetValue(macro.Id, out var before))
+                _released.UnionWith(before.Except(now));
+            _imagesOf[macro.Id] = now;
             return true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -93,6 +110,8 @@ internal sealed class MacroLibrary
     public void Delete(MacroDefinition macro)
     {
         Macros.Remove(macro);
+        if (_imagesOf.Remove(macro.Id, out var images))
+            _released.UnionWith(images);
         try
         {
             File.Delete(PathFor(macro.Id));
@@ -101,6 +120,21 @@ internal sealed class MacroLibrary
         {
             // Leftover file: it would come back on next start, but the order list no longer has it.
         }
+    }
+
+    /// <summary>
+    /// Deletes the images that saves and deletions left unused and no other macro uses. Called after the History recorded
+    /// the change, so the version before it still found its images to keep a copy of. Also deletes <paramref name="taken"/>
+    /// when no macro uses them: images an editor took and the user did not save.
+    /// </summary>
+    public void ReleaseUnusedImages(IEnumerable<string>? taken = null)
+    {
+        if (taken != null)
+            _released.UnionWith(taken);
+        var used = _imagesOf.Values.SelectMany(s => s).ToHashSet(StringComparer.Ordinal);
+        foreach (string id in _released.Where(id => !used.Contains(id)).ToList())
+            Images.Delete(id);
+        _released.Clear();
     }
 
     private string PathFor(Guid id) => Path.Combine(_folder, $"{id}.json");
@@ -121,8 +155,32 @@ internal sealed class MacroLibrary
         macro.FloatingButton ??= new();
         macro.FloatingButton.Sanitize();
         macro.AppExe = AppScope.Normalize(macro.AppExe);
-        foreach (var action in macro.Actions)
+        if (!MacroDefinition.ChecksPerSecondSteps.Contains(macro.ChecksPerSecond))
+            macro.ChecksPerSecond = MacroDefinition.DefaultChecksPerSecond;
+        foreach (var action in macro.AllActions.ToList())
         {
+            if (action.Type == MacroActionType.If)
+            {
+                action.If ??= new();
+                action.If.Conditions ??= new();
+                action.If.Conditions.RemoveAll(c => c == null);
+                action.If.Then ??= new();
+                action.If.Else ??= new();
+                action.If.WaitSeconds = Math.Clamp(action.If.WaitSeconds, 0, 86_400);
+                foreach (var condition in action.If.Conditions)
+                {
+                    condition.Name = condition.Name?.Trim();
+                    condition.Tolerance = Math.Clamp(condition.Tolerance, 0, 100);
+                    condition.Similarity = Math.Clamp(condition.Similarity, 0, 100);
+                    condition.Images?.RemoveAll(i => i == null);
+                }
+            }
+            else
+            {
+                action.If = null;
+            }
+            if (action.Type is not (MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo))
+                action.FoundId = null;
             action.Path ??= new();
             action.Text ??= "";
             action.Name = action.Name?.Trim() ?? "";

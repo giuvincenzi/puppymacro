@@ -49,6 +49,9 @@ internal sealed class ItemFileContent
 
     public List<ItemFileEntry> Entries { get; } = new();
 
+    /// <summary>The images of the file's macros, as Base64 by id (<c>Images</c> at the top of the file).</summary>
+    public Dictionary<string, string> Images { get; } = new(StringComparer.Ordinal);
+
     public IEnumerable<object> SelectedItems => Entries.Where(e => e.Selected && e.Item != null).Select(e => e.Item!);
 }
 
@@ -69,19 +72,36 @@ internal static class ItemFile
     /// <summary>This PuppyMacro's version, written in the files it exports.</summary>
     public static Version? AppVersion { get; } = typeof(ItemFile).Assembly.GetName().Version;
 
-    public static string Write(IEnumerable<object> items, Version? app)
+    /// <param name="images">Where the macros' images are: they go in the file (<c>Images</c>), so it is complete.</param>
+    public static string Write(IEnumerable<object> items, Version? app, ImageStore? images = null)
     {
         var list = new JsonArray();
+        var ids = new HashSet<string>(StringComparer.Ordinal);
         foreach (object item in items)
+        {
             list.Add(new JsonObject { ["Kind"] = KindName(item), ["Item"] = JsonNode.Parse(Serialize(item)) });
+            if (item is MacroDefinition macro)
+                ids.UnionWith(ImageStore.IdsIn(macro));
+        }
         var root = new JsonObject
         {
             ["Format"] = CurrentFormat,
             ["App"] = app == null ? null : VersionText(app),
             ["Items"] = list,
         };
+        // A new field around the items: older versions read Format 1 files without looking at it.
+        if (images?.Embed(ids) is { } embedded)
+        {
+            var node = new JsonObject();
+            foreach (var (id, base64) in embedded.OrderBy(e => e.Key, StringComparer.Ordinal))
+                node[id] = base64;
+            root["Images"] = node;
+        }
         return root.ToJsonString(CodeJson.Options);
     }
+
+    /// <summary>Keeps the images of a file being imported (before its macros are saved).</summary>
+    public static void AddImages(ItemFileContent content, MacroLibrary macros) => macros.Images.Restore(content.Images);
 
     /// <summary>
     /// Reads the file's items, checked as the Code views check them, and prepares the ones in <paramref name="only"/> (all
@@ -112,13 +132,22 @@ internal static class ItemFile
             return new ItemFileContent { Error = newer ? update : Strings.ItemFile_NewerFormat, NeedsUpdate = true };
 
         var content = new ItemFileContent { App = app };
+        if (file["Images"] is JsonObject images)
+            foreach (var (id, value) in images)
+                if (MacroJson.IsImageId(id) && value is JsonValue v && v.TryGetValue(out string? base64))
+                    content.Images[id] = base64;
         var taken = new Taken(settings, macros);
         for (int index = 0; index < items.Count; index++)
-            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken));
+        {
+            // An image a macro names is in the file, or already kept here.
+            bool HasImage(string image) => content.Images.ContainsKey(image) || macros.Images.Has(image);
+            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken, HasImage));
+        }
         return content;
     }
 
-    private static ItemFileEntry ReadEntry(JsonNode? node, int index, bool chosen, string? update, Taken taken)
+    private static ItemFileEntry ReadEntry(JsonNode? node, int index, bool chosen, string? update, Taken taken,
+        Func<string, bool> hasImage)
     {
         string kindName = node is JsonObject o && o["Kind"] is JsonValue k && k.TryGetValue(out string? word) ? word : "";
         string kind = kindName.ToLowerInvariant();
@@ -143,7 +172,7 @@ internal static class ItemFile
         object? parsed = kind switch
         {
             "loop" => LoopJson.Parse(json, id, (_, _) => null, out problems),
-            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems),
+            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems, hasImage),
             _ => RemapJson.Parse(json, id, (_, _) => null, out problems, withoutSource: true),
         };
         if (parsed is RemapDefinition remapTitle)

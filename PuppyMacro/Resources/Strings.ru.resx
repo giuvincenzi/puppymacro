@@ -1023,6 +1023,19 @@
   <data name="Code_PathEmpty" xml:space="preserve"><value>Путь должен содержать хотя бы одну точку.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Время должно начинаться с 0 или больше и никогда не уменьшаться.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Введите текст для вставки.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Условия есть только у действия If. Удалите If или задайте для Type значение If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>Действию If нужны его условия и действия в If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Добавьте хотя бы одно условие.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Дайте условию имя, чтобы действия в Then могли щелкнуть там, где оно найдено.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>У другого условия этого макроса такое же имя. Дайте каждому свое имя.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Запишите цвет как # и шесть шестнадцатеричных цифр, например #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Снимите изображение для поиска кнопкой «Захватить с экрана».</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Выберите 10, 30 или 60 проверок в секунду или 0, чтобы проверять каждый кадр.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>У PuppyMacro нет этого изображения. Снимите его снова кнопкой «Захватить с экрана».</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Введите текст для поиска.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>«Текст на экране» ищет в нарисованной вами области или на всем экране.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Туда, где что-то найдено, могут перейти только «Щелчок», «Зажать кнопку мыши», «Отпустить кнопку мыши» и «Переместить в точку».</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Это действие переходит туда, где условие нашло свое изображение или текст, но оно находится не в Then этого условия. Переместите его туда или выберите фиксированную точку.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Панель наложения PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Переместить панель</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Перетащите, чтобы переместить панель</value></data>

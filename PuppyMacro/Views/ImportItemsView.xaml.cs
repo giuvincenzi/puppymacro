@@ -18,6 +18,9 @@ namespace PuppyMacro.Views;
 public partial class ImportItemsView : UserControl
 {
     private Func<ICollection<int>?, ItemFileContent>? _read;
+
+    /// <summary>The file as last read (its images go in before its macros are saved).</summary>
+    internal ItemFileContent? FileContent { get; private set; }
     private List<ImportItemRow> _rows = new();
 
     public ImportItemsView() => InitializeComponent();
@@ -46,6 +49,7 @@ public partial class ImportItemsView : UserControl
     {
         _read = read;
         ItemFileContent content = read(null);
+        FileContent = content;
         ImportFileText.Text = fileName;
         Error = content.Error;
         NeedsUpdate = content.NeedsUpdate;
@@ -93,6 +97,7 @@ public partial class ImportItemsView : UserControl
         if (_read == null)
             return;
         ItemFileContent content = _read(Chosen());
+        FileContent = content;
         foreach (ImportItemRow row in _rows)
             if (content.Entries.FirstOrDefault(e => e.Index == row.Index) is { } entry)
                 row.Update(entry);
