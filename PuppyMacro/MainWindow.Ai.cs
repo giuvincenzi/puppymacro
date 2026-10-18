@@ -445,8 +445,9 @@ public partial class MainWindow : IAiHost
     string? IAiHost.AddCollections(IReadOnlyList<LibraryCollection> collections, string app) =>
         SavingAs(app, () => AddCollections(collections));
 
-    string? IAiHost.SaveComponent(LibraryComponent component, LibraryCollection? created, string app) =>
-        SavingAs(app, () => SaveComponent(component, created));
+    string? IAiHost.SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
+        IReadOnlyList<MacroDefinition>? macros, IReadOnlyList<LibraryComponent>? callers) =>
+        SavingAs(app, () => SaveComponent(component, created, macros, callers));
 
     void IAiHost.Save(object item, string app) => SavingAs(app, () =>
     {

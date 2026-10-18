@@ -1383,4 +1383,126 @@
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>コンポーネント {0} を変更</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>この新しいコンポーネントをライブラリに保存しますか?</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>このコンポーネントの変更を保存しますか? リンクしているすべてのマクロが新しい内容を実行します。</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>パラメーターの値を受け取れるのは、コンポーネントのアクションだけです。</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>{0} はパラメーターの値を受け取れません。ここで受け取れるのは {1} です。</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>このアクションには、パラメーターの値を受け取れる項目がありません。</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>このアクションの現在の設定では {0} が使われないため、パラメーターの値を受け取れません。</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>このコンポーネントには {0} というパラメーターはありません。</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} の種類は {1} ですが、{2} には {3} が必要です。</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>自分のパラメーターを引き渡せるのはコンポーネントだけです。マクロでは値を直接入力してください。</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} には {1} というパラメーターはありません。</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} には {1} の値が必要です。</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>パラメーターの種類に合った値、{"From": "a parameter of this component"}、または {"Found": "a condition's Id"} (必要に応じて OffsetX と OffsetY を付けて) を入力してください。</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>引数を持てるのは、コンポーネントにリンクされた行と [コンポーネント] 条件だけです。Arguments を削除してください。</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>条件が何かを見つけた場所から受け取れるのは座標だけですが、{0} の種類は {1} です。</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} には移動先となる場所がありません。そのコンポーネントがチェックするのは、ピクセルか、画面にないものです。</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} は何を見つけるかを指定していないため、条件として使用できません。</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>次のコンポーネントが互いを繰り返し呼び出すことになります: {0}。</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>コンポーネントの入れ子は最大 {0} 階層までですが、ここでは {1} 階層になります。</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>パラメーター名は英字で始め、そのあとに英字、数字、_ を続けて、40 文字以内にしてください。</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>同じ名前のパラメーターを 2 つ作ることはできません。</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>数値には単位が必要です。Pixels、Ms、Seconds、Count、Percent のいずれかを指定してください。</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>単位を持てるのは数値だけです。Unit を削除してください。</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>例を指定してください。エディターに表示され、テストで再生される値です。</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>ここには {"From"} や {"Found"} ではなく、値を入力してください。</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>このコンポーネントには、Returns で指定された条件がありません。</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>コンポーネントが見つけるものは、そのコンポーネントの外で見つかった場所に左右されてはいけません。</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>座標は {"X": 100, "Y": 200} のように、ピクセル単位の整数で入力してください。</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>数値を入力してください。</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>整数を入力してください。</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>テキストを引用符で囲んで入力してください。</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>ここではテキストを空にできません。</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>キーはホットキーと同じ形式で入力してください (例: {"Vk": 65})。</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>ここではマウス ボタンではなく、キーボードのキーを選んでください。</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>ここでは Ctrl、Alt、Shift、Win を付けずに、キーだけを指定してください。</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>画像は [{"Id": …, "X": …, "Y": …}] の形式で 1 つ以上指定してください。</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>範囲は {"X", "Y", "Width", "Height"} の形式で、ピクセル単位の整数で入力してください。</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>このパラメーターが使われるすべてのフィールドに合う値がありません。各フィールドの範囲が重なっていません。</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>座標</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>数値</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>テキスト</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>キー</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>色</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>画像</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>範囲</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>ピクセル</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>回</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>画像 {0} 枚</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>この変更を行うと、{0} に問題が発生します: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>この行のリンクは解除できません。値の 1 つが条件が何かを見つけた場所になっていますが、そのコンポーネントはこの値をピクセルの座標に使っており、ピクセルの座標には見つかった場所を使えません。</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>値を指定</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>{0} から</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>値の取得元</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>値</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>すべての呼び出しで値を指定</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>省略時は {0}</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>既定値 ({0})</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>{0} の値を確認してください。{1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>位置 {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>引数</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>この呼び出しがコンポーネントに渡す値</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>コンポーネント</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>ライブラリのコンポーネント</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>何を見つけるかが指定された、ライブラリのコンポーネント</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>選択</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>コンポーネントがまだ選択されていません</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>見つかる</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>見つからない</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} で見つかる</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} で見つからない</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>現在 {0}, {1} で見つかりました。</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>現在成立しています。</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>現在成立していません。</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>パラメーター</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>呼び出しのたびにこのコンポーネントに渡される値です。アクションのフィールドは、一覧の「… から」でその値を受け取ります。</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>パラメーターを追加</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>パラメーターを編集</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>パラメーターを削除</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>パラメーターの追加</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>パラメーターの編集 - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>名前</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>英字、数字、_ を使い、英字で始めます。呼び出しはこの名前で値を渡します。</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>種類</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>値を渡す先のフィールドの種類</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>単位</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>数値が何を表すかです。同じ単位のフィールドにだけ使えます。</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>ピクセル</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>ミリ秒 (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>秒 (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>回数</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>パーセント (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>例</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>フィールドに入る値で、エディターに表示され、テストで再生されます</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>すべての呼び出しで値を指定する</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>オフの場合は呼び出しで省略でき、そのときは既定値が使われます。</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>既定値</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>呼び出しで省略したときに使われる値</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>省略可能。AI アプリ向けに英語で記述します</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>例を確認してください。{0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>既定値を確認してください。{0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>役割</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>コンポーネントの編集 - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>条件として使用</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>条件として使用できる</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>If がこのコンポーネントを条件としてチェックします。ここで選んだ条件が成立すると成立し、「… が見つかった場所」はその条件が見つけた場所になります。</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>見つけるもの</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>このコンポーネントの条件の 1 つ</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>見つけるものとしてどの条件を使うかを選ぶか、[条件として使用できる] をオフにしてください。</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>この行はコンポーネントを呼び出します。ライブラリにあるとおりにコンポーネントを実行し、下の値を使います。これらの値はこの行だけのものです。</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>編集</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>呼び出しの更新</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>この変更で呼び出しが更新されます</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>{1} の呼び出し {0} 件があわせて変更されます。すべてまとめて保存されるため、保存できないものがあれば何も変更されません。</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}。この種類の値を渡していない呼び出しには、この値が設定されます。各呼び出しで後から変更できます。</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0} が削除されます</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>各呼び出しのこのパラメーターの値も削除されます。</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} の名前が {1} になります</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>呼び出しの値は、新しい名前でそのまま保持されます。</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>変更される呼び出し</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>マクロ</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>コンポーネント</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>呼び出し {0} 件</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>更新して保存</value></data>
 </root>

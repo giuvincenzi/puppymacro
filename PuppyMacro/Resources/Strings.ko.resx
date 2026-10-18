@@ -1383,4 +1383,126 @@
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>구성 요소 {0} 변경됨</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>이 새 구성 요소를 라이브러리에 저장할까요?</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>이 구성 요소의 변경 내용을 저장할까요? 이 구성 요소를 연결한 모든 매크로가 새 내용을 실행합니다.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>매개 변수의 값을 받을 수 있는 것은 구성 요소의 동작뿐입니다.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>{0}은(는) 매개 변수의 값을 받을 수 없습니다. 여기서 받을 수 있는 항목은 {1}입니다.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>이 동작에는 매개 변수의 값을 받을 수 있는 항목이 없습니다.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>이 동작의 현재 설정에서는 {0}을(를) 사용하지 않으므로 매개 변수의 값을 받을 수 없습니다.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>이 구성 요소에는 {0}(이)라는 매개 변수가 없습니다.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0}은(는) {1} 형식이지만 {2}에는 {3} 형식이 필요합니다.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>자신의 매개 변수를 넘겨줄 수 있는 것은 구성 요소뿐입니다. 매크로에서는 값을 직접 입력하세요.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0}에는 {1}(이)라는 매개 변수가 없습니다.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0}에는 {1}의 값이 필요합니다.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>매개 변수 형식에 맞는 값, {"From": "a parameter of this component"} 또는 {"Found": "a condition's Id"}(필요하면 OffsetX와 OffsetY 포함)를 입력하세요.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>인수는 구성 요소에 연결된 행과 [구성 요소] 조건에만 있습니다. Arguments를 제거하세요.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>조건이 무언가를 찾은 위치에서 값을 받을 수 있는 것은 좌표뿐인데, {0}은(는) {1} 형식입니다.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0}에는 이동할 위치가 없습니다. 그 구성 요소가 확인하는 것이 픽셀이거나 화면에 없는 것이기 때문입니다.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0}은(는) 무엇을 찾는지 지정하지 않았으므로 조건으로 사용할 수 없습니다.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>다음 구성 요소가 서로를 끝없이 호출하게 됩니다: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>구성 요소는 최대 {0}단계까지만 중첩할 수 있는데, 여기서는 {1}단계가 됩니다.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>매개 변수 이름은 영문자로 시작하고 그 뒤에 영문자, 숫자, _를 써서 40자 이내여야 합니다.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>두 매개 변수의 이름이 같을 수 없습니다.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>숫자에는 단위가 필요합니다. Pixels, Ms, Seconds, Count, Percent 중 하나를 지정하세요.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>단위는 숫자에만 있습니다. Unit을 제거하세요.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>예시 값을 지정하세요. 편집기에 표시되고 테스트에서 재생되는 값입니다.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>여기에는 {"From"}이나 {"Found"}가 아닌 값을 입력하세요.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>이 구성 요소에는 Returns가 가리키는 조건이 없습니다.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>구성 요소가 찾는 것은 구성 요소 밖에서 찾은 위치에 따라 달라질 수 없습니다.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>좌표는 {"X": 100, "Y": 200}처럼 픽셀 단위의 정수로 입력하세요.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>숫자를 입력하세요.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>정수를 입력하세요.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>텍스트를 따옴표로 묶어 입력하세요.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>여기서는 텍스트를 비워 둘 수 없습니다.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>키는 바로 가기 키와 같은 형식으로 입력하세요(예: {"Vk": 65}).</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>여기서는 마우스 단추가 아닌 키보드 키를 선택하세요.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>여기서는 Ctrl, Alt, Shift, Win 없이 키만 지정하세요.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>이미지는 [{"Id": …, "X": …, "Y": …}] 형식으로 하나 이상 지정하세요.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>영역은 {"X", "Y", "Width", "Height"} 형식으로, 픽셀 단위의 정수로 입력하세요.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>이 매개 변수가 들어가는 모든 필드에 맞는 값이 없습니다. 필드마다 허용 범위가 서로 겹치지 않습니다.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>좌표</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>숫자</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>텍스트</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>키</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>색</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>이미지</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>영역</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0}({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>픽셀</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>회</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>이미지 {0}개</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>이 변경으로 인해 {0}에 문제가 생깁니다: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>이 행은 연결을 해제할 수 없습니다. 값 중 하나가 조건이 무언가를 찾은 위치인데, 구성 요소가 이 값을 픽셀의 좌표로 사용하며 픽셀 좌표에는 찾은 위치를 쓸 수 없습니다.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>값 지정</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>{0}에서</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>값을 가져올 곳</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>값</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>모든 호출에서 값 지정</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>생략하면 {0}</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>기본값({0})</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>{0}의 값을 확인하세요. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>위치 {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>인수</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>이 호출이 구성 요소에 전달하는 값</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>구성 요소</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>라이브러리의 구성 요소</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>무엇을 찾는지 지정된 라이브러리 구성 요소</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>선택</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>아직 선택한 구성 요소가 없습니다</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>찾음</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>찾지 못함</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0}이(가) 찾음</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0}이(가) 찾지 못함</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>지금 {0}, {1}에서 찾았습니다.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>지금 충족됩니다.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>지금 충족되지 않습니다.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>매개 변수</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>각 호출이 이 구성 요소에 전달하는 값입니다. 동작의 필드는 목록에서 "…에서"를 골라 값을 받습니다.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>매개 변수 추가</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>매개 변수 편집</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>매개 변수 제거</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>매개 변수 추가</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>매개 변수 편집 - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>이름</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>영문자, 숫자, _를 사용하며 영문자로 시작합니다. 호출은 이 이름으로 값을 전달합니다.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>형식</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>값을 전달할 필드의 종류</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>단위</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>숫자가 무엇을 나타내는지입니다. 같은 단위를 쓰는 곳에만 사용할 수 있습니다.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>픽셀</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>밀리초(ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>초(s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>횟수</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>퍼센트(%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>예시 값</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>필드에 들어가는 값으로, 편집기에 표시되고 테스트에서 재생됩니다</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>모든 호출에서 값 지정</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>끄면 호출에서 생략할 수 있으며, 이때는 기본값이 사용됩니다.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>기본값</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>호출에서 생략했을 때 사용되는 값</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>선택 사항. AI 앱을 위해 영어로 적습니다</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>예시 값을 확인하세요. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>기본값을 확인하세요. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>하는 일</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>구성 요소 편집 - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>조건으로 사용</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>조건으로 사용 가능</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>If가 이 구성 요소를 조건으로 확인합니다. 여기서 고른 조건이 충족되면 충족되며, "…을(를) 찾은 위치"는 그 조건이 찾은 위치로 이동합니다.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>찾는 대상</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>이 구성 요소의 조건 중 하나</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>찾는 대상으로 사용할 조건을 고르거나 [조건으로 사용 가능]을 끄세요.</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>이 행은 구성 요소를 호출합니다. 라이브러리에 있는 그대로 구성 요소를 실행하며 아래 값을 사용합니다. 이 값은 이 행에만 적용됩니다.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>편집</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>호출 업데이트</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>이 변경으로 호출이 업데이트됩니다</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>{1}의 호출 {0}개가 함께 변경됩니다. 모든 내용이 한꺼번에 저장되므로, 저장할 수 없는 것이 있으면 아무것도 변경되지 않습니다.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. 이 종류의 값을 전달하지 않는 호출에는 이 값이 지정됩니다. 각 호출에서 나중에 바꿀 수 있습니다.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0}이(가) 제거됩니다</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>모든 호출에서 이 매개 변수의 값이 삭제됩니다.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0}의 이름이 {1}(으)로 바뀝니다</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>호출의 값은 새 이름으로 그대로 유지됩니다.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>변경되는 호출</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>매크로</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>구성 요소</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>호출 {0}개</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>업데이트 후 저장</value></data>
 </root>

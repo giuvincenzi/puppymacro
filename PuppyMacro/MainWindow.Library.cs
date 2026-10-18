@@ -93,8 +93,14 @@ public partial class MainWindow
     /// Saves a component (an AI app's, a Restore): one the Library has gets its new content where it is; a new one goes into
     /// <paramref name="created"/> (a new collection, added). Checked as the Library window checks it. Why not, or null.
     /// </summary>
-    internal string? SaveComponent(LibraryComponent component, LibraryCollection? created, IReadOnlyList<MacroDefinition>? macros = null) => SaveLibrary(library =>
+    /// <param name="macros">Copies of the macros whose calls the new signature changed, saved with it.</param>
+    /// <param name="callers">Copies of the components whose calls it changed, saved with it.</param>
+    internal string? SaveComponent(LibraryComponent component, LibraryCollection? created, IReadOnlyList<MacroDefinition>? macros = null,
+        IReadOnlyList<LibraryComponent>? callers = null) => SaveLibrary(library =>
     {
+        foreach (var caller in callers ?? Array.Empty<LibraryComponent>())
+            if (library.Find(caller.Id) is { } calling)
+                calling.Collection.Components[calling.Collection.Components.IndexOf(calling.Component)] = caller.Clone();
         if (library.Find(component.Id) is { } found)
         {
             int index = found.Collection.Components.IndexOf(found.Component);

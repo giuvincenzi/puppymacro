@@ -1462,4 +1462,132 @@
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>Изменён компонент {0}</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Сохранить этот новый компонент в библиотеке?</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Сохранить изменения этого компонента? Все привязанные к нему макросы будут выполнять новый вариант.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Значение параметра могут получать только действия компонента.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>Поле {0} не может получать значение параметра. Здесь это могут поля {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Ни одно поле этого действия не может получать значение параметра.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>Поле {0} не используется при текущих настройках этого действия, поэтому не может получать значение параметра.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>У компонента нет параметра {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>Параметр {0} имеет тип «{1}», а {2} принимает тип «{3}».</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Передавать дальше свои параметры может только компонент. В макросе укажите само значение.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>У компонента «{0}» нет параметра {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>Компоненту «{0}» нужно значение параметра {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Укажите значение того же типа, что и у параметра, {"From": "параметр этого компонента"} или {"Found": "Id условия"}, при необходимости с OffsetX и OffsetY.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Аргументы есть только у строки, привязанной к компоненту, и у условия «Компонент». Удалите Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Из места, где условие что-то нашло, можно взять только точку, а параметр {0} имеет тип «{1}».</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>Условие «{0}» не дает места, куда можно перейти: его компонент проверяет пиксель или то, чего нет на экране.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>Компонент «{0}» не указывает, что он находит, поэтому его нельзя использовать как условие.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>Эти компоненты вызывали бы друг друга по кругу: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Наибольшая допустимая глубина вложения компонентов — {0}, а здесь она была бы {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>Имя параметра начинается с буквы, за которой идут буквы, цифры или _, и содержит не более 40 символов.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>У двух параметров не может быть одинаковое имя.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>Для числа нужна единица: Pixels, Ms, Seconds, Count или Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Единица есть только у числа. Удалите Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Укажите пример — значение, которое показывает редактор и использует проверка.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Здесь укажите значение, а не {"From"} или {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>В этом компоненте нет условия, указанного в Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>То, что находит компонент, не может зависеть от места, найденного за его пределами.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Укажите точку в виде {"X": 100, "Y": 200} в целых пикселях.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Введите число.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Введите целое число.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Введите текст в кавычках.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>Здесь текст не может быть пустым.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Укажите клавишу так же, как горячую клавишу, например {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Здесь выберите клавишу клавиатуры, а не кнопку мыши.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Здесь клавиша указывается отдельно, без Ctrl, Alt, Shift или Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Укажите изображения в виде [{"Id": …, "X": …, "Y": …}], хотя бы одно.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Укажите область в виде {"X", "Y", "Width", "Height"} в целых пикселях.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>Ни одно значение не подходит для всех полей, в которые передается этот параметр: их ограничения не пересекаются.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Точка</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Число</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Текст</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Клавиша</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Цвет</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Изображение</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Область</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>пиксели</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>количество раз</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} изображение</value></data>
+  <data name="Param_Images_few" xml:space="preserve"><value>{0} изображения</value></data>
+  <data name="Param_Images_many" xml:space="preserve"><value>{0} изображений</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>После этого изменения в «{0}» возникнет проблема: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>Эту строку нельзя отвязать. Одно из ее значений — место, где условие что-то нашло, а компонент использует это значение как точку пикселя, которую нельзя взять из найденного места.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>Свое значение</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>Из параметра {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>Откуда берется значение</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>Значение</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>задается в каждом вызове</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0}, если не задано</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>По умолчанию ({0})</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Проверьте значение параметра {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>в точке {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Аргументы</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Значения, которые этот вызов передает компоненту</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Компонент</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Компонент из библиотеки</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>Компонент библиотеки, который указывает, что он находит</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Выбрать</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>Компонент еще не выбран</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>Находит</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>Не находит</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>«{0}» находит</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>«{0}» не находит</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>Сейчас найдено в точке {0}, {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>Сейчас выполняется.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Сейчас не выполняется.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Параметры</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>Значения, которые этому компоненту передает каждый вызов. Поле его действия получает такое значение, если выбрать в списке поля «Из параметра».</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>Добавить параметр</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Изменить параметр</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Удалить параметр</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Добавление параметра</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Изменение параметра - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>Имя</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Буквы, цифры и _, первой идет буква. По этому имени вызовы передают значение.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>Тип</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>Вид поля, которому параметр передает значение</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Единица</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>Что измеряет число. Параметр можно использовать только там, где та же единица.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Пиксели</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Миллисекунды (мс)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Секунды (с)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Количество раз</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Проценты (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>Пример</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>Значение в его полях: его показывает редактор и использует проверка</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Значение задается в каждом вызове</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>Если выключено, вызов может не задавать значение, и тогда используется значение по умолчанию.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>Значение по умолчанию</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>Значение для вызова, который его не задает</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Необязательно, на английском, для приложений AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Проверьте пример. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Проверьте значение по умолчанию. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>Что делает</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Изменение компонента - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Использование как условия</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Можно использовать как условие</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>If проверяет компонент как условие: оно выполняется, когда выполняется выбранное здесь условие, а «Там, где найдено „…“» переходит туда, где это условие находит то, что ищет.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>Что находит</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>Одно из его условий</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Выберите, какое из его условий определяет, что он находит, или выключите «Можно использовать как условие».</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>Эта строка вызывает компонент: она выполняет его таким, какой он в библиотеке, со значениями ниже, которые относятся только к этой строке.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Изменить</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Обновление вызовов</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>Это изменение обновит вызовы</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>Вместе с этим изменением обновится {0} вызов компонента «{1}». Все сохраняется вместе: если что-то сохранить не удастся, ничего не изменится.</value></data>
+  <data name="Signature_Intro_few" xml:space="preserve"><value>Вместе с этим изменением обновятся {0} вызова компонента «{1}». Все сохраняется вместе: если что-то сохранить не удастся, ничего не изменится.</value></data>
+  <data name="Signature_Intro_many" xml:space="preserve"><value>Вместе с этим изменением обновятся {0} вызовов компонента «{1}». Все сохраняется вместе: если что-то сохранить не удастся, ничего не изменится.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. Вызовы, в которых нет значения такого вида, получат это значение. Потом его можно изменить в каждом вызове.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>Параметр {0} удаляется</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Его значение удаляется из всех вызовов.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} теперь называется {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>Вызовы сохраняют свое значение под новым именем.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Изменяемые вызовы</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Макрос</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Компонент</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} вызов</value></data>
+  <data name="Signature_Calls_few" xml:space="preserve"><value>{0} вызова</value></data>
+  <data name="Signature_Calls_many" xml:space="preserve"><value>{0} вызовов</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Обновить и сохранить</value></data>
 </root>

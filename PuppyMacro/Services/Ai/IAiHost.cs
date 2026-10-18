@@ -65,9 +65,11 @@ internal interface IAiHost
 
     /// <summary>
     /// Saves a Library component as <paramref name="app"/>'s: a new one into <paramref name="created"/> (a new collection)
-    /// or the collection its Id is in; why not, or null.
+    /// or the collection its Id is in, with the macros and components whose calls a new signature changed
+    /// (<c>SignatureUpdate</c>), all together; why not, or null.
     /// </summary>
-    string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app);
+    string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
+        IReadOnlyList<MacroDefinition>? macros = null, IReadOnlyList<LibraryComponent>? callers = null);
 
     /// <summary>Deletes a loop, macro or remap (stopping it first), as its card's Delete does.</summary>
     void Delete(Guid id, string app);

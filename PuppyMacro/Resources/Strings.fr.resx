@@ -1417,4 +1417,129 @@ Détails : {1}</value></data>
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>Composant {0} modifié</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Enregistrer ce nouveau composant dans la bibliothèque ?</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Enregistrer les modifications de ce composant ? Toutes les macros qui y sont liées exécuteront le nouveau.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Seules les actions d'un composant peuvent recevoir la valeur d'un paramètre.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>{0} ne peut pas recevoir la valeur d'un paramètre. Ici, ceux-ci le peuvent : {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Aucun champ de cette action ne peut recevoir la valeur d'un paramètre.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>{0} n'est pas utilisé avec les réglages actuels de cette action, il ne peut donc pas recevoir la valeur d'un paramètre.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>Le composant n'a aucun paramètre nommé {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} est de type {1}, alors que {2} attend le type {3}.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Seul un composant peut transmettre l'un de ses paramètres. Dans une macro, écrivez la valeur.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} n'a aucun paramètre nommé {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} a besoin d'une valeur pour {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Écrivez une valeur du type du paramètre, {"From": "a parameter of this component"} ou {"Found": "a condition's Id"} avec OffsetX et OffsetY si besoin.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Seule une ligne liée à un composant ou une condition Composant a des arguments. Supprimez Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Seul un point peut venir de l'endroit où une condition a trouvé quelque chose, et {0} est de type {1}.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} n'indique aucun endroit où aller : son composant vérifie un pixel, ou quelque chose qui n'est pas là.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} n'indique pas ce qu'il trouve, il ne peut donc pas servir de condition.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>Ces composants s'appelleraient les uns les autres en boucle : {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Les composants peuvent être imbriqués sur {0} niveaux au maximum, et ici il y en aurait {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>Le nom d'un paramètre commence par une lettre, suivie de lettres, de chiffres ou de _, avec 40 caractères au maximum.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>Deux paramètres ne peuvent pas avoir le même nom.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>Un nombre a besoin de son unité : Pixels, Ms, Seconds, Count ou Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Seul un nombre a une unité. Supprimez Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Indiquez un exemple : la valeur que l'éditeur affiche et qu'un test utilise.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Ici, écrivez une valeur, pas {"From"} ni {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>Ce composant n'a pas la condition indiquée dans Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>Ce qu'un composant trouve ne peut pas dépendre d'un endroit trouvé en dehors de lui.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Écrivez un point sous la forme {"X": 100, "Y": 200}, en pixels entiers.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Écrivez un nombre.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Écrivez un nombre entier.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Écrivez un texte entre guillemets.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>Ici, le texte ne peut pas être vide.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Écrivez une touche comme on écrit un raccourci, par exemple {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Ici, choisissez une touche du clavier, pas un bouton de la souris.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Ici, la touche s'utilise seule, sans Ctrl, Alt, Maj ou Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Indiquez les images sous la forme [{"Id": …, "X": …, "Y": …}], au moins une.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Écrivez une zone sous la forme {"X", "Y", "Width", "Height"}, en pixels entiers.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>Aucune valeur ne convient à tous les champs auxquels va ce paramètre : leurs limites ne se recoupent pas.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Point</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Texte</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Touche</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Couleur</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Image</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Zone</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>pixels</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>fois</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} image</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} images</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>Avec cette modification, {0} aurait un problème : {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>Cette ligne ne peut pas être dissociée. L'une de ses valeurs est l'endroit où une condition a trouvé quelque chose, et son composant utilise cette valeur comme point d'un pixel, qui ne peut pas être un endroit trouvé.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>Une valeur</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>Depuis {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>Provenance de la valeur</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>Valeur</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>chaque appel transmet une valeur</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} s'il est omis</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Sa valeur par défaut, {0}</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Vérifiez la valeur de {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>en {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Arguments</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Les valeurs que cet appel transmet au composant</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Composant</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Composant de la bibliothèque</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>Un composant de la bibliothèque qui indique ce qu'il trouve</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Choisir</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>Aucun composant choisi pour l'instant</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>Il le trouve</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>Il ne le trouve pas</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} le trouve</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} ne le trouve pas</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>Trouvé maintenant en {0}, {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>Vraie pour le moment.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Pas vraie pour le moment.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Paramètres</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>Les valeurs que chaque appel transmet à ce composant. Un champ de ses actions en reçoit une si vous choisissez Depuis dans sa liste.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>Ajouter un paramètre</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Modifier le paramètre</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Supprimer le paramètre</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Ajouter un paramètre</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Modifier le paramètre - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Lettres, chiffres et _, en commençant par une lettre. Les appels transmettent la valeur sous ce nom.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>Le type de champ auquel il donne une valeur</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Unité</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>Ce que mesure le nombre. Il ne peut aller que là où la même unité est utilisée.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Pixels</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Millisecondes (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Secondes (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Nombre de fois</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Pourcentage (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>Exemple</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>La valeur de ses champs, celle que l'éditeur affiche et qu'un test utilise</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Chaque appel transmet une valeur</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>Quand c'est désactivé, un appel peut l'omettre et la valeur par défaut est utilisée.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>Valeur par défaut</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>La valeur utilisée quand un appel l'omet</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Facultative, en anglais, pour les applications d'AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Vérifiez l'exemple. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Vérifiez la valeur par défaut. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>Ce qu'il fait</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Modifier le composant - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Utilisation comme condition</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Peut servir de condition</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>Un If le vérifie comme une condition : il est vrai quand la condition choisie ici l'est, et « Là où se trouve … » va à l'endroit trouvé par cette condition.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>Ce qu'il trouve</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>L'une de ses conditions</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Choisissez laquelle de ses conditions il trouve, ou désactivez Peut servir de condition.</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>Cette ligne appelle un composant : elle l'exécute tel qu'il est dans la bibliothèque, avec les valeurs ci-dessous, propres à cette ligne.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Modifier</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Mettre à jour les appels</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>Cette modification met à jour les appels</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>{0} appel de {1} change en même temps. Tout est enregistré d'un seul coup : si quelque chose ne peut pas être enregistré, rien ne change.</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>{0} appels de {1} changent en même temps. Tout est enregistré d'un seul coup : si quelque chose ne peut pas être enregistré, rien ne change.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. Les appels qui ne transmettent pas de valeur de ce type reçoivent celle-ci, et chaque appel peut la modifier ensuite.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0} est supprimé</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>La valeur que chaque appel lui transmet est supprimée.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} s'appelle maintenant {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>Les appels gardent leur valeur sous le nouveau nom.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Appels modifiés</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Macro</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Composant</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} appel</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} appels</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Mettre à jour et enregistrer</value></data>
 </root>

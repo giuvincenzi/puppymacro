@@ -8,14 +8,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
+using PuppyMacro.Services.Components;
 
 namespace PuppyMacro.Services.Ai;
 
 /// <summary>
-/// The Library for AI apps: search_library (by the structured name's parts and words, short answers), get_component,
-/// save_component (checked as the Library checks it, confirmed as a save is), and the parts of get_item that read a big
-/// macro in pieces (an outline, one path). A macro links a component with a row {"Type":"Component","ComponentId":…},
-/// written with save_macro or patch_item like any other row.
+/// The Library for AI apps: search_library (by the structured name's parts and words, short answers with each component's
+/// signature), get_component (with a call to copy), save_component (checked as the Library checks it, the guided update of
+/// the calls when its signature changes, confirmed as a save is), and the parts of get_item that read a big macro in pieces
+/// (an outline with the calls' values, one path). A macro calls a component with a row {"Type":"Component","ComponentId":…,
+/// "Arguments":…} or a condition {"Kind":"Component",…}, written with save_macro or patch_item like any other.
 /// </summary>
 internal sealed partial class AiTools
 {
@@ -59,6 +61,8 @@ internal sealed partial class AiTools
                 Title = p.Component.Name,
                 Description = string.IsNullOrWhiteSpace(p.Component.Description) ? null : p.Component.Description,
                 Actions = MacroDefinition.Walk(p.Component.Actions).Count(),
+                Parameters = Signature(p.Component),
+                Condition = p.Component.Returns != null ? true : (bool?)null,
                 LinkedRows = links.GetValueOrDefault(p.Component.Id),
                 Collection = new { p.Collection.Id, p.Collection.Name, Screen = ScreenText(p.Collection.Screen) },
             }),
@@ -72,6 +76,18 @@ internal sealed partial class AiTools
         WriteIndented = false,
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
     };
+
+    /// <summary>"Slot: Point; Hold: Number (Ms) = 30": a component's parameters in one line, or null when it takes none.</summary>
+    private static string? Signature(LibraryComponent component) => component.Parameters.Count == 0 ? null
+        : string.Join("; ", component.Parameters.Select(p =>
+            $"{p.Name}: {p.Type}{(p.Unit is NumberUnit u ? $" ({u})" : "")}{(p.Default is { } d ? " = " + d.ToJsonString() : "")}"));
+
+    /// <summary>A call to copy: each required parameter with its example (the others take their defaults).</summary>
+    private static Dictionary<string, JsonNode?>? ExampleArguments(LibraryComponent component)
+    {
+        var arguments = component.Parameters.Where(p => p.Required).ToDictionary(p => p.Name, p => p.Example?.DeepClone());
+        return arguments.Count == 0 ? null : arguments;
+    }
 
     /// <summary>"5120x1440 at 0,0, 100%": the monitor a collection's points were taken on.</summary>
     private static string? ScreenText(LibraryScreen? screen) => screen == null ? null
@@ -87,18 +103,25 @@ internal sealed partial class AiTools
         var (collection, component) = found;
         _log.Add(app, AiActivityKind.Read, Phrase.Of("Ai_ReadComponent", component.Name));
         var usedIn = _host.Macros.Macros
-            .Where(m => m.AllActions.Any(a => a.Type == MacroActionType.Component && a.ComponentId == id))
+            .Where(m => ComponentSignatures.Callees(m.Actions).Contains(id))
             .Select(m => new { m.Id, m.Name });
+        var calledBy = _host.Macros.Library.AllComponents
+            .Where(c => c.Id != id && ComponentSignatures.Callees(c.Actions).Contains(id))
+            .Select(c => new { c.Id, c.Name });
+        var arguments = ExampleArguments(component);
         var answer = new
         {
             Name = ComponentLibrary.StructuredName(collection, component),
-            Component = JsonNode.Parse(JsonSerializer.Serialize(component, CompactJson)),
+            Component = JsonNode.Parse(AiJson.Compact(component)),
             Collection = new
             {
                 collection.Id, collection.Name, Domain = collection.Domain.ToString(), App = collection.AppExe,
                 Screen = ScreenText(collection.Screen),
             },
+            Call = new { Type = "Component", ComponentId = id, Arguments = arguments },
+            AsCondition = component.Returns == null ? null : new { Kind = "Component", Name = component.Name, ComponentId = id, Arguments = arguments },
             UsedIn = usedIn,
+            CalledBy = calledBy,
         };
         return Task.FromResult(new AiToolResult(JsonSerializer.Serialize(answer, CompactAnswer)));
     });
@@ -124,6 +147,9 @@ internal sealed partial class AiTools
             return AiToolResult.Error($"\"component\" can't be read: {ex.Message}");
         }
 
+        List<MacroDefinition> updatedMacros = new();
+        List<LibraryComponent> updatedComponents = new();
+        string updatedText = "";
         var (problem, before, collectionName) = await _host.Ui(() => Task.FromResult(Loc.English(() =>
         {
             var library = _host.Macros.Library;
@@ -134,8 +160,15 @@ internal sealed partial class AiTools
             string? name = editId is Guid known ? library.Find(known)!.Value.Collection.Name : CollectionArg(args, component, out string? bad)?.Name;
             if (editId == null && name == null)
                 return (CollectionProblem(args), (string?)null, "");
-            string? check = ComponentLibrary.CheckComponent(component, _host.Macros.Images.Has, library.AllComponents);
-            return (check, existing == null ? null : JsonSerializer.Serialize(existing, CodeJson.Options), name ?? "");
+            // A bound field holds its parameter's Example.
+            ComponentEdits.WriteExamples(component);
+            var others = library.AllComponents.Where(c => c.Id != component.Id).ToList();
+            var problems = ComponentLibrary.Problems(component, _host.Macros.Images.Has, others.Append(component));
+            if (problems.Count > 0)
+                return (string.Join(" ", problems.Select(p => p.Message)), (string?)null, "");
+            if (existing != null && UpdateCalls(args, existing, component, others, out updatedMacros, out updatedComponents, out updatedText) is string calls)
+                return (calls, (string?)null, "");
+            return ((string?)null, existing == null ? null : JsonSerializer.Serialize(existing, CodeJson.Options), name ?? "");
         }))).ConfigureAwait(false);
         if (problem != null)
             return AiToolResult.Error($"The component has problems, nothing was saved: {problem}");
@@ -148,14 +181,15 @@ internal sealed partial class AiTools
             if (BusyNow() is AiToolResult busyNow)
                 return busyNow;
             LibraryCollection? created = editId == null ? CollectionArg(args, component, out _) : null;
-            string? notSaved = _host.SaveComponent(component, created, app);
+            string? notSaved = _host.SaveComponent(component, created, app, updatedMacros, updatedComponents);
             if (notSaved != null)
                 return AiToolResult.Error(Loc.English(() => notSaved));
             _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", json, component.Id, "component", before);
             var collection = _host.Macros.Library.Find(component.Id)!.Value.Collection;
+            string call = JsonSerializer.Serialize(new { Type = "Component", ComponentId = component.Id, Arguments = ExampleArguments(component) }, CompactAnswer);
             return new AiToolResult($"Saved the {(before == null ? "new " : "")}component " +
                                     $"\"{ComponentLibrary.StructuredName(collection, component)}\" in the collection \"{collection.Name}\". Its Id: {component.Id}. " +
-                                    "A macro links it with the row {\"Type\":\"Component\",\"ComponentId\":\"" + component.Id + "\"}.");
+                                    $"A macro calls it with the row {call}." + updatedText);
         }
 
         if (!_host.Settings.AiAskBeforeChanging)
@@ -170,6 +204,64 @@ internal sealed partial class AiTools
             Log(app, AiActivityKind.Proposal, label, answer, "", json);
             return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// The guided update of the calls when a component's signature changes (SignatureUpdate): the macros and components whose
+    /// calls change, with call_values given to those that need a value and renamed followed. Why not (the calls and the values
+    /// still needed, said for the AI app), or null; <paramref name="text"/> says what changed, for the answer.
+    /// </summary>
+    private string? UpdateCalls(JsonElement args, LibraryComponent existing, LibraryComponent after, List<LibraryComponent> others,
+        out List<MacroDefinition> macros, out List<LibraryComponent> components, out string text)
+    {
+        macros = new List<MacroDefinition>();
+        components = new List<LibraryComponent>();
+        text = "";
+        var renamed = new Dictionary<string, string>();
+        if (args.TryGetProperty("renamed", out JsonElement r) && r.ValueKind == JsonValueKind.Object)
+            foreach (var p in r.EnumerateObject())
+                if (p.Value.ValueKind == JsonValueKind.String)
+                    renamed[p.Name] = p.Value.GetString()!;
+        var update = SignatureUpdate.Compare(existing, after, _host.Macros.Macros, others, renamed);
+        if (!update.Needed)
+            return null;
+        var signatures = new ComponentSignatures(others.Append(after));
+        var values = new Dictionary<string, JsonNode>();
+        var missing = new List<string>();
+        JsonElement given = args.TryGetProperty("call_values", out JsonElement v) && v.ValueKind == JsonValueKind.Object ? v : default;
+        foreach (var parameter in update.NeedValue)
+        {
+            JsonNode? value = given.ValueKind == JsonValueKind.Object && given.TryGetProperty(parameter.Name, out JsonElement e)
+                ? JsonNode.Parse(e.GetRawText()) : null;
+            if (value == null)
+            {
+                missing.Add($"{parameter.Name} ({parameter.Type}{(parameter.Unit is NumberUnit u ? ", " + u : "")})");
+                continue;
+            }
+            ComponentValues.Read(value, parameter.Type, signatures.RuleOf(after.Id, parameter.Name), out string? bad, _host.Macros.Images.Has);
+            if (bad != null)
+                return $"call_values.{parameter.Name}: {bad}";
+            values[parameter.Name] = value;
+        }
+        string sites = string.Join(", ", update.Sites.Select(s => $"\"{s.OwnerName}\" ({(s.IsMacro ? "macro" : "component")}, {s.Calls})"));
+        if (missing.Count > 0)
+            return $"This change updates {update.Calls} existing call(s): {sites}. " +
+                   $"Give call_values with the value every call without a fitting one gets, for: {string.Join(", ", missing)}" +
+                   (update.Removed.Count > 0 ? $". Taken out of every call: {string.Join(", ", update.Removed)}" : "") +
+                   " (if a parameter was renamed, renamed {\"old\": \"new\"} keeps the calls' values).";
+        var (newMacros, newComponents) = update.Apply(_host.Macros.Macros, others, values, after);
+        (macros, components) = (newMacros, newComponents);
+        var changed = newMacros.ToDictionary(m => m.Id);
+        var updatedOthers = others.Select(c => newComponents.FirstOrDefault(k => k.Id == c.Id) ?? c).Append(after);
+        var problems = ComponentChecks.CheckAll(new ComponentSignatures(updatedOthers),
+                _host.Macros.Macros.Select(m => changed.GetValueOrDefault(m.Id) ?? m), _host.Macros.Images.Has)
+            .Where(p => update.Sites.Any(s => s.OwnerId == p.ItemId))
+            .ToList();
+        if (problems.Count > 0)
+            return "After updating the calls some can't work, nothing was saved: " +
+                   string.Join(" ", problems.Select(p => $"{p.Where}, {p.Path}: {p.Message}"));
+        text = $" Updated {update.Calls} call(s): {sites}.";
+        return null;
     }
 
     /// <summary>
@@ -242,7 +334,11 @@ internal sealed partial class AiTools
                 if (!string.IsNullOrWhiteSpace(a.Name))
                     text.Append(" \"").Append(a.Name).Append('"');
                 if (a.Type == MacroActionType.Component && a.ComponentId is Guid id)
+                {
                     text.Append(' ').Append(_host.Macros.Library.Find(id) is { } f ? ComponentLibrary.StructuredName(f.Collection, f.Component) : "missing");
+                    if (a.Arguments is { Count: > 0 } arguments)
+                        text.Append(' ').Append(new JsonObject(arguments.Select(p => KeyValuePair.Create(p.Key, p.Value?.DeepClone()))).ToJsonString(CompactJson));
+                }
                 if (a.If is { } block)
                 {
                     text.Append(" [").Append(string.Join(", ", block.Conditions.Select(c => c.Kind + (string.IsNullOrWhiteSpace(c.Name) ? "" : $" \"{c.Name}\""))))
@@ -263,8 +359,7 @@ internal sealed partial class AiTools
     /// <summary>After a macro's JSON: the components it links, so the AI app reads them only if it needs to.</summary>
     private string LinkedList(MacroDefinition macro)
     {
-        var ids = macro.AllActions.Where(a => a.Type == MacroActionType.Component && a.ComponentId != null)
-            .Select(a => a.ComponentId!.Value).Distinct().ToList();
+        var ids = ComponentSignatures.Callees(macro.Actions).Distinct().ToList();
         if (ids.Count == 0)
             return "";
         return "\nLinked components (get_component reads one):\n" + string.Join("\n", ids.Select(id =>

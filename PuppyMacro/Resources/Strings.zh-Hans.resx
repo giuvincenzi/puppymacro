@@ -1383,4 +1383,126 @@
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>已更改组件 {0}</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>要将这个新组件保存到库中吗？</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>要保存对此组件的更改吗？所有链接它的宏都将运行新版本。</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>只有组件的操作才能接收参数的值。</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>{0} 不能接收参数的值。此处可以接收的是：{1}。</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>此操作中没有可以接收参数值的项。</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>按此操作当前的设置，{0} 不会被使用，因此不能接收参数的值。</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>该组件没有名为 {0} 的参数。</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} 的类型是 {1}，而 {2} 需要 {3} 类型。</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>只有组件才能传递自己的参数。在宏中，请直接写入值。</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} 没有名为 {1} 的参数。</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} 需要 {1} 的值。</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>请写入与参数类型相符的值、{"From": "a parameter of this component"}，或 {"Found": "a condition's Id"}（需要时加上 OffsetX 和 OffsetY）。</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>只有链接到组件的行和“组件”条件才有参数值。请删除 Arguments。</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>只有坐标才能来自条件找到内容的位置，而 {0} 的类型是 {1}。</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} 没有可前往的位置：其组件检查的是像素，或是不在屏幕上的内容。</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} 没有指定它查找什么，因此不能用作条件。</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>这些组件会循环互相调用：{0}。</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>组件最多只能嵌套 {0} 层，而这里会有 {1} 层。</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>参数名称必须以英文字母开头，后跟英文字母、数字或 _，最多 40 个字符。</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>两个参数不能同名。</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>数字需要单位：Pixels、Ms、Seconds、Count 或 Percent。</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>只有数字才有单位。请删除 Unit。</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>请提供示例值，即编辑器中显示、测试时播放的值。</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>此处请写入值，而不是 {"From"} 或 {"Found"}。</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>此组件没有 Returns 所指定的条件。</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>组件查找的内容不能依赖于在组件外部找到的位置。</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>请将坐标写成 {"X": 100, "Y": 200} 的形式，以像素为单位，使用整数。</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>请输入数字。</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>请输入整数。</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>请输入用引号括起来的文本。</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>此处的文本不能为空。</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>请按热键的写法输入按键，例如 {"Vk": 65}。</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>此处请选择键盘按键，而不是鼠标按钮。</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>此处只能使用单个按键，不能带 Ctrl、Alt、Shift 或 Win。</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>请以 [{"Id": …, "X": …, "Y": …}] 的形式提供图像，至少一张。</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>请将区域写成 {"X", "Y", "Width", "Height"} 的形式，以像素为单位，使用整数。</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>没有任何值能适用于此参数所用的所有字段：这些字段的范围没有交集。</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>坐标</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>数字</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>文本</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>按键</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>颜色</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>图像</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>区域</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0}（{1}）</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>像素</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>次</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} 张图像</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>此更改会导致 {0} 出现问题：{1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>无法取消此行的链接：它的一个值是条件找到内容的位置，而其组件将该值用作像素的坐标，像素坐标不能使用找到的位置。</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>指定值</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>来自 {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>值的来源</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>值</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>每次调用都需提供值</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>省略时为 {0}</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>默认值（{0}）</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>请检查 {0} 的值。{1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>位于 {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>参数值</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>此调用传给组件的值</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>组件</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>库中的组件</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>指定了查找内容的库组件</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>选择</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>尚未选择组件</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>找到</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>未找到</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} 找到</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} 未找到</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>当前在 {0}, {1} 处找到。</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>当前成立。</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>当前不成立。</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>参数</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>每次调用为此组件提供的值。其操作的字段可以通过列表中的“来自 …”使用其中一个值。</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>添加参数</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>编辑参数</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>删除参数</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>添加参数</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>编辑参数 - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>名称</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>使用英文字母、数字和 _，并以字母开头。调用通过此名称传递值。</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>类型</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>它为哪种字段提供值</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>单位</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>数字所计量的内容。它只能用于单位相同的地方。</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>像素</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>毫秒 (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>秒 (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>次数</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>百分比 (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>示例值</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>其字段使用的值，也是编辑器中显示、测试时播放的值</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>每次调用都提供值</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>关闭时，调用可以省略它，此时使用默认值。</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>默认值</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>调用省略它时使用的值</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>可选，用英文填写，供 AI 应用使用</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>请检查示例值。{0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>请检查默认值。{0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>作用</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>编辑组件 - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>用作条件</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>可用作条件</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>If 会将它作为条件检查：当你在此选择的条件成立时它就成立，“找到 … 的位置”会前往该条件找到它的位置。</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>查找内容</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>它的一个条件</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>请选择用它的哪个条件来查找，或关闭“可用作条件”。</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>此行会调用一个组件：它按库中的样子运行该组件，并使用下面的值，这些值只属于此行。</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>编辑</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>更新调用</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>此更改会更新调用</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>{1} 的 {0} 处调用将随之更改。所有内容会一起保存：如果有内容无法保存，则不会进行任何更改。</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}。未提供此类值的调用将使用此值；之后可以在每个调用中更改。</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0} 将被移除</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>所有调用中它的值都会被删除。</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} 重命名为 {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>调用会以新名称保留其值。</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>将更改的调用</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>宏</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>组件</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} 处调用</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>更新并保存</value></data>
 </root>

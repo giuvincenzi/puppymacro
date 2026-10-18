@@ -246,11 +246,17 @@ internal sealed partial class AiTools
             // The problems in English, as every text an AI app gets (i18n.md).
             List<CodeProblem> found = new();
             MacroAction? parsed = Loc.English(() => MacroJson.ParseAction(action, new Guid?[] { null }, new Dictionary<Guid, string>(), out found,
-                hasImage: _host.Macros.Images.Has));
+                hasImage: _host.Macros.Images.Has, components: _host.Macros.Library.Signatures()));
+            // A Component condition is checked as the condition its component returns, with the call's arguments.
+            if (parsed?.If?.Conditions.FirstOrDefault() is { Kind: ConditionKind.Component } called)
+                parsed.If.Conditions[0] = Components.ComponentPrograms.Prepare(_host.Macros.Library.AllComponents)
+                    .Effective(called, Components.FrameArguments.None, new Dictionary<Guid, OpenCvSharp.Point>()) ?? called;
             return Task.FromResult((parsed, string.Join(" ", found.Select(p => p.Message))));
         }).ConfigureAwait(false);
         if (checkedAction?.If?.Conditions.FirstOrDefault() is not { } condition)
             return AiToolResult.Error("The condition has problems: " + problems);
+        if (condition.Kind == ConditionKind.Component)
+            return AiToolResult.Error("The component's condition can't be checked: a value its call needs has none (a Found argument has no place outside a macro's If).");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_CheckedCondition", ask.Title);

@@ -1428,4 +1428,129 @@ Detajet: {1}</value></data>
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>Komponenti {0} u ndryshua</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Të ruhet ky komponent i ri në bibliotekë?</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Të ruhen ndryshimet e këtij komponenti? Të gjitha makrot që e lidhin do të ekzekutojnë të riun.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Vetëm veprimet e një komponenti mund të marrin vlerën e një parametri.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>Fusha {0} nuk mund të marrë vlerën e një parametri. Këtu mund ta marrin vetëm {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Asgjë në këtë veprim nuk mund të marrë vlerën e një parametri.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>Fusha {0} nuk përdoret ashtu siç është caktuar ky veprim, prandaj nuk mund të marrë vlerën e një parametri.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>Komponenti nuk ka asnjë parametër me emrin {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} ka llojin {1}, ndërsa {2} pranon llojin {3}.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Vetëm një komponent mund të kalojë më tej një nga parametrat e tij. Në një makro, shkruani vlerën.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} nuk ka asnjë parametër me emrin {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} ka nevojë për një vlerë për {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Shkruani një vlerë të llojit të parametrit, {"From": "një parametër i këtij komponenti"} ose {"Found": "Id-ja e një kushti"}, me OffsetX dhe OffsetY nëse nevojitet.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Vetëm një rresht i lidhur me një komponent ose një kusht i llojit Komponent ka argumente. Hiqni Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Vetëm një pikë mund të vijë nga vendi ku një kusht gjeti diçka, ndërsa {0} ka llojin {1}.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} nuk jep asnjë vend ku të shkohet: komponenti i tij kontrollon një piksel ose diçka që nuk është aty.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} nuk tregon çfarë gjen, prandaj nuk mund të përdoret si kusht.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>Këta komponentë do ta thërrisnin njëri-tjetrin pa fund: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Komponentët mund të jenë njëri brenda tjetrit deri në {0} nivele, ndërsa këtu do të ishin {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>Emri i një parametri fillon me një shkronjë, e ndjekur nga shkronja, shifra ose _, dhe ka deri në 40 karaktere.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>Dy parametra nuk mund të kenë të njëjtin emër.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>Një numër ka nevojë për njësinë e tij: Pixels, Ms, Seconds, Count ose Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Vetëm një numër ka njësi. Hiqni Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Jepni një shembull: vlerën që shfaq redaktori dhe me të cilën ekzekutohet një test.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Këtu shkruani një vlerë, jo {"From"} ose {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>Ky komponent nuk e ka kushtin që përmend Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>Ajo që gjen një komponent nuk mund të varet nga një vend i gjetur jashtë tij.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Shkruajeni një pikë si {"X": 100, "Y": 200}, në piksela të plotë.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Shkruani një numër.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Shkruani një numër të plotë.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Shkruani një tekst në thonjëza.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>Teksti nuk mund të jetë bosh këtu.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Shkruajeni një tast ashtu siç shkruhet një tast i shpejtë, për shembull {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Këtu zgjidhni një tast të tastierës, jo një buton të miut.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Këtu tasti shkon vetëm, pa Ctrl, Alt, Shift ose Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Jepini imazhet si [{"Id": …, "X": …, "Y": …}], të paktën një.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Shkruajeni një zonë si {"X", "Y", "Width", "Height"}, në piksela të plotë.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>Asnjë vlerë nuk u përshtatet të gjitha fushave ku shkon ky parametër, sepse kufijtë e tyre nuk mbivendosen.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Pikë</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Numër</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Tekst</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Tast</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Ngjyrë</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Imazh</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Zonë</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>piksela</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>herë</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} imazh</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} imazhe</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>Ky ndryshim do ta linte {0} me një problem: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Një nga vlerat e tij është vendi ku një kusht gjeti diçka, dhe komponenti e përdor atë vlerë për pikën e një pikseli, e cila nuk mund të marrë një vend të gjetur.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>Një vlerë</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>Nga {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>Nga vjen vlera</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>Vlera</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>çdo thirrje jep një vlerë</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} kur mungon</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Vlera e parazgjedhur, {0}</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Kontrolloni vlerën për {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>në {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Argumentet</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Vlerat që kjo thirrje i jep komponentit</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Komponent</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Komponent nga biblioteka</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>Një komponent i bibliotekës që tregon çfarë gjen</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Zgjidh</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>Ende nuk është zgjedhur asnjë komponent</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>E gjen</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>Nuk e gjen</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} e gjen</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} nuk e gjen</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>U gjet tani në {0}, {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>I vërtetë tani.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Nuk është i vërtetë tani.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Parametrat</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>Vlerat që i jep çdo thirrje këtij komponenti. Një fushë e veprimeve të tij merr njërën prej tyre kur zgjidhni "Nga" në listën e saj.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>Shto parametër</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Redakto parametrin</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Hiq parametrin</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Shto parametër</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Redakto parametrin - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Shkronja, shifra dhe _, duke filluar me një shkronjë. Thirrjet e japin vlerën me këtë emër.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>Lloji</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>Lloji i fushës të cilës i jep një vlerë</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Njësia</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>Çfarë mat numri. Mund të përdoret vetëm aty ku përdoret e njëjta njësi.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Piksela</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Milisekonda (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Sekonda (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Herë</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Përqindje (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>Shembulli</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>Vlera që mbajnë fushat e tij, që shfaq redaktori dhe me të cilën ekzekutohet një test</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Çdo thirrje jep një vlerë</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>Kur është çaktivizuar, një thirrje mund ta lërë jashtë dhe përdoret vlera e parazgjedhur.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>Vlera e parazgjedhur</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>Vlera që përdoret kur një thirrje e lë jashtë</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Opsionale, në anglisht, për aplikacionet AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Kontrolloni shembullin. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Kontrolloni vlerën e parazgjedhur. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>Çfarë bën</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Redakto komponentin - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Përdorimi si kusht</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Mund të përdoret si kusht</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>Një If e kontrollon si kusht. Është i vërtetë kur është i vërtetë kushti që zgjidhni këtu, dhe "Aty ku u gjet …" shkon aty ku e gjen ai kusht.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>Çfarë gjen</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>Një nga kushtet e tij</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Zgjidhni cili nga kushtet e tij tregon çfarë gjen, ose çaktivizoni Mund të përdoret si kusht.</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>Ky rresht thërret një komponent: e ekzekuton ashtu siç është në bibliotekë, me vlerat më poshtë, që janë vetëm të këtij rreshti.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Redakto</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Përditëso thirrjet</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>Ky ndryshim përditëson thirrjet</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>Me këtë ndryshim ndryshon edhe {0} thirrje e komponentit {1}. Gjithçka ruhet së bashku: nëse diçka nuk mund të ruhet, nuk ndryshon asgjë.</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>Me këtë ndryshim ndryshojnë edhe {0} thirrje të komponentit {1}. Gjithçka ruhet së bashku: nëse diçka nuk mund të ruhet, nuk ndryshon asgjë.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. Thirrjet që nuk japin një vlerë të këtij lloji marrin këtë; çdo thirrje mund ta ndryshojë më vonë.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0} hiqet</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Vlera që i jep çdo thirrje hiqet.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} tani quhet {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>Thirrjet e ruajnë vlerën e tyre me emrin e ri.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Thirrjet që ndryshojnë</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Makro</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Komponent</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} thirrje</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} thirrje</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Përditëso dhe ruaj</value></data>
 </root>

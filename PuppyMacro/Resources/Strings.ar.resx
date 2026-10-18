@@ -1553,4 +1553,141 @@
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>تم تغيير المكوّن {0}</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>هل تريد حفظ هذا المكوّن الجديد في المكتبة؟</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>هل تريد حفظ التغييرات على هذا المكوّن؟ ستشغّل كل وحدات الماكرو المرتبطة به النسخة الجديدة.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>إجراءات المكوّن وحدها هي التي يمكنها أخذ قيمة من معلمة.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>لا يمكن للحقل {0} أخذ قيمة من معلمة. الحقول التي يمكنها ذلك هنا هي {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>لا يوجد في هذا الإجراء ما يمكنه أخذ قيمة من معلمة.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>لا يُستخدم الحقل {0} بالطريقة التي أُعدّ بها هذا الإجراء، لذا لا يمكنه أخذ قيمة من معلمة.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>لا يحتوي المكوّن على معلمة باسم {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>المعلمة {0} من النوع {1}، بينما يأخذ {2} النوع {3}.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>المكوّن وحده يمكنه تمرير إحدى معلماته. في الماكرو، اكتب القيمة نفسها.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>لا يحتوي {0} على معلمة باسم {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>يحتاج {0} إلى قيمة للمعلمة {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>اكتب قيمة من نوع المعلمة، أو {"From": "معلمة لهذا المكوّن"}، أو {"Found": "Id شرط"} مع OffsetX وOffsetY عند الحاجة.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>لا توجد وسيطات إلا في الصف المرتبط بمكوّن أو في شرط "مكوّن". احذف Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>لا يمكن أن يُؤخذ من مكان عثور شرطٍ على شيء إلا نقطة، والمعلمة {0} من النوع {1}.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>لا يعطي {0} مكانًا للانتقال إليه، لأن ما يفحصه مكوّنه بكسل أو شيء غير موجود على الشاشة.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>لا يحدد {0} ما يعثر عليه، لذا لا يمكن استخدامه كشرط.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>ستستدعي هذه المكوّنات بعضها بعضًا في حلقة: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>أقصى عمق مسموح لتداخل المكوّنات هو {0}، وسيكون العمق هنا {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>يبدأ اسم المعلمة بحرف، تليه أحرف أو أرقام أو _، بحد أقصى 40 حرفًا.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>لا يمكن أن يكون لمعلمتين الاسم نفسه.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>يحتاج الرقم إلى وحدة: Pixels أو Ms أو Seconds أو Count أو Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>الوحدة للأرقام فقط. احذف Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>أعطِ مثالاً، وهو القيمة التي يعرضها المحرر ويشغّلها الاختبار.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>اكتب هنا قيمة، وليس {"From"} أو {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>لا يحتوي هذا المكوّن على الشرط الذي يحدده Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>لا يمكن أن يعتمد ما يعثر عليه المكوّن على مكان تم العثور عليه خارجه.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>اكتب النقطة بالشكل {"X": 100, "Y": 200}، بأعداد صحيحة من البكسل.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>اكتب رقمًا.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>اكتب عددًا صحيحًا.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>اكتب نصًا بين علامتي اقتباس.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>لا يمكن أن يكون النص فارغًا هنا.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>اكتب المفتاح كما يُكتب مفتاح التشغيل السريع، مثل {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>اختر هنا مفتاحًا من لوحة المفاتيح، وليس زر ماوس.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>يكون المفتاح هنا بمفرده، دون Ctrl أو Alt أو Shift أو Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>اكتب الصور بالشكل [{"Id": …, "X": …, "Y": …}]، صورة واحدة على الأقل.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>اكتب المنطقة بالشكل {"X", "Y", "Width", "Height"}، بأعداد صحيحة من البكسل.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>لا توجد قيمة تناسب كل الحقول التي تذهب إليها هذه المعلمة، لأن حدودها لا تتداخل.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>نقطة</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>رقم</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>نص</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>مفتاح</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>لون</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>صورة</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>منطقة</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>بكسل</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>مرات</value></data>
+  <data name="Param_Images_zero" xml:space="preserve"><value>{0} صورة</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>صورة واحدة</value></data>
+  <data name="Param_Images_two" xml:space="preserve"><value>صورتان</value></data>
+  <data name="Param_Images_few" xml:space="preserve"><value>{0} صور</value></data>
+  <data name="Param_Images_many" xml:space="preserve"><value>{0} صورة</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} صورة</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>سيتسبب هذا التغيير في مشكلة في {0}: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>لا يمكن إلغاء ربط هذا الصف. إحدى قيمه هي المكان الذي عثر فيه شرط على شيء، ويستخدم مكوّنه هذه القيمة كنقطة بكسل، ولا يمكن أخذ نقطة البكسل من مكان تم العثور عليه.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>قيمة</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>من {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>مصدر القيمة</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>القيمة</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>قيمة مطلوبة في كل استدعاء</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} عند عدم تحديدها</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>قيمتها الافتراضية ({0})</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>تحقق من قيمة {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>عند {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>الوسيطات</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>القيم التي يعطيها هذا الاستدعاء للمكوّن</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>مكوّن</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>مكوّن من المكتبة</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>مكوّن من المكتبة يحدد ما يعثر عليه</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>اختيار</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>لم يتم اختيار مكوّن بعد</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>يعثر عليه</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>لا يعثر عليه</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>يعثر عليه {0}</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>لا يعثر عليه {0}</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>تم العثور عليه الآن عند {0}، {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>يتحقق الآن.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>لا يتحقق الآن.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>المعلمات</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>القيم التي يعطيها كل استدعاء لهذا المكوّن. يأخذ حقل من حقول إجراءاته إحداها باختيار "من" في قائمته.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>إضافة معلمة</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>تحرير المعلمة</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>إزالة المعلمة</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>إضافة معلمة</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>تحرير المعلمة - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>أحرف وأرقام و_، ويبدأ بحرف. تعطي الاستدعاءات القيمة بهذا الاسم.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>نوع الحقل الذي تعطيه المعلمة قيمة</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>ما يقيسه الرقم. لا يمكن استخدامه إلا حيث تُستخدم الوحدة نفسها.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>بكسل</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>مللي ثانية</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>ثوانٍ</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>عدد المرات</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>نسبة مئوية (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>مثال</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>القيمة الموجودة في حقولها، وهي ما يعرضه المحرر ويشغّله الاختبار</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>كل استدعاء يعطي قيمة</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>عند إيقاف هذا الخيار، يمكن للاستدعاء ألا يحددها، فتُستخدم القيمة الافتراضية.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>القيمة الافتراضية</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>القيمة التي يعطيها الاستدعاء الذي لا يحددها</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>اختياري، بالإنجليزية، لتطبيقات AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>تحقق من المثال. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>تحقق من القيمة الافتراضية. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>ما يفعله</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>تحرير المكوّن - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>الاستخدام كشرط</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>يمكن استخدامه كشرط</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>يفحصه If كشرط: يتحقق عندما يتحقق الشرط الذي تختاره هنا، وينتقل "حيث تم العثور على …" إلى حيث يعثر ذلك الشرط على ما يبحث عنه.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>ما يعثر عليه</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>أحد شروطه</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>اختر أيّ شروطه يحدد ما يعثر عليه، أو أوقف "يمكن استخدامه كشرط".</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>يستدعي هذا الصف مكوّنًا: يشغّله كما هو في المكتبة، بالقيم أدناه، وهي خاصة بهذا الصف.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>تحرير</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>تحديث الاستدعاءات</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>يحدّث هذا التغيير الاستدعاءات</value></data>
+  <data name="Signature_Intro_zero" xml:space="preserve"><value>سيتغير {0} استدعاء لـ{1} مع هذا التغيير. يُحفظ كل شيء معًا: إذا تعذّر حفظ أي شيء، فلن يتغير شيء.</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>سيتغير استدعاء واحد لـ{1} مع هذا التغيير. يُحفظ كل شيء معًا: إذا تعذّر حفظ أي شيء، فلن يتغير شيء.</value></data>
+  <data name="Signature_Intro_two" xml:space="preserve"><value>سيتغير استدعاءان لـ{1} مع هذا التغيير. يُحفظ كل شيء معًا: إذا تعذّر حفظ أي شيء، فلن يتغير شيء.</value></data>
+  <data name="Signature_Intro_few" xml:space="preserve"><value>ستتغير {0} استدعاءات لـ{1} مع هذا التغيير. يُحفظ كل شيء معًا: إذا تعذّر حفظ أي شيء، فلن يتغير شيء.</value></data>
+  <data name="Signature_Intro_many" xml:space="preserve"><value>سيتغير {0} استدعاءً لـ{1} مع هذا التغيير. يُحفظ كل شيء معًا: إذا تعذّر حفظ أي شيء، فلن يتغير شيء.</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>سيتغير {0} استدعاء لـ{1} مع هذا التغيير. يُحفظ كل شيء معًا: إذا تعذّر حفظ أي شيء، فلن يتغير شيء.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. الاستدعاءات التي لا تعطي قيمة من هذا النوع تحصل على هذه القيمة، ويمكن تغييرها لاحقًا في كل استدعاء.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>تتم إزالة {0}</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>تُحذف قيمتها من كل استدعاء.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>أصبح اسم {0} الآن {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>تحتفظ الاستدعاءات بقيمتها تحت الاسم الجديد.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>الاستدعاءات التي تتغير</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>ماكرو</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>مكوّن</value></data>
+  <data name="Signature_Calls_zero" xml:space="preserve"><value>{0} استدعاء</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>استدعاء واحد</value></data>
+  <data name="Signature_Calls_two" xml:space="preserve"><value>استدعاءان</value></data>
+  <data name="Signature_Calls_few" xml:space="preserve"><value>{0} استدعاءات</value></data>
+  <data name="Signature_Calls_many" xml:space="preserve"><value>{0} استدعاءً</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} استدعاء</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>تحديث وحفظ</value></data>
 </root>

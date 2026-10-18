@@ -50,8 +50,16 @@ internal sealed class FakeAiHost : IAiHost
 
     public Task<T> Ui<T>(Func<Task<T>> action) => action();
 
-    public string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app)
+    public string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
+        IReadOnlyList<MacroDefinition>? macros = null, IReadOnlyList<LibraryComponent>? callers = null)
     {
+        // The calls the new signature changed, saved with it.
+        foreach (var macro in macros ?? Array.Empty<MacroDefinition>())
+            if (Macros.Find(macro.Id) is { } saved)
+                saved.CopyFrom(macro);
+        foreach (var caller in callers ?? Array.Empty<LibraryComponent>())
+            if (Macros.Library.Find(caller.Id) is { } calling)
+                calling.Collection.Components[calling.Collection.Components.IndexOf(calling.Component)] = caller.Clone();
         if (Macros.Library.Find(component.Id) is { } found)
         {
             found.Collection.Components[found.Collection.Components.IndexOf(found.Component)] = component.Clone();

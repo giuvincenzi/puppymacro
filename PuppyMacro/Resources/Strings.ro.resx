@@ -1462,4 +1462,132 @@ Detalii: {1}</value></data>
   <data name="Ai_ChangedComponent" xml:space="preserve"><value>Componenta {0} a fost modificată</value></data>
   <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Salvați această componentă nouă în bibliotecă?</value></data>
   <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Salvați modificările acestei componente? Toate macrocomenzile legate de ea vor rula noua versiune.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Doar acțiunile unei componente pot prelua valoarea unui parametru.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>Câmpul {0} nu poate prelua valoarea unui parametru. Aici o pot prelua doar {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Nimic din această acțiune nu poate prelua valoarea unui parametru.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>Câmpul {0} nu este folosit așa cum este setată această acțiune, deci nu poate prelua valoarea unui parametru.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>Componenta nu are niciun parametru numit {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} este de tipul {1}, iar {2} acceptă tipul {3}.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Doar o componentă poate transmite mai departe unul dintre parametrii săi. Într-o macrocomandă, scrieți valoarea.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} nu are niciun parametru numit {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} are nevoie de o valoare pentru {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Scrieți o valoare de tipul parametrului, {"From": "un parametru al acestei componente"} sau {"Found": "Id-ul unei condiții"}, cu OffsetX și OffsetY dacă este nevoie.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Doar un rând legat de o componentă sau o condiție de tip Componentă are argumente. Eliminați Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Doar un punct poate proveni din locul în care o condiție a găsit ceva, iar {0} este de tipul {1}.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} nu oferă niciun loc în care să se meargă: componenta sa verifică un pixel sau ceva ce nu este acolo.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} nu spune ce găsește, deci nu poate servi drept condiție.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>Aceste componente s-ar apela una pe alta la nesfârșit: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Componentele pot fi incluse una în alta pe cel mult {0} niveluri, iar aici ar fi {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>Numele unui parametru începe cu o literă, urmată de litere, cifre sau _, și are cel mult 40 de caractere.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>Doi parametri nu pot avea același nume.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>Un număr are nevoie de unitatea sa: Pixels, Ms, Seconds, Count sau Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Doar un număr are unitate. Eliminați Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Dați un exemplu: valoarea pe care o afișează editorul și cu care rulează un test.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Aici scrieți o valoare, nu {"From"} sau {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>Această componentă nu are condiția indicată de Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>Ce găsește o componentă nu poate depinde de un loc găsit în afara ei.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Scrieți un punct ca {"X": 100, "Y": 200}, în pixeli întregi.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Scrieți un număr.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Scrieți un număr întreg.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Scrieți un text între ghilimele.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>Textul nu poate fi gol aici.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Scrieți o tastă așa cum se scrie o tastă rapidă, de exemplu {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Aici alegeți o tastă de pe tastatură, nu un buton al mouse-ului.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Aici tasta trebuie să fie singură, fără Ctrl, Alt, Shift sau Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Dați imaginile ca [{"Id": …, "X": …, "Y": …}], cel puțin una.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Scrieți o zonă ca {"X", "Y", "Width", "Height"}, în pixeli întregi.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>Nicio valoare nu se potrivește tuturor câmpurilor în care merge acest parametru, deoarece limitele lor nu se suprapun.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Punct</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Număr</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Text</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Tastă</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Culoare</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Imagine</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Zonă</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>pixeli</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>număr de ori</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} imagine</value></data>
+  <data name="Param_Images_few" xml:space="preserve"><value>{0} imagini</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} de imagini</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>Această modificare ar crea o problemă pentru {0}: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Una dintre valorile sale este locul în care o condiție a găsit ceva, iar componenta folosește acea valoare pentru punctul unui pixel, care nu poate prelua un loc găsit.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>O valoare</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>Din {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>De unde provine valoarea</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>Valoare</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>fiecare apel dă o valoare</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} dacă lipsește</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Valoarea implicită, {0}</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Verificați valoarea pentru {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>la {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Argumente</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Valorile pe care acest apel le dă componentei</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Componentă</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Componentă din bibliotecă</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>O componentă din bibliotecă ce spune ce găsește</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Alegere</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>Nicio componentă aleasă încă</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>Găsește ce caută</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>Nu găsește ce caută</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} găsește ce caută</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} nu găsește ce caută</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>Găsit acum la {0}, {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>Adevărată acum.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Nu este adevărată acum.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Parametri</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>Valorile pe care fiecare apel le dă acestei componente. Un câmp al acțiunilor ei preia una dintre ele când alegeți Din în lista sa.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>Adăugare parametru</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Editare parametru</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Eliminare parametru</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Adăugare parametru</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Editare parametru - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Litere, cifre și _, începând cu o literă. Apelurile dau valoarea după acest nume.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>Tip</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>Tipul de câmp căruia îi dă o valoare</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Unitate</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>Ce măsoară numărul. Poate fi folosit doar acolo unde se folosește aceeași unitate.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Pixeli</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Milisecunde (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Secunde (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Număr de ori</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Procent (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>Exemplu</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>Valoarea din câmpurile sale, pe care o afișează editorul și cu care rulează un test</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Fiecare apel dă o valoare</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>Când este dezactivat, un apel îl poate omite și se folosește valoarea implicită.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>Valoare implicită</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>Valoarea folosită când un apel îl omite</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Opțional, în engleză, pentru aplicațiile AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Verificați exemplul. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Verificați valoarea implicită. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>Ce face</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Editare componentă - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Utilizare ca o condiție</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Poate fi folosită ca o condiție</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>Un If o verifică drept condiție. Este adevărată când este adevărată condiția aleasă aici, iar „Locul găsit de …” merge acolo unde acea condiție găsește ce caută.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>Ce găsește</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>Una dintre condițiile ei</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Alegeți care dintre condițiile ei spune ce găsește sau dezactivați Poate fi folosită ca o condiție.</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>Acest rând apelează o componentă: o rulează așa cum este în bibliotecă, cu valorile de mai jos, care aparțin doar acestui rând.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Editare</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Actualizare apeluri</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>Această modificare actualizează apelurile</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>Această modificare schimbă și {0} apel la componenta {1}. Totul se salvează împreună: dacă ceva nu poate fi salvat, nu se schimbă nimic.</value></data>
+  <data name="Signature_Intro_few" xml:space="preserve"><value>Această modificare schimbă și {0} apeluri la componenta {1}. Totul se salvează împreună: dacă ceva nu poate fi salvat, nu se schimbă nimic.</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>Această modificare schimbă și {0} de apeluri la componenta {1}. Totul se salvează împreună: dacă ceva nu poate fi salvat, nu se schimbă nimic.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. Apelurile care nu dau o valoare de acest tip o primesc pe aceasta; fiecare apel o poate modifica ulterior.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>Parametrul {0} este eliminat</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Valoarea pe care o dă fiecare apel pentru el dispare.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} se numește acum {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>Apelurile își păstrează valoarea sub noul nume.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Apeluri care se modifică</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Macrocomandă</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Componentă</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} apel</value></data>
+  <data name="Signature_Calls_few" xml:space="preserve"><value>{0} apeluri</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} de apeluri</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Actualizare și salvare</value></data>
 </root>

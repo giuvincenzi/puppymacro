@@ -106,10 +106,11 @@ internal sealed partial class AiTools
         "a smaller copy of a picture and some lines of a log. get_last_run links a macro's last run again. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
         "A picture takes much more of your context than text.\n\n" +
         "The Library: components that already work in the user's apps (a point, an If that finds something, a sequence), " +
-        "kept by earlier work, the user's or an AI app's. Before building a macro, search_library finds what can be linked " +
-        "instead of made again (a linked row plays the component as it is in the Library); after a new piece works, " +
-        "save_component keeps it, with a structured name in English (domain-app-purpose-concept) that later searches find. " +
-        "A component's points are the screen it was made on.\n\n" +
+        "kept by earlier work, the user's or an AI app's, and linked by macros instead of made again: a linked row plays the " +
+        "component as it is in the Library, also after it changes. " + ComponentsAreFunctions + " " + ReusableComponents + " " +
+        "Before building a macro, search_library finds what can be linked or extended; after a new piece works, save_component " +
+        "keeps it, with a structured name in English (domain-app-purpose-concept) that later searches find. A component's " +
+        "points are the screen it was made on.\n\n" +
         "New loops and macros: the user knows what each key and click must do in their app, and PuppyMacro's pick tools take " +
         "confirmed_steps, the steps the item will play as the user confirmed them in the chat, before anything is picked. " +
         "Questions that the user's words already answer, or that do not apply to the item, only slow them down. Once saved, " +
@@ -121,6 +122,26 @@ internal sealed partial class AiTools
         "examples); PuppyMacro gives the Id of a new item. Keys are Windows virtual-key codes (A = 65, 0 = 48, F1 = 112, " +
         "Enter = 13, Space = 32; mouse: 1 left, 2 right, 4 middle, 5 and 6 side buttons). Points are physical screen " +
         "pixels. get_help reads the user guide.";
+
+    /// <summary>How components work as functions: in the Instructions and in the Library tools' descriptions (AI apps may not pass the Instructions on).</summary>
+    private const string ComponentsAreFunctions =
+        "A component is a function. Its Parameters are the values a call gives it, each of a type (Point, Number with a Unit, " +
+        "Text, Key, Color, Image, Area), going to fields of its actions through Bind ({\"Type\":\"Click\",…,\"Bind\":{\"Point\":\"Slot\"}}); a bound " +
+        "field holds the parameter's Example, which PuppyMacro writes there at save. A parameter with no Default is given by " +
+        "every call. A row calls it: {\"Type\":\"Component\",\"ComponentId\":…,\"Arguments\":{\"Slot\":{\"X\":3986,\"Y\":1056}}}; an argument " +
+        "is a value, {\"From\":\"a parameter\"} (inside a component, one of its own passed on) or {\"Found\":\"a condition's Id\"} (a Point: " +
+        "where an If around the call found an image or a text this time, with OffsetX and OffsetY). A component with Returns " +
+        "(one of its conditions) is also a condition: {\"Kind\":\"Component\",\"Name\":…,\"ComponentId\":…,\"Arguments\":…} in an If is true " +
+        "when that condition is, checked as the If checks any condition, and a \"Where … was found\" goes where it found it. " +
+        "Components call components (never in a loop, at most 10 levels). A call costs microseconds when the macro plays, where " +
+        "a key or a look at the screen takes milliseconds: linking never makes a macro slower.";
+
+    /// <summary>What makes a component reusable: in the Instructions and in save_component's description.</summary>
+    private const string ReusableComponents =
+        "A component with one concept (one thing it finds, one point, one operation) links into more macros than one that " +
+        "does three things. What changes between uses (a slot's position, a key, a wait) is a parameter, so one component " +
+        "serves every slot instead of a copy per value. A component that finds something with an image or a text and returns " +
+        "it works wherever the thing is, where fixed coordinates tie it to one place.";
 
     /// <summary>In the descriptions of the tools that make a new loop or macro: AI apps may not pass <see cref="Instructions"/> to the model.</summary>
     private const string NewItemRule =
@@ -344,8 +365,9 @@ internal sealed partial class AiTools
                 """{"type":"object","properties":{"id":{"type":"string","description":"The Id of a loop, macro or remap (get_overview lists them)."},"outline":{"type":"boolean","description":"A macro: its outline instead of its JSON."},"outline_depth":{"type":"integer","minimum":1,"maximum":20,"description":"How many levels of Then and Else the outline goes into; 1 when left out (the macro's own actions)."},"path":{"type":"string","description":"A JSON Pointer into the item, e.g. /Actions/3 or /Actions/3/If/Then/0: only that part."}},"required":["id"],"additionalProperties":false}""",
                 true, false, (a, app, _) => GetItem(a, app)),
             new("get_schema",
-                "Gives the JSON Schema, with descriptions and defaults, of a loop, a macro or a remap: every field and allowed value.",
-                """{"type":"object","properties":{"kind":{"type":"string","enum":["loop","macro","remap"]}},"required":["kind"],"additionalProperties":false}""",
+                "Gives the JSON Schema, with descriptions and defaults, of a loop, a macro, a remap or a Library component: every " +
+                "field and allowed value.",
+                """{"type":"object","properties":{"kind":{"type":"string","enum":["loop","macro","remap","component"]}},"required":["kind"],"additionalProperties":false}""",
                 true, false, (a, app, _) => Task.FromResult(Schema(a))),
             new("get_settings",
                 "Gives the settings an AI app can change with update_settings (theme, global hotkeys, overlay panel, sound volume).",
@@ -516,7 +538,8 @@ internal sealed partial class AiTools
                 true, false, (a, _, _) => ReadResource(a)),
             new("search_library",
                 "Searches the user's Library: components that already work (a point, an If that finds something, a sequence), " +
-                "kept to be linked in macros instead of being made again. Each has a structured name in English, " +
+                "kept to be linked in macros instead of being made again; each is a function, with the parameters a call gives it " +
+                "(their names and types are in the answer) and, when it can be a condition, Condition. Each has a structured name in English, " +
                 "domain-app-purpose-concept (\"game-diablo_iv-find-rare_item_in_slot\"), a title in the user's words and maybe a " +
                 "description. Filters narrow it (all optional, all must match): collection (an Id: its components), domain, app " +
                 "(as in the name: the exe without .exe, lowercase, '_' for anything else, or any), purpose, and words found in " +
@@ -525,22 +548,27 @@ internal sealed partial class AiTools
                 """{"type":"object","properties":{"collection":{"type":"string","description":"A collection's Id: only its components."},"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app part of the name, e.g. diablo_iv, excel, any."},"purpose":{"type":"string","enum":["find","wait","read","state","point","act"],"description":"find: recognizes something; wait: waits until something shows or goes; read: reads a text; state: which screen the app is in; point: where to click or move; act: a sequence that does an operation."},"words":{"type":"string","description":"Words, in English as the names are, e.g. \"rare item\"."},"limit":{"type":"integer","minimum":1,"maximum":200}},"additionalProperties":false}""",
                 true, false, (a, app, _) => SearchLibrary(a, app)),
             new("get_component",
-                "Gives one Library component: its actions as compact JSON (the same fields as a macro's), its collection with the " +
-                "screen it was made on, and the macros that link it. A macro links it with the row " +
-                "{\"Type\":\"Component\",\"ComponentId\":\"<its Id>\"}: that row plays the component as it is in the Library, also " +
-                "after it changes; a row like that has no DelayMs or Name of its own and can't be changed inside the macro.",
+                "Gives one Library component as compact JSON: its parameters, what it returns and its actions (the same fields as a " +
+                "macro's, with Bind), its collection with the screen it was made on, the macros and components that call it, and a " +
+                "call to copy (Call; AsCondition when it can be a condition) with each required parameter's example. " +
+                ComponentsAreFunctions + " A linked row has no DelayMs or Name of its own.",
                 idOnly, true, false, (a, app, _) => GetComponent(a, app)),
             new("save_component",
                 "Saves a Library component: something that works, to be linked in other macros (and shared with the collection " +
-                "it is in). Without id it is new; with id its content is replaced (every macro that links it plays the new one). " +
-                "component: Name (the user's words), Purpose (Find, Wait, Read, State, Point or Act), Concept (English, lowercase " +
-                "letters, digits and _, as short as clear, e.g. rare_item_in_slot), Description (short, English, optional) and " +
-                "Actions (as a macro's, self-contained: a \"where … was found\" uses a condition inside the component; no linked " +
-                "rows inside). collection, for a new component: {\"id\"} of an existing one, or {\"name\", \"domain\", \"app\"} for a " +
-                "new one (made on the screen its first point is on). The structured name is domain-app-purpose-concept. A " +
-                "component's names are how later searches find it, so the concepts already in the Library (search_library) are " +
-                "worth reusing. Saved at once, kept in its History; the user's OK first when they chose it.",
-                """{"type":"object","properties":{"id":{"type":"string","description":"A component's Id, to change it; leave out for a new one."},"collection":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app's .exe, e.g. Diablo IV.exe; leave out for any app."}},"additionalProperties":false},"component":{"type":"object","description":"Name, Purpose, Concept, Description, Actions."}},"required":["component"],"additionalProperties":false}""",
+                "it is in). Without id it is new; with id its content is replaced (every macro and component that calls it plays " +
+                "the new one). component, as get_schema(\"component\") describes it: Name (the user's words), Purpose (Find, Wait, " +
+                "Read, State, Point or Act), Concept (English, lowercase letters, digits and _, as short as clear, e.g. " +
+                "rare_item_in_slot), Description (short, English, optional), Parameters, Returns and Actions (as a macro's, " +
+                "self-contained: a \"where … was found\" uses a condition inside it, what comes from outside comes as a parameter). " +
+                ComponentsAreFunctions + " " + ReusableComponents + " When a new version changes what existing calls must give " +
+                "(a parameter removed, renamed, a new one without a Default, another type), the answer lists the calls and asks " +
+                "for call_values, one value for each parameter that every call without a fitting one gets, and renamed lets the " +
+                "calls keep their values under a new name; the component and the calls are then saved together. collection, for " +
+                "a new component: {\"id\"} of an existing one, or {\"name\", \"domain\", \"app\"} for a new one (made on the screen " +
+                "its first point is on). The structured name is domain-app-purpose-concept; the concepts already in the Library " +
+                "(search_library) are how later searches find it. Saved at once, kept in its History; the user's OK first when " +
+                "they chose it.",
+                """{"type":"object","properties":{"id":{"type":"string","description":"A component's Id, to change it; leave out for a new one."},"collection":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app's .exe, e.g. Diablo IV.exe; leave out for any app."}},"additionalProperties":false},"component":{"type":"object","description":"Name, Purpose, Concept, Description, Parameters, Returns, Actions."},"call_values":{"type":"object","description":"Changing a component whose calls must change: for each parameter the answer named, the value every call without a fitting one gets.","additionalProperties":true},"renamed":{"type":"object","description":"Changing a component: parameters renamed, old name to new name, so the calls keep their values.","additionalProperties":{"type":"string"}}},"required":["component"],"additionalProperties":false}""",
                 false, false, (a, app, c) => SaveComponent(a, app, c)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
@@ -671,7 +699,8 @@ internal sealed partial class AiTools
         "loop" => new AiToolResult(WithoutId(CodeSchema.ForLoop(Guid.Empty, withDefaults: true))),
         "macro" => new AiToolResult(WithTextLanguages(WithoutId(CodeSchema.ForMacro(Guid.Empty, withDefaults: true)))),
         "remap" => new AiToolResult(WithoutId(CodeSchema.ForRemap(Guid.Empty, withDefaults: true))),
-        _ => AiToolResult.Error("kind must be loop, macro or remap."),
+        "component" => new AiToolResult(WithTextLanguages(WithoutId(CodeSchema.ForComponent(Guid.Empty, withDefaults: true)))),
+        _ => AiToolResult.Error("kind must be loop, macro, remap or component."),
     };
 
     /// <summary>A Text condition's Language: the languages Windows can read on this PC, named in the macro's schema.</summary>
