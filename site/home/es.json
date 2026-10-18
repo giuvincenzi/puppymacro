@@ -43,7 +43,7 @@
   "language_text": "En el idioma de Windows o en el que elijas: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 y 中文.",
   "privacy_title": "Privacidad",
   "privacy_updates": "PuppyMacro no recopila ni envía datos personales. Con <strong>Buscar actualizaciones automáticamente</strong> (activado de forma predeterminada), se conecta a GitHub al iniciarse y cada 12 horas para buscar y descargar actualizaciones; a esas solicitudes se aplica la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">Declaración de privacidad general de GitHub</a>. Puedes desactivarlo en Configuración > Datos y actualizaciones.",
-  "privacy_ai": "PuppyMacro no envía nada a servicios de AI. Con <strong>Permitir el acceso de AI</strong> activado (está desactivado de forma predeterminada), las aplicaciones de AI de tu equipo que conectes pueden leer tus bucles, macros, reasignaciones y configuración a través de PuppyMacro: lo que leen va al proveedor de esa aplicación, según su propia política de privacidad.",
+  "privacy_ai": "PuppyMacro no envía nada a servicios de AI. Con <strong>Permitir el acceso de AI</strong> activado (está desactivado de forma predeterminada), las aplicaciones de AI de tu equipo que conectes pueden leer tus bucles, macros, reasignaciones y configuración a través de PuppyMacro: lo que leen va al proveedor de esa aplicación, según su propia política de privacidad. Con <strong>Permitir que las aplicaciones de AI vean la pantalla</strong> (activado de forma predeterminada), también pueden ver imágenes de tu pantalla, para crear macros que la miran.",
   "footer_license": "Licencia MIT",
   "footer_releases": "Todas las versiones"
 }

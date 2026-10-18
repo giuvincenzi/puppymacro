@@ -43,7 +43,7 @@
   "language_text": "使用 Windows 的显示语言，或你选择的语言：English、Italiano、Français、Español、Deutsch、Português、Română、Shqip、Русский、العربية、日本語、한국어 和 中文。",
   "privacy_title": "隐私",
   "privacy_updates": "PuppyMacro 不会收集或发送个人数据。开启<strong>自动检查更新</strong>（默认开启）后，它会在启动时以及每隔 12 小时连接 GitHub，检查并下载更新；这些请求适用 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub 一般隐私声明</a>。可在“设置 > 数据和更新”中关闭此功能。",
-  "privacy_ai": "PuppyMacro 不会向任何 AI 服务发送内容。开启<strong>允许 AI 访问</strong>（默认关闭）后，你在电脑上连接的 AI 应用可以通过 PuppyMacro 读取你的循环、宏、重映射和设置：它们读取的内容会发送给该应用的提供商，并适用其自己的隐私政策。",
+  "privacy_ai": "PuppyMacro 不会向任何 AI 服务发送内容。开启<strong>允许 AI 访问</strong>（默认关闭）后，你在电脑上连接的 AI 应用可以通过 PuppyMacro 读取你的循环、宏、重映射和设置：它们读取的内容会发送给该应用的提供商，并适用其自己的隐私政策。 开启<strong>允许 AI 应用查看屏幕</strong>（默认开启）后，它们还可以查看你的屏幕图像，用于创建查看屏幕的宏。",
   "footer_license": "MIT 许可证",
   "footer_releases": "所有版本"
 }

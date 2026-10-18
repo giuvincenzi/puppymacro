@@ -403,6 +403,10 @@
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>عند إيقاف التشغيل: يتم حفظ العناصر الجديدة والمتغيرة من AI على الفور، جاهزة للتجربة.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>السؤال قبل تغيير الإعدادات</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>السمة، ومفاتيح التشغيل السريع العامة، ولوحة التراكب، والصوت</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>السماح لتطبيقات AI برؤية الشاشة</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>تُرسل صور الشاشة، وما يقرؤه شرط الماكرو فيها، إلى تطبيق AI ومزوّده. وبذلك يمكنه إنشاء ماكرو يراقب الشاشة.</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>السماح لتطبيقات AI باختبار وحدات الماكرو</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>بعد أن تضغط «بدء»، يمكن لتطبيق AI تشغيل ماكرو محفوظ لمعرفة كيف يعمل. يوقفه «إيقاف الكل».</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>بدء PuppyMacro عندما يحتاج إليه تطبيق AI</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>عند إيقاف التشغيل: أثناء إغلاق PuppyMacro، لا يمكن لتطبيقات AI استخدامه وتطلب منك فتحه.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>التطبيقات</value></data>

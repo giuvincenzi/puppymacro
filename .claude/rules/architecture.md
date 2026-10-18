@@ -138,6 +138,10 @@ Rules:
   - No recognition inside apps that block screen capture or run in exclusive fullscreen: they show black (the condition window
     says so).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
+- A macro's Debug (`MacroDefinition.Debug`, `Services/RunLog.cs`, `DebugLogWindow`): the log of its last run, in
+  English, in `RunLog.Root` (`%LocalAppData%`, not the data folder), one folder per macro; deleted when PuppyMacro starts
+  and closes. The macro only queues lines and pictures; one background thread writes them (never the macro's thread:
+  the disk would slow it). An AI app's test is always logged.
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version. It is
   recorded in one place, `MainWindow.Save()` and `SaveMacro`, so every path is covered (editors, switches, the overlay's
   right click, AI apps). In the editors' History view, Restore puts the version in the fields and asks to Save.
@@ -154,13 +158,23 @@ Rules:
   - `AiTools` holds every tool without the protocol, unit tested with a fake `IAiHost`. Saves are checked with the Code
     views' checks.
   - **An AI app writes and reads every character**, so a change is a patch, not the whole item, and reads are compact.
-  - **What the model must do goes in the tools' descriptions and schemas too**: MCP's server instructions are optional
+  - **What the model must know goes in the tools' descriptions and schemas too**: MCP's server instructions are optional
     for the client, and Claude Desktop's agent mode did not follow them, while every client gives the model the tools'
     descriptions.
+  - **The texts for the AI describe, they do not command** (the user's choice: the AI is not treated as a robot): how
+    PuppyMacro works and what each choice brings (what is faster, sturdier, costlier), and the model decides. The limits
+    that matter are in the code: the ready window before anything on the user's screen, `confirmed_steps`, the AI page's
+    permissions, the checks of a save.
   - AI apps cut long tool calls: a request that waits for the user answers "waiting" and the AI calls `wait_for_user`.
   - One request that waits for the user at a time; none while the user has a PuppyMacro editor or dialog open. Request
     windows open centered on the screen and in front, and close after a timeout without input.
-  - Starting and testing loops and macros are not tools on purpose (their input would go to the AI app's chat in
-    front).
+  - The screen (`AiTools.Screen.cs`): `look_at_screen` (pictures, kept for `take_image` and `pick_pixel` with a
+    `snapshot_id`), `check_condition` (the same rule as the editor's Now on the screen, `ConditionReport.TrueFor`),
+    `record_macro` (PuppyMacro's recorder after the ready window, an image around each click), `test_macro` and
+    `get_last_run`. Pictures go to the AI app as JPEG no larger than `AiTools.MaxImageSide`, only with
+    `AppSettings.AiSeeScreen`; they cost the model far more than text, so only these tools send them.
+  - An AI app plays a macro only with `test_macro` (with `AppSettings.AiTestMacros`): after the user's Start in the ready
+    window, with the app the user brought in front given the front back, so its input never goes to the AI app's chat;
+    always logged, stopped after its time limit. Nothing else starts loops or macros (only `stop_all` stops them).
   - Everything is refused while `AppSettings.AllowAiAccess` is off.
   - Restore of an AI change (Recent activity, `AiActivityWindow`) puts the item back as the user's own change.

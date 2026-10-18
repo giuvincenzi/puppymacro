@@ -62,7 +62,7 @@ or UI text:
     must know or do changes;
   - a new tool when the feature adds something an AI app cannot do with the existing ones (a new
     kind of item, a new interaction with the user), or the reason it is left out (for example,
-    starting loops and macros is not a tool on purpose);
+    nothing starts loops on its own: an AI app plays a macro only as a test, after the user's Start);
   - `AiToolsTests` for every change above (`testing.md`).
 
 The plan given to the user before implementing (`working-rules.md`) lists every item of this

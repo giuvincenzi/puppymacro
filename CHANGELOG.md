@@ -8,6 +8,12 @@
   macro. A click inside Then can go where the image or text was found. The condition window says what PuppyMacro sees
   as you change it, and takes pixels, images and areas from the screen. **Settings > Screen recognition** chooses the
   graphics card or the processor, and AI apps can pick pixels, take images and draw areas too.
+- **Debug** in the macro editor keeps the log of the macro's last run: each action, what each If saw and where it went,
+  why it ended, with pictures of the screen when an If isn't true and at the end. **View log** shows it, in the card and
+  in the macro's More options. It is deleted when PuppyMacro closes.
+- AI apps can look at the screen, check a condition, record what you do and test a macro after you press Start, then
+  read how it went: so they can build and fix macros that look at the screen. Two new permissions on the AI page, **Let
+  AI apps see the screen** and **Let AI apps test macros**, are on by default.
 
 ### Changed
 - PuppyMacro asks Windows not to slow it down to save power (efficiency mode), so loops, macros and screen checks keep

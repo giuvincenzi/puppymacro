@@ -338,6 +338,10 @@
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>끄면 AI가 만들거나 변경한 항목이 바로 저장되어 사용해 볼 수 있습니다.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>설정을 변경하기 전에 확인</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>테마, 전역 바로 가기 키, 오버레이 패널, 소리</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>AI 앱이 화면을 볼 수 있도록 허용</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>화면 이미지와 매크로 조건이 화면에서 읽은 내용이 AI 앱과 그 제공업체로 전송됩니다. 이를 통해 화면을 보는 매크로를 만들 수 있습니다.</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>AI 앱이 매크로를 테스트할 수 있도록 허용</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>[시작]을 누르면 AI 앱이 저장된 매크로를 재생하여 어떻게 동작하는지 확인할 수 있습니다. [모두 중지]로 중지됩니다.</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>AI 앱에 필요할 때 PuppyMacro 시작</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>끄면 PuppyMacro가 닫혀 있는 동안 AI 앱이 사용할 수 없으며 PuppyMacro를 열라고 안내합니다.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>앱</value></data>

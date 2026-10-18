@@ -44,7 +44,7 @@
   "language_text": "In your Windows language, or the one you choose: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 and 中文.",
   "privacy_title": "Privacy",
   "privacy_updates": "PuppyMacro does not collect or send personal data. With <strong>Check for updates automatically</strong> (on by default), it contacts GitHub when it starts and every 12 hours to check for and download updates; the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a> applies to those requests. Turn it off in Settings > Data and updates.",
-  "privacy_ai": "PuppyMacro sends nothing to AI services. With <strong>Allow AI access</strong> on (off by default), the AI apps on your PC that you connect can read your loops, macros, remaps and settings through PuppyMacro: what they read goes to that app's provider, under its own privacy policy.",
+  "privacy_ai": "PuppyMacro sends nothing to AI services. With <strong>Allow AI access</strong> on (off by default), the AI apps on your PC that you connect can read your loops, macros, remaps and settings through PuppyMacro: what they read goes to that app's provider, under its own privacy policy. With <strong>Let AI apps see the screen</strong> (on by default), they can also see pictures of your screen, to build macros that look at it.",
   "footer_license": "MIT License",
   "footer_releases": "All releases"
 }

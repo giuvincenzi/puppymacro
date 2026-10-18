@@ -351,6 +351,10 @@ Details: {1}</value></data>
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Aus: Neue und geänderte Elemente der AI werden sofort gespeichert und können gleich ausprobiert werden.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Vor dem Ändern von Einstellungen fragen</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Design, globale Hotkeys, Overlay-Panel, Sound</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>AI-Apps den Bildschirm sehen lassen</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>Bilder des Bildschirms und was eine Makrobedingung dort liest, gehen an die AI-App und ihren Anbieter. Damit kann sie Makros erstellen, die auf den Bildschirm schauen.</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>AI-Apps Makros testen lassen</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>Nachdem Sie auf Starten gedrückt haben, kann die AI-App ein gespeichertes Makro abspielen, um zu sehen, wie es läuft. Alle stoppen beendet es.</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>PuppyMacro starten, wenn eine AI-App es benötigt</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Aus: Solange PuppyMacro geschlossen ist, können AI-Apps es nicht verwenden und fordern Sie auf, es zu öffnen.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Apps</value></data>

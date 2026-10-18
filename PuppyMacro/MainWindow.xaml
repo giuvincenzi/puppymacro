@@ -891,6 +891,12 @@
                                 <ui:SettingsCard Header="{x:Static r:Strings.AiPage_AskSettings}" Description="{x:Static r:Strings.AiPage_AskSettingsDescription}">
                                     <ui:ToggleSwitch x:Name="AiAskSettingsSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_AskSettings}" Toggled="OnAiPermissionChanged" />
                                 </ui:SettingsCard>
+                                <ui:SettingsCard Header="{x:Static r:Strings.AiPage_SeeScreen}" Description="{x:Static r:Strings.AiPage_SeeScreenDescription}">
+                                    <ui:ToggleSwitch x:Name="AiSeeScreenSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_SeeScreen}" Toggled="OnAiPermissionChanged" />
+                                </ui:SettingsCard>
+                                <ui:SettingsCard Header="{x:Static r:Strings.AiPage_TestMacros}" Description="{x:Static r:Strings.AiPage_TestMacrosDescription}">
+                                    <ui:ToggleSwitch x:Name="AiTestMacrosSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_TestMacros}" Toggled="OnAiPermissionChanged" />
+                                </ui:SettingsCard>
                                 <ui:SettingsCard Header="{x:Static r:Strings.AiPage_StartWhenNeeded}"
                                                  Description="{x:Static r:Strings.AiPage_StartWhenNeededDescription}">
                                     <ui:ToggleSwitch x:Name="AiStartSwitch" AutomationProperties.Name="{x:Static r:Strings.AiPage_StartWhenNeeded}" Toggled="OnAiPermissionChanged" />

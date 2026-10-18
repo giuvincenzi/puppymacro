@@ -65,6 +65,8 @@ public partial class MainWindow : IAiHost
         AiAskDeleteSwitch.IsOn = _settings.AiAskBeforeDeleting;
         AiAskChangeSwitch.IsOn = _settings.AiAskBeforeChanging;
         AiAskSettingsSwitch.IsOn = _settings.AiAskBeforeSettings;
+        AiSeeScreenSwitch.IsOn = _settings.AiSeeScreen;
+        AiTestMacrosSwitch.IsOn = _settings.AiTestMacros;
         AiStartSwitch.IsOn = _settings.AiStartWhenNeeded;
         // The apps' settings change outside PuppyMacro (Install in VS Code, a restart of Claude Desktop): looked at again
         // while the page shows.
@@ -113,6 +115,8 @@ public partial class MainWindow : IAiHost
         _settings.AiAskBeforeDeleting = AiAskDeleteSwitch.IsOn;
         _settings.AiAskBeforeChanging = AiAskChangeSwitch.IsOn;
         _settings.AiAskBeforeSettings = AiAskSettingsSwitch.IsOn;
+        _settings.AiSeeScreen = AiSeeScreenSwitch.IsOn;
+        _settings.AiTestMacros = AiTestMacrosSwitch.IsOn;
         _settings.AiStartWhenNeeded = AiStartSwitch.IsOn;
         Save();
     }

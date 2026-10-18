@@ -42,84 +42,81 @@ internal sealed partial class AiTools
     /// <summary>The most points pick_points asks for at once.</summary>
     public const int MaxPoints = 20;
 
+    // The texts for the AI app describe how PuppyMacro works and what each choice brings, not orders: the model decides.
+    // The limits that matter are in the code (the ready window, confirmed_steps, the permissions, the checks of a save).
     public const string Instructions =
-        "PuppyMacro automates keyboard and mouse input on Windows: loops (press keys or click at intervals), macros " +
-        "(recorded or built step by step) and remaps (a key or combination sends another one). These tools read and change " +
-        "the user's loops, macros, remaps and settings.\n\n" +
+        "PuppyMacro automates keyboard and mouse input on Windows: loops (keys pressed or clicks at intervals), macros " +
+        "(recorded or built step by step, and able to look at the screen) and remaps (a key or combination sends another " +
+        "one). These tools read and change the user's loops, macros, remaps and settings, and work with the user's screen.\n\n" +
         "How requests work:\n" +
-        "- Read tools (get_overview, get_item, get_schema, get_settings, check_hotkey, get_status, list_apps, get_help, export_items) answer at once.\n" +
-        "- save_loop, save_macro and save_remap create or change an item; delete_item, set_enabled and update_settings do " +
-        "what they say. They are saved at once and kept in the item's History in PuppyMacro, where the user can restore " +
-        "any version. Some may wait for the user's OK in PuppyMacro, as the user chose in PuppyMacro's AI settings: the " +
-        "answer then says whether the user confirmed or cancelled. After a change, tell the user to try it.\n" +
-        "- pick_point, pick_points, pick_app, capture_hotkey, pick_pixel, take_image and draw_area ask the user to click points on the screen, click a window " +
-        "of an app, or press keys. Use them instead of guessing coordinates, app names or key codes. First explain in the " +
-        "chat what the user will have to do; then call the tool. PuppyMacro shows a window in the middle of the screen, on " +
-        "top of everything, and waits until the user is ready (Enter or Start) before the user picks, so they can first open " +
-        "the right screen (a game's inventory, a window). Give it a title (short, e.g. \"Pick the 3 items to destroy\"), a " +
-        "description (one or two short sentences: what you are making and why) and the steps (one short instruction each, " +
-        "in order; PuppyMacro numbers them). For PuppyMacro's own screens, take the steps from the user guide (get_help). " +
-        "For each point, also give what it is (label, or labels for pick_points): it is shown next to the cursor while the " +
-        "user picks it. Write the title, description, steps and labels in the language the user writes to you in.\n" +
-        "- Macros can look at the screen: an action of Type If checks its conditions (a pixel's color, an image or a text on " +
-        "the screen, or with Not that it is not there, for example to wait until something goes away; all of them or any one), waiting as it says (once, up to some seconds, or as long as it takes), then " +
-        "plays its Then actions, or its Else actions or stops the macro. A Click, Mouse button down / up or Move to inside " +
-        "Then can go where an Image or Text condition without Not found its match (FoundId: the condition's Id, plus FoundOffsetX/Y), " +
-        "wherever it is that time. Get the values from the user's screen with pick_pixel (a pixel and its color), take_image " +
-        "(an image: PuppyMacro keeps it and gives its Id) and draw_area (a search area), never by guessing; get_schema gives " +
-        "the fields and their usual values. The macro's ChecksPerSecond limits how often the conditions look while they wait.\n" +
-        "- place_floating_button gives a Toggle loop or macro a floating button for overlay mode and opens the screen where " +
-        "the user places it, with your title, description and steps. open_item opens an item in PuppyMacro's editor, for the " +
-        "user to look at or change it themselves.\n" +
-        "- Loops, macros and remaps are shared as .puppyitems files (JSON text). export_items gives a file's text, for the user " +
-        "to save or send; import_items adds the items of a file's text the user gives you (new Ids, disabled, nothing replaced). " +
-        "When there are several items, ask the user which ones (or all) first. open_import_window and open_export_window show " +
-        "PuppyMacro's own Import and Export windows instead: offer them when the user would rather choose there.\n" +
-        "- A request that waits for the user answers after about 40 seconds at most. If the user has not answered yet, the " +
-        "answer says so with a request_id: call wait_for_user with it (again if needed) until the user answers. Only one " +
-        "such request at a time.\n\n" +
-        "Creating a new loop or macro (not when changing one):\n" +
-        "- Before building it, ask only the questions that matter for this item and that the user's words leave open, " +
-        "for example how fast it should go, or which keys or items it covers. Skip questions that do not apply: a macro " +
-        "that sells the inventory once needs no repeat count. Use sensible defaults for the rest, and say which.\n" +
-        "- When you have no more questions, and before any pick or save, write in the chat the exact steps the loop or " +
-        "macro will play, in order, one per line: each key or click and what it does there (\"1. Click the first item: " +
-        "selects it\", \"2. Press Space: destroys it\"). Ask the user to confirm them, and change them until they do. Only " +
-        "then ask for the points, in that same order, and save it.\n" +
-        "- Once it is saved, offer in one short message only the extras it does not have yet and that make sense for it: " +
-        "a hotkey, the overlay (Show in overlay) and a floating button (place_floating_button; Toggle items only), a sound " +
-        "when it starts and stops, a specific app (if you already set AppExe, do not offer it). Do what the user picks.\n\n" +
-        "Not available: starting, stopping or testing loops and macros (only stop_all, which stops everything). Their keys " +
-        "and clicks would go to the window in front, which is usually this chat. Ask the user to start them in " +
-        "PuppyMacro: the Play button on the item's card, its hotkey, or overlay mode. A running item that you change stops.\n\n" +
+        "- Reads (get_overview, get_item, get_schema, get_settings, check_hotkey, get_status, list_apps, get_help, " +
+        "export_items, get_last_run) answer at once.\n" +
+        "- save_loop, save_macro and save_remap create or rewrite an item; patch_item and update_actions change only what " +
+        "they name, which is much faster for a big item, since every character of a call is written by you. delete_item, " +
+        "set_enabled and update_settings do what they say. Everything is saved at once and kept in the item's History, " +
+        "where the user can restore any version. Some changes wait for the user's OK, as the user chose on PuppyMacro's AI " +
+        "page; the answer says whether they confirmed.\n" +
+        "- Some tools need the user: pick_point, pick_points, pick_app, capture_hotkey, pick_pixel, take_image, draw_area, " +
+        "look_at_screen, check_condition, record_macro, test_macro and place_floating_button. PuppyMacro first shows a " +
+        "window in the middle of the screen, on top of everything, with your title, a short description of what you are " +
+        "making together and why, and the steps, numbered; it waits for Start or Enter, so the user can first open the right " +
+        "screen. The user reads these texts, so they are best in the language the user writes in. Points, app names, keys, " +
+        "colors and images that come from these tools match the user's PC, which guesses can't. A point's label is shown " +
+        "next to the cursor while the user picks it.\n" +
+        "- A request that waits for the user answers within about 40 seconds. If the user has not answered yet, the answer " +
+        "has a request_id, and wait_for_user waits again. One such request runs at a time.\n\n" +
+        "Macros that look at the screen:\n" +
+        "- An action of Type If checks its conditions: a pixel's color, an image or a text on the screen, or with Not that " +
+        "it is not there (to wait until something goes away); all of them or any one; once, up to some seconds, or as long " +
+        "as it takes. Then it plays its Then actions; otherwise its Else actions, or Stop the macro, which ends the whole " +
+        "macro: the actions after the If and the next rounds do not play. An Else with no actions lets the macro go on to " +
+        "the next action.\n" +
+        "- The kinds trade speed for sturdiness. A pixel is the fastest and lightest, but breaks when the color shifts " +
+        "(light, effects, a hover). An image is the most reliable when it is small and distinctive (a button, an icon), " +
+        "and a flat area of one color can't be found. A text is the slowest, and only in the languages Windows can read " +
+        "(get_schema names them). Similarity counts in whole percent, 100 = identical; around 90 leaves room for small " +
+        "changes. The macro's ChecksPerSecond sets how often conditions look while they wait.\n" +
+        "- A Click, Mouse button down / up or Move to inside Then can go where an Image or Text condition without Not found " +
+        "its match (FoundId, plus FoundOffsetX/Y), wherever it is that time.\n" +
+        "- look_at_screen shows the screen; take_image and pick_pixel can then read that same picture without asking the " +
+        "user. check_condition shows what a condition sees now, as the editor does: on the right screen and on a wrong one it " +
+        "shows whether the condition tells them apart. record_macro gives what the user did, with an image around each " +
+        "click. test_macro plays a saved macro after the user's Start and gives its log and pictures; get_last_run reads the " +
+        "last run of a macro with Debug on. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
+        "Pictures take much more of your context than text.\n\n" +
+        "New loops and macros: the user knows what each key and click must do in their app, and PuppyMacro's pick tools take " +
+        "confirmed_steps, the steps the item will play as the user confirmed them in the chat, before anything is picked. " +
+        "Questions that the user's words already answer, or that do not apply to the item, only slow them down. Once saved, " +
+        "an item can also have a hotkey, Show in overlay and a floating button (Toggle items), a sound, and a specific app.\n\n" +
+        "Playing: test_macro plays a saved macro as a test, after the user's Start, so its keys and clicks go to the app the " +
+        "user brought in front, not to this chat. Otherwise loops and macros start in PuppyMacro: the Play button on the " +
+        "item's card, its hotkey, or overlay mode. A running item that is changed stops. stop_all stops everything.\n\n" +
         "Formats: items are JSON exactly as PuppyMacro saves them (get_schema gives the JSON Schema, get_item real " +
-        "examples). Leave out the Id of a new item. Keys are Windows virtual-key codes (A = 65, 0 = 48, F1 = 112, " +
+        "examples); PuppyMacro gives the Id of a new item. Keys are Windows virtual-key codes (A = 65, 0 = 48, F1 = 112, " +
         "Enter = 13, Space = 32; mouse: 1 left, 2 right, 4 middle, 5 and 6 side buttons). Points are physical screen " +
-        "pixels. For how PuppyMacro works, read the user guide with get_help.";
+        "pixels. get_help reads the user guide.";
 
     /// <summary>In the descriptions of the tools that make a new loop or macro: AI apps may not pass <see cref="Instructions"/> to the model.</summary>
     private const string NewItemRule =
-        " For a NEW loop or macro, before calling this: ask only the questions that matter for it and that the user's words " +
-        "leave open (how fast, which keys or items; none that do not apply), then write in the chat the exact steps it will " +
-        "play, in order, one per line, each key or click and what it does there, and wait for the user's OK. Only then pick " +
-        "the points (in that order) and save. A change to an existing item needs no such confirmation.";
+        " For a NEW loop or macro, the user confirms in the chat the exact steps it will play (each key or click and what it " +
+        "does there) before points are picked: the pick tools take them as confirmed_steps. Questions the user's words " +
+        "already answer, or that do not apply, only slow the user down. A change to an existing item needs no such step.";
 
     private const string AfterNewItem =
-        " After saving a NEW one, offer in one short message only the extras it does not have yet and that fit it: a hotkey, " +
-        "Show in overlay and a floating button (place_floating_button, Toggle only), a sound, a specific app (not when AppExe " +
-        "is set). Then tell the user to try it: you can't start it.";
+        " Once saved, an item can also have a hotkey, Show in overlay and a floating button (place_floating_button, Toggle " +
+        "only), a sound, and a specific app (AppExe). test_macro plays a macro to see how it goes; loops start in PuppyMacro.";
 
     private const string UserWindow =
-        " Write every text shown to the user in the language the user writes to you in. If the user takes long, the answer " +
-        "is \"waiting\" with a request_id: call wait_for_user with it until the user answers.";
+        " The user reads the title, description and steps, so they are best in the language the user writes in. If the user " +
+        "takes long, the answer is \"waiting\" with a request_id, and wait_for_user waits again.";
 
     private const string RewriteRule =
-        " To change an existing item, use patch_item or update_actions instead: they send only what changes (rewriting a big " +
-        "macro here takes minutes).";
+        " patch_item and update_actions change an existing item by sending only what changes: rewriting a big macro here " +
+        "takes minutes, since you write every character.";
 
     private const string NoStart =
-        "Starting and testing loops and macros is not available to AI apps: their keys and clicks would go to the window in " +
-        "front, usually your chat. Ask the user to start it in PuppyMacro (the Play button on its card, its hotkey, or overlay mode).";
+        "Loops and macros start in PuppyMacro (the Play button on the card, the hotkey, overlay mode); test_macro plays a " +
+        "saved macro as a test after the user's Start.";
 
     private static readonly JsonSerializerOptions ReadOptions = CodeJson.StrictOptions;
 
@@ -194,7 +191,7 @@ internal sealed partial class AiTools
         const string snapshot = "\"snapshot_id\":{\"type\":\"string\",\"description\":\"A look_at_screen picture: read it at once instead of asking the user. Then title, description and steps are not needed.\"}";
         const string areaArg = "\"area\":{\"type\":\"object\",\"description\":\"A part of the screen in physical pixels.\",\"properties\":{\"X\":{\"type\":\"integer\"},\"Y\":{\"type\":\"integer\"},\"Width\":{\"type\":\"integer\"},\"Height\":{\"type\":\"integer\"}},\"required\":[\"X\",\"Y\",\"Width\",\"Height\"],\"additionalProperties\":false}";
         const string confirmed = """
-            "confirmed_steps":{"type":"array","items":{"type":"string"},"minItems":1,"description":"The steps the loop or macro will play, one per item, each key or click and what it does: for a NEW item, exactly as you wrote them in the chat and the user confirmed (do not call this tool before); for a change to an existing one, the steps as they will be after it."},
+            "confirmed_steps":{"type":"array","items":{"type":"string"},"minItems":1,"description":"The steps the loop or macro will play, one per item, each key or click and what it does: for a NEW item, exactly as you wrote them in the chat and the user confirmed them (the pick comes after that OK); for a change to an existing one, the steps as they will be after it."},
             """;
         static string Save(string kind) => """
             {"type":"object","properties":{
@@ -250,7 +247,7 @@ internal sealed partial class AiTools
                 Save("remap"), false, false, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
             new("patch_item",
                 "Changes part of a loop, macro or remap with a JSON Patch (RFC 6902): only what changes, so it is fast even for a " +
-                "big macro. Use it for changes to an existing item (the same change on many actions: update_actions). Checked and saved like save_* (kept in " +
+                "big macro (the same change on many actions: update_actions). Checked and saved like save_* (kept in " +
                 "its History); the answer lists what changed.",
                 """
                 {"type":"object","properties":{

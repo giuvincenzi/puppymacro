@@ -50,7 +50,8 @@ paths:
   Everything else keeps its rules: the editors, the Code views and the AI tools' saves still refuse a remap without a
   hotkey, and a remap without one never clashes with anything.
 - Not in the backup: `backup-before-import-*.puppymacro` (copies of earlier data; inside a backup they would
-  grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data). The
+  grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data), the macros'
+  Debug logs (`RunLog.Root` in `%LocalAppData%`: the last run of a macro, deleted when PuppyMacro starts and closes). The
   Start with Windows Run entry is outside the data folder: Release builds set it from `StartWithWindows` at every
   start (`MainWindow`), so an import, a reinstall or another PC gets it back. So are the file types (`Services/FileTypes.cs`:
   `.puppyitems` and `.puppymacro` in `HKCU\Software\Classes`, their icons and open commands): Release
@@ -67,8 +68,9 @@ paths:
 - History versions and AI requests keep their texts as a `Phrase`: see `i18n.md`, "Texts kept in files".
 - AI apps: `AppSettings.AllowAiAccess` is off by default and in older files (a new field with the old behavior, no
   migration); its permissions' defaults are in `AppSettings` (the bridge reads them from `settings.json` without
-  writing it). `ai-activity.json` in the data folder holds the newest AI requests up to `AiActivityLog.MaxBytes` (no age
-  limit), with the JSON before a change or deletion for Restore; not user data: a missing or unreadable file is an
+  writing it). Let AI apps see the screen and Let AI apps test macros are on by default and in older files (the user's
+  choice); Allow AI access stays the switch for everything. `ai-activity.json` in the data folder holds the newest AI
+  requests up to `AiActivityLog.MaxBytes` (no age limit), with the JSON before a change or deletion for Restore; not user data: a missing or unreadable file is an
   empty history.
 - Limits are sizes, never days or counts (the user's choice). The oldest entries go first and the newest one always
   stays.

@@ -359,6 +359,10 @@ Detajet: {1}</value></data>
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Joaktiv: elementet e reja dhe të ndryshuara nga AI ruhen menjëherë, gati për t'u provuar.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Pyet para ndryshimit të cilësimeve</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Tema, tastet e shpejta globale, paneli i mbivendosjes, tingulli</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>Lejo aplikacionet AI të shohin ekranin</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>Pamjet e ekranit, dhe çfarë lexon aty një kusht i makros, shkojnë te aplikacioni AI dhe ofruesi i tij. Me to mund të krijojë makro që shohin ekranin.</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>Lejo aplikacionet AI të provojnë makrot</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>Pasi shtypni Nis, aplikacioni AI mund të luajë një makro të ruajtur për të parë si shkon. Ndal të gjitha e ndalon.</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Nis PuppyMacro kur një aplikacion AI ka nevojë</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Joaktiv: kur PuppyMacro është i mbyllur, aplikacionet AI nuk mund ta përdorin dhe ju thonë ta hapni.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Aplikacionet</value></data>

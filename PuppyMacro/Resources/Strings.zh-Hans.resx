@@ -338,6 +338,10 @@
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>关闭时：AI 新建和更改的项目会立即保存，可直接试用。</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>更改设置前询问</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>主题、全局热键、覆盖面板、声音</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>允许 AI 应用查看屏幕</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>屏幕图像以及宏条件在屏幕上读取的内容会发送给 AI 应用及其提供商。这样它就能创建查看屏幕的宏。</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>允许 AI 应用测试宏</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>按下“开始”后，AI 应用可以播放已保存的宏来查看效果。“全部停止”会停止它。</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>在 AI 应用需要时启动 PuppyMacro</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>关闭时：PuppyMacro 关闭期间，AI 应用无法使用它，并会提示你打开它。</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>应用</value></data>
