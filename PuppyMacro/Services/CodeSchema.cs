@@ -57,6 +57,7 @@ internal static class CodeSchema
         ["MacroAction.FoundId"] = "Click, MouseDown, MouseUp, MoveTo inside an If's Then: the Id of an Image or Text condition of that If (or of an If around it); the action goes to the center of what it found, moved by FoundOffsetX and FoundOffsetY, instead of X, Y. Null = X, Y.",
         ["MacroAction.FoundOffsetX"] = "With FoundId: pixels to the right of the center of what was found (negative: to the left).",
         ["MacroAction.FoundOffsetY"] = "With FoundId: pixels below the center of what was found (negative: above).",
+        ["MacroAction.ComponentId"] = "Component: the Id of the Library component this row links; it plays the component's actions as they are in the Library. Only on Component rows, which have no DelayMs or Name of their own.",
 
         ["MacroIf.Conditions"] = "What to check on the screen. At least one.",
         ["MacroIf.Match"] = "All: Then runs when every condition is true. Any: when at least one is.",
@@ -212,6 +213,7 @@ internal static class CodeSchema
         [MacroActionType.Scroll] = "Turn the scroll wheel ScrollSteps notches in ScrollDirection.",
         [MacroActionType.PasteText] = "Paste Text, with Enter before or after if set.",
         [MacroActionType.If] = "Check the screen (If.Conditions), waiting as If.Wait says, then run If.Then, or If.Else (or stop) when the conditions are not true in time.",
+        [MacroActionType.Component] = "Play a Library component (ComponentId), linked: as it is in the Library, changing when it changes.",
     };
 
     /// <summary>A whole macro: its Id is the only value allowed, and suggested.</summary>

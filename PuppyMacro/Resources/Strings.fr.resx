@@ -1335,4 +1335,8 @@ Détails : {1}</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} est lié dans ces macros : {1}. Dissociez-le d'abord dans celles-ci.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Certains composants de {0} sont liés dans ces macros : {1}. Dissociez-les d'abord dans celles-ci.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro n'a pas pu lire la bibliothèque et en a gardé une copie sous le nom library.invalid.json. La bibliothèque ne peut pas être modifiée tant que le fichier n'est pas corrigé.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Seule une ligne liée à un composant a un ComponentId. Supprimez ComponentId ou définissez Type sur Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Choisissez le composant à lier avec Ajouter un composant.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>La bibliothèque ne contient plus ce composant. Liez-en un autre avec Ajouter un composant ou supprimez cette ligne.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Une ligne liée à un composant n'a pas de délai ni de nom propres : ce sont les actions du composant qui les ont. Supprimez DelayMs et Name.</value></data>
 </root>

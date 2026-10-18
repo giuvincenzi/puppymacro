@@ -1336,4 +1336,8 @@ Detalles: {1}</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} está vinculado en estas macros: {1}. Desvincúlalo primero en ellas.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Algunos componentes de {0} están vinculados en estas macros: {1}. Desvincúlalos primero en ellas.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro no pudo leer la biblioteca, así que guardó una copia como library.invalid.json. No se puede cambiar la biblioteca hasta que se corrija el archivo.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Solo una fila vinculada a un componente tiene un ComponentId. Quita ComponentId o cambia Type a Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Elige el componente que quieres vincular con Agregar componente.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>La biblioteca ya no tiene este componente. Vincula otro con Agregar componente o elimina esta fila.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Una fila vinculada a un componente no tiene espera ni nombre propios: los tienen las acciones del componente. Quita DelayMs y Name.</value></data>
 </root>

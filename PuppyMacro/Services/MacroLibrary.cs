@@ -21,8 +21,13 @@ internal sealed class MacroLibrary
     public MacroLibrary(string folder, string? imagesFolder = null)
     {
         _folder = folder;
-        Images = new ImageStore(imagesFolder ?? Path.Combine(Path.GetDirectoryName(Path.GetFullPath(folder)) ?? folder, "images"));
+        string data = Path.GetDirectoryName(Path.GetFullPath(folder)) ?? folder;
+        Images = new ImageStore(imagesFolder ?? Path.Combine(data, "images"));
+        Library = new ComponentLibrary(Path.Combine(data, ComponentLibrary.FileName));
     }
+
+    /// <summary>The Library of components the macros link (library.json, next to the macros' folder).</summary>
+    public ComponentLibrary Library { get; }
 
     /// <summary>The images of the Image conditions, in the data folder next to the macros.</summary>
     public ImageStore Images { get; }
@@ -124,7 +129,11 @@ internal sealed class MacroLibrary
     /// </summary>
     public void ReleaseUnusedImages()
     {
+        // A Library it could not read may still name images: none is deleted until it is fixed.
+        if (Library.Broken)
+            return;
         var keep = _imagesOf.Values.SelectMany(s => s).ToHashSet(StringComparer.Ordinal);
+        keep.UnionWith(Library.ImageIds());
         keep.UnionWith(Images.Held());
         foreach (string id in Images.All().Where(id => !keep.Contains(id)))
             Images.Delete(id);

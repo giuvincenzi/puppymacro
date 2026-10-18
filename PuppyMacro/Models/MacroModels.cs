@@ -318,6 +318,10 @@ public sealed class MacroAction : KeyModifierFields
     [JsonIgnore]
     public List<MacroAction>? Resolved { get; set; }
 
+    /// <summary>Component, at run time only: the component's name when it was resolved (for the Debug log).</summary>
+    [JsonIgnore]
+    public string ResolvedName { get; set; } = "";
+
     /// <summary>The actions of its Then and Else (an If's), none for the other types.</summary>
     [JsonIgnore]
     public IEnumerable<List<MacroAction>> Branches

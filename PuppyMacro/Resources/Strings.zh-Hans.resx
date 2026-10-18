@@ -1302,4 +1302,8 @@
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} 已链接到以下宏：{1}。请先在那里取消链接。</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>{0} 中的部分组件已链接到以下宏：{1}。请先在那里取消链接。</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro 无法读取库，因此已将副本保存为 library.invalid.json。在修复该文件之前，无法更改库。</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>只有链接到组件的行才有 ComponentId。请删除 ComponentId，或将 Type 改为 Component。</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>请使用“添加组件”选择要链接的组件。</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>库中已没有此组件。请使用“添加组件”链接其他组件，或删除此行。</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>链接到组件的行没有自己的等待时间和名称，它们属于组件的操作。请删除 DelayMs 和 Name。</value></data>
 </root>

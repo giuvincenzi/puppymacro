@@ -23,18 +23,41 @@ internal sealed class EngineSnapshot
     public ImageStore? Images { get; init; }
     public RecognitionDevice RecognitionDevice { get; init; }
 
-    public static EngineSnapshot From(AppSettings settings, MacroLibrary macros) => new()
+    /// <summary>The macros that link a component the Library doesn't have: they can't play (their hotkey passes to the app).</summary>
+    public IReadOnlySet<Guid> Unplayable { get; init; } = new HashSet<Guid>();
+
+    /// <summary>
+    /// The snapshot of the data now. The macros are copies with their linked rows resolved (<see cref="ComponentLibrary.Resolve"/>),
+    /// once here on the UI thread: playing them never reads the Library.
+    /// </summary>
+    public static EngineSnapshot From(AppSettings settings, MacroLibrary macros)
     {
-        StopAll = settings.StopAllHotkey?.Clone(),
-        OverlayMode = settings.OverlayModeHotkey?.Clone(),
-        Record = settings.RecordHotkey?.Clone(),
-        OpenMain = settings.OpenMainHotkey?.Clone(),
-        Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
-        Macros = macros.Macros.Select(m => m.Clone()).ToArray(),
-        Remaps = settings.Remaps.Where(r => r.Enabled).Select(r => r.Clone()).ToArray(),
-        Images = macros.Images,
-        RecognitionDevice = settings.RecognitionDevice,
-    };
+        var unplayable = new HashSet<Guid>();
+        var copies = new List<MacroDefinition>();
+        foreach (var macro in macros.Macros)
+        {
+            if (macros.Library.Resolve(macro) is { } resolved)
+                copies.Add(resolved);
+            else
+            {
+                unplayable.Add(macro.Id);
+                copies.Add(macro.Clone());
+            }
+        }
+        return new EngineSnapshot
+        {
+            StopAll = settings.StopAllHotkey?.Clone(),
+            OverlayMode = settings.OverlayModeHotkey?.Clone(),
+            Record = settings.RecordHotkey?.Clone(),
+            OpenMain = settings.OpenMainHotkey?.Clone(),
+            Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
+            Macros = copies.ToArray(),
+            Remaps = settings.Remaps.Where(r => r.Enabled).Select(r => r.Clone()).ToArray(),
+            Images = macros.Images,
+            RecognitionDevice = settings.RecognitionDevice,
+            Unplayable = unplayable,
+        };
+    }
 }
 
 /// <summary>
@@ -289,10 +312,14 @@ internal sealed class LoopEngine : IDisposable
 
     // ================= Macros =================
 
+    /// <summary>Starts a macro as the snapshot has it (its linked rows resolved), whatever copy the caller holds.</summary>
     public void StartMacro(MacroDefinition macro)
     {
         lock (_sync)
         {
+            if (Playable(macro.Id) is not { } snapped)
+                return;
+            macro = snapped;
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return;
             // Debug on: the run writes its log (RunLog only queues, so this does not slow the hook that may call it).
@@ -315,6 +342,9 @@ internal sealed class LoopEngine : IDisposable
     {
         lock (_sync)
         {
+            if (Playable(macro.Id) is not { } snapped)
+                return null;
+            macro = snapped;
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return null;
             var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: new RunLog(folder, macro, why));
@@ -339,6 +369,10 @@ internal sealed class LoopEngine : IDisposable
         runner.Exited += _ => _dispatcher.InvokeAsync(finished);
         runner.Start();
     }
+
+    /// <summary>The snapshot's macro with this id, or null when it is not there or links a component the Library doesn't have.</summary>
+    private MacroDefinition? Playable(Guid id) =>
+        _snapshot.Unplayable.Contains(id) ? null : _snapshot.Macros.FirstOrDefault(m => m.Id == id);
 
     public void StopMacro(Guid macroId) => StopMacro(macroId, playSound: true);
 
@@ -994,7 +1028,7 @@ internal sealed class LoopEngine : IDisposable
                 return true;
             }
 
-            var macroTarget = snap.Macros.FirstOrDefault(m => m.Enabled && Usable(m.AppExe)
+            var macroTarget = snap.Macros.FirstOrDefault(m => m.Enabled && !snap.Unplayable.Contains(m.Id) && Usable(m.AppExe)
                 && Matches(m.Hotkey, pressed) && (canHold || m.Mode == ActivationMode.Toggle));
             if (macroTarget != null)
             {

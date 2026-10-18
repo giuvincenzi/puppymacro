@@ -1346,4 +1346,8 @@ Dettagli: {1}</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} è collegato in queste macro: {1}. Scollegalo prima da lì.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Alcuni componenti di {0} sono collegati in queste macro: {1}. Scollegali prima da lì.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro non è riuscito a leggere la libreria e ne ha conservato una copia come library.invalid.json. Non puoi modificare la libreria finché il file non viene corretto.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Solo una riga collegata a un componente ha un ComponentId. Rimuovi ComponentId oppure imposta Type su Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Scegli il componente da collegare con Aggiungi componente.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>La libreria non contiene più questo componente. Collegane un altro con Aggiungi componente oppure elimina questa riga.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Una riga collegata a un componente non ha un'attesa o un nome propri: li hanno le azioni del componente. Rimuovi DelayMs e Name.</value></data>
 </root>

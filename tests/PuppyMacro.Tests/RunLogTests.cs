@@ -189,6 +189,26 @@ public class RunLogTests : IDisposable
     }
 
     [Fact]
+    public void A_linked_component_plays_its_actions_numbered_under_its_row()
+    {
+        var press = new MacroAction { Type = MacroActionType.PressKey, Vk = 0x87, HoldMs = 10 };
+        var component = new LibraryComponent { Name = "Press F24", Concept = "press_f24", Actions = { press } };
+        var library = new ComponentLibrary(_folder.File(ComponentLibrary.FileName));
+        library.Collections.Add(new LibraryCollection { Name = "Keys", Components = { component } });
+        var macro = library.Resolve(new MacroDefinition
+        {
+            Name = "Linked",
+            Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id } },
+        })!;
+
+        string log = RunWithLog(macro);
+
+        Assert.Contains("#1 Component \"Press F24\": 1 action(s)", log);
+        Assert.Contains("#1 (Press F24) 1 Press F24, held 10 ms", log);
+        Assert.Contains("Ends: finished", log);
+    }
+
+    [Fact]
     public void A_run_without_a_log_writes_nothing()
     {
         var macro = new MacroDefinition { Name = "Quiet", Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 0x87, HoldMs = 10 } } };

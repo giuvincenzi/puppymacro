@@ -189,6 +189,25 @@ internal sealed class MacroRunner
         return pictures;
     }
 
+    /// <summary>
+    /// A row linked to a Library component: its actions as the Library had them when the macro started (the engine's
+    /// snapshot resolved them, each link with its own condition ids), numbered under the row in the Debug log
+    /// ("4 (Remove one affix) 2").
+    /// </summary>
+    private bool Component(MacroAction row)
+    {
+        if (row.Resolved == null)
+        {
+            Log("Component: not in the Library, skipped");
+            return true;
+        }
+        string me = _current;
+        Log($"Component \"{row.ResolvedName}\": {row.Resolved.Count} action(s)");
+        bool goOn = Play(row.Resolved, $"{me} ({row.ResolvedName}) ");
+        _current = me;
+        return goOn;
+    }
+
     /// <summary>Checks an If's conditions, then plays Then or Else, or ends the macro (Stop the macro).</summary>
     private bool If(MacroIf block)
     {
@@ -268,12 +287,15 @@ internal sealed class MacroRunner
             (a.X, a.Y) = point;
             where = " (where its condition found it)";
         }
-        if (_log != null && a.Type != MacroActionType.If)
+        if (_log != null && a.Type is not (MacroActionType.If or MacroActionType.Component))
             Event(Describe(a) + where);
         switch (a.Type)
         {
             case MacroActionType.If:
                 return a.If == null || If(a.If);
+
+            case MacroActionType.Component:
+                return Component(a);
 
             case MacroActionType.PressKey:
                 for (int r = 0; r < Math.Max(1, a.Repeat); r++)

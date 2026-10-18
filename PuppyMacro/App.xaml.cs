@@ -235,6 +235,8 @@ public partial class App : Application
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
         macros.Load(settings.MacroOrder, out string? macroWarning);
         warning ??= macroWarning;
+        macros.Library.Load(out string? libraryWarning);
+        warning ??= libraryWarning;
         if (settings.LoadedSchemaVersion < 6 && !macros.FillButtonOpacity(settings.OverlayPanelOpacity))
             warning ??= Strings.App_MacrosNotUpdated;
         if (SettingsStore.AddOpenMainHotkey(settings, macros))

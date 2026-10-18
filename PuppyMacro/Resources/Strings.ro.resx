@@ -1379,4 +1379,8 @@ Detalii: {1}</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} este legată în aceste macrocomenzi: {1}. Anulați mai întâi legătura acolo.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Unele componente din {0} sunt legate în aceste macrocomenzi: {1}. Anulați mai întâi legăturile acolo.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro nu a putut citi biblioteca, așa că a păstrat o copie ca library.invalid.json. Biblioteca nu poate fi modificată până când fișierul nu este reparat.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Doar un rând legat de o componentă are un ComponentId. Eliminați ComponentId sau setați Type la Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Alegeți componenta de legat cu Adăugare componentă.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>Biblioteca nu mai conține această componentă. Legați alta cu Adăugare componentă sau ștergeți acest rând.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Un rând legat de o componentă nu are o așteptare sau un nume propriu: le au acțiunile componentei. Eliminați DelayMs și Name.</value></data>
 </root>

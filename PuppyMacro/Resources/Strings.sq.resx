@@ -1346,4 +1346,8 @@ Detajet: {1}</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} është i lidhur në këto makro: {1}. Fillimisht shkëputeni atje.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Disa komponentë të {0} janë të lidhur në këto makro: {1}. Fillimisht shkëputini atje.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro nuk mundi ta lexonte bibliotekën, prandaj ruajti një kopje si library.invalid.json. Biblioteka nuk mund të ndryshohet derisa skedari të rregullohet.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Vetëm një rresht i lidhur me një komponent ka ComponentId. Hiqni ComponentId ose ndryshoni Type në Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Zgjidhni komponentin që do të lidhni me Shto komponent.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>Biblioteka nuk e ka më këtë komponent. Lidhni një tjetër me Shto komponent ose fshini këtë rresht.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Një rresht i lidhur me një komponent nuk ka pritje ose emër të vetin: i kanë veprimet e komponentit. Hiqni DelayMs dhe Name.</value></data>
 </root>

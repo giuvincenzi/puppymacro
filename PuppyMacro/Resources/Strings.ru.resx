@@ -1379,4 +1379,8 @@
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} привязан в этих макросах: {1}. Сначала отвяжите его там.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Некоторые компоненты из {0} привязаны в этих макросах: {1}. Сначала отвяжите их там.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro не удалось прочитать библиотеку, поэтому копия сохранена как library.invalid.json. Библиотеку нельзя изменить, пока файл не будет исправлен.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>ComponentId есть только у строки, привязанной к компоненту. Удалите ComponentId или задайте для Type значение Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Выберите компонент для привязки с помощью кнопки «Добавить компонент».</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>В библиотеке больше нет этого компонента. Привяжите другой с помощью кнопки «Добавить компонент» или удалите эту строку.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>У строки, привязанной к компоненту, нет своей задержки и своего имени: они есть у действий компонента. Удалите DelayMs и Name.</value></data>
 </root>

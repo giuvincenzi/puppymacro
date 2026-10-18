@@ -265,6 +265,7 @@ internal sealed class ComponentLibrary
             var actions = found.Component.Actions.ConvertAll(a => a.Clone());
             MacroEditList.RenewConditions(actions);
             action.Resolved = actions;
+            action.ResolvedName = found.Component.Name;
         }
         return copy;
     }

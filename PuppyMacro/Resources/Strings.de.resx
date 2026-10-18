@@ -1335,4 +1335,8 @@ Details: {1}</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} ist in diesen Makros verknüpft: {1}. Heben Sie die Verknüpfung dort zuerst auf.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Einige Komponenten von {0} sind in diesen Makros verknüpft: {1}. Heben Sie die Verknüpfungen dort zuerst auf.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro konnte die Bibliothek nicht lesen und hat eine Kopie als library.invalid.json behalten. Die Bibliothek kann erst geändert werden, wenn die Datei repariert ist.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Nur eine mit einer Komponente verknüpfte Zeile hat eine ComponentId. Entfernen Sie ComponentId, oder setzen Sie Type auf Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Wählen Sie die zu verknüpfende Komponente mit Komponente hinzufügen.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>Die Bibliothek enthält diese Komponente nicht mehr. Verknüpfen Sie mit Komponente hinzufügen eine andere, oder löschen Sie diese Zeile.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Eine mit einer Komponente verknüpfte Zeile hat keine eigene Wartezeit und keinen eigenen Namen, die haben die Aktionen der Komponente. Entfernen Sie DelayMs und Name.</value></data>
 </root>
