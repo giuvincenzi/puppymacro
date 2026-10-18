@@ -30,6 +30,10 @@
   finds is also a condition (**Component** in Add condition). Edit a component's actions and parameters with **Edit** in
   the Library; when a change affects the macros that call it, PuppyMacro asks one value for all of them and saves
   everything together.
+- **Grid parameters**: cells all alike in rows, as an inventory, a keypad or a sheet, described once by the first and
+  the last cell, the columns and the rows. A click, a mouse button, a move or a pixel inside a component goes to one of
+  its cells, a number or one a parameter gives, so each row of a macro only says which cell. **Show the cells** marks
+  every cell on a picture of the screen to check the grid.
 
 ### Changed
 - PuppyMacro's tools for AI apps are named `puppymacro_…`, have titles and follow the MCP specification 2025-11-25.

@@ -155,13 +155,20 @@ Rules:
     never split. Ids never change; a component never moves to another collection; its "Where … was found" use its own
     conditions (what comes from outside comes as a parameter).
   - **A component is a function** (the user's decision, with GitHub Actions' composite actions and Amazon States
-    Language as precedents): a typed signature (`Parameters`: Point, Number with a unit, Text, Key, Color, Image, Area;
+    Language as precedents): a typed signature (`Parameters`: Point, Number with a unit, Text, Key, Color, Image, Area, Grid;
     required when it has no `Default`; one `Example`, which PuppyMacro writes into the bound fields at save), fields bound
     to parameters next to the field (`Bind` on an action or condition, by slot), calls with `Arguments` (a value,
     `{"From"}` a parameter of the component around, `{"Found"}` a place an If around the call found), components calling
     components (never in a loop, at most `ComponentSignatures.MaxDepth` levels), and `Returns` (one of its conditions):
     such a component is also a condition, `ConditionKind.Component`, checked as the condition it returns with the call's
     arguments, in the If's own wait. No expressions, no code in the JSON: a field takes a parameter's value as it is.
+  - **A Grid** (the user's decision: one more type, general, not a feature apart) is cells all alike in rows: the same
+    point of the first and of the last cell, the columns and the rows. A Point field (a click's, mouse button's or move's,
+    a pixel's) bound to a Grid takes one of its cells, `Cell` (counted row by row from 1), fixed or bound to a Number
+    (Count). The step can have decimals; the point is rounded half away from zero (`GridValue.PointOf`, the D4 inventory's
+    33 slots exactly). Only points: a grid has no cell size, so no areas. Every call is checked with its values, down the
+    calls, and the component with its Examples: a cell its grid doesn't have can't be saved nor played, and if one got
+    there it is skipped, never played at another point.
   - **The checks and the preparation of components live only in `Services/Components/`**, and everyone calls them (the
     editors, the Code views, `MacroJson`, `SaveLibrary`, import, the AI tools, the snapshot): `ComponentSlots` (which
     field of which action or condition can take a parameter, its type, unit and limits, from `MacroJson`'s ranges),

@@ -205,6 +205,12 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     Arguments (`Views/ArgumentsEditor`, a card per parameter, the same list pattern, `Views/ValueEditor` with the app's own
     controls for each type) with Save and Cancel; Add condition › Component from the Library; `SignatureUpdateWindow`
     before a save that changes the calls.
+  - Grid parameters (approved: the same canvas, boards 1-4, drawn on the real windows): Grid in the parameter window's
+    Type list; a grid's value is a `SettingsExpander` (`Views/GridValueEditor`: first and last cell with Pick on screen,
+    columns, rows, how many cells, **Show the cells**) wherever a value is edited (Example, Default, an argument given as a
+    value, Update the calls); Position lists "A cell of …" for each Grid parameter, then the **Cell** card with the same
+    list as the other fields; a pixel's point the same. Show the cells is `ScreenPickWindow` in its Cells mode: rings and
+    numbers over the still picture, closed by a click or Esc.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set hotkey" / "Set key"
   button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no other button); set, the keys as accent

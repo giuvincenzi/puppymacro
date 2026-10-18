@@ -92,7 +92,9 @@ paths:
   answers, the app's `_meta`) and the screen's pictures: on this PC only, never sent anywhere (the guide's privacy says so).
 - A component's `Parameters` (with `Example` and `Default` as JSON values), `Returns`, and the `Bind` and `Arguments` of
   actions and conditions are new in the same release as the Library: `library.json` and the macro files of earlier builds
-  of this branch read with empty ones (no format change; nothing released has them).
+  of this branch read with empty ones (no format change; nothing released has them). The same for the Grid type (its value
+  `{"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}`) and `Cell` on actions and pixel conditions (null: the
+  point is X, Y).
 - The Library: `library.json` in the data folder (`ComponentLibrary`, `Format` raised only when its layout changes), part
   Data of the backup. A missing file is an empty Library; a file it can't read (also a newer format) is copied to
   `library.invalid.json`, saving the Library is refused and no image is deleted until it is fixed, so linked macros never

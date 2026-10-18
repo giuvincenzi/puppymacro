@@ -22,8 +22,10 @@
   fails: `ComponentValuesTests` (each type and rule, the slot table), `ComponentChecksTests` (Bind, calls, arguments,
   limits rising to the signature, parameters, Returns, loops, depth, which macros can't play), `ComponentRuntimeTests`
   (frames, bound fields, Component conditions; real runs on the fake screen), `ComponentUpdatesTests` (the guided update,
-  Unlink, Save as component, fingerprint, images, files, saving together) and `ComponentPerformanceTests` (the D4 macro
-  made with functions and 1000 like it: the times are in the test's output), with the builders of `ComponentTestKit`.
+  Unlink, Save as component, fingerprint, images, files, saving together), `ComponentGridTests` (the Grid: its value and
+  every rule, each cell's point, Cell and its checks per call, a run on the fake screen, the edits) and
+  `ComponentPerformanceTests` (the D4 macro made with functions and 1000 like it: the times are in the test's output),
+  with the builders of `ComponentTestKit`.
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a
   test of another language sets it itself.
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,

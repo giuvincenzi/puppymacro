@@ -114,4 +114,29 @@ public class ComponentPerformanceTests
         Assert.True(condition < 0.5, $"{condition} ms");
         Assert.Equal((3912 + 74, 1056 + 74), (ComponentPrograms.Bound(click, frame)!.X, ComponentPrograms.Bound(click, frame)!.Y));
     }
+
+    [Fact]
+    public void A_cell_of_a_grid_costs_as_little_as_a_point()
+    {
+        // The D4 inventory as a Grid and the slot as a Number: the click goes to cell 23.
+        var inventory = new System.Text.Json.Nodes.JsonObject
+        {
+            ["First"] = Point(3912, 1056), ["Last"] = Point(4647, 1268), ["Columns"] = 11, ["Rows"] = 3,
+        };
+        var gridClick = Bound(Click(3912, 1056), ("Point", "Inv"), ("Cell", "Slot"));
+        gridClick.Cell = 1;
+        var gridFrame = new FrameArguments(new Dictionary<string, System.Text.Json.Nodes.JsonNode> { ["Inv"] = inventory, ["Slot"] = Number(23) });
+        var pointClick = Bound(Click(3912, 1056), ("Point", "Slot"));
+        var pointFrame = new FrameArguments(new Dictionary<string, System.Text.Json.Nodes.JsonNode> { ["Slot"] = Point(3912, 1268) });
+
+        double grid = Ms(() => ComponentPrograms.Bound(gridClick, gridFrame), 100_000);
+        double point = Ms(() => ComponentPrograms.Bound(pointClick, pointFrame), 100_000);
+
+        Write($"A click at a cell of a grid: {grid * 1000:0.0} µs");
+        Write($"A click at a point: {point * 1000:0.0} µs");
+
+        Assert.Equal((3912, 1268), (ComponentPrograms.Bound(gridClick, gridFrame)!.X, ComponentPrograms.Bound(gridClick, gridFrame)!.Y));
+        // Far below the milliseconds of a click.
+        Assert.True(grid < 0.5, $"{grid} ms");
+    }
 }
