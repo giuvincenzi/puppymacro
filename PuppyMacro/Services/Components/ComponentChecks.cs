@@ -25,7 +25,10 @@ internal sealed record CallScope(ComponentSignatures? Signatures, IReadOnlyList<
 /// </summary>
 internal static class ComponentChecks
 {
-    private static readonly Regex NamePattern = new("^[A-Za-z][A-Za-z0-9_]{0,39}$", RegexOptions.CultureInvariant);
+    /// <summary>The most letters a parameter's name can have.</summary>
+    public const int MaxParameterName = 40;
+
+    private static readonly Regex NamePattern = new($"^[A-Za-z][A-Za-z0-9_]{{0,{MaxParameterName - 1}}}$", RegexOptions.CultureInvariant);
 
     // ================= Bind =================
 
@@ -256,6 +259,28 @@ internal static class ComponentChecks
     }
 
     /// <summary>
+    /// Whether a condition's own Not makes it true when what it looks for is not there (an action in its Then can't go where
+    /// it was found). A Component condition's Not is turned again by the Nots of what its component returns
+    /// (<see cref="ReturnedCondition"/>), as it plays: with both, what it returns is there, and found. Its own Not when what
+    /// it returns isn't known.
+    /// </summary>
+    public static bool NotThere(MacroCondition condition, ComponentSignatures? signatures)
+    {
+        if (!condition.Not)
+            return false;
+        return condition.Kind != ConditionKind.Component || signatures == null || condition.ComponentId is not Guid id
+               || ReturnedCondition(signatures, id, condition.Not) is not { } returned || returned.Not;
+    }
+
+    /// <summary>
+    /// Whether an action in an If's Then can name this condition in a "Where … was found" (<see cref="MacroCondition.GivesPlace"/>,
+    /// with a Component condition's Nots counted as in <see cref="NotThere"/>); <see cref="PlaceProblem"/> then says whether
+    /// what a Component condition returns gives a place.
+    /// </summary>
+    public static bool GivesPlace(MacroCondition condition, ComponentSignatures? signatures) =>
+        condition.Finds && !NotThere(condition, signatures);
+
+    /// <summary>
     /// What a Component condition checks in the end: the returned condition of the component (through Component conditions
     /// it returns in turn), with Not turned once for each Not on the way. Null when one is missing or the calls loop.
     /// </summary>
@@ -420,10 +445,10 @@ internal static class ComponentChecks
                     CheckCall(condition.ComponentId, condition.Arguments, at, true, scope, found, notThere, add);
             }
             var inside = new Dictionary<Guid, MacroCondition?>(found);
-            foreach (var condition in block.Conditions.Where(c => c.GivesPlace))
+            foreach (var condition in block.Conditions.Where(c => GivesPlace(c, scope.Signatures)))
                 inside[condition.Id] = condition;
             var notInside = new HashSet<Guid>(notThere);
-            notInside.UnionWith(block.Conditions.Where(c => c.Not).Select(c => c.Id));
+            notInside.UnionWith(block.Conditions.Where(c => NotThere(c, scope.Signatures)).Select(c => c.Id));
             Calls(block.Then, $"{prefix}If.Then", scope, inside, notInside, add);
             Calls(block.Else, $"{prefix}If.Else", scope, found, notThere, add);
         }

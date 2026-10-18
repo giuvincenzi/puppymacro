@@ -192,11 +192,52 @@ internal sealed class MacroLibrary
             error = ex.Message;
             return false;
         }
-        foreach (var (temp, path) in files)
-            File.Move(temp, path, overwrite: true);
+        // Each file takes its place with the old one kept aside: when one can't (its place is taken by a folder, a file kept
+        // open), those already moved go back, so the Library and the macros stay as they were.
+        var moved = new List<(string Path, string? Backup, bool Placed)>();
+        try
+        {
+            foreach (var (temp, path) in files)
+            {
+                string? backup = File.Exists(path) ? path + ".bak" : null;
+                if (backup != null)
+                    File.Move(path, backup, overwrite: true);
+                moved.Add((path, backup, false));
+                File.Move(temp, path);
+                moved[^1] = (path, backup, true);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            for (int i = moved.Count - 1; i >= 0; i--)
+                PutBack(moved[i].Path, moved[i].Backup, moved[i].Placed);
+            foreach (var (temp, _) in files)
+                TryDelete(temp);
+            error = ex.Message;
+            return false;
+        }
+        foreach (var (_, backup, _) in moved)
+            if (backup != null)
+                TryDelete(backup);
         foreach (var macro in macros)
             _imagesOf[macro.Id] = ImageStore.IdsIn(macro);
         return true;
+    }
+
+    /// <summary>A file of <see cref="TrySaveTogether"/> that took its place goes, and the one it replaced comes back.</summary>
+    private static void PutBack(string path, string? backup, bool placed)
+    {
+        try
+        {
+            if (placed)
+                File.Delete(path);
+            if (backup != null)
+                File.Move(backup, path, overwrite: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // The disk refuses even this: the old file stays as its .bak next to it, never lost.
+        }
     }
 
     private static void TryDelete(string file)

@@ -1409,6 +1409,7 @@ Detalles: {1}</value></data>
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>Desconocida</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>Acciones seleccionadas</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>Este archivo no se puede importar. La colección {0} que contiene es una versión distinta de la de tu biblioteca, y una colección se comparte completa, así que no se pueden mezclar. No se importó nada. Para importarlo, elimina primero tu colección si ninguna macro la usa, o pide un archivo hecho a partir de tu versión.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Este archivo no se puede importar. El componente {0} aparece dos veces en él, y un componente pertenece a una sola colección. No se importó nada.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>La colección {0} de este archivo no se puede importar. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Se usa en {0} macro</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Se usa en {0} macros</value></data>

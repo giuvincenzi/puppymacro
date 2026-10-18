@@ -1408,6 +1408,7 @@ Details: {1}</value></data>
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>Unbekannt</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>Ausgewählte Aktionen</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>Diese Datei kann nicht importiert werden. Die Sammlung {0} darin ist eine andere Version als die in Ihrer Bibliothek, und eine Sammlung wird immer ganz geteilt, daher lassen sich die beiden nicht mischen. Es wurde nichts importiert. Löschen Sie zum Importieren zuerst Ihre Sammlung, falls kein Makro sie verwendet, oder bitten Sie um eine Datei, die aus Ihrer Version erstellt wurde.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Diese Datei kann nicht importiert werden. Die Komponente {0} ist zweimal darin enthalten, aber eine Komponente gehört immer nur zu einer Sammlung. Es wurde nichts importiert.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Die Sammlung {0} in dieser Datei kann nicht importiert werden. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>In {0} Makro verwendet</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>In {0} Makros verwendet</value></data>

@@ -210,7 +210,7 @@ public sealed class ValueEditorViewModel : INotifyPropertyChanged
     internal JsonNode? ToJson() => Type switch
     {
         ParameterType.Point => new JsonObject { ["X"] = Whole(_x), ["Y"] = Whole(_y) },
-        ParameterType.Number => double.IsNaN(_number) ? null : JsonValue.Create(_number),
+        ParameterType.Number => double.IsFinite(_number) ? JsonValue.Create(_number) : null, // NaN or infinite: no number
         ParameterType.Text => JsonValue.Create(_text),
         ParameterType.Key => _key is { IsSet: true } key ? ComponentValues.ToJson(key) : null,
         ParameterType.Color => JsonValue.Create(_color.Trim().ToUpperInvariant()),
@@ -225,7 +225,8 @@ public sealed class ValueEditorViewModel : INotifyPropertyChanged
         _ => _area is { } a ? ComponentValues.ToJson(a) : null,
     };
 
-    private static int Whole(double value) => double.IsNaN(value) ? 0 : (int)Math.Round(value);
+    /// <summary>A NumberBox's number as a whole one: none is 0, an infinite one stays past every limit (the check says so).</summary>
+    private static int Whole(double value) => double.IsNaN(value) ? 0 : (int)Math.Clamp(Math.Round(value), int.MinValue, int.MaxValue);
 
     /// <summary>Why the value can't be used as it is (another type, outside its limits, missing), or null.</summary>
     public string? Problem

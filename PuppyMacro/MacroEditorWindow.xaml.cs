@@ -612,7 +612,7 @@ public partial class MacroEditorWindow
     /// <summary>The action window for an action of <paramref name="list"/> at <paramref name="index"/>.</summary>
     private MacroActionWindow ActionWindow(MacroAction action, bool isNew, List<MacroAction> list, int index) =>
         new(_engine, action, isNew, MacroJson.AllowedGroupIds(list, index, replacing: !isNew), GroupNames(),
-            MacroJson.FoundAt(_list.Actions, list), _macros.Images, _settings.RecognitionDevice,
+            MacroJson.FoundAt(_list.Actions, list, _macros.Library.Signatures()), _macros.Images, _settings.RecognitionDevice,
             // The other Ifs' condition names (not this one's own), so a new condition gets a name of its own.
             _list.All.Where(a => !ReferenceEquals(a, action)).SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
                 .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim()).ToList(),
@@ -709,8 +709,9 @@ public partial class MacroEditorWindow
     {
         if (row.Action.ComponentId is not Guid id || _macros.Library.Find(id) is not { } found || _list.ListOf(row.Action) is not { } list)
             return;
-        var arguments = ArgumentViewModel.For(found.Component, row.Action.Arguments, _macros.Library.Signatures(), EditingParameters,
-            MacroJson.FoundAt(_list.Actions, list), _macros.Images);
+        var signatures = _macros.Library.Signatures();
+        var arguments = ArgumentViewModel.For(found.Component, row.Action.Arguments, signatures, EditingParameters,
+            MacroJson.FoundAt(_list.Actions, list, signatures), _macros.Images);
         var window = new ComponentWindow(found.Collection, found.Component, LinkingMacros(), canUnlink: true, arguments, _engine) { Owner = this };
         if (window.ShowDialog() != true)
             return;
@@ -1566,9 +1567,10 @@ public partial class MacroEditorWindow
             return Strings.Code_ImageMissing;
         if (_list.All.Any(a => a.Type == MacroActionType.Component && LinkedComponent(a) == null))
             return Strings.Code_ComponentMissing;
+        var signatures = _macros.Library.Signatures();
         foreach (var action in _list.All)
         {
-            if (action.FoundId is not Guid id || _list.ListOf(action) is not { } list || MacroJson.FoundAt(_list.Actions, list).ContainsKey(id))
+            if (action.FoundId is not Guid id || _list.ListOf(action) is not { } list || MacroJson.FoundAt(_list.Actions, list, signatures).ContainsKey(id))
                 continue;
             return string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_FoundOutside, RowFor(action).Number, ConditionName(id));
         }

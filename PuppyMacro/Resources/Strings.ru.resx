@@ -1452,6 +1452,7 @@
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>Неизвестно</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>Выделенные действия</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>Этот файл нельзя импортировать. Коллекция {0} в нём — это другая версия той, что есть в вашей библиотеке, а коллекция передаётся только целиком, поэтому их нельзя смешать. Ничего не импортировано. Чтобы импортировать файл, сначала удалите свою коллекцию, если её не использует ни один макрос, или попросите файл, сделанный из вашей версии.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Этот файл нельзя импортировать. Компонент {0} встречается в нём дважды, а компонент может входить только в одну коллекцию. Ничего не импортировано.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Коллекцию {0} из этого файла нельзя импортировать. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Используется в {0} макросе</value></data>
   <data name="Library_UsedInMacros_few" xml:space="preserve"><value>Используется в {0} макросах</value></data>

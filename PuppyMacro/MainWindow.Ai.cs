@@ -391,6 +391,9 @@ public partial class MainWindow : IAiHost
                 {
                     if (JsonSerializer.Deserialize<LibraryComponent>(entry.Before, CodeJson.Options) is not { } component)
                         return Strings.AiActivity_CantRestore;
+                    // The images of the version before the change, from the component's History, as for a macro.
+                    if (entry.ItemId is Guid componentId)
+                        _itemHistory?.RestoreImages(componentId, entry.Before);
                     if (SaveComponent(component, null) is string notRestored)
                         return notRestored;
                     _aiLog.MarkRestored(entry);

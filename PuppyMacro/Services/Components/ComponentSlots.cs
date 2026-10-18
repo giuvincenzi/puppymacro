@@ -124,7 +124,7 @@ internal static class ComponentSlots
                 slots.Add(new ComponentSlot(Area, ParameterType.Area, null, ValueRule.Any, drawn));
                 break;
             case ConditionKind.Text:
-                slots.Add(new ComponentSlot(Text, ParameterType.Text, null, new ValueRule { NotEmpty = true }, true));
+                slots.Add(new ComponentSlot(Text, ParameterType.Text, null, new ValueRule { NotEmpty = true, NotBlank = true }, true));
                 slots.Add(new ComponentSlot(Area, ParameterType.Area, null, ValueRule.Any, drawn));
                 break;
         }

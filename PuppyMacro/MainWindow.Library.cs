@@ -180,6 +180,7 @@ public partial class MainWindow
         {
             Owner = owner,
             HistoryProvider = id => _itemHistory?.Versions(id) ?? new List<HistoryVersion>(),
+            RestoreImages = (id, json) => _itemHistory?.RestoreImages(id, json),
             ImportRequested = ImportCollections,
             ExportRequested = ExportCollection,
             EditRequested = EditComponent,

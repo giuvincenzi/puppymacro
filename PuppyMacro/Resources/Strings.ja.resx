@@ -1375,6 +1375,7 @@
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>不明</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>選択したアクション</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>このファイルはインポートできません。ファイル内のコレクション {0} は、ライブラリにあるものとは別のバージョンです。コレクションは丸ごと共有されるため、両方を混ぜることはできません。何もインポートされていません。インポートするには、どのマクロも使っていなければ先にご自分のコレクションを削除するか、ご自分のバージョンから作られたファイルを依頼してください。</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>このファイルはインポートできません。ファイル内にコンポーネント {0} が 2 回含まれていますが、コンポーネントは 1 つのコレクションにしか属せません。何もインポートされていません。</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>このファイルのコレクション {0} はインポートできません。{1}</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>{0} 個のマクロで使用</value></data>
   <data name="Ai_SearchedLibrary" xml:space="preserve"><value>ライブラリを検索しました</value></data>

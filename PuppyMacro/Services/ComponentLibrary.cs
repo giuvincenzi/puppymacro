@@ -232,22 +232,37 @@ internal sealed class ComponentLibrary
         return problems;
     }
 
-    /// <summary>The rows linking each component, by component id, in these macros.</summary>
+    /// <summary>The calls to each component (linked rows and Component conditions), by component id, in these macros.</summary>
     public static Dictionary<Guid, int> Links(IEnumerable<MacroDefinition> macros)
     {
         var links = new Dictionary<Guid, int>();
-        foreach (var action in macros.SelectMany(m => m.AllActions))
-            if (action.Type == MacroActionType.Component && action.ComponentId is Guid id)
-                links[id] = links.GetValueOrDefault(id) + 1;
+        foreach (Guid id in macros.SelectMany(Called))
+            links[id] = links.GetValueOrDefault(id) + 1;
         return links;
     }
 
-    /// <summary>The macros that link a component, by name, or none.</summary>
+    /// <summary>
+    /// The components a macro calls, one id per call: its linked rows and its Component conditions (a component used only as
+    /// a condition is used too).
+    /// </summary>
+    public static IEnumerable<Guid> Called(MacroDefinition macro)
+    {
+        foreach (var action in macro.AllActions)
+        {
+            if (action.Type == MacroActionType.Component && action.ComponentId is Guid id)
+                yield return id;
+            foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+                if (condition.Kind == ConditionKind.Component && condition.ComponentId is Guid called)
+                    yield return called;
+        }
+    }
+
+    /// <summary>The macros that call a component (a row or a condition), by name, or none.</summary>
     private static List<string> LinkedIn(IEnumerable<Guid> components, IEnumerable<MacroDefinition> macros)
     {
         var ids = components.ToHashSet();
         return macros
-            .Where(m => m.AllActions.Any(a => a.Type == MacroActionType.Component && a.ComponentId is Guid id && ids.Contains(id)))
+            .Where(m => Called(m).Any(ids.Contains))
             .Select(m => m.Name)
             .ToList();
     }

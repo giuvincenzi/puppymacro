@@ -62,6 +62,9 @@ internal sealed record ValueRule
     /// <summary>A text that isn't empty.</summary>
     public bool NotEmpty { get; init; }
 
+    /// <summary>A text with more than spaces: what a Text condition looks for (<see cref="MacroJson"/>'s rule for it).</summary>
+    public bool NotBlank { get; init; }
+
     /// <summary>A key of the keyboard, not a mouse button.</summary>
     public bool Keyboard { get; init; }
 
@@ -76,6 +79,7 @@ internal sealed record ValueRule
         Range = (Math.Max(Range.Min, other.Range.Min), Math.Min(Range.Max, other.Range.Max)),
         Whole = Whole || other.Whole,
         NotEmpty = NotEmpty || other.NotEmpty,
+        NotBlank = NotBlank || other.NotBlank,
         Keyboard = Keyboard || other.Keyboard,
         KeyAlone = KeyAlone || other.KeyAlone,
     };
@@ -143,6 +147,8 @@ internal static class ComponentValues
                     string text = v.GetValue<string>();
                     if (rule.NotEmpty && text.Length == 0)
                         return Fail(out problem, Strings.Code_ValueTextEmpty);
+                    if (rule.NotBlank && string.IsNullOrWhiteSpace(text))
+                        return Fail(out problem, Strings.Code_EnterConditionText);
                     return text;
                 }
                 case ParameterType.Key:
@@ -328,6 +334,9 @@ internal static class ComponentValues
     internal static bool Numeric(JsonNode? node, out double value)
     {
         value = 0;
+        // A number made in memory can be infinite or NaN, which JSON can't write: not a value (and its text would throw).
+        if (node is JsonValue made && ((made.TryGetValue(out double d) && !double.IsFinite(d)) || (made.TryGetValue(out float f) && !float.IsFinite(f))))
+            return false;
         return node is JsonValue v && v.GetValueKind() == JsonValueKind.Number
                && double.TryParse(v.ToJsonString(), NumberStyles.Float, CultureInfo.InvariantCulture, out value) && double.IsFinite(value);
     }

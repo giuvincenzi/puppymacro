@@ -1540,6 +1540,7 @@
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>غير معروفة</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>الإجراءات المحددة</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>لا يمكن استيراد هذا الملف. المجموعة {0} الموجودة فيه إصدار مختلف عن الموجودة في مكتبتك، والمجموعة تُشارك كاملة، لذا لا يمكن الجمع بينهما. لم يُستورد أي شيء. لاستيراده، احذف مجموعتك أولاً إن لم يكن أي ماكرو يستخدمها، أو اطلب ملفًا مصنوعًا من إصدارك.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>لا يمكن استيراد هذا الملف. المكوّن {0} موجود فيه مرتين، والمكوّن ينتمي إلى مجموعة واحدة فقط. لم يُستورد أي شيء.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>لا يمكن استيراد المجموعة {0} من هذا الملف. {1}</value></data>
   <data name="Library_UsedInMacros_zero" xml:space="preserve"><value>مستخدم في {0} ماكرو</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>مستخدم في ماكرو واحد</value></data>

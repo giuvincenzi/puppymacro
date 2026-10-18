@@ -1419,6 +1419,7 @@ Detajet: {1}</value></data>
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>I panjohur</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>Veprimet e zgjedhura</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>Ky skedar nuk mund të importohet. Koleksioni {0} në të është një version tjetër nga ai në bibliotekën tuaj, dhe një koleksion ndahet i plotë, prandaj të dy nuk mund të përzihen. Nuk u importua asgjë. Për ta importuar, fillimisht fshini koleksionin tuaj nëse nuk e përdor asnjë makro, ose kërkoni një skedar të bërë nga versioni juaj.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Ky skedar nuk mund të importohet. Komponenti {0} gjendet dy herë në të, ndërsa një komponent i përket vetëm një koleksioni. Nuk u importua asgjë.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Koleksioni {0} në këtë skedar nuk mund të importohet. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Përdoret në {0} makro</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Përdoret në {0} makro</value></data>

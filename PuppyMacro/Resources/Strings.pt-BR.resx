@@ -1482,6 +1482,7 @@ Detalhes: {1}</value></data>
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>Desconhecida</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>Ações selecionadas</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>Este arquivo não pode ser importado. A coleção {0} nele é uma versão diferente da que está na sua biblioteca, e uma coleção é compartilhada inteira, então as duas não podem ser misturadas. Nada foi importado. Para importá-lo, exclua primeiro a sua coleção se nenhuma macro a usar, ou peça um arquivo feito a partir da sua versão.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Este arquivo não pode ser importado. O componente {0} aparece duas vezes nele, e um componente pertence a uma única coleção. Nada foi importado.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>A coleção {0} deste arquivo não pode ser importada. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Usado em {0} macro</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Usado em {0} macros</value></data>

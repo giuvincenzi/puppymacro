@@ -483,6 +483,25 @@ public class MacroConditionsTests : IDisposable
     }
 
     [Fact]
+    public void The_history_gives_back_the_images_of_a_component_s_version_for_restore()
+    {
+        var store = new ImageStore(ImagesFolder);
+        var history = new ItemHistory(_folder.File("history"), images: store);
+        string id = store.Add(Png(2));
+        var component = Kit.Comp("Affix there", If(Image("A", id)));
+        string withImage = CodeJson.Serialize(component); // a component's History version, as the main window records it
+        history.Record(component.Id, withImage, ItemHistory.You);
+        component.Actions.Clear();
+        component.Actions.Add(Press());
+        history.Record(component.Id, CodeJson.Serialize(component), ItemHistory.You);
+        store.Delete(id);
+
+        history.RestoreImages(component.Id, withImage);
+
+        Assert.Equal(Png(2), store.Read(id));
+    }
+
+    [Fact]
     public void An_image_survives_when_the_version_that_held_it_is_dropped_for_space()
     {
         var store = new ImageStore(ImagesFolder);

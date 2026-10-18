@@ -148,21 +148,23 @@ internal static class MacroJson
 
     /// <summary>
     /// The conditions whose image or text an action of <paramref name="list"/> can use: those of every If whose Then holds
-    /// it, by Id with their names.
+    /// it, by Id with their names. <paramref name="signatures"/>: the Library, for the Nots of what a Component condition
+    /// returns.
     /// </summary>
-    public static Dictionary<Guid, string> FoundAt(List<MacroAction> root, List<MacroAction> list)
+    public static Dictionary<Guid, string> FoundAt(List<MacroAction> root, List<MacroAction> list, ComponentSignatures? signatures = null)
     {
         var found = new Dictionary<Guid, string>();
-        Holders(root, list, new List<MacroIf>(), found);
+        Holders(root, list, new List<MacroIf>(), found, signatures);
         return found;
     }
 
-    private static bool Holders(List<MacroAction> current, List<MacroAction> target, List<MacroIf> path, Dictionary<Guid, string> found)
+    private static bool Holders(List<MacroAction> current, List<MacroAction> target, List<MacroIf> path, Dictionary<Guid, string> found,
+        ComponentSignatures? signatures)
     {
         if (ReferenceEquals(current, target))
         {
             foreach (var block in path)
-                foreach (var condition in block.Conditions.Where(c => c.GivesPlace))
+                foreach (var condition in block.Conditions.Where(c => ComponentChecks.GivesPlace(c, signatures)))
                     found[condition.Id] = condition.Name ?? "";
             return true;
         }
@@ -171,9 +173,9 @@ internal static class MacroJson
             if (action.If is not { } block)
                 continue;
             path.Add(block);
-            bool hit = Holders(block.Then, target, path, found);
+            bool hit = Holders(block.Then, target, path, found, signatures);
             path.RemoveAt(path.Count - 1);
-            if (hit || Holders(block.Else, target, path, found))
+            if (hit || Holders(block.Else, target, path, found, signatures))
                 return true;
         }
         return false;
@@ -308,10 +310,10 @@ internal static class MacroJson
             if (block.Wait == ConditionWait.UpTo)
                 check.Range($"{prefix}If.WaitSeconds", block.WaitSeconds, WaitSeconds);
             var inside = new Dictionary<Guid, MacroCondition?>(found);
-            foreach (var condition in block.Conditions.Where(c => c.GivesPlace))
+            foreach (var condition in block.Conditions.Where(c => ComponentChecks.GivesPlace(c, scope.Signatures)))
                 inside[condition.Id] = condition;
             var notInside = new HashSet<Guid>(notThere ?? new HashSet<Guid>());
-            notInside.UnionWith(block.Conditions.Where(c => c.Not).Select(c => c.Id));
+            notInside.UnionWith(block.Conditions.Where(c => ComponentChecks.NotThere(c, scope.Signatures)).Select(c => c.Id));
             CheckActions(block.Then, $"{prefix}If.Then", inside, scope, check, single: false, notInside);
             CheckActions(block.Else, $"{prefix}If.Else", found, scope, check, single: false, notThere);
         }

@@ -155,7 +155,7 @@ public partial class MacroEditorWindow
                 _renamed[original] = edited.Name;
         }
         if (edited.Type != card.Parameter.Type || edited.Unit != card.Parameter.Unit)
-            ComponentEdits.Forget(_list.Actions, edited); // its fields were of the old type: they keep their values
+            ComponentEdits.Retyped(_list.Actions, card.Parameter, edited.Name); // its fields were of the old type: they keep their values
         ShowParameters();
         Refresh();
     }

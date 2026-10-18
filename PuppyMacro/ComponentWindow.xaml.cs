@@ -99,7 +99,7 @@ public partial class ComponentWindow
     internal static string UsedIn(LibraryComponent component, IEnumerable<MacroDefinition> macros)
     {
         var names = macros
-            .Where(m => m.AllActions.Any(a => a.Type == MacroActionType.Component && a.ComponentId == component.Id))
+            .Where(m => ComponentLibrary.Called(m).Contains(component.Id))
             .Select(m => m.Name)
             .ToList();
         return names.Count == 0 ? Strings.Library_NotUsed : string.Join(Strings.ListSeparator, names);

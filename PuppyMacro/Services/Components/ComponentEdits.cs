@@ -175,6 +175,9 @@ internal static class ComponentEdits
 
         foreach (var action in MacroDefinition.Walk(actions))
         {
+            // The fields bound to the outer component's parameters first: a place's parameter, bound below, is already one of
+            // the new component's own, even when the outer component has a parameter of the same name.
+            action.Bind = Rebound(action.Bind, Outer);
             if (action.FoundId is Guid foundId && !inside.Contains(foundId))
             {
                 string name = Place(foundId, action.FoundOffsetX, action.FoundOffsetY, new PointValue(action.X, action.Y));
@@ -182,7 +185,6 @@ internal static class ComponentEdits
                 action.FoundOffsetX = action.FoundOffsetY = 0;
                 (action.Bind ??= new Dictionary<string, string>())[ComponentSlots.Point] = name;
             }
-            action.Bind = Rebound(action.Bind, Outer);
             action.Arguments = Lifted(action.Arguments, inside, Place, Outer);
             foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
             {
@@ -315,6 +317,18 @@ internal static class ComponentEdits
         }
     }
 
+    /// <summary>
+    /// A parameter whose type or unit changed in the component's editor (<paramref name="old"/> as it was, named
+    /// <paramref name="name"/> now): its fields, of the old type, keep their values (no Bind), and the calls inside that
+    /// passed it on get its old Example, a value of the kind they take, never one of the new type.
+    /// </summary>
+    public static void Retyped(List<MacroAction> actions, ComponentParameter old, string name)
+    {
+        var was = old.Clone();
+        was.Name = name;
+        Forget(actions, was);
+    }
+
     /// <summary>A parameter's name made from a condition's name ("Remove Affix" → "Remove_Affix"), or <paramref name="fallback"/>.</summary>
     public static string NameFrom(string? text, string fallback)
     {
@@ -329,15 +343,22 @@ internal static class ComponentEdits
         string result = name.ToString().Trim('_');
         if (result.Length == 0 || !char.IsAsciiLetter(result[0]))
             result = fallback + (result.Length == 0 ? "" : "_" + result);
-        return result.Length > 40 ? result[..40].TrimEnd('_') : result;
+        return result.Length > ComponentChecks.MaxParameterName ? result[..ComponentChecks.MaxParameterName].TrimEnd('_') : result;
     }
 
-    /// <summary>The name, or "Name2", "Name3"… when a parameter already has it.</summary>
+    /// <summary>
+    /// The name, or "Name2", "Name3"… when a parameter already has it; the name is shortened so that the number fits in a
+    /// parameter's name (<see cref="ComponentChecks.MaxParameterName"/>).
+    /// </summary>
     private static string Unique(string name, List<ComponentParameter> parameters)
     {
         string candidate = name;
         for (int n = 2; parameters.Any(p => p.Name.Equals(candidate, StringComparison.OrdinalIgnoreCase)); n++)
-            candidate = name + n.ToString(CultureInfo.InvariantCulture);
+        {
+            string number = n.ToString(CultureInfo.InvariantCulture);
+            int room = ComponentChecks.MaxParameterName - number.Length;
+            candidate = (name.Length > room ? name[..room] : name) + number;
+        }
         return candidate;
     }
 }

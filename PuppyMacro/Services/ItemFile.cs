@@ -156,8 +156,8 @@ internal static class ItemFile
         var content = new ItemFileContent { App = app };
         if (file["Images"] is JsonObject images)
             foreach (var (id, value) in images)
-                if (MacroJson.IsImageId(id) && value is JsonValue v && v.TryGetValue(out string? base64))
-                    content.Images[id] = base64;
+                if (value is JsonValue v && v.TryGetValue(out string? base64) && ImageStore.Embedded(id, base64) != null)
+                    content.Images[id] = base64; // only an image whose bytes are its id: another one is missing
         // An image a macro or a component names is in the file, or already kept here.
         bool HasImage(string image) => content.Images.ContainsKey(image) || macros.Images.Has(image);
 
@@ -192,12 +192,13 @@ internal static class ItemFile
     /// The file's collections against the Library (the user's decision: a collection is a package, its id never changes):
     /// one the Library doesn't have is new (it must pass the Library's checks, its calls against the Library with the file's
     /// new collections in it); one with the same id and the same content (<see cref="ComponentLibrary.Fingerprint"/>) is
-    /// already here; one with the same id and other content, or a component that is here in another collection, refuses the
-    /// whole file, saying which.
+    /// already here; one with the same id and other content, a component that is here in another collection, or a component
+    /// id the file's new collections hold twice, refuses the whole file, saying which.
     /// </summary>
     private static string? CollectionsProblem(List<LibraryCollection> collections, ComponentLibrary library, Func<string, bool> hasImage,
         List<LibraryCollection> added)
     {
+        var newIds = new HashSet<Guid>();
         foreach (var collection in collections)
         {
             if (library.FindCollection(collection.Id) is { } mine)
@@ -210,6 +211,9 @@ internal static class ItemFile
             {
                 if (library.Find(component.Id) is { } elsewhere)
                     return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportConflict, elsewhere.Collection.Name);
+                // A component lives in one place: the file can't hold its id twice (in this collection or in another new one).
+                if (!newIds.Add(component.Id))
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportComponentTwice, component.Name);
             }
             if (ComponentLibrary.CheckCollection(collection) is string bad)
                 return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportCollectionProblem, collection.Name, bad);

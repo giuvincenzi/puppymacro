@@ -52,10 +52,15 @@ internal sealed class SignatureUpdate
         renamed = (renamed ?? new Dictionary<string, string>())
             .Where(r => r.Key != r.Value && before.Parameters.Any(p => p.Name == r.Key) && after.Parameters.Any(p => p.Name == r.Value))
             .ToDictionary(r => r.Key, r => r.Value);
+        // A name a rename takes over is gone as the old parameter, even though a parameter has it now.
         var removed = before.Parameters.Select(p => p.Name)
-            .Where(n => !renamed.ContainsKey(n) && after.Parameters.All(p => p.Name != n))
+            .Where(n => !renamed.ContainsKey(n) && (after.Parameters.All(p => p.Name != n) || renamed.Values.Contains(n)))
             .ToList();
-        string OldName(string name) => renamed.FirstOrDefault(r => r.Value == name).Key ?? name;
+        // The old name of a parameter of the new version: the one it was renamed from, its own name when it kept it, none
+        // when it is new (also when its name was another parameter's, renamed away).
+        string? OldName(string name) => renamed.FirstOrDefault(r => r.Value == name).Key
+            ?? (renamed.ContainsKey(name) || removed.Contains(name) ? null : name);
+        ComponentParameter? Old(string name) => OldName(name) is { } old ? before.Parameters.FirstOrDefault(p => p.Name == old) : null;
         var sites = new List<CallSite>();
         var needed = new HashSet<string>();
         foreach (var (id, name, isMacro, actions) in Owners(macros, components).Where(o => o.Id != after.Id))
@@ -65,14 +70,14 @@ internal sealed class SignatureUpdate
             {
                 calls++;
                 foreach (var parameter in after.Parameters)
-                    if (Fits(arguments?.GetValueOrDefault(OldName(parameter.Name)), parameter, before.Parameters.FirstOrDefault(p => p.Name == OldName(parameter.Name))) == false)
+                    if (Fits(OldName(parameter.Name) is { } old ? arguments?.GetValueOrDefault(old) : null, parameter, Old(parameter.Name)) == false)
                         needed.Add(parameter.Name);
             }
             if (calls > 0)
                 sites.Add(new CallSite(id, name, isMacro, calls));
         }
         var typeChanged = after.Parameters
-            .Where(p => before.Parameters.FirstOrDefault(o => o.Name == OldName(p.Name)) is { } old && (old.Type != p.Type || old.Unit != p.Unit))
+            .Where(p => Old(p.Name) is { } old && (old.Type != p.Type || old.Unit != p.Unit))
             .Select(p => p.Name)
             .ToHashSet();
         return new SignatureUpdate

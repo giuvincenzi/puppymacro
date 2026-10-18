@@ -85,8 +85,8 @@ internal sealed class ComponentPrograms
     /// The values a call gives its component's parameters, in the frame of the caller: a value as it is, a <c>{"From"}</c>
     /// the caller's own parameter, a <c>{"Found"}</c> where the caller's condition found something plus the offset; a
     /// parameter left out its Default. Null, with <paramref name="missing"/>, when a <c>{"Found"}</c> condition found nothing
-    /// this time (one of an Any's that wasn't true) or a value is missing: the call is skipped, as a "Where … was found"
-    /// click is.
+    /// this time (one of an Any's that wasn't true) or its offset moves the place past the screen's limits, or a value is
+    /// missing: the call is skipped, as a "Where … was found" click is.
     /// </summary>
     public static FrameArguments? Evaluate(PreparedComponent callee, Dictionary<string, JsonNode?>? arguments, FrameArguments caller,
         IReadOnlyDictionary<Guid, OpenCvSharp.Point> found, out string? missing)
@@ -103,7 +103,11 @@ internal sealed class ComponentPrograms
                 if (reference.From is string from)
                     value = caller[from]?.DeepClone();
                 else if (reference.Found is Guid id && found.TryGetValue(id, out var point))
-                    value = new JsonObject { ["X"] = point.X + reference.OffsetX, ["Y"] = point.Y + reference.OffsetY };
+                {
+                    var at = new JsonObject { ["X"] = (long)point.X + reference.OffsetX, ["Y"] = (long)point.Y + reference.OffsetY };
+                    // The offset can move the place past the screen's limits: then there is no point this time, never another one.
+                    value = ComponentValues.Read(at, ParameterType.Point, ValueRule.Any, out _) != null ? at : null;
+                }
             }
             else
                 value = value?.DeepClone();
@@ -119,7 +123,8 @@ internal sealed class ComponentPrograms
 
     /// <summary>
     /// The action with its bound fields set from the frame; the action itself when nothing of it is bound. Null when its point
-    /// is a cell its grid doesn't have (the checks refuse that before: it is never played somewhere else).
+    /// is a cell its grid doesn't have or a value its field can't take (the checks refuse those before: it is never played
+    /// somewhere else).
     /// </summary>
     public static MacroAction? Bound(MacroAction action, FrameArguments arguments)
     {
@@ -131,7 +136,7 @@ internal sealed class ComponentPrograms
             if (arguments[parameter] is not { } node || ComponentSlots.Find(action, slot) is not { } s)
                 continue;
             if (ComponentSlots.Read(s, node, action.Cell != null) is not { } value)
-                continue;
+                return null; // a value its field can't take: never played with the field's own value instead
             copy ??= ShallowForBind(action);
             if (!ComponentSlots.Write(copy, slot, value))
                 return null;
@@ -150,7 +155,7 @@ internal sealed class ComponentPrograms
             if (arguments[parameter] is not { } node || ComponentSlots.Find(condition, slot) is not { } s)
                 continue;
             if (ComponentSlots.Read(s, node, condition.Cell != null) is not { } value)
-                continue;
+                return null; // a value its field can't take: never checked with the field's own value instead
             copy ??= condition.Clone();
             if (!ComponentSlots.Write(copy, slot, value))
                 return null;

@@ -97,6 +97,28 @@ public class ComponentEditsTests
         Assert.True(JsonNode.DeepEquals(Point(3912, 1056), actions[2].If!.Conditions[0].Arguments!["Slot"]));
     }
 
+    [Fact]
+    public void A_parameter_of_another_type_gives_the_calls_that_passed_it_on_its_old_example()
+    {
+        // The editor: Slot, a Point, renamed Where (its fields and calls follow), then made a Text.
+        var strip = Comp("Strip", new[] { SlotParam() }, Bound(Click(), ("Point", "Slot")));
+        var old = SlotParam("Slot");
+        var actions = new List<MacroAction>
+        {
+            Bound(Click(5, 6), ("Point", "Where")),
+            Call(strip, ("Slot", From("Where"))),
+            If(CallCondition(strip, "Inner", ("Slot", From("Where"))), Press()),
+        };
+
+        ComponentEdits.Retyped(actions, old, "Where");
+
+        Assert.Empty(actions[0].Bind!);
+        Assert.Equal((5, 6), (actions[0].X, actions[0].Y));
+        // The calls take a Point: they get the old Example, never the new type's.
+        Assert.True(JsonNode.DeepEquals(Point(3912, 1056), actions[1].Arguments!["Slot"]));
+        Assert.True(JsonNode.DeepEquals(Point(3912, 1056), actions[2].If!.Conditions[0].Arguments!["Slot"]));
+    }
+
     // ================= The guided update =================
 
     private static LibraryComponent Strip(params ComponentParameter[] parameters) =>

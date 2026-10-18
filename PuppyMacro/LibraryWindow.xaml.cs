@@ -157,7 +157,7 @@ public partial class LibraryWindow
     /// <summary>"Used in 2 macros", or "Not used".</summary>
     private string UseText(LibraryComponent component)
     {
-        int macros = LinkingMacros.Count(m => m.AllActions.Any(a => a.Type == MacroActionType.Component && a.ComponentId == component.Id));
+        int macros = LinkingMacros.Count(m => ComponentLibrary.Called(m).Contains(component.Id));
         return macros == 0 ? Strings.Library_NotUsed : Plurals.Format("Library_UsedInMacros", macros);
     }
 
@@ -273,6 +273,8 @@ public partial class LibraryWindow
         {
             if (HistoryRestore.ReadComponent(version, item.Component.Id) is not { } restored)
                 return;
+            // The images that version names come back from the History, as a macro's Restore does.
+            RestoreImages?.Invoke(item.Component.Id, version.Json);
             if (SaveChange(library =>
                 {
                     if (library.Find(item.Component.Id) is not { } found)
@@ -293,6 +295,9 @@ public partial class LibraryWindow
 
     /// <summary>The History's versions of an item (set by the main window).</summary>
     internal Func<Guid, IReadOnlyList<HistoryVersion>>? HistoryProvider { get; init; }
+
+    /// <summary>Puts back, from an item's History, the images its JSON names (set by the main window).</summary>
+    internal Action<Guid, string>? RestoreImages { get; init; }
 
     private async void OnDeleteComponentClick(object sender, RoutedEventArgs e)
     {

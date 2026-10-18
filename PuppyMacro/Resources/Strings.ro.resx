@@ -1452,6 +1452,7 @@ Detalii: {1}</value></data>
   <data name="Library_ScreenUnknown" xml:space="preserve"><value>Necunoscut</value></data>
   <data name="Library_SelectedActions" xml:space="preserve"><value>Acțiuni selectate</value></data>
   <data name="Library_ImportConflict" xml:space="preserve"><value>Acest fișier nu poate fi importat. Colecția {0} din el este o versiune diferită de cea din biblioteca dvs., iar o colecție se partajează întreagă, așa că cele două nu pot fi combinate. Nu s-a importat nimic. Pentru a-l importa, ștergeți mai întâi colecția dvs. dacă nu o folosește nicio macrocomandă sau cereți un fișier creat din versiunea dvs.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Acest fișier nu poate fi importat. Componenta {0} apare de două ori în el, iar o componentă aparține unei singure colecții. Nu s-a importat nimic.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Colecția {0} din acest fișier nu poate fi importată. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Folosită în {0} macrocomandă</value></data>
   <data name="Library_UsedInMacros_few" xml:space="preserve"><value>Folosită în {0} macrocomenzi</value></data>

@@ -131,19 +131,29 @@ internal sealed partial class ImageStore
             return;
         foreach (var (id, base64) in images)
         {
-            if (!MacroJson.IsImageId(id) || Has(id))
+            if (Has(id))
                 continue;
-            byte[] png;
-            try
-            {
-                png = Convert.FromBase64String(base64);
-            }
-            catch (FormatException)
-            {
-                continue;
-            }
-            if (IdOf(png) == id)
+            if (Embedded(id, base64) is { } png)
                 Write(id, png);
+        }
+    }
+
+    /// <summary>
+    /// An embedded image's bytes when they are the image its id names (Base64 of bytes whose <see cref="IdOf"/> is the id);
+    /// null otherwise: such an image is missing, never kept under an id that isn't its own.
+    /// </summary>
+    public static byte[]? Embedded(string id, string base64)
+    {
+        if (!MacroJson.IsImageId(id))
+            return null;
+        try
+        {
+            byte[] png = Convert.FromBase64String(base64);
+            return IdOf(png) == id ? png : null;
+        }
+        catch (FormatException)
+        {
+            return null;
         }
     }
 
