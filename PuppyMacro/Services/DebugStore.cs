@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace PuppyMacro.Services;
@@ -92,6 +93,61 @@ internal static class DebugStore
         ".json" => "application/json",
         _ => "text/plain",
     };
+
+    /// <summary>
+    /// The file of a resource URI with its type, or null (<see cref="PathOf"/>): the one way to a file of the archive, for
+    /// resources/read and the read_resource tool alike (through <c>AiTools.OpenResource</c>).
+    /// </summary>
+    public static DebugFile? Open(string uri) => PathOf(uri) is { } path ? new DebugFile(path, UriOf(path), MimeOf(path)) : null;
+
+    /// <summary>
+    /// What a linked file is, for the AI app before it opens it (MCP's description of a resource link): what it holds, from
+    /// the archive's names, then its size, a picture's in pixels and a text's in lines.
+    /// </summary>
+    public static string Describe(string path)
+    {
+        string name = Path.GetFileName(path);
+        Match monitor = Regex.Match(name, @"^monitor-(\d+)\.png$");
+        Match numbered = Regex.Match(name, @"^(\d{4})(?:-m(\d+))?\.png$");
+        string what = name switch
+        {
+            _ when monitor.Success => $"monitor {monitor.Groups[1].Value}",
+            _ when numbered.Success => $"the screen just before event {numbered.Groups[1].Value}" +
+                (numbered.Groups[2].Success ? $", monitor {numbered.Groups[2].Value}" : ""),
+            RunLog.LogFile => "the log",
+            RunLog.RunFile => "the run: macro, start and how it ended",
+            "actions.json" => "the recorded actions",
+            "screen.json" => "the monitors' bounds",
+            _ => name,
+        };
+        try
+        {
+            if (MimeOf(path).StartsWith("image/", StringComparison.Ordinal))
+                return PngSize(path) is var (width, height) ? $"{what}, PNG, {width} × {height} px" : $"{what}, PNG";
+            return $"{what}, {File.ReadLines(path).Count()} lines";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return what;
+        }
+    }
+
+    /// <summary>A PNG's width and height from its header, without decoding it; null when it is not a PNG.</summary>
+    public static (int Width, int Height)? PngSize(string path)
+    {
+        Span<byte> head = stackalloc byte[24];
+        using (FileStream file = File.OpenRead(path))
+        {
+            if (file.ReadAtLeast(head, head.Length, throwOnEndOfStream: false) < head.Length)
+                return null;
+        }
+        // The signature, then the IHDR chunk: its width and height are the first 8 bytes of its data, big-endian.
+        ReadOnlySpan<byte> signature = new byte[] { 0x89, (byte)'P', (byte)'N', (byte)'G', 0x0D, 0x0A, 0x1A, 0x0A };
+        if (!head[..8].SequenceEqual(signature) || !head[12..16].SequenceEqual("IHDR"u8))
+            return null;
+        return (System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(head[16..20]),
+            System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(head[20..24]));
+    }
 
     // ================= Operations in progress =================
 
@@ -231,4 +287,10 @@ internal static class DebugStore
             .OrderByDescending(Directory.GetCreationTimeUtc)
             .FirstOrDefault();
     }
+}
+
+/// <summary>A file of the debug archive as an MCP resource: where it is, its URI and its type.</summary>
+internal sealed record DebugFile(string Path, string Uri, string MimeType)
+{
+    public bool IsImage => MimeType.StartsWith("image/", StringComparison.Ordinal);
 }

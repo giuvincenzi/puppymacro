@@ -172,6 +172,15 @@ Rules:
     AI app reads one with `resources/read` (`AiServer.DebugResource`: only files inside the debug archive, else -32002)
     when it needs it. Whatever enters an answer stays in the AI app's context until the end of the conversation. No
     `structuredContent`: the same JSON would also be text, twice in the context.
+  - The links are built in one place for every tool (`AiServer.McpTool`): each with its size and a description of what
+    the file holds and, from `DebugStore.Describe`, a picture's width and height or a text's lines.
+  - Some AI apps do not let the model read resources (MCP leaves reading them to the client; Claude Desktop's model could
+    not open a link): `read_resource` reads a linked file as a tool, the pattern of FastMCP's "Resources as Tools". The
+    descriptions and answers that link files say both ways; nothing in the code depends on which client is connected.
+    `read_resource` and `resources/read` call the same function (`AiTools.OpenResource`, with `DebugStore.Open`), which
+    resolves the URI, checks that it stays inside the debug folder and the permissions, and gives the type: they cannot
+    differ on what can be read, because the code is one. A picture's part (`area`) or smaller copy (`scale`) and a text's
+    lines (`offset`, `limit`) are asked by the AI app, never chosen by PuppyMacro; the files never change.
   - `AiTools` holds every tool without the protocol, unit tested with a fake `IAiHost`. Saves are checked with the Code
     views' checks.
   - **An AI app writes and reads every character**, so a change is a patch, not the whole item, and reads are compact.
@@ -188,8 +197,9 @@ Rules:
   - The screen (`AiTools.Screen.cs`): `look_at_screen` (each monitor's picture, the screen's own, linked; `take_image` and
     `pick_pixel` read it again with its `snapshot_id`), `check_condition` (the same rule as the editor's Now on the screen,
     `ConditionReport.TrueFor`), `record_macro` (PuppyMacro's recorder after the ready window: the screen at each key and
-    click, an image around each click), `test_macro` and `get_last_run`. Pictures need `AppSettings.AiSeeScreen`. When one
-    of them is over, `AiFinishedWindow` says the user can go back to the AI app (the name it gave).
+    click, an image around each click), `test_macro`, `get_last_run` and `read_resource`. Pictures need
+    `AppSettings.AiSeeScreen`. When one of them is over, `AiFinishedWindow` says the user can go back to the AI app (the
+    name it gave).
   - An AI app plays a macro only with `test_macro` (with `AppSettings.AiTestMacros`): after the user's Start in the ready
     window, with the app the user brought in front given the front back, so its input never goes to the AI app's chat;
     always logged, stopped after its time limit. Nothing else starts loops or macros (only `stop_all` stops them).

@@ -113,7 +113,7 @@ internal sealed class AiServer : IDisposable
         // One debug session and one rate limit for this connection.
         DebugSession? debug = null;
         var limit = new AiRateLimit();
-        McpServerOptions options = Options(_tools.All, AiTools.InstructionsText, (tool, args, request, cancel) =>
+        McpServerOptions options = Options(_tools.All, AiTools.InstructionsText, _tools.OpenResource, (tool, args, request, cancel) =>
         {
             debug ??= DebugSession.Start(FriendlyName(request.Server.ClientInfo), new
             {
@@ -224,12 +224,14 @@ internal sealed class AiServer : IDisposable
             {
                 Uri = DebugStore.UriOf(f),
                 Name = Path.GetFileName(f),
-            }));
+                Description = DebugStore.Describe(f),
+            }).Concat<object>(result.Images.Select(i => new { Image = i.MimeType, Bytes = i.Data.Length })));
         }
     }
 
     /// <summary>The MCP server's options: PuppyMacro, its instructions, the tools (each answered by <paramref name="run"/>) and the debug data as resources.</summary>
     internal static McpServerOptions Options(IEnumerable<AiTool> tools, string instructions,
+        Func<string, AiTools.OpenedResource> open,
         Func<AiTool, JsonElement, RequestContext<CallToolRequestParams>, CancellationToken, Task<AiToolResult>> run)
     {
         var options = new McpServerOptions
@@ -241,7 +243,7 @@ internal sealed class AiServer : IDisposable
         };
         foreach (AiTool tool in tools)
             options.ToolCollection.Add(new McpTool(tool, run));
-        options.ResourceCollection.Add(new DebugResource());
+        options.ResourceCollection.Add(new DebugResource(open));
         return options;
     }
 
@@ -259,7 +261,8 @@ internal sealed class AiServer : IDisposable
 
     /// <summary>
     /// An <see cref="AiTool"/> as the SDK's tool: its schema as given, its answer as text, and the files it points to as
-    /// resource links (their name, type and size; the AI app reads them with resources/read if it needs them).
+    /// resource links (their name, type, size and what they hold, <see cref="DebugStore.Describe"/>: built here for every
+    /// tool; the AI app reads them with resources/read or read_resource if it needs them), and the pictures an answer gives.
     /// </summary>
     private sealed class McpTool : McpServerTool
     {
@@ -306,10 +309,13 @@ internal sealed class AiServer : IDisposable
                 {
                     Uri = DebugStore.UriOf(file),
                     Name = info.Name,
+                    Description = DebugStore.Describe(file),
                     MimeType = DebugStore.MimeOf(file),
                     Size = info.Exists ? info.Length : null,
                 });
             }
+            foreach (AiImage image in result.Images)
+                content.Add(ImageContentBlock.FromBytes(image.Data, image.MimeType));
             return new CallToolResult
             {
                 Content = content,
@@ -320,10 +326,11 @@ internal sealed class AiServer : IDisposable
 
     /// <summary>
     /// The debug data as MCP resources (puppymacro://debug/{path}): resources/read gives a file of the debug folder, a log
-    /// or JSON as text, a picture as its PNG (base64, as MCP carries binary data). Only files inside the folder: any other
-    /// path, "..", or a file that is not there answers "Resource not found" (-32002).
+    /// or JSON as text, a picture as its PNG (base64, as MCP carries binary data), through <see cref="AiTools.OpenResource"/>
+    /// as the read_resource tool. Only files inside the folder: any other path, "..", or a file that is not there answers
+    /// "Resource not found" (-32002); with AI access or Let AI apps see the screen off, "Invalid request" (-32600) and why.
     /// </summary>
-    private sealed class DebugResource : McpServerResource
+    private sealed class DebugResource(Func<string, AiTools.OpenedResource> open) : McpServerResource
     {
         public override ResourceTemplate ProtocolResourceTemplate { get; } = new()
         {
@@ -341,13 +348,13 @@ internal sealed class AiServer : IDisposable
             CancellationToken cancellationToken = default)
         {
             string uri = request.Params?.Uri ?? "";
-            DebugStore.WaitWritten(TimeSpan.FromSeconds(10));
-            string file = DebugStore.PathOf(uri)
-                ?? throw new ModelContextProtocol.McpProtocolException($"Resource not found: {uri}", ModelContextProtocol.McpErrorCode.ResourceNotFound);
-            string mime = DebugStore.MimeOf(file);
-            ResourceContents contents = mime.StartsWith("image/", StringComparison.Ordinal)
-                ? BlobResourceContents.FromBytes(File.ReadAllBytes(file), uri, mime)
-                : new TextResourceContents { Uri = uri, MimeType = mime, Text = File.ReadAllText(file) };
+            AiTools.OpenedResource opened = open(uri);
+            if (opened.File is not { } file)
+                throw new ModelContextProtocol.McpProtocolException(opened.Problem ?? $"Resource not found: {uri}",
+                    opened.Missing ? ModelContextProtocol.McpErrorCode.ResourceNotFound : ModelContextProtocol.McpErrorCode.InvalidRequest);
+            ResourceContents contents = file.IsImage
+                ? BlobResourceContents.FromBytes(File.ReadAllBytes(file.Path), uri, file.MimeType)
+                : new TextResourceContents { Uri = uri, MimeType = file.MimeType, Text = File.ReadAllText(file.Path) };
             return ValueTask.FromResult(new ReadResourceResult { Contents = new List<ResourceContents> { contents } });
         }
     }

@@ -21,7 +21,13 @@ internal sealed record AiToolResult(string Text, bool IsError = false)
     /// resource links, never their content, so the AI app reads only what it needs.
     /// </summary>
     public IReadOnlyList<string> Files { get; init; } = Array.Empty<string>();
+
+    /// <summary>Pictures given in the answer itself (only read_resource, when the AI app asks for one).</summary>
+    public IReadOnlyList<AiImage> Images { get; init; } = Array.Empty<AiImage>();
 }
+
+/// <summary>A picture in an answer: its encoded bytes and type.</summary>
+internal sealed record AiImage(byte[] Data, string MimeType);
 
 /// <summary>
 /// One MCP tool: its name, what it does (for the AI), its input JSON Schema, what runs it, and how it behaves (MCP tool
@@ -62,7 +68,7 @@ internal sealed partial class AiTools
         "one). These tools read and change the user's loops, macros, remaps and settings, and work with the user's screen.\n\n" +
         "How requests work:\n" +
         "- Reads (get_overview, get_item, get_schema, get_settings, check_hotkey, list_apps, get_help, " +
-        "export_items, get_last_run) answer at once.\n" +
+        "export_items, get_last_run, read_resource) answer at once.\n" +
         "- save_loop, save_macro and save_remap create or rewrite an item; patch_item and update_actions change only what " +
         "they name, which is much faster for a big item, since every character of a call is written by you. delete_item, " +
         "set_enabled and update_settings do what they say. Everything is saved at once and kept in the item's History, " +
@@ -94,8 +100,10 @@ internal sealed partial class AiTools
         "user. check_condition shows what a condition sees now, as the editor does: on the right screen and on a wrong one it " +
         "shows whether the condition tells them apart. record_macro gives what the user did, with an image around each " +
         "click. test_macro plays a saved macro after the user's Start. What these capture (a log, the screen's pictures) stays " +
-        "in PuppyMacro's debug data, and the answer links each file (MCP resource links; also its path): a file is read " +
-        "only when you open it, so the conversation keeps only what you need. get_last_run links a macro's last run again. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
+        "in PuppyMacro's debug data, and the answer links each file (MCP resource links, with what it holds and its size; also " +
+        "its path): a file is read only when you open it, so the conversation keeps only what you need. A link opens with " +
+        "resources/read, or, in an AI app that cannot open resource links, with read_resource, which can also give a part or " +
+        "a smaller copy of a picture and some lines of a log. get_last_run links a macro's last run again. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
         "A picture takes much more of your context than text.\n\n" +
         "New loops and macros: the user knows what each key and click must do in their app, and PuppyMacro's pick tools take " +
         "confirmed_steps, the steps the item will play as the user confirmed them in the chat, before anything is picked. " +
@@ -203,6 +211,7 @@ internal sealed partial class AiTools
         ["record_macro"] = "Record the user",
         ["test_macro"] = "Test a macro",
         ["get_last_run"] = "Read a macro's last run",
+        ["read_resource"] = "Read a linked file",
         ["capture_hotkey"] = "Ask for a key",
         ["place_floating_button"] = "Place a floating button",
         ["open_item"] = "Open an item's editor",
@@ -216,6 +225,7 @@ internal sealed partial class AiTools
     private static readonly HashSet<string> PureReads = new()
     {
         "get_overview", "get_item", "get_schema", "get_settings", "check_hotkey", "list_apps", "get_help", "export_items", "get_last_run",
+        "read_resource",
     };
 
     private static readonly System.Text.RegularExpressions.Regex ToolWords = new(
@@ -268,7 +278,7 @@ internal sealed partial class AiTools
         if (!_host.Settings.AllowAiAccess)
         {
             _log.Add(app, AiActivityKind.Connection, Phrase.Of("Ai_CalledWhileOff", name), AiActivityResult.Refused);
-            return AiToolResult.Error("AI access is off in PuppyMacro. Ask the user to turn on Allow AI access on PuppyMacro's AI page.");
+            return AiToolResult.Error(AccessOff);
         }
         try
         {
@@ -441,8 +451,8 @@ internal sealed partial class AiTools
                 "Takes the screen as PuppyMacro's conditions see it (PuppyMacro's own windows left out), after the ready window with " +
                 "your title, description and steps, so the user can bring the right app in front first. The answer gives each " +
                 "monitor's bounds and a snapshot_id, and links each monitor's picture (PNG at the screen's own size, physical " +
-                "pixels): open the ones you need. take_image and pick_pixel read the same picture with snapshot_id, without the " +
-                "user. Needs Let AI apps see the screen (on by default)." + UserWindow,
+                "pixels, its size in the link): open the ones you need. take_image and pick_pixel read the same picture with " +
+                "snapshot_id, without the user. Needs Let AI apps see the screen (on by default)." + LinksOpen + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => LookAtScreen(a, app, c)),
             new("check_condition",
@@ -460,7 +470,7 @@ internal sealed partial class AiTools
                 "with an image around it kept as a condition image (its Id), so an If can wait for what was clicked and click " +
                 "where it is found. It links the recording's log (each key and click with its number and time) and the picture of " +
                 "the screen at each of them, named by that number: open the ones you need. Without Let AI apps see the screen, no " +
-                "pictures." + UserWindow,
+                "pictures." + LinksOpen + UserWindow,
                 "{\"type\":\"object\",\"properties\":{\"mouse_movement\":{\"type\":\"boolean\",\"description\":\"Also record the mouse's paths (Move along a path). Leave out for the user's own choice in PuppyMacro.\"}," + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => RecordMacro(a, app, c)),
             new("test_macro",
@@ -470,14 +480,24 @@ internal sealed partial class AiTools
                 "default). The run is always logged, Debug or not. The answer says why it ended and links its log (each key, click " +
                 "and If with its number and time, and what each If saw) and the picture of the screen just before each of them, " +
                 "named by that number: open the ones you need. Needs Let AI apps test macros (on by default); pictures need Let AI " +
-                "apps see the screen." + UserWindow,
+                "apps see the screen." + LinksOpen + UserWindow,
                 "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The macro's Id.\"},\"max_seconds\":{\"type\":\"number\",\"minimum\":1,\"maximum\":600,\"description\":\"The longest the test plays; 20 when left out.\"}," + confirmed + asking + "},\"required\":[\"id\",\"confirmed_steps\"," + askingRequired + "],\"additionalProperties\":false}",
                 false, true, (a, app, c) => TestMacro(a, app, c)),
             new("get_last_run",
                 "A macro's last run in PuppyMacro's debug data (a test_macro, or a run the user started with Debug on; kept 7 " +
-                "days): how it ended, with its log and pictures linked, as test_macro gives them.",
+                "days): how it ended, with its log and pictures linked, as test_macro gives them." + LinksOpen,
                 "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The macro's Id.\"}},\"required\":[\"id\"],\"additionalProperties\":false}",
                 true, false, (a, app, _) => GetLastRun(a, app)),
+            new("read_resource",
+                "Reads a file another PuppyMacro tool linked (a resource link to PuppyMacro's debug data: a log, a picture of the " +
+                "screen, JSON), the same file resources/read gives, for AI apps that cannot open resource links. Without options " +
+                "it gives the whole file: a picture as an image, a text as text. A link's description says what the file holds " +
+                "and its size (a picture's width and height, a text's lines). For a picture, area reads a part of it and scale a " +
+                "smaller copy, width and height alike; a point (px, py) of what it gives is at (area X + px / scale, area Y + py / " +
+                "scale) in the picture, and the answer repeats the numbers. For a text, offset and limit read some of its lines. " +
+                "The files themselves never change. Pictures need Let AI apps see the screen.",
+                """{"type":"object","properties":{"uri":{"type":"string","description":"The uri of a resource link another PuppyMacro tool gave (puppymacro://debug/…)."},"area":{"type":"object","description":"Pictures: the part to read, in the picture's own pixels (X and Y from 0 at its top left). Leave out for the whole picture.","properties":{"X":{"type":"integer","minimum":0},"Y":{"type":"integer","minimum":0},"Width":{"type":"integer","minimum":1},"Height":{"type":"integer","minimum":1}},"required":["X","Y","Width","Height"],"additionalProperties":false},"scale":{"type":"number","exclusiveMinimum":0,"maximum":1,"description":"Pictures: the size to read it at, width and height alike: 1 (when left out) its own size, 0.25 a quarter."},"offset":{"type":"integer","minimum":1,"description":"Texts (a log, JSON): the first line to read, from 1."},"limit":{"type":"integer","minimum":1,"description":"Texts: how many lines to read from offset; to the end when left out."}},"required":["uri"],"additionalProperties":false}""",
+                true, false, (a, _, _) => ReadResource(a)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),

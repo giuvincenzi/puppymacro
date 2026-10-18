@@ -13,7 +13,8 @@
   the macro's More options. Runs are kept 7 days; **Settings > Debug data** shows the space they take and deletes them.
 - AI apps can look at the screen, check a condition, record what you do and test a macro after you press Start, so they
   can build and fix macros that look at the screen. What they capture is kept as files and the AI app opens only what it
-  needs (MCP resource links), so its conversation does not fill up. A **Done** window says when you can go back to the
+  needs (MCP resource links, or PuppyMacro's own tool for AI apps that cannot open them, also a part or a smaller copy of
+  a picture and some lines of a log), so its conversation does not fill up. A **Done** window says when you can go back to the
   AI app. Two new permissions on the AI page, **Let AI apps see the screen** and **Let AI apps test macros**, are on by
   default. Every AI request is kept 7 days with what was sent and answered: **Open debug** in the AI activity opens it.
 

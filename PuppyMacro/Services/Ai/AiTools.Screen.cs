@@ -35,6 +35,11 @@ internal sealed partial class AiTools
         "Let AI apps see the screen is off on PuppyMacro's AI page, so pictures of the screen and what it shows are not given " +
         "to AI apps. The user can turn it on there.";
 
+    /// <summary>How the linked files open, in every answer and description that links them.</summary>
+    private const string LinksOpen =
+        " A link opens with resources/read, or, in an AI app that cannot open resource links, with read_resource, which can " +
+        "also give a part or a smaller copy of a picture and some lines of a text.";
+
     private const string TestOff =
         "Let AI apps test macros is off on PuppyMacro's AI page. The user can turn it on there, or start the macro themselves.";
 
@@ -75,12 +80,14 @@ internal sealed partial class AiTools
             string id = DebugStore.UriOf(folder)[DebugStore.UriPrefix.Length..];
             var files = new List<string>();
             var described = new List<object>();
+            var where = new List<object>();
             for (int i = 0; i < monitors.Count; i++)
             {
                 var (bounds, picture) = monitors[i];
                 string file = Path.Combine(folder, $"monitor-{i + 1}.png");
                 files.Add(file);
                 described.Add(new { File = Path.GetFileName(file), bounds.X, bounds.Y, bounds.Width, bounds.Height });
+                where.Add(new { File = Path.GetFileName(file), bounds.X, bounds.Y });
                 Mat copy = picture.Clone();
                 DebugStore.Write(() =>
                 {
@@ -98,10 +105,11 @@ internal sealed partial class AiTools
             return new AiToolResult(JsonSerializer.Serialize(new
             {
                 SnapshotId = id,
-                Monitors = described,
-                Note = "Each monitor's picture is linked below, at the screen's own size, in physical pixels: a point at (px, py) " +
-                       "in a monitor's picture is at X + px, Y + py on the screen. take_image and pick_pixel read this same " +
-                       "picture with snapshot_id and screen coordinates, without the user. PuppyMacro's own windows are left out.",
+                Monitors = where,
+                Note = Prefixed("Each monitor's picture is linked below (its size in the link), at the screen's own size, in " +
+                       "physical pixels: a point at (px, py) in a monitor's picture is at X + px, Y + py on the screen. " +
+                       "take_image and pick_pixel read this same picture with snapshot_id and screen coordinates, without the " +
+                       "user. PuppyMacro's own windows are left out." + LinksOpen),
             }, AnswerOptions)) { Files = files };
         }, cancel).ConfigureAwait(false);
     }
@@ -155,12 +163,12 @@ internal sealed partial class AiTools
         return (null, "That area is not inside one monitor of the picture. Screen coordinates are physical pixels; look_at_screen gives each monitor's bounds.");
     }
 
-    private static Rect? AreaArg(JsonElement args, string name)
+    private static Rect? AreaArg(JsonElement args, string name, string unit = "screen pixels")
     {
         if (args.ValueKind != JsonValueKind.Object || !args.TryGetProperty(name, out JsonElement a) || a.ValueKind != JsonValueKind.Object)
             return null;
         int Get(string field) => a.TryGetProperty(field, out JsonElement v) && v.TryGetInt32(out int n)
-            ? n : throw new FormatException($"\"{name}\" needs X, Y, Width and Height (whole numbers, screen pixels).");
+            ? n : throw new FormatException($"\"{name}\" needs X, Y, Width and Height (whole numbers, {unit}).");
         var rect = new Rect(Get("X"), Get("Y"), Get("Width"), Get("Height"));
         if (rect.Width < 1 || rect.Height < 1)
             throw new FormatException($"\"{name}\" needs a Width and a Height of at least 1.");
@@ -366,9 +374,9 @@ internal sealed partial class AiTools
         }
         return new AiToolResult(JsonSerializer.Serialize(new
         {
-            Note = "Actions are as PuppyMacro's recorder builds them (not saved). Each click has an image around it, taken a " +
-                   "moment after the click, ready for an Image condition's Images. The recording's log (each input, with the " +
-                   "picture of the screen at that moment, named by its number) and its files are linked below.",
+            Note = Prefixed("Actions are as PuppyMacro's recorder builds them (not saved). Each click has an image around it, " +
+                   "taken a moment after the click, ready for an Image condition's Images. The recording's log (each input, with " +
+                   "the picture of the screen at that moment, named by its number) and its files are linked below." + LinksOpen),
             recording.Actions,
             Clicks = clicks,
         }, AnswerOptions)) { Files = FilesOf(folder) };
@@ -458,9 +466,9 @@ internal sealed partial class AiTools
         if (!_host.Settings.AiSeeScreen)
             files.RemoveAll(f => f.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
         int pictures = files.Count(f => f.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
-        return new AiToolResult(
+        return new AiToolResult(Prefixed(
             $"{first} Its log ({RunLog.LogFile}: each event with its number and time; the picture of the screen just before an " +
-            $"event has the same number) and {pictures} picture(s) are linked below, in {folder}." +
-            (_host.Settings.AiSeeScreen ? "" : " " + SeeScreenOff)) { Files = files };
+            $"event has the same number) and {pictures} picture(s) are linked below, in {folder}." + LinksOpen +
+            (_host.Settings.AiSeeScreen ? "" : " " + SeeScreenOff))) { Files = files };
     }
 }

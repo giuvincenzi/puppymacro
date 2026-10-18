@@ -192,6 +192,113 @@ public class AiScreenToolsTests : IDisposable
         Assert.Empty(last.Files);
     }
 
+    private static byte[] ImageOf(AiToolResult result) => Assert.Single(result.Images).Data;
+
+    [Fact]
+    public async Task Read_resource_gives_a_linked_picture_whole_or_a_part_at_a_smaller_size()
+    {
+        AiToolResult look = await Call("look_at_screen", Asking);
+        string picture = Assert.Single(look.Files, f => f.EndsWith(".png", StringComparison.Ordinal));
+        string uri = DebugStore.UriOf(picture);
+
+        AiToolResult whole = await Call("read_resource", new { uri });
+        Assert.False(whole.IsError, whole.Text);
+        Assert.Equal(File.ReadAllBytes(picture), ImageOf(whole)); // the file as it is, as resources/read gives it
+        Assert.Contains("800 × 600 px", whole.Text);
+
+        AiToolResult part = await Call("read_resource", new { uri, area = new { X = 100, Y = 100, Width = 40, Height = 20 }, scale = 0.5 });
+        Assert.False(part.IsError, part.Text);
+        using (var read = OpenCvSharp.Cv2.ImDecode(ImageOf(part), OpenCvSharp.ImreadModes.Color))
+        {
+            Assert.Equal(20, read.Width);
+            Assert.Equal(10, read.Height);
+        }
+        Assert.Contains("A point (px, py) of it is at (100 + px / 0.5, 100 + py / 0.5)", part.Text);
+
+        AiToolResult small = await Call("read_resource", new { uri, scale = 0.25 });
+        using (var read = OpenCvSharp.Cv2.ImDecode(ImageOf(small), OpenCvSharp.ImreadModes.Color))
+            Assert.Equal(200, read.Width);
+        // The file stays the screen's own.
+        using (var saved = OpenCvSharp.Cv2.ImRead(picture))
+            Assert.Equal(800, saved.Width);
+    }
+
+    [Fact]
+    public async Task Read_resource_gives_a_linked_text_whole_or_some_of_its_lines()
+    {
+        MacroDefinition macro = SavedMacro();
+        AiToolResult tested = await Call("test_macro", TestArgs(macro.Id, 5));
+        string log = tested.Files[0];
+        string uri = DebugStore.UriOf(log);
+        string[] lines = File.ReadAllLines(log);
+
+        Assert.Equal(File.ReadAllText(log), (await Call("read_resource", new { uri })).Text);
+        AiToolResult second = await Call("read_resource", new { uri, offset = 2, limit = 1 });
+        Assert.Equal($"Lines 2–2 of {lines.Length} of log.txt:\n{lines[1]}", second.Text);
+        AiToolResult rest = await Call("read_resource", new { uri, offset = 2 });
+        Assert.StartsWith($"Lines 2–{lines.Length} of {lines.Length}", rest.Text);
+    }
+
+    [Theory]
+    [InlineData("{\"scale\":0}", "\"scale\" must be more than 0")]
+    [InlineData("{\"scale\":1.5}", "\"scale\" must be more than 0")]
+    [InlineData("{\"area\":{\"X\":790,\"Y\":0,\"Width\":20,\"Height\":20}}", "inside the picture, which is 800 × 600 px")]
+    [InlineData("{\"offset\":1}", "offset and limit read lines of a text")]
+    public async Task Read_resource_says_what_to_change_for_a_picture(string options, string problem)
+    {
+        AiToolResult look = await Call("look_at_screen", Asking);
+        var args = JsonSerializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(options)!;
+        args["uri"] = DebugStore.UriOf(Assert.Single(look.Files, f => f.EndsWith(".png", StringComparison.Ordinal)));
+
+        AiToolResult read = await Call("read_resource", args);
+
+        Assert.True(read.IsError);
+        Assert.Contains(problem, read.Text);
+    }
+
+    [Fact]
+    public async Task Read_resource_and_resources_read_open_only_the_debug_data_with_the_permissions()
+    {
+        AiToolResult look = await Call("look_at_screen", Asking);
+        string uri = DebugStore.UriOf(Assert.Single(look.Files, f => f.EndsWith(".png", StringComparison.Ordinal)));
+        File.WriteAllText(_folder.File("secret.txt"), "secret");
+
+        foreach (string outside in new[] { DebugStore.UriPrefix + "../secret.txt", "file:///C:/Windows/win.ini", DebugStore.UriPrefix + "nothing.txt" })
+        {
+            Assert.True(_tools.OpenResource(outside).Missing);
+            Assert.Contains("No file", (await Call("read_resource", new { uri = outside })).Text);
+        }
+        Assert.Contains("offset and limit choose its lines", (await Call("read_resource",
+            new { uri = DebugStore.UriOf(Path.Combine(Path.GetDirectoryName(look.Files[0])!, "screen.json")), scale = 0.5 })).Text);
+
+        _settings.AiSeeScreen = false;
+        AiTools.OpenedResource hidden = _tools.OpenResource(uri);
+        Assert.Null(hidden.File);
+        Assert.False(hidden.Missing);
+        Assert.Contains("Let AI apps see the screen", (await Call("read_resource", new { uri })).Text);
+
+        _settings.AiSeeScreen = true;
+        _settings.AllowAiAccess = false;
+        Assert.Contains("Allow AI access", _tools.OpenResource(uri).Problem);
+    }
+
+    [Fact]
+    public async Task A_link_says_what_its_file_holds_and_its_size()
+    {
+        AiToolResult look = await Call("look_at_screen", Asking);
+        Assert.Equal("monitor 1, PNG, 800 × 600 px", DebugStore.Describe(Assert.Single(look.Files, f => f.EndsWith(".png", StringComparison.Ordinal))));
+        Assert.DoesNotContain("\"Width\"", look.Text); // the size is in the link, the answer keeps where each monitor is
+        Assert.Contains("\"X\": 0", look.Text);
+        Assert.Contains("puppymacro_take_image", look.Text);
+
+        AiToolResult recorded = await Call("record_macro", Asking);
+        string log = recorded.Files[0];
+        Assert.Equal($"the log, {File.ReadAllLines(log).Length} lines", DebugStore.Describe(log));
+        Assert.Equal("the screen just before event 0002, PNG, 800 × 600 px",
+            DebugStore.Describe(Assert.Single(recorded.Files, f => Path.GetFileName(f) == "0002.png")));
+        Assert.Contains("puppymacro_read_resource", recorded.Text);
+    }
+
     [Fact]
     public void Every_tool_has_its_full_name_a_title_and_honest_annotations()
     {

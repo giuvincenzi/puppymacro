@@ -102,6 +102,13 @@ public class AiScreenTests
         var png = Assert.IsType<BlobResourceContents>(Assert.Single(read.Contents));
         Assert.Equal("image/png", png.MimeType);
         Assert.True(png.DecodedData.Length > 1000);
+        Assert.Matches(@"^monitor 1, PNG, \d+ × \d+ px$", picture.Description);
+        // read_resource, for AI apps that cannot open resource links: the same file, or a smaller copy.
+        CallToolResult same = await Call(client, "read_resource", new { uri = picture.Uri });
+        Assert.Equal(png.DecodedData.ToArray(), Assert.Single(same.Content.OfType<ImageContentBlock>()).DecodedData.ToArray());
+        CallToolResult half = await Call(client, "read_resource", new { uri = picture.Uri, scale = 0.5 });
+        Assert.Single(half.Content.OfType<ImageContentBlock>());
+        Assert.Contains("at scale 0.5", Text(half));
         string snapshot = Regex.Match(Text(look), "\"SnapshotId\": \"([^\"]+)\"").Groups[1].Value;
         CallToolResult pixel = await Call(client, "pick_pixel", new { snapshot_id = snapshot, x = 10, y = 10 });
         Assert.Matches("\"Color\":\"#[0-9A-F]{6}\"", Text(pixel));
