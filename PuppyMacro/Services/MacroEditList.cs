@@ -174,7 +174,7 @@ internal sealed class MacroEditList
     }
 
     /// <summary>New ids for the conditions of the inserted Ifs, and the inserted actions that used them follow.</summary>
-    private static void RenewConditions(List<MacroAction> inserted)
+    internal static void RenewConditions(List<MacroAction> inserted)
     {
         var all = MacroDefinition.Walk(inserted).ToList();
         var renamed = new Dictionary<Guid, Guid>();

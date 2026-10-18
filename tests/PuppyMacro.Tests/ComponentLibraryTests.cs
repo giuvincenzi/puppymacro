@@ -1,0 +1,277 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using PuppyMacro.Models;
+using PuppyMacro.Resources;
+using PuppyMacro.Services;
+using Xunit;
+
+namespace PuppyMacro.Tests;
+
+/// <summary>
+/// The Library (ComponentLibrary): library.json read and written, a file it can't read kept and never replaced, structured
+/// names, the fingerprint (what it covers and what it leaves out), a component's rules, deleting what macros link, and the
+/// linked rows resolved for playing (each link with its own condition ids, a missing component).
+/// </summary>
+public class ComponentLibraryTests : IDisposable
+{
+    private const string ImageA = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+    private readonly TempFolder _folder = new();
+
+    public void Dispose() => _folder.Dispose();
+
+    private string LibraryFile => _folder.File(ComponentLibrary.FileName);
+
+    private static MacroAction Click(int x = 10, Guid? found = null) =>
+        new() { Type = MacroActionType.Click, Vk = 0x01, X = x, Y = 20, FoundId = found };
+
+    private static MacroCondition Image(string name) => new()
+    {
+        Kind = ConditionKind.Image,
+        Name = name,
+        Images = new() { new ConditionImage { Id = ImageA, X = 100, Y = 200 } },
+        Similarity = 90,
+    };
+
+    /// <summary>An If that finds an image and clicks where it was found.</summary>
+    private static MacroAction FindAndClick(MacroCondition image) => new()
+    {
+        Type = MacroActionType.If,
+        If = new MacroIf
+        {
+            Conditions = { image },
+            Wait = ConditionWait.UpTo,
+            WaitSeconds = 5,
+            Then = { Click(found: image.Id) },
+        },
+    };
+
+    private static LibraryComponent Component(string name, params MacroAction[] actions) =>
+        new() { Name = name, Purpose = ComponentPurpose.Act, Concept = "remove_one_affix", Actions = actions.ToList() };
+
+    private static LibraryCollection Collection(params LibraryComponent[] components) => new()
+    {
+        Name = "Diablo IV 5120×1440",
+        Domain = LibraryDomain.Game,
+        AppExe = "Diablo IV.exe",
+        Screen = new LibraryScreen { Width = 5120, Height = 1440, ScalePercent = 100 },
+        Components = components.ToList(),
+    };
+
+    private static MacroAction Link(LibraryComponent component) =>
+        new() { Type = MacroActionType.Component, ComponentId = component.Id };
+
+    [Fact]
+    public void The_library_is_saved_and_read_back_whole()
+    {
+        var component = Component("Remove one affix", FindAndClick(Image("Remove Affix")));
+        var library = new ComponentLibrary(LibraryFile);
+        library.Load(out _);
+        library.Collections.Add(Collection(component));
+        Assert.True(library.TrySave(out string? error), error);
+
+        var read = new ComponentLibrary(LibraryFile);
+        read.Load(out string? warning);
+
+        Assert.Null(warning);
+        var (collection, found) = read.Find(component.Id)!.Value;
+        Assert.Equal("Diablo IV 5120×1440", collection.Name);
+        Assert.Equal(5120, collection.Screen!.Width);
+        Assert.Equal("Remove one affix", found.Name);
+        Assert.Equal(ComponentLibrary.Fingerprint(library.Collections[0]), ComponentLibrary.Fingerprint(collection));
+    }
+
+    [Fact]
+    public void No_file_is_an_empty_library()
+    {
+        var library = new ComponentLibrary(LibraryFile);
+        library.Load(out string? warning);
+
+        Assert.Null(warning);
+        Assert.Empty(library.Collections);
+        Assert.False(library.Broken);
+    }
+
+    [Theory]
+    [InlineData("{ not json")]
+    [InlineData("{\"Format\": 99, \"Collections\": []}")]
+    [InlineData("{\"Format\": 1, \"Collections\": [{\"Name\": \"X\", \"Domain\": \"Spaceship\"}]}")]
+    public void A_file_it_can_t_read_is_kept_and_never_replaced(string text)
+    {
+        File.WriteAllText(LibraryFile, text);
+        var library = new ComponentLibrary(LibraryFile);
+
+        library.Load(out string? warning);
+
+        Assert.True(library.Broken);
+        Assert.Equal(Strings.Library_FileUnreadable, warning);
+        Assert.Equal(text, File.ReadAllText(_folder.File("library.invalid.json")));
+        Assert.False(library.TrySave(out _));
+        Assert.Equal(text, File.ReadAllText(LibraryFile));
+    }
+
+    [Theory]
+    [InlineData("Diablo IV.exe", "diablo_iv")]
+    [InlineData("EXCEL.EXE", "excel")]
+    [InlineData("my-app_2.exe", "my_app_2")]
+    [InlineData(null, "any")]
+    [InlineData("   ", "any")]
+    public void The_app_s_part_of_a_structured_name_is_lowercase_with_underscores(string? exe, string slug) =>
+        Assert.Equal(slug, ComponentLibrary.AppSlug(exe));
+
+    [Fact]
+    public void A_structured_name_is_domain_app_purpose_concept()
+    {
+        var component = Component("Remove one affix", Click());
+        Assert.Equal("game-diablo_iv-act-remove_one_affix", ComponentLibrary.StructuredName(Collection(component), component));
+    }
+
+    [Fact]
+    public void The_fingerprint_follows_the_actions_and_ids_not_the_names()
+    {
+        var component = Component("Remove one affix", Click(10));
+        var collection = Collection(component);
+        string first = ComponentLibrary.Fingerprint(collection);
+
+        // Names, descriptions, the app and the screen: a rename on one PC never blocks an import.
+        collection.Name = "Diablo";
+        collection.AppExe = null;
+        collection.Screen = null;
+        component.Name = "Other";
+        component.Description = "Clicks it";
+        component.Concept = "other";
+        Assert.Equal(first, ComponentLibrary.Fingerprint(collection));
+
+        // The order of the components does not matter.
+        var second = Component("Slot 1", Click(30));
+        collection.Components.Add(second);
+        string both = ComponentLibrary.Fingerprint(collection);
+        collection.Components.Reverse();
+        Assert.Equal(both, ComponentLibrary.Fingerprint(collection));
+
+        // What plays does.
+        second.Actions[0].X = 31;
+        Assert.NotEqual(both, ComponentLibrary.Fingerprint(collection));
+        string changed = ComponentLibrary.Fingerprint(collection);
+        second.Id = Guid.NewGuid();
+        Assert.NotEqual(changed, ComponentLibrary.Fingerprint(collection));
+    }
+
+    [Fact]
+    public void The_fingerprint_is_the_same_in_every_language()
+    {
+        var collection = Collection(Component("Wait", new MacroAction { Type = MacroActionType.PressKey, Vk = 0x41, DelayMs = 12.5 }));
+        string english = ComponentLibrary.Fingerprint(collection);
+        var culture = System.Globalization.CultureInfo.CurrentCulture;
+        try
+        {
+            System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("it-IT");
+            Assert.Equal(english, ComponentLibrary.Fingerprint(collection));
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = culture;
+        }
+    }
+
+    [Fact]
+    public void A_component_needs_a_name_a_concept_and_actions_and_holds_no_other_component()
+    {
+        var good = Component("Remove one affix", FindAndClick(Image("Remove Affix")));
+        Assert.Null(ComponentLibrary.CheckComponent(good));
+
+        Assert.Equal(Strings.Library_NameMissing, ComponentLibrary.CheckComponent(Component(" ", Click())));
+        var badConcept = Component("A", Click());
+        badConcept.Concept = "Remove Affix";
+        Assert.Equal(Strings.Library_ConceptInvalid, ComponentLibrary.CheckComponent(badConcept));
+        Assert.Equal(Strings.Library_NoActions, ComponentLibrary.CheckComponent(Component("A")));
+        Assert.Equal(Strings.Library_NestedComponent, ComponentLibrary.CheckComponent(Component("A", Link(good))));
+    }
+
+    [Fact]
+    public void A_component_s_found_points_use_its_own_conditions()
+    {
+        var image = Image("Remove Affix");
+        // A click "where Remove Affix was found" without the If that finds it: the If is in the macro, not in the component.
+        var outside = Component("Click it", Click(found: image.Id));
+
+        Assert.NotNull(ComponentLibrary.CheckComponent(outside));
+    }
+
+    [Fact]
+    public void Linked_components_and_their_collections_can_t_be_deleted()
+    {
+        var linked = Component("Remove one affix", Click());
+        var free = Component("Slot 2", Click(30));
+        var collection = Collection(linked, free);
+        var macro = new MacroDefinition { Name = "D4 Strip Affixes", Actions = { Link(linked) } };
+        var macros = new[] { macro };
+
+        string? refused = ComponentLibrary.CanDeleteComponent(linked, macros);
+        Assert.NotNull(refused);
+        Assert.Contains("D4 Strip Affixes", refused);
+        Assert.Null(ComponentLibrary.CanDeleteComponent(free, macros));
+        Assert.Contains("D4 Strip Affixes", ComponentLibrary.CanDeleteCollection(collection, macros));
+
+        // Inside a Then too.
+        var nested = new MacroDefinition { Name = "Nested", Actions = { new MacroAction { Type = MacroActionType.If, If = new MacroIf { Then = { Link(free) } } } } };
+        Assert.Contains("Nested", ComponentLibrary.CanDeleteComponent(free, new[] { nested }));
+        Assert.Equal(2, ComponentLibrary.Links(new[] { macro, nested }).Values.Sum());
+    }
+
+    [Fact]
+    public void Each_link_plays_with_its_own_condition_ids()
+    {
+        var image = Image("Remove Affix");
+        var component = Component("Remove one affix", FindAndClick(image));
+        var library = new ComponentLibrary(LibraryFile);
+        library.Collections.Add(Collection(component));
+        var macro = new MacroDefinition { Name = "Twice", Actions = { Link(component), Link(component) } };
+
+        var resolved = library.Resolve(macro)!;
+
+        var first = resolved.Actions[0].Resolved!;
+        var second = resolved.Actions[1].Resolved!;
+        Guid firstId = first[0].If!.Conditions[0].Id, secondId = second[0].If!.Conditions[0].Id;
+        Assert.NotEqual(firstId, secondId);
+        Assert.NotEqual(image.Id, firstId);
+        // Each click follows its own link's condition.
+        Assert.Equal(firstId, first[0].If!.Then[0].FoundId);
+        Assert.Equal(secondId, second[0].If!.Then[0].FoundId);
+        // The Library and the macro stay as they were.
+        Assert.Equal(image.Id, component.Actions[0].If!.Conditions[0].Id);
+        Assert.Null(macro.Actions[0].Resolved);
+    }
+
+    [Fact]
+    public void A_macro_linking_a_missing_component_can_t_play()
+    {
+        var library = new ComponentLibrary(LibraryFile);
+        var gone = Guid.NewGuid();
+        var macro = new MacroDefinition { Name = "Old", Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = gone } } };
+
+        Assert.Equal(new[] { gone }, library.Missing(macro));
+        Assert.Null(library.Resolve(macro));
+    }
+
+    [Fact]
+    public void A_macro_without_links_resolves_as_it_is()
+    {
+        var library = new ComponentLibrary(LibraryFile);
+        var macro = new MacroDefinition { Name = "Plain", Actions = { Click() } };
+
+        Assert.Empty(library.Missing(macro));
+        Assert.Equal(10, library.Resolve(macro)!.Actions[0].X);
+    }
+
+    [Fact]
+    public void The_library_names_the_images_its_components_use()
+    {
+        var library = new ComponentLibrary(LibraryFile);
+        library.Collections.Add(Collection(Component("Remove one affix", FindAndClick(Image("Remove Affix")))));
+
+        Assert.Equal(new[] { ImageA }, library.ImageIds().Distinct());
+    }
+}

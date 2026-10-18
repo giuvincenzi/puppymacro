@@ -1372,4 +1372,11 @@ Detalii: {1}</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>O acțiune din Then merge în locul găsit de {0}. Modificați mai întâi acea acțiune, apoi eliminați condiția.</value></data>
   <data name="Condition_UsedByThenNot" xml:space="preserve"><value>O acțiune din Then merge în locul găsit de {0}, deci această condiție trebuie să fie adevărată când este pe ecran. Modificați mai întâi acea acțiune.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Două condiții au același Id. Dați fiecăreia propriul Id.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Dați-i un nume.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>Conceptul poate conține doar litere mici, cifre și _, de exemplu remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>O componentă are nevoie de cel puțin o acțiune.</value></data>
+  <data name="Library_NestedComponent" xml:space="preserve"><value>O componentă nu poate conține altă componentă. Anulați mai întâi legătura acelui rând.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} este legată în aceste macrocomenzi: {1}. Anulați mai întâi legătura acolo.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Unele componente din {0} sunt legate în aceste macrocomenzi: {1}. Anulați mai întâi legăturile acolo.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro nu a putut citi biblioteca, așa că a păstrat o copie ca library.invalid.json. Biblioteca nu poate fi modificată până când fișierul nu este reparat.</value></data>
 </root>

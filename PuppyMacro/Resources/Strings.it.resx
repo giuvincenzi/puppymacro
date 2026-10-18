@@ -1339,4 +1339,11 @@ Dettagli: {1}</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Un'azione in Then va dove è stato trovato {0}. Cambia prima quell'azione, poi rimuovi la condizione.</value></data>
   <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Un'azione in Then va dove è stato trovato {0}, quindi questa condizione deve essere vera quando è sullo schermo. Cambia prima quell'azione.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Due condizioni hanno lo stesso Id. Dai a ciascuna il suo.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Dagli un nome.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>Il concetto può contenere solo lettere minuscole, cifre e _, ad esempio remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>Un componente deve avere almeno un'azione.</value></data>
+  <data name="Library_NestedComponent" xml:space="preserve"><value>Un componente non può contenere un altro componente. Scollega prima quella riga.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} è collegato in queste macro: {1}. Scollegalo prima da lì.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Alcuni componenti di {0} sono collegati in queste macro: {1}. Scollegali prima da lì.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro non è riuscito a leggere la libreria e ne ha conservato una copia come library.invalid.json. Non puoi modificare la libreria finché il file non viene corretto.</value></data>
 </root>

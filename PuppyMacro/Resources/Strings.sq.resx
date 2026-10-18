@@ -1339,4 +1339,11 @@ Detajet: {1}</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Një veprim në Then shkon aty ku u gjet {0}. Ndryshoni fillimisht atë veprim, pastaj hiqni kushtin.</value></data>
   <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Një veprim në Then shkon aty ku u gjet {0}, prandaj ky kusht duhet të jetë i vërtetë kur është në ekran. Ndryshoni fillimisht atë veprim.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dy kushte kanë të njëjtin Id. Jepini secilit Id-në e vet.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Jepini një emër.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>Koncepti mund të ketë vetëm shkronja të vogla, shifra dhe _, për shembull remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>Një komponent ka nevojë për të paktën një veprim.</value></data>
+  <data name="Library_NestedComponent" xml:space="preserve"><value>Një komponent nuk mund të përmbajë një komponent tjetër. Fillimisht shkëputni atë rresht.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} është i lidhur në këto makro: {1}. Fillimisht shkëputeni atje.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Disa komponentë të {0} janë të lidhur në këto makro: {1}. Fillimisht shkëputini atje.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro nuk mundi ta lexonte bibliotekën, prandaj ruajti një kopje si library.invalid.json. Biblioteka nuk mund të ndryshohet derisa skedari të rregullohet.</value></data>
 </root>

@@ -1295,4 +1295,11 @@
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Then 内のアクションが「{0}」が見つかった場所を使っています。先にそのアクションを変更してから条件を削除してください。</value></data>
   <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Then 内のアクションが「{0}」が見つかった場所を使っているため、この条件は画面にあるときに成立する必要があります。先にそのアクションを変更してください。</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>2 つの条件の Id が同じです。それぞれに別の Id を付けてください。</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>名前を入力してください。</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>コンセプトに使えるのは小文字、数字、_ だけです (例: remove_one_affix)。</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>コンポーネントには少なくとも 1 つのアクションが必要です。</value></data>
+  <data name="Library_NestedComponent" xml:space="preserve"><value>コンポーネントに別のコンポーネントを含めることはできません。先にその行のリンクを解除してください。</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} は次のマクロでリンクされています: {1}。先にそこでリンクを解除してください。</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>{0} の一部のコンポーネントは次のマクロでリンクされています: {1}。先にそこでリンクを解除してください。</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro はライブラリを読み込めなかったため、コピーを library.invalid.json として保存しました。ファイルが修正されるまでライブラリは変更できません。</value></data>
 </root>

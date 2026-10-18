@@ -1295,4 +1295,11 @@
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Then 中的一个操作会移到找到“{0}”的位置。请先更改该操作，再删除此条件。</value></data>
   <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Then 中的一个操作会移到找到“{0}”的位置，因此此条件必须在它出现在屏幕上时成立。请先更改该操作。</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>有两个条件的 Id 相同。请为每个条件设置各自的 Id。</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>请输入名称。</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>概念只能包含小写字母、数字和 _，例如 remove_one_affix。</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>组件至少需要一个操作。</value></data>
+  <data name="Library_NestedComponent" xml:space="preserve"><value>组件不能包含其他组件。请先取消该行的链接。</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} 已链接到以下宏：{1}。请先在那里取消链接。</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>{0} 中的部分组件已链接到以下宏：{1}。请先在那里取消链接。</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro 无法读取库，因此已将副本保存为 library.invalid.json。在修复该文件之前，无法更改库。</value></data>
 </root>

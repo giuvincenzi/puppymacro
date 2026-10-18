@@ -1329,4 +1329,11 @@ Detalles: {1}</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Una acción de Then va donde se encontró {0}. Cambia primero esa acción y luego quita la condición.</value></data>
   <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Una acción de Then va donde se encontró {0}, así que esta condición debe cumplirse cuando está en la pantalla. Cambia primero esa acción.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dos condiciones tienen el mismo Id. Dale a cada una el suyo.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Ponle un nombre.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>El concepto solo puede tener letras minúsculas, números y _, por ejemplo remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>Un componente necesita al menos una acción.</value></data>
+  <data name="Library_NestedComponent" xml:space="preserve"><value>Un componente no puede contener otro componente. Desvincula primero esa fila.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} está vinculado en estas macros: {1}. Desvincúlalo primero en ellas.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Algunos componentes de {0} están vinculados en estas macros: {1}. Desvincúlalos primero en ellas.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro no pudo leer la biblioteca, así que guardó una copia como library.invalid.json. No se puede cambiar la biblioteca hasta que se corrija el archivo.</value></data>
 </root>

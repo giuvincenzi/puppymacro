@@ -18,6 +18,9 @@ public enum MacroActionType
     Scroll,
     PasteText,
     If,
+
+    /// <summary>A row linked to a <see cref="LibraryComponent"/> (<see cref="MacroAction.ComponentId"/>): it plays the component.</summary>
+    Component,
 }
 
 /// <summary>What a condition of an If action looks at.</summary>
@@ -304,6 +307,17 @@ public sealed class MacroAction : KeyModifierFields
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public int FoundOffsetY { get; set; }
 
+    /// <summary>Component: the <see cref="LibraryComponent.Id"/> it links; null for the other types.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? ComponentId { get; set; }
+
+    /// <summary>
+    /// Component, at run time only: the component's actions, each link with its own condition Ids
+    /// (<c>ComponentLibrary.Resolve</c>, when the engine's snapshot is made); never saved.
+    /// </summary>
+    [JsonIgnore]
+    public List<MacroAction>? Resolved { get; set; }
+
     /// <summary>The actions of its Then and Else (an If's), none for the other types.</summary>
     [JsonIgnore]
     public IEnumerable<List<MacroAction>> Branches
@@ -337,6 +351,7 @@ public sealed class MacroAction : KeyModifierFields
         var copy = (MacroAction)MemberwiseClone();
         copy.Path = Path.ConvertAll(p => new PathPoint { X = p.X, Y = p.Y, T = p.T });
         copy.If = If?.Clone();
+        copy.Resolved = Resolved?.ConvertAll(a => a.Clone());
         return copy;
     }
 

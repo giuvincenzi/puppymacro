@@ -1328,4 +1328,11 @@ Details: {1}</value></data>
   <data name="Condition_UsedByThen" xml:space="preserve"><value>Eine Aktion in Then geht dorthin, wo {0} gefunden wurde. Ändere zuerst diese Aktion und entferne dann die Bedingung.</value></data>
   <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Eine Aktion in Then geht dorthin, wo {0} gefunden wurde. Diese Bedingung muss daher erfüllt sein, wenn es auf dem Bildschirm ist. Ändere zuerst diese Aktion.</value></data>
   <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Zwei Bedingungen haben dieselbe Id. Gib jeder ihre eigene.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Geben Sie einen Namen ein.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>Das Konzept darf nur Kleinbuchstaben, Ziffern und _ enthalten, zum Beispiel remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>Eine Komponente braucht mindestens eine Aktion.</value></data>
+  <data name="Library_NestedComponent" xml:space="preserve"><value>Eine Komponente kann keine andere Komponente enthalten. Heben Sie zuerst die Verknüpfung dieser Zeile auf.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} ist in diesen Makros verknüpft: {1}. Heben Sie die Verknüpfung dort zuerst auf.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Einige Komponenten von {0} sind in diesen Makros verknüpft: {1}. Heben Sie die Verknüpfungen dort zuerst auf.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro konnte die Bibliothek nicht lesen und hat eine Kopie als library.invalid.json behalten. Die Bibliothek kann erst geändert werden, wenn die Datei repariert ist.</value></data>
 </root>
