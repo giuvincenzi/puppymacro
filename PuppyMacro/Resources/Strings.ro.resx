@@ -1590,4 +1590,35 @@ Detalii: {1}</value></data>
   <data name="Signature_Calls_few" xml:space="preserve"><value>{0} apeluri</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} de apeluri</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Actualizare și salvare</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Scrieți o grilă ca {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, în pixeli întregi.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>O grilă are între 1 și {0} coloane, între 1 și {0} rânduri și cel mult {1} celule.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Când există o singură coloană, prima și ultima celulă trebuie să aibă același X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Când există un singur rând, prima și ultima celulă trebuie să aibă același Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} este o grilă, deci acest punct are nevoie de o celulă. Indicați care cu Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>O celulă se folosește doar într-o componentă, când punctul provine dintr-un parametru de tip Grilă.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>În {3}, celula {0} din {1} nu există, deoarece grila respectivă are {2} celule.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Una dintre celulele sale se află în afara grilei sale.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Grila sa este o valoare fixă, dar celula sa provine dintr-un parametru al componentei care îl conține, iar un rând obișnuit nu poate alege o celulă.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Grilă</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} de la {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} celulă, numerotată rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridCells_few" xml:space="preserve"><value>{0} celule, numerotate rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} de celule, numerotate rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>Ultima celulă, cu numărul {0}, se află la {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Prima celulă</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>Punctul de folosit în celula din stânga sus</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Ultima celulă</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>Același punct în celula din dreapta jos</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Coloane</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Rânduri</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Afișare celule</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Afișează pe ecran punctul fiecărei celule cu numărul ei, ca să verificați grila</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Celulele grilei</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Fiecare cerc este punctul unei celule, cu numărul ei. Faceți clic oriunde pentru a închide.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>O celulă din {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Celulă</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Numerotate rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Grila acestui apel</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Grila pe care o dă acest apel, de exemplu pentru o altă dimensiune a ecranului</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>în celula {0} din {1}</value></data>
 </root>

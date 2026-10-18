@@ -1690,4 +1690,38 @@
   <data name="Signature_Calls_many" xml:space="preserve"><value>{0} استدعاءً</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} استدعاء</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>تحديث وحفظ</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>اكتب الشبكة بالشكل {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}، بأعداد صحيحة من البكسل.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>تحتوي الشبكة على 1 إلى {0} من الأعمدة و1 إلى {0} من الصفوف، و{1} خلية كحد أقصى.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>عندما يكون هناك عمود واحد فقط، يجب أن يكون للخلية الأولى والأخيرة قيمة X نفسها.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>عندما يكون هناك صف واحد فقط، يجب أن يكون للخلية الأولى والأخيرة قيمة Y نفسها.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} شبكة، لذا تحتاج هذه النقطة إلى خلية. حدد الخلية باستخدام Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>لا تُستخدم الخلية إلا داخل مكوّن، عندما تأتي النقطة من معلمة من نوع شبكة.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>في {3}، لا توجد الخلية {0} في {1}، فعدد خلايا هذه الشبكة {2}.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>لا يمكن إلغاء ربط هذا الصف. إحدى خلاياه تقع خارج شبكتها.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>لا يمكن إلغاء ربط هذا الصف. شبكته قيمة ثابتة، لكن خليته تأتي من معلمة في المكوّن الذي يحتويه، ولا يمكن للصف العادي اختيار خلية.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>شبكة</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} بدءًا من {2}، {3}</value></data>
+  <data name="Param_GridCells_zero" xml:space="preserve"><value>{0} خلية، مرقّمة صفًا بعد صف من أعلى اليسار بدءًا من 1</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>خلية واحدة، مرقّمة صفًا بعد صف من أعلى اليسار بدءًا من 1</value></data>
+  <data name="Param_GridCells_two" xml:space="preserve"><value>خليتان، مرقّمتان صفًا بعد صف من أعلى اليسار بدءًا من 1</value></data>
+  <data name="Param_GridCells_few" xml:space="preserve"><value>{0} خلايا، مرقّمة صفًا بعد صف من أعلى اليسار بدءًا من 1</value></data>
+  <data name="Param_GridCells_many" xml:space="preserve"><value>{0} خلية، مرقّمة صفًا بعد صف من أعلى اليسار بدءًا من 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} خلية، مرقّمة صفًا بعد صف من أعلى اليسار بدءًا من 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>الخلية الأخيرة، رقم {0}، موجودة عند {1}، {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>الخلية الأولى</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>النقطة المراد استخدامها في الخلية العلوية اليسرى</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>الخلية الأخيرة</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>النقطة نفسها في الخلية السفلية اليمنى</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>الأعمدة</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>الصفوف</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>إظهار الخلايا</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>يعرض على الشاشة نقطة كل خلية مع رقمها، للتحقق من الشبكة</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>خلايا الشبكة</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>كل دائرة هي نقطة خلية، مع رقمها. انقر في أي مكان للإغلاق.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>خلية من {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>الخلية</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>مرقّمة صفًا بعد صف من أعلى اليسار بدءًا من 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>شبكة هذا الاستدعاء</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>الشبكة التي يعطيها هذا الاستدعاء، مثلاً لحجم شاشة آخر</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>عند الخلية {0} من {1}</value></data>
 </root>

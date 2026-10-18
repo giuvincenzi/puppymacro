@@ -1505,4 +1505,33 @@
   <data name="Signature_Component" xml:space="preserve"><value>组件</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} 处调用</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>更新并保存</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>请将网格写成 {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"} 的形式，以像素为单位，使用整数。</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>网格的列数和行数均为 1 到 {0}，单元格最多 {1} 个。</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>只有一列时，第一个和最后一个单元格的 X 必须相同。</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>只有一行时，第一个和最后一个单元格的 Y 必须相同。</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} 是网格，因此此坐标需要一个单元格。请用 Cell 指定是哪一个。</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>只有在组件中、坐标来自网格参数时，才使用单元格。</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>在 {3} 中，{1} 的单元格 {0} 不存在：该网格共有 {2} 个单元格。</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>无法取消此行的链接：它的一个单元格不在其网格内。</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>无法取消此行的链接：它的网格是固定值，但单元格来自包含它的组件的参数，而普通行无法选择单元格。</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>网格</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1}，起点 {2}, {3}</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} 个单元格，从左上角开始逐行编号，从 1 开始</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>最后一个单元格（第 {0} 个）位于 {1}, {2}。</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>第一个单元格</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>在左上角单元格中使用的坐标</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>最后一个单元格</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>右下角单元格中的相同位置</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>列数</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>行数</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>显示单元格</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>在屏幕上显示每个单元格的坐标及其编号，以检查网格</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>网格的单元格</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>每个圆圈是一个单元格的坐标，并标有编号。单击任意位置即可关闭。</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>{0} 的一个单元格</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>单元格</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>从左上角开始逐行编号，从 1 开始</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>此调用的网格</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>此调用传入的网格，例如用于其他屏幕尺寸</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>位于 {1} 的单元格 {0}</value></data>
 </root>

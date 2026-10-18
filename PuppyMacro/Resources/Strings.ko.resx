@@ -1505,4 +1505,33 @@
   <data name="Signature_Component" xml:space="preserve"><value>구성 요소</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>호출 {0}개</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>업데이트 후 저장</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>그리드는 {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"} 형식으로, 픽셀 단위의 정수로 입력하세요.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>그리드의 열과 행은 각각 1~{0}개이며, 셀은 최대 {1}개입니다.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>열이 하나뿐이면 첫 번째 셀과 마지막 셀의 X가 같아야 합니다.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>행이 하나뿐이면 첫 번째 셀과 마지막 셀의 Y가 같아야 합니다.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0}은(는) 그리드이므로 이 좌표에는 셀이 필요합니다. Cell로 어느 셀인지 지정하세요.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>셀은 구성 요소 안에서 좌표가 그리드 매개 변수에서 올 때만 사용합니다.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>{3}에서 {1}의 셀 {0}은(는) 없습니다. 이 그리드의 셀은 {2}개입니다.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>이 행은 연결을 해제할 수 없습니다. 셀 중 하나가 그리드 밖에 있습니다.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>이 행은 연결을 해제할 수 없습니다. 그리드는 고정 값이지만 셀은 이 행을 포함하는 구성 요소의 매개 변수에서 오며, 일반 행은 셀을 고를 수 없습니다.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>그리드</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1}, 시작 위치 {2}, {3}</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>셀 {0}개, 왼쪽 위부터 한 행씩 1부터 번호 매김</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>마지막 셀({0}번)은 {1}, {2}에 있습니다.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>첫 번째 셀</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>왼쪽 위 셀에서 사용할 좌표</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>마지막 셀</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>오른쪽 아래 셀에서의 같은 위치</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>열</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>행</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>셀 표시</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>각 셀의 좌표를 번호와 함께 화면에 표시하여 그리드를 확인합니다</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>그리드의 셀</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>각 원은 셀의 좌표이며 번호가 함께 표시됩니다. 아무 곳이나 클릭하면 닫힙니다.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>{0}의 셀</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>셀</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>왼쪽 위부터 한 행씩 1부터 번호 매김</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>이 호출의 그리드</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>이 호출이 전달하는 그리드입니다. 예를 들어 화면 크기가 다를 때 사용합니다.</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>{1}의 셀 {0}</value></data>
 </root>

@@ -1553,4 +1553,34 @@ Detajet: {1}</value></data>
   <data name="Signature_Calls_one" xml:space="preserve"><value>{0} thirrje</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} thirrje</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Përditëso dhe ruaj</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Shkruajeni një rrjetë si {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, në piksela të plotë.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Një rrjetë ka nga 1 deri në {0} kolona dhe nga 1 deri në {0} rreshta, dhe të shumtën {1} qeliza.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Kur ka vetëm një kolonë, qeliza e parë dhe e fundit duhet të kenë të njëjtin X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Kur ka vetëm një rresht, qeliza e parë dhe e fundit duhet të kenë të njëjtin Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} është një rrjetë, prandaj kjo pikë ka nevojë për një qelizë. Tregoni se cila me Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Një qelizë përdoret vetëm brenda një komponenti, kur pika vjen nga një parametër i llojit Rrjetë.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>Në {3}, qeliza {0} e {1} nuk ekziston, sepse ajo rrjetë ka {2} qeliza.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Një nga qelizat e tij është jashtë rrjetës së vet.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Rrjeta e tij është një vlerë fikse, por qeliza e tij vjen nga një parametër i komponentit që e përmban, dhe një rresht i zakonshëm nuk mund të zgjedhë një qelizë.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Rrjetë</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} nga {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} qelizë, e numëruar rresht pas rreshti nga këndi lart majtas, duke filluar nga 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} qeliza, të numëruara rresht pas rreshti nga këndi lart majtas, duke filluar nga 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>Qeliza e fundit, numri {0}, ndodhet te {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Qeliza e parë</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>Pika që do të përdoret në qelizën lart majtas</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Qeliza e fundit</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>E njëjta pikë në qelizën poshtë djathtas</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Kolonat</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Rreshtat</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Shfaq qelizat</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Shfaq në ekran pikën e çdo qelize me numrin e saj, për të kontrolluar rrjetën</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Qelizat e rrjetës</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Çdo rreth është pika e një qelize, me numrin e saj. Klikoni kudo për ta mbyllur.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Një qelizë e {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Qeliza</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Të numëruara rresht pas rreshti nga këndi lart majtas, duke filluar nga 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Rrjeta e kësaj thirrjeje</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Rrjeta që jep kjo thirrje, për shembull për një madhësi tjetër ekrani</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>te qeliza {0} e {1}</value></data>
 </root>

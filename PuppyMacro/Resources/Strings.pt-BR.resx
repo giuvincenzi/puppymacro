@@ -1616,4 +1616,34 @@ Detalhes: {1}</value></data>
   <data name="Signature_Calls_one" xml:space="preserve"><value>{0} chamada</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} chamadas</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Atualizar e salvar</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Escreva uma grade como {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, em pixels inteiros.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Uma grade tem de 1 a {0} colunas e de 1 a {0} linhas, e no máximo {1} células.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Com uma só coluna, a primeira e a última célula devem ter o mesmo X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Com uma só linha, a primeira e a última célula devem ter o mesmo Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} é uma grade, então este ponto precisa de uma célula. Informe qual com Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Uma célula só é usada dentro de um componente, quando o ponto vem de um parâmetro do tipo Grade.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>Em {3}, a célula {0} de {1} não existe, porque essa grade tem {2} células.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Esta linha não pode ser desvinculada. Uma das suas células está fora da sua grade.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Esta linha não pode ser desvinculada. A grade dela é um valor fixo, mas a célula vem de um parâmetro do componente que a contém, e uma linha normal não pode escolher uma célula.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Grade</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} a partir de {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} célula, numerada linha por linha a partir do canto superior esquerdo, começando em 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} células, numeradas linha por linha a partir do canto superior esquerdo, começando em 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>A última célula, a de número {0}, fica em {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Primeira célula</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>O ponto a usar na célula do canto superior esquerdo</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Última célula</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>O mesmo ponto na célula do canto inferior direito</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Colunas</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Linhas</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Mostrar as células</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Mostra na tela o ponto de cada célula com o seu número, para verificar a grade</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>As células da grade</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Cada círculo é o ponto de uma célula, com o seu número. Clique em qualquer lugar para fechar.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Uma célula de {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Célula</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Numeradas linha por linha a partir do canto superior esquerdo, começando em 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Grade desta chamada</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>A grade que esta chamada passa, por exemplo para outro tamanho de tela</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>na célula {0} de {1}</value></data>
 </root>

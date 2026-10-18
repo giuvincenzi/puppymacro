@@ -1505,4 +1505,33 @@
   <data name="Signature_Component" xml:space="preserve"><value>コンポーネント</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>呼び出し {0} 件</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>更新して保存</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>グリッドは {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"} の形式で、ピクセル単位の整数で入力してください。</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>グリッドの列と行はそれぞれ 1 から {0} まで、セルは最大 {1} 個です。</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>列が 1 つの場合、最初と最後のセルの X は同じである必要があります。</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>行が 1 つの場合、最初と最後のセルの Y は同じである必要があります。</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} はグリッドなので、この座標にはセルが必要です。Cell でどのセルかを指定してください。</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>セルを使えるのは、コンポーネント内で座標がグリッドのパラメーターから来る場合だけです。</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>{3} で、{1} のセル {0} は存在しません。このグリッドのセルは {2} 個です。</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>この行のリンクは解除できません。セルの 1 つがグリッドの外にあります。</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>この行のリンクは解除できません。グリッドは固定の値ですが、セルはこの行を含むコンポーネントのパラメーターから来ており、通常の行ではセルを選べません。</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>グリッド</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1}、開始位置 {2}, {3}</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>セル {0} 個 (左上から 1 行ずつ、1 から番号付け)</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>最後のセル ({0} 番) の位置は {1}, {2} です。</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>最初のセル</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>左上のセルで使う座標</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>最後のセル</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>右下のセルでの同じ位置</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>列</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>行</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>セルを表示</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>各セルの座標を番号付きで画面上に表示し、グリッドを確認します</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>グリッドのセル</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>各円がセルの座標で、番号が付いています。どこかをクリックすると閉じます。</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>{0} のセル</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>セル</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>左上から 1 行ずつ、1 から番号付け</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>この呼び出しのグリッド</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>この呼び出しが渡すグリッドです (画面サイズが違う場合など)</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>{1} のセル {0}</value></data>
 </root>

@@ -1553,4 +1553,34 @@ Dettagli: {1}</value></data>
   <data name="Signature_Calls_one" xml:space="preserve"><value>{0} chiamata</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} chiamate</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Aggiorna e salva</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Scrivi una griglia come {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, in pixel interi.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Una griglia ha da 1 a {0} colonne e da 1 a {0} righe, e al massimo {1} celle.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Con una sola colonna, la prima e l'ultima cella devono avere la stessa X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Con una sola riga, la prima e l'ultima cella devono avere la stessa Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} è una griglia, quindi questo punto ha bisogno di una cella. Indica quale con Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Una cella si usa solo dentro un componente, quando il punto viene da un parametro di tipo Griglia.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>In {3} la cella {0} di {1} non esiste, perché quella griglia ha {2} celle.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Questa riga non può essere scollegata. Una delle sue celle è fuori dalla sua griglia.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Questa riga non può essere scollegata. La sua griglia è un valore fisso, ma la sua cella viene da un parametro del componente che la contiene, e una riga normale non può scegliere una cella.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Griglia</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} da {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} cella, numerata riga per riga dall'angolo in alto a sinistra, a partire da 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} celle, numerate riga per riga dall'angolo in alto a sinistra, a partire da 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>L'ultima cella, la numero {0}, è in {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Prima cella</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>Il punto da usare nella cella in alto a sinistra</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Ultima cella</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>Lo stesso punto nella cella in basso a destra</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Colonne</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Righe</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Mostra le celle</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Mostra sullo schermo il punto di ogni cella con il suo numero, per controllare la griglia</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Le celle della griglia</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Ogni cerchio è il punto di una cella, con il suo numero. Fai clic in un punto qualsiasi per chiudere.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Una cella di {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Cella</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Numerata riga per riga dall'angolo in alto a sinistra, a partire da 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Griglia di questa chiamata</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>La griglia che questa chiamata passa, ad esempio per un'altra dimensione dello schermo</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>nella cella {0} di {1}</value></data>
 </root>

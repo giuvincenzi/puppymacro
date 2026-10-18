@@ -1543,4 +1543,34 @@ Detalles: {1}</value></data>
   <data name="Signature_Calls_one" xml:space="preserve"><value>{0} llamada</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} llamadas</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Actualizar y guardar</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Escribe una cuadrícula como {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, en píxeles enteros.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Una cuadrícula tiene de 1 a {0} columnas y de 1 a {0} filas, y como máximo {1} celdas.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Con una sola columna, la primera y la última celda deben tener la misma X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Con una sola fila, la primera y la última celda deben tener la misma Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} es una cuadrícula, así que este punto necesita una celda. Indica cuál con Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Una celda solo se usa dentro de un componente, cuando el punto viene de un parámetro de tipo Cuadrícula.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>En {3}, la celda {0} de {1} no existe, porque esa cuadrícula tiene {2} celdas.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Esta fila no se puede desvincular. Una de sus celdas está fuera de su cuadrícula.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Esta fila no se puede desvincular. Su cuadrícula es un valor fijo, pero su celda viene de un parámetro del componente que la contiene, y una fila normal no puede elegir una celda.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Cuadrícula</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} desde {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} celda, numerada fila por fila desde la esquina superior izquierda, empezando por 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} celdas, numeradas fila por fila desde la esquina superior izquierda, empezando por 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>La última celda, la número {0}, está en {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Primera celda</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>El punto que se usa en la celda de arriba a la izquierda</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Última celda</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>El mismo punto en la celda de abajo a la derecha</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Columnas</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Filas</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Mostrar las celdas</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Muestra en la pantalla el punto de cada celda con su número, para comprobar la cuadrícula</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Las celdas de la cuadrícula</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Cada círculo es el punto de una celda, con su número. Haz clic en cualquier lugar para cerrar.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Una celda de {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Celda</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Numeradas fila por fila desde la esquina superior izquierda, empezando por 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Cuadrícula de esta llamada</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>La cuadrícula que pasa esta llamada, por ejemplo para otro tamaño de pantalla</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>en la celda {0} de {1}</value></data>
 </root>

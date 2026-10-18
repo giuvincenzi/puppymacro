@@ -1542,4 +1542,34 @@ Details: {1}</value></data>
   <data name="Signature_Calls_one" xml:space="preserve"><value>{0} Aufruf</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} Aufrufe</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Aktualisieren und speichern</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Geben Sie ein Raster als {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"} in ganzen Pixeln an.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Ein Raster hat 1 bis {0} Spalten und 1 bis {0} Zeilen und höchstens {1} Zellen.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Bei nur einer Spalte müssen die erste und die letzte Zelle dasselbe X haben.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Bei nur einer Zeile müssen die erste und die letzte Zelle dasselbe Y haben.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} ist ein Raster, daher braucht dieser Punkt eine Zelle. Geben Sie mit Cell an, welche.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Eine Zelle wird nur innerhalb einer Komponente verwendet, wenn der Punkt aus einem Parameter vom Typ Raster stammt.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>In {3} gibt es die Zelle {0} von {1} nicht, denn dieses Raster hat {2} Zellen.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Die Verknüpfung dieser Zeile kann nicht aufgehoben werden. Eine ihrer Zellen liegt außerhalb ihres Rasters.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Die Verknüpfung dieser Zeile kann nicht aufgehoben werden. Ihr Raster ist ein fester Wert, aber ihre Zelle stammt aus einem Parameter der umgebenden Komponente, und eine normale Zeile kann keine Zelle auswählen.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Raster</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} ab {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} Zelle, zeilenweise von links oben gezählt, beginnend mit 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} Zellen, zeilenweise von links oben gezählt, beginnend mit 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>Die letzte Zelle, Nummer {0}, liegt bei {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Erste Zelle</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>Der Punkt, der in der Zelle links oben verwendet wird</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Letzte Zelle</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>Derselbe Punkt in der Zelle rechts unten</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Spalten</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Zeilen</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Zellen anzeigen</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Zeigt den Punkt jeder Zelle mit ihrer Nummer auf dem Bildschirm an, damit Sie das Raster prüfen können</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Zellen des Rasters</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Jeder Kreis ist der Punkt einer Zelle, mit ihrer Nummer. Klicken Sie irgendwo, um zu schließen.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Eine Zelle von {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Zelle</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Zeilenweise von links oben gezählt, beginnend mit 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Raster dieses Aufrufs</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Das Raster, das dieser Aufruf übergibt, zum Beispiel für eine andere Bildschirmgröße</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>bei Zelle {0} von {1}</value></data>
 </root>

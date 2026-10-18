@@ -1542,4 +1542,34 @@ Détails : {1}</value></data>
   <data name="Signature_Calls_one" xml:space="preserve"><value>{0} appel</value></data>
   <data name="Signature_Calls_other" xml:space="preserve"><value>{0} appels</value></data>
   <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Mettre à jour et enregistrer</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Écrivez une grille sous la forme {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, en pixels entiers.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Une grille a de 1 à {0} colonnes et de 1 à {0} lignes, avec {1} cellules au maximum.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Avec une seule colonne, la première et la dernière cellule doivent avoir le même X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Avec une seule ligne, la première et la dernière cellule doivent avoir le même Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} est une grille, ce point a donc besoin d'une cellule. Indiquez laquelle avec Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Une cellule ne s'utilise que dans un composant, quand le point vient d'un paramètre de type Grille.</value></data>
+  <data name="Code_CellOutside" xml:space="preserve"><value>Dans {3}, la cellule {0} de {1} n'existe pas, car cette grille a {2} cellules.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Cette ligne ne peut pas être dissociée. L'une de ses cellules est en dehors de sa grille.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Cette ligne ne peut pas être dissociée. Sa grille est une valeur fixe, mais sa cellule vient d'un paramètre du composant qui la contient, et une ligne normale ne peut pas choisir de cellule.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Grille</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} à partir de {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} cellule, numérotée ligne par ligne depuis le coin supérieur gauche, à partir de 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} cellules, numérotées ligne par ligne depuis le coin supérieur gauche, à partir de 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>La dernière cellule, la numéro {0}, se trouve à {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Première cellule</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>Le point à utiliser dans la cellule en haut à gauche</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Dernière cellule</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>Le même point dans la cellule en bas à droite</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Colonnes</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Lignes</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Afficher les cellules</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Affiche à l'écran le point de chaque cellule avec son numéro, pour vérifier la grille</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Les cellules de la grille</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Chaque cercle est le point d'une cellule, avec son numéro. Cliquez n'importe où pour fermer.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Une cellule de {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Cellule</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Numérotées ligne par ligne depuis le coin supérieur gauche, à partir de 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Grille de cet appel</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>La grille que cet appel transmet, par exemple pour une autre taille d'écran</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>dans la cellule {0} de {1}</value></data>
 </root>

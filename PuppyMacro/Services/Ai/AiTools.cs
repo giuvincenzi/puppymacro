@@ -126,8 +126,13 @@ internal sealed partial class AiTools
     /// <summary>How components work as functions: in the Instructions and in the Library tools' descriptions (AI apps may not pass the Instructions on).</summary>
     private const string ComponentsAreFunctions =
         "A component is a function. Its Parameters are the values a call gives it, each of a type (Point, Number with a Unit, " +
-        "Text, Key, Color, Image, Area), going to fields of its actions through Bind ({\"Type\":\"Click\",…,\"Bind\":{\"Point\":\"Slot\"}}); a bound " +
-        "field holds the parameter's Example, which PuppyMacro writes there at save. A parameter with no Default is given by " +
+        "Text, Key, Color, Image, Area, Grid), going to fields of its actions through Bind ({\"Type\":\"Click\",…,\"Bind\":{\"Point\":\"Slot\"}}); a bound " +
+        "field holds the parameter's Example, which PuppyMacro writes there at save. A Grid is cells all alike in rows, as an " +
+        "inventory or a keypad: {\"First\":{\"X\",\"Y\"},\"Last\":{\"X\",\"Y\"},\"Columns\":11,\"Rows\":3}, the same point of the top-left and " +
+        "bottom-right cell. A click's, mouse button's, move's or pixel's Point bound to a Grid takes one of its cells, the field's " +
+        "Cell (row by row from 1), which a Number Count parameter can give (\"Bind\":{\"Point\":\"Inventory\",\"Cell\":\"Slot\"}): then a " +
+        "call gives only the slot's number, and two kinds of points of the same slots (where to read a color, where to click) " +
+        "are two Grids used with the same cell. Every call's cells are checked against its grid. A parameter with no Default is given by " +
         "every call. A row calls it: {\"Type\":\"Component\",\"ComponentId\":…,\"Arguments\":{\"Slot\":{\"X\":3986,\"Y\":1056}}}; an argument " +
         "is a value, {\"From\":\"a parameter\"} (inside a component, one of its own passed on) or {\"Found\":\"a condition's Id\"} (a Point: " +
         "where an If around the call found an image or a text this time, with OffsetX and OffsetY). A component with Returns " +
@@ -140,7 +145,8 @@ internal sealed partial class AiTools
     private const string ReusableComponents =
         "A component with one concept (one thing it finds, one point, one operation) links into more macros than one that " +
         "does three things. What changes between uses (a slot's position, a key, a wait) is a parameter, so one component " +
-        "serves every slot instead of a copy per value. A component that finds something with an image or a text and returns " +
+        "serves every slot instead of a copy per value; slots in rows and columns the same distance apart are a Grid, so the " +
+        "calls give a number instead of 33 points. A component that finds something with an image or a text and returns " +
         "it works wherever the thing is, where fixed coordinates tie it to one place.";
 
     /// <summary>In the descriptions of the tools that make a new loop or macro: AI apps may not pass <see cref="Instructions"/> to the model.</summary>
