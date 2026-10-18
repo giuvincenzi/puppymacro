@@ -116,7 +116,7 @@ internal static class DebugStore
                 {
                     write();
                 }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or OpenCvSharp.OpenCVException)
+                catch (Exception ex) when (ex is not OutOfMemoryException)
                 {
                     // Debug data that cannot be written never stops what is being debugged.
                 }
@@ -127,7 +127,7 @@ internal static class DebugStore
                 }
             }
         })
-        { IsBackground = true, Name = "PuppyMacro debug writer", Priority = ThreadPriority.BelowNormal }.Start();
+        { IsBackground = true, Name = "PuppyMacro debug writer" }.Start();
     }
 
     /// <summary>Queues a write for the debug writer thread, in order.</summary>

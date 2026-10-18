@@ -21,6 +21,8 @@ public partial class DebugLogWindow
         WindowFit.Apply(this);
         Title = string.Format(CultureInfo.CurrentCulture, Strings.DebugLog_Title, macroName);
         _folder = folder;
+        // What a run just queued (its last lines) is written in a moment.
+        RunLog.WaitWritten(TimeSpan.FromSeconds(2));
         string? log = RunLog.Read(folder);
         LogBox.Text = log ?? Strings.DebugLog_None;
         CopyButton.IsEnabled = log != null;

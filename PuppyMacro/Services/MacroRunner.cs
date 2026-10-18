@@ -95,7 +95,14 @@ internal sealed class MacroRunner
             _timer = timer;
             // With a log, every monitor's capture runs for the whole run: a picture before an action is a copy, not a start.
             if (_log != null)
+            {
                 _frames = _monitors().Select(b => _screen.Start(b)).OfType<IScreenWatch>().ToList();
+                // The first action's picture needs each monitor's first image: up to ConditionChecker.FirstImageMs.
+                var clock = Stopwatch.StartNew();
+                while (clock.ElapsedMilliseconds < ConditionChecker.FirstImageMs && _frames.Any(w => w.Version == 0 && !w.Failed))
+                    if (_stop.WaitOne(15))
+                        break;
+            }
 
             int repeats = _macro.Repeat switch
             {

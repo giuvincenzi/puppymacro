@@ -90,6 +90,8 @@ internal sealed partial class AiTools
             }
             string screen = JsonSerializer.Serialize(described, DebugJson.Options);
             DebugStore.Write(() => File.WriteAllText(Path.Combine(folder, ScreenFile), screen));
+            // The links point to files already written (an AI app may read them at once).
+            await Task.Run(() => DebugStore.WaitWritten(TimeSpan.FromSeconds(30)));
             KeepSnapshot(id, monitors);
             Log(app, AiActivityKind.Interaction, label, AiAnswer.Done, "");
             _host.Finished(app);

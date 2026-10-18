@@ -27,9 +27,9 @@ public class DebugLogTests
         // The run's log is written by the debug writer: on disk a moment after the run, in debug\user\macro.
         string debug = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
             "PuppyMacro Dev", "debug", "user", "macro");
-        Assert.True(Retry.WhileFalse(() => System.IO.Directory.Exists(debug) && System.IO.Directory.GetFiles(debug, "run.json", System.IO.SearchOption.AllDirectories)
-                .Any(f => System.IO.File.ReadAllText(f).Contains(macro.Id.ToString("D"))), AppSession.Timeout).Success,
-            $"no run of the macro in {debug}");
+        Assert.True(Retry.WhileFalse(() => System.IO.Directory.Exists(debug) && System.IO.Directory.GetFiles(debug, "log.txt", System.IO.SearchOption.AllDirectories)
+                .Any(f => System.IO.File.ReadAllText(f) is var text && text.Contains(macro.Id.ToString("D")) && text.Contains("Ends:")), AppSession.Timeout).Success,
+            $"no ended run of the macro in {debug}");
 
         app.CardButton("E2E debug", "More options").AsButton().Invoke();
         app.MenuItem("View log").AsMenuItem().Invoke();
@@ -38,7 +38,7 @@ public class DebugLogTests
                 ?? app.Automation.GetDesktop().FindFirstChild(cf => cf.ByName("Log of E2E debug").And(cf.ByProcessId(app.ProcessId)))?.AsWindow(),
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the log window did not open").Result!;
         TextBox text = app.FindById(log, "LogBox").AsTextBox();
-        Assert.True(Retry.WhileFalse(() => text.Text.Contains("#1 Press F22") && text.Text.Contains("Macro ends: finished"), AppSession.Timeout).Success,
+        Assert.True(Retry.WhileFalse(() => text.Text.Contains("#1 Press F22") && text.Text.Contains("Ends: finished"), AppSession.Timeout).Success,
             $"the log: {text.Text}");
         log.Close();
     }
