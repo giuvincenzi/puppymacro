@@ -251,15 +251,20 @@ public class AiAppsTests : IDisposable
     }
 
     [Theory]
-    [InlineData("claude-ai", null, "Claude Desktop")]
-    [InlineData("local-agent-mode-puppymacro-dev", null, "Claude Desktop")]
-    [InlineData("claude-code", null, "Claude Code")]
-    [InlineData("Visual Studio Code", null, "Visual Studio Code")]
-    [InlineData("codex-mcp-client", null, "Codex")]
-    [InlineData("my-agent", "My Agent", "My Agent")]
-    [InlineData("", null, "Unknown app")]
-    public void AI_apps_are_named_as_people_know_them(string name, string? title, string expected) =>
-        Assert.Equal(expected, AiServer.FriendlyName(new Implementation { Name = name, Title = title, Version = "1" }));
+    [InlineData("claude-ai", null, "Claude (claude-ai)", "ClaudeDesktop")]
+    [InlineData("local-agent-mode-puppymacro-dev", null, "Claude (local-agent-mode-puppymacro-dev)", "ClaudeDesktop")]
+    [InlineData("claude-code", null, "Claude (claude-code)", "Other")]
+    [InlineData("Visual Studio Code", null, "Visual Studio Code", "VsCode")]
+    [InlineData("codex-mcp-client", null, "Codex", "Codex")]
+    [InlineData("my-agent", "My Agent", "My Agent", "Other")]
+    [InlineData("", null, "Unknown app", "Other")]
+    public void AI_apps_are_named_as_people_know_them_and_Claude_s_apps_read_apart(string name, string? title, string expected, string kind)
+    {
+        var client = new Implementation { Name = name, Title = title, Version = "1" };
+        Assert.Equal(expected, AiServer.FriendlyName(client));
+        // Which card of the AI page it lights up, whatever its name shows.
+        Assert.Equal(kind, AiServer.KindOf(client).ToString());
+    }
 }
 
 public class AiActivityLogTests : IDisposable

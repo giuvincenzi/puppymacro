@@ -20,6 +20,8 @@
 
 ### Changed
 - PuppyMacro's tools for AI apps are named `puppymacro_…`, have titles and follow the MCP specification 2025-11-25.
+- Claude's apps show "Claude" and the name each gives itself, so Claude Desktop's chat, its agent mode and Claude Code
+  read apart in the status bar and the AI activity, for example **Claude (claude-ai)**.
 - PuppyMacro asks Windows not to slow it down to save power (efficiency mode), so loops, macros and screen checks keep
   their timing also while it waits in the tray.
 

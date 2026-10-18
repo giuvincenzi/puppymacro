@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -103,6 +104,10 @@ public class AiScreenTests
         Assert.Equal("image/png", png.MimeType);
         Assert.True(png.DecodedData.Length > 1000);
         Assert.Matches(@"^monitor 1, PNG, \d+ × \d+ px$", picture.Description);
+        // resources/read is in the debug data too, as a tool call is.
+        string debug = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PuppyMacro Dev", "debug", "ai");
+        Assert.True(Retry.WhileFalse(() => Directory.GetDirectories(debug, "*-resources_read-monitor-1-png", SearchOption.AllDirectories)
+            .Any(folder => File.Exists(Path.Combine(folder, "response.json"))), AppSession.Timeout).Success, "no resources/read in the debug data");
         // read_resource, for AI apps that cannot open resource links: the same file, or a smaller copy.
         CallToolResult same = await Call(client, "read_resource", new { uri = picture.Uri });
         Assert.Equal(png.DecodedData.ToArray(), Assert.Single(same.Content.OfType<ImageContentBlock>()).DecodedData.ToArray());

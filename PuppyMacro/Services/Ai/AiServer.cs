@@ -15,8 +15,17 @@ using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services.Ai;
 
-/// <summary>An AI app connected right now, by the name it gave ("Claude Desktop").</summary>
-internal sealed record AiClient(int Session, string Name, DateTime Since);
+/// <summary>An AI app connected right now: which app it is, for the AI page's cards, and its name as shown ("Claude (claude-ai)").</summary>
+internal sealed record AiClient(int Session, AiAppKind Kind, string Name, DateTime Since);
+
+/// <summary>The AI apps the AI page has a card for, recognized from the name they give; any other is Other.</summary>
+internal enum AiAppKind
+{
+    Other,
+    ClaudeDesktop,
+    VsCode,
+    Codex,
+}
 
 /// <summary>
 /// PuppyMacro's MCP server: waits on <see cref="AiPipe"/> for bridges (<see cref="AiBridge"/>) and runs one MCP session
@@ -114,14 +123,26 @@ internal sealed class AiServer : IDisposable
         // One debug session and one rate limit for this connection.
         DebugSession? debug = null;
         var limit = new AiRateLimit();
-        McpServerOptions options = Options(_tools.All, AiTools.InstructionsText, _tools.OpenResource, (tool, args, request, cancel) =>
+        McpServerOptions options = Options(_tools.All, AiTools.InstructionsText, async request =>
         {
-            debug ??= DebugSession.Start(FriendlyName(request.Server.ClientInfo), new
-            {
-                request.Server.ClientInfo,
-                request.Server.ClientCapabilities,
-            });
-            return CallDebugged(tool, args, request, debug, limit, cancel);
+            // resources/read: the same reading as read_resource (AiTools.OpenResource), logged and limited as a tool call.
+            debug ??= StartDebug(request.Server);
+            string uri = request.Params?.Uri ?? "";
+            AiTools.OpenedResource? opened = null;
+            AiToolResult result = await Debugged(debug, limit, "resources_read", Task.FromResult<string?>(Path.GetFileName(uri)),
+                JsonSerializer.SerializeToElement(new { uri }), request.Params?.Meta, () =>
+                {
+                    opened = _tools.OpenResource(uri);
+                    return Task.FromResult(opened.File is { } file
+                        ? new AiToolResult($"{file.MimeType}, {DebugStore.SizeText(new FileInfo(file.Path).Length)}")
+                        : AiToolResult.Error(opened.Problem ?? ""));
+                }, CancellationToken.None).ConfigureAwait(false);
+            return opened ?? new AiTools.OpenedResource(null, result.Text, false);
+        }, (tool, args, request, cancel) =>
+        {
+            debug ??= StartDebug(request.Server);
+            return Debugged(debug, limit, tool.Name, _tools.SubjectOf(args), args, request.Params?.Meta,
+                () => _tools.Call(tool.Name, args, FriendlyName(request.Server.ClientInfo), cancel), cancel);
         });
 
         try
@@ -169,7 +190,7 @@ internal sealed class AiServer : IDisposable
         {
             if (_ended.Remove(session))
                 return; // it disconnected meanwhile
-            _clients.Add(new AiClient(session, name, DateTime.Now));
+            _clients.Add(new AiClient(session, KindOf(server.ClientInfo), name, DateTime.Now));
         }
         if (_allowed())
             _log.Add(name, AiActivityKind.Connection, Phrase.Of("Ai_Connected"));
@@ -181,42 +202,69 @@ internal sealed class AiServer : IDisposable
     /// <summary>The name of an AI app that gave none.</summary>
     public const string UnknownApp = "Unknown app";
 
-    /// <summary>"Claude Desktop", "Visual Studio Code", "Codex", or the name the app gave.</summary>
+    /// <summary>
+    /// Which app it is, from the name it gives (for the AI page's cards): Claude Desktop names itself "claude-ai" (its
+    /// chat) or "local-agent-mode-" and the server's name in its settings (its agent mode); Claude Code ("claude-code") has
+    /// no card.
+    /// </summary>
+    internal static AiAppKind KindOf(Implementation? client)
+    {
+        string lower = (client?.Title ?? client?.Name ?? "").Trim().ToLowerInvariant();
+        if (lower.Contains("claude-code") || lower.Contains("claude code"))
+            return AiAppKind.Other;
+        if (lower.Contains("claude") || lower.StartsWith("local-agent-mode", StringComparison.Ordinal))
+            return AiAppKind.ClaudeDesktop;
+        if (lower.Contains("visual studio code") || lower.Contains("vscode"))
+            return AiAppKind.VsCode;
+        if (lower.Contains("codex"))
+            return AiAppKind.Codex;
+        return AiAppKind.Other;
+    }
+
+    /// <summary>
+    /// The AI app as people read it everywhere (the activity, the status bar, the Done window, the debug folders). A Claude
+    /// app is "Claude" with the name it gave, so its chat, its agent mode and Claude Code read apart ("Claude (claude-ai)",
+    /// "Claude (local-agent-mode-puppymacro)", "Claude (claude-code)"); then "Visual Studio Code", "Codex", or the name
+    /// any other app gave.
+    /// </summary>
     internal static string FriendlyName(Implementation? client)
     {
         string name = (client?.Title ?? client?.Name ?? "").Trim();
         string lower = name.ToLowerInvariant();
-        if (lower.Contains("claude-code") || lower.Contains("claude code"))
-            return "Claude Code";
-        // Claude Desktop's agent mode names itself "local-agent-mode-" and the server's name in its settings.
         if (lower.Contains("claude") || lower.StartsWith("local-agent-mode", StringComparison.Ordinal))
-            return "Claude Desktop";
-        if (lower.Contains("visual studio code") || lower.Contains("vscode"))
-            return "Visual Studio Code";
-        if (lower.Contains("codex"))
-            return "Codex";
-        return name.Length == 0 ? UnknownApp : name;
+            return $"Claude ({name})";
+        return KindOf(client) switch
+        {
+            AiAppKind.VsCode => "Visual Studio Code",
+            AiAppKind.Codex => "Codex",
+            _ => name.Length == 0 ? UnknownApp : name,
+        };
     }
 
+    /// <summary>The connection's debug session, with who connected and how (its session.json).</summary>
+    private static DebugSession StartDebug(McpServer server) =>
+        DebugSession.Start(FriendlyName(server.ClientInfo), new { server.ClientInfo, server.ClientCapabilities });
+
     /// <summary>
-    /// Runs a tool within this connection's rate limit (<see cref="AiRateLimit"/>), with its debug folder (request.json
-    /// before, response.json after: <see cref="DebugCall"/>), whatever happens.
+    /// Every request of an AI app (a tool call, a resources/read) runs here: within this connection's rate limit
+    /// (<see cref="AiRateLimit"/>), with its debug folder (request.json before, response.json after:
+    /// <see cref="DebugCall"/>), whatever happens. <paramref name="what"/> names the folder: the tool, or "resources_read".
     /// </summary>
-    private async Task<AiToolResult> CallDebugged(AiTool tool, JsonElement args, RequestContext<CallToolRequestParams> request,
-        DebugSession debug, AiRateLimit limit, CancellationToken cancel)
+    private static async Task<AiToolResult> Debugged(DebugSession debug, AiRateLimit limit, string what,
+        Task<string?> subject, JsonElement args, object? meta, Func<Task<AiToolResult>> run, CancellationToken cancel)
     {
-        string app = FriendlyName(request.Server.ClientInfo);
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        JsonElement? meta = request.Params?.Meta is { } m ? JsonSerializer.SerializeToElement(m) : null;
-        DebugCall call = debug.NewCall(tool.Name, await _tools.SubjectOf(args).ConfigureAwait(false), args, meta);
+        JsonElement? metaJson = meta != null ? JsonSerializer.SerializeToElement(meta) : null;
+        DebugCall call = debug.NewCall(what, await subject.ConfigureAwait(false), args, metaJson);
         AiToolResult result = AiToolResult.Error("PuppyMacro could not finish the request.");
         try
         {
+            cancel.ThrowIfCancellationRequested();
             if (limit.Wait() is TimeSpan wait)
                 return result = AiToolResult.Error(
                     $"Too many requests at once: PuppyMacro takes about {AiRateLimit.PerSecond} a second. Try again in {Math.Ceiling(wait.TotalSeconds)} s.");
             DebugCall.Current = call;
-            return result = WithFileList(await _tools.Call(tool.Name, args, app, cancel).ConfigureAwait(false));
+            return result = WithFileList(await run().ConfigureAwait(false));
         }
         finally
         {
@@ -252,7 +300,7 @@ internal sealed class AiServer : IDisposable
 
     /// <summary>The MCP server's options: PuppyMacro, its instructions, the tools (each answered by <paramref name="run"/>) and the debug data as resources.</summary>
     internal static McpServerOptions Options(IEnumerable<AiTool> tools, string instructions,
-        Func<string, AiTools.OpenedResource> open,
+        Func<RequestContext<ReadResourceRequestParams>, Task<AiTools.OpenedResource>> read,
         Func<AiTool, JsonElement, RequestContext<CallToolRequestParams>, CancellationToken, Task<AiToolResult>> run)
     {
         var options = new McpServerOptions
@@ -264,7 +312,7 @@ internal sealed class AiServer : IDisposable
         };
         foreach (AiTool tool in tools)
             options.ToolCollection.Add(new McpTool(tool, run));
-        options.ResourceCollection.Add(new DebugResource(open));
+        options.ResourceCollection.Add(new DebugResource(read));
         return options;
     }
 
@@ -351,7 +399,7 @@ internal sealed class AiServer : IDisposable
     /// as the read_resource tool. Only files inside the folder: any other path, "..", or a file that is not there answers
     /// "Resource not found" (-32002); with AI access or Let AI apps see the screen off, "Invalid request" (-32600) and why.
     /// </summary>
-    private sealed class DebugResource(Func<string, AiTools.OpenedResource> open) : McpServerResource
+    private sealed class DebugResource(Func<RequestContext<ReadResourceRequestParams>, Task<AiTools.OpenedResource>> read) : McpServerResource
     {
         public override ResourceTemplate ProtocolResourceTemplate { get; } = new()
         {
@@ -365,18 +413,18 @@ internal sealed class AiServer : IDisposable
 
         public override bool IsMatch(string uri) => uri.StartsWith(DebugStore.UriPrefix, StringComparison.Ordinal);
 
-        public override ValueTask<ReadResourceResult> ReadAsync(RequestContext<ReadResourceRequestParams> request,
+        public override async ValueTask<ReadResourceResult> ReadAsync(RequestContext<ReadResourceRequestParams> request,
             CancellationToken cancellationToken = default)
         {
             string uri = request.Params?.Uri ?? "";
-            AiTools.OpenedResource opened = open(uri);
+            AiTools.OpenedResource opened = await read(request).ConfigureAwait(false);
             if (opened.File is not { } file)
                 throw new ModelContextProtocol.McpProtocolException(opened.Problem ?? $"Resource not found: {uri}",
                     opened.Missing ? ModelContextProtocol.McpErrorCode.ResourceNotFound : ModelContextProtocol.McpErrorCode.InvalidRequest);
             ResourceContents contents = file.IsImage
                 ? BlobResourceContents.FromBytes(File.ReadAllBytes(file.Path), uri, file.MimeType)
                 : new TextResourceContents { Uri = uri, MimeType = file.MimeType, Text = File.ReadAllText(file.Path) };
-            return ValueTask.FromResult(new ReadResourceResult { Contents = new List<ResourceContents> { contents } });
+            return new ReadResourceResult { Contents = new List<ResourceContents> { contents } };
         }
     }
 }

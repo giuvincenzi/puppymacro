@@ -171,14 +171,14 @@ public partial class MainWindow : IAiHost
     {
         string exe = AppPaths.ExecutablePath;
         bool access = _settings.AllowAiAccess;
-        AiClient? Live(string name) => clients.FirstOrDefault(c => c.Name == name);
+        AiClient? Live(AiAppKind kind) => clients.FirstOrDefault(c => c.Kind == kind);
         static string Since(AiClient client) =>
             string.Format(CultureInfo.CurrentCulture, Strings.AiApps_ConnectedSince, client.Since.ToString("t", CultureInfo.CurrentCulture));
 
         string claudeConfig = AiApps.ClaudeConfigPath(AppDataFolder, LocalAppDataFolder);
         bool claudeInstalled = AiApps.ClaudeInstalled(AppDataFolder, LocalAppDataFolder);
         bool claudeAdded = AiApps.ClaudeHas(claudeConfig, exe);
-        AiClient? claude = Live("Claude Desktop");
+        AiClient? claude = Live(AiAppKind.ClaudeDesktop);
         string? claudeExe = AiApps.ClaudeExe(LocalAppDataFolder, _claudeStoreFolder);
         if (claudeExe == null && claudeInstalled)
         {
@@ -188,13 +188,13 @@ public partial class MainWindow : IAiHost
 
         string? codeExe = AiApps.VsCodeExe(LocalAppDataFolder, ProgramFilesFolder);
         bool codeAdded = AiApps.VsCodeHas(AiApps.VsCodeConfigPath(AppDataFolder), exe);
-        AiClient? code = Live("Visual Studio Code");
+        AiClient? code = Live(AiAppKind.VsCode);
 
         bool codexInstalled = AiApps.CodexInstalled(UserProfileFolder);
         bool codexAdded = AiApps.CodexHas(AiApps.CodexConfigPath(UserProfileFolder), exe);
-        AiClient? codex = Live("Codex");
+        AiClient? codex = Live(AiAppKind.Codex);
 
-        var others = clients.Where(c => c.Name is not ("Claude Desktop" or "Visual Studio Code" or "Codex")).Select(c => c.Name).Distinct().ToList();
+        var others = clients.Where(c => c.Kind == AiAppKind.Other).Select(c => c.Name).Distinct().ToList();
         return new List<AiAppTile>
         {
             new()

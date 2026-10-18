@@ -167,6 +167,11 @@ Rules:
     again before changing a tool. Tools are named `puppymacro_<name>` (`AiTools.Prefix`), each with a `title` and honest
     annotations (only reads: `readOnlyHint`; can change the user's apps: `destructiveHint`; pure reads: `idempotentHint`);
     an input error is a tool error with what to change (`isError`); each connection is rate limited (`AiRateLimit`).
+  - Every request of an AI app, a tool call or a `resources/read`, goes through one function (`AiServer.Debugged`): the
+    connection's rate limit and its folder in the debug archive, so nothing an AI app does is missing from it.
+  - Which app it is (`AiServer.KindOf`: the AI page's cards) is apart from the name people read (`FriendlyName`, the
+    user's choice): a Claude app is "Claude" with the name it gives itself ("Claude (claude-ai)", the chat;
+    "Claude (local-agent-mode-…)", the agent mode; "Claude (claude-code)"), so they read apart everywhere.
   - **An answer holds the result, short; large data stays in files and goes as references**: a run's log, the screen's
     pictures, a recording are in the call's debug folder, and the answer gives MCP `resource_link`s (and the path); the
     AI app reads one with `resources/read` (`AiServer.DebugResource`: only files inside the debug archive, else -32002)
