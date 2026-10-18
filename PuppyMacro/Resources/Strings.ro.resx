@@ -1337,6 +1337,7 @@ Detalii: {1}</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>la locul găsit de {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>când condițiile sunt adevărate</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>când nu sunt</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>nu se redă, deoarece If oprește macrocomanda când condițiile sale nu sunt adevărate</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · nicio acțiune încă. Selectați această ramură, apoi adăugați acțiuni.</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Acțiunile noi se adaugă la sfârșitul ramurii {0} din #{1}</value></data>

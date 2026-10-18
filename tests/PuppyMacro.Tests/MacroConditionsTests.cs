@@ -333,6 +333,39 @@ public class MacroConditionsTests : IDisposable
         Assert.Contains("\"NearbySizes\"", schema);
     }
 
+    /// <summary>Every object of a schema, at any depth.</summary>
+    private static IEnumerable<System.Text.Json.Nodes.JsonObject> Objects(System.Text.Json.Nodes.JsonNode? node)
+    {
+        if (node is System.Text.Json.Nodes.JsonObject o)
+        {
+            yield return o;
+            foreach (var (_, child) in o)
+                foreach (var inner in Objects(child))
+                    yield return inner;
+        }
+        else if (node is System.Text.Json.Nodes.JsonArray a)
+        {
+            foreach (var child in a)
+                foreach (var inner in Objects(child))
+                    yield return inner;
+        }
+    }
+
+    [Fact]
+    public void WaitSeconds_has_its_range_only_when_the_If_waits_up_to_it()
+    {
+        var schema = System.Text.Json.Nodes.JsonNode.Parse(CodeSchema.ForMacro(Guid.NewGuid()));
+        var ifs = Objects(schema).Where(o => o["properties"]?["WaitSeconds"] != null && o["properties"]?["Wait"] != null).ToList();
+
+        Assert.NotEmpty(ifs);
+        Assert.All(ifs, o =>
+        {
+            Assert.Null(o["properties"]!["WaitSeconds"]!["minimum"]); // Once and As long as it takes keep 0
+            Assert.Equal("UpTo", o["if"]!["properties"]!["Wait"]!["const"]!.GetValue<string>());
+            Assert.Equal(MacroJson.WaitSeconds.Min, o["then"]!["properties"]!["WaitSeconds"]!["minimum"]!.GetValue<double>());
+        });
+    }
+
     // ================= Images =================
 
     [Fact]

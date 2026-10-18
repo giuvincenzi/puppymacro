@@ -42,10 +42,31 @@ public class AiScreenTests
     {
         Dictionary<string, object?> arguments =
             JsonSerializer.SerializeToElement(args).EnumerateObject().ToDictionary(p => p.Name, p => (object?)p.Value.Clone());
-        return await client.CallToolAsync(tool, arguments, cancellationToken: TestContext.Current.CancellationToken);
+        return await client.CallToolAsync("puppymacro_" + tool, arguments, cancellationToken: TestContext.Current.CancellationToken);
     }
 
     private static string Text(CallToolResult result) => string.Join("\n", result.Content.OfType<TextContentBlock>().Select(c => c.Text));
+
+    /// <summary>The answer's links (MCP resource links) by file name: the answer itself carries no file's content.</summary>
+    private static Dictionary<string, ResourceLinkBlock> Links(CallToolResult result)
+    {
+        Assert.Empty(result.Content.OfType<ImageContentBlock>());
+        return result.Content.OfType<ResourceLinkBlock>().ToDictionary(l => l.Name);
+    }
+
+    /// <summary>A linked file read as an AI app reads it (resources/read): a log's text.</summary>
+    private static async Task<string> ReadText(McpClient client, ResourceLinkBlock link)
+    {
+        ReadResourceResult read = await client.ReadResourceAsync(link.Uri, cancellationToken: TestContext.Current.CancellationToken);
+        return Assert.IsType<TextResourceContents>(Assert.Single(read.Contents)).Text;
+    }
+
+    /// <summary>The Done window after a request on the screen, closed with OK.</summary>
+    private static void CloseDone(AppSession app)
+    {
+        AutomationElement done = app.TopWindow("Done") ?? throw new InvalidOperationException("no Done window");
+        app.FindButton(done, "OK").Invoke();
+    }
 
     private static object With(object extra) =>
         JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(JsonSerializer.Serialize(Ready))!
@@ -73,8 +94,15 @@ public class AiScreenTests
         CallToolResult look = await call;
 
         Assert.True(look.IsError != true, Text(look));
-        Assert.NotEmpty(look.Content.OfType<ImageContentBlock>());
-        string snapshot = Regex.Match(Text(look), "\"SnapshotId\": \"([0-9a-f]+)\"").Groups[1].Value;
+        CloseDone(app);
+        // The picture is linked, and read as a PNG of the screen's own size.
+        ResourceLinkBlock picture = Links(look)["monitor-1.png"];
+        Assert.Equal("image/png", picture.MimeType);
+        ReadResourceResult read = await client.ReadResourceAsync(picture.Uri, cancellationToken: TestContext.Current.CancellationToken);
+        var png = Assert.IsType<BlobResourceContents>(Assert.Single(read.Contents));
+        Assert.Equal("image/png", png.MimeType);
+        Assert.True(png.DecodedData.Length > 1000);
+        string snapshot = Regex.Match(Text(look), "\"SnapshotId\": \"([^\"]+)\"").Groups[1].Value;
         CallToolResult pixel = await Call(client, "pick_pixel", new { snapshot_id = snapshot, x = 10, y = 10 });
         Assert.Matches("\"Color\":\"#[0-9A-F]{6}\"", Text(pixel));
     }
@@ -118,8 +146,14 @@ public class AiScreenTests
         CallToolResult tested = await call;
 
         Assert.True(tested.IsError != true, Text(tested));
-        Assert.Contains("The test ended: finished", Text(tested));
-        Assert.Contains("#1 Press F22", Text(tested));
+        Assert.StartsWith("The test ended: finished", Text(tested));
+        CloseDone(app);
+        Assert.Contains("#1 Press F22", await ReadText(client, Links(tested)["log.txt"]));
+        Assert.Contains("0001.png", Links(tested).Keys);
+
+        // Outside the debug data, nothing is read.
+        await Assert.ThrowsAnyAsync<Exception>(async () =>
+            await client.ReadResourceAsync("puppymacro://debug/../../secret.txt", cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -150,5 +184,9 @@ public class AiScreenTests
         Assert.Contains("\"Type\": \"Click\"", text);
         Assert.Matches("\"Id\": \"[0-9a-f]{64}\"", text);
         Assert.DoesNotContain($"\"Vk\": {Vk.F18}", text); // the Record hotkey is not recorded
+        CloseDone(app);
+        string log = await ReadText(client, Links(recorded)["log.txt"]);
+        Assert.Contains("Key down F22", log);
+        Assert.Contains("Click Left", log);
     }
 }

@@ -8,14 +8,17 @@
   macro. A click inside Then can go where the image or text was found. The condition window says what PuppyMacro sees
   as you change it, and takes pixels, images and areas from the screen. **Settings > Screen recognition** chooses the
   graphics card or the processor, and AI apps can pick pixels, take images and draw areas too.
-- **Debug** in the macro editor keeps the log of the macro's last run: each action, what each If saw and where it went,
-  why it ended, with pictures of the screen when an If isn't true and at the end. **View log** shows it, in the card and
-  in the macro's More options. It is deleted when PuppyMacro closes.
-- AI apps can look at the screen, check a condition, record what you do and test a macro after you press Start, then
-  read how it went: so they can build and fix macros that look at the screen. Two new permissions on the AI page, **Let
-  AI apps see the screen** and **Let AI apps test macros**, are on by default.
+- **Debug** in the macro editor keeps a log of each run of the macro: every key and click with a picture of the screen
+  just before it, what each If saw and where it went, why it ended. **View log** opens the last run, in the card and in
+  the macro's More options. Runs are kept 7 days; **Settings > Debug data** shows the space they take and deletes them.
+- AI apps can look at the screen, check a condition, record what you do and test a macro after you press Start, so they
+  can build and fix macros that look at the screen. What they capture is kept as files and the AI app opens only what it
+  needs (MCP resource links), so its conversation does not fill up. A **Done** window says when you can go back to the
+  AI app. Two new permissions on the AI page, **Let AI apps see the screen** and **Let AI apps test macros**, are on by
+  default. Every AI request is kept 7 days with what was sent and answered: **Open debug** in the AI activity opens it.
 
 ### Changed
+- PuppyMacro's tools for AI apps are named `puppymacro_…`, have titles and follow the MCP specification 2025-11-25.
 - PuppyMacro asks Windows not to slow it down to save power (efficiency mode), so loops, macros and screen checks keep
   their timing also while it waits in the tray.
 

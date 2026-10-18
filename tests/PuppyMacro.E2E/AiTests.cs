@@ -52,7 +52,8 @@ public class AiTests
     {
         Dictionary<string, object?>? arguments = args == null ? null
             : JsonSerializer.SerializeToElement(args).EnumerateObject().ToDictionary(p => p.Name, p => (object?)p.Value.Clone());
-        CallToolResult result = await client.CallToolAsync(tool, arguments, cancellationToken: TestContext.Current.CancellationToken);
+        // The tools' full names (puppymacro_…): the tests name them without the prefix.
+        CallToolResult result = await client.CallToolAsync("puppymacro_" + tool, arguments, cancellationToken: TestContext.Current.CancellationToken);
         string text = string.Join("\n", result.Content.OfType<TextContentBlock>().Select(c => c.Text));
         return (text, result.IsError == true);
     }

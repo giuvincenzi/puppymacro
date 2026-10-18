@@ -13,9 +13,9 @@
   fake `IScreen`. Their speed on a real screen is measured by hand with the development build started with
   `PUPPYMACRO_BENCH=1` (a table of image and area sizes, processor and graphics card, text recognition) or
   `PUPPYMACRO_BENCH=load-gpu` / `load-cpu` (a search 30 times a second for a minute, to watch an app's frame rate):
-  `Services/Screen/RecognitionBench.cs`, results in a text file it opens. The macros' Debug log (`RunLog.Root`, one
-  folder for the process) is set to a temporary folder by the AI tools' tests, which run one at a time
-  (`[Collection(nameof(RunLog))]`). The AI tools are tested with `FakeAiHost` as the app and the user
+  `Services/Screen/RecognitionBench.cs`, results in a text file it opens. The debug archive (`DebugStore.Root`, one
+  folder for the process) is set to a temporary folder by the tests that write in it, which run one at a time
+  (`[Collection(nameof(DebugStore))]`). The AI tools are tested with `FakeAiHost` as the app and the user
   (`AiTools.WaitStep` is short there); the file types' registry keys under a test key in `HKCU\Software\PuppyMacroTests`,
   deleted after.
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a

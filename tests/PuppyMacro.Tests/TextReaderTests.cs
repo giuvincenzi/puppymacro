@@ -26,6 +26,16 @@ public class TextReaderTests
     }
 
     [Fact]
+    public void Punctuation_around_the_words_of_the_text_looked_for_does_not_count_either()
+    {
+        var lines = new List<List<TextReader.Word>> { Line(0, ("Modification", 0, 120), ("(l)", 130, 30)) };
+
+        Assert.Equal(new Rect(0, 0, 160, 20), TextReader.Find(lines, "Modification (l)", TextMatch.Exact, false));
+        Assert.Equal(new Rect(0, 0, 160, 20), TextReader.Find(lines, "Modification (l)", TextMatch.Contains, false));
+        Assert.Equal(new Rect(0, 0, 160, 20), TextReader.Find(lines, "Modification l", TextMatch.Exact, false));
+    }
+
+    [Fact]
     public void Exact_needs_whole_words_and_Contains_takes_a_part()
     {
         var lines = new List<List<TextReader.Word>> { Line(0, ("Primes.", 0, 70), ("Primeval", 80, 80)) };

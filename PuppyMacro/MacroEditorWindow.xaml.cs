@@ -342,12 +342,13 @@ public partial class MacroEditorWindow
             then.Indent = row.Indent + 1;
             wanted.Add(then);
             AddRows(block.Then, row.Indent + 2, wanted, numbers);
-            if (block.OnFail != ConditionFail.Else)
-                continue;
+            // Stop the macro: its Else shows greyed, saying the If stops the macro instead; its actions are kept, not shown.
             var otherwise = BranchFor(action, isElse: true);
             otherwise.Indent = row.Indent + 1;
+            otherwise.Stops = block.OnFail != ConditionFail.Else;
             wanted.Add(otherwise);
-            AddRows(block.Else, row.Indent + 2, wanted, numbers);
+            if (!otherwise.Stops)
+                AddRows(block.Else, row.Indent + 2, wanted, numbers);
         }
     }
 
@@ -375,7 +376,8 @@ public partial class MacroEditorWindow
         {
             int count = MacroDefinition.Walk(branch.List).Count();
             string when = branch.IsElse ? Strings.MacroEditor_ElseInfo : Strings.MacroEditor_ThenInfo;
-            branch.Info = count == 0 ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_BranchEmpty, when)
+            branch.Info = branch.Stops ? Strings.MacroEditor_ElseNotPlayed
+                : count == 0 ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_BranchEmpty, when)
                 : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_BranchInfo, when, Count(count));
         }
         string total = DurationText(DurationRange.Of(_list.Actions));

@@ -1304,6 +1304,7 @@ Dettagli: {1}</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>dove si trova {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>quando le condizioni sono vere</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>quando non lo sono</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>non viene eseguito, perché l'If ferma la macro quando le sue condizioni non sono vere</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · ancora nessuna azione. Seleziona il ramo, poi aggiungile.</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Le nuove azioni vanno alla fine di {0} in #{1}</value></data>

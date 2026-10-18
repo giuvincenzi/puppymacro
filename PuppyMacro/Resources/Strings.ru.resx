@@ -1337,6 +1337,7 @@
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>туда, где найдено «{0}»</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>когда условия выполнены</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>когда не выполнены</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>не воспроизводится, потому что If останавливает макрос, когда его условия не выполняются</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · действий пока нет. Выберите этот блок, затем добавьте их.</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Новые действия добавляются в конец {0} условия №{1}</value></data>

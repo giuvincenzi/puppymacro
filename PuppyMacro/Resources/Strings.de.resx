@@ -1293,6 +1293,7 @@ Details: {1}</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>wo {0} gefunden wurde</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>wenn die Bedingungen erfüllt sind</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>wenn nicht</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>wird nicht abgespielt, weil das If das Makro stoppt, wenn seine Bedingungen nicht erfüllt sind</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · noch keine Aktionen. Wählen Sie den Zweig aus, und fügen Sie dann Aktionen hinzu.</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Neue Aktionen kommen ans Ende von {0} in #{1}</value></data>

@@ -177,7 +177,6 @@ internal static class CodeSchema
         ["MacroAction.ScrollSteps"] = MacroJson.ScrollSteps,
         ["MacroAction.FoundOffsetX"] = MacroJson.Coordinate,
         ["MacroAction.FoundOffsetY"] = MacroJson.Coordinate,
-        ["MacroIf.WaitSeconds"] = MacroJson.WaitSeconds,
         ["MacroCondition.X"] = MacroJson.Coordinate,
         ["MacroCondition.Y"] = MacroJson.Coordinate,
         ["MacroCondition.Tolerance"] = MacroJson.Tolerance,
@@ -334,6 +333,23 @@ internal static class CodeSchema
                     schema["maxLength"] = FloatingButton.MaxLabelLength;
                     break;
             }
+        }
+
+        // WaitSeconds counts only with Wait UpTo (once or as long as it takes leave it 0): its range only then, as MacroJson checks.
+        if (context.TypeInfo.Type == typeof(MacroIf) && schema.ContainsKey("properties"))
+        {
+            schema["if"] = new JsonObject
+            {
+                ["properties"] = new JsonObject { ["Wait"] = new JsonObject { ["const"] = nameof(ConditionWait.UpTo) } },
+                ["required"] = new JsonArray("Wait"),
+            };
+            schema["then"] = new JsonObject
+            {
+                ["properties"] = new JsonObject
+                {
+                    ["WaitSeconds"] = new JsonObject { ["minimum"] = MacroJson.WaitSeconds.Min, ["maximum"] = MacroJson.WaitSeconds.Max },
+                },
+            };
         }
 
         // Descriptions of the action types in the Ctrl+Space list (a Monaco/VS Code schema extension).

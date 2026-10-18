@@ -129,7 +129,9 @@ internal static class TextReader
     /// </summary>
     public static Rect? Find(List<List<Word>> lines, string text, TextMatch match, bool matchCase)
     {
-        string wanted = WithoutSpaces(text).Trim(Punctuation);
+        // The text is taken word by word as the words read are ("Modification (l)" is "Modification" and "l"): punctuation
+        // at a word's ends does not count, a word of punctuation only stays.
+        string wanted = string.Concat(text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Select(Bare));
         if (wanted.Length == 0)
             return null;
         var comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
@@ -142,9 +144,7 @@ internal static class TextReader
             for (int i = 0; i < words.Count; i++)
             {
                 // Punctuation at a word's ends does not count ("Primes." is the word "Primes"), as in the tests.
-                string w = WithoutSpaces(words[i].Text).Trim(Punctuation);
-                if (w.Length == 0)
-                    w = WithoutSpaces(words[i].Text);
+                string w = Bare(words[i].Text);
                 joined.Append(w);
                 owner.AddRange(Enumerable.Repeat(i, w.Length));
             }
@@ -164,6 +164,13 @@ internal static class TextReader
             }
         }
         return best;
+    }
+
+    /// <summary>A word without spaces and without the punctuation at its ends; a word of punctuation only, as it is.</summary>
+    private static string Bare(string word)
+    {
+        string w = WithoutSpaces(word).Trim(Punctuation);
+        return w.Length == 0 ? WithoutSpaces(word) : w;
     }
 
     private static readonly char[] Punctuation = ".,:;!?\"'()[]{}…·、。，：；！？「」『』（）".ToCharArray();

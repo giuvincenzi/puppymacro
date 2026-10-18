@@ -1367,6 +1367,7 @@ Detalhes: {1}</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>no ponto encontrado por {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>quando as condições são verdadeiras</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>quando não são</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>não é reproduzido, porque o If para a macro quando as condições dele não são verdadeiras</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · nenhuma ação ainda. Selecione esta parte e adicione as ações.</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>As novas ações entram no final de {0} da #{1}</value></data>

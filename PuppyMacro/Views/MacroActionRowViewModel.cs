@@ -19,6 +19,9 @@ public abstract class MacroEditorItem : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>Shown greyed and not selectable: an Else the If never plays (Stop the macro).</summary>
+    public virtual bool NotPlayed => false;
+
     /// <summary>Drop indicator above or below the item while dragging.</summary>
     public bool DropBefore
     {
@@ -134,6 +137,17 @@ public sealed class MacroBranchViewModel : MacroEditorItem
     public MacroAction Owner { get; }
 
     public bool IsElse { get; }
+
+    private bool _stops;
+
+    /// <summary>An Else when its If stops the macro instead (Stop the macro): shown greyed, its actions kept but hidden.</summary>
+    public bool Stops
+    {
+        get => _stops;
+        set { if (_stops != value) { _stops = value; OnPropertyChanged(); OnPropertyChanged(nameof(NotPlayed)); } }
+    }
+
+    public override bool NotPlayed => _stops;
 
     /// <summary>The list the header stands for.</summary>
     public System.Collections.Generic.List<MacroAction> List => IsElse ? Owner.If!.Else : Owner.If!.Then;

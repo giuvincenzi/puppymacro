@@ -1293,6 +1293,7 @@ Détails : {1}</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>là où se trouve {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>quand les conditions sont vraies</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>quand elles ne le sont pas</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>non lu, car le If arrête la macro quand ses conditions ne sont pas vraies</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · aucune action pour l'instant. Sélectionnez la branche, puis ajoutez-les.</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Les nouvelles actions vont à la fin de {0} de #{1}</value></data>

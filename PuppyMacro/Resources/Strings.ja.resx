@@ -1260,6 +1260,7 @@
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>{0} が見つかった場所</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>条件が満たされたとき</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>満たされないとき</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>再生されません。条件が成立しないとき、If がマクロを停止するためです</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · アクションはまだありません。選択してから追加してください。</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>新しいアクションは #{1} の {0} の末尾に挿入されます</value></data>

@@ -215,6 +215,10 @@
                             <EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnRowMouseUp" />
                             <EventSetter Event="PreviewMouseMove" Handler="OnRowMouseMove" />
                             <Style.Triggers>
+                                <!-- An Else its If never plays (Stop the macro): greyed, not selectable -->
+                                <DataTrigger Binding="{Binding NotPlayed}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
                                 <!-- Drag to move: a line where the dragged actions go -->
                                 <DataTrigger Binding="{Binding DropBefore}" Value="True">
                                     <Setter Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />

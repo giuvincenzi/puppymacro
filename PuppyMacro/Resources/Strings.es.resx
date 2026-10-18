@@ -1294,6 +1294,7 @@ Detalles: {1}</value></data>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>donde se encuentre {0}</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>cuando se cumplen las condiciones</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>cuando no se cumplen</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>no se reproduce, porque el If detiene la macro cuando sus condiciones no se cumplen</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · aún no hay acciones. Selecciona la rama y luego agrégalas.</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Las acciones nuevas van al final de {0} de #{1}</value></data>

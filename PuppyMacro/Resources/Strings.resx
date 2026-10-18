@@ -1382,6 +1382,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>where {0} was found</value><comment>Detail of a mouse action row: {0} the condition whose image or text it goes to</comment></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>when the conditions are true</value><comment>What Then means, after its name</comment></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>when they aren't</value><comment>What Else means, after its name</comment></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>not played, because the If stops the macro when its conditions aren't true</value><comment>Details of an Else its If never plays, after the word Else (a global word)</comment></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value><comment>Details of a Then or Else: {0} when it runs, {1} how many actions ("3 actions")</comment></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · no actions yet. Select it, then add them.</value><comment>Details of an empty Then or Else: {0} when it runs</comment></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>New actions go at the end of {0} of #{1}</value><comment>{0} Then or Else (global words), {1} the number of its If</comment></data>

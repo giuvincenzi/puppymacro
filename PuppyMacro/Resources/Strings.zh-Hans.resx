@@ -1260,6 +1260,7 @@
   <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>找到 {0} 的位置</value></data>
   <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>条件满足时</value></data>
   <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>条件不满足时</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>不会播放，因为条件不成立时 If 会停止宏</value></data>
   <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
   <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · 还没有操作。请先选中它，再添加操作。</value></data>
   <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>新操作将插入到 #{1} 的 {0} 末尾</value></data>

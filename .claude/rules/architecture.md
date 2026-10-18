@@ -138,10 +138,15 @@ Rules:
   - No recognition inside apps that block screen capture or run in exclusive fullscreen: they show black (the condition window
     says so).
 - Updates: `Services/UpdateService.cs`, `MainWindow.Updates.cs` (see `updates.md`).
-- A macro's Debug (`MacroDefinition.Debug`, `Services/RunLog.cs`, `DebugLogWindow`): the log of its last run, in
-  English, in `RunLog.Root` (`%LocalAppData%`, not the data folder), one folder per macro; deleted when PuppyMacro starts
-  and closes. The macro only queues lines and pictures; one background thread writes them (never the macro's thread:
-  the disk would slow it). An AI app's test is always logged.
+- The debug archive (`Services/DebugStore.cs`, `%LocalAppData%`, not the data folder): one folder per operation,
+  `ai\<app>\<session>\<nnn>-<tool>[-<item>]\` for each call of an AI app (`DebugSession`, `DebugCall`: `session.json`,
+  `request.json` with every argument and the app's `_meta`, `response.json`) and `user\macro\<time>-<macro>\` for a run
+  the user starts with Debug on. Names have no spaces and sort by time; they are also the MCP resources' paths. One
+  background thread writes everything (`DebugStore.Write`): what plays never waits for the disk. A run's log
+  (`RunLog`): numbered events, each with the screen's pictures just before it named by its number, in English. The
+  cleaner deletes whole operations older than `DebugStore.Life`, at start and every hour, never one in progress and never
+  at close (a crash loses nothing). Debug is the user's alone (`AiTools.KeepUsersDebug` on every AI save); an AI app's
+  test is always logged.
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version. It is
   recorded in one place, `MainWindow.Save()` and `SaveMacro`, so every path is covered (editors, switches, the overlay's
   right click, AI apps). In the editors' History view, Restore puts the version in the fields and asks to Save.
@@ -154,7 +159,19 @@ Rules:
   - The pipe (`AiPipe`) is one per Windows user and per build, current user only; elevated, it gets a medium integrity
     label so a non-elevated AI app can open it. Its first instance uses `FirstPipeInstance` and the bridge talks only to
     a server whose exe is its own.
-  - The call log (`AiCallLog`) keeps times and sizes, never the content.
+  - **MCP as specified**: every tool added or changed follows the MCP specification of the SDK's version (2.2.0:
+    [2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25), its
+    [Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools) and
+    [Resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)) and Anthropic's
+    [Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents); read them
+    again before changing a tool. Tools are named `puppymacro_<name>` (`AiTools.Prefix`), each with a `title` and honest
+    annotations (only reads: `readOnlyHint`; can change the user's apps: `destructiveHint`; pure reads: `idempotentHint`);
+    an input error is a tool error with what to change (`isError`); each connection is rate limited (`AiRateLimit`).
+  - **An answer holds the result, short; large data stays in files and goes as references**: a run's log, the screen's
+    pictures, a recording are in the call's debug folder, and the answer gives MCP `resource_link`s (and the path); the
+    AI app reads one with `resources/read` (`AiServer.DebugResource`: only files inside the debug archive, else -32002)
+    when it needs it. Whatever enters an answer stays in the AI app's context until the end of the conversation. No
+    `structuredContent`: the same JSON would also be text, twice in the context.
   - `AiTools` holds every tool without the protocol, unit tested with a fake `IAiHost`. Saves are checked with the Code
     views' checks.
   - **An AI app writes and reads every character**, so a change is a patch, not the whole item, and reads are compact.
@@ -168,11 +185,11 @@ Rules:
   - AI apps cut long tool calls: a request that waits for the user answers "waiting" and the AI calls `wait_for_user`.
   - One request that waits for the user at a time; none while the user has a PuppyMacro editor or dialog open. Request
     windows open centered on the screen and in front, and close after a timeout without input.
-  - The screen (`AiTools.Screen.cs`): `look_at_screen` (pictures, kept for `take_image` and `pick_pixel` with a
-    `snapshot_id`), `check_condition` (the same rule as the editor's Now on the screen, `ConditionReport.TrueFor`),
-    `record_macro` (PuppyMacro's recorder after the ready window, an image around each click), `test_macro` and
-    `get_last_run`. Pictures go to the AI app as JPEG no larger than `AiTools.MaxImageSide`, only with
-    `AppSettings.AiSeeScreen`; they cost the model far more than text, so only these tools send them.
+  - The screen (`AiTools.Screen.cs`): `look_at_screen` (each monitor's picture, the screen's own, linked; `take_image` and
+    `pick_pixel` read it again with its `snapshot_id`), `check_condition` (the same rule as the editor's Now on the screen,
+    `ConditionReport.TrueFor`), `record_macro` (PuppyMacro's recorder after the ready window: the screen at each key and
+    click, an image around each click), `test_macro` and `get_last_run`. Pictures need `AppSettings.AiSeeScreen`. When one
+    of them is over, `AiFinishedWindow` says the user can go back to the AI app (the name it gave).
   - An AI app plays a macro only with `test_macro` (with `AppSettings.AiTestMacros`): after the user's Start in the ready
     window, with the app the user brought in front given the front back, so its input never goes to the AI app's chat;
     always logged, stopped after its time limit. Nothing else starts loops or macros (only `stop_all` stops them).

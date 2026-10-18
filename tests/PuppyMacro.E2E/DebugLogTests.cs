@@ -24,14 +24,12 @@ public class DebugLogTests
         PressCard(app, target, "E2E debug", "Play");
         target.WaitFor(t => t.Ups(Vk.F22).Count == 1, 15, "the macro did not play");
         WaitIdle(app, "E2E debug");
-        // The log is written by its own thread: on disk a moment after the run (RunLog.Root of the development build).
+        // The run's log is written by the debug writer: on disk a moment after the run, in debug\user\macro.
         string debug = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
-            "PuppyMacro Dev", "debug");
-        string file = System.IO.Path.Combine(debug, macro.Id.ToString("N"), "log.txt");
-        Assert.True(Retry.WhileFalse(() => System.IO.File.Exists(file), AppSession.Timeout).Success,
-            $"no log at {file}. The debug folder holds: " + (System.IO.Directory.Exists(debug)
-                ? string.Join(", ", System.IO.Directory.GetFileSystemEntries(debug, "*", System.IO.SearchOption.AllDirectories))
-                : "nothing, it does not exist"));
+            "PuppyMacro Dev", "debug", "user", "macro");
+        Assert.True(Retry.WhileFalse(() => System.IO.Directory.Exists(debug) && System.IO.Directory.GetFiles(debug, "run.json", System.IO.SearchOption.AllDirectories)
+                .Any(f => System.IO.File.ReadAllText(f).Contains(macro.Id.ToString("D"))), AppSession.Timeout).Success,
+            $"no run of the macro in {debug}");
 
         app.CardButton("E2E debug", "More options").AsButton().Invoke();
         app.MenuItem("View log").AsMenuItem().Invoke();
@@ -43,5 +41,16 @@ public class DebugLogTests
         Assert.True(Retry.WhileFalse(() => text.Text.Contains("#1 Press F22") && text.Text.Contains("Macro ends: finished"), AppSession.Timeout).Success,
             $"the log: {text.Text}");
         log.Close();
+    }
+
+    [Fact]
+    public void Settings_shows_the_debug_data_with_Delete_all()
+    {
+        using var app = new AppSession();
+        app.GoTo("Settings");
+
+        app.Find(app.MainWindow, "Debug data");
+        app.Expand("DebugDataGroup");
+        app.FindButton(app.MainWindow, "Delete all");
     }
 }

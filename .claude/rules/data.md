@@ -50,8 +50,8 @@ paths:
   Everything else keeps its rules: the editors, the Code views and the AI tools' saves still refuse a remap without a
   hotkey, and a remap without one never clashes with anything.
 - Not in the backup: `backup-before-import-*.puppymacro` (copies of earlier data; inside a backup they would
-  grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data), the macros'
-  Debug logs (`RunLog.Root` in `%LocalAppData%`: the last run of a macro, deleted when PuppyMacro starts and closes). The
+  grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data), the debug
+  archive (`DebugStore.Root` in `%LocalAppData%`: debugging data, kept 7 days). The
   Start with Windows Run entry is outside the data folder: Release builds set it from `StartWithWindows` at every
   start (`MainWindow`), so an import, a reinstall or another PC gets it back. So are the file types (`Services/FileTypes.cs`:
   `.puppyitems` and `.puppymacro` in `HKCU\Software\Classes`, their icons and open commands): Release
@@ -72,12 +72,23 @@ paths:
   choice); Allow AI access stays the switch for everything. `ai-activity.json` in the data folder holds the newest AI
   requests up to `AiActivityLog.MaxBytes` (no age limit), with the JSON before a change or deletion for Restore; not user data: a missing or unreadable file is an
   empty history.
-- Limits are sizes, never days or counts (the user's choice). The oldest entries go first and the newest one always
-  stays.
-- `logs\ai-calls.jsonl` in the data folder (`AiCallLog`, size limit there): one JSON line per tool call of an AI app,
-  for debugging only. Never the arguments or answers. Not user data: a missing or unreadable file or line is skipped.
-  `logs\` is for debugging logs only; `logs\screen-capture.log` holds the screen capture's errors (`CaptureLog`, size
-  limit there).
+- **Each kind of data has its own keeping rule, written here; a new kind of data gets its rule decided with the user
+  and written here in the same pull request.** Where a limit is a size, the oldest entries go first and the newest one
+  always stays.
+
+  | What | Where | Kept |
+  |---|---|---|
+  | Settings, loops, remaps, macros | data folder | until the user deletes them |
+  | Images of the conditions | data folder, `images\` | while a saved macro uses them or something holds them |
+  | History | data folder, `history\` | the newest versions, up to `ItemHistory.MaxBytes` per item |
+  | AI activity | data folder, `ai-activity.json` | the newest requests, up to `AiActivityLog.MaxBytes` |
+  | Screen capture's errors | data folder, `logs\screen-capture.log` | up to `CaptureLog.MaxBytes` |
+  | Copy before an Import | data folder, `backup-before-import-*.puppymacro` | until the user deletes it |
+  | Code view's cache | `%LocalAppData%`, `WebView2` | as WebView2 keeps it |
+  | Debug archive (AI requests, Debug runs) | `%LocalAppData%`, `debug\` | 7 days per operation (`DebugStore.Life`); Settings › Debug data deletes it |
+
+  `logs\` in the data folder is for debugging logs only. The debug archive holds the AI apps' requests whole (arguments,
+  answers, the app's `_meta`) and the screen's pictures: on this PC only, never sent anywhere (the guide's privacy says so).
 - The images of the macros' conditions: `images\{sha256}.png` in the data folder (`ImageStore`), part Data. A macro
   names them by that Id. An image no saved macro uses and nothing holds (an open editor, the editor's copied actions, an
   AI app's take: `ImageStore.Hold`) is deleted at the next save of a macro or at start; the History keeps a copy of every
