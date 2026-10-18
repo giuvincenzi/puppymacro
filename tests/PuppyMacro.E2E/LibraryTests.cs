@@ -116,6 +116,48 @@ public class LibraryTests
     }
 
     [Fact]
+    public void A_Grid_parameter_s_example_opens_on_its_cells()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.FindById(app.MainWindow, "LibraryButton").AsButton().Invoke();
+        Window library = app.Dialog("Library");
+        ListBox collections = app.FindById(library, "CollectionList").AsListBox();
+        Retry.WhileNull(() => collections.Items.FirstOrDefault(i => i.Name == "Sample: typing"), AppSession.Timeout, throwOnTimeout: true,
+            timeoutMessage: "the collection Sample: typing is not there").Result!.Select();
+        ListBox components = app.FindById(library, "ComponentList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => components.Items.Length == 1, AppSession.Timeout).Success);
+        components.Items[0].Select();
+        Retry.WhileNull(() => components.Items[0].FindFirstDescendant(cf => cf.ByControlType(ControlType.Button).And(cf.ByName("Edit"))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "Edit is not shown").Result!.AsButton().Invoke();
+        Window editor = ChildDialog(library, "Edit component - Type a word");
+        app.FindById(editor, "AddParameterButton").AsButton().Invoke();
+        Window parameter = ChildDialog(editor, "Add parameter");
+
+        // Grid in the Type list: the Example becomes a card that opens on the grid's fields.
+        var type = app.FindById(parameter, "TypeBox").AsComboBox();
+        type.Expand();
+        Assert.Contains("Grid", type.Items.Select(i => i.Name));
+        type.Select("Grid");
+        type.Collapse();
+        Assert.True(app.Has(parameter, "Example"));
+        var example = app.FindById(parameter, "ExampleGrid");
+        var expander = Retry.WhileNull(() => new[] { example }.Concat(example.FindAllDescendants()).FirstOrDefault(e => e.Patterns.ExpandCollapse.IsSupported),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the grid's card does not open").Result!;
+        expander.Patterns.ExpandCollapse.Pattern.Expand();
+        Assert.True(app.Has(parameter, "First cell"));
+        Assert.True(app.Has(parameter, "Last cell"));
+        Assert.True(app.Has(parameter, "Columns"));
+        Assert.True(app.Has(parameter, "Rows"));
+        Assert.True(app.Has(parameter, "1 cell, counted row by row from the top left, starting at 1"));
+        Assert.True(app.Has(parameter, "Show the cells"));
+
+        parameter.Close();
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+        library.Close();
+    }
+
+    [Fact]
     public void The_Library_lists_its_collections_and_refuses_to_delete_a_linked_component()
     {
         using var app = new AppSession();
