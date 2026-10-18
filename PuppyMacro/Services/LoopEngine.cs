@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Services.Components;
 
 namespace PuppyMacro.Services;
 
@@ -23,27 +24,23 @@ internal sealed class EngineSnapshot
     public ImageStore? Images { get; init; }
     public RecognitionDevice RecognitionDevice { get; init; }
 
-    /// <summary>The macros that link a component the Library doesn't have: they can't play (their hotkey passes to the app).</summary>
+    /// <summary>
+    /// The macros whose calls to components fail the checks (a component the Library doesn't have, a wrong argument): they
+    /// can't play (their hotkey passes to the app).
+    /// </summary>
     public IReadOnlySet<Guid> Unplayable { get; init; } = new HashSet<Guid>();
 
+    /// <summary>The Library's components, prepared once: what the macros' linked rows and Component conditions play.</summary>
+    public ComponentPrograms Components { get; init; } = ComponentPrograms.Empty;
+
     /// <summary>
-    /// The snapshot of the data now. The macros are copies with their linked rows resolved (<see cref="ComponentLibrary.Resolve"/>),
-    /// once here on the UI thread: playing them never reads the Library.
+    /// The snapshot of the data now: copies of the macros and the Library's components prepared once, here on the UI thread,
+    /// so playing never reads the Library.
     /// </summary>
     public static EngineSnapshot From(AppSettings settings, MacroLibrary macros)
     {
-        var unplayable = new HashSet<Guid>();
-        var copies = new List<MacroDefinition>();
-        foreach (var macro in macros.Macros)
-        {
-            if (macros.Library.Resolve(macro) is { } resolved)
-                copies.Add(resolved);
-            else
-            {
-                unplayable.Add(macro.Id);
-                copies.Add(macro.Clone());
-            }
-        }
+        var copies = macros.Macros.Select(m => m.Clone()).ToList();
+        var signatures = new ComponentSignatures(macros.Library.AllComponents);
         return new EngineSnapshot
         {
             StopAll = settings.StopAllHotkey?.Clone(),
@@ -55,7 +52,8 @@ internal sealed class EngineSnapshot
             Remaps = settings.Remaps.Where(r => r.Enabled).Select(r => r.Clone()).ToArray(),
             Images = macros.Images,
             RecognitionDevice = settings.RecognitionDevice,
-            Unplayable = unplayable,
+            Unplayable = ComponentChecks.Unplayable(signatures, copies),
+            Components = ComponentPrograms.Prepare(signatures.All),
         };
     }
 }
@@ -312,7 +310,7 @@ internal sealed class LoopEngine : IDisposable
 
     // ================= Macros =================
 
-    /// <summary>Starts a macro as the snapshot has it (its linked rows resolved), whatever copy the caller holds.</summary>
+    /// <summary>Starts a macro as the snapshot has it (with its components), whatever copy the caller holds.</summary>
     public void StartMacro(MacroDefinition macro)
     {
         lock (_sync)
@@ -324,7 +322,7 @@ internal sealed class LoopEngine : IDisposable
                 return;
             // Debug on: the run writes its log (RunLog only queues, so this does not slow the hook that may call it).
             var log = macro.Debug ? new RunLog(DebugStore.NewUserMacroRun(macro.Name), macro, "a run started by the user") : null;
-            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: log);
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: log, programs: _snapshot.Components);
             runner.Exited += OnMacroExited;
             _runningMacros[macro.Id] = runner;
             runner.Start();
@@ -347,7 +345,8 @@ internal sealed class LoopEngine : IDisposable
             macro = snapped;
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return null;
-            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: new RunLog(folder, macro, why));
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: new RunLog(folder, macro, why),
+                programs: _snapshot.Components);
             runner.Exited += OnMacroExited;
             runner.Exited += exited;
             _runningMacros[macro.Id] = runner;
@@ -359,13 +358,15 @@ internal sealed class LoopEngine : IDisposable
     }
 
     /// <summary>
-    /// Plays <paramref name="action"/> once for the editor's Test (<see cref="MacroDefinition.ForTest"/>).
-    /// It is not a running macro: no sound, no state change. <paramref name="finished"/> runs on
-    /// the UI thread when it ends.
+    /// Plays <paramref name="action"/> once for the editor's Test (<see cref="MacroDefinition.ForTest"/>), with the
+    /// snapshot's components (a linked row plays its component). It is not a running macro: no sound, no state change.
+    /// <paramref name="finished"/> runs on the UI thread when it ends.
     /// </summary>
-    public void TestMacroAction(MacroAction action, Action finished)
+    /// <param name="parameters">Inside a component's editor: its parameters, whose Examples the action's calls pass on.</param>
+    public void TestMacroAction(MacroAction action, Action finished, IEnumerable<ComponentParameter>? parameters = null)
     {
-        var runner = new MacroRunner(MacroDefinition.ForTest(action), _paster, _snapshot.Images, _snapshot.RecognitionDevice);
+        var runner = new MacroRunner(MacroDefinition.ForTest(action), _paster, _snapshot.Images, _snapshot.RecognitionDevice,
+            programs: _snapshot.Components, arguments: parameters == null ? null : FrameArguments.Examples(parameters));
         runner.Exited += _ => _dispatcher.InvokeAsync(finished);
         runner.Start();
     }

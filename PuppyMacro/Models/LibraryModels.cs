@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace PuppyMacro.Models;
@@ -108,12 +110,109 @@ public sealed class LibraryComponent
     /// <summary>A short English description, written by the AI app that made it (optional).</summary>
     public string Description { get; set; } = "";
 
+    /// <summary>
+    /// Its signature: the values a call gives it (<see cref="MacroAction.Arguments"/>), each bound to fields of its actions
+    /// (<see cref="MacroAction.Bind"/>). Empty: it takes none.
+    /// </summary>
+    public List<ComponentParameter> Parameters { get; set; } = new();
+
+    /// <summary>What it finds, when it can be used as a condition (<see cref="ConditionKind.Component"/>); null otherwise.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ComponentReturns? Returns { get; set; }
+
     public List<MacroAction> Actions { get; set; } = new();
 
     public LibraryComponent Clone()
     {
         var copy = (LibraryComponent)MemberwiseClone();
+        copy.Parameters = Parameters.ConvertAll(p => p.Clone());
+        copy.Returns = Returns?.Clone();
         copy.Actions = Actions.ConvertAll(a => a.Clone());
         return copy;
     }
+}
+
+/// <summary>The type of a component's parameter: the kind of field it gives a value to.</summary>
+public enum ParameterType
+{
+    /// <summary>A point on the screen, {"X", "Y"} in physical pixels.</summary>
+    Point,
+
+    /// <summary>A number, with its <see cref="NumberUnit"/>.</summary>
+    Number,
+
+    Text,
+
+    /// <summary>A key with its modifiers, as a hotkey is written.</summary>
+    Key,
+
+    /// <summary>"#RRGGBB".</summary>
+    Color,
+
+    /// <summary>The images of an Image condition: [{"Id", "X", "Y"}].</summary>
+    Image,
+
+    /// <summary>A part of the screen, {"X", "Y", "Width", "Height"}.</summary>
+    Area,
+}
+
+/// <summary>What a <see cref="ParameterType.Number"/> counts: a number can only go where the same unit does.</summary>
+public enum NumberUnit
+{
+    Pixels,
+    Ms,
+    Seconds,
+    Count,
+    Percent,
+}
+
+/// <summary>
+/// One parameter of a component. Required when it has no <see cref="Default"/>. <see cref="Example"/> is the value its bound
+/// fields hold, what the editor shows and a Test plays.
+/// </summary>
+public sealed class ComponentParameter
+{
+    /// <summary>Letters, digits and '_', starting with a letter ("Slot").</summary>
+    public string Name { get; set; } = "";
+
+    public ParameterType Type { get; set; }
+
+    /// <summary>Number only: what it counts.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public NumberUnit? Unit { get; set; }
+
+    public JsonNode? Example { get; set; }
+
+    /// <summary>The value a call that leaves it out gives; null: every call gives one.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public JsonNode? Default { get; set; }
+
+    /// <summary>A short English description, for the AI apps (optional).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Description { get; set; } = "";
+
+    [JsonIgnore]
+    public bool Required => Default == null;
+
+    public ComponentParameter Clone()
+    {
+        var copy = (ComponentParameter)MemberwiseClone();
+        copy.Example = Example?.DeepClone();
+        copy.Default = Default?.DeepClone();
+        return copy;
+    }
+
+    /// <summary>The same name, type, unit, example, default and description.</summary>
+    public bool SameAs(ComponentParameter other) =>
+        Name == other.Name && Type == other.Type && Unit == other.Unit && Description == other.Description
+        && JsonNode.DeepEquals(Example, other.Example) && JsonNode.DeepEquals(Default, other.Default);
+}
+
+/// <summary>What a component finds: one of its conditions (<see cref="Found"/>), true or not, and the place it finds.</summary>
+public sealed class ComponentReturns
+{
+    /// <summary>The <see cref="MacroCondition.Id"/> of one of the component's conditions.</summary>
+    public Guid Found { get; set; }
+
+    public ComponentReturns Clone() => (ComponentReturns)MemberwiseClone();
 }

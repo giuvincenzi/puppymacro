@@ -141,8 +141,8 @@ public class AiLibraryToolsTests : IDisposable
     public async Task Save_component_refuses_what_the_Library_refuses()
     {
         Assert.Contains("lowercase", (await Call("save_component", new { collection = new { name = "X" }, component = NewComponent("Remove Affix") })).Text);
-        var nested = new object[] { new { Type = "Component", ComponentId = _slot.Id } };
-        Assert.True((await Call("save_component", new { collection = new { name = "X" }, component = NewComponent(actions: nested) })).IsError);
+        var missing = new object[] { new { Type = "Component", ComponentId = Guid.NewGuid() } };
+        Assert.True((await Call("save_component", new { collection = new { name = "X" }, component = NewComponent(actions: missing) })).IsError);
         Assert.Contains("\"collection\"", (await Call("save_component", new { component = NewComponent() })).Text);
         Assert.Contains("No collection has the Id", (await Call("save_component", new { collection = new { id = Guid.NewGuid().ToString() }, component = NewComponent() })).Text);
         Assert.Equal(2, _host.Macros.Library.Collections.Count);

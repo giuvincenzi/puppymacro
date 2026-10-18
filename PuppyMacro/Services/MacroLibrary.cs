@@ -108,6 +108,59 @@ internal sealed class MacroLibrary
         }
     }
 
+    /// <summary>
+    /// Saves the Library and some macros together (a component and the calls its new signature changed): every file is
+    /// written next to its place first, and only when all of them are written do they take their places, so a failure
+    /// leaves every file as it was.
+    /// </summary>
+    public bool TrySaveTogether(IReadOnlyList<MacroDefinition> macros, out string? error)
+    {
+        error = null;
+        if (Library.Broken)
+        {
+            error = Strings.Library_FileUnreadable;
+            return false;
+        }
+        var files = new List<(string Temp, string Path)>();
+        try
+        {
+            Directory.CreateDirectory(_folder);
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(Library.FilePath))!);
+            files.Add((Library.FilePath + ".tmp", Library.FilePath));
+            File.WriteAllText(files[^1].Temp, Library.Text());
+            foreach (var macro in macros)
+            {
+                string path = PathFor(macro.Id);
+                files.Add((path + ".tmp", path));
+                File.WriteAllText(files[^1].Temp, JsonSerializer.Serialize(macro, JsonOptions));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            foreach (var (temp, _) in files)
+                TryDelete(temp);
+            error = ex.Message;
+            return false;
+        }
+        foreach (var (temp, path) in files)
+            File.Move(temp, path, overwrite: true);
+        foreach (var macro in macros)
+            _imagesOf[macro.Id] = ImageStore.IdsIn(macro);
+        return true;
+    }
+
+    private static void TryDelete(string file)
+    {
+        try
+        {
+            File.Delete(file);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // A leftover .tmp file is never read.
+        }
+    }
+
     public void Delete(MacroDefinition macro)
     {
         Macros.Remove(macro);

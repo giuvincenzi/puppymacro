@@ -173,8 +173,11 @@ internal sealed class MacroEditList
         }
     }
 
-    /// <summary>New ids for the conditions of the inserted Ifs, and the inserted actions that used them follow.</summary>
-    internal static void RenewConditions(List<MacroAction> inserted)
+    /// <summary>
+    /// New ids for the conditions of the inserted Ifs, and what used them follows: the inserted actions' "Where … was found"
+    /// and the {"Found"} arguments of their calls. Answers the old ids with their new ones.
+    /// </summary>
+    internal static Dictionary<Guid, Guid> RenewConditions(List<MacroAction> inserted)
     {
         var all = MacroDefinition.Walk(inserted).ToList();
         var renamed = new Dictionary<Guid, Guid>();
@@ -185,8 +188,23 @@ internal sealed class MacroEditList
             condition.Id = newId;
         }
         foreach (var action in all)
+        {
             if (action.FoundId is Guid found && renamed.TryGetValue(found, out Guid newFound))
                 action.FoundId = newFound;
+            RenewFound(action.Arguments, renamed);
+            foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+                RenewFound(condition.Arguments, renamed);
+        }
+        return renamed;
+    }
+
+    /// <summary>The {"Found"} arguments of a call that name a renewed condition name its new id.</summary>
+    private static void RenewFound(Dictionary<string, System.Text.Json.Nodes.JsonNode?>? arguments, Dictionary<Guid, Guid> renamed)
+    {
+        foreach (var value in arguments?.Values ?? Enumerable.Empty<System.Text.Json.Nodes.JsonNode?>())
+            if (value is System.Text.Json.Nodes.JsonObject o && Components.ComponentValues.Reference(o) is { Found: Guid id }
+                && renamed.TryGetValue(id, out Guid renewed))
+                o["Found"] = renewed.ToString();
     }
 
     /// <summary>Moves to <paramref name="index"/> of the macro's own list.</summary>

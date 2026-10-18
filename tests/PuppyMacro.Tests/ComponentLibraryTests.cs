@@ -5,6 +5,7 @@ using System.Linq;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Components;
 using Xunit;
 
 namespace PuppyMacro.Tests;
@@ -12,7 +13,8 @@ namespace PuppyMacro.Tests;
 /// <summary>
 /// The Library (ComponentLibrary): library.json read and written, a file it can't read kept and never replaced, structured
 /// names, the fingerprint (what it covers and what it leaves out), a component's rules, deleting what macros link, and the
-/// linked rows resolved for playing (each link with its own condition ids, a missing component).
+/// engine's snapshot (the components prepared once, a macro whose calls fail can't play). The functions themselves (parameters,
+/// calls, frames) are in ComponentFunctionsTests.
 /// </summary>
 public class ComponentLibraryTests : IDisposable
 {
@@ -177,17 +179,19 @@ public class ComponentLibraryTests : IDisposable
     }
 
     [Fact]
-    public void A_component_needs_a_name_a_concept_and_actions_and_holds_no_other_component()
+    public void A_component_needs_a_name_a_concept_and_actions_and_calls_only_components_the_Library_has()
     {
         var good = Component("Remove one affix", FindAndClick(Image("Remove Affix")));
         Assert.Null(ComponentLibrary.CheckComponent(good));
 
-        Assert.Equal(Strings.Library_NameMissing, ComponentLibrary.CheckComponent(Component(" ", Click())));
+        Assert.EndsWith(Strings.Library_NameMissing, ComponentLibrary.CheckComponent(Component(" ", Click())));
         var badConcept = Component("A", Click());
         badConcept.Concept = "Remove Affix";
-        Assert.Equal(Strings.Library_ConceptInvalid, ComponentLibrary.CheckComponent(badConcept));
-        Assert.Equal(Strings.Library_NoActions, ComponentLibrary.CheckComponent(Component("A")));
-        Assert.Equal(Strings.Library_NestedComponent, ComponentLibrary.CheckComponent(Component("A", Link(good))));
+        Assert.EndsWith(Strings.Library_ConceptInvalid, ComponentLibrary.CheckComponent(badConcept));
+        Assert.EndsWith(Strings.Library_NoActions, ComponentLibrary.CheckComponent(Component("A")));
+        // A component can call another one, when the Library has it.
+        Assert.EndsWith(Strings.Code_ComponentMissing, ComponentLibrary.CheckComponent(Component("A", Link(good))));
+        Assert.Null(ComponentLibrary.CheckComponent(Component("A", Link(good)), library: new[] { good }));
     }
 
     [Fact]
@@ -222,53 +226,62 @@ public class ComponentLibraryTests : IDisposable
     }
 
     [Fact]
-    public void Each_link_plays_with_its_own_condition_ids()
+    public void The_snapshot_prepares_each_component_once_and_leaves_the_Library_as_it_is()
     {
         var image = Image("Remove Affix");
         var component = Component("Remove one affix", FindAndClick(image));
-        var library = new ComponentLibrary(LibraryFile);
-        library.Collections.Add(Collection(component));
+        var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
+        macros.Library.Collections.Add(Collection(component));
         var macro = new MacroDefinition { Name = "Twice", Actions = { Link(component), Link(component) } };
+        macros.Macros.Add(macro);
 
-        var resolved = library.Resolve(macro)!;
+        var snapshot = EngineSnapshot.From(AppSettings.CreateDefault(), macros);
 
-        var first = resolved.Actions[0].Resolved!;
-        var second = resolved.Actions[1].Resolved!;
-        Guid firstId = first[0].If!.Conditions[0].Id, secondId = second[0].If!.Conditions[0].Id;
-        Assert.NotEqual(firstId, secondId);
-        Assert.NotEqual(image.Id, firstId);
-        // Each click follows its own link's condition.
-        Assert.Equal(firstId, first[0].If!.Then[0].FoundId);
-        Assert.Equal(secondId, second[0].If!.Then[0].FoundId);
-        // The Library and the macro stay as they were.
-        Assert.Equal(image.Id, component.Actions[0].If!.Conditions[0].Id);
-        Assert.Null(macro.Actions[0].Resolved);
+        var prepared = snapshot.Components.Find(component.Id)!;
+        Assert.Equal("Remove one affix", prepared.Name);
+        // A copy, the same ids: each call gets a frame of its own, so the ids never need to change.
+        Assert.NotSame(component.Actions[0], prepared.Actions[0]);
+        Assert.Equal(image.Id, prepared.Actions[0].If!.Conditions[0].Id);
+        Assert.Equal(1, snapshot.Components.Count);
+        // The snapshot's macro is the saved one, untouched: its two rows play the one prepared component.
+        Assert.Equal(MacroJson.Serialize(macro), MacroJson.Serialize(snapshot.Macros.Single()));
+        Assert.Empty(snapshot.Unplayable);
     }
 
     [Fact]
     public void A_macro_linking_a_missing_component_can_t_play()
     {
-        var library = new ComponentLibrary(LibraryFile);
+        var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
         var gone = Guid.NewGuid();
         var macro = new MacroDefinition { Name = "Old", Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = gone } } };
+        var asCondition = new MacroDefinition { Name = "Old condition", Actions = { new MacroAction { Type = MacroActionType.If, If = new MacroIf
+        {
+            Conditions = { new MacroCondition { Kind = ConditionKind.Component, Name = "Gone", ComponentId = gone } },
+        } } } };
+        macros.Macros.Add(macro);
+        macros.Macros.Add(asCondition);
 
-        Assert.Equal(new[] { gone }, library.Missing(macro));
-        Assert.Null(library.Resolve(macro));
+        Assert.Equal(new[] { gone }, macros.Library.Missing(macro));
+        Assert.Equal(new[] { gone }, macros.Library.Missing(asCondition));
+        Assert.Equal(new[] { macro.Id, asCondition.Id }.ToHashSet(), EngineSnapshot.From(AppSettings.CreateDefault(), macros).Unplayable.ToHashSet());
     }
 
     [Fact]
-    public void A_macro_without_links_resolves_as_it_is()
+    public void A_macro_without_links_plays_as_it_is()
     {
-        var library = new ComponentLibrary(LibraryFile);
+        var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
         var macro = new MacroDefinition { Name = "Plain", Actions = { Click() } };
+        macros.Macros.Add(macro);
 
-        Assert.Empty(library.Missing(macro));
-        Assert.Equal(10, library.Resolve(macro)!.Actions[0].X);
+        Assert.Empty(macros.Library.Missing(macro));
+        var snapshot = EngineSnapshot.From(AppSettings.CreateDefault(), macros);
+        Assert.Empty(snapshot.Unplayable);
+        Assert.Equal(10, snapshot.Macros.Single().Actions[0].X);
     }
 
-    private static List<CodeProblem> Problems(MacroDefinition macro, Func<Guid, bool>? hasComponent = null)
+    private static List<CodeProblem> Problems(MacroDefinition macro, params LibraryComponent[] library)
     {
-        MacroJson.Parse(MacroJson.Serialize(macro), macro.Id, (_, _) => null, out var problems, hasComponent: hasComponent);
+        MacroJson.Parse(MacroJson.Serialize(macro), macro.Id, (_, _) => null, out var problems, components: new ComponentSignatures(library));
         return problems;
     }
 
@@ -277,9 +290,9 @@ public class ComponentLibraryTests : IDisposable
     {
         var component = Component("Remove one affix", Click());
         var good = new MacroDefinition { Name = "D4", Actions = { Link(component) } };
-        Assert.Empty(Problems(good, id => id == component.Id));
+        Assert.Empty(Problems(good, component));
 
-        Assert.Contains(Problems(good, _ => false), p => p.Message.EndsWith(Strings.Code_ComponentMissing));
+        Assert.Contains(Problems(good), p => p.Message.EndsWith(Strings.Code_ComponentMissing));
         var noId = new MacroDefinition { Name = "D4", Actions = { new MacroAction { Type = MacroActionType.Component } } };
         Assert.Contains(Problems(noId), p => p.Message.EndsWith(Strings.Code_ChooseComponent));
         var withDelay = new MacroDefinition { Name = "D4", Actions = { Link(component) } };
@@ -291,7 +304,7 @@ public class ComponentLibraryTests : IDisposable
     }
 
     [Fact]
-    public void The_engine_s_snapshot_resolves_the_links_and_a_macro_missing_one_can_t_play()
+    public void The_engine_s_snapshot_has_the_components_and_a_macro_missing_one_can_t_play()
     {
         var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
         var component = Component("Remove one affix", Click(42));
@@ -303,9 +316,8 @@ public class ComponentLibraryTests : IDisposable
 
         var snapshot = EngineSnapshot.From(AppSettings.CreateDefault(), macros);
 
-        Assert.Equal(42, snapshot.Macros.Single(m => m.Id == linked.Id).Actions[0].Resolved!.Single().X);
+        Assert.Equal(42, snapshot.Components.Find(component.Id)!.Actions.Single().X);
         Assert.Equal(new[] { broken.Id }, snapshot.Unplayable);
-        Assert.Null(linked.Actions[0].Resolved); // the saved macro stays as it is
     }
 
     [Fact]

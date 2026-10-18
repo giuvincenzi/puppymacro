@@ -802,7 +802,7 @@ internal sealed partial class AiTools
             ? LoopJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems)
             : typeof(T) == typeof(MacroDefinition)
                 ? MacroJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems,
-                    _host.Macros.Images.Has, id => _host.Macros.Library.Find(id) != null)
+                    _host.Macros.Images.Has, _host.Macros.Library.Signatures())
                 : RemapJson.Parse(text, itemId, (b, a) => HotkeyConflicts.RemapClash(b, a, _host.Settings, _host.Macros, itemId), out problems);
         return parsed is T ok
             ? (ok, null, existing == null ? null : Serialize(existing))

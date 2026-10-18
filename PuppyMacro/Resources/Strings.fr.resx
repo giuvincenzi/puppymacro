@@ -1331,7 +1331,6 @@ Détails : {1}</value></data>
   <data name="Library_NameMissing" xml:space="preserve"><value>Donnez-lui un nom.</value></data>
   <data name="Library_ConceptInvalid" xml:space="preserve"><value>Le concept ne peut contenir que des lettres minuscules, des chiffres et _, par exemple remove_one_affix.</value></data>
   <data name="Library_NoActions" xml:space="preserve"><value>Un composant doit avoir au moins une action.</value></data>
-  <data name="Library_NestedComponent" xml:space="preserve"><value>Un composant ne peut pas contenir un autre composant. Dissociez d'abord cette ligne.</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} est lié dans ces macros : {1}. Dissociez-le d'abord dans celles-ci.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Certains composants de {0} sont liés dans ces macros : {1}. Dissociez-les d'abord dans celles-ci.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro n'a pas pu lire la bibliothèque et en a gardé une copie sous le nom library.invalid.json. La bibliothèque ne peut pas être modifiée tant que le fichier n'est pas corrigé.</value></data>

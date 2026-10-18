@@ -1375,7 +1375,6 @@
   <data name="Library_NameMissing" xml:space="preserve"><value>Укажите имя.</value></data>
   <data name="Library_ConceptInvalid" xml:space="preserve"><value>Концепция может содержать только строчные буквы, цифры и _, например remove_one_affix.</value></data>
   <data name="Library_NoActions" xml:space="preserve"><value>Компоненту нужно хотя бы одно действие.</value></data>
-  <data name="Library_NestedComponent" xml:space="preserve"><value>Компонент не может содержать другой компонент. Сначала отвяжите эту строку.</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} привязан в этих макросах: {1}. Сначала отвяжите его там.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>Некоторые компоненты из {0} привязаны в этих макросах: {1}. Сначала отвяжите их там.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro не удалось прочитать библиотеку, поэтому копия сохранена как library.invalid.json. Библиотеку нельзя изменить, пока файл не будет исправлен.</value></data>

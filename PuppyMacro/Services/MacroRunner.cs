@@ -6,13 +6,16 @@ using System.Globalization;
 using System.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Services.Components;
 using PuppyMacro.Services.Screen;
 
 namespace PuppyMacro.Services;
 
 /// <summary>
 /// Plays a macro on its own thread: every action after its delay, scaled by the macro speed. An If checks its conditions
-/// on the screen (the speed does not change that wait), then plays Then or Else, or ends the macro.
+/// on the screen (the speed does not change that wait), then plays Then or Else, or ends the macro. A linked row plays its
+/// prepared component in a frame of its own: the call's arguments (its bound fields read them when each action starts) and
+/// the places its Ifs find, so two calls never mix them up.
 /// </summary>
 internal sealed class MacroRunner
 {
@@ -35,16 +38,30 @@ internal sealed class MacroRunner
     private bool _ifStopped;
     private readonly Func<IReadOnlyList<OpenCvSharp.Rect>> _monitors;
     private List<IScreenWatch>? _frames;
+    private readonly ComponentPrograms _programs;
 
-    // Where the conditions checked so far found their image or text, for the mouse actions that use it.
-    private readonly Dictionary<Guid, OpenCvSharp.Point> _found = new();
+    /// <summary>One call playing: its arguments, and where the conditions it checked so far found their image or text.</summary>
+    private sealed class CallFrame
+    {
+        public required FrameArguments Arguments { get; init; }
+        public Dictionary<Guid, OpenCvSharp.Point> Found { get; } = new();
+    }
+
+    // The macro's frame at the bottom, then one per component call inside it.
+    private readonly Stack<CallFrame> _calls = new();
+
+    private CallFrame Top => _calls.Peek();
 
     /// <param name="log">The run's Debug log (Debug on, or a test by an AI app); null writes none.</param>
     /// <param name="monitors">The monitors whose pictures the log takes (the desktop's when null).</param>
+    /// <param name="programs">The components its linked rows and Component conditions call (the engine's snapshot).</param>
+    /// <param name="arguments">The values of the macro's own frame: a component's Examples when it is tested alone.</param>
     public MacroRunner(MacroDefinition macro, ClipboardPaster paster, ImageStore? images = null,
         RecognitionDevice device = RecognitionDevice.Automatic, IScreen? screen = null, RunLog? log = null,
-        Func<IReadOnlyList<OpenCvSharp.Rect>>? monitors = null)
+        Func<IReadOnlyList<OpenCvSharp.Rect>>? monitors = null, ComponentPrograms? programs = null, FrameArguments? arguments = null)
     {
+        _programs = programs ?? ComponentPrograms.Empty;
+        _calls.Push(new CallFrame { Arguments = arguments ?? FrameArguments.None });
         _log = log;
         _monitors = monitors ?? ScreenCapture.MonitorBounds;
         _macro = macro.Clone();
@@ -150,7 +167,7 @@ internal sealed class MacroRunner
     {
         for (int i = 0; i < actions.Count; i++)
         {
-            var action = actions[i];
+            var action = ComponentPrograms.Bound(actions[i], Top.Arguments);
             if (!Wait(action.DelayMs))
                 return false;
             _current = $"{path}{i + 1}";
@@ -190,23 +207,46 @@ internal sealed class MacroRunner
     }
 
     /// <summary>
-    /// A row linked to a Library component: its actions as the Library had them when the macro started (the engine's
-    /// snapshot resolved them, each link with its own condition ids), numbered under the row in the Debug log
-    /// ("4 (Remove one affix) 2").
+    /// A row linked to a Library component: the component as the Library had it when the macro started (prepared in the
+    /// engine's snapshot), in a new frame with the row's arguments, numbered under the row in the Debug log
+    /// ("4 (Remove one affix) 2"). Skipped when an argument has no value this time (its condition found nothing).
     /// </summary>
     private bool Component(MacroAction row)
     {
-        if (row.Resolved == null)
+        if (row.ComponentId is not Guid id || _programs.Find(id) is not { } callee)
         {
             Log("Component: not in the Library, skipped");
             return true;
         }
+        if (_calls.Count > ComponentSignatures.MaxDepth)
+        {
+            Log($"Component \"{callee.Name}\": skipped, more than {ComponentSignatures.MaxDepth} components inside each other");
+            return true;
+        }
+        if (ComponentPrograms.Evaluate(callee, row.Arguments, Top.Arguments, Top.Found, out string? missing) is not { } arguments)
+        {
+            Log($"Component \"{callee.Name}\": skipped, {missing} has no value this time (its condition found nothing)");
+            return true;
+        }
         string me = _current;
-        Log($"Component \"{row.ResolvedName}\": {row.Resolved.Count} action(s)");
-        bool goOn = Play(row.Resolved, $"{me} ({row.ResolvedName}) ");
-        _current = me;
-        return goOn;
+        Log($"Component \"{callee.Name}\": {callee.Actions.Count} action(s){ArgumentsText(callee, arguments)}");
+        _calls.Push(new CallFrame { Arguments = arguments });
+        try
+        {
+            return Play(callee.Actions, $"{me} ({callee.Name}) ");
+        }
+        finally
+        {
+            _calls.Pop();
+            _current = me;
+        }
     }
+
+    /// <summary>", with Slot = 3986, 1056; Settle = 100 ms" for the Debug log, in English.</summary>
+    private static string ArgumentsText(PreparedComponent callee, FrameArguments arguments) =>
+        callee.Parameters.Count == 0 ? ""
+            : ", with " + Loc.English(() => string.Join("; ", callee.Parameters.Select(p =>
+                $"{p.Name} = {ComponentValues.Describe(arguments[p.Name], p.Type, p.Unit)}")));
 
     /// <summary>Checks an If's conditions, then plays Then or Else, or ends the macro (Stop the macro).</summary>
     private bool If(MacroIf block)
@@ -221,14 +261,16 @@ internal sealed class MacroRunner
                 _ => "waits as long as it takes",
             });
         var clock = Stopwatch.StartNew();
-        var result = _checker.Check(block, _stop, describe: _log != null);
+        var checking = Checked(block);
+        var result = checking == null ? new ConditionResult(false, false, new Dictionary<Guid, OpenCvSharp.Point>())
+            : _checker.Check(checking, _stop, describe: _log != null);
         _current = me;
         if (result.Stopped)
         {
             Log($"If: stopped while it was checking, after {clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)} s");
             return false;
         }
-        KeepFound(_found, block, result);
+        KeepFound(Top.Found, block, result);
         // The event with the screen as the conditions saw it, then what each one saw.
         Event($"If: {(result.Met ? "true" : "not true")} after {clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)} s -> " +
             (result.Met ? $"Then ({block.Then.Count} actions)"
@@ -243,6 +285,32 @@ internal sealed class MacroRunner
             return false;
         }
         return Play(block.Else, $"{me} Else ");
+    }
+
+    /// <summary>
+    /// The If as the checker sees it in this frame: each condition with its bound fields filled, a Component condition as
+    /// the condition its component returns. A condition that can't be checked this time (a value its call needs is
+    /// missing) is never true: with All the If is not true at once (null), with Any the others decide.
+    /// </summary>
+    private MacroIf? Checked(MacroIf block)
+    {
+        var conditions = new List<MacroCondition>();
+        foreach (var condition in block.Conditions)
+        {
+            if (_programs.Effective(condition, Top.Arguments, Top.Found) is { } effective)
+                conditions.Add(effective);
+            else
+            {
+                Log($"If: the condition \"{condition.Name}\" can't be checked this time (its component or a value is missing)");
+                if (block.Match == ConditionMatch.All)
+                    return null;
+            }
+        }
+        if (conditions.Count == 0)
+            return null;
+        if (conditions.SequenceEqual(block.Conditions))
+            return block;
+        return new MacroIf { Conditions = conditions, Match = block.Match, Wait = block.Wait, WaitSeconds = block.WaitSeconds, OnFail = block.OnFail };
     }
 
     /// <summary>
@@ -265,7 +333,7 @@ internal sealed class MacroRunner
     {
         if (a.FoundId is not { } id)
             return (a.X, a.Y);
-        return _found.TryGetValue(id, out var p) ? (p.X + a.FoundOffsetX, p.Y + a.FoundOffsetY) : null;
+        return Top.Found.TryGetValue(id, out var p) ? (p.X + a.FoundOffsetX, p.Y + a.FoundOffsetY) : null;
     }
 
     /// <summary>Waits <paramref name="ms"/> at ×1 speed. Returns false if stopped.</summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace PuppyMacro.Models;
@@ -29,6 +30,12 @@ public enum ConditionKind
     Pixel,
     Image,
     Text,
+
+    /// <summary>
+    /// A Library component that says what it finds (<see cref="LibraryComponent.Returns"/>): true when that condition of it is,
+    /// with the component's arguments; it gives the place that condition found.
+    /// </summary>
+    Component,
 }
 
 /// <summary>Whether Then runs when all the conditions are true or when one of them is.</summary>
@@ -187,9 +194,24 @@ public sealed class MacroCondition
     [JsonIgnore(Condition = Null)]
     public string? Language { get; set; }
 
-    /// <summary>Image and Text: it has a name and looks in an area.</summary>
+    /// <summary>Component: the <see cref="LibraryComponent.Id"/> whose returned condition this is.</summary>
+    [JsonIgnore(Condition = Null)]
+    public Guid? ComponentId { get; set; }
+
+    /// <summary>Component: the values of the component's parameters (<see cref="MacroAction.Arguments"/>).</summary>
+    [JsonIgnore(Condition = Null)]
+    public Dictionary<string, JsonNode?>? Arguments { get; set; }
+
+    /// <summary>
+    /// Inside a component: the fields of this condition that come from the component's parameters, by slot ("Point",
+    /// "Color"…) with the parameter's name (<c>Components.ComponentSlots</c>). The fields keep the parameter's Example.
+    /// </summary>
+    [JsonIgnore(Condition = Null)]
+    public Dictionary<string, string>? Bind { get; set; }
+
+    /// <summary>Image, Text and Component: it has a name and finds a place.</summary>
     [JsonIgnore]
-    public bool Finds => Kind is ConditionKind.Image or ConditionKind.Text;
+    public bool Finds => Kind is ConditionKind.Image or ConditionKind.Text or ConditionKind.Component;
 
     /// <summary>Whether a mouse action in Then can go where it was found: not when it is true for not being there.</summary>
     [JsonIgnore]
@@ -199,6 +221,8 @@ public sealed class MacroCondition
     {
         var copy = (MacroCondition)MemberwiseClone();
         copy.Images = Images?.ConvertAll(i => i.Clone());
+        copy.Arguments = MacroAction.CloneArguments(Arguments);
+        copy.Bind = Bind == null ? null : new Dictionary<string, string>(Bind);
         return copy;
     }
 }
@@ -312,15 +336,19 @@ public sealed class MacroAction : KeyModifierFields
     public Guid? ComponentId { get; set; }
 
     /// <summary>
-    /// Component, at run time only: the component's actions, each link with its own condition Ids
-    /// (<c>ComponentLibrary.Resolve</c>, when the engine's snapshot is made); never saved.
+    /// Component: the value of each of the component's parameters, by name: a value of its type, <c>{"From": a parameter}</c>
+    /// (inside a component, that component's parameter) or <c>{"Found": a condition's Id, "OffsetX", "OffsetY"}</c> (a Point:
+    /// where an If around the row found it). A parameter left out takes its Default.
     /// </summary>
-    [JsonIgnore]
-    public List<MacroAction>? Resolved { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, JsonNode?>? Arguments { get; set; }
 
-    /// <summary>Component, at run time only: the component's name when it was resolved (for the Debug log).</summary>
-    [JsonIgnore]
-    public string ResolvedName { get; set; } = "";
+    /// <summary>
+    /// Inside a component: the fields of this action that come from the component's parameters, by slot ("Point", "HoldMs"…)
+    /// with the parameter's name (<c>Components.ComponentSlots</c>). The fields keep the parameter's Example.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, string>? Bind { get; set; }
 
     /// <summary>The actions of its Then and Else (an If's), none for the other types.</summary>
     [JsonIgnore]
@@ -355,9 +383,14 @@ public sealed class MacroAction : KeyModifierFields
         var copy = (MacroAction)MemberwiseClone();
         copy.Path = Path.ConvertAll(p => new PathPoint { X = p.X, Y = p.Y, T = p.T });
         copy.If = If?.Clone();
-        copy.Resolved = Resolved?.ConvertAll(a => a.Clone());
+        copy.Arguments = CloneArguments(Arguments);
+        copy.Bind = Bind == null ? null : new Dictionary<string, string>(Bind);
         return copy;
     }
+
+    /// <summary>A deep copy of a call's arguments (a <see cref="JsonNode"/> belongs to one parent).</summary>
+    public static Dictionary<string, JsonNode?>? CloneArguments(Dictionary<string, JsonNode?>? arguments) =>
+        arguments?.ToDictionary(p => p.Key, p => p.Value?.DeepClone());
 
     /// <summary>Time the step itself takes at ×1 speed (holds, paths, smooth moves).</summary>
     [System.Text.Json.Serialization.JsonIgnore]

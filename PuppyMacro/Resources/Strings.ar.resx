@@ -1463,7 +1463,6 @@
   <data name="Library_NameMissing" xml:space="preserve"><value>أدخل اسمًا.</value></data>
   <data name="Library_ConceptInvalid" xml:space="preserve"><value>يمكن أن يحتوي المفهوم على أحرف صغيرة وأرقام و_ فقط، مثل remove_one_affix.</value></data>
   <data name="Library_NoActions" xml:space="preserve"><value>يحتاج المكوّن إلى إجراء واحد على الأقل.</value></data>
-  <data name="Library_NestedComponent" xml:space="preserve"><value>لا يمكن أن يحتوي مكوّن على مكوّن آخر. ألغِ ربط هذا الصف أولاً.</value></data>
   <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} مرتبط في وحدات الماكرو هذه: {1}. ألغِ ربطه هناك أولاً.</value></data>
   <data name="Library_CollectionInUse" xml:space="preserve"><value>بعض مكوّنات {0} مرتبطة في وحدات الماكرو هذه: {1}. ألغِ ربطها هناك أولاً.</value></data>
   <data name="Library_FileUnreadable" xml:space="preserve"><value>تعذّر على PuppyMacro قراءة المكتبة، لذا احتفظ بنسخة منها باسم library.invalid.json. لا يمكن تغيير المكتبة حتى يتم إصلاح الملف.</value></data>

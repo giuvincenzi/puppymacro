@@ -705,7 +705,7 @@ public partial class MacroEditorWindow
             if (library.FindCollection(details.CollectionId ?? Guid.Empty) is not { } collection)
                 return Strings.Library_NameMissing;
             collection.Components.Add(component);
-            return ComponentLibrary.CheckComponent(component, _macros.Images.Has);
+            return ComponentLibrary.CheckComponent(component, _macros.Images.Has, library.AllComponents);
         });
         if (problem != null)
         {
@@ -904,15 +904,8 @@ public partial class MacroEditorWindow
     {
         if (SelectedRow is not { } row)
             return;
-        // A linked row plays its component as the Library has it.
-        var action = row.Action;
-        if (action.Type == MacroActionType.Component)
-        {
-            if (_macros.Library.Resolve(new MacroDefinition { Actions = { action.Clone() } }) is not { } resolved)
-                return;
-            action = resolved.Actions[0];
-        }
-        ActionTestSession.Run(_engine, action, this);
+        // A linked row plays its component as the Library has it (the engine's snapshot).
+        ActionTestSession.Run(_engine, row.Action, this);
     }
 
     /// <summary>Double-click: an action opens Edit, a group opens or closes.</summary>
@@ -1547,7 +1540,7 @@ public partial class MacroEditorWindow
         var code = new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForMacro(_itemId), BuildMacro, MacroJson.Serialize,
             (string text, out List<CodeProblem> problems) => MacroJson.Parse(text, _itemId, HotkeyConflict, out problems, _macros.Images.Has,
-                id => _macros.Library.Find(id) != null),
+                _macros.Library.Signatures()),
             LoadMacro, Validate);
         code.Opening += () =>
         {

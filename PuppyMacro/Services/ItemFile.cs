@@ -90,10 +90,13 @@ internal static class ItemFile
             if (item is not MacroDefinition macro)
                 continue;
             ids.UnionWith(ImageStore.IdsIn(macro));
-            foreach (var link in macro.AllActions.Where(a => a.Type == MacroActionType.Component))
-                if (link.ComponentId is Guid component && library?.Find(component) is { } found && !shared.Any(c => c.Id == found.Collection.Id))
+            foreach (Guid component in Components.ComponentSignatures.Callees(macro.Actions))
+                if (library?.Find(component) is { } found && !shared.Any(c => c.Id == found.Collection.Id))
                     shared.Add(found.Collection);
         }
+        // The collections their components call too, down every call: a file always has what its components need.
+        if (library != null)
+            shared = library.WithDependencies(shared);
         var root = new JsonObject
         {
             ["Format"] = CurrentFormat,
@@ -106,7 +109,7 @@ internal static class ItemFile
             root["Collections"] = JsonNode.Parse(JsonSerializer.Serialize(shared, CodeJson.Options));
             foreach (var collection in shared)
                 foreach (var component in collection.Components)
-                    ids.UnionWith(ImageStore.IdsIn(new MacroDefinition { Actions = component.Actions }));
+                    ids.UnionWith(ImageStore.IdsIn(component));
         }
         // A new field around the items: older versions read Format 1 files without looking at it.
         if (images?.Embed(ids) is { } embedded)
@@ -172,19 +175,21 @@ internal static class ItemFile
             if (CollectionsProblem(fileCollections, macros.Library, HasImage, content.NewCollections) is string problem)
                 return new ItemFileContent { Error = newer ? update : problem, NeedsUpdate = newer };
         }
-        bool HasComponent(Guid id) => macros.Library.Find(id) != null || fileCollections.Any(c => c.Components.Any(k => k.Id == id));
+        // The items' calls are checked against the Library with the file's new collections in it.
+        var components = new Components.ComponentSignatures(macros.Library.AllComponents.Concat(content.NewCollections.SelectMany(c => c.Components)));
 
         var taken = new Taken(settings, macros);
         for (int index = 0; index < items.Count; index++)
-            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken, HasImage, HasComponent));
+            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken, HasImage, components));
         return content;
     }
 
     /// <summary>
     /// The file's collections against the Library (the user's decision: a collection is a package, its id never changes):
-    /// one the Library doesn't have is new (it must pass the Library's checks); one with the same id and the same content
-    /// (<see cref="ComponentLibrary.Fingerprint"/>) is already here; one with the same id and other content, or a component
-    /// that is here in another collection, refuses the whole file, saying which.
+    /// one the Library doesn't have is new (it must pass the Library's checks, its calls against the Library with the file's
+    /// new collections in it); one with the same id and the same content (<see cref="ComponentLibrary.Fingerprint"/>) is
+    /// already here; one with the same id and other content, or a component that is here in another collection, refuses the
+    /// whole file, saying which.
     /// </summary>
     private static string? CollectionsProblem(List<LibraryCollection> collections, ComponentLibrary library, Func<string, bool> hasImage,
         List<LibraryCollection> added)
@@ -203,18 +208,24 @@ internal static class ItemFile
                 if (library.Find(component.Id) is { } elsewhere)
                     return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportConflict, elsewhere.Collection.Name);
             }
-            string? bad = ComponentLibrary.CheckCollection(collection)
-                ?? collection.Components.Select(c => ComponentLibrary.CheckComponent(c, hasImage)).FirstOrDefault(p => p != null);
-            if (bad != null)
+            if (ComponentLibrary.CheckCollection(collection) is string bad)
                 return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportCollectionProblem, collection.Name, bad);
             collection.AppExe = AppScope.Normalize(collection.AppExe);
             added.Add(collection);
         }
+        var merged = library.AllComponents.Concat(added.SelectMany(c => c.Components)).ToList();
+        foreach (var collection in added)
+            foreach (var component in collection.Components)
+                if (ComponentLibrary.CheckComponent(component, hasImage, merged) is string problem)
+                {
+                    added.Clear();
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportCollectionProblem, collection.Name, problem);
+                }
         return null;
     }
 
     private static ItemFileEntry ReadEntry(JsonNode? node, int index, bool chosen, string? update, Taken taken,
-        Func<string, bool> hasImage, Func<Guid, bool> hasComponent)
+        Func<string, bool> hasImage, Components.ComponentSignatures components)
     {
         string kindName = node is JsonObject o && o["Kind"] is JsonValue k && k.TryGetValue(out string? word) ? word : "";
         string kind = kindName.ToLowerInvariant();
@@ -239,7 +250,7 @@ internal static class ItemFile
         object? parsed = kind switch
         {
             "loop" => LoopJson.Parse(json, id, (_, _) => null, out problems),
-            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems, hasImage, hasComponent),
+            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems, hasImage, components),
             _ => RemapJson.Parse(json, id, (_, _) => null, out problems, withoutSource: true),
         };
         if (parsed is RemapDefinition remapTitle)

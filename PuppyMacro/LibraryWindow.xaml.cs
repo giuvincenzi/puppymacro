@@ -242,7 +242,7 @@ public partial class LibraryWindow
             if (library.Find(item.Component.Id) is not { } found)
                 return Strings.Code_ComponentMissing;
             details.ApplyTo(found.Component);
-            return ComponentLibrary.CheckComponent(found.Component, _macros.Images.Has);
+            return ComponentLibrary.CheckComponent(found.Component, _macros.Images.Has, library.AllComponents);
         });
     }
 
@@ -260,11 +260,13 @@ public partial class LibraryWindow
                     if (library.Find(item.Component.Id) is not { } found)
                         return Strings.Code_ComponentMissing;
                     found.Component.Actions = restored.Actions;
+                    found.Component.Parameters = restored.Parameters;
+                    found.Component.Returns = restored.Returns;
                     found.Component.Name = restored.Name;
                     found.Component.Purpose = restored.Purpose;
                     found.Component.Concept = restored.Concept;
                     found.Component.Description = restored.Description;
-                    return ComponentLibrary.CheckComponent(found.Component, _macros.Images.Has);
+                    return ComponentLibrary.CheckComponent(found.Component, _macros.Images.Has, library.AllComponents);
                 }))
                 window.Close();
         };

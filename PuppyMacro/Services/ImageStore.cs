@@ -147,14 +147,36 @@ internal sealed partial class ImageStore
         }
     }
 
-    /// <summary>The ids of the images a macro uses.</summary>
-    public static HashSet<string> IdsIn(MacroDefinition macro) =>
-        macro.AllActions
-            .SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
+    /// <summary>The ids of the images a macro uses: its conditions' and those its calls give to components.</summary>
+    public static HashSet<string> IdsIn(MacroDefinition macro) => IdsIn(macro.Actions);
+
+    /// <summary>The ids of the images some actions use, also those their calls give as arguments.</summary>
+    public static HashSet<string> IdsIn(IEnumerable<MacroAction> actions)
+    {
+        var all = MacroDefinition.Walk(actions).ToList();
+        var conditions = all.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).ToList();
+        var ids = conditions
             .SelectMany(c => c.Images ?? new List<ConditionImage>())
             .Select(i => i.Id)
             .Where(MacroJson.IsImageId)
             .ToHashSet(StringComparer.Ordinal);
+        foreach (var arguments in all.Select(a => a.Arguments).Concat(conditions.Select(c => c.Arguments)))
+            foreach (var value in arguments?.Values ?? Enumerable.Empty<System.Text.Json.Nodes.JsonNode?>())
+                if (value != null)
+                    ids.UnionWith(IdsIn(value.ToJsonString()));
+        return ids;
+    }
+
+    /// <summary>The ids of the images a component uses: its actions', and its parameters' examples and defaults.</summary>
+    public static HashSet<string> IdsIn(LibraryComponent component)
+    {
+        var ids = IdsIn(component.Actions);
+        foreach (var parameter in component.Parameters)
+            foreach (var value in new[] { parameter.Example, parameter.Default })
+                if (value != null)
+                    ids.UnionWith(IdsIn(value.ToJsonString()));
+        return ids;
+    }
 
     /// <summary>The ids of the images an item's JSON names (a History version, an AI change), without reading it as an item.</summary>
     public static HashSet<string> IdsIn(string json) =>

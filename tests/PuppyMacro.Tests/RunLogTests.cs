@@ -135,11 +135,11 @@ public class RunLogTests : IDisposable
     }
 
     /// <summary>Runs a macro to its end with a log and gives the log.</summary>
-    private string RunWithLog(MacroDefinition macro)
+    private string RunWithLog(MacroDefinition macro, Services.Components.ComponentPrograms? programs = null)
     {
         var log = new RunLog(NewFolder("run-" + Guid.NewGuid().ToString("N")[..6]), macro, "a test");
         var runner = new MacroRunner(macro, new ClipboardPaster(Dispatcher.CurrentDispatcher), null, RecognitionDevice.Cpu, _screen, log,
-            () => new[] { new Rect(0, 0, ConditionCheckerTests.FakeScreen.Width, ConditionCheckerTests.FakeScreen.Height) });
+            () => new[] { new Rect(0, 0, ConditionCheckerTests.FakeScreen.Width, ConditionCheckerTests.FakeScreen.Height) }, programs);
         using var ended = new ManualResetEventSlim();
         runner.Exited += _ => ended.Set();
         runner.Start();
@@ -193,15 +193,13 @@ public class RunLogTests : IDisposable
     {
         var press = new MacroAction { Type = MacroActionType.PressKey, Vk = 0x87, HoldMs = 10 };
         var component = new LibraryComponent { Name = "Press F24", Concept = "press_f24", Actions = { press } };
-        var library = new ComponentLibrary(_folder.File(ComponentLibrary.FileName));
-        library.Collections.Add(new LibraryCollection { Name = "Keys", Components = { component } });
-        var macro = library.Resolve(new MacroDefinition
+        var macro = new MacroDefinition
         {
             Name = "Linked",
             Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id } },
-        })!;
+        };
 
-        string log = RunWithLog(macro);
+        string log = RunWithLog(macro, Services.Components.ComponentPrograms.Prepare(new[] { component }));
 
         Assert.Contains("#1 Component \"Press F24\": 1 action(s)", log);
         Assert.Contains("#1 (Press F24) 1 Press F24, held 10 ms", log);

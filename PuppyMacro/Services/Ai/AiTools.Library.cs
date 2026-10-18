@@ -134,7 +134,7 @@ internal sealed partial class AiTools
             string? name = editId is Guid known ? library.Find(known)!.Value.Collection.Name : CollectionArg(args, component, out string? bad)?.Name;
             if (editId == null && name == null)
                 return (CollectionProblem(args), (string?)null, "");
-            string? check = ComponentLibrary.CheckComponent(component, _host.Macros.Images.Has);
+            string? check = ComponentLibrary.CheckComponent(component, _host.Macros.Images.Has, library.AllComponents);
             return (check, existing == null ? null : JsonSerializer.Serialize(existing, CodeJson.Options), name ?? "");
         }))).ConfigureAwait(false);
         if (problem != null)

@@ -9,15 +9,18 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
+using PuppyMacro.Services.Components;
 
 namespace PuppyMacro.Services;
 
 /// <summary>
 /// The Library: collections of components (<see cref="LibraryCollection"/>, <see cref="LibraryComponent"/>) that macros
-/// link (a row of type <see cref="MacroActionType.Component"/>), in <c>library.json</c> in the data folder. Its rules: a
-/// component is self-contained (its "Where … was found" use its own conditions) and holds no other component; a linked
-/// component, or a collection with one, can't be deleted; ids never change. A collection's content has a fingerprint, so
-/// two copies with the same id are told apart at import.
+/// link (a row of type <see cref="MacroActionType.Component"/>, a condition of kind <see cref="ConditionKind.Component"/>),
+/// in <c>library.json</c> in the data folder. Its rules: a component is self-contained (its "Where … was found" use its own
+/// conditions; what comes from outside comes as its parameters' values), and may call other components, never in a loop and
+/// at most <see cref="ComponentSignatures.MaxDepth"/> deep; a linked component, or a collection with one, can't be deleted;
+/// ids never change. A collection's content has a fingerprint, so two copies with the same id are told apart at import.
+/// The checks of components and calls are in <c>Services/Components</c>.
 /// </summary>
 internal sealed class ComponentLibrary
 {
@@ -85,6 +88,11 @@ internal sealed class ComponentLibrary
         }
     }
 
+    /// <summary>library.json's path, and its text as it would be saved now (<see cref="MacroLibrary.TrySaveTogether"/>).</summary>
+    internal string FilePath => _file;
+
+    internal string Text() => JsonSerializer.Serialize(new LibraryFile { Collections = Collections }, CodeJson.Options);
+
     public bool TrySave(out string? error)
     {
         if (Broken)
@@ -97,7 +105,7 @@ internal sealed class ComponentLibrary
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(_file))!);
             string temp = _file + ".tmp";
-            File.WriteAllText(temp, JsonSerializer.Serialize(new LibraryFile { Collections = Collections }, CodeJson.Options));
+            File.WriteAllText(temp, Text());
             File.Move(temp, _file, overwrite: true);
             return true;
         }
@@ -120,6 +128,30 @@ internal sealed class ComponentLibrary
     }
 
     public IEnumerable<LibraryComponent> AllComponents => Collections.SelectMany(c => c.Components);
+
+    /// <summary>The Library's components as the checks of calls see them.</summary>
+    public ComponentSignatures Signatures() => new(AllComponents);
+
+    /// <summary>
+    /// These collections and every collection whose components theirs call, down every call, each once, in that order: what
+    /// a file needs so that its components can play where it is imported.
+    /// </summary>
+    public List<LibraryCollection> WithDependencies(IEnumerable<LibraryCollection> collections)
+    {
+        var result = new List<LibraryCollection>();
+        var queue = new Queue<LibraryCollection>(collections);
+        while (queue.Count > 0)
+        {
+            var collection = queue.Dequeue();
+            if (result.Any(c => c.Id == collection.Id))
+                continue;
+            result.Add(collection);
+            foreach (Guid called in collection.Components.SelectMany(c => ComponentSignatures.Callees(c.Actions)))
+                if (Find(called) is { } found && !result.Any(c => c.Id == found.Collection.Id))
+                    queue.Enqueue(found.Collection);
+        }
+        return result;
+    }
 
     // ================= Names =================
 
@@ -153,16 +185,23 @@ internal sealed class ComponentLibrary
     // ================= Fingerprint =================
 
     /// <summary>
-    /// What a collection's content is, as a SHA-256 of its components' ids and actions (sorted by id, compact JSON with the
-    /// current model): two copies with the same id and fingerprint play the same. Names, descriptions, the app and the
-    /// screen are left out, so renaming on one PC never blocks an import. Always computed with the code that compares, never
-    /// read from a file (a newer model writes other text).
+    /// What a collection's content is, as a SHA-256 of its components' ids, signatures (each parameter's name, type, unit,
+    /// example and default; what they return) and actions (sorted by id, compact JSON with the current model): two copies
+    /// with the same id and fingerprint play the same and are called the same way. The components' names and descriptions,
+    /// the parameters' descriptions, the app and the screen are left out, so renaming on one PC never blocks an import.
+    /// Always computed with the code that compares, never read from a file (a newer model writes other text).
     /// </summary>
     public static string Fingerprint(LibraryCollection collection)
     {
         var content = collection.Components
             .OrderBy(c => c.Id)
-            .Select(c => new { c.Id, c.Actions })
+            .Select(c => new
+            {
+                c.Id,
+                Parameters = c.Parameters.Select(p => new { p.Name, p.Type, p.Unit, p.Example, p.Default }),
+                c.Returns,
+                c.Actions,
+            })
             .ToList();
         byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(content, CompactOptions)));
         return Convert.ToHexString(hash).ToLowerInvariant();
@@ -174,27 +213,27 @@ internal sealed class ComponentLibrary
     public static string? CheckCollection(LibraryCollection collection) =>
         string.IsNullOrWhiteSpace(collection.Name) ? Strings.Library_NameMissing : null;
 
+    /// <summary>A concept: lowercase letters, digits and '_'.</summary>
+    public static bool IsConcept(string? concept) => concept != null && ConceptPattern.IsMatch(concept);
+
     /// <summary>
-    /// Why a component can't be saved, or null: a name, a concept of lowercase letters, digits and '_', at least one
-    /// action, no linked component inside, no groups, and its actions as a macro's checks accept them (so its "Where …
-    /// was found" use its own conditions only, and its condition ids and names are its own).
+    /// Why a component can't be saved into <paramref name="library"/>, or null: what <see cref="MacroJson.ParseComponent"/>
+    /// checks (a name, a concept, at least one action, no groups, its parameters, what it returns, its actions as a macro's
+    /// checks accept them with its parameters, its calls against the Library, no loop of calls, not too deep).
     /// </summary>
     /// <param name="hasImage">Whether PuppyMacro has an image; null skips that check.</param>
-    public static string? CheckComponent(LibraryComponent component, Func<string, bool>? hasImage = null)
+    /// <param name="library">The Library's components it is checked among (it replaces the one with its id); none when null.</param>
+    public static string? CheckComponent(LibraryComponent component, Func<string, bool>? hasImage = null,
+        IEnumerable<LibraryComponent>? library = null) =>
+        Problems(component, hasImage, library).FirstOrDefault()?.Message;
+
+    /// <summary>Every problem <see cref="CheckComponent"/> would name, with its line in the component's JSON.</summary>
+    public static List<CodeProblem> Problems(LibraryComponent component, Func<string, bool>? hasImage = null,
+        IEnumerable<LibraryComponent>? library = null)
     {
-        if (string.IsNullOrWhiteSpace(component.Name))
-            return Strings.Library_NameMissing;
-        if (!ConceptPattern.IsMatch(component.Concept))
-            return Strings.Library_ConceptInvalid;
-        if (component.Actions.Count == 0)
-            return Strings.Library_NoActions;
-        if (MacroDefinition.Walk(component.Actions).Any(a => a.Type == MacroActionType.Component))
-            return Strings.Library_NestedComponent;
-        var alone = new MacroDefinition { Name = component.Name, Actions = component.Actions.ConvertAll(a => a.Clone()) };
-        foreach (var action in MacroDefinition.Walk(alone.Actions))
-            action.GroupId = null;
-        MacroJson.Parse(MacroJson.Serialize(alone), alone.Id, (_, _) => null, out var problems, hasImage);
-        return problems.Count == 0 ? null : problems[0].Message;
+        MacroJson.ParseComponent(CodeJson.Serialize(component), component.Id, out var problems, hasImage,
+            library ?? Enumerable.Empty<LibraryComponent>());
+        return problems;
     }
 
     /// <summary>The rows linking each component, by component id, in these macros.</summary>
@@ -234,39 +273,18 @@ internal sealed class ComponentLibrary
     }
 
     /// <summary>The ids of the images the components use (kept while the Library has them).</summary>
-    public IEnumerable<string> ImageIds() =>
-        Collections.SelectMany(c => c.Components).SelectMany(c => ImageStore.IdsIn(new MacroDefinition { Actions = c.Actions }));
+    public IEnumerable<string> ImageIds() => AllComponents.SelectMany(ImageStore.IdsIn);
 
     // ================= Linked rows =================
 
-    /// <summary>The ids of the components a macro links that the Library doesn't have.</summary>
+    /// <summary>The ids of the components a macro links (rows and Component conditions) that the Library doesn't have.</summary>
     public List<Guid> Missing(MacroDefinition macro) =>
         macro.AllActions
             .Where(a => a.Type == MacroActionType.Component)
             .Select(a => a.ComponentId ?? Guid.Empty)
+            .Concat(macro.AllActions.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
+                .Where(c => c.Kind == ConditionKind.Component).Select(c => c.ComponentId ?? Guid.Empty))
             .Where(id => Find(id) == null)
             .Distinct()
             .ToList();
-
-    /// <summary>
-    /// A copy of the macro to play: each linked row gets its component's actions (<see cref="MacroAction.Resolved"/>),
-    /// each link with new condition ids, so a component linked twice, or sharing ids with the macro, keeps its found
-    /// points apart. Null when a linked component is missing (the macro can't play).
-    /// </summary>
-    public MacroDefinition? Resolve(MacroDefinition macro)
-    {
-        var copy = macro.Clone();
-        foreach (var action in copy.AllActions.ToList())
-        {
-            if (action.Type != MacroActionType.Component)
-                continue;
-            if (action.ComponentId is not Guid id || Find(id) is not { } found)
-                return null;
-            var actions = found.Component.Actions.ConvertAll(a => a.Clone());
-            MacroEditList.RenewConditions(actions);
-            action.Resolved = actions;
-            action.ResolvedName = found.Component.Name;
-        }
-        return copy;
-    }
 }

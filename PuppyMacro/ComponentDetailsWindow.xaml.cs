@@ -34,17 +34,22 @@ public partial class ComponentDetailsWindow
     private readonly bool _saving;
     private readonly List<MacroAction> _actions;
     private readonly Func<string, bool> _hasImage;
+    private readonly List<LibraryComponent> _components;
+    private readonly List<ComponentParameter> _parameters;
     private readonly LibraryScreen? _screen;
     private bool _conceptTyped;
     private bool _settingConcept;
 
-    private ComponentDetailsWindow(ComponentLibrary library, bool saving, List<MacroAction> actions, Func<string, bool> hasImage, string? appExe)
+    private ComponentDetailsWindow(ComponentLibrary library, bool saving, List<MacroAction> actions, Func<string, bool> hasImage, string? appExe,
+        List<ComponentParameter>? parameters = null)
     {
         InitializeComponent();
         WindowFit.Apply(this);
         _saving = saving;
         _actions = actions;
         _hasImage = hasImage;
+        _components = library.AllComponents.ToList();
+        _parameters = parameters ?? new List<ComponentParameter>();
         foreach (ComponentPurpose purpose in Enum.GetValues<ComponentPurpose>())
             PurposeBox.Items.Add(new ComboBoxItem { Content = LibraryWindow.PurposeName(purpose), Tag = purpose });
         foreach (LibraryDomain domain in Enum.GetValues<LibraryDomain>())
@@ -161,13 +166,14 @@ public partial class ComponentDetailsWindow
         Concept = ConceptBox.Text.Trim(),
         Description = DescriptionBox.Text.Trim(),
         Actions = _actions.ConvertAll(a => a.Clone()),
+        Parameters = _parameters.ConvertAll(p => p.Clone()),
     };
 
     private string? Problem()
     {
         if (NewCollection && string.IsNullOrWhiteSpace(CollectionNameBox.Text))
             return Strings.Library_NameMissing;
-        return ComponentLibrary.CheckComponent(Draft(), _hasImage);
+        return ComponentLibrary.CheckComponent(Draft(), _hasImage, _components);
     }
 
     private void Validate()

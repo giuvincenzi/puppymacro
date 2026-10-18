@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
+using PuppyMacro.Services.Components;
 
 namespace PuppyMacro.Services;
 
@@ -46,11 +47,12 @@ internal static class MacroJson
     /// <summary>Checks a whole macro's text and reads it. Null when there are problems.</summary>
     /// <param name="conflict">The hotkey conflict message for a binding and the app it works in (null: all apps), or null (see <see cref="HotkeyConflicts"/>).</param>
     /// <param name="hasImage">Whether PuppyMacro has an image (<see cref="ImageStore.Has"/>); null skips that check.</param>
-    /// <param name="hasComponent">Whether the Library has a component (<see cref="ComponentLibrary.Find"/>); null skips that check.</param>
+    /// <param name="components">The Library's components, for the calls to them; null skips what needs the Library.</param>
     public static MacroDefinition? Parse(string text, Guid id, Func<HotkeyBinding, string?, string?> conflict, out List<CodeProblem> problems,
-        Func<string, bool>? hasImage = null, Func<Guid, bool>? hasComponent = null)
+        Func<string, bool>? hasImage = null, ComponentSignatures? components = null)
     {
-        MacroDefinition? macro = CodeJson.Read<MacroDefinition>(text, (m, check) => CheckMacro(m, id, conflict, hasImage, hasComponent, check), out problems);
+        var scope = new CallScope(components, null, hasImage);
+        MacroDefinition? macro = CodeJson.Read<MacroDefinition>(text, (m, check) => CheckMacro(m, id, conflict, scope, check), out problems);
         if (macro == null)
             return null;
         macro.Name = macro.Name.Trim();
@@ -67,14 +69,16 @@ internal static class MacroJson
     /// one of <paramref name="allowedGroups"/> (see <see cref="AllowedGroupIds"/>).
     /// </summary>
     /// <param name="found">The conditions whose image or text an action there can use (<see cref="FoundAt"/>), by Id with their names.</param>
+    /// <param name="parameters">Inside a component: its parameters, which the action's Bind and calls can use; null in a macro.</param>
     public static MacroAction? ParseAction(string text, IReadOnlyList<Guid?> allowedGroups, IReadOnlyDictionary<Guid, string> groupNames,
         out List<CodeProblem> problems, IReadOnlyDictionary<Guid, string>? found = null, Func<string, bool>? hasImage = null,
-        Func<Guid, bool>? hasComponent = null)
+        ComponentSignatures? components = null, IReadOnlyList<ComponentParameter>? parameters = null)
     {
+        var scope = new CallScope(components, parameters, hasImage);
         MacroAction? action = CodeJson.Read<MacroAction>(text, (a, check) =>
         {
-            var finders = new Dictionary<Guid, string>(found ?? new Dictionary<Guid, string>());
-            CheckActions(new List<MacroAction> { a }, "", finders, hasImage, hasComponent, check, single: true);
+            var finders = (found ?? new Dictionary<Guid, string>()).ToDictionary(f => f.Key, _ => (MacroCondition?)null);
+            CheckActions(new List<MacroAction> { a }, "", finders, scope, check, single: true);
             CheckNames(new[] { a }, check, "");
             if (!allowedGroups.Contains(a.GroupId))
             {
@@ -87,6 +91,52 @@ internal static class MacroJson
             foreach (var each in MacroDefinition.Walk(new[] { action }))
                 TrimNames(each);
         return action;
+    }
+
+    /// <summary>
+    /// Checks a Library component's text (its Code view, an AI app's save, a file) and reads it: its names, its parameters,
+    /// what it returns, its actions as a macro's are checked (their Bind and calls with its parameters) and its place among
+    /// the Library's components (<paramref name="library"/>: without it, or with an older version of it). Null when there
+    /// are problems.
+    /// </summary>
+    public static LibraryComponent? ParseComponent(string text, Guid id, out List<CodeProblem> problems, Func<string, bool>? hasImage,
+        IEnumerable<LibraryComponent> library)
+    {
+        LibraryComponent? component = CodeJson.Read<LibraryComponent>(text, (c, check) =>
+        {
+            check.SameId(c.Id, id);
+            if (string.IsNullOrWhiteSpace(c.Name))
+                check.Add("Name", Strings.Library_NameMissing);
+            if (!ComponentLibrary.IsConcept(c.Concept))
+                check.Add("Concept", Strings.Library_ConceptInvalid);
+            if (c.Actions.Count == 0)
+                check.Add("Actions", Strings.Library_NoActions);
+            var signatures = new ComponentSignatures(library.Where(k => k.Id != c.Id).Append(c));
+            var scope = new CallScope(signatures, c.Parameters, hasImage);
+            ComponentChecks.CheckSignature(c, signatures, hasImage, check.Add);
+            CheckNoGroups(c.Actions, "Actions", check);
+            CheckActions(c.Actions, "Actions", new Dictionary<Guid, MacroCondition?>(), scope, check, single: false);
+            CheckNames(c.Actions, check, "Actions");
+        }, out problems);
+        if (component == null)
+            return null;
+        component.Name = component.Name.Trim();
+        foreach (var action in MacroDefinition.Walk(component.Actions))
+            TrimNames(action);
+        return component;
+    }
+
+    /// <summary>A component has no groups: its actions belong to none.</summary>
+    private static void CheckNoGroups(List<MacroAction> list, string path, CodeJson.Checker check)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i].GroupId != null)
+                check.Add($"{path}[{i}].GroupId", Strings.Code_NoSuchGroup);
+            foreach (var (branch, name) in new[] { (list[i].If?.Then, "Then"), (list[i].If?.Else, "Else") })
+                if (branch != null)
+                    CheckNoGroups(branch, $"{path}[{i}].If.{name}", check);
+        }
     }
 
     private static void TrimNames(MacroAction action)
@@ -175,8 +225,8 @@ internal static class MacroJson
 
     private static void Add(CodeJson.Checker check, string path, string message) => check.Add(path, message);
 
-    private static void CheckMacro(MacroDefinition m, Guid id, Func<HotkeyBinding, string?, string?> conflict, Func<string, bool>? hasImage,
-        Func<Guid, bool>? hasComponent, CodeJson.Checker check)
+    private static void CheckMacro(MacroDefinition m, Guid id, Func<HotkeyBinding, string?, string?> conflict, CallScope scope,
+        CodeJson.Checker check)
     {
         check.SameId(m.Id, id);
         if (string.IsNullOrWhiteSpace(m.Name))
@@ -193,32 +243,36 @@ internal static class MacroJson
         check.Hotkey(m.Hotkey, m.Mode, binding => conflict(binding, AppScope.Normalize(m.AppExe)));
         check.FloatingButton(m.FloatingButton, m.Mode);
         CheckGroups(m, check);
-        CheckActions(m.Actions, "Actions", new Dictionary<Guid, string>(), hasImage, hasComponent, check, single: false);
+        CheckActions(m.Actions, "Actions", new Dictionary<Guid, MacroCondition?>(), scope, check, single: false);
         CheckNames(m.Actions, check, "Actions");
     }
 
     /// <summary>
     /// Checks every action of <paramref name="list"/> (at <paramref name="path"/>, "Actions" or "Actions[2].If.Then"),
-    /// also inside Then and Else. <paramref name="found"/>: the conditions an action here can use where they found something;
-    /// <paramref name="notThere"/>: the conditions around it that are true when what they look for is not there.
+    /// also inside Then and Else. <paramref name="found"/>: the conditions an action here can use where they found something
+    /// (null when only the Id is known); <paramref name="notThere"/>: the conditions around it that are true when what they
+    /// look for is not there. <paramref name="scope"/>: a macro's or a component's, for Bind and the calls.
     /// </summary>
-    private static void CheckActions(List<MacroAction> list, string path, Dictionary<Guid, string> found, Func<string, bool>? hasImage,
-        Func<Guid, bool>? hasComponent, CodeJson.Checker check, bool single, HashSet<Guid>? notThere = null)
+    private static void CheckActions(List<MacroAction> list, string path, Dictionary<Guid, MacroCondition?> found, CallScope scope,
+        CodeJson.Checker check, bool single, HashSet<Guid>? notThere = null)
     {
         for (int i = 0; i < list.Count; i++)
         {
             string prefix = single ? "" : $"{path}[{i}].";
             var a = list[i];
             CheckAction(a, prefix, check);
-            CheckLink(a, prefix, hasComponent, check);
+            CheckLink(a, prefix, scope, found, notThere, check);
+            ComponentChecks.CheckBind(a, prefix, scope, check.Add);
             if (a.FoundId is Guid foundId)
             {
                 if (a.Type is not (MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo))
                     check.Add($"{prefix}FoundId", Strings.Code_FoundOnlyMouse);
                 else if (notThere?.Contains(foundId) == true)
                     check.Add($"{prefix}FoundId", Strings.Code_FoundNot);
-                else if (!found.TryGetValue(foundId, out _))
+                else if (!found.TryGetValue(foundId, out MacroCondition? place))
                     check.Add($"{prefix}FoundId", Strings.Code_FoundOutside);
+                else if (place != null && ComponentChecks.PlaceProblem(place, scope.Signatures) is string noPlace)
+                    check.Add($"{prefix}FoundId", noPlace);
                 check.Range($"{prefix}FoundOffsetX", a.FoundOffsetX, Coordinate);
                 check.Range($"{prefix}FoundOffsetY", a.FoundOffsetY, Coordinate);
             }
@@ -236,16 +290,30 @@ internal static class MacroJson
             if (block.Conditions.Count == 0)
                 check.Add($"{prefix}If.Conditions", Strings.Code_AddCondition);
             for (int c = 0; c < block.Conditions.Count; c++)
-                CheckCondition(block.Conditions[c], $"{prefix}If.Conditions[{c}].", hasImage, check);
+            {
+                var condition = block.Conditions[c];
+                string at = $"{prefix}If.Conditions[{c}].";
+                CheckCondition(condition, at, scope.HasImage, check);
+                ComponentChecks.CheckBind(condition, at, scope, check.Add);
+                if (condition.Kind == ConditionKind.Component)
+                    ComponentChecks.CheckCall(condition.ComponentId, condition.Arguments, at, asCondition: true, scope, found, notThere, check.Add);
+                else
+                {
+                    if (condition.ComponentId != null)
+                        check.Add($"{at}ComponentId", Strings.Code_ComponentIdOnlyLinks);
+                    if (condition.Arguments != null)
+                        check.Add($"{at}Arguments", Strings.Code_ArgumentsOnlyCalls);
+                }
+            }
             if (block.Wait == ConditionWait.UpTo)
                 check.Range($"{prefix}If.WaitSeconds", block.WaitSeconds, WaitSeconds);
-            var inside = new Dictionary<Guid, string>(found);
+            var inside = new Dictionary<Guid, MacroCondition?>(found);
             foreach (var condition in block.Conditions.Where(c => c.GivesPlace))
-                inside[condition.Id] = condition.Name ?? "";
+                inside[condition.Id] = condition;
             var notInside = new HashSet<Guid>(notThere ?? new HashSet<Guid>());
             notInside.UnionWith(block.Conditions.Where(c => c.Not).Select(c => c.Id));
-            CheckActions(block.Then, $"{prefix}If.Then", inside, hasImage, hasComponent, check, single: false, notInside);
-            CheckActions(block.Else, $"{prefix}If.Else", found, hasImage, hasComponent, check, single: false, notThere);
+            CheckActions(block.Then, $"{prefix}If.Then", inside, scope, check, single: false, notInside);
+            CheckActions(block.Else, $"{prefix}If.Else", found, scope, check, single: false, notThere);
         }
     }
 
@@ -380,21 +448,22 @@ internal static class MacroJson
     }
 
     /// <summary>
-    /// A row linked to a component: its ComponentId, a component the Library has, and nothing else (no wait, no name: the
-    /// component's own actions have them). ComponentId on another type of action is refused.
+    /// A row linked to a component: its ComponentId, a component the Library has, its arguments (<see cref="ComponentChecks.CheckCall"/>),
+    /// and nothing else (no wait, no name: the component's own actions have them). ComponentId and Arguments on another type
+    /// of action are refused.
     /// </summary>
-    private static void CheckLink(MacroAction a, string prefix, Func<Guid, bool>? hasComponent, CodeJson.Checker check)
+    private static void CheckLink(MacroAction a, string prefix, CallScope scope, IReadOnlyDictionary<Guid, MacroCondition?> found,
+        IReadOnlySet<Guid>? notThere, CodeJson.Checker check)
     {
         if (a.Type != MacroActionType.Component)
         {
             if (a.ComponentId != null)
                 check.Add($"{prefix}ComponentId", Strings.Code_ComponentIdOnlyLinks);
+            if (a.Arguments != null)
+                check.Add($"{prefix}Arguments", Strings.Code_ArgumentsOnlyCalls);
             return;
         }
-        if (a.ComponentId is not Guid id || id == Guid.Empty)
-            check.Add($"{prefix}ComponentId", Strings.Code_ChooseComponent);
-        else if (hasComponent != null && !hasComponent(id))
-            check.Add($"{prefix}ComponentId", Strings.Code_ComponentMissing);
+        ComponentChecks.CheckCall(a.ComponentId, a.Arguments, prefix, asCondition: false, scope, found, notThere, check.Add);
         if (a.DelayMs != 0 || !string.IsNullOrEmpty(a.Name))
             check.Add($"{prefix}Type", Strings.Code_ComponentOnlyLink);
     }
