@@ -270,7 +270,10 @@ internal sealed class ItemHistory
 
     // ================= What changed =================
 
-    /// <summary>Names of objects that are keys (shown as "Ctrl + X").</summary>
+    /// <summary>
+    /// Names of the item's own fields that are keys (shown as "Ctrl + X"): only at the top of the item, as an object with the
+    /// same name deeper in it (a call's argument named "Target") is something else.
+    /// </summary>
     private static readonly HashSet<string> KeyObjects = new(StringComparer.Ordinal) { "Hotkey", "Source", "Target" };
 
     /// <summary>
@@ -372,9 +375,10 @@ internal sealed class ItemHistory
     private static void Leaves(JsonNode? node, string path, IDictionary<string, PhraseArg> output)
     {
         string last = path.Contains('.') ? path[(path.LastIndexOf('.') + 1)..] : path;
+        bool topField = path.Length > 0 && path.IndexOfAny(new[] { '.', '[' }) < 0;
         switch (node)
         {
-            case JsonObject o when KeyObjects.Contains(last) || last.EndsWith("Hotkey", StringComparison.Ordinal):
+            case JsonObject o when topField && (KeyObjects.Contains(path) || path.EndsWith("Hotkey", StringComparison.Ordinal)):
                 output[path] = KeysOf(o);
                 break;
             case JsonObject o:

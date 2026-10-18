@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
 
 namespace PuppyMacro.Services;
 
-/// <summary>All macros, in display order. Each macro is saved as macros\{id}.json next to the exe.</summary>
+/// <summary>All macros, in display order. Each macro is saved in its own file in the macros folder, macros\{id}.json for a new one.</summary>
 internal sealed class MacroLibrary
 {
     // The same format as the macro editor's Code view.
@@ -35,39 +37,87 @@ internal sealed class MacroLibrary
     // The images each saved macro uses (the others are deleted by ReleaseUnusedImages).
     private readonly Dictionary<Guid, HashSet<string>> _imagesOf = new();
 
+    // The files the macros were read from, by Id; a new macro goes to macros\{id}.json.
+    private readonly Dictionary<Guid, string> _files = new();
+
+    // The images named by the files that could not be read at start, and whether one could not be read at all: kept, so the
+    // macro finds them when its file can be read (a newer version's file, a file another program had open).
+    private readonly HashSet<string> _imagesOfUnread = new(StringComparer.Ordinal);
+    private bool _unreadFile;
+
     public List<MacroDefinition> Macros { get; private set; } = new();
 
     public MacroDefinition? Find(Guid id) => Macros.FirstOrDefault(m => m.Id == id);
 
-    /// <summary>Loads every macro file; <paramref name="order"/> decides the order (unknown ones go last).</summary>
+    /// <summary>
+    /// Loads every macro file; <paramref name="order"/> decides the order (unknown ones go last). A macro is saved back to the
+    /// file it was read from. A file without an Id, or with the Id of another file (a copy made in File Explorer), is a macro
+    /// of its own: its Id comes from its file name, so it stays the same at every start until the macro is saved with it.
+    /// </summary>
     public void Load(IList<Guid> order, out string? warning)
     {
         warning = null;
-        var loaded = new List<MacroDefinition>();
+        _files.Clear();
+        _imagesOf.Clear();
+        _imagesOfUnread.Clear();
+        _unreadFile = false;
+        var read = new List<(string File, MacroDefinition Macro)>();
         if (Directory.Exists(_folder))
         {
-            foreach (string file in Directory.GetFiles(_folder, "*.json"))
+            foreach (string file in Directory.GetFiles(_folder, "*.json").Order(StringComparer.OrdinalIgnoreCase))
             {
+                string? text = null;
                 try
                 {
-                    var macro = JsonSerializer.Deserialize<MacroDefinition>(File.ReadAllText(file), JsonOptions);
-                    if (macro != null)
-                    {
-                        Sanitize(macro);
-                        loaded.Add(macro);
-                        _imagesOf[macro.Id] = ImageStore.IdsIn(macro);
-                    }
+                    text = File.ReadAllText(file);
+                    if (CodeJson.ReadFile<MacroDefinition>(text) is { } macro)
+                        read.Add((file, macro));
                 }
                 catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
                 {
                     warning = string.Format(CultureInfo.CurrentCulture, Strings.App_MacroFilesSkipped, Path.GetFileName(file));
+                    // Its images stay until it can be read: the ones its text names, or every image when it can't be read at all.
+                    if (text != null)
+                        _imagesOfUnread.UnionWith(ImageStore.IdsIn(text));
+                    else
+                        _unreadFile = true;
                 }
             }
+        }
+
+        // The file named after its Id keeps it; another file with that Id, or without one, gets the Id of its file name.
+        var loaded = new List<MacroDefinition>();
+        var ids = new HashSet<Guid>();
+        foreach (var (file, macro) in read.OrderBy(r => r.Macro.Id != Guid.Empty && IsNamedAfter(r.File, r.Macro.Id) ? 0 : 1))
+        {
+            if (macro.Id == Guid.Empty || ids.Contains(macro.Id))
+                macro.Id = IdOfFile(file, ids);
+            ids.Add(macro.Id);
+            Sanitize(macro);
+            loaded.Add(macro);
+            _files[macro.Id] = file;
+            _imagesOf[macro.Id] = ImageStore.IdsIn(macro);
         }
         Macros = loaded
             .OrderBy(m => order.IndexOf(m.Id) is int i && i >= 0 ? i : int.MaxValue)
             .ThenBy(m => m.Name, StringComparer.CurrentCultureIgnoreCase)
             .ToList();
+    }
+
+    private static bool IsNamedAfter(string file, Guid id) =>
+        Guid.TryParse(Path.GetFileNameWithoutExtension(file), out Guid named) && named == id;
+
+    /// <summary>An Id made from a file's name, the same at every start, that none of <paramref name="taken"/> has.</summary>
+    private static Guid IdOfFile(string file, HashSet<Guid> taken)
+    {
+        string name = Path.GetFileName(file).ToLowerInvariant();
+        for (int n = 0; ; n++)
+        {
+            byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(n == 0 ? name : $"{name}|{n}"));
+            var id = new Guid(hash.AsSpan(0, 16));
+            if (id != Guid.Empty && !taken.Contains(id))
+                return id;
+        }
     }
 
     /// <summary>
@@ -168,6 +218,7 @@ internal sealed class MacroLibrary
         {
             File.Delete(PathFor(macro.Id));
             _imagesOf.Remove(macro.Id);
+            _files.Remove(macro.Id);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -182,72 +233,43 @@ internal sealed class MacroLibrary
     /// </summary>
     public void ReleaseUnusedImages()
     {
-        // A Library it could not read may still name images: none is deleted until it is fixed.
-        if (Library.Broken)
+        // A Library or a macro file it could not read may still name images: none is deleted until it is fixed.
+        if (Library.Broken || _unreadFile)
             return;
         var keep = _imagesOf.Values.SelectMany(s => s).ToHashSet(StringComparer.Ordinal);
+        keep.UnionWith(_imagesOfUnread);
         keep.UnionWith(Library.ImageIds());
         keep.UnionWith(Images.Held());
         foreach (string id in Images.All().Where(id => !keep.Contains(id)))
             Images.Delete(id);
     }
 
-    private string PathFor(Guid id) => Path.Combine(_folder, $"{id}.json");
-
-    /// <summary>Empty entries a file edited by hand can have (null in a list): left out, also inside Then and Else.</summary>
-    private static void RemoveEmpty(List<MacroAction> actions)
-    {
-        actions.RemoveAll(a => a == null);
-        foreach (var action in actions)
-        {
-            if (action.If is not { } block)
-                continue;
-            block.Conditions ??= new();
-            block.Conditions.RemoveAll(c => c == null);
-            foreach (var condition in block.Conditions)
-                condition.Images?.RemoveAll(i => i == null);
-            block.Then ??= new();
-            block.Else ??= new();
-            RemoveEmpty(block.Then);
-            RemoveEmpty(block.Else);
-        }
-    }
+    private string PathFor(Guid id) => _files.TryGetValue(id, out string? file) ? file : Path.Combine(_folder, $"{id}.json");
 
     private static void Sanitize(MacroDefinition macro)
     {
-        if (macro.Id == Guid.Empty)
-            macro.Id = Guid.NewGuid();
         macro.Name = string.IsNullOrWhiteSpace(macro.Name) ? "Macro" : macro.Name.Trim();
-        macro.Actions ??= new();
         macro.Speed = MacroDefinition.SpeedSteps.Contains(macro.Speed) ? macro.Speed : 1;
         macro.RepeatCount = Math.Clamp(macro.RepeatCount, 1, 100000);
         if (!SoundService.Names.Contains(macro.SoundName))
             macro.SoundName = SoundService.Names[0];
-        macro.Groups ??= new();
         foreach (var group in macro.Groups)
             group.Name = string.IsNullOrWhiteSpace(group.Name) ? "Group" : group.Name.Trim();
-        macro.FloatingButton ??= new();
         macro.FloatingButton.Sanitize();
         macro.AppExe = AppScope.Normalize(macro.AppExe);
         if (!MacroDefinition.ChecksPerSecondSteps.Contains(macro.ChecksPerSecond))
             macro.ChecksPerSecond = MacroDefinition.DefaultChecksPerSecond;
-        RemoveEmpty(macro.Actions);
         foreach (var action in macro.AllActions.ToList())
         {
             if (action.Type == MacroActionType.If)
             {
                 action.If ??= new();
-                action.If.Conditions ??= new();
-                action.If.Conditions.RemoveAll(c => c == null);
-                action.If.Then ??= new();
-                action.If.Else ??= new();
                 action.If.WaitSeconds = Math.Clamp(action.If.WaitSeconds, 0, 86_400);
                 foreach (var condition in action.If.Conditions)
                 {
                     condition.Name = condition.Name?.Trim();
                     condition.Tolerance = Math.Clamp(condition.Tolerance, 0, 100);
                     condition.Similarity = Math.Clamp(condition.Similarity, 0, 100);
-                    condition.Images?.RemoveAll(i => i == null);
                 }
             }
             else
@@ -256,12 +278,13 @@ internal sealed class MacroLibrary
             }
             if (action.Type is not (MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo))
                 action.FoundId = null;
-            action.Path ??= new();
-            action.Text ??= "";
-            action.Name = action.Name?.Trim() ?? "";
+            action.Name = action.Name.Trim();
             action.DelayMs = Math.Clamp(action.DelayMs, 0, 86_400_000);
             action.Repeat = Math.Clamp(action.Repeat, 1, 100000);
             action.RepeatPauseMs = Math.Clamp(action.RepeatPauseMs, 0, 86_400_000);
+            // Recordings of earlier versions could hold for 0 ms (a touchpad's tap) or longer than the editor allows.
+            if (action.Type is MacroActionType.PressKey or MacroActionType.Click)
+                action.HoldMs = Math.Clamp(action.HoldMs, MacroJson.HoldMs.Min, MacroJson.HoldMs.Max);
             if (action.Type != MacroActionType.PressKey)
                 action.ClearModifiers(); // only a Press key is a combination
         }

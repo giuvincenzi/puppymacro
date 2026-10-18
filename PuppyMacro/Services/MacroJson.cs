@@ -412,8 +412,9 @@ internal static class MacroJson
 
         // A group's actions are next to each other in one list: the macro's own, or one Then or Else.
         var finished = new HashSet<Guid>();
-        var used = new HashSet<Guid>();
-        CheckGroupRuns(m.Actions, "Actions", index, finished, used, check);
+        var listOf = new Dictionary<Guid, List<MacroAction>>();
+        CheckGroupRuns(m.Actions, "Actions", index, finished, listOf, check);
+        var used = listOf.Keys.ToHashSet();
         for (int j = 0; j < m.Groups.Count; j++)
         {
             if (!used.Contains(m.Groups[j].Id))
@@ -421,8 +422,12 @@ internal static class MacroJson
         }
     }
 
+    /// <summary>
+    /// A group's actions are one run in one list: an action of a group whose run ended, or whose run is in another list
+    /// (<paramref name="listOf"/>: the list of each group met so far), is apart, whichever comes first.
+    /// </summary>
     private static void CheckGroupRuns(List<MacroAction> list, string path, Dictionary<Guid, int> index, HashSet<Guid> finished,
-        HashSet<Guid> used, CodeJson.Checker check)
+        Dictionary<Guid, List<MacroAction>> listOf, CodeJson.Checker check)
     {
         Guid? previous = null;
         for (int i = 0; i < list.Count; i++)
@@ -434,14 +439,14 @@ internal static class MacroJson
             {
                 if (!index.ContainsKey(id))
                     check.Add($"{path}[{i}].GroupId", Strings.Code_NoSuchGroup);
-                else if (finished.Contains(id))
+                else if (finished.Contains(id) || (listOf.TryGetValue(id, out var home) && !ReferenceEquals(home, list)))
                     check.Add($"{path}[{i}].GroupId", Strings.Code_GroupApart);
-                used.Add(id);
+                listOf.TryAdd(id, list);
             }
             previous = groupId;
             foreach (var (branch, name) in new[] { (list[i].If?.Then, "Then"), (list[i].If?.Else, "Else") })
                 if (branch != null)
-                    CheckGroupRuns(branch, $"{path}[{i}].If.{name}", index, finished, used, check);
+                    CheckGroupRuns(branch, $"{path}[{i}].If.{name}", index, finished, listOf, check);
         }
         if (previous is Guid last)
             finished.Add(last);

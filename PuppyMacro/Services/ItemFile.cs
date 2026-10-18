@@ -166,7 +166,11 @@ internal static class ItemFile
         {
             try
             {
-                fileCollections = JsonSerializer.Deserialize<List<LibraryCollection>>(collections.ToJsonString(), CodeJson.Options) ?? new();
+                // A null where a collection, a component or a list goes is a damaged file, as for the items.
+                using var document = JsonDocument.Parse(collections.ToJsonString());
+                if (CodeJson.MisplacedNulls(document.RootElement, typeof(List<LibraryCollection>)).Count > 0)
+                    throw new JsonException("null where a value is needed");
+                fileCollections = document.RootElement.Deserialize<List<LibraryCollection>>(CodeJson.Options) ?? new();
             }
             catch (JsonException)
             {
@@ -196,7 +200,6 @@ internal static class ItemFile
     {
         foreach (var collection in collections)
         {
-            collection.Components.RemoveAll(c => c == null);
             if (library.FindCollection(collection.Id) is { } mine)
             {
                 if (ComponentLibrary.Fingerprint(mine) != ComponentLibrary.Fingerprint(collection))
@@ -383,15 +386,35 @@ internal static class ItemFile
         string.Format(CultureInfo.CurrentCulture, remap.AppExe == null ? Strings.Ai_RemapTitle : Strings.Ai_RemapTitleInApp,
             KeyNames.Format(remap.Source), KeyNames.Format(remap.Target), remap.AppExe);
 
-    /// <summary>A file name for these items: the item's name for one item, "PuppyMacro items" for more.</summary>
+    /// <summary>
+    /// The longest name a file gets, before the extension: Windows takes 255 characters for a name and, in most apps, 260
+    /// for the whole path, so a long item name leaves room for the folder.
+    /// </summary>
+    public const int MaxFileNameLength = 100;
+
     /// <summary>A name made safe for a file, with the extension ("Diablo IV 5120×1440.puppyitems").</summary>
     public static string SafeFileName(string name)
     {
         foreach (char bad in System.IO.Path.GetInvalidFileNameChars())
             name = name.Replace(bad, '_');
-        return (name.Trim().Length == 0 ? Strings.ItemFile_DefaultFileName : name.Trim()) + Extension;
+        name = Shortened(name.Trim());
+        return (name.Length == 0 ? Strings.ItemFile_DefaultFileName : name) + Extension;
     }
 
+    /// <summary>At most <see cref="MaxFileNameLength"/> characters, never cutting a letter made of more than one char.</summary>
+    private static string Shortened(string name)
+    {
+        if (name.Length <= MaxFileNameLength)
+            return name;
+        var shortened = new System.Text.StringBuilder();
+        TextElementEnumerator letters = StringInfo.GetTextElementEnumerator(name);
+        while (letters.MoveNext() && shortened.Length + letters.GetTextElement().Length <= MaxFileNameLength)
+            shortened.Append(letters.GetTextElement());
+        // Windows drops a space or a dot at the end of a file name.
+        return shortened.ToString().TrimEnd(' ', '.');
+    }
+
+    /// <summary>A file name for these items: the item's name for one item, "PuppyMacro items" for more.</summary>
     public static string FileName(IReadOnlyList<object> items)
     {
         string name = items.Count != 1 ? Strings.ItemFile_DefaultFileName : items[0] switch
@@ -404,7 +427,7 @@ internal static class ItemFile
         };
         foreach (char bad in System.IO.Path.GetInvalidFileNameChars())
             name = name.Replace(bad, ' ');
-        name = name.Replace('→', '-').Trim();
+        name = Shortened(name.Replace('→', '-').Trim());
         return (name.Length > 0 ? name : Strings.ItemFile_DefaultFileName) + Extension;
     }
 

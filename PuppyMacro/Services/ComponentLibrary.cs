@@ -61,16 +61,12 @@ internal sealed class ComponentLibrary
             return;
         try
         {
-            var read = JsonSerializer.Deserialize<LibraryFile>(File.ReadAllText(_file), CodeJson.Options)
-                ?? throw new JsonException("empty");
+            // A null where a list or a collection goes holds nothing: read as an empty list, that entry left out.
+            var read = CodeJson.ReadFile<LibraryFile>(File.ReadAllText(_file)) ?? throw new JsonException("empty");
             if (read.Format > CurrentFormat)
                 throw new JsonException("newer format");
-            read.Collections.RemoveAll(c => c == null);
             foreach (var collection in read.Collections)
-            {
-                collection.Components.RemoveAll(c => c == null);
                 collection.AppExe = AppScope.Normalize(collection.AppExe);
-            }
             Collections = read.Collections;
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException or NotSupportedException)

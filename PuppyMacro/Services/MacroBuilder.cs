@@ -26,6 +26,12 @@ internal static class MacroBuilder
     private const double ScrollGroupMs = 300;
     private const double PathTolerancePx = 1.5;
 
+    /// <summary>
+    /// How long a press was held, as a Press key or a Click holds it: at least the editor's shortest hold (a touchpad's tap
+    /// can go down and up in the same millisecond). A press held longer than its longest is recorded as a down and an up.
+    /// </summary>
+    private static double Held(RawEvent down, RawEvent up) => Math.Max(MacroJson.HoldMs.Min, Math.Round(up.T - down.T));
+
     public static List<MacroAction> Build(IReadOnlyList<RawEvent> events)
     {
         var actions = new List<MacroAction>();
@@ -65,10 +71,11 @@ internal static class MacroBuilder
                 }
 
                 case RawEventKind.KeyDown:
-                    if (i + 1 < events.Count && events[i + 1].Kind == RawEventKind.KeyUp && events[i + 1].Vk == e.Vk)
+                    if (i + 1 < events.Count && events[i + 1].Kind == RawEventKind.KeyUp && events[i + 1].Vk == e.Vk
+                        && Held(e, events[i + 1]) <= MacroJson.HoldMs.Max)
                     {
                         RawEvent up = events[i + 1];
-                        Add(new MacroAction { Type = MacroActionType.PressKey, Vk = e.Vk, HoldMs = Math.Round(up.T - e.T) }, e.T, up.T);
+                        Add(new MacroAction { Type = MacroActionType.PressKey, Vk = e.Vk, HoldMs = Held(e, up) }, e.T, up.T);
                         i += 2;
                     }
                     else
@@ -85,7 +92,8 @@ internal static class MacroBuilder
 
                 case RawEventKind.ButtonDown:
                     if (i + 1 < events.Count && events[i + 1].Kind == RawEventKind.ButtonUp && events[i + 1].Vk == e.Vk
-                        && Math.Abs(events[i + 1].X - e.X) <= ClickTolerancePx && Math.Abs(events[i + 1].Y - e.Y) <= ClickTolerancePx)
+                        && Math.Abs(events[i + 1].X - e.X) <= ClickTolerancePx && Math.Abs(events[i + 1].Y - e.Y) <= ClickTolerancePx
+                        && Held(e, events[i + 1]) <= MacroJson.HoldMs.Max)
                     {
                         RawEvent up = events[i + 1];
                         var last = actions.Count > 0 ? actions[^1] : null;
@@ -98,7 +106,7 @@ internal static class MacroBuilder
                         }
                         else
                         {
-                            Add(new MacroAction { Type = MacroActionType.Click, Vk = e.Vk, X = e.X, Y = e.Y, HoldMs = Math.Round(up.T - e.T) }, e.T, up.T);
+                            Add(new MacroAction { Type = MacroActionType.Click, Vk = e.Vk, X = e.X, Y = e.Y, HoldMs = Held(e, up) }, e.T, up.T);
                         }
                         i += 2;
                     }
