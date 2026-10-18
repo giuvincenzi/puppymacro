@@ -1,212 +1,136 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Threading;
+using System.Text.Json;
 using OpenCvSharp;
 
 namespace PuppyMacro.Services;
 
 /// <summary>
-/// The log of one run of a macro with Debug on, or of a run an AI app tests: what each action did, what each If saw, why
-/// it ended, and pictures of the screen when an If was not true and at the end. Always English (it is pasted into chats
-/// and read by AI apps). Kept in <see cref="Root"/>, one folder per macro that holds only its last run; the whole folder
-/// is deleted when PuppyMacro starts and closes. The macro only queues: one writer thread writes the lines and encodes the
-/// pictures, so a run never waits for the disk.
+/// The log of one operation in its debug folder (<see cref="DebugStore"/>): a macro's run (Debug on, or an AI app's test)
+/// or an AI app's recording. Each event has a number, its time from the start and the pictures of the screen taken just
+/// before it, named by that number ("0002 +00:00.512 If … → 0002.png", "0002-m2.png" for a second monitor), so the
+/// log and its pictures go together without an index. Always English: it is pasted into chats and read by AI apps.
+/// Everything is queued to the debug writer: the macro never waits for the disk.
 /// </summary>
 internal sealed class RunLog
 {
-    /// <summary>Past this size log.txt becomes log.1.txt (the one before is dropped): the newest lines stay.</summary>
-    public const long MaxLogBytes = 2 * 1024 * 1024;
-
     public const string LogFile = "log.txt";
 
-    /// <summary>
-    /// %LocalAppData%\PuppyMacro\debug (PuppyMacro Dev for the development build): not user data, not in backups. The unit
-    /// tests set a temporary folder.
-    /// </summary>
-    public static string Root { get; internal set; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        App.IsDevBuild ? "PuppyMacro Dev" : "PuppyMacro",
-        "debug");
+    /// <summary>What the run is (its macro's Id and name, when it started and why it ended): the first lines name the macro.</summary>
+    public const string RunFile = "run.json";
 
     private readonly Stopwatch _clock = Stopwatch.StartNew();
     private readonly object _sync = new();
-    private readonly Dictionary<string, Mat> _pictures = new();
-    private int _pending;
-    private readonly ManualResetEventSlim _idle = new(true);
+    private readonly Dictionary<string, object?> _run;
+    private int _events;
 
-    /// <summary>Starts the log of a run: the macro's folder is emptied first.</summary>
-    public RunLog(Guid macroId, string macroName, string why, string? root = null)
+    /// <param name="folder">The operation's folder, already made.</param>
+    /// <param name="macro">The macro that runs, or null (a recording).</param>
+    /// <param name="what">What it is: "a run started by the user", "a test by Claude Desktop", "a recording".</param>
+    public RunLog(string folder, Models.MacroDefinition? macro, string what)
     {
-        Folder = FolderFor(macroId, root);
-        string folder = Folder;
-        Queue(() =>
+        Folder = folder;
+        DebugStore.Begin(folder);
+        _run = new Dictionary<string, object?>
         {
-            if (Directory.Exists(folder))
-                Directory.Delete(folder, recursive: true);
-            Directory.CreateDirectory(folder);
-        });
-        Line($"Macro \"{macroName}\" starts ({why}) at {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}");
+            ["MacroId"] = macro?.Id,
+            ["Macro"] = macro?.Name,
+            ["What"] = what,
+            ["Started"] = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz", CultureInfo.InvariantCulture),
+        };
+        WriteRun();
+        Line(macro == null
+            ? $"Starts: {what}"
+            : $"Macro \"{macro.Name}\" ({macro.Id:D}) starts: {what}");
     }
 
     public string Folder { get; }
 
     public string LogPath => Path.Combine(Folder, LogFile);
 
-    public static string FolderFor(Guid macroId, string? root = null) =>
-        Path.Combine(root ?? Root, macroId.ToString("N", CultureInfo.InvariantCulture));
-
-    /// <summary>The last run's log of a macro, or null when it has none.</summary>
-    public static string? Read(Guid macroId, string? root = null)
-    {
-        string file = Path.Combine(FolderFor(macroId, root), LogFile);
-        try
-        {
-            return File.Exists(file) ? File.ReadAllText(file) : null;
-        }
-        catch (IOException)
-        {
-            return null;
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return null;
-        }
-    }
-
-    public static bool Exists(Guid macroId, string? root = null) => File.Exists(Path.Combine(FolderFor(macroId, root), LogFile));
-
-    /// <summary>Deletes every macro's log (PuppyMacro starts or closes); a file in use stays.</summary>
-    public static void DeleteAll(string? root = null)
-    {
-        try
-        {
-            if (Directory.Exists(root ?? Root))
-                Directory.Delete(root ?? Root, recursive: true);
-        }
-        catch (IOException)
-        {
-        }
-        catch (UnauthorizedAccessException)
-        {
-        }
-    }
-
-    /// <summary>One line, after the time since the run started ("+00:01.250").</summary>
-    public void Line(string text)
-    {
-        TimeSpan t = _clock.Elapsed;
-        string line = $"+{(int)t.TotalMinutes:00}:{t.Seconds:00}.{t.Milliseconds:000} {text}{Environment.NewLine}";
-        string file = LogPath;
-        Queue(() =>
-        {
-            if (File.Exists(file) && new FileInfo(file).Length > MaxLogBytes)
-                File.Move(file, Path.Combine(Path.GetDirectoryName(file)!, "log.1.txt"), overwrite: true);
-            File.AppendAllText(file, line);
-        });
-    }
-
     /// <summary>
-    /// A picture of the screen saved as <paramref name="name"/> (a PNG). The log takes it and disposes it; a newer picture
-    /// with the same name replaces one not written yet (an If false at every round keeps only its last picture).
+    /// An event with the pictures of the screen just before it (each monitor; the log takes and disposes them): its line
+    /// names them. Answers the event's number.
     /// </summary>
-    public void Picture(string name, Mat picture)
+    public int Event(string text, IReadOnlyList<(Rect Bounds, Mat Picture)>? pictures = null)
     {
-        string file = Path.Combine(Folder, name);
+        int number;
+        lock (_sync)
+            number = ++_events;
+        var names = new List<string>();
+        for (int i = 0; i < (pictures?.Count ?? 0); i++)
+        {
+            string name = $"{number:0000}{(i == 0 ? "" : $"-m{i + 1}")}.png";
+            names.Add(name);
+            Mat picture = pictures![i].Picture;
+            string file = Path.Combine(Folder, name);
+            DebugStore.Write(() =>
+            {
+                using (picture)
+                    Cv2.ImWrite(file, picture);
+            });
+        }
+        Append($"{number:0000} {Time()} {text}{(names.Count == 0 ? "" : " → " + string.Join(", ", names))}");
+        return number;
+    }
+
+    /// <summary>A detail of the event before it (what a condition saw), without a number.</summary>
+    public void Line(string text) => Append($"     {Time()} {text}");
+
+    /// <summary>The run ended: its last event (with the screen at the end) and why, also in <see cref="RunFile"/>.</summary>
+    public void End(string why, IReadOnlyList<(Rect Bounds, Mat Picture)>? pictures = null)
+    {
+        Event($"Ends: {why}", pictures);
         lock (_sync)
         {
-            if (_pictures.Remove(name, out var older))
-            {
-                older.Dispose();
-                _pictures[name] = picture;
-                return; // already queued: it writes the newest
-            }
-            _pictures[name] = picture;
+            _run["Ended"] = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz", CultureInfo.InvariantCulture);
+            _run["EndReason"] = why;
         }
-        Queue(() =>
-        {
-            Mat? latest;
-            lock (_sync)
-                _pictures.Remove(name, out latest);
-            if (latest == null)
-                return;
-            using (latest)
-                Cv2.ImWrite(file, latest);
-        });
-    }
-
-    /// <summary>
-    /// A picture of every monitor as the run ended (end.png, end-monitor-2.png…), taken on the writer thread: the run does
-    /// not wait for it. <paramref name="take"/> gives the pictures (the screen capture; a fake one in the tests).
-    /// </summary>
-    public void ScreenAtEnd(Func<IReadOnlyList<(Rect Bounds, Mat Picture)>> take)
-    {
+        WriteRun();
         string folder = Folder;
-        Queue(() =>
-        {
-            var monitors = take();
-            for (int i = 0; i < monitors.Count; i++)
-            {
-                var (bounds, picture) = monitors[i];
-                string name = monitors.Count > 1 ? $"end-monitor-{i + 1}.png" : "end.png";
-                using (picture)
-                    Cv2.ImWrite(Path.Combine(folder, name), picture);
-                TimeSpan t = _clock.Elapsed;
-                File.AppendAllText(Path.Combine(folder, LogFile),
-                    $"+{(int)t.TotalMinutes:00}:{t.Seconds:00}.{t.Milliseconds:000} screenshot at the end of {bounds.X},{bounds.Y} {bounds.Width}x{bounds.Height}: {name}{Environment.NewLine}");
-            }
-        });
+        DebugStore.Write(() => DebugStore.End(folder));
     }
 
     /// <summary>Waits until everything queued is written, at most <paramref name="timeout"/>.</summary>
-    public bool WaitWritten(TimeSpan timeout) => _idle.Wait(timeout);
+    public static bool WaitWritten(TimeSpan timeout) => DebugStore.WaitWritten(timeout);
 
-    private void Queue(Action write)
+    /// <summary>A run's log, or null when it is not there any more.</summary>
+    public static string? Read(string? folder)
     {
-        lock (_sync)
+        if (folder == null)
+            return null;
+        try
         {
-            if (_pending++ == 0)
-                _idle.Reset();
+            string file = Path.Combine(folder, LogFile);
+            return File.Exists(file) ? File.ReadAllText(file) : null;
         }
-        Writer.Add(() =>
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            try
-            {
-                write();
-            }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or OpenCVException)
-            {
-                // A log that cannot be written never stops the macro.
-            }
-            finally
-            {
-                lock (_sync)
-                {
-                    if (--_pending == 0)
-                        _idle.Set();
-                }
-            }
-        });
+            return null;
+        }
     }
 
-    /// <summary>The one thread that writes every log, in order.</summary>
-    private static class Writer
+    private string Time()
     {
-        private static readonly BlockingCollection<Action> Work = new();
+        TimeSpan t = _clock.Elapsed;
+        return $"+{(int)t.TotalMinutes:00}:{t.Seconds:00}.{t.Milliseconds:000}";
+    }
 
-        static Writer()
-        {
-            new Thread(() =>
-            {
-                foreach (var write in Work.GetConsumingEnumerable())
-                    write();
-            })
-            { IsBackground = true, Name = "PuppyMacro debug log", Priority = ThreadPriority.BelowNormal }.Start();
-        }
+    private void Append(string line)
+    {
+        string file = LogPath;
+        DebugStore.Write(() => File.AppendAllText(file, line + Environment.NewLine));
+    }
 
-        public static void Add(Action write) => Work.Add(write);
+    private void WriteRun()
+    {
+        string json;
+        lock (_sync)
+            json = JsonSerializer.Serialize(_run, new JsonSerializerOptions { WriteIndented = true });
+        string file = Path.Combine(Folder, RunFile);
+        DebugStore.Write(() => File.WriteAllText(file, json));
     }
 }

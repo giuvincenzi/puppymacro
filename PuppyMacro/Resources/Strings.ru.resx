@@ -211,6 +211,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>Руководство пользователя</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Недоступно в сборке для разработки</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Данные сохраняются в {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Данные отладки</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Журналы и снимки экрана запросов AI и макросов с включенным Debug, хранятся 7 дней на этом компьютере. Занимают {0}.</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} МБ</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} ГБ</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Удалить данные отладки</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Все, кроме того, что выполняется сейчас.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Удалить все</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Удалить данные отладки PuppyMacro? То, что выполняется сейчас, сохранится.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Горячие клавиши сейчас не работают:
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro продолжает работать в области уведомлений. Чтобы выйти, щелкните его значок правой кнопкой мыши.</value></data>
@@ -430,6 +438,7 @@
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>Все типы</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>Все результаты</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Восстановить</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Открыть отладку</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Подробности</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Запросов пока нет.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Нет запросов, соответствующих фильтрам.</value></data>
@@ -452,6 +461,10 @@
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Нажмите {0}, когда будете готовы · {1} — отмена</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Начать</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>Готово</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>Можно вернуться в {0}.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>Можно вернуться в приложение AI.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>ОК</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>Выбор точки</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Щелкните точку, в которую должен переместиться указатель</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>Отмена</value></data>
@@ -520,7 +533,7 @@
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Любая клавиша или кнопка мыши, например F2 или A. Для сочетания сначала удерживайте Ctrl, Alt, Shift или Win; левый и правый щелчок, колесико прокрутки и Esc можно использовать только в сочетании. Для удержания нужна горячая клавиша.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Звук</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Воспроизводится при запуске и остановке макроса</value></data>
-  <data name="Macro_DebugDescription" xml:space="preserve"><value>Сохраняет журнал последнего запуска этого макроса со снимками экрана, когда If не выполняется, и в конце. Журнал удаляется при закрытии PuppyMacro.</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Сохраняет журнал каждого запуска этого макроса со снимком экрана перед каждым шагом на 7 дней на этом компьютере.</value></data>
   <data name="Macro_ViewLog" xml:space="preserve"><value>Просмотреть журнал</value></data>
   <data name="DebugLog_Title" xml:space="preserve"><value>Журнал: {0}</value></data>
   <data name="DebugLog_Description" xml:space="preserve"><value>Последний запуск макроса на английском языке, чтобы его можно было вставить куда угодно. Снимки экрана находятся в его папке.</value></data>
@@ -1348,7 +1361,6 @@
   <data name="Ai_TestedMacro" xml:space="preserve"><value>Протестировал макрос {0}</value></data>
   <data name="Ai_ReadPixel" xml:space="preserve"><value>Прочитал пиксель экрана: {0}</value></data>
   <data name="Ai_TookImage" xml:space="preserve"><value>Взял изображение с экрана: {0}</value></data>
-  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>Посмотрел на экран при щелчке {0} записи</value></data>
   <data name="Ai_ReadLastRun" xml:space="preserve"><value>Прочитал журнал последнего запуска макроса</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Действие</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Условие</value></data>

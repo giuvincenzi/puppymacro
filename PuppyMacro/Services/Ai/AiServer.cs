@@ -27,19 +27,16 @@ internal sealed class AiServer : IDisposable
     private readonly AiTools _tools;
     private readonly AiActivityLog _log;
     private readonly Func<bool> _allowed;
-    private readonly AiCallLog? _calls;
     private readonly CancellationTokenSource _stop = new();
     private readonly object _sync = new();
     private readonly List<AiClient> _clients = new();
     private int _nextSession;
 
-    /// <param name="calls">Where every tool call is logged with its times and sizes (debugging), or null.</param>
-    public AiServer(AiTools tools, AiActivityLog log, Func<bool> allowed, AiCallLog? calls = null)
+    public AiServer(AiTools tools, AiActivityLog log, Func<bool> allowed)
     {
         _tools = tools;
         _log = log;
         _allowed = allowed;
-        _calls = calls;
     }
 
     /// <summary>Raised on a server thread when an AI app connects or disconnects.</summary>
@@ -113,7 +110,18 @@ internal sealed class AiServer : IDisposable
     private async Task Serve(NamedPipeServerStream pipe)
     {
         int session = Interlocked.Increment(ref _nextSession);
-        McpServerOptions options = Options(_tools.All, AiTools.Instructions, (tool, args, app, cancel) => CallLogged(tool, args, app, cancel));
+        // One debug session and one rate limit for this connection.
+        DebugSession? debug = null;
+        var limit = new AiRateLimit();
+        McpServerOptions options = Options(_tools.All, AiTools.InstructionsText, (tool, args, request, cancel) =>
+        {
+            debug ??= DebugSession.Start(FriendlyName(request.Server.ClientInfo), new
+            {
+                request.Server.ClientInfo,
+                request.Server.ClientCapabilities,
+            });
+            return CallDebugged(tool, args, request, debug, limit, cancel);
+        });
 
         try
         {
@@ -169,6 +177,9 @@ internal sealed class AiServer : IDisposable
         ClientsChanged?.Invoke();
     }
 
+    /// <summary>The name of an AI app that gave none.</summary>
+    public const string UnknownApp = "Unknown app";
+
     /// <summary>"Claude Desktop", "Visual Studio Code", "Codex", or the name the app gave.</summary>
     internal static string FriendlyName(Implementation? client)
     {
@@ -183,40 +194,54 @@ internal sealed class AiServer : IDisposable
             return "Visual Studio Code";
         if (lower.Contains("codex"))
             return "Codex";
-        return name.Length == 0 ? "Unknown app" : name;
+        return name.Length == 0 ? UnknownApp : name;
     }
 
-    /// <summary>The MCP server's options: PuppyMacro, its instructions and the tools, each answered by <paramref name="run"/>.</summary>
-    /// <summary>Runs a tool and logs its times and sizes (<see cref="AiCallLog"/>), whatever happens.</summary>
-    private async Task<AiToolResult> CallLogged(AiTool tool, JsonElement args, string app, CancellationToken cancel)
+    /// <summary>
+    /// Runs a tool within this connection's rate limit (<see cref="AiRateLimit"/>), with its debug folder (request.json
+    /// before, response.json after: <see cref="DebugCall"/>), whatever happens.
+    /// </summary>
+    private async Task<AiToolResult> CallDebugged(AiTool tool, JsonElement args, RequestContext<CallToolRequestParams> request,
+        DebugSession debug, AiRateLimit limit, CancellationToken cancel)
     {
-        DateTime start = DateTime.Now;
+        string app = FriendlyName(request.Server.ClientInfo);
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        AiToolResult? result = null;
+        JsonElement? meta = request.Params?.Meta is { } m ? JsonSerializer.SerializeToElement(m) : null;
+        DebugCall call = debug.NewCall(tool.Name, await _tools.SubjectOf(args).ConfigureAwait(false), args, meta);
+        AiToolResult result = AiToolResult.Error("PuppyMacro could not finish the request.");
         try
         {
+            if (limit.Wait() is TimeSpan wait)
+                return result = AiToolResult.Error(
+                    $"Too many requests at once: PuppyMacro takes about {AiRateLimit.PerSecond} a second. Try again in {Math.Ceiling(wait.TotalSeconds)} s.");
+            DebugCall.Current = call;
             return result = await _tools.Call(tool.Name, args, app, cancel).ConfigureAwait(false);
         }
         finally
         {
-            int? ops = args.ValueKind == JsonValueKind.Object && args.TryGetProperty("patch", out JsonElement patch)
-                && patch.ValueKind == JsonValueKind.Array ? patch.GetArrayLength() : null;
-            _calls?.Add(new AiCall(start, Math.Round(watch.Elapsed.TotalMilliseconds, 1), app, tool.Name, args.GetRawText().Length,
-                result?.Text.Length ?? 0, result == null ? "failed" : result.IsError ? "error" : "ok", ops));
+            DebugCall.Current = null;
+            call.Answered(result, watch.Elapsed.TotalMilliseconds, result.Files.Select(f => new
+            {
+                Uri = DebugStore.UriOf(f),
+                Name = Path.GetFileName(f),
+            }));
         }
     }
 
+    /// <summary>The MCP server's options: PuppyMacro, its instructions, the tools (each answered by <paramref name="run"/>) and the debug data as resources.</summary>
     internal static McpServerOptions Options(IEnumerable<AiTool> tools, string instructions,
-        Func<AiTool, JsonElement, string, CancellationToken, Task<AiToolResult>> run)
+        Func<AiTool, JsonElement, RequestContext<CallToolRequestParams>, CancellationToken, Task<AiToolResult>> run)
     {
         var options = new McpServerOptions
         {
             ServerInfo = new Implementation { Name = "PuppyMacro", Version = Version() },
             ServerInstructions = instructions,
             ToolCollection = new McpServerPrimitiveCollection<McpServerTool>(),
+            ResourceCollection = new McpServerResourceCollection(),
         };
         foreach (AiTool tool in tools)
             options.ToolCollection.Add(new McpTool(tool, run));
+        options.ResourceCollection.Add(new DebugResource());
         return options;
     }
 
@@ -232,13 +257,16 @@ internal sealed class AiServer : IDisposable
         _stop.Dispose();
     }
 
-    /// <summary>An <see cref="AiTool"/> as the SDK's tool: its schema as given, its answer as text.</summary>
+    /// <summary>
+    /// An <see cref="AiTool"/> as the SDK's tool: its schema as given, its answer as text, and the files it points to as
+    /// resource links (their name, type and size; the AI app reads them with resources/read if it needs them).
+    /// </summary>
     private sealed class McpTool : McpServerTool
     {
         private readonly AiTool _tool;
-        private readonly Func<AiTool, JsonElement, string, CancellationToken, Task<AiToolResult>> _run;
+        private readonly Func<AiTool, JsonElement, RequestContext<CallToolRequestParams>, CancellationToken, Task<AiToolResult>> _run;
 
-        public McpTool(AiTool tool, Func<AiTool, JsonElement, string, CancellationToken, Task<AiToolResult>> run)
+        public McpTool(AiTool tool, Func<AiTool, JsonElement, RequestContext<CallToolRequestParams>, CancellationToken, Task<AiToolResult>> run)
         {
             _tool = tool;
             _run = run;
@@ -246,12 +274,15 @@ internal sealed class AiServer : IDisposable
             ProtocolTool = new Tool
             {
                 Name = tool.Name,
+                Title = tool.Title,
                 Description = tool.Description,
                 InputSchema = schema.RootElement.Clone(),
                 Annotations = new ToolAnnotations
                 {
+                    Title = tool.Title,
                     ReadOnlyHint = tool.ReadOnly,
                     DestructiveHint = tool.Destructive,
+                    IdempotentHint = tool.Idempotent,
                     OpenWorldHint = false,
                 },
             };
@@ -266,16 +297,58 @@ internal sealed class AiServer : IDisposable
         {
             JsonElement args = JsonSerializer.SerializeToElement(
                 request.Params?.Arguments ?? new Dictionary<string, JsonElement>());
-            string app = FriendlyName(request.Server.ClientInfo);
-            AiToolResult result = await _run(_tool, args, app, cancellationToken).ConfigureAwait(false);
+            AiToolResult result = await _run(_tool, args, request, cancellationToken).ConfigureAwait(false);
             var content = new List<ContentBlock> { new TextContentBlock { Text = result.Text } };
-            foreach (byte[] jpeg in result.Images)
-                content.Add(ImageContentBlock.FromBytes(jpeg, "image/jpeg"));
+            foreach (string file in result.Files)
+            {
+                var info = new FileInfo(file);
+                content.Add(new ResourceLinkBlock
+                {
+                    Uri = DebugStore.UriOf(file),
+                    Name = info.Name,
+                    MimeType = DebugStore.MimeOf(file),
+                    Size = info.Exists ? info.Length : null,
+                });
+            }
             return new CallToolResult
             {
                 Content = content,
                 IsError = result.IsError,
             };
+        }
+    }
+
+    /// <summary>
+    /// The debug data as MCP resources (puppymacro://debug/{path}): resources/read gives a file of the debug folder, a log
+    /// or JSON as text, a picture as its PNG (base64, as MCP carries binary data). Only files inside the folder: any other
+    /// path, "..", or a file that is not there answers "Resource not found" (-32002).
+    /// </summary>
+    private sealed class DebugResource : McpServerResource
+    {
+        public override ResourceTemplate ProtocolResourceTemplate { get; } = new()
+        {
+            UriTemplate = DebugStore.UriPrefix + "{+path}",
+            Name = "debug",
+            Title = "PuppyMacro debug data",
+            Description = "Files PuppyMacro keeps about AI requests and macro runs: logs, the screen's pictures, requests and answers.",
+        };
+
+        public override IReadOnlyList<object> Metadata { get; } = Array.Empty<object>();
+
+        public override bool IsMatch(string uri) => uri.StartsWith(DebugStore.UriPrefix, StringComparison.Ordinal);
+
+        public override ValueTask<ReadResourceResult> ReadAsync(RequestContext<ReadResourceRequestParams> request,
+            CancellationToken cancellationToken = default)
+        {
+            string uri = request.Params?.Uri ?? "";
+            DebugStore.WaitWritten(TimeSpan.FromSeconds(10));
+            string file = DebugStore.PathOf(uri)
+                ?? throw new ModelContextProtocol.McpProtocolException($"Resource not found: {uri}", ModelContextProtocol.McpErrorCode.ResourceNotFound);
+            string mime = DebugStore.MimeOf(file);
+            ResourceContents contents = mime.StartsWith("image/", StringComparison.Ordinal)
+                ? BlobResourceContents.FromBytes(File.ReadAllBytes(file), uri, mime)
+                : new TextResourceContents { Uri = uri, MimeType = mime, Text = File.ReadAllText(file) };
+            return ValueTask.FromResult(new ReadResourceResult { Contents = new List<ResourceContents> { contents } });
         }
     }
 }

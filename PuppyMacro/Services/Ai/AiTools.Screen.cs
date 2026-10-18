@@ -13,28 +13,23 @@ namespace PuppyMacro.Services.Ai;
 
 /// <summary>
 /// The tools that let an AI app build a macro with the screen: look at it (look_at_screen, then take_image and pick_pixel
-/// from that picture), check a condition (check_condition), record what the user does (record_macro,
-/// get_recording_frame), test a macro (test_macro) and read how its last run went (get_last_run). Each one that needs the
-/// user shows the ready window first, with the AI's title, description and steps. Pictures go to the AI app only with Let
-/// AI apps see the screen on (the AI page), and as JPEG no larger than <see cref="MaxImageSide"/>.
+/// from that picture), check a condition (check_condition), record what the user does (record_macro), test a macro
+/// (test_macro) and find how its last run went (get_last_run). Each one that needs the user shows the ready window first,
+/// with the AI's title, description and steps. What they capture stays in the call's debug folder (<see cref="DebugCall"/>):
+/// the answer says how it went and links its files (<see cref="AiToolResult.Files"/>, MCP resource links), which the AI
+/// app reads only if it needs them. Pictures are the screen's own, never shrunk or re-encoded.
 /// </summary>
 internal sealed partial class AiTools
 {
-    /// <summary>The longest side of a picture sent to an AI app: larger ones cost far more and are shrunk by the AI app anyway.</summary>
-    public const int MaxImageSide = 1568;
-
-    /// <summary>How long a look_at_screen picture stays for take_image and pick_pixel.</summary>
-    public static readonly TimeSpan SnapshotLife = TimeSpan.FromMinutes(10);
-
-    private const int MaxSnapshots = 3;
-
     /// <summary>The side of the image kept around each recorded click.</summary>
     public const int ClickImageSide = 96;
 
-    /// <summary>The most pictures a test's or get_last_run's answer carries (the newest).</summary>
-    private const int MaxRunPictures = 6;
-
     public const double DefaultTestSeconds = 20;
+
+    /// <summary>A look_at_screen picture's monitors (bounds), next to its PNGs.</summary>
+    private const string ScreenFile = "screen.json";
+
+    private const int CachedSnapshots = 3;
 
     private const string SeeScreenOff =
         "Let AI apps see the screen is off on PuppyMacro's AI page, so pictures of the screen and what it shows are not given " +
@@ -43,54 +38,117 @@ internal sealed partial class AiTools
     private const string TestOff =
         "Let AI apps test macros is off on PuppyMacro's AI page. The user can turn it on there, or start the macro themselves.";
 
-    private readonly Dictionary<string, (DateTime At, List<(Rect Bounds, Mat Picture)> Monitors)> _snapshots = new();
-    private (string Id, List<(int X, int Y, Rect Monitor, byte[]? Jpeg)> Clicks)? _recording;
+    /// <summary>The newest look_at_screen pictures, decoded (their PNGs are the source; this only spares reading them).</summary>
+    private readonly List<(string Id, List<(Rect Bounds, Mat Picture)> Monitors)> _snapshots = new();
 
-    // ================= Pictures =================
-
-    /// <summary>A picture for the AI app: shrunk to <see cref="MaxImageSide"/> at most, as JPEG, and how much it was shrunk.</summary>
-    internal static (byte[] Jpeg, double Scale, int Width, int Height) ForAi(Mat picture)
+    /// <summary>The folder this call keeps its files in (outside a connection, one of its own).</summary>
+    private static string CallFolder(string tool)
     {
-        double scale = Math.Min(1, (double)MaxImageSide / Math.Max(picture.Width, picture.Height));
-        using Mat small = scale < 1
-            ? picture.Resize(new Size(Math.Max(1, (int)Math.Round(picture.Width * scale)), Math.Max(1, (int)Math.Round(picture.Height * scale))), 0, 0, InterpolationFlags.Area)
-            : picture.Clone();
-        Cv2.ImEncode(".jpg", small, out byte[] jpeg, new ImageEncodingParam(ImwriteFlags.JpegQuality, 85));
-        return (jpeg, scale, small.Width, small.Height);
+        if (DebugCall.Current is { } call)
+            return call.Folder;
+        using JsonDocument none = JsonDocument.Parse("{}");
+        return DebugSession.Detached.NewCall(tool, null, none.RootElement.Clone(), null).Folder;
     }
 
-    /// <summary>Keeps a look_at_screen picture for take_image and pick_pixel (the newest few, for <see cref="SnapshotLife"/>).</summary>
-    private string KeepSnapshot(List<(Rect Bounds, Mat Picture)> monitors)
+    // ================= look_at_screen =================
+
+    private async Task<AiToolResult> LookAtScreen(JsonElement args, string app, CancellationToken cancel)
     {
-        string id = Guid.NewGuid().ToString("N")[..8];
+        if (!_host.Settings.AiSeeScreen)
+            return AiToolResult.Error(SeeScreenOff);
+        AiAsk ask = Asking(args);
+        string folder = CallFolder(Name("look_at_screen"));
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+        Phrase label = Phrase.Of("Ai_LookedAtScreen", ask.Title);
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer ready = await _host.Ready(app, ask);
+            if (ready != AiAnswer.Done)
+            {
+                Log(app, AiActivityKind.Interaction, label, ready, "");
+                return Answered(ready, "");
+            }
+            var monitors = await _host.TakeScreen();
+            if (monitors.Count == 0)
+                return AiToolResult.Error("PuppyMacro could not see the screen (no monitor gave a picture). Ask the user to try again.");
+            string id = DebugStore.UriOf(folder)[DebugStore.UriPrefix.Length..];
+            var files = new List<string>();
+            var described = new List<object>();
+            for (int i = 0; i < monitors.Count; i++)
+            {
+                var (bounds, picture) = monitors[i];
+                string file = Path.Combine(folder, $"monitor-{i + 1}.png");
+                files.Add(file);
+                described.Add(new { File = Path.GetFileName(file), bounds.X, bounds.Y, bounds.Width, bounds.Height });
+                Mat copy = picture.Clone();
+                DebugStore.Write(() =>
+                {
+                    using (copy)
+                        Cv2.ImWrite(file, copy);
+                });
+            }
+            string screen = JsonSerializer.Serialize(described, DebugJson.Options);
+            DebugStore.Write(() => File.WriteAllText(Path.Combine(folder, ScreenFile), screen));
+            KeepSnapshot(id, monitors);
+            Log(app, AiActivityKind.Interaction, label, AiAnswer.Done, "");
+            _host.Finished(app);
+            return new AiToolResult(JsonSerializer.Serialize(new
+            {
+                SnapshotId = id,
+                Monitors = described,
+                Note = "Each monitor's picture is linked below, at the screen's own size, in physical pixels: a point at (px, py) " +
+                       "in a monitor's picture is at X + px, Y + py on the screen. take_image and pick_pixel read this same " +
+                       "picture with snapshot_id and screen coordinates, without the user. PuppyMacro's own windows are left out.",
+            }, AnswerOptions)) { Files = files };
+        }, cancel).ConfigureAwait(false);
+    }
+
+    private void KeepSnapshot(string id, List<(Rect Bounds, Mat Picture)> monitors)
+    {
         lock (_sync)
         {
-            foreach (var old in _snapshots.Where(s => DateTime.UtcNow - s.Value.At > SnapshotLife)
-                         .Concat(_snapshots.OrderByDescending(s => s.Value.At).Skip(MaxSnapshots - 1)).Select(s => s.Key).Distinct().ToList())
+            _snapshots.Insert(0, (id, monitors));
+            foreach (var old in _snapshots.Skip(CachedSnapshots).ToList())
             {
-                foreach (var (_, picture) in _snapshots[old].Monitors)
+                foreach (var (_, picture) in old.Monitors)
                     picture.Dispose();
                 _snapshots.Remove(old);
             }
-            _snapshots[id] = (DateTime.UtcNow, monitors);
         }
-        return id;
     }
 
-    /// <summary>Under no lock: the part of a kept picture at a screen area (one monitor), or why not.</summary>
+    /// <summary>The part of a look_at_screen picture at a screen area (one monitor), from memory or its files, or why not.</summary>
     private (Mat? Part, string? Problem) FromSnapshot(string id, Rect area)
     {
         lock (_sync)
         {
-            if (!_snapshots.TryGetValue(id, out var snapshot) || DateTime.UtcNow - snapshot.At > SnapshotLife)
-                return (null, $"No picture \"{id}\": pictures from look_at_screen last {SnapshotLife.TotalMinutes:0} minutes. Call look_at_screen again.");
-            foreach (var (bounds, picture) in snapshot.Monitors)
-            {
-                if (!bounds.Contains(area.TopLeft) || !bounds.Contains(new Point(area.Right - 1, area.Bottom - 1)))
-                    continue;
-                using var view = new Mat(picture, new Rect(area.X - bounds.X, area.Y - bounds.Y, area.Width, area.Height));
-                return (view.Clone(), null);
-            }
+            if (_snapshots.FirstOrDefault(s => s.Id == id) is { Monitors: { } kept })
+                return Cut(kept, area);
+        }
+        string? screen = DebugStore.PathOf(DebugStore.UriPrefix + id + "/" + ScreenFile);
+        if (screen == null)
+            return (null, $"No picture \"{id}\": it is not in PuppyMacro's debug data any more. Call look_at_screen again.");
+        DebugStore.WaitWritten(TimeSpan.FromSeconds(10));
+        var monitors = new List<(Rect, Mat)>();
+        using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(screen));
+        foreach (JsonElement m in doc.RootElement.EnumerateArray())
+        {
+            var bounds = new Rect(m.GetProperty("X").GetInt32(), m.GetProperty("Y").GetInt32(), m.GetProperty("Width").GetInt32(), m.GetProperty("Height").GetInt32());
+            monitors.Add((bounds, Cv2.ImRead(Path.Combine(Path.GetDirectoryName(screen)!, m.GetProperty("File").GetString()!))));
+        }
+        KeepSnapshot(id, monitors);
+        return Cut(monitors, area);
+    }
+
+    private static (Mat? Part, string? Problem) Cut(List<(Rect Bounds, Mat Picture)> monitors, Rect area)
+    {
+        foreach (var (bounds, picture) in monitors)
+        {
+            if (picture.Empty() || !bounds.Contains(area.TopLeft) || !bounds.Contains(new Point(area.Right - 1, area.Bottom - 1)))
+                continue;
+            using var view = new Mat(picture, new Rect(area.X - bounds.X, area.Y - bounds.Y, area.Width, area.Height));
+            return (view.Clone(), null);
         }
         return (null, "That area is not inside one monitor of the picture. Screen coordinates are physical pixels; look_at_screen gives each monitor's bounds.");
     }
@@ -116,74 +174,6 @@ internal sealed partial class AiTools
     private static bool? BoolArg(JsonElement args, string name) =>
         args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement v) && v.ValueKind is JsonValueKind.True or JsonValueKind.False
             ? v.GetBoolean() : null;
-
-    // ================= look_at_screen =================
-
-    private async Task<AiToolResult> LookAtScreen(JsonElement args, string app, CancellationToken cancel)
-    {
-        if (!_host.Settings.AiSeeScreen)
-            return AiToolResult.Error(SeeScreenOff);
-        AiAsk ask = Asking(args);
-        Rect? area = AreaArg(args, "area");
-        if (await Refusal().ConfigureAwait(false) is string busy)
-            return AiToolResult.Error(busy);
-        Phrase label = Phrase.Of("Ai_LookedAtScreen", ask.Title);
-        return await StartForUser(app, async () =>
-        {
-            AiAnswer ready = await _host.Ready(app, ask);
-            if (ready != AiAnswer.Done)
-            {
-                Log(app, AiActivityKind.Interaction, label, ready, "");
-                return Answered(ready, "");
-            }
-            var monitors = await _host.TakeScreen();
-            if (monitors.Count == 0)
-                return AiToolResult.Error("PuppyMacro could not see the screen (no monitor gave a picture). Ask the user to try again.");
-            string id = KeepSnapshot(monitors);
-            var images = new List<byte[]>();
-            var described = new List<object>();
-            // Shrinking and encoding take a moment on a large screen: not on the UI thread.
-            string? problem = await Task.Run(() =>
-            {
-                if (area is Rect part)
-                {
-                    var (cut, why) = FromSnapshot(id, part);
-                    if (cut == null)
-                        return why;
-                    using (cut)
-                    {
-                        var (jpeg, scale, w, h) = ForAi(cut);
-                        images.Add(jpeg);
-                        described.Add(new { Image = 1, part.X, part.Y, part.Width, part.Height, ImageWidth = w, ImageHeight = h, Scale = Math.Round(scale, 4) });
-                    }
-                    return null;
-                }
-                foreach (var (bounds, picture) in monitors)
-                {
-                    var (jpeg, scale, w, h) = ForAi(picture);
-                    images.Add(jpeg);
-                    described.Add(new
-                    {
-                        Image = images.Count, bounds.X, bounds.Y, bounds.Width, bounds.Height, ImageWidth = w, ImageHeight = h,
-                        Scale = Math.Round(scale, 4),
-                    });
-                }
-                return null;
-            });
-            if (problem != null)
-                return AiToolResult.Error(problem);
-            Log(app, AiActivityKind.Interaction, label, AiAnswer.Done, "");
-            string text = JsonSerializer.Serialize(new
-            {
-                SnapshotId = id,
-                Pictures = described,
-                Coordinates = "A point at (px, py) in picture n is at X + px / Scale, Y + py / Scale on the screen (physical pixels). " +
-                    "take_image and pick_pixel read this same picture with snapshot_id and screen coordinates, for the next " +
-                    $"{SnapshotLife.TotalMinutes:0} minutes; area gives a part at full size, for exact coordinates. PuppyMacro's own windows are left out of it.",
-            }, AnswerOptions);
-            return new AiToolResult(text) { Images = images };
-        }, cancel).ConfigureAwait(false);
-    }
 
     /// <summary>take_image and pick_pixel with snapshot_id: from a look_at_screen picture, without asking the user.</summary>
     private async Task<AiToolResult> FromSnapshotPick(JsonElement args, string app, AiScreenPickKind kind, string snapshotId)
@@ -265,6 +255,7 @@ internal sealed partial class AiTools
             ConditionReport report = await _host.CheckCondition(condition);
             bool isTrue = report.TrueFor(condition);
             Log(app, AiActivityKind.Interaction, label, AiAnswer.Done, isTrue ? "true" : "not true");
+            _host.Finished(app);
             return new AiToolResult(JsonSerializer.Serialize(new
             {
                 True = isTrue,
@@ -287,6 +278,7 @@ internal sealed partial class AiTools
     {
         AiAsk ask = Asking(args);
         bool moves = BoolArg(args, "mouse_movement") ?? _host.Settings.RecordMouseMovement;
+        string folder = CallFolder(Name("record_macro"));
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_Recorded", ask.Title);
@@ -302,103 +294,95 @@ internal sealed partial class AiTools
             Log(app, AiActivityKind.Interaction, label, answer, recording == null ? "" : $"{recording.Actions.Count}");
             if (answer != AiAnswer.Done || recording == null)
                 return Answered(answer, "");
-            var prepared = await Task.Run(() => PrepareClicks(recording));
-            return RecordingAnswer(recording, prepared); // on the UI thread: the images go to the store there
+            var clicks = await Task.Run(() => KeepRecording(folder, recording));
+            _host.Finished(app);
+            return RecordingAnswer(folder, recording, clicks); // on the UI thread: the images go to the store there
         }, cancel).ConfigureAwait(false);
     }
 
-    /// <summary>Off the UI thread: for each click the image around it (a PNG, none when flat) and its frame for the AI app.</summary>
-    private List<(byte[]? Png, Rect Around, byte[]? Jpeg)> PrepareClicks(AiRecording recording)
+    /// <summary>
+    /// Off the UI thread: the recording's log, its actions and the screen at each of the user's inputs into the call's
+    /// folder (without Let AI apps see the screen, no pictures), and for each click the image around it (a PNG, none when
+    /// flat).
+    /// </summary>
+    private List<(byte[]? Png, Rect Around)> KeepRecording(string folder, AiRecording recording)
     {
         bool see = _host.Settings.AiSeeScreen;
-        var prepared = new List<(byte[]?, Rect, byte[]?)>();
-        foreach (var click in recording.Clicks)
+        var log = new RunLog(folder, null, "a recording of the user's inputs");
+        var clicks = new List<(byte[]?, Rect)>();
+        foreach (var input in recording.Inputs)
         {
-            using var screen = click.Screen;
-            byte[]? png = null, jpeg = null;
+            byte[]? png = null;
             Rect around = default;
-            if (see && screen != null)
+            if (input.Click && see && input.Screen.FirstOrDefault(m => m.Bounds.Contains(input.X, input.Y)) is { Picture: { } screen } monitor)
             {
                 int half = ClickImageSide / 2;
-                around = new Rect(click.X - half, click.Y - half, ClickImageSide, ClickImageSide).Intersect(click.MonitorBounds);
+                around = new Rect(input.X - half, input.Y - half, ClickImageSide, ClickImageSide).Intersect(monitor.Bounds);
                 if (around.Width >= MacroJson.AreaSize.Min && around.Height >= MacroJson.AreaSize.Min)
                 {
-                    using var cut = new Mat(screen, new Rect(around.X - click.MonitorBounds.X, around.Y - click.MonitorBounds.Y, around.Width, around.Height));
+                    using var cut = new Mat(screen, new Rect(around.X - monitor.Bounds.X, around.Y - monitor.Bounds.Y, around.Width, around.Height));
                     if (!OneColor(cut))
                         Cv2.ImEncode(".png", cut, out png);
                 }
-                jpeg = ForAi(screen).Jpeg;
             }
-            prepared.Add((png, around, jpeg));
+            if (input.Click)
+                clicks.Add((png, around));
+            log.Event($"{input.What} at +{input.TimeMs / 1000:0.000} s of the recording", see ? input.Screen : null);
+            if (!see)
+                foreach (var (_, picture) in input.Screen)
+                    picture.Dispose();
         }
-        return prepared;
+        string actions = JsonSerializer.Serialize(recording.Actions, AnswerOptions);
+        DebugStore.Write(() => File.WriteAllText(Path.Combine(folder, "actions.json"), actions));
+        log.End("the user stopped the recording");
+        RunLog.WaitWritten(TimeSpan.FromSeconds(30));
+        return clicks;
     }
 
     /// <summary>
-    /// On the UI thread: the actions, and for each click the image around it (in the conditions' images, for an Image
-    /// condition that waits for what was clicked) and its frame kept for get_recording_frame. Without Let AI apps see the
-    /// screen: the actions only.
+    /// On the UI thread: the actions, each click with the image around it (in the conditions' images, for an Image
+    /// condition that waits for what was clicked), and the links to the recording's log and pictures.
     /// </summary>
-    private AiToolResult RecordingAnswer(AiRecording recording, List<(byte[]? Png, Rect Around, byte[]? Jpeg)> prepared)
+    private AiToolResult RecordingAnswer(string folder, AiRecording recording, List<(byte[]? Png, Rect Around)> prepared)
     {
-        string id = Guid.NewGuid().ToString("N")[..8];
         var clicks = new List<object>();
-        var frames = new List<(int X, int Y, Rect Monitor, byte[]? Jpeg)>();
-        for (int i = 0; i < recording.Clicks.Count; i++)
+        var clickInputs = recording.Inputs.Where(i => i.Click).ToList();
+        for (int i = 0; i < clickInputs.Count; i++)
         {
-            var click = recording.Clicks[i];
-            var (png, around, jpeg) = prepared[i];
+            var (png, around) = prepared[i];
             string? imageId = null;
             if (png != null)
             {
                 imageId = _host.Macros.Images.Add(png);
                 _host.Macros.Images.HoldAlso(typeof(AiTools), imageId);
             }
-            frames.Add((click.X, click.Y, click.MonitorBounds, jpeg));
             clicks.Add(new
             {
-                Click = i + 1, click.X, click.Y, TimeMs = Math.Round(click.TimeMs),
+                clickInputs[i].X, clickInputs[i].Y, TimeMs = Math.Round(clickInputs[i].TimeMs),
                 Image = imageId == null ? null : new { Id = imageId, around.X, around.Y, around.Width, around.Height },
             });
         }
-        lock (_sync)
-            _recording = (id, frames);
         return new AiToolResult(JsonSerializer.Serialize(new
         {
-            RecordingId = id,
-            Note = _host.Settings.AiSeeScreen
-                ? "Actions are as PuppyMacro's recorder builds them (not saved). Each click has an image around it, taken a moment " +
-                  "after the click, ready for an Image condition's Images (its Id, and X, Y where it was); get_recording_frame " +
-                  "gives the screen at a click."
-                : "Actions are as PuppyMacro's recorder builds them (not saved). Let AI apps see the screen is off: no pictures.",
+            Note = "Actions are as PuppyMacro's recorder builds them (not saved). Each click has an image around it, taken a " +
+                   "moment after the click, ready for an Image condition's Images. The recording's log (each input, with the " +
+                   "picture of the screen at that moment, named by its number) and its files are linked below.",
             recording.Actions,
             Clicks = clicks,
-        }, AnswerOptions));
+        }, AnswerOptions)) { Files = FilesOf(folder) };
     }
 
-    private Task<AiToolResult> RecordingFrame(JsonElement args, string app)
+    /// <summary>The files a call keeps, without its own request and response: log first, then the rest by name.</summary>
+    private static List<string> FilesOf(string folder)
     {
-        if (!_host.Settings.AiSeeScreen)
-            return Task.FromResult(AiToolResult.Error(SeeScreenOff));
-        string id = Str(args, "recording_id") ?? "";
-        int click = IntArg(args, "click") ?? 0;
-        lock (_sync)
-        {
-            if (_recording is not { } recording || recording.Id != id)
-                return Task.FromResult(AiToolResult.Error($"No recording \"{id}\": only the last record_macro is kept."));
-            if (click < 1 || click > recording.Clicks.Count)
-                return Task.FromResult(AiToolResult.Error($"\"click\" goes from 1 to {recording.Clicks.Count}."));
-            var frame = recording.Clicks[click - 1];
-            if (frame.Jpeg == null)
-                return Task.FromResult(AiToolResult.Error("PuppyMacro had no picture of the screen at that click."));
-            _log.Add(app, AiActivityKind.Read, Phrase.Of("Ai_ReadRecordingFrame", click.ToString(System.Globalization.CultureInfo.InvariantCulture)));
-            double scale = Math.Min(1, (double)MaxImageSide / Math.Max(frame.Monitor.Width, frame.Monitor.Height));
-            return Task.FromResult(new AiToolResult(JsonSerializer.Serialize(new
-            {
-                Click = click, frame.X, frame.Y, Monitor = new { frame.Monitor.X, frame.Monitor.Y, frame.Monitor.Width, frame.Monitor.Height },
-                Scale = Math.Round(scale, 4),
-            }, AnswerOptions)) { Images = new[] { frame.Jpeg } });
-        }
+        DebugStore.WaitWritten(TimeSpan.FromSeconds(30));
+        if (!Directory.Exists(folder))
+            return new List<string>();
+        return Directory.GetFiles(folder)
+            .Where(f => Path.GetFileName(f) is not ("request.json" or "response.json"))
+            .OrderBy(f => Path.GetFileName(f) == RunLog.LogFile ? 0 : 1)
+            .ThenBy(f => f, StringComparer.Ordinal)
+            .ToList();
     }
 
     // ================= test_macro and get_last_run =================
@@ -419,6 +403,7 @@ internal sealed partial class AiTools
         })).ConfigureAwait(false);
         if (problem != null)
             return AiToolResult.Error(problem);
+        string folder = CallFolder(Name("test_macro"));
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_TestedMacro", $"\"{name}\"");
@@ -430,48 +415,50 @@ internal sealed partial class AiTools
                 Log(app, AiActivityKind.Interaction, label, ready, "");
                 return Answered(ready, "");
             }
-            AiTestRun? run = await _host.TestMacro(id, app, seconds);
+            AiTestRun? run = await _host.TestMacro(id, app, seconds, folder);
             if (run == null)
                 return AiToolResult.Error("PuppyMacro could not start the macro (another item started meanwhile, or it has no actions).");
             Log(app, AiActivityKind.Interaction, label, AiAnswer.Done, run.EndReason);
-            return LastRun(id, $"The test ended: {run.EndReason}.", pictures: true);
+            _host.Finished(app);
+            return RunAnswer($"The test ended: {run.EndReason}.", folder);
         }, cancel).ConfigureAwait(false);
     }
 
     private Task<AiToolResult> GetLastRun(JsonElement args, string app)
     {
         Guid id = IdArg(args, "id");
-        bool pictures = BoolArg(args, "pictures") ?? false;
         _log.Add(app, AiActivityKind.Read, Phrase.Of("Ai_ReadLastRun"));
-        return Task.FromResult(LastRun(id, null, pictures));
+        string? folder = DebugStore.LastRunOf(id);
+        if (folder == null)
+            return Task.FromResult(new AiToolResult(
+                "This macro has no run in PuppyMacro's debug data: a run is kept for a macro with Debug on (the user's choice) " +
+                "and for every test_macro, for 7 days."));
+        string? ended = null;
+        try
+        {
+            using JsonDocument run = JsonDocument.Parse(File.ReadAllText(Path.Combine(folder, RunLog.RunFile)));
+            if (run.RootElement.TryGetProperty("EndReason", out JsonElement reason))
+                ended = reason.GetString();
+        }
+        catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
+        {
+        }
+        return Task.FromResult(RunAnswer(ended == null ? "Its last run had not ended when its log was written." : $"Its last run ended: {ended}.", folder));
     }
 
-    /// <summary>A macro's last run log, its folder, and (with Let AI apps see the screen) its newest pictures.</summary>
-    private AiToolResult LastRun(Guid id, string? first, bool pictures)
+    /// <summary>
+    /// How a run went in one line, with its files linked (the log, each picture named by its event): the AI app reads only
+    /// what it needs. Without Let AI apps see the screen, the pictures are not linked.
+    /// </summary>
+    private AiToolResult RunAnswer(string first, string folder)
     {
-        string? log = RunLog.Read(id);
-        if (log == null)
-            return new AiToolResult((first == null ? "" : first + " ") +
-                "This macro has no log: PuppyMacro keeps the last run's log only for a macro with Debug on (a field of the " +
-                "macro) or after test_macro, until PuppyMacro closes.");
-        string folder = RunLog.FolderFor(id);
-        var images = new List<byte[]>();
-        string seen = "";
-        if (pictures && _host.Settings.AiSeeScreen && Directory.Exists(folder))
-        {
-            var files = new DirectoryInfo(folder).GetFiles("*.png").OrderByDescending(f => f.LastWriteTimeUtc).Take(MaxRunPictures).Reverse().ToList();
-            foreach (var file in files)
-            {
-                using var picture = Cv2.ImRead(file.FullName);
-                if (!picture.Empty())
-                    images.Add(ForAi(picture).Jpeg);
-            }
-            seen = files.Count == 0 ? "" : $" Pictures, in order: {string.Join(", ", files.Select(f => f.Name))}.";
-        }
-        else if (pictures && !_host.Settings.AiSeeScreen)
-        {
-            seen = " " + SeeScreenOff;
-        }
-        return new AiToolResult($"{(first == null ? "" : first + " ")}Log folder: {folder}.{seen}\n\n{log}") { Images = images };
+        var files = FilesOf(folder);
+        if (!_host.Settings.AiSeeScreen)
+            files.RemoveAll(f => f.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
+        int pictures = files.Count(f => f.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
+        return new AiToolResult(
+            $"{first} Its log ({RunLog.LogFile}: each event with its number and time; the picture of the screen just before an " +
+            $"event has the same number) and {pictures} picture(s) are linked below, in {folder}." +
+            (_host.Settings.AiSeeScreen ? "" : " " + SeeScreenOff)) { Files = files };
     }
 }

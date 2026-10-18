@@ -216,6 +216,14 @@
   <!-- ===== MainWindow.xaml.cs ===== -->
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Not available in the development build</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Data saved in {0}</value><comment>{0}: the data folder's path.</comment></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Debug data</value><comment>Settings card: the debug data (AI requests and macros with Debug on)</comment></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Logs and pictures of the screen from AI requests and from macros with Debug on, kept 7 days on this PC. They take {0}.</value><comment>Under Debug data: {0} the space it takes (Settings_SizeMb or Settings_SizeGb)</comment></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value><comment>A size in megabytes: {0} the number</comment></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value><comment>A size in gigabytes: {0} the number</comment></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Delete the debug data</value><comment>Settings card: deletes the debug data</comment></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Everything except what is in progress now.</value><comment>Under Delete the debug data</comment></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Delete all</value><comment>Button: deletes all the debug data</comment></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Delete PuppyMacro's debug data? What is in progress now stays.</value><comment>Confirmation before deleting the debug data</comment></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Hotkeys don't work right now:
 {0}</value><comment>{0}: the error from Windows.</comment></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro is still running in the system tray. Right-click its icon to exit.</value></data>
@@ -440,6 +448,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>All types</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>All results</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Restore</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Open debug</value><comment>Button in the AI activity window: opens the request's folder in the debug data</comment></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Details</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>No requests yet.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>No requests match the filters.</value></data>
@@ -464,6 +473,10 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value><comment>A step's number.</comment></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Press {0} when you're ready · {1} cancels</value><comment>{0}: the Enter key, {1}: the Esc key, each shown as a keycap.</comment></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Start</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>Done</value><comment>Title of the window shown when an AI app's request on the user's screen is over</comment></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>You can go back to {0}.</value><comment>In the Done window: {0} the AI app's name, as it gave it (Claude Desktop, Visual Studio Code…)</comment></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>You can go back to your AI app.</value><comment>In the Done window, when the AI app gave no name</comment></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>OK</value><comment>Button that closes the Done window</comment></data>
   <!-- ===== PickPointWindow.xaml(.cs) ===== -->
   <data name="Pick_Title" xml:space="preserve"><value>Pick a point</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Click the point the cursor should go to</value></data>
@@ -536,7 +549,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Editor_Sound" xml:space="preserve"><value>Sound</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Plays when the macro starts and stops</value></data>
   <data name="Macro_Debug" xml:space="preserve"><value>Debug</value><comment>GLOBAL: the macro editor's Debug card, the same in every language</comment></data>
-  <data name="Macro_DebugDescription" xml:space="preserve"><value>Keeps the log of this macro's last run, with pictures of the screen when an If isn't true and at the end. The log is deleted when PuppyMacro closes.</value><comment>Description of the macro editor's Debug card. If is a global word</comment></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Keeps a log of each run of this macro, with a picture of the screen before each step, for 7 days on this PC.</value><comment>Description of the macro editor's Debug card. If is a global word</comment></data>
   <data name="Macro_ViewLog" xml:space="preserve"><value>View log</value><comment>Button and menu item: opens the Debug log of a macro's last run</comment></data>
   <data name="DebugLog_Title" xml:space="preserve"><value>Log of {0}</value><comment>Title of the Debug log window: {0} the macro's name</comment></data>
   <data name="DebugLog_Description" xml:space="preserve"><value>The last run of the macro, written in English so you can paste it anywhere. The pictures of the screen are in its folder.</value><comment>Under the Debug log window's title</comment></data>
@@ -1393,7 +1406,6 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Ai_TestedMacro" xml:space="preserve"><value>Tested the macro {0}</value><comment>AI activity: {0} the macro's name in quotes</comment></data>
   <data name="Ai_ReadPixel" xml:space="preserve"><value>Read a pixel of the screen: {0}</value><comment>AI activity: {0} the pixel's position and color</comment></data>
   <data name="Ai_TookImage" xml:space="preserve"><value>Took an image from the screen: {0}</value><comment>AI activity: {0} where the image was taken and its size</comment></data>
-  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>Looked at the screen at click {0} of the recording</value><comment>AI activity: {0} the click's number in the recording</comment></data>
   <data name="Ai_ReadLastRun" xml:space="preserve"><value>Read the log of a macro's last run</value><comment>AI activity: an AI app read the log of a macro's last run</comment></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Action</value><comment>Label under the + of the macro editor's button that adds an action (short: the button's name is Add action)</comment></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condition</value><comment>Label under the + of the macro editor's button that adds a condition (short: the button's name is Add condition)</comment></data>

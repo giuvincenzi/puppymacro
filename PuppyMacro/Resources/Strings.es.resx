@@ -202,6 +202,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>Guía del usuario</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>No disponible en la compilación de desarrollo</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Datos guardados en {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Datos de depuración</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Registros e imágenes de la pantalla de las solicitudes de AI y de las macros con Debug activado, guardados 7 días en este equipo. Ocupan {0}.</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Eliminar los datos de depuración</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Todo excepto lo que está en curso ahora.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Eliminar todo</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>¿Eliminar los datos de depuración de PuppyMacro? Lo que está en curso ahora se conserva.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Las teclas de acceso rápido no funcionan en este momento:
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro sigue ejecutándose en la bandeja del sistema. Haz clic con el botón derecho en su icono para salir.</value></data>
@@ -410,6 +418,7 @@ Detalles: {1}</value></data>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>Todos los tipos</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>Todos los resultados</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Restaurar</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Abrir depuración</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Detalles</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Aún no hay peticiones.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Ninguna petición coincide con los filtros.</value></data>
@@ -432,6 +441,10 @@ Detalles: {1}</value></data>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Presiona {0} cuando estés listo · {1} cancela</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Comenzar</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>Listo</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>Puedes volver a {0}.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>Puedes volver a tu aplicación de AI.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>Aceptar</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>Elegir un punto</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Haz clic en el punto al que debe ir el cursor</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>Cancelar</value></data>
@@ -499,7 +512,7 @@ Detalles: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Cualquier tecla o botón del mouse, como F2 o A. Para una combinación, mantén presionada primero Ctrl, Alt, Mayús o Win; el clic izquierdo y derecho, la rueda del mouse y Esc la necesitan. Mantener necesita una tecla de acceso rápido.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sonido</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Suena cuando la macro se inicia y se detiene</value></data>
-  <data name="Macro_DebugDescription" xml:space="preserve"><value>Guarda el registro de la última ejecución de esta macro, con imágenes de la pantalla cuando un If no se cumple y al final. El registro se elimina al cerrar PuppyMacro.</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Guarda el registro de cada ejecución de esta macro, con una imagen de la pantalla antes de cada paso, durante 7 días en este equipo.</value></data>
   <data name="Macro_ViewLog" xml:space="preserve"><value>Ver registro</value></data>
   <data name="DebugLog_Title" xml:space="preserve"><value>Registro de {0}</value></data>
   <data name="DebugLog_Description" xml:space="preserve"><value>La última ejecución de la macro, escrita en inglés para que puedas pegarla en cualquier sitio. Las imágenes de la pantalla están en su carpeta.</value></data>
@@ -1305,7 +1318,6 @@ Detalles: {1}</value></data>
   <data name="Ai_TestedMacro" xml:space="preserve"><value>Probó la macro {0}</value></data>
   <data name="Ai_ReadPixel" xml:space="preserve"><value>Leyó un píxel de la pantalla: {0}</value></data>
   <data name="Ai_TookImage" xml:space="preserve"><value>Tomó una imagen de la pantalla: {0}</value></data>
-  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>Miró la pantalla en el clic {0} de la grabación</value></data>
   <data name="Ai_ReadLastRun" xml:space="preserve"><value>Leyó el registro de la última ejecución de una macro</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Acción</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condición</value></data>

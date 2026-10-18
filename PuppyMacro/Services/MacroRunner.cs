@@ -33,15 +33,20 @@ internal sealed class MacroRunner
     private readonly RunLog? _log;
     private string? _stopReason;
     private bool _ifStopped;
+    private readonly Func<IReadOnlyList<OpenCvSharp.Rect>> _monitors;
+    private List<IScreenWatch>? _frames;
 
     // Where the conditions checked so far found their image or text, for the mouse actions that use it.
     private readonly Dictionary<Guid, OpenCvSharp.Point> _found = new();
 
     /// <param name="log">The run's Debug log (Debug on, or a test by an AI app); null writes none.</param>
+    /// <param name="monitors">The monitors whose pictures the log takes (the desktop's when null).</param>
     public MacroRunner(MacroDefinition macro, ClipboardPaster paster, ImageStore? images = null,
-        RecognitionDevice device = RecognitionDevice.Automatic, IScreen? screen = null, RunLog? log = null)
+        RecognitionDevice device = RecognitionDevice.Automatic, IScreen? screen = null, RunLog? log = null,
+        Func<IReadOnlyList<OpenCvSharp.Rect>>? monitors = null)
     {
         _log = log;
+        _monitors = monitors ?? ScreenCapture.MonitorBounds;
         _macro = macro.Clone();
         _paster = paster;
         _images = images;
@@ -88,6 +93,9 @@ internal sealed class MacroRunner
         {
             using var timer = PreciseTimer.Create();
             _timer = timer;
+            // With a log, every monitor's capture runs for the whole run: a picture before an action is a copy, not a start.
+            if (_log != null)
+                _frames = _monitors().Select(b => _screen.Start(b)).OfType<IScreenWatch>().ToList();
 
             int repeats = _macro.Repeat switch
             {
@@ -99,7 +107,7 @@ internal sealed class MacroRunner
             for (int round = 0; round < repeats && !_stopRequested; round++)
             {
                 if (repeats > 1)
-                    _log?.Line(repeats == int.MaxValue ? $"Round {round + 1}" : $"Round {round + 1} of {repeats}");
+                    _log?.Event(repeats == int.MaxValue ? $"Round {round + 1}" : $"Round {round + 1} of {repeats}");
                 if (!Play(_macro.Actions, ""))
                     return;
                 if (_macro.Actions.Count == 0 && !Wait(100))
@@ -118,13 +126,9 @@ internal sealed class MacroRunner
             else if (_ifStopped)
                 end = "an If was not true, and it stops the macro (Stop the macro)";
             EndReason = end;
-            _log?.Line($"Macro ends: {end}");
-            _log?.ScreenAtEnd(() =>
-            {
-                using var snapshot = ScreenSnapshot.Take(_screen);
-                var pictures = snapshot.Monitors.Select(m => (m.Bounds, m.Picture.Clone())).ToList();
-                return pictures;
-            });
+            _log?.End(end, Frame());
+            foreach (var watch in _frames ?? new List<IScreenWatch>())
+                watch.Dispose();
             ReleaseHeld();
             _checker?.Dispose();
             Exited?.Invoke(this);
@@ -154,6 +158,30 @@ internal sealed class MacroRunner
 
     private void Log(string text) => _log?.Line($"#{_current} {text}");
 
+    /// <summary>An event of the log, with each monitor's picture now (just before what it says happens).</summary>
+    private void Event(string text) => _log?.Event($"#{_current} {text}", Frame());
+
+    /// <summary>Each monitor as it is now, for the log; nothing without a log or a picture yet.</summary>
+    private List<(OpenCvSharp.Rect Bounds, OpenCvSharp.Mat Picture)>? Frame()
+    {
+        if (_log == null || _frames == null)
+            return null;
+        var pictures = new List<(OpenCvSharp.Rect, OpenCvSharp.Mat)>();
+        foreach (var watch in _frames.Where(w => !w.Failed && w.Version > 0))
+        {
+            try
+            {
+                if (watch.Copy(watch.Bounds) is { } picture)
+                    pictures.Add((watch.Bounds, picture));
+            }
+            catch (Exception ex) when (ex is not OutOfMemoryException)
+            {
+                // A picture that cannot be taken only leaves the log without it.
+            }
+        }
+        return pictures;
+    }
+
     /// <summary>Checks an If's conditions, then plays Then or Else, or ends the macro (Stop the macro).</summary>
     private bool If(MacroIf block)
     {
@@ -168,18 +196,6 @@ internal sealed class MacroRunner
             });
         var clock = Stopwatch.StartNew();
         var result = _checker.Check(block, _stop, describe: _log != null);
-        if (_log != null)
-        {
-            foreach (string line in result.Details)
-                _log.Line($"   {line}");
-            for (int p = 0; p < result.Pictures.Count; p++)
-            {
-                var (bounds, picture) = result.Pictures[p];
-                string name = $"if-{me.Replace(' ', '-')}{(result.Pictures.Count > 1 ? $"-monitor-{p + 1}" : "")}.png";
-                _log.Line($"   screenshot of {bounds.X},{bounds.Y} {bounds.Width}x{bounds.Height}: {name}");
-                _log.Picture(name, picture);
-            }
-        }
         _current = me;
         if (result.Stopped)
         {
@@ -187,9 +203,12 @@ internal sealed class MacroRunner
             return false;
         }
         KeepFound(_found, block, result);
-        Log($"If: {(result.Met ? "true" : "not true")} after {clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)} s -> " +
+        // The event with the screen as the conditions saw it, then what each one saw.
+        Event($"If: {(result.Met ? "true" : "not true")} after {clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)} s -> " +
             (result.Met ? $"Then ({block.Then.Count} actions)"
                 : block.OnFail == ConditionFail.Else ? $"Else ({block.Else.Count} actions)" : "the macro stops (Stop the macro)"));
+        foreach (string line in result.Details)
+            _log?.Line($"  {line}");
         if (result.Met)
             return Play(block.Then, $"{me} Then ");
         if (block.OnFail != ConditionFail.Else)
@@ -243,7 +262,7 @@ internal sealed class MacroRunner
             where = " (where its condition found it)";
         }
         if (_log != null && a.Type != MacroActionType.If)
-            Log(Describe(a) + where);
+            Event(Describe(a) + where);
         switch (a.Type)
         {
             case MacroActionType.If:

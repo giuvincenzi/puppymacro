@@ -11,8 +11,7 @@ namespace PuppyMacro.Services.Screen;
 
 /// <summary>
 /// What an If found: whether its conditions are true, and where each Image or Text condition found its match. Asked to
-/// describe (a run's Debug log): what each condition saw at the last check, in English, and, when they were not true, a
-/// picture of each monitor they looked at (the caller disposes them).
+/// describe (a run's Debug log): what each condition saw at the last check, in English.
 /// </summary>
 internal sealed record ConditionResult(bool Met, bool Stopped, IReadOnlyDictionary<Guid, Point> Found)
 {
@@ -20,7 +19,6 @@ internal sealed record ConditionResult(bool Met, bool Stopped, IReadOnlyDictiona
 
     public IReadOnlyList<string> Details { get; init; } = Array.Empty<string>();
 
-    public IReadOnlyList<(Rect Bounds, Mat Picture)> Pictures { get; init; } = Array.Empty<(Rect, Mat)>();
 }
 
 /// <summary>
@@ -144,11 +142,11 @@ internal sealed class ConditionChecker : IDisposable
                     if (Evaluate(block, looks, found, details))
                         return new ConditionResult(true, false, found) { Details = details ?? (IReadOnlyList<string>)Array.Empty<string>() };
                     if (block.Wait == ConditionWait.Once)
-                        return NotTrue(looks, details);
+                        return NotTrue(details);
                 }
                 now = clock.Elapsed.TotalMilliseconds;
                 if (block.Wait == ConditionWait.UpTo && now >= limitMs && !double.IsNegativeInfinity(lastCheck))
-                    return NotTrue(looks, details);
+                    return NotTrue(details);
                 // Wait for a new image, the next allowed check or the end of the wait, whichever comes first.
                 double left = (block.Wait == ConditionWait.UpTo && !double.IsNegativeInfinity(lastCheck) ? limitMs : double.PositiveInfinity) - now;
                 double next = Math.Min(left, changed && ready ? Math.Max(1, gapMs - (now - lastCheck)) : 250);
@@ -165,31 +163,9 @@ internal sealed class ConditionChecker : IDisposable
         }
     }
 
-    /// <summary>Not true in time: what the last check saw and, when asked to describe, a picture of each monitor looked at.</summary>
-    private static ConditionResult NotTrue(List<Look> looks, List<string>? details)
-    {
-        var pictures = new List<(Rect, Mat)>();
-        if (details != null)
-        {
-            foreach (var watch in looks.Select(l => l.Watch).OfType<IScreenWatch>().Where(w => !w.Failed).DistinctBy(w => w.Bounds))
-            {
-                try
-                {
-                    if (watch.Copy(watch.Bounds) is { } picture)
-                        pictures.Add((watch.Bounds, picture));
-                }
-                catch (Exception ex) when (ex is not OutOfMemoryException)
-                {
-                    // A picture that cannot be taken only leaves the log without it.
-                }
-            }
-        }
-        return new ConditionResult(false, false, new Dictionary<Guid, Point>())
-        {
-            Details = details ?? (IReadOnlyList<string>)Array.Empty<string>(),
-            Pictures = pictures,
-        };
-    }
+    /// <summary>Not true in time, with what the last check saw.</summary>
+    private static ConditionResult NotTrue(List<string>? details) =>
+        new(false, false, new Dictionary<Guid, Point>()) { Details = details ?? (IReadOnlyList<string>)Array.Empty<string>() };
 
     /// <summary>Checks one condition on the screen now and says what it saw (the editor's live check and Test).</summary>
     public ConditionReport Inspect(MacroCondition condition)

@@ -56,7 +56,7 @@ public partial class MainWindow : IAiHost
         _aiLog = new AiActivityLog(AppPaths.AiActivityFile);
         _aiLog.Load();
         _aiTools = new AiTools(this, _aiLog);
-        _aiServer = new AiServer(_aiTools, _aiLog, () => _settings.AllowAiAccess, new AiCallLog(AppPaths.AiCallsFile));
+        _aiServer = new AiServer(_aiTools, _aiLog, () => _settings.AllowAiAccess);
         _aiLog.Changed += () => Dispatcher.InvokeAsync(RefreshAiPage);
         _aiServer.ClientsChanged += () => Dispatcher.InvokeAsync(RefreshAiPage);
         _aiServer.Start();
@@ -432,6 +432,7 @@ public partial class MainWindow : IAiHost
 
     void IAiHost.Save(object item, string app) => SavingAs(app, () =>
     {
+        AiTools.KeepUsersDebug(item, _macros);
         SaveItem(item);
         return true;
     });
@@ -694,65 +695,67 @@ public partial class MainWindow : IAiHost
     });
 
     /// <summary>
-    /// The recorder for an AI app: every monitor's capture runs while it records, so each click takes its monitor's
-    /// picture at once (on a thread-pool thread: the input hook never waits). The main window is hidden meanwhile, as for
-    /// the user's own recording, and shown again only if it was visible.
+    /// The recorder for an AI app: every monitor's capture runs while it records, so each key press and click takes every
+    /// monitor's picture at once (on a thread-pool thread: the input hook never waits). The main window is hidden
+    /// meanwhile, as for the user's own recording, and shown again only if it was visible.
     /// </summary>
     Task<(AiAnswer Answer, AiRecording? Recording)> IAiHost.Record(string app, bool mouseMovement)
     {
         var result = new TaskCompletionSource<(AiAnswer, AiRecording?)>();
         var watches = ScreenCapture.MonitorBounds().Select(b => ScreenCapture.Shared.Start(b)).OfType<IScreenWatch>().ToList();
-        var clicks = new List<AiRecordedClick>();
+        var inputs = new List<AiRecordedInput>();
         int copying = 0;
-        void OnClick(int x, int y, double t)
+        void OnInput(RawEventKind kind, int vk, int x, int y, double t)
         {
             Interlocked.Increment(ref copying);
             try
             {
-                OpenCvSharp.Mat? picture = null;
-                OpenCvSharp.Rect bounds = default;
-                if (watches.FirstOrDefault(w => w.Bounds.Contains(x, y)) is { } watch)
+                var screen = new List<(OpenCvSharp.Rect, OpenCvSharp.Mat)>();
+                foreach (var watch in watches.Where(w => !w.Failed && w.Version > 0))
                 {
-                    bounds = watch.Bounds;
                     try
                     {
-                        picture = watch.Copy(watch.Bounds);
+                        if (watch.Copy(watch.Bounds) is { } picture)
+                            screen.Add((watch.Bounds, picture));
                     }
                     catch (Exception ex) when (ex is not OutOfMemoryException)
                     {
-                        CaptureLog.Write($"a recorded click's picture failed: {ex.Message}");
+                        CaptureLog.Write($"a recorded input's picture failed: {ex.Message}");
                     }
                 }
-                lock (clicks)
-                    clicks.Add(new AiRecordedClick(x, y, t, bounds, picture));
+                bool click = kind == RawEventKind.ButtonDown;
+                string what = Loc.English(() => click ? $"Click {KeyNames.Get(vk)} at {x},{y}" : $"Key down {KeyNames.Get(vk)}");
+                lock (inputs)
+                    inputs.Add(new AiRecordedInput(what, click, x, y, t, screen));
             }
             finally
             {
                 Interlocked.Decrement(ref copying);
             }
         }
-        _engine.RecordedClick += OnClick;
+        _engine.RecordedInput += OnInput;
         bool wasVisible = IsVisible;
         RecordingSession.RunForAi(_engine, _settings, mouseMovement,
             hide: () => { if (wasVisible) Hide(); },
             restore: () => { if (wasVisible) Show(); },
             done: events =>
             {
-                _engine.RecordedClick -= OnClick;
+                _engine.RecordedInput -= OnInput;
                 _ = Task.Run(async () =>
                 {
-                    // The last clicks' pictures may still be on their way.
+                    // The last inputs' pictures may still be on their way.
                     for (int waited = 0; Volatile.Read(ref copying) > 0 && waited < 2000; waited += 20)
                         await Task.Delay(20);
                     foreach (var watch in watches)
                         watch.Dispose();
-                    List<AiRecordedClick> taken;
-                    lock (clicks)
-                        taken = clicks.OrderBy(c => c.TimeMs).ToList();
+                    List<AiRecordedInput> taken;
+                    lock (inputs)
+                        taken = inputs.OrderBy(i => i.TimeMs).ToList();
                     if (events == null)
                     {
-                        foreach (var click in taken)
-                            click.Screen?.Dispose();
+                        foreach (var input in taken)
+                            foreach (var (_, picture) in input.Screen)
+                                picture.Dispose();
                         result.SetResult((AiAnswer.Cancelled, null));
                     }
                     else
@@ -769,7 +772,7 @@ public partial class MainWindow : IAiHost
     /// Start may have activated PuppyMacro), then the macro plays as Play would, always logged, until it ends, Stop all or
     /// the time limit.
     /// </summary>
-    async Task<AiTestRun?> IAiHost.TestMacro(Guid id, string app, double maxSeconds)
+    async Task<AiTestRun?> IAiHost.TestMacro(Guid id, string app, double maxSeconds, string folder)
     {
         if (_macros.Find(id) is not { } macro || _engine.AnyRunning)
             return null;
@@ -778,7 +781,7 @@ public partial class MainWindow : IAiHost
             NativeMethods.SetForegroundWindow(_engine.LastOtherWindow);
         await Task.Delay(300);
         var ended = new TaskCompletionSource();
-        MacroRunner? runner = _engine.StartMacroTest(macro, $"a test by {app}", _ => ended.TrySetResult());
+        MacroRunner? runner = _engine.StartMacroTest(macro, folder, $"a test by {app}", _ => ended.TrySetResult());
         if (runner == null)
             return null;
         if (await Task.WhenAny(ended.Task, Task.Delay(TimeSpan.FromSeconds(maxSeconds))) != ended.Task)
@@ -786,9 +789,16 @@ public partial class MainWindow : IAiHost
             _engine.StopMacro(id, $"stopped at the test's time limit of {maxSeconds.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)} s");
             await Task.WhenAny(ended.Task, Task.Delay(5000));
         }
-        // The end's screenshot and the last lines are written by the log's own thread.
-        await Task.Run(() => runner.DebugLog?.WaitWritten(TimeSpan.FromSeconds(10)));
-        return new AiTestRun(runner.EndReason ?? "it was still ending", RunLog.FolderFor(id));
+        // The last lines and pictures are written by the debug writer.
+        await Task.Run(() => RunLog.WaitWritten(TimeSpan.FromSeconds(30)));
+        return new AiTestRun(runner.EndReason ?? "it was still ending", folder);
+    }
+
+    /// <summary>The window that says the AI app's request on the screen is over (the app's own name, or none).</summary>
+    void IAiHost.Finished(string app)
+    {
+        var window = new AiFinishedWindow(app);
+        window.Show();
     }
 
     /// <summary>Dialogs open that do not suspend the hotkeys (file dialogs, AI activity, Import's confirmation).</summary>

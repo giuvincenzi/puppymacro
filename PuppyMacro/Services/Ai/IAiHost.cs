@@ -122,24 +122,31 @@ internal interface IAiHost
 
     /// <summary>
     /// PuppyMacro's recorder, started at once after a countdown (the ready window was the prompt): the actions recorded
-    /// until the user presses Stop, and the screen at each click. Cancelled during the countdown: nothing.
+    /// until the user presses Stop, and the screen at each of the user's key presses and clicks. Cancelled during the
+    /// countdown: nothing.
     /// </summary>
     Task<(AiAnswer Answer, AiRecording? Recording)> Record(string app, bool mouseMovement);
 
     /// <summary>
-    /// Runs a saved macro as the user's Play would, with its Debug log (always), until it ends, Stop all, or
-    /// <paramref name="maxSeconds"/>. Null when the macro can't run (empty, or another item running).
+    /// Runs a saved macro as the user's Play would, with its log in <paramref name="folder"/> (always), until it ends, Stop
+    /// all, or <paramref name="maxSeconds"/>. Null when the macro can't run (empty, or another item running).
     /// </summary>
-    Task<AiTestRun?> TestMacro(Guid id, string app, double maxSeconds);
+    Task<AiTestRun?> TestMacro(Guid id, string app, double maxSeconds, string folder);
+
+    /// <summary>What the AI app asked on the user's screen is over: a window says the user can go back to <paramref name="app"/>.</summary>
+    void Finished(string app);
 }
 
-/// <summary>A recording for an AI app: the actions, and for each click the screen at that moment (the caller disposes them).</summary>
-internal sealed record AiRecording(List<MacroAction> Actions, List<AiRecordedClick> Clicks);
+/// <summary>A recording for an AI app: the actions, and the screen at each of the user's inputs (the caller disposes them).</summary>
+internal sealed record AiRecording(List<MacroAction> Actions, List<AiRecordedInput> Inputs);
 
-/// <summary>One recorded click: where (physical pixels), when (ms from the start), and the monitor it was on as a picture.</summary>
-internal sealed record AiRecordedClick(int X, int Y, double TimeMs, Rect MonitorBounds, Mat? Screen);
+/// <summary>
+/// One of the user's inputs while recording: what it was ("Click Left", "Key down F22"), whether it is a click, where
+/// (physical pixels; a key: the cursor), when (ms from the start), and each monitor as a picture at that moment.
+/// </summary>
+internal sealed record AiRecordedInput(string What, bool Click, int X, int Y, double TimeMs, List<(Rect Bounds, Mat Picture)> Screen);
 
-/// <summary>A test run's end: why it ended and its Debug log's folder.</summary>
+/// <summary>A test run's end: why it ended and its log's folder.</summary>
 internal sealed record AiTestRun(string EndReason, string LogFolder);
 
 /// <summary>What an AI app asks the user to do: a short title, why (description) and the steps, shown numbered.</summary>

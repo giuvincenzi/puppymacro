@@ -1115,6 +1115,28 @@
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
 
+                        <!-- The debug data (DebugStore): what it is and the space it takes, its folder, Delete all -->
+                        <ui:SettingsExpander x:Name="DebugDataGroup" Tag="DebugData" Header="{x:Static r:Strings.Settings_DebugData}"
+                                             Expanded="OnGroupToggled" Collapsed="OnGroupToggled">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Bug}" />
+                            </ui:SettingsExpander.HeaderIcon>
+                            <ui:SettingsExpander.Description>
+                                <TextBlock x:Name="DebugDataText" TextWrapping="Wrap" />
+                            </ui:SettingsExpander.Description>
+                            <ui:SettingsExpander.Items>
+                                <ui:SettingsCard Header="{x:Static r:Strings.DebugLog_OpenFolder}" IsClickEnabled="True" Click="OnOpenDebugFolderClick">
+                                    <ui:SettingsCard.ActionIcon>
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />
+                                    </ui:SettingsCard.ActionIcon>
+                                </ui:SettingsCard>
+                                <ui:SettingsCard Header="{x:Static r:Strings.Settings_DeleteDebugData}"
+                                                 Description="{x:Static r:Strings.Settings_DeleteDebugDataDescription}">
+                                    <Button Content="{x:Static r:Strings.Settings_DeleteAll}" Click="OnDeleteDebugDataClick" />
+                                </ui:SettingsCard>
+                            </ui:SettingsExpander.Items>
+                        </ui:SettingsExpander>
+
                         <ui:SettingsCard Header="{x:Static r:Strings.Settings_Updates}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Sync}" />

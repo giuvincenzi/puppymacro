@@ -205,7 +205,7 @@ internal sealed class FakeAiHost : IAiHost
 
     public AiAnswer RecordAnswer { get; set; } = AiAnswer.Done;
 
-    /// <summary>As the recorder: Press A, then a click at 120, 120 on the pattern.</summary>
+    /// <summary>As the recorder: Press A, then a click at 120, 120 on the pattern, each with the screen at that moment.</summary>
     public Task<(AiAnswer Answer, AiRecording? Recording)> Record(string app, bool mouseMovement) =>
         Task.FromResult<(AiAnswer, AiRecording?)>(RecordAnswer != AiAnswer.Done ? (RecordAnswer, null) : (AiAnswer.Done, new AiRecording(
             new List<MacroAction>
@@ -213,24 +213,32 @@ internal sealed class FakeAiHost : IAiHost
                 new() { Type = MacroActionType.PressKey, Vk = 0x41 },
                 new() { Type = MacroActionType.Click, Vk = 1, X = 120, Y = 120, DelayMs = 500 },
             },
-            new List<AiRecordedClick> { new(120, 120, 600, new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) })));
+            new List<AiRecordedInput>
+            {
+                new("Key down A", false, 0, 0, 100, new() { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) }),
+                new("Click Left at 120,120", true, 120, 120, 600, new() { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) }),
+            })));
 
-    public List<(Guid Id, double MaxSeconds)> Tested { get; } = new();
+    public List<(Guid Id, double MaxSeconds, string Folder)> Tested { get; } = new();
 
-    /// <summary>As a test run: its log says it pressed A and ended.</summary>
-    public Task<AiTestRun?> TestMacro(Guid id, string app, double maxSeconds)
+    /// <summary>As a test run: its log, in the call's folder, says it pressed A (with a picture) and ended.</summary>
+    public Task<AiTestRun?> TestMacro(Guid id, string app, double maxSeconds, string folder)
     {
-        Tested.Add((id, maxSeconds));
-        var log = new RunLog(id, "Test", $"a test by {app}");
-        log.Line("#1 Press A, held 50 ms");
-        log.Line("Macro ends: finished");
-        log.WaitWritten(TimeSpan.FromSeconds(10));
-        return Task.FromResult<AiTestRun?>(new AiTestRun("finished", log.Folder));
+        Tested.Add((id, maxSeconds, folder));
+        var log = new RunLog(folder, Macros.Find(id), $"a test by {app}");
+        log.Event("#1 Press A, held 50 ms", new List<(OpenCvSharp.Rect, OpenCvSharp.Mat)> { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) });
+        log.End("finished");
+        RunLog.WaitWritten(TimeSpan.FromSeconds(10));
+        return Task.FromResult<AiTestRun?>(new AiTestRun("finished", folder));
     }
+
+    public List<string> FinishedFor { get; } = new();
+
+    public void Finished(string app) => FinishedFor.Add(app);
 }
 
-// RunLog.Root is one folder for the whole process: these classes set it, one at a time.
-[Collection(nameof(RunLog))]
+// DebugStore.Root is one folder for the whole process: these classes set it, one at a time.
+[Collection(nameof(DebugStore))]
 public class AiToolsTests : IDisposable
 {
     private const string App = "Claude Desktop";
@@ -244,7 +252,7 @@ public class AiToolsTests : IDisposable
     public AiToolsTests()
     {
         AiTools.WaitStep = TimeSpan.FromMilliseconds(300);
-        RunLog.Root = _folder.File("debug");
+        DebugStore.Root = _folder.File("debug");
         _settings.AllowAiAccess = true;
         _settings.Loops.Clear();
         _host = new FakeAiHost(_settings, new MacroLibrary(_folder.File("macros")));
@@ -254,8 +262,10 @@ public class AiToolsTests : IDisposable
 
     public void Dispose() => _folder.Dispose();
 
+    /// <summary>A tool by its name without the prefix ("get_item") or its full one.</summary>
     private Task<AiToolResult> Call(string tool, object? args = null) =>
-        _tools.Call(tool, JsonSerializer.SerializeToElement(args ?? new { }), App, TestContext.Current.CancellationToken);
+        _tools.Call(tool.StartsWith(AiTools.Prefix, StringComparison.Ordinal) ? tool : AiTools.Name(tool),
+            JsonSerializer.SerializeToElement(args ?? new { }), App, TestContext.Current.CancellationToken);
 
     private static readonly HotkeyBinding CtrlX = new() { Vk = 0x58, Ctrl = true };
 
@@ -266,7 +276,8 @@ public class AiToolsTests : IDisposable
     private static readonly object Asking = new
     {
         title = "Pick the Send button",
-        label = "The Send button",
+        count = 1,
+        labels = new[] { "The Send button" },
         confirmed_steps = Plan,
         description = "We are making a macro that sends a message.",
         steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
@@ -742,7 +753,7 @@ public class AiToolsTests : IDisposable
     [Fact]
     public async Task A_pick_waits_until_the_user_is_ready_then_gives_the_points()
     {
-        AiToolResult one = await Call("pick_point", Asking);
+        AiToolResult one = await Call("pick_points", Asking);
         AiToolResult three = await Call("pick_points", new
         {
             confirmed_steps = Plan,
@@ -753,7 +764,7 @@ public class AiToolsTests : IDisposable
             steps = new[] { "Click the 3 items" },
         });
 
-        Assert.Equal("{\"X\":640,\"Y\":360}", one.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", one.Text);
         using JsonDocument points = JsonDocument.Parse(three.Text);
         Assert.Equal(3, points.RootElement.GetArrayLength());
         Assert.Equal(new[] { "The Send button" }, _host.PointsAsked[0]);
@@ -768,7 +779,7 @@ public class AiToolsTests : IDisposable
     {
         _host.ReadyAnswer = AiAnswer.Cancelled;
 
-        AiToolResult result = await Call("pick_point", Asking);
+        AiToolResult result = await Call("pick_points", Asking);
 
         Assert.Contains("cancelled", result.Text);
         Assert.Empty(_host.PointsAsked);
@@ -778,10 +789,11 @@ public class AiToolsTests : IDisposable
     public async Task Interactions_need_a_title_a_description_and_steps()
     {
         string[] steps = { "Click it" };
-        Assert.True((await Call("pick_point", new { label = "It", title = "Pick", description = "", steps })).IsError);
-        Assert.True((await Call("pick_point", new { confirmed_steps = Plan, title = "Pick", description = "Why", steps })).IsError); // no label
-        Assert.True((await Call("pick_point", new { label = "It", title = "Pick", description = "Why", steps })).IsError); // no steps confirmed
-        Assert.True((await Call("pick_point", new { confirmed_steps = new[] { " " }, label = "It", title = "Pick", description = "Why", steps })).IsError);
+        string[] it = { "It" };
+        Assert.True((await Call("pick_points", new { count = 1, labels = it, title = "Pick", description = "", steps })).IsError);
+        Assert.True((await Call("pick_points", new { confirmed_steps = Plan, count = 1, title = "Pick", description = "Why", steps })).IsError); // no label
+        Assert.True((await Call("pick_points", new { count = 1, labels = it, title = "Pick", description = "Why", steps })).IsError); // no steps confirmed
+        Assert.True((await Call("pick_points", new { confirmed_steps = new[] { " " }, count = 1, labels = it, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_points", new { count = 2, labels = new[] { "One", "" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_points", new { count = 3, labels = new[] { "One", "Two" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_app", new { title = "", description = "Why", steps })).IsError);
@@ -796,7 +808,7 @@ public class AiToolsTests : IDisposable
         string title = new('T', 300);
         string description = new('D', 2000);
 
-        await Call("pick_point", new { confirmed_steps = Plan, label = "It", title, description, steps = new[] { "Click it" } });
+        await Call("pick_points", new { confirmed_steps = Plan, count = 1, labels = new[] { "It" }, title, description, steps = new[] { "Click it" } });
 
         Assert.Equal(title, _host.ReadyShown[0].Title);
         Assert.Equal(description, _host.ReadyShown[0].Description);
@@ -913,7 +925,7 @@ public class AiToolsTests : IDisposable
     {
         _host.Hold = new TaskCompletionSource<bool>();
 
-        AiToolResult first = await Call("pick_point", Asking);
+        AiToolResult first = await Call("pick_points", Asking);
         string id = RequestId(first);
         AiToolResult other = await Call("pick_app", Asking);
         AiToolResult stillWaiting = await Call("wait_for_user", new { request_id = id });
@@ -925,7 +937,7 @@ public class AiToolsTests : IDisposable
         Assert.True(other.IsError);
         Assert.Contains($"request_id \"{id}\"", other.Text);
         Assert.StartsWith("Waiting", stillWaiting.Text);
-        Assert.Equal("{\"X\":640,\"Y\":360}", answer.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", answer.Text);
         Assert.True((await Call("wait_for_user", new { request_id = id })).IsError); // given once
     }
 
@@ -933,7 +945,7 @@ public class AiToolsTests : IDisposable
     public async Task An_answer_not_taken_yet_is_kept_when_another_request_starts()
     {
         _host.Hold = new TaskCompletionSource<bool>();
-        string id = RequestId(await Call("pick_point", Asking));
+        string id = RequestId(await Call("pick_points", Asking));
         _host.Hold.SetResult(true);
         _host.Hold = null;
 
@@ -941,14 +953,14 @@ public class AiToolsTests : IDisposable
         AiToolResult answer = await Call("wait_for_user", new { request_id = id });
 
         Assert.False(app.IsError, app.Text);
-        Assert.Equal("{\"X\":640,\"Y\":360}", answer.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", answer.Text);
     }
 
     [Fact]
     public async Task Only_the_app_that_asked_gets_the_answer()
     {
         _host.Hold = new TaskCompletionSource<bool>();
-        string id = RequestId(await Call("pick_point", Asking));
+        string id = RequestId(await Call("pick_points", Asking));
         _host.Hold.SetResult(true);
 
         AiToolResult other = await _tools.Call("wait_for_user", JsonSerializer.SerializeToElement(new { request_id = id }), "Codex",
@@ -956,7 +968,7 @@ public class AiToolsTests : IDisposable
         AiToolResult mine = await Call("wait_for_user", new { request_id = id });
 
         Assert.True(other.IsError);
-        Assert.Equal("{\"X\":640,\"Y\":360}", mine.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", mine.Text);
     }
 
     [Fact]
@@ -979,8 +991,8 @@ public class AiToolsTests : IDisposable
         Assert.True(_host.StoppedAll);
         Assert.False(result.IsError);
         // An AI app plays a macro only as a test, after the user's Start (test_macro): nothing starts loops or macros.
-        Assert.DoesNotContain(_tools.All, t => t.Name.StartsWith("start", StringComparison.Ordinal));
-        Assert.Contains(_tools.All, t => t.Name == "test_macro");
+        Assert.DoesNotContain(_tools.All, t => t.Name.StartsWith("puppymacro_start", StringComparison.Ordinal));
+        Assert.Contains(_tools.All, t => t.Name == "puppymacro_test_macro");
     }
 
     [Fact]

@@ -21,6 +21,7 @@ namespace PuppyMacro;
 public partial class App : Application
 {
     private Mutex? _singleInstance;
+    private Timer? _debugCleaner;
     private bool _ownsMutex;
 
     // Starting PuppyMacro while it runs signals this event: the running instance shows its window.
@@ -191,8 +192,8 @@ public partial class App : Application
             return;
         }
 
-        // The macros' Debug logs last only while PuppyMacro runs: also those of a run that ended badly.
-        RunLog.DeleteAll();
+        // The debug data older than its days goes, now and every hour; nothing goes when PuppyMacro closes or crashes.
+        _debugCleaner = new Timer(_ => DebugStore.DeleteOlderThan(DebugStore.Life, DateTime.UtcNow), null, TimeSpan.Zero, TimeSpan.FromHours(1));
 
         _showWindowRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowEventName);
         _showWindowWait = ThreadPool.RegisterWaitForSingleObject(_showWindowRequest,
@@ -380,11 +381,9 @@ public partial class App : Application
         _showWindowRequest?.Dispose();
         _showBackupSettingsWait?.Unregister(null);
         _showBackupSettingsRequest?.Dispose();
+        _debugCleaner?.Dispose();
         if (_ownsMutex)
-        {
-            RunLog.DeleteAll();
             _singleInstance?.ReleaseMutex();
-        }
         _singleInstance?.Dispose();
         base.OnExit(e);
     }

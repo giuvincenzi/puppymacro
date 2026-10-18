@@ -139,7 +139,7 @@ public partial class MacroEditorWindow
     {
         EnabledSwitch.IsOn = source.Enabled;
         DebugSwitch.IsOn = source.Debug;
-        ViewLogButton.Visibility = RunLog.Exists(_itemId) ? Visibility.Visible : Visibility.Collapsed;
+        ViewLogButton.Visibility = DebugStore.LastRunOf(_itemId) != null ? Visibility.Visible : Visibility.Collapsed;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
 
@@ -204,8 +204,11 @@ public partial class MacroEditorWindow
         return macro;
     }
 
-    private void OnViewLogClick(object sender, RoutedEventArgs e) =>
-        new DebugLogWindow(_itemId, NameBox.Text.Trim()) { Owner = this }.ShowDialog();
+    private void OnViewLogClick(object sender, RoutedEventArgs e)
+    {
+        if (DebugStore.LastRunOf(_itemId) is string folder)
+            new DebugLogWindow(folder, NameBox.Text.Trim()) { Owner = this }.ShowDialog();
+    }
 
     // ================= Window size =================
 

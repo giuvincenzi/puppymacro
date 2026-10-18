@@ -9,18 +9,19 @@ using PuppyMacro.Views;
 
 namespace PuppyMacro;
 
-/// <summary>A macro's Debug log: its last run (<see cref="RunLog"/>), with Copy and Open folder (the pictures are there).</summary>
+/// <summary>A macro's last run's log (<see cref="RunLog"/>, in the debug data), with Copy and Open folder (the pictures are there).</summary>
 public partial class DebugLogWindow
 {
     private readonly string _folder;
 
-    internal DebugLogWindow(Guid macroId, string macroName)
+    /// <param name="folder">The run's folder (<see cref="DebugStore.LastRunOf"/>).</param>
+    internal DebugLogWindow(string folder, string macroName)
     {
         InitializeComponent();
         WindowFit.Apply(this);
         Title = string.Format(CultureInfo.CurrentCulture, Strings.DebugLog_Title, macroName);
-        _folder = RunLog.FolderFor(macroId);
-        string? log = RunLog.Read(macroId);
+        _folder = folder;
+        string? log = RunLog.Read(folder);
         LogBox.Text = log ?? Strings.DebugLog_None;
         CopyButton.IsEnabled = log != null;
         OpenFolderButton.IsEnabled = Directory.Exists(_folder);

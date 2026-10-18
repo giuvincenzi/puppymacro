@@ -208,6 +208,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>Udhëzuesi i përdoruesit</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Nuk ofrohet në versionin e zhvillimit</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Të dhënat ruhen në {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Të dhënat e korrigjimit</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Regjistra dhe pamje të ekranit nga kërkesat AI dhe nga makrot me Debug aktiv, të ruajtura 7 ditë në këtë PC. Zënë {0}.</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Fshi të dhënat e korrigjimit</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Gjithçka, përveç asaj që është në zhvillim tani.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Fshi të gjitha</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Të fshihen të dhënat e korrigjimit të PuppyMacro? Ajo që është në zhvillim tani mbetet.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Tastet e shpejta nuk funksionojnë tani:
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro vazhdon të ekzekutohet në zonën e njoftimeve. Klikoni me të djathtën ikonën e tij për të dalë.</value></data>
@@ -417,6 +425,7 @@ Detajet: {1}</value></data>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>Të gjitha llojet</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>Të gjitha rezultatet</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Rikthe</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Hap korrigjimin</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Detajet</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Ende nuk ka kërkesa.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Asnjë kërkesë nuk përputhet me filtrat.</value></data>
@@ -439,6 +448,10 @@ Detajet: {1}</value></data>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Shtypni {0} kur të jeni gati · {1} anulon</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Nis</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>U krye</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>Mund të ktheheni te {0}.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>Mund të ktheheni te aplikacioni juaj AI.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>OK</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>Zgjidh një pikë</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Klikoni pikën ku duhet të shkojë kursori</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>Anulo</value></data>
@@ -507,7 +520,7 @@ Detajet: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Çdo tast ose buton i miut, si F2 ose A. Për një kombinim, mbani fillimisht shtypur Ctrl, Alt, Shift ose Win; klikimi majtas dhe djathtas, rrota e miut dhe Esc kanë nevojë për një të tillë. Mbajtja ka nevojë për një tast të shpejtë.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Tingulli</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Luhet kur makroja niset dhe ndalet</value></data>
-  <data name="Macro_DebugDescription" xml:space="preserve"><value>Ruan regjistrin e ekzekutimit të fundit të kësaj makroje, me pamje të ekranit kur një If nuk është i vërtetë dhe në fund. Regjistri fshihet kur mbyllet PuppyMacro.</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Ruan regjistrin e çdo ekzekutimi të kësaj makroje, me një pamje të ekranit para çdo hapi, për 7 ditë në këtë PC.</value></data>
   <data name="Macro_ViewLog" xml:space="preserve"><value>Shiko regjistrin</value></data>
   <data name="DebugLog_Title" xml:space="preserve"><value>Regjistri i {0}</value></data>
   <data name="DebugLog_Description" xml:space="preserve"><value>Ekzekutimi i fundit i makros, i shkruar në anglisht që ta ngjitni kudo. Pamjet e ekranit janë në dosjen e saj.</value></data>
@@ -1315,7 +1328,6 @@ Detajet: {1}</value></data>
   <data name="Ai_TestedMacro" xml:space="preserve"><value>Provoi makron {0}</value></data>
   <data name="Ai_ReadPixel" xml:space="preserve"><value>Lexoi një piksel të ekranit: {0}</value></data>
   <data name="Ai_TookImage" xml:space="preserve"><value>Mori një imazh nga ekrani: {0}</value></data>
-  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>Pa ekranin te klikimi {0} i regjistrimit</value></data>
   <data name="Ai_ReadLastRun" xml:space="preserve"><value>Lexoi regjistrin e ekzekutimit të fundit të një makroje</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Veprim</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Kusht</value></data>

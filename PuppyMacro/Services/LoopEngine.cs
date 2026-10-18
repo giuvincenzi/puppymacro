@@ -175,10 +175,10 @@ internal sealed class LoopEngine : IDisposable
     public event Action<int>? RecordingProgress;
 
     /// <summary>
-    /// A button pressed while recording (X, Y, ms from the start), raised on a thread-pool thread so the hook never waits:
-    /// an AI app's recording takes the screen there.
+    /// A key or button pressed while recording (the kind, its virtual-key code, X, Y, ms from the start), raised on a
+    /// thread-pool thread so the hook never waits: an AI app's recording takes the screen there.
     /// </summary>
-    public event Action<int, int, double>? RecordedClick;
+    public event Action<RawEventKind, int, int, int, double>? RecordedInput;
 
     /// <summary>
     /// Raised (asynchronously, on the UI thread) when another app comes in front, with its .exe name ("" when it
@@ -296,7 +296,7 @@ internal sealed class LoopEngine : IDisposable
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return;
             // Debug on: the run writes its log (RunLog only queues, so this does not slow the hook that may call it).
-            var log = macro.Debug ? new RunLog(macro.Id, macro.Name, "started by the user") : null;
+            var log = macro.Debug ? new RunLog(DebugStore.NewUserMacroRun(macro.Name), macro, "a run started by the user") : null;
             var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: log);
             runner.Exited += OnMacroExited;
             _runningMacros[macro.Id] = runner;
@@ -311,13 +311,13 @@ internal sealed class LoopEngine : IDisposable
     /// it), always with its Debug log, saying <paramref name="why"/>. <paramref name="exited"/> runs on the macro's thread
     /// when it ends. Null when it can't start (no actions, already running).
     /// </summary>
-    public MacroRunner? StartMacroTest(MacroDefinition macro, string why, Action<MacroRunner> exited)
+    public MacroRunner? StartMacroTest(MacroDefinition macro, string folder, string why, Action<MacroRunner> exited)
     {
         lock (_sync)
         {
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return null;
-            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: new RunLog(macro.Id, macro.Name, why));
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: new RunLog(folder, macro, why));
             runner.Exited += OnMacroExited;
             runner.Exited += exited;
             _runningMacros[macro.Id] = runner;
@@ -504,8 +504,8 @@ internal sealed class LoopEngine : IDisposable
     {
         double t = (Stopwatch.GetTimestamp() - _recordStart) * 1000.0 / Stopwatch.Frequency;
         _recorded.Add(new RawEvent(kind, vk, x, y, delta, t));
-        if (kind == RawEventKind.ButtonDown && RecordedClick is { } clicked)
-            System.Threading.ThreadPool.QueueUserWorkItem(_ => clicked(x, y, t));
+        if (kind is RawEventKind.ButtonDown or RawEventKind.KeyDown && RecordedInput is { } recorded)
+            System.Threading.ThreadPool.QueueUserWorkItem(_ => recorded(kind, vk, x, y, t));
         if (_recorded.Count % 25 == 0 || kind != RawEventKind.Move)
         {
             int count = _recorded.Count;

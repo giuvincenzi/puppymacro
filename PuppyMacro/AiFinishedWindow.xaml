@@ -1,0 +1,46 @@
+<Window
+    x:Class="PuppyMacro.AiFinishedWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    Title="{x:Static r:Strings.AiFinished_Title}"
+    Width="420"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    Topmost="True"
+    ShowInTaskbar="False"
+    ShowActivated="False"
+    ResizeMode="NoResize"
+    SizeToContent="Height"
+    WindowStartupLocation="CenterScreen"
+    FontFamily="Segoe UI Variable Text, Segoe UI"
+    Foreground="White">
+
+    <!-- After an AI app's request on the user's screen (a recording, a test, a check, the screen taken): the same look as the
+         ready window before it, in the middle of the screen, without taking the focus; OK or a few seconds close it. -->
+    <Border CornerRadius="8" BorderThickness="1" Background="#F22B2B2B" BorderBrush="#1FFFFFFF">
+        <StackPanel>
+            <StackPanel Margin="20,16,20,18">
+                <TextBlock FontSize="20" FontWeight="SemiBold" Text="{x:Static r:Strings.AiFinished_Title}" />
+                <TextBlock x:Name="BackText" Margin="0,6,0,0" FontSize="14" Foreground="#C5C5C5" TextWrapping="Wrap" LineHeight="20" />
+            </StackPanel>
+            <Border Padding="20,12" CornerRadius="0,0,8,8" BorderThickness="0,1,0,0" BorderBrush="#1FFFFFFF" Background="#F2202020">
+                <Button x:Name="OkButton" HorizontalAlignment="Right" Click="OnOkClick" Focusable="False" AutomationProperties.Name="{x:Static r:Strings.AiFinished_Ok}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Back" Height="32" Padding="18,0" CornerRadius="4" Background="#60CDFF">
+                                <TextBlock FontSize="14" Foreground="Black" Text="{x:Static r:Strings.AiFinished_Ok}" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Back" Property="Background" Value="#7DD6FF" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Border>
+        </StackPanel>
+    </Border>
+</Window>

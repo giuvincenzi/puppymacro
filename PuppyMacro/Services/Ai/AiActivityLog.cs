@@ -70,6 +70,12 @@ public sealed class AiActivity
 
     /// <summary>The user put <see cref="Before"/> back.</summary>
     public bool Restored { get; set; }
+
+    /// <summary>
+    /// The request's folder in the debug data (<c>DebugStore</c>: what the AI app sent and got, and what it captured), for
+    /// Open debug; null for older entries. The folder lasts its days there, the entry longer.
+    /// </summary>
+    public string? DebugFolder { get; set; }
 }
 
 /// <summary>
@@ -146,6 +152,7 @@ internal sealed class AiActivityLog
             ItemId = itemId,
             ItemKind = itemKind,
             Before = before,
+            DebugFolder = DebugCall.Current?.Folder,
         };
         lock (_sync)
         {

@@ -198,6 +198,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>用户指南</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>在开发版本中不可用</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>数据保存在 {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>调试数据</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>来自 AI 请求和已开启 Debug 的宏的日志与屏幕图像，在此电脑上保留 7 天。占用 {0}。</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>删除调试数据</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>除当前正在进行的内容外的全部数据。</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>全部删除</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>要删除 PuppyMacro 的调试数据吗？当前正在进行的内容会保留。</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>热键目前无法使用：
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro 仍在系统托盘中运行。右键单击其图标即可退出。</value></data>
@@ -396,6 +404,7 @@
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>所有类型</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>所有结果</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>还原</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>打开调试</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>详细信息</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>还没有请求。</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>没有与筛选条件匹配的请求。</value></data>
@@ -418,6 +427,10 @@
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>准备好后按 {0} · {1} 取消</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>开始</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>完成</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>你可以返回 {0} 了。</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>你可以返回 AI 应用了。</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>确定</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>选取一个点</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>单击光标要移动到的点</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>取消</value></data>
@@ -485,7 +498,7 @@
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>任意按键或鼠标按钮，如 F2 或 A。若要使用组合键，请先按住 Ctrl、Alt、Shift 或 Win；左键单击、右键单击、滚轮和 Esc 必须使用组合键。“按住”需要热键。</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>声音</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>在宏启动和停止时播放</value></data>
-  <data name="Macro_DebugDescription" xml:space="preserve"><value>保留此宏上次运行的日志，以及 If 不成立时和结束时的屏幕图像。关闭 PuppyMacro 时会删除日志。</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>保留此宏每次运行的日志，以及每一步之前的屏幕图像，在此电脑上保留 7 天。</value></data>
   <data name="Macro_ViewLog" xml:space="preserve"><value>查看日志</value></data>
   <data name="DebugLog_Title" xml:space="preserve"><value>{0} 的日志</value></data>
   <data name="DebugLog_Description" xml:space="preserve"><value>宏的上次运行，以英文写成，方便粘贴到任何地方。屏幕图像在其文件夹中。</value></data>
@@ -1271,7 +1284,6 @@
   <data name="Ai_TestedMacro" xml:space="preserve"><value>测试了宏 {0}</value></data>
   <data name="Ai_ReadPixel" xml:space="preserve"><value>读取了屏幕上的像素：{0}</value></data>
   <data name="Ai_TookImage" xml:space="preserve"><value>从屏幕截取了图像：{0}</value></data>
-  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>查看了录制中第 {0} 次单击时的屏幕</value></data>
   <data name="Ai_ReadLastRun" xml:space="preserve"><value>读取了某个宏上次运行的日志</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>操作</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>条件</value></data>

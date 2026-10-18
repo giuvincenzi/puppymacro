@@ -211,6 +211,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>Ghidul utilizatorului</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Indisponibil în versiunea de dezvoltare</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Date salvate în {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Date de depanare</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Jurnale și imagini ale ecranului din cererile AI și din macrocomenzile cu Debug activat, păstrate 7 zile pe acest PC. Ocupă {0}.</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Ștergeți datele de depanare</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Totul, în afară de ce este în desfășurare acum.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Ștergeți tot</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Ștergeți datele de depanare ale PuppyMacro? Ce este în desfășurare acum rămâne.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Tastele rapide nu funcționează acum:
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro este încă în execuție în zona de notificare. Faceți clic dreapta pe pictograma sa pentru a ieși.</value></data>
@@ -430,6 +438,7 @@ Detalii: {1}</value></data>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>Toate tipurile</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>Toate rezultatele</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Restaurare</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Deschidere depanare</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Detalii</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Nicio cerere încă.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Nicio cerere nu corespunde filtrelor.</value></data>
@@ -452,6 +461,10 @@ Detalii: {1}</value></data>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Apăsați {0} când sunteți gata · {1} anulează</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Pornire</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>Gata</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>Puteți reveni la {0}.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>Puteți reveni la aplicația AI.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>OK</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>Alegeți un punct</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Faceți clic pe punctul la care trebuie să ajungă cursorul</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>Anulare</value></data>
@@ -520,7 +533,7 @@ Detalii: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Orice tastă sau buton al mouse-ului, cum ar fi F2 sau A. Pentru o combinație, țineți apăsat mai întâi Ctrl, Alt, Shift sau Win; clicul stânga și dreapta, rotița de defilare și Esc necesită una. Menținere necesită o tastă rapidă.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sunet</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Se redă când macrocomanda pornește și se oprește</value></data>
-  <data name="Macro_DebugDescription" xml:space="preserve"><value>Păstrează jurnalul ultimei rulări a acestei macrocomenzi, cu imagini ale ecranului când un If nu este adevărat și la final. Jurnalul se șterge când se închide PuppyMacro.</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Păstrează jurnalul fiecărei rulări a acestei macrocomenzi, cu o imagine a ecranului înainte de fiecare pas, timp de 7 zile pe acest PC.</value></data>
   <data name="Macro_ViewLog" xml:space="preserve"><value>Vizualizare jurnal</value></data>
   <data name="DebugLog_Title" xml:space="preserve"><value>Jurnalul pentru {0}</value></data>
   <data name="DebugLog_Description" xml:space="preserve"><value>Ultima rulare a macrocomenzii, scrisă în engleză ca să o puteți lipi oriunde. Imaginile ecranului sunt în folderul ei.</value></data>
@@ -1348,7 +1361,6 @@ Detalii: {1}</value></data>
   <data name="Ai_TestedMacro" xml:space="preserve"><value>A testat macrocomanda {0}</value></data>
   <data name="Ai_ReadPixel" xml:space="preserve"><value>A citit un pixel al ecranului: {0}</value></data>
   <data name="Ai_TookImage" xml:space="preserve"><value>A preluat o imagine de pe ecran: {0}</value></data>
-  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>A privit ecranul la clicul {0} din înregistrare</value></data>
   <data name="Ai_ReadLastRun" xml:space="preserve"><value>A citit jurnalul ultimei rulări a unei macrocomenzi</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Acțiune</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condiție</value></data>

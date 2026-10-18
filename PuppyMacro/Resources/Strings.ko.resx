@@ -198,6 +198,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>사용자 가이드</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>개발 빌드에서는 사용할 수 없음</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>데이터 저장 위치: {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>디버그 데이터</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>AI 요청과 Debug가 켜진 매크로의 로그 및 화면 이미지로, 이 PC에 7일 동안 보관됩니다. 사용 중인 공간: {0}</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0}MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0}GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>디버그 데이터 삭제</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>지금 진행 중인 항목을 제외한 모든 항목입니다.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>모두 삭제</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>PuppyMacro의 디버그 데이터를 삭제할까요? 지금 진행 중인 항목은 남습니다.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>지금은 바로 가기 키가 작동하지 않습니다.
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro가 시스템 트레이에서 계속 실행 중입니다. 종료하려면 아이콘을 마우스 오른쪽 단추로 클릭하세요.</value></data>
@@ -396,6 +404,7 @@
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>모든 유형</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>모든 결과</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>복원</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>디버그 열기</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>세부 정보</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>아직 요청이 없습니다.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>필터와 일치하는 요청이 없습니다.</value></data>
@@ -418,6 +427,10 @@
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>준비되면 {0} 키를 누르세요 · {1} 키를 누르면 취소</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>시작</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>완료</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>{0}(으)로 돌아가도 됩니다.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>AI 앱으로 돌아가도 됩니다.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>확인</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>지점 선택</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>커서를 이동할 지점을 클릭하세요</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>취소</value></data>
@@ -485,7 +498,7 @@
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>F2나 A 같은 아무 키 또는 마우스 단추입니다. 조합을 입력하려면 먼저 Ctrl, Alt, Shift 또는 Win을 누르고 있으세요. 왼쪽 및 오른쪽 클릭, 스크롤 휠, Esc에는 조합이 필요합니다. 누르고 있기에는 바로 가기 키가 필요합니다.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>소리</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>매크로가 시작되고 중지될 때 재생됩니다</value></data>
-  <data name="Macro_DebugDescription" xml:space="preserve"><value>이 매크로의 마지막 실행 로그를 If가 충족되지 않을 때와 마지막의 화면 이미지와 함께 보관합니다. 로그는 PuppyMacro를 닫으면 삭제됩니다.</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>이 매크로의 실행마다 로그를 각 단계 전의 화면 이미지와 함께 이 PC에 7일 동안 보관합니다.</value></data>
   <data name="Macro_ViewLog" xml:space="preserve"><value>로그 보기</value></data>
   <data name="DebugLog_Title" xml:space="preserve"><value>{0} 로그</value></data>
   <data name="DebugLog_Description" xml:space="preserve"><value>매크로의 마지막 실행입니다. 어디에나 붙여 넣을 수 있도록 영어로 작성됩니다. 화면 이미지는 해당 폴더에 있습니다.</value></data>
@@ -1271,7 +1284,6 @@
   <data name="Ai_TestedMacro" xml:space="preserve"><value>매크로 {0}을(를) 테스트함</value></data>
   <data name="Ai_ReadPixel" xml:space="preserve"><value>화면의 픽셀을 읽음: {0}</value></data>
   <data name="Ai_TookImage" xml:space="preserve"><value>화면에서 이미지를 가져옴: {0}</value></data>
-  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>기록의 클릭 {0}에서 화면을 확인함</value></data>
   <data name="Ai_ReadLastRun" xml:space="preserve"><value>매크로의 마지막 실행 로그를 읽음</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>동작</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>조건</value></data>

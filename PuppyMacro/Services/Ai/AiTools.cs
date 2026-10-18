@@ -16,13 +16,25 @@ internal sealed record AiToolResult(string Text, bool IsError = false)
 {
     public static AiToolResult Error(string text) => new(text, true);
 
-    /// <summary>Pictures of the screen, as JPEG, after the text (look_at_screen, a test, a recording's frame).</summary>
-    public IReadOnlyList<byte[]> Images { get; init; } = Array.Empty<byte[]>();
+    /// <summary>
+    /// Files of the call's debug folder the answer points to (a log, pictures of the screen): the server gives them as MCP
+    /// resource links, never their content, so the AI app reads only what it needs.
+    /// </summary>
+    public IReadOnlyList<string> Files { get; init; } = Array.Empty<string>();
 }
 
-/// <summary>One MCP tool: its name, what it does (for the AI), its input JSON Schema and what runs it.</summary>
+/// <summary>
+/// One MCP tool: its name, what it does (for the AI), its input JSON Schema, what runs it, and how it behaves (MCP tool
+/// annotations: it only reads, it may change or destroy something, calling it twice is the same as once).
+/// </summary>
 internal sealed record AiTool(string Name, string Description, string InputSchema, bool ReadOnly, bool Destructive,
-    Func<JsonElement, string, CancellationToken, Task<AiToolResult>> Run);
+    Func<JsonElement, string, CancellationToken, Task<AiToolResult>> Run)
+{
+    /// <summary>A short name people read in the AI app's interface.</summary>
+    public string Title { get; init; } = "";
+
+    public bool Idempotent { get; init; }
+}
 
 /// <summary>
 /// The tools PuppyMacro gives AI apps (MCP), without the protocol (<see cref="AiServer"/> adds it). Reads answer at once.
@@ -49,14 +61,14 @@ internal sealed partial class AiTools
         "(recorded or built step by step, and able to look at the screen) and remaps (a key or combination sends another " +
         "one). These tools read and change the user's loops, macros, remaps and settings, and work with the user's screen.\n\n" +
         "How requests work:\n" +
-        "- Reads (get_overview, get_item, get_schema, get_settings, check_hotkey, get_status, list_apps, get_help, " +
+        "- Reads (get_overview, get_item, get_schema, get_settings, check_hotkey, list_apps, get_help, " +
         "export_items, get_last_run) answer at once.\n" +
         "- save_loop, save_macro and save_remap create or rewrite an item; patch_item and update_actions change only what " +
         "they name, which is much faster for a big item, since every character of a call is written by you. delete_item, " +
         "set_enabled and update_settings do what they say. Everything is saved at once and kept in the item's History, " +
         "where the user can restore any version. Some changes wait for the user's OK, as the user chose on PuppyMacro's AI " +
         "page; the answer says whether they confirmed.\n" +
-        "- Some tools need the user: pick_point, pick_points, pick_app, capture_hotkey, pick_pixel, take_image, draw_area, " +
+        "- Some tools need the user: pick_points, pick_app, capture_hotkey, pick_pixel, take_image, draw_area, " +
         "look_at_screen, check_condition, record_macro, test_macro and place_floating_button. PuppyMacro first shows a " +
         "window in the middle of the screen, on top of everything, with your title, a short description of what you are " +
         "making together and why, and the steps, numbered; it waits for Start or Enter, so the user can first open the right " +
@@ -81,9 +93,10 @@ internal sealed partial class AiTools
         "- look_at_screen shows the screen; take_image and pick_pixel can then read that same picture without asking the " +
         "user. check_condition shows what a condition sees now, as the editor does: on the right screen and on a wrong one it " +
         "shows whether the condition tells them apart. record_macro gives what the user did, with an image around each " +
-        "click. test_macro plays a saved macro after the user's Start and gives its log and pictures; get_last_run reads the " +
-        "last run of a macro with Debug on. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
-        "Pictures take much more of your context than text.\n\n" +
+        "click. test_macro plays a saved macro after the user's Start. What these capture (a log, the screen's pictures) stays " +
+        "in PuppyMacro's debug data, and the answer links each file (MCP resource links; also its path): a file is read " +
+        "only when you open it, so the conversation keeps only what you need. get_last_run links a macro's last run again. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
+        "A picture takes much more of your context than text.\n\n" +
         "New loops and macros: the user knows what each key and click must do in their app, and PuppyMacro's pick tools take " +
         "confirmed_steps, the steps the item will play as the user confirmed them in the chat, before anything is picked. " +
         "Questions that the user's words already answer, or that do not apply to the item, only slow them down. Once saved, " +
@@ -136,10 +149,101 @@ internal sealed partial class AiTools
     {
         _host = host;
         _log = log;
-        All = Build();
+        All = Build().Select(t => t with
+        {
+            Name = Prefix + t.Name,
+            Title = Titles[t.Name],
+            Description = Prefixed(t.Description),
+            InputSchema = Prefixed(t.InputSchema),
+            Idempotent = PureReads.Contains(t.Name),
+        }).ToList();
     }
 
     public IReadOnlyList<AiTool> All { get; }
+
+    /// <summary>
+    /// Before every tool's name (MCP: tools named by server, as the guides for agents advise, so an AI app with many
+    /// servers tells "puppymacro_get_item" from another server's "get_item").
+    /// </summary>
+    public const string Prefix = "puppymacro_";
+
+    /// <summary>A tool's full name.</summary>
+    public static string Name(string bare) => Prefix + bare;
+
+    /// <summary>The <see cref="Instructions"/>, with the tools' full names.</summary>
+    public static string InstructionsText => Prefixed(Instructions);
+
+    /// <summary>The short names people read in the AI app's interface (MCP's title).</summary>
+    private static readonly Dictionary<string, string> Titles = new()
+    {
+        ["get_overview"] = "List loops, macros and remaps",
+        ["get_item"] = "Read an item",
+        ["get_schema"] = "Read an item's format",
+        ["get_settings"] = "Read settings",
+        ["check_hotkey"] = "Check a hotkey",
+        ["list_apps"] = "List open apps",
+        ["get_help"] = "Read the user guide",
+        ["save_loop"] = "Save a loop",
+        ["save_macro"] = "Save a macro",
+        ["save_remap"] = "Save a remap",
+        ["patch_item"] = "Change part of an item",
+        ["update_actions"] = "Change many actions",
+        ["delete_item"] = "Delete an item",
+        ["set_enabled"] = "Turn an item on or off",
+        ["update_settings"] = "Change settings",
+        ["export_items"] = "Export items",
+        ["import_items"] = "Import items",
+        ["pick_points"] = "Ask for points",
+        ["pick_app"] = "Ask for an app",
+        ["pick_pixel"] = "Ask for a pixel",
+        ["take_image"] = "Ask for an image",
+        ["draw_area"] = "Ask for an area",
+        ["look_at_screen"] = "Look at the screen",
+        ["check_condition"] = "Check a condition",
+        ["record_macro"] = "Record the user",
+        ["test_macro"] = "Test a macro",
+        ["get_last_run"] = "Read a macro's last run",
+        ["capture_hotkey"] = "Ask for a key",
+        ["place_floating_button"] = "Place a floating button",
+        ["open_item"] = "Open an item's editor",
+        ["open_import_window"] = "Open Import",
+        ["open_export_window"] = "Open Export",
+        ["wait_for_user"] = "Wait for the user",
+        ["stop_all"] = "Stop everything",
+    };
+
+    /// <summary>The tools that only read: calling one twice gives the same, and asks the user nothing (MCP idempotentHint).</summary>
+    private static readonly HashSet<string> PureReads = new()
+    {
+        "get_overview", "get_item", "get_schema", "get_settings", "check_hotkey", "list_apps", "get_help", "export_items", "get_last_run",
+    };
+
+    private static readonly System.Text.RegularExpressions.Regex ToolWords = new(
+        @"\b(" + string.Join("|", Titles.Keys.OrderByDescending(k => k.Length)) + @")\b");
+
+    /// <summary>A text with every tool's name written in full ("call wait_for_user" → "call puppymacro_wait_for_user").</summary>
+    public static string Prefixed(string text) => ToolWords.Replace(text, Prefix + "$1");
+
+    /// <summary>Debug is the user's alone: an AI app's save keeps the value the macro had (off for a new one).</summary>
+    public static void KeepUsersDebug(object item, MacroLibrary macros)
+    {
+        if (item is MacroDefinition macro)
+            macro.Debug = macros.Find(macro.Id)?.Debug ?? false;
+    }
+
+    /// <summary>The item a call is about, for its debug folder's name: the loop's, macro's or remap's name from "id".</summary>
+    public async Task<string?> SubjectOf(JsonElement args)
+    {
+        if (args.ValueKind != JsonValueKind.Object || !Guid.TryParse(Str(args, "id"), out Guid id))
+            return null;
+        return await _host.Ui(() => Task.FromResult(Find(id) switch
+        {
+            LoopDefinition loop => loop.Name,
+            MacroDefinition macro => macro.Name,
+            RemapDefinition => "remap",
+            _ => (string?)null,
+        })).ConfigureAwait(false);
+    }
 
     /// <summary>The tools' names, descriptions and schemas without a host: for the bridge while PuppyMacro is closed (never run).</summary>
     public static IReadOnlyList<AiTool> Definitions() => new AiTools(null!, null!).All;
@@ -168,11 +272,13 @@ internal sealed partial class AiTools
         }
         try
         {
-            return await tool.Run(args, app, cancel).ConfigureAwait(false);
+            AiToolResult result = await tool.Run(args, app, cancel).ConfigureAwait(false);
+            // Errors and PuppyMacro's own notes name tools by their full names; an item's data is given as it is.
+            return result.IsError || result.Text.StartsWith("Waiting:", StringComparison.Ordinal) ? result with { Text = Prefixed(result.Text) } : result;
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException or KeyNotFoundException)
         {
-            return AiToolResult.Error(ex.Message);
+            return AiToolResult.Error(Prefixed(ex.Message));
         }
     }
 
@@ -203,7 +309,9 @@ internal sealed partial class AiTools
         return new List<AiTool>
         {
             new("get_overview",
-                "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running) and the global hotkeys.",
+                "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running) and the global hotkeys, and says " +
+                "whether overlay mode is on, whether a request waits for the user (its request_id) and whether the user has a " +
+                "PuppyMacro editor or dialog open.",
                 none, true, false, (_, app, _) => Read(app, Phrase.Of("Ai_ReadOverview"), Overview)),
             new("get_item",
                 "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out " +
@@ -228,9 +336,6 @@ internal sealed partial class AiTools
                   "ignore_id":{"type":"string","description":"The Id of the item being changed, so its own hotkey does not count."}},
                  "required":["hotkey"],"additionalProperties":false}
                 """, true, false, (a, app, _) => CheckHotkey(a, app)),
-            new("get_status",
-                "Tells what is running, whether overlay mode is on, and whether a request is waiting for the user.",
-                none, true, false, (_, app, _) => Read(app, null, Status)),
             new("list_apps",
                 "Lists the .exe names of the apps with a window open, for an item that works only in one app (AppExe).",
                 none, true, false, (_, app, _) => Read(app, Phrase.Of("Ai_ListedApps"), () => JsonSerializer.Serialize(_host.RunningApps(), AnswerOptions))),
@@ -305,12 +410,9 @@ internal sealed partial class AiTools
                  "required":["content"],"additionalProperties":false}
                 """, false, false, (a, app, c) => ImportItems(a, app, c)),
 
-            new("pick_point", "Shows the user your title, description and steps, waits until they are ready, then they click a point on the screen: its position in physical pixels (X, Y)." + NewItemRule + UserWindow,
-                "{\"type\":\"object\",\"properties\":{" + confirmed + "\"label\":{\"type\":\"string\",\"description\":\"What this point is, shown next to the cursor while the user picks, e.g. \\\"The Salvage button\\\".\"}," + asking + "},\"required\":[\"confirmed_steps\",\"label\"," + askingRequired + "],\"additionalProperties\":false}",
-                true, false, (a, app, c) => PickPoints(a, app, single: true, c)),
-            new("pick_points", "Like pick_point for several points in a row (for example the 3 items to click): the user clicks them in order, the order the loop or macro uses them." + NewItemRule + UserWindow,
-                "{\"type\":\"object\",\"properties\":{" + confirmed + "\"count\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":" + MaxPoints + "},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"minItems\":2,\"maxItems\":" + MaxPoints + ",\"description\":\"One per point (as many as count), in order: what it is, shown next to the cursor while the user picks it, e.g. [\\\"The first item\\\", \\\"The second item\\\", \\\"The Confirm button\\\"].\"}," + asking + "},\"required\":[\"confirmed_steps\",\"count\",\"labels\"," + askingRequired + "],\"additionalProperties\":false}",
-                true, false, (a, app, c) => PickPoints(a, app, single: false, c)),
+            new("pick_points", "Shows the user your title, description and steps, waits until they are ready, then they click one or more points on the screen, in order (the order the loop or macro uses them): each one's position in physical pixels (X, Y)." + NewItemRule + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + confirmed + "\"count\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":" + MaxPoints + "},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"minItems\":1,\"maxItems\":" + MaxPoints + ",\"description\":\"One per point (as many as count), in order: what it is, shown next to the cursor while the user picks it, e.g. [\\\"The first item\\\", \\\"The second item\\\", \\\"The Confirm button\\\"].\"}," + asking + "},\"required\":[\"confirmed_steps\",\"count\",\"labels\"," + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => PickPoints(a, app, c)),
             new("pick_app", "Shows the user your title, description and steps, waits until they are ready, then they click a window of an app: its .exe name, for AppExe." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickApp(a, app, c)),
@@ -336,13 +438,12 @@ internal sealed partial class AiTools
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickOnScreen(a, app, AiScreenPickKind.Area, c)),
             new("look_at_screen",
-                "Shows you the screen as PuppyMacro's conditions see it (PuppyMacro's own windows left out): one picture per monitor, " +
-                "shrunk, with each monitor's bounds and scale to turn a point of a picture into screen coordinates, and a " +
-                "snapshot_id that take_image and pick_pixel can read. With area, only that part at full size (for exact " +
-                "coordinates or small details). First the ready window shows your title, description and steps, so the user can " +
-                "bring the right app in front; the picture is taken when they press Start or Enter. Pictures cost much more of your " +
-                "context than text. Needs Let AI apps see the screen (on by default)." + UserWindow,
-                "{\"type\":\"object\",\"properties\":{" + asking + "," + areaArg + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                "Takes the screen as PuppyMacro's conditions see it (PuppyMacro's own windows left out), after the ready window with " +
+                "your title, description and steps, so the user can bring the right app in front first. The answer gives each " +
+                "monitor's bounds and a snapshot_id, and links each monitor's picture (PNG at the screen's own size, physical " +
+                "pixels): open the ones you need. take_image and pick_pixel read the same picture with snapshot_id, without the " +
+                "user. Needs Let AI apps see the screen (on by default)." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => LookAtScreen(a, app, c)),
             new("check_condition",
                 "Checks one condition on the screen now, as the condition window's Now on the screen does, after the ready window " +
@@ -355,30 +456,27 @@ internal sealed partial class AiTools
             new("record_macro",
                 "Records what the user does with PuppyMacro's recorder: after the ready window with your title, description and " +
                 "steps, a short countdown, then every key and click until the user presses Stop on the recording bar. The answer is " +
-                "the actions as PuppyMacro builds them (not saved: save_macro saves them, as they are or changed) and each click with " +
-                "an image around it, taken a moment after the click and kept as a condition image (its Id), so an If can wait for " +
-                "what was clicked and click where it is found. get_recording_frame shows the screen at a click. Without Let AI apps " +
-                "see the screen, only the actions." + UserWindow,
+                "the actions as PuppyMacro builds them (not saved: save_macro saves them, as they are or changed) and each click " +
+                "with an image around it kept as a condition image (its Id), so an If can wait for what was clicked and click " +
+                "where it is found. It links the recording's log (each key and click with its number and time) and the picture of " +
+                "the screen at each of them, named by that number: open the ones you need. Without Let AI apps see the screen, no " +
+                "pictures." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{\"mouse_movement\":{\"type\":\"boolean\",\"description\":\"Also record the mouse's paths (Move along a path). Leave out for the user's own choice in PuppyMacro.\"}," + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
-                false, false, (a, app, c) => RecordMacro(a, app, c)),
-            new("get_recording_frame",
-                "The screen at one click of the last record_macro: the monitor's picture, shrunk, with its bounds and scale. Needs Let AI apps see the screen.",
-                "{\"type\":\"object\",\"properties\":{\"recording_id\":{\"type\":\"string\"},\"click\":{\"type\":\"integer\",\"minimum\":1,\"description\":\"The click's number in the recording's Clicks.\"}},\"required\":[\"recording_id\",\"click\"],\"additionalProperties\":false}",
-                true, false, (a, app, _) => RecordingFrame(a, app)),
+                true, false, (a, app, c) => RecordMacro(a, app, c)),
             new("test_macro",
                 "Plays a saved macro on the user's screen, as its Play button would, to see how it goes. First the ready window shows " +
                 "your title, description and steps: the user brings the app the macro works in to the front and presses Start or " +
                 "Enter, and the macro's keys and clicks go there. It ends by itself, at Stop all, or after max_seconds (20 by " +
-                "default). The run is always logged, Debug or not: the answer is why it ended and the log (each action, what each If " +
-                "saw and where it went), with pictures of the screen when an If was not true and at the end (with Let AI apps see " +
-                "the screen). Needs Let AI apps test macros (on by default)." + UserWindow,
+                "default). The run is always logged, Debug or not. The answer says why it ended and links its log (each key, click " +
+                "and If with its number and time, and what each If saw) and the picture of the screen just before each of them, " +
+                "named by that number: open the ones you need. Needs Let AI apps test macros (on by default); pictures need Let AI " +
+                "apps see the screen." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The macro's Id.\"},\"max_seconds\":{\"type\":\"number\",\"minimum\":1,\"maximum\":600,\"description\":\"The longest the test plays; 20 when left out.\"}," + confirmed + asking + "},\"required\":[\"id\",\"confirmed_steps\"," + askingRequired + "],\"additionalProperties\":false}",
-                false, false, (a, app, c) => TestMacro(a, app, c)),
+                false, true, (a, app, c) => TestMacro(a, app, c)),
             new("get_last_run",
-                "The log of a macro's last run: each action, what each If saw and where it went, why it ended. There is one for a macro " +
-                "with Debug on (a field of the macro) or after test_macro, until PuppyMacro closes. With pictures, also its pictures of " +
-                "the screen (when an If was not true, and at the end; Let AI apps see the screen).",
-                "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The macro's Id.\"},\"pictures\":{\"type\":\"boolean\"}},\"required\":[\"id\"],\"additionalProperties\":false}",
+                "A macro's last run in PuppyMacro's debug data (a test_macro, or a run the user started with Debug on; kept 7 " +
+                "days): how it ended, with its log and pictures linked, as test_macro gives them.",
+                "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The macro's Id.\"}},\"required\":[\"id\"],\"additionalProperties\":false}",
                 true, false, (a, app, _) => GetLastRun(a, app)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
@@ -447,6 +545,9 @@ internal sealed partial class AiTools
                 OpenMain = Keys(s.OpenMainHotkey), OverlayMode = Keys(s.OverlayModeHotkey), StopAll = Keys(s.StopAllHotkey),
                 Record = Keys(s.RecordHotkey),
             },
+            OverlayModeOn = _host.OverlayModeActive,
+            WaitingForUser = WaitingId(),
+            UserIsEditing = _host.UserIsEditing,
         };
         return JsonSerializer.Serialize(overview, AnswerOptions);
     }
@@ -457,18 +558,6 @@ internal sealed partial class AiTools
     private static PhraseArg KeyArg(HotkeyBinding? binding) =>
         binding is { IsSet: true } ? PhraseArg.Of(binding.Clone()) : Phrase.Of("History_None");
 
-    private string Status()
-    {
-        var status = new
-        {
-            Running = _host.Settings.Loops.Where(l => _host.IsRunning(l.Id)).Select(l => l.Name)
-                .Concat(_host.Macros.Macros.Where(m => _host.IsRunning(m.Id)).Select(m => m.Name)).ToList(),
-            OverlayMode = _host.OverlayModeActive,
-            WaitingForUser = WaitingId(),
-            UserIsEditing = _host.UserIsEditing,
-        };
-        return JsonSerializer.Serialize(status, AnswerOptions);
-    }
 
     private async Task<AiToolResult> GetItem(JsonElement args, string app)
     {
@@ -909,23 +998,21 @@ internal sealed partial class AiTools
     // ================= Interactions =================
 
     /// <param name="count">1 for pick_point; null: the "count" argument (pick_points).</param>
-    private async Task<AiToolResult> PickPoints(JsonElement args, string app, bool single, CancellationToken cancel)
+    private async Task<AiToolResult> PickPoints(JsonElement args, string app, CancellationToken cancel)
     {
         AiAsk ask = Asking(args);
         if (!(args.TryGetProperty("confirmed_steps", out JsonElement plan) && plan.ValueKind == JsonValueKind.Array
               && plan.EnumerateArray().Any(step => step.ValueKind == JsonValueKind.String && step.GetString()!.Trim().Length > 0)))
             throw new FormatException("Give \"confirmed_steps\": the steps the loop or macro will play. For a new one, write them " +
                 "in the chat first and wait for the user's OK.");
-        List<string> labels = single
-            ? new List<string> { (Str(args, "label") ?? "").Trim() }
-            : args.TryGetProperty("labels", out JsonElement list) && list.ValueKind == JsonValueKind.Array
-                ? list.EnumerateArray().Select(l => l.ValueKind == JsonValueKind.String ? l.GetString()!.Trim() : "").ToList()
-                : new List<string>();
+        List<string> labels = args.TryGetProperty("labels", out JsonElement list) && list.ValueKind == JsonValueKind.Array
+            ? list.EnumerateArray().Select(l => l.ValueKind == JsonValueKind.String ? l.GetString()!.Trim() : "").ToList()
+            : new List<string>();
         if (labels.Any(l => l.Length == 0))
-            throw new FormatException(single ? "Give a \"label\": what the point is." : "Every one of the \"labels\" must say what its point is.");
-        int points = single ? 1 : args.TryGetProperty("count", out JsonElement c) && c.TryGetInt32(out int n) ? n : 0;
-        if (!single && (points < 2 || points > MaxPoints))
-            return AiToolResult.Error($"count must be from 2 to {MaxPoints} (for one point, use pick_point).");
+            throw new FormatException("Every one of the \"labels\" must say what its point is.");
+        int points = args.TryGetProperty("count", out JsonElement c) && c.TryGetInt32(out int n) ? n : 0;
+        if (points < 1 || points > MaxPoints)
+            return AiToolResult.Error($"count must be from 1 to {MaxPoints}.");
         if (labels.Count != points)
             return AiToolResult.Error($"Give one label per point: {points} points, {labels.Count} labels.");
         if (await Refusal().ConfigureAwait(false) is string busy)
@@ -942,9 +1029,7 @@ internal sealed partial class AiTools
             if (BusyNow() is AiToolResult busy)
                 return busy;
             var (answer, picked) = await _host.PickPoints(app, ask.Title, labels);
-            string text = points == 1 && picked.Count == 1
-                ? JsonSerializer.Serialize(new { X = picked[0].X, Y = picked[0].Y })
-                : JsonSerializer.Serialize(picked.Select(p => new { X = p.X, Y = p.Y }));
+            string text = JsonSerializer.Serialize(picked.Select(p => new { X = p.X, Y = p.Y }));
             Log(app, AiActivityKind.Interaction, label, answer, answer == AiAnswer.Done ? string.Join("; ", picked.Select(p => $"{p.X}, {p.Y}")) : "");
             return Answered(answer, text);
         }, cancel).ConfigureAwait(false);

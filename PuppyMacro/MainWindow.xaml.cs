@@ -139,6 +139,7 @@ public partial class MainWindow
         BackupGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Backup");
         AboutGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("About");
         DataFolderText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Settings_DataSavedIn, AppPaths.DataFolder);
+        RefreshDebugData();
         RemapFilterBox.SelectedIndex = 0;
         UpdateRemapState();
         FilterBox.SelectedIndex = (int)settings.Filter;
@@ -313,6 +314,8 @@ public partial class MainWindow
         SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
         if (page != "Settings")
             _engine.CancelCapture(); // a Settings hotkey field that waits stops
+        else
+            RefreshDebugData();
     }
 
     /// <summary>The overlay panel's options are off while the panel is off.</summary>
@@ -714,11 +717,11 @@ public partial class MainWindow
         duplicate.Click += (_, _) => DuplicateMacro(item);
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
         menu.Items.Add(EditMenuItem(item));
-        // The log of its last run with Debug on (or of an AI app's test): it lasts until PuppyMacro closes.
-        if (RunLog.Exists(item.Definition.Id))
+        // The log of its last run with Debug on (or of an AI app's test), kept in the debug data for its days.
+        if (DebugStore.LastRunOf(item.Definition.Id) is string lastRun)
         {
             var viewLog = new MenuItem { Header = Strings.Macro_ViewLog, Icon = new FontIcon { Icon = SegoeFluentIcons.Bug } };
-            viewLog.Click += (_, _) => ShowUserDialog(() => new DebugLogWindow(item.Definition.Id, item.Definition.Name) { Owner = this }.ShowDialog());
+            viewLog.Click += (_, _) => ShowUserDialog(() => new DebugLogWindow(lastRun, item.Definition.Name) { Owner = this }.ShowDialog());
             menu.Items.Add(viewLog);
         }
         menu.Items.Add(new Separator());
@@ -1998,6 +2001,31 @@ public partial class MainWindow
         return names.Count == 1 ? names[0]
             : string.Format(CultureInfo.CurrentCulture, Strings.Main_ListLastAnd,
                 string.Join(Strings.ListSeparator, names.Take(names.Count - 1)), names[^1]);
+    }
+
+    /// <summary>The Debug data card's text with the space the debug data takes (counted off the UI thread).</summary>
+    private async void RefreshDebugData()
+    {
+        long bytes = await System.Threading.Tasks.Task.Run(DebugStore.Size);
+        string size = bytes >= 1L << 30
+            ? string.Format(CultureInfo.CurrentCulture, Strings.Settings_SizeGb, (bytes / (double)(1L << 30)).ToString("0.#", CultureInfo.CurrentCulture))
+            : string.Format(CultureInfo.CurrentCulture, Strings.Settings_SizeMb, Math.Ceiling(bytes / (double)(1L << 20)).ToString("0", CultureInfo.CurrentCulture));
+        DebugDataText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Settings_DebugDataDescription, size);
+    }
+
+    private void OnOpenDebugFolderClick(object sender, RoutedEventArgs e)
+    {
+        System.IO.Directory.CreateDirectory(DebugStore.Root);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{DebugStore.Root}\""));
+    }
+
+    private async void OnDeleteDebugDataClick(object sender, RoutedEventArgs e)
+    {
+        if (ShowUserDialog(() => MessageBox.Show(this, Strings.Settings_DeleteDebugDataConfirm, Strings.Settings_DeleteDebugData,
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No, App.MessageBoxOptions) == MessageBoxResult.Yes) != true)
+            return;
+        await System.Threading.Tasks.Task.Run(() => DebugStore.DeleteOlderThan(TimeSpan.Zero, DateTime.UtcNow));
+        RefreshDebugData();
     }
 
     private void OnOpenDataFolderClick(object sender, RoutedEventArgs e)
