@@ -27,6 +27,9 @@ internal sealed partial class AiTools
 
     private Task<AiToolResult> SearchLibrary(JsonElement args, string app) => _host.Ui(() =>
     {
+        Guid? collectionId = Str(args, "collection") is { Length: > 0 } idText
+            ? Guid.TryParse(idText, out Guid parsed) ? parsed : throw new FormatException("\"collection\" must be a collection's Id.")
+            : null;
         string? domain = Str(args, "domain")?.Trim().ToLowerInvariant();
         string? appSlug = Str(args, "app")?.Trim().ToLowerInvariant();
         string? purpose = Str(args, "purpose")?.Trim().ToLowerInvariant();
@@ -36,6 +39,7 @@ internal sealed partial class AiTools
 
         var found = _host.Macros.Library.Collections
             .SelectMany(c => c.Components.Select(k => (Collection: c, Component: k)))
+            .Where(p => collectionId == null || p.Collection.Id == collectionId)
             .Where(p => domain == null || p.Collection.Domain.ToString().Equals(domain, StringComparison.OrdinalIgnoreCase))
             .Where(p => appSlug == null || ComponentLibrary.AppSlug(p.Collection.AppExe) == appSlug)
             .Where(p => purpose == null || p.Component.Purpose.ToString().Equals(purpose, StringComparison.OrdinalIgnoreCase))

@@ -327,18 +327,20 @@ internal sealed partial class AiTools
         return new List<AiTool>
         {
             new("get_overview",
-                "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running) and the global hotkeys, and says " +
-                "whether overlay mode is on, whether a request waits for the user (its request_id) and whether the user has a " +
-                "PuppyMacro editor or dialog open. With many items: words keeps those whose name or app has every word, and " +
-                "offset and limit (100 when left out) page each list; Total says how many there are.",
+                "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running, and Characters: how long " +
+                "the item's compact JSON is) and the global hotkeys, says whether overlay mode is on, whether a request waits " +
+                "for the user (its request_id) and whether the user has a PuppyMacro editor or dialog open, and lists the " +
+                "Library's collections of reusable components (Id, name, how many components). With many items: words keeps " +
+                "those whose name or app has every word, and offset and limit (100 when left out) page each list; Total and " +
+                "Library.Collections say how many there are.",
                 """{"type":"object","properties":{"words":{"type":"string","description":"Words the name or the app must have, e.g. \"diablo salvage\"."},"offset":{"type":"integer","minimum":0,"description":"How many of each list to skip; 0 when left out."},"limit":{"type":"integer","minimum":1,"maximum":1000,"description":"How many of each list to give; 100 when left out."}},"additionalProperties":false}""",
                 true, false, (a, app, _) => Read(app, Phrase.Of("Ai_ReadOverview"), () => Overview(a))),
             new("get_item",
-                "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out " +
-                "(get_schema gives the defaults). save_* takes it as it is; patch_item's paths point into it. A big macro can be " +
-                "read in pieces: outline gives one line per action with its path (a JSON Pointer), type, name and an If's " +
-                "conditions, down to outline_depth levels of Then and Else; path gives only the part there. A macro's rows " +
-                "linked to Library components are listed after it.",
+                "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out. " +
+                "Saves take it as it is, and patch paths point into it. A big item reads better in pieces: outline gives one " +
+                "line per action with its path (a JSON Pointer), type, name and an If's conditions, down to outline_depth " +
+                "levels of Then and Else; path gives only the part there. A macro's rows linked to Library components are " +
+                "listed after it.",
                 """{"type":"object","properties":{"id":{"type":"string","description":"The Id of a loop, macro or remap (get_overview lists them)."},"outline":{"type":"boolean","description":"A macro: its outline instead of its JSON."},"outline_depth":{"type":"integer","minimum":1,"maximum":20,"description":"How many levels of Then and Else the outline goes into; 1 when left out (the macro's own actions)."},"path":{"type":"string","description":"A JSON Pointer into the item, e.g. /Actions/3 or /Actions/3/If/Then/0: only that part."}},"required":["id"],"additionalProperties":false}""",
                 true, false, (a, app, _) => GetItem(a, app)),
             new("get_schema",
@@ -516,11 +518,11 @@ internal sealed partial class AiTools
                 "Searches the user's Library: components that already work (a point, an If that finds something, a sequence), " +
                 "kept to be linked in macros instead of being made again. Each has a structured name in English, " +
                 "domain-app-purpose-concept (\"game-diablo_iv-find-rare_item_in_slot\"), a title in the user's words and maybe a " +
-                "description. Filters narrow it (all optional, all must match): domain, app (as in the name: the exe without " +
-                ".exe, lowercase, '_' for anything else, or any), purpose, and words found in the name, title or description. " +
-                "The answer is short: up to limit components (20 when left out), each with its Id, how many rows link it and its " +
-                "collection with the screen it was made on (its points are that screen's). A component's actions: get_component.",
-                """{"type":"object","properties":{"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app part of the name, e.g. diablo_iv, excel, any."},"purpose":{"type":"string","enum":["find","wait","read","state","point","act"],"description":"find: recognizes something; wait: waits until something shows or goes; read: reads a text; state: which screen the app is in; point: where to click or move; act: a sequence that does an operation."},"words":{"type":"string","description":"Words, in English as the names are, e.g. \"rare item\"."},"limit":{"type":"integer","minimum":1,"maximum":200}},"additionalProperties":false}""",
+                "description. Filters narrow it (all optional, all must match): collection (an Id: its components), domain, app " +
+                "(as in the name: the exe without .exe, lowercase, '_' for anything else, or any), purpose, and words found in " +
+                "the name, title or description. The answer is short: up to limit components (20 when left out), each with its " +
+                "Id, how many rows link it and its collection with the screen it was made on (its points are that screen's).",
+                """{"type":"object","properties":{"collection":{"type":"string","description":"A collection's Id: only its components."},"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app part of the name, e.g. diablo_iv, excel, any."},"purpose":{"type":"string","enum":["find","wait","read","state","point","act"],"description":"find: recognizes something; wait: waits until something shows or goes; read: reads a text; state: which screen the app is in; point: where to click or move; act: a sequence that does an operation."},"words":{"type":"string","description":"Words, in English as the names are, e.g. \"rare item\"."},"limit":{"type":"integer","minimum":1,"maximum":200}},"additionalProperties":false}""",
                 true, false, (a, app, _) => SearchLibrary(a, app)),
             new("get_component",
                 "Gives one Library component: its actions as compact JSON (the same fields as a macro's), its collection with the " +
@@ -597,23 +599,29 @@ internal sealed partial class AiTools
         var loops = s.Loops.Where(l => Has(l.Name, l.AppExe)).ToList();
         var macros = _host.Macros.Macros.Where(m => Has(m.Name, m.AppExe)).ToList();
         var remaps = s.Remaps.Where(r => Has(r.Note, r.AppExe)).ToList();
+        var collections = _host.Macros.Library.Collections.Where(c => Has(c.Name, c.AppExe)).ToList();
         var overview = new
         {
             Total = new { Loops = loops.Count, Macros = macros.Count, Remaps = remaps.Count },
             Loops = loops.Skip(offset).Take(limit).Select(l => new
             {
                 l.Id, l.Name, l.Enabled, Running = _host.IsRunning(l.Id), Hotkey = Keys(l.Hotkey), l.Mode,
-                App = l.AppExe, Actions = l.Actions.Count,
+                App = l.AppExe, Actions = l.Actions.Count, Characters = Characters(l),
             }),
             Macros = macros.Skip(offset).Take(limit).Select(m => new
             {
                 m.Id, m.Name, m.Enabled, Running = _host.IsRunning(m.Id), Hotkey = Keys(m.Hotkey), m.Mode,
-                App = m.AppExe, Actions = m.Actions.Count,
+                App = m.AppExe, Actions = m.Actions.Count, Characters = Characters(m),
             }),
             Remaps = remaps.Skip(offset).Take(limit).Select(r => new
             {
-                r.Id, Source = Keys(r.Source), Target = Keys(r.Target), App = r.AppExe, r.Enabled, r.Note,
+                r.Id, Source = Keys(r.Source), Target = Keys(r.Target), App = r.AppExe, r.Enabled, r.Note, Characters = Characters(r),
             }),
+            Library = new
+            {
+                Collections = collections.Count,
+                List = collections.Skip(offset).Take(limit).Select(c => new { c.Id, c.Name, Components = c.Components.Count }),
+            },
             GlobalHotkeys = new
             {
                 OpenMain = Keys(s.OpenMainHotkey), OverlayMode = Keys(s.OverlayModeHotkey), StopAll = Keys(s.StopAllHotkey),
@@ -625,6 +633,9 @@ internal sealed partial class AiTools
         };
         return JsonSerializer.Serialize(overview, AnswerOptions);
     }
+
+    /// <summary>How long the item's compact JSON (what get_item gives) is, in characters.</summary>
+    private static int Characters(object item) => Loc.English(() => AiJson.Compact(item)).Length;
 
     private static string? Keys(HotkeyBinding? binding) => binding is { IsSet: true } ? KeyNames.Format(binding) : null;
 

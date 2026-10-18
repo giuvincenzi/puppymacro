@@ -252,4 +252,62 @@ public class AiLibraryToolsTests : IDisposable
         Assert.DoesNotContain("Diablo salvage 1", page.Text);
         Assert.DoesNotContain("Excel report", page.Text);
     }
+
+    [Fact]
+    public async Task Get_overview_gives_each_item_s_characters_as_get_item_gives_them()
+    {
+        var macro = new MacroDefinition { Name = "Farm", Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 65 } } };
+        _host.Macros.Macros.Add(macro);
+        var loop = _settings.Loops.First();
+        var remap = new RemapDefinition { Source = HotkeyBinding.FromKey(0x85), Target = HotkeyBinding.FromKey(0x86), Note = "F22 to F23" };
+        _settings.Remaps.Add(remap);
+
+        using var overview = JsonDocument.Parse((await Call("get_overview")).Text);
+
+        int Of(string list, Guid id) => overview.RootElement.GetProperty(list).EnumerateArray()
+            .Single(e => e.GetProperty("Id").GetGuid() == id).GetProperty("Characters").GetInt32();
+        Assert.Equal((await Call("get_item", new { id = macro.Id })).Text.Length, Of("Macros", macro.Id));
+        Assert.Equal((await Call("get_item", new { id = loop.Id })).Text.Length, Of("Loops", loop.Id));
+        Assert.Equal((await Call("get_item", new { id = remap.Id })).Text.Length, Of("Remaps", remap.Id));
+    }
+
+    [Fact]
+    public async Task Get_overview_lists_the_library_s_collections_with_their_components_and_pages_them()
+    {
+        using var all = JsonDocument.Parse((await Call("get_overview")).Text);
+        var library = all.RootElement.GetProperty("Library");
+        Assert.Equal(2, library.GetProperty("Collections").GetInt32());
+        var diablo = library.GetProperty("List").EnumerateArray().Single(c => c.GetProperty("Name").GetString() == "Diablo IV 5120x1440");
+        Assert.Equal(2, diablo.GetProperty("Components").GetInt32());
+        Assert.Equal(_host.Macros.Library.Collections[0].Id, diablo.GetProperty("Id").GetGuid());
+
+        using var paged = JsonDocument.Parse((await Call("get_overview", new { offset = 1, limit = 1 })).Text);
+        var page = paged.RootElement.GetProperty("Library");
+        Assert.Equal(2, page.GetProperty("Collections").GetInt32()); // the count is of all of them
+        Assert.Equal("Excel", Assert.Single(page.GetProperty("List").EnumerateArray()).GetProperty("Name").GetString());
+
+        using var words = JsonDocument.Parse((await Call("get_overview", new { words = "excel" })).Text);
+        Assert.Equal(1, words.RootElement.GetProperty("Library").GetProperty("Collections").GetInt32()); // by name or app
+
+        _host.Macros.Library.Collections.Clear();
+        using var empty = JsonDocument.Parse((await Call("get_overview")).Text);
+        Assert.Equal(0, empty.RootElement.GetProperty("Library").GetProperty("Collections").GetInt32());
+        Assert.Empty(empty.RootElement.GetProperty("Library").GetProperty("List").EnumerateArray());
+    }
+
+    [Fact]
+    public async Task Search_library_gives_one_collection_s_components()
+    {
+        var diablo = _host.Macros.Library.Collections[0];
+        var excel = _host.Macros.Library.Collections[1];
+
+        Assert.Equal(2, Found(await Call("search_library", new { collection = diablo.Id.ToString() })));
+        Assert.Equal(1, Found(await Call("search_library", new { collection = excel.Id.ToString() })));
+        Assert.Equal(1, Found(await Call("search_library", new { collection = diablo.Id.ToString(), purpose = "find" }))); // with the others
+        Assert.Equal(0, Found(await Call("search_library", new { collection = Guid.NewGuid().ToString() })));
+
+        var bad = await Call("search_library", new { collection = "slot" });
+        Assert.True(bad.IsError);
+        Assert.Contains("\"collection\" must be a collection's Id", bad.Text);
+    }
 }
