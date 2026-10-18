@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -215,7 +216,7 @@ internal sealed class AiServer : IDisposable
                 return result = AiToolResult.Error(
                     $"Too many requests at once: PuppyMacro takes about {AiRateLimit.PerSecond} a second. Try again in {Math.Ceiling(wait.TotalSeconds)} s.");
             DebugCall.Current = call;
-            return result = await _tools.Call(tool.Name, args, app, cancel).ConfigureAwait(false);
+            return result = WithFileList(await _tools.Call(tool.Name, args, app, cancel).ConfigureAwait(false));
         }
         finally
         {
@@ -227,6 +228,26 @@ internal sealed class AiServer : IDisposable
                 Description = DebugStore.Describe(f),
             }).Concat<object>(result.Images.Select(i => new { Image = i.MimeType, Bytes = i.Data.Length })));
         }
+    }
+
+    /// <summary>
+    /// The answer's text with, at its end, a line for each linked file: its name, what it holds, its size in pixels or
+    /// lines, and its weight. The same is in each resource link, but some AI apps show the model only a link's name and
+    /// URI (Claude Desktop did), so the text says it too, built here for every tool.
+    /// </summary>
+    internal static AiToolResult WithFileList(AiToolResult result)
+    {
+        if (result.Files.Count == 0)
+            return result;
+        var text = new StringBuilder(result.Text).Append("\n\nLinked files:");
+        foreach (string file in result.Files)
+        {
+            var info = new FileInfo(file);
+            text.Append("\n- ").Append(info.Name).Append(": ").Append(DebugStore.Describe(file));
+            if (info.Exists)
+                text.Append(", ").Append(DebugStore.SizeText(info.Length));
+        }
+        return result with { Text = text.ToString() };
     }
 
     /// <summary>The MCP server's options: PuppyMacro, its instructions, the tools (each answered by <paramref name="run"/>) and the debug data as resources.</summary>

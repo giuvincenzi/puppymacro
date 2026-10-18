@@ -132,6 +132,14 @@ internal static class DebugStore
         }
     }
 
+    /// <summary>A file's size for the AI app: "320 B", "562 KB", "10.7 MB" (invariant numbers, 1 KB = 1024 bytes).</summary>
+    public static string SizeText(long bytes) => bytes switch
+    {
+        < 1024 => string.Create(CultureInfo.InvariantCulture, $"{bytes} B"),
+        < 1024 * 1024 => string.Create(CultureInfo.InvariantCulture, $"{Math.Round(bytes / 1024.0)} KB"),
+        _ => string.Create(CultureInfo.InvariantCulture, $"{Math.Round(bytes / (1024.0 * 1024), 1)} MB"),
+    };
+
     /// <summary>A PNG's width and height from its header, without decoding it; null when it is not a PNG.</summary>
     public static (int Width, int Height)? PngSize(string path)
     {

@@ -173,7 +173,10 @@ Rules:
     when it needs it. Whatever enters an answer stays in the AI app's context until the end of the conversation. No
     `structuredContent`: the same JSON would also be text, twice in the context.
   - The links are built in one place for every tool (`AiServer.McpTool`): each with its size and a description of what
-    the file holds and, from `DebugStore.Describe`, a picture's width and height or a text's lines.
+    the file holds and, from `DebugStore.Describe`, a picture's width and height or a text's lines. Some AI apps show the
+    model only a link's name and URI (Claude Desktop did), so the answer's text also ends with the list of linked files
+    and the same facts (`AiServer.WithFileList`, one place for every tool). Only measured facts: no estimates and no
+    limits of a particular AI app in the texts.
   - Some AI apps do not let the model read resources (MCP leaves reading them to the client; Claude Desktop's model could
     not open a link): `read_resource` reads a linked file as a tool, the pattern of FastMCP's "Resources as Tools". The
     descriptions and answers that link files say both ways; nothing in the code depends on which client is connected.

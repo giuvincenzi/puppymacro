@@ -106,7 +106,7 @@ internal sealed partial class AiTools
             {
                 SnapshotId = id,
                 Monitors = where,
-                Note = Prefixed("Each monitor's picture is linked below (its size in the link), at the screen's own size, in " +
+                Note = Prefixed("Each monitor's picture is linked below (its size in the list of linked files), at the screen's own size, in " +
                        "physical pixels: a point at (px, py) in a monitor's picture is at X + px, Y + py on the screen. " +
                        "take_image and pick_pixel read this same picture with snapshot_id and screen coordinates, without the " +
                        "user. PuppyMacro's own windows are left out." + LinksOpen),

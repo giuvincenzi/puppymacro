@@ -100,7 +100,7 @@ internal sealed partial class AiTools
         "user. check_condition shows what a condition sees now, as the editor does: on the right screen and on a wrong one it " +
         "shows whether the condition tells them apart. record_macro gives what the user did, with an image around each " +
         "click. test_macro plays a saved macro after the user's Start. What these capture (a log, the screen's pictures) stays " +
-        "in PuppyMacro's debug data, and the answer links each file (MCP resource links, with what it holds and its size; also " +
+        "in PuppyMacro's debug data, and the answer links each file (MCP resource links) and lists it with what it holds, its size and its weight (also " +
         "its path): a file is read only when you open it, so the conversation keeps only what you need. A link opens with " +
         "resources/read, or, in an AI app that cannot open resource links, with read_resource, which can also give a part or " +
         "a smaller copy of a picture and some lines of a log. get_last_run links a macro's last run again. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
@@ -451,7 +451,7 @@ internal sealed partial class AiTools
                 "Takes the screen as PuppyMacro's conditions see it (PuppyMacro's own windows left out), after the ready window with " +
                 "your title, description and steps, so the user can bring the right app in front first. The answer gives each " +
                 "monitor's bounds and a snapshot_id, and links each monitor's picture (PNG at the screen's own size, physical " +
-                "pixels, its size in the link): open the ones you need. take_image and pick_pixel read the same picture with " +
+                "pixels, its size in the list of linked files): open the ones you need. take_image and pick_pixel read the same picture with " +
                 "snapshot_id, without the user. Needs Let AI apps see the screen (on by default)." + LinksOpen + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => LookAtScreen(a, app, c)),
@@ -491,8 +491,8 @@ internal sealed partial class AiTools
             new("read_resource",
                 "Reads a file another PuppyMacro tool linked (a resource link to PuppyMacro's debug data: a log, a picture of the " +
                 "screen, JSON), the same file resources/read gives, for AI apps that cannot open resource links. Without options " +
-                "it gives the whole file: a picture as an image, a text as text. A link's description says what the file holds " +
-                "and its size (a picture's width and height, a text's lines). For a picture, area reads a part of it and scale a " +
+                "it gives the whole file: a picture as an image, a text as text. An answer that links files lists each one with " +
+                "what it holds, its size (a picture's width and height, a text's lines) and its weight. For a picture, area reads a part of it and scale a " +
                 "smaller copy, width and height alike; a point (px, py) of what it gives is at (area X + px / scale, area Y + py / " +
                 "scale) in the picture, and the answer repeats the numbers. For a text, offset and limit read some of its lines. " +
                 "The files themselves never change. Pictures need Let AI apps see the screen.",

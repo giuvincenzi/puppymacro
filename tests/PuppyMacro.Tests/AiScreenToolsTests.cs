@@ -300,6 +300,24 @@ public class AiScreenToolsTests : IDisposable
     }
 
     [Fact]
+    public async Task The_answer_lists_each_linked_file_with_what_it_holds_its_size_and_weight()
+    {
+        AiToolResult look = AiServer.WithFileList(await Call("look_at_screen", Asking));
+        string picture = Assert.Single(look.Files, f => f.EndsWith(".png", StringComparison.Ordinal));
+        Assert.Contains($"Linked files:\n- monitor-1.png: monitor 1, PNG, 800 × 600 px, {DebugStore.SizeText(new FileInfo(picture).Length)}", look.Text);
+
+        AiToolResult read = await Call("read_resource", new { uri = DebugStore.UriOf(picture), scale = 0.5 });
+        Assert.Matches(@"400 × 300 px, \d+ (B|KB) as PNG\.", read.Text);
+        Assert.Same(read, AiServer.WithFileList(read)); // nothing linked, nothing added
+    }
+
+    [Theory]
+    [InlineData(320, "320 B")]
+    [InlineData(575_480, "562 KB")]
+    [InlineData(10_733_569, "10.2 MB")]
+    public void Sizes_read_the_same_on_every_PC(long bytes, string text) => Assert.Equal(text, DebugStore.SizeText(bytes));
+
+    [Fact]
     public void Every_tool_has_its_full_name_a_title_and_honest_annotations()
     {
         Assert.All(_tools.All, t =>

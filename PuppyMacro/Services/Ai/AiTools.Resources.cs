@@ -65,7 +65,8 @@ internal sealed partial class AiTools
         if (area == null && scale == 1)
         {
             string size = DebugStore.PngSize(file.Path) is var (w, h) ? Invariant($" ({w} × {h} px)") : "";
-            return new AiToolResult($"{name}{size}, as it is.") { Images = new[] { new AiImage(File.ReadAllBytes(file.Path), file.MimeType) } };
+            byte[] data = File.ReadAllBytes(file.Path);
+            return new AiToolResult($"{name}{size}, as it is: {DebugStore.SizeText(data.Length)}.") { Images = new[] { new AiImage(data, file.MimeType) } };
         }
         using Mat picture = Cv2.ImRead(file.Path, ImreadModes.Unchanged);
         if (picture.Empty())
@@ -84,7 +85,8 @@ internal sealed partial class AiTools
         Cv2.ImEncode(".png", sized, out byte[] png);
         return new AiToolResult(
             Invariant($"{name} is {picture.Width} × {picture.Height} px. This is its area X {part.X}, Y {part.Y}, {part.Width} × {part.Height} px, ") +
-            Invariant($"at scale {scale}: {width} × {height} px. A point (px, py) of it is at ({part.X} + px / {scale}, {part.Y} + py / {scale}) in {name}."))
+            Invariant($"at scale {scale}: {width} × {height} px, {DebugStore.SizeText(png.Length)} as PNG. ") +
+            Invariant($"A point (px, py) of it is at ({part.X} + px / {scale}, {part.Y} + py / {scale}) in {name}."))
         {
             Images = new[] { new AiImage(png, "image/png") },
         };
