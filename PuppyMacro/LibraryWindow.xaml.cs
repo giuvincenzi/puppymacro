@@ -224,8 +224,7 @@ public partial class LibraryWindow
         if (_save == null)
             return false;
         string? problem = _save(change);
-        ProblemBar.Message = problem ?? "";
-        ProblemBar.IsOpen = problem != null;
+        SetProblem(problem);
         Refresh();
         return problem == null;
     }
@@ -281,8 +280,7 @@ public partial class LibraryWindow
             return;
         if (ComponentLibrary.CanDeleteComponent(item.Component, LinkingMacros) is string refused)
         {
-            ProblemBar.Message = refused;
-            ProblemBar.IsOpen = true;
+            SetProblem(refused);
             return;
         }
         if (!await Confirm(string.Format(CultureInfo.CurrentCulture, Strings.Library_DeleteComponentConfirm, item.Component.Name)))
@@ -328,8 +326,7 @@ public partial class LibraryWindow
     {
         if (ComponentLibrary.CanDeleteCollection(collection, LinkingMacros) is string refused)
         {
-            ProblemBar.Message = refused;
-            ProblemBar.IsOpen = true;
+            SetProblem(refused);
             return;
         }
         if (!await Confirm(string.Format(CultureInfo.CurrentCulture, Strings.Library_DeleteCollectionConfirm, collection.Name)))
@@ -373,8 +370,15 @@ public partial class LibraryWindow
     /// <summary>Shows a problem in the window's bar (an import refused).</summary>
     internal void ShowProblem(string? problem)
     {
+        SetProblem(problem);
+        Refresh();
+    }
+
+    /// <summary>The bar's message, also its name for screen readers (an InfoBar's texts have no UI Automation peer).</summary>
+    private void SetProblem(string? problem)
+    {
         ProblemBar.Message = problem ?? "";
         ProblemBar.IsOpen = problem != null;
-        Refresh();
+        System.Windows.Automation.AutomationProperties.SetName(ProblemBar, problem ?? "");
     }
 }

@@ -75,8 +75,9 @@ public class LibraryTests
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "Delete is not shown").Result!.AsButton();
         delete.Invoke();
 
-        Assert.True(Retry.WhileFalse(() => app.Has(library, "Sample: save with a component"), AppSession.Timeout).Success,
-            "the Library does not say which macro links the component");
+        AutomationElement problem = app.FindById(library, "ProblemBar");
+        Assert.True(Retry.WhileFalse(() => problem.Name.Contains("Sample: save with a component"), AppSession.Timeout).Success,
+            $"the Library does not say which macro links the component: \"{problem.Name}\"");
         Assert.Equal(1, components.Items.Length);
         library.Close();
     }
