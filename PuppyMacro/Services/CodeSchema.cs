@@ -324,15 +324,23 @@ internal static class CodeSchema
 
     private static JsonNode Transform(JsonSchemaExporterContext context, JsonNode node)
     {
-        // Enums are read by CodeJson's own converter, so the exporter only says "true" (anything).
-        if (context.TypeInfo.Type.IsEnum)
+        // Enums are read by CodeJson's own converter, so the exporter only says "true" (anything); a nullable one (a
+        // parameter's Unit) can also be left out.
+        System.Type? nullableEnum = System.Nullable.GetUnderlyingType(context.TypeInfo.Type) is { IsEnum: true } underlying ? underlying : null;
+        if (context.TypeInfo.Type.IsEnum || nullableEnum != null)
         {
+            var names = System.Enum.GetNames(nullableEnum ?? context.TypeInfo.Type).Select(n => (JsonNode?)JsonValue.Create(n)).ToList();
+            if (nullableEnum != null)
+                names.Add(null);
             node = new JsonObject
             {
-                ["type"] = "string",
-                ["enum"] = new JsonArray(System.Enum.GetNames(context.TypeInfo.Type).Select(n => (JsonNode?)JsonValue.Create(n)).ToArray()),
+                ["type"] = nullableEnum != null ? new JsonArray("string", "null") : "string",
+                ["enum"] = new JsonArray(names.ToArray()),
             };
         }
+        // Any JSON value (a parameter's Example and Default) is "true": an object, so its description fits.
+        if (node is JsonValue { } any && any.GetValueKind() == System.Text.Json.JsonValueKind.True && context.PropertyInfo != null)
+            node = new JsonObject();
         if (node is not JsonObject schema)
             return node;
 
