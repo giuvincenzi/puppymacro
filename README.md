@@ -14,7 +14,7 @@
 </p>
 
 <!-- Title and description: written once in site/home/en.json, checked by the test workflow (readme_and_mcp_registry_test) -->
-Macros, auto clicker and key remapper for Windows. Loops, recorded macros and key remaps, with an always-on-top overlay to start and stop them without leaving the app you are using. Free and open source.
+Auto clicker, macros and hotkeys for PC. AI-ready. Automate clicks, keys and text, record macros and remap keys, all on hotkeys and from an overlay. Your AI app can set it all up. Free and open source.
 <!-- End of title and description -->
 
 AI apps on your PC can build them through MCP, with the PuppyMacro app installed.

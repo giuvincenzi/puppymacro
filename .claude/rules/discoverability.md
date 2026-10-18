@@ -15,9 +15,9 @@ paths:
 
 - PuppyMacro has one **title** and one **description**, written once in `site/home/en.json` (`title`; the description is
   `summary` + " " + `free_and_open_source`) and translated in `site/home/<code>.json`:
-  - title: "Macros, auto clicker and key remapper for Windows";
-  - description: "Loops, recorded macros and key remaps, with an always-on-top overlay to start and stop them without
-    leaving the app you are using. Free and open source."
+  - title: "Auto clicker, macros and hotkeys for PC. AI-ready";
+  - description: "Automate clicks, keys and text, record macros and remap keys, all on hotkeys and from an overlay. Your AI
+    app can set it all up. Free and open source."
 - Who reads them:
   - the home page of every language (`scripts/site.ps1`): the page title ("PuppyMacro: " + title), the description for
     search engines, the link previews, the `SoftwareApplication` structured data and, without "Free and open source.",
@@ -28,7 +28,7 @@ paths:
   - the repository's About on GitHub: title + ". " + description, set by hand
     (`gh repo edit --description "…"`) whenever they change: the workflows' token has no Administration permission, and a
     personal token with it would be a secret only for this.
-- Titles and descriptions say "Windows"; the requirements say "Windows 10 / 11" (the home's badge, the structured data's
+- Titles and descriptions say "PC" and never name Windows versions; the requirements say "Windows 10 / 11" (the home's badge, the structured data's
   `operatingSystem`, the guide's install page).
 - The slogan, "A good puppy for everything you repeat.", is not the title: it stays in English in every language
   (only `en.json` has it, `site.ps1` stops when a translation adds it).
