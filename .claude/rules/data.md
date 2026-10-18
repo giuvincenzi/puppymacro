@@ -15,7 +15,13 @@ paths:
   options). The Code views show that exact text for a macro, an action, a loop or a remap and read
   it back strictly (`CodeJson.StrictOptions` and the checks in `MacroJson`, `LoopJson`,
   `RemapJson`): keep their checks and limits equal to the editor windows', and `CodeSchema`'s
-  descriptions up to date when the models change.
+  descriptions up to date when the models change. A null where the model allows none (a list's entry, a field that can't
+  be null) is a problem at its path in the Code views, imports and AI saves (`CodeJson.MisplacedNulls`), and is left out
+  when a data file is read (`CodeJson.ReadFile`: a null list is empty, a null entry is dropped), never a crash.
+- A macro is saved to the file it was read from. A macro file without an Id, or with an Id another file already has
+  (a copy made in File Explorer), gets an Id made from its file name, the same at every start. The images a macro file
+  that could not be read names are kept, and none is deleted while a macro file can't be read at all, as for the
+  Library.
 - Versions before 1.6 kept the data next to the exe; `AppPaths.MigrateFromExeFolder` copies it
   to the data folder on first start (Release builds only).
 - `SettingsStore.Sanitize` validates and **migrates** old files. When the settings format

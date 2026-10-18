@@ -83,7 +83,8 @@ Rules:
 - Macros: `Models/MacroModels.cs`, `Services/MacroBuilder.cs`, `MacroRunner.cs`, `MacroLibrary.cs` (one JSON per
   macro), `MacroEditorWindow`. Recording: `RecordingSession.cs`.
   The editor's operations live in `Services/MacroEditList.cs`, without UI, with unit tests; the window only maps the
-  list to rows and group headers. Test action: `Services/ActionTestSession.cs`.
+  list to rows and group headers. Test action: `Services/ActionTestSession.cs`; it runs as a macro does (Stop all
+  stops it, `AnyRunning` is true meanwhile) and the editors come back however it ends.
 - Form view / Code view (macro, action, loop and remap editors): `Views/CodeView` (WebView2 with `Assets/CodeEditor`
   and Monaco; the Problems panel is HTML in the same page, like VS Code's: Monaco has none of its own),
   `Services/CodeJson.cs`, `Services/CodeSchema.cs`. The checks of each item (`MacroJson`, `LoopJson`, `RemapJson`) are
@@ -192,8 +193,8 @@ Rules:
   - Every change goes through `MainWindow.SaveLibrary`: refused while something runs (an import that only adds
     collections excepted), then every component and every macro's calls are checked against the Library as it would be
     (`ComponentChecks.CheckAll`; a problem the change brings refuses it), then saved with the macros it changes, recorded in
-    the History (each collection and component is an item), the snapshot made again and the unused images deleted. A component linked by a saved macro or by the open editor's can't be
-    deleted, nor its collection.
+    the History (each collection and component is an item), the snapshot made again and the unused images deleted. A component called (a linked row or a Component condition) by a
+    saved macro or by the open editor's can't be deleted, nor its collection (`ComponentLibrary.Called`).
   - Import compares a collection by id and fingerprint (`ComponentLibrary.Fingerprint`: the components' ids, signatures
     and actions, recomputed with the current code): a different version of a collection the Library has refuses the whole
     file. A file carries the collections its components call, down every call (`ComponentLibrary.WithDependencies`), and
@@ -221,8 +222,10 @@ Rules:
     [Resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)) and Anthropic's
     [Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents); read them
     again before changing a tool. Tools are named `puppymacro_<name>` (`AiTools.Prefix`), each with a `title` and honest
-    annotations (only reads: `readOnlyHint`; can change the user's apps: `destructiveHint`; pure reads: `idempotentHint`);
-    an input error is a tool error with what to change (`isError`); each connection is rate limited (`AiRateLimit`).
+    annotations (only reads: `readOnlyHint`; can rewrite or remove what exists, not only add, or send input to the user's
+    apps: `destructiveHint`; pure reads: `idempotentHint`); an input error, also an argument of the wrong type, is a tool
+    error that names the argument and what to change (`isError`), never ignored or guessed; each connection is rate
+    limited (`AiRateLimit`).
   - Every request of an AI app, a tool call or a `resources/read`, goes through one function (`AiServer.Debugged`): the
     connection's rate limit and its folder in the debug archive, so nothing an AI app does is missing from it.
   - Which app it is (`AiServer.KindOf`: the AI page's cards) is apart from the name people read (`FriendlyName`, the

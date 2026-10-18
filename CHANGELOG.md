@@ -44,6 +44,21 @@
 
 ### Fixed
 - Stopping a loop or macro while it pastes a text no longer loses the paste or pastes the previous clipboard.
+- Two pastes at the same moment (two loops, or a loop and a macro) no longer lose your clipboard: it always comes back.
+  A loop stopped during the Enter before a paste no longer pastes.
+- A long press in a macro no longer holds up the other loops, macros and remaps while it is held, and a click at a
+  point can no longer land elsewhere when another loop moves the pointer at the same moment.
+- Stop all now also stops the Test of an action in the macro editor, and the editor comes back.
+- A macro file with an empty entry in a list no longer stops PuppyMacro from starting, and the Code view, imports and AI
+  apps show such an entry as a problem on its line instead of failing.
+- A macro file without an Id, or a copy of a macro file made in File Explorer, no longer makes the macro appear twice.
+- A recorded tap shorter than a millisecond or a key held longer than a minute no longer makes a macro that the Code
+  view, AI apps and imports refuse.
+- The Code view refuses a group whose actions are in two lists whatever their order, the History shows changed
+  values named like a key, and Export offers a file name Windows can save for an item with a very long name.
+- AI apps: a wrong value for an argument (enabled, only, an Id) is refused with what to change instead of turning an
+  item off, importing everything or failing without saying why; a picture's area or a log's lines past the largest
+  number are refused instead of closing PuppyMacro; get_item's path reads fields left at their default.
 
 ## 1.23.0
 
