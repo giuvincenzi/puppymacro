@@ -32,26 +32,33 @@ public partial class MainWindow
 
     /// <param name="onlyAdds">The change only adds collections (an import): it may happen while something runs, as nothing
     /// that plays changes.</param>
-    private string? SaveLibrary(Func<ComponentLibrary, string?> change, bool onlyAdds, IReadOnlyList<MacroDefinition>? macros = null)
+    /// <param name="refusals">The language of the answer when it is refused (InvariantCulture: English, for an AI app); the
+    /// language of the moment when null. Only the checks run in it: what a saved change shows stays in the user's.</param>
+    private string? SaveLibrary(Func<ComponentLibrary, string?> change, bool onlyAdds, IReadOnlyList<MacroDefinition>? macros = null,
+        System.Globalization.CultureInfo? refusals = null)
     {
-        if (_engine.AnyRunning && !onlyAdds)
-            return Strings.Library_StopFirst;
-        if (Library.Broken)
-            return Strings.Library_FileUnreadable;
         macros ??= Array.Empty<MacroDefinition>();
         var before = Library.Collections.Select(c => c.Clone()).ToList();
-        var known = ProblemKeys(_macros.Macros);
-        string? problem = change(Library);
-        if (problem == null)
+        string? problem = Loc.In(refusals ?? System.Globalization.CultureInfo.CurrentUICulture, () =>
         {
-            var after = _macros.Macros.Select(m => macros.FirstOrDefault(x => x.Id == m.Id) ?? m).ToList();
-            var fresh = ComponentChecks.CheckAll(Library.Signatures(), after, _macros.Images.Has)
-                .FirstOrDefault(p => !known.Contains((p.ItemId, p.Path, p.Message)));
-            if (fresh != null)
-                problem = string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Library_ChangeBreaks, fresh.Where, fresh.Message);
-        }
-        if (problem == null && !_macros.TrySaveTogether(macros, out string? error))
-            problem = string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Library_SaveFailed, error);
+            if (_engine.AnyRunning && !onlyAdds)
+                return Strings.Library_StopFirst;
+            if (Library.Broken)
+                return Strings.Library_FileUnreadable;
+            var known = ProblemKeys(_macros.Macros);
+            string? why = change(Library);
+            if (why == null)
+            {
+                var after = _macros.Macros.Select(m => macros.FirstOrDefault(x => x.Id == m.Id) ?? m).ToList();
+                var fresh = ComponentChecks.CheckAll(Library.Signatures(), after, _macros.Images.Has)
+                    .FirstOrDefault(p => !known.Contains((p.ItemId, p.Path, p.Message)));
+                if (fresh != null)
+                    why = string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Library_ChangeBreaks, fresh.Where, fresh.Message);
+            }
+            if (why == null && !_macros.TrySaveTogether(macros, out string? error))
+                why = string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Library_SaveFailed, error);
+            return why;
+        });
         if (problem != null)
         {
             Library.Collections.Clear();
@@ -78,16 +85,17 @@ public partial class MainWindow
 
     /// <summary>
     /// The new collections of a file being imported, added whole before its items (they may link them); the ones the
-    /// Library has meanwhile are left as they are. Answers why they could not be added, or null.
+    /// Library has meanwhile are left as they are. Answers why they could not be added (in <paramref name="refusals"/>, the
+    /// language of the moment when null), or null.
     /// </summary>
-    internal string? AddCollections(IReadOnlyList<LibraryCollection> collections) =>
+    internal string? AddCollections(IReadOnlyList<LibraryCollection> collections, System.Globalization.CultureInfo? refusals = null) =>
         collections.Count == 0 ? null : SaveLibrary(library =>
         {
             foreach (var collection in collections)
                 if (library.FindCollection(collection.Id) == null)
                     library.Collections.Add(collection.Clone());
             return null;
-        }, onlyAdds: true);
+        }, onlyAdds: true, refusals: refusals);
 
     /// <summary>
     /// Saves a component (an AI app's, a Restore): one the Library has gets its new content where it is; a new one goes into
@@ -95,8 +103,9 @@ public partial class MainWindow
     /// </summary>
     /// <param name="macros">Copies of the macros whose calls the new signature changed, saved with it.</param>
     /// <param name="callers">Copies of the components whose calls it changed, saved with it.</param>
+    /// <param name="refusals">The language of the answer when it is refused; the language of the moment when null.</param>
     internal string? SaveComponent(LibraryComponent component, LibraryCollection? created, IReadOnlyList<MacroDefinition>? macros = null,
-        IReadOnlyList<LibraryComponent>? callers = null) => SaveLibrary(library =>
+        IReadOnlyList<LibraryComponent>? callers = null, System.Globalization.CultureInfo? refusals = null) => SaveLibrary(library =>
     {
         foreach (var caller in callers ?? Array.Empty<LibraryComponent>())
             if (library.Find(caller.Id) is { } calling)
@@ -122,7 +131,7 @@ public partial class MainWindow
             collection.Components.Add(component.Clone());
         }
         return ComponentLibrary.CheckComponent(component, _macros.Images.Has, library.AllComponents);
-    }, macros);
+    }, onlyAdds: false, macros, refusals);
 
     /// <summary>The Library's Import: the same Import as the title bar's (a file's items and collections).</summary>
     private void ImportCollections(LibraryWindow window) => ImportItems(null, null, null);

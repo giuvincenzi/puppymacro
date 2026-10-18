@@ -72,7 +72,7 @@ internal sealed partial class AiTools
         if (picture.Empty())
             return AiToolResult.Error($"PuppyMacro could not read the picture {name}.");
         Rect part = area ?? new Rect(0, 0, picture.Width, picture.Height);
-        if (part.X < 0 || part.Y < 0 || part.Right > picture.Width || part.Bottom > picture.Height)
+        if (!Inside(part, new Rect(0, 0, picture.Width, picture.Height)))
             return AiToolResult.Error(Invariant($"\"area\" must be inside the picture, which is {picture.Width} × {picture.Height} px (X and Y from 0)."));
         int width = Math.Max(1, (int)Math.Round(part.Width * scale));
         int height = Math.Max(1, (int)Math.Round(part.Height * scale));
@@ -108,7 +108,8 @@ internal sealed partial class AiTools
         int first = offset ?? 1;
         if (first > lines.Length)
             return AiToolResult.Error(Invariant($"\"offset\" is past the end: {name} has {lines.Length} lines."));
-        int last = Math.Min(lines.Length, first - 1 + (limit ?? lines.Length));
+        // In 64 bits: first - 1 + limit can pass the largest int (limit int.MaxValue: to the end).
+        int last = (int)Math.Min(lines.Length, first - 1L + (limit ?? lines.Length));
         return new AiToolResult(Invariant($"Lines {first}–{last} of {lines.Length} of {name}:\n") + string.Join("\n", lines[(first - 1)..last]));
     }
 

@@ -97,7 +97,7 @@ internal sealed partial class AiTools
 
     private Task<AiToolResult> GetComponent(JsonElement args, string app) => _host.Ui(() =>
     {
-        Guid id = IdArg(args, "id");
+        Guid id = IdArg(args, "id", "a component's Id (search_library finds them)");
         if (_host.Macros.Library.Find(id) is not { } found)
             return Task.FromResult(AiToolResult.Error($"No component has the Id {id}. search_library finds them."));
         var (collection, component) = found;
@@ -132,7 +132,7 @@ internal sealed partial class AiTools
     {
         if (!args.TryGetProperty("component", out JsonElement item) || item.ValueKind != JsonValueKind.Object)
             return AiToolResult.Error("Give the component in \"component\": Name, Purpose, Concept, Description and Actions.");
-        Guid? editId = Str(args, "id") is { Length: > 0 } idText ? Guid.Parse(idText) : null;
+        Guid? editId = OptionalIdArg(args, "id", "the Id of the component to change (search_library finds them); leave it out for a new one");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
@@ -157,9 +157,11 @@ internal sealed partial class AiTools
             if (editId != null && existing == null)
                 return ((string?)$"No component has the Id {editId}. search_library finds them.", (string?)null, "");
             component.Id = editId ?? Guid.NewGuid();
-            string? name = editId is Guid known ? library.Find(known)!.Value.Collection.Name : CollectionArg(args, component, out string? bad)?.Name;
-            if (editId == null && name == null)
-                return (CollectionProblem(args), (string?)null, "");
+            // A new component's collection is checked here, before the user is asked, as the Library will check it.
+            string? bad = null;
+            string? name = editId is Guid known ? library.Find(known)!.Value.Collection.Name : CollectionArg(args, component, out bad)?.Name;
+            if (name == null)
+                return (bad, (string?)null, "");
             // A bound field holds its parameter's Example.
             ComponentEdits.WriteExamples(component);
             var others = library.AllComponents.Where(c => c.Id != component.Id).ToList();
@@ -181,9 +183,10 @@ internal sealed partial class AiTools
             if (BusyNow() is AiToolResult busyNow)
                 return busyNow;
             LibraryCollection? created = editId == null ? CollectionArg(args, component, out _) : null;
+            // The host answers in English (IAiHost.SaveComponent), while the user's own windows stay in their language.
             string? notSaved = _host.SaveComponent(component, created, app, updatedMacros, updatedComponents);
             if (notSaved != null)
-                return AiToolResult.Error(Loc.English(() => notSaved));
+                return AiToolResult.Error(notSaved);
             _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", json, component.Id, "component", before);
             var collection = _host.Macros.Library.Find(component.Id)!.Value.Collection;
             string call = JsonSerializer.Serialize(new { Type = "Component", ComponentId = component.Id, Arguments = ExampleArguments(component) }, CompactAnswer);
@@ -266,55 +269,100 @@ internal sealed partial class AiTools
 
     /// <summary>
     /// The collection a new component goes in: an existing one ({"id":…}), or a new one ({"name", "domain", "app"}) made on
-    /// the screen the actions' first point is on. Null when "collection" doesn't say one.
+    /// the screen the actions' first point is on and checked as the Library checks a collection (in the language of the
+    /// moment: English for the AI app). Null, with why in <paramref name="problem"/>, when "collection" doesn't say one.
     /// </summary>
     private LibraryCollection? CollectionArg(JsonElement args, LibraryComponent component, out string? problem)
     {
-        problem = null;
+        problem = "Give the collection in \"collection\": {\"id\": an existing collection's Id}, or {\"name\", \"domain\", \"app\"} for a new one.";
         if (!args.TryGetProperty("collection", out JsonElement c) || c.ValueKind != JsonValueKind.Object)
             return null;
-        if (Str(c, "id") is { Length: > 0 } idText)
-            return Guid.TryParse(idText, out Guid id) ? _host.Macros.Library.FindCollection(id) : null;
-        if (Str(c, "name") is not { Length: > 0 } name)
-            return null;
-        LibraryDomain domain = Enum.TryParse(Str(c, "domain"), ignoreCase: true, out LibraryDomain d) ? d : LibraryDomain.Other;
-        return new LibraryCollection
+        if (Given(c, "id", out JsonElement idValue))
         {
-            Name = name.Trim(),
+            if (idValue.ValueKind == JsonValueKind.String && Guid.TryParse(idValue.GetString(), out Guid id)
+                && _host.Macros.Library.FindCollection(id) is { } existing)
+            {
+                problem = null;
+                return existing;
+            }
+            problem = $"No collection has the Id {idValue.GetRawText()} (\"collection.id\"). search_library gives the collections of the components it finds.";
+            return null;
+        }
+        if (!Given(c, "name", out JsonElement nameValue))
+            return null;
+        if (nameValue.ValueKind != JsonValueKind.String)
+        {
+            problem = "\"collection.name\" must be a text: the new collection's name.";
+            return null;
+        }
+        LibraryDomain domain = LibraryDomain.Other;
+        if (Given(c, "domain", out JsonElement domainValue))
+        {
+            // Only a domain's name: Enum.TryParse would also take any number ("42"), a domain that does not exist.
+            string? named = domainValue.ValueKind == JsonValueKind.String
+                ? Enum.GetNames<LibraryDomain>().FirstOrDefault(n => n.Equals(domainValue.GetString()!.Trim(), StringComparison.OrdinalIgnoreCase))
+                : null;
+            if (named == null)
+            {
+                problem = "\"collection.domain\" must be one of " +
+                          string.Join(", ", Enum.GetNames<LibraryDomain>().Select(n => n.ToLowerInvariant())) + ".";
+                return null;
+            }
+            domain = Enum.Parse<LibraryDomain>(named);
+        }
+        var collection = new LibraryCollection
+        {
+            Name = nameValue.GetString()!.Trim(),
             Domain = domain,
             AppExe = AppScope.Normalize(Str(c, "app")),
             Screen = LibraryScreens.Of(component.Actions),
         };
+        if (ComponentLibrary.CheckCollection(collection) is string bad)
+        {
+            problem = $"The new collection in \"collection\" can't be made as it is. {bad}";
+            return null;
+        }
+        problem = null;
+        return collection;
     }
-
-    private static string CollectionProblem(JsonElement args) =>
-        args.TryGetProperty("collection", out JsonElement c) && Str(c, "id") is { Length: > 0 } id
-            ? $"No collection has the Id {id}. search_library gives the collections of the components it finds."
-            : "Give the collection in \"collection\": {\"id\": an existing collection's Id}, or {\"name\", \"domain\", \"app\"} for a new one.";
 
     // ================= get_item in pieces =================
 
-    /// <summary>One part of an item's compact JSON, at a JSON Pointer ("/Actions/3/If/Then/0"), or why not.</summary>
-    internal static string? AtPath(string compact, string path, out string? problem)
+    /// <summary>
+    /// One part of an item at a JSON Pointer ("/Actions/3/If/Then/0"), or why not: from its compact JSON (get_item's), or,
+    /// for a field the compact JSON leaves out at its default, from the item's whole JSON (<paramref name="full"/>, the one
+    /// patch_item changes), so a path patch_item works on is a path get_item reads.
+    /// </summary>
+    internal static string? AtPath(string compact, string full, string path, out string? problem)
     {
         problem = null;
-        JsonNode? node = JsonNode.Parse(compact);
-        foreach (string raw in path.Split('/', StringSplitOptions.RemoveEmptyEntries))
+        JsonNode? part = Find(JsonNode.Parse(compact), path, out string? missing);
+        if (missing != null)
+            part = Find(JsonNode.Parse(full), path, out missing);
+        if (missing == null)
+            return part?.ToJsonString(CompactJson) ?? "null";
+        problem = $"Nothing is at \"{path}\" (\"{missing}\" is not there). The outline gives each action's path.";
+        return null;
+
+        // The node at the path (null also for a JSON null), or the first part that is not there.
+        static JsonNode? Find(JsonNode? node, string path, out string? missing)
         {
-            string part = raw.Replace("~1", "/").Replace("~0", "~");
-            node = node switch
+            missing = null;
+            foreach (string raw in path.Split('/', StringSplitOptions.RemoveEmptyEntries))
             {
-                JsonObject o when o.TryGetPropertyValue(part, out JsonNode? child) => child,
-                JsonArray a when int.TryParse(part, out int i) && i >= 0 && i < a.Count => a[i],
-                _ => null,
-            };
-            if (node == null)
-            {
-                problem = $"Nothing is at \"{path}\" (\"{part}\" is not there). The outline gives each action's path.";
-                return null;
+                string part = raw.Replace("~1", "/").Replace("~0", "~");
+                if (node is JsonObject o && o.TryGetPropertyValue(part, out JsonNode? child))
+                    node = child;
+                else if (node is JsonArray a && int.TryParse(part, out int i) && i >= 0 && i < a.Count)
+                    node = a[i];
+                else
+                {
+                    missing = part;
+                    return null;
+                }
             }
+            return node;
         }
-        return node?.ToJsonString(CompactJson);
     }
 
     /// <summary>

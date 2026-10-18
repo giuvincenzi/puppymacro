@@ -393,11 +393,11 @@ internal sealed partial class AiTools
                 true, false, (a, app, _) => Task.FromResult(Help(a, app))),
 
             new("save_loop", "Creates a loop, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
-                Save("loop"), false, false, (a, app, c) => SaveItem<LoopDefinition>(a, app, "loop", c)),
+                Save("loop"), false, true, (a, app, c) => SaveItem<LoopDefinition>(a, app, "loop", c)),
             new("save_macro", "Creates a macro, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
-                Save("macro"), false, false, (a, app, c) => SaveItem<MacroDefinition>(a, app, "macro", c)),
+                Save("macro"), false, true, (a, app, c) => SaveItem<MacroDefinition>(a, app, "macro", c)),
             new("save_remap", "Creates a remap, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule,
-                Save("remap"), false, false, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
+                Save("remap"), false, true, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
             new("patch_item",
                 "Changes part of a loop, macro or remap with a JSON Patch (RFC 6902): only what changes, so it is fast even for a " +
                 "big macro (the same change on many actions: update_actions). Checked and saved like save_* (kept in " +
@@ -413,7 +413,7 @@ internal sealed partial class AiTools
                       "value":{"description":"add, replace and test: the value."}},
                      "required":["op","path"]}}},
                  "required":["id","patch"],"additionalProperties":false}
-                """, false, false, (a, app, c) => PatchItem(a, app, c)),
+                """, false, true, (a, app, c) => PatchItem(a, app, c)),
             new("update_actions",
                 "Changes the same fields of every action of a loop or macro that matches, in one short call: e.g. every delay of " +
                 "800 ms to 1200 in a macro of 33 slots. No need to read the item or count indexes; prefer it to patch_item for " +
@@ -425,15 +425,15 @@ internal sealed partial class AiTools
                   "group":{"type":"string","description":"Only the actions in the macro group with this name."},
                   "set":{"type":"object","description":"The fields to change and their new values, e.g. {\"DelayMs\": 1200}."}},
                  "required":["id","set"],"additionalProperties":false}
-                """, false, false, (a, app, c) => UpdateActions(a, app, c)),
+                """, false, true, (a, app, c) => UpdateActions(a, app, c)),
             new("delete_item", "Deletes a loop, macro or remap (the user may be asked to confirm; it can be restored in PuppyMacro).",
                 idOnly, false, true, (a, app, c) => Delete(a, app, c)),
             new("set_enabled", "Enables or disables a loop, macro or remap.",
                 """{"type":"object","properties":{"id":{"type":"string"},"enabled":{"type":"boolean"}},"required":["id","enabled"],"additionalProperties":false}""",
-                false, false, (a, app, c) => SetEnabled(a, app, c)),
+                false, true, (a, app, c) => SetEnabled(a, app, c)),
             new("update_settings", "Changes settings. Give only the values to change, in get_settings' format.",
                 """{"type":"object","properties":{"settings":{"type":"object","description":"Values to change, e.g. {\"Theme\": \"Dark\", \"StopAllHotkey\": {\"Vk\": 123}}."}},"required":["settings"],"additionalProperties":false}""",
-                false, false, (a, app, c) => UpdateSettings(a, app, c)),
+                false, true, (a, app, c) => UpdateSettings(a, app, c)),
             new("export_items",
                 "Gives loops, macros and remaps as the text of a .puppyitems file, PuppyMacro's file to share them: the user saves " +
                 "it as a .puppyitems file and opens it in PuppyMacro, also on another PC (Import), or gives it to an AI app " +
@@ -569,7 +569,7 @@ internal sealed partial class AiTools
                 "(search_library) are how later searches find it. Saved at once, kept in its History; the user's OK first when " +
                 "they chose it.",
                 """{"type":"object","properties":{"id":{"type":"string","description":"A component's Id, to change it; leave out for a new one."},"collection":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app's .exe, e.g. Diablo IV.exe; leave out for any app."}},"additionalProperties":false},"component":{"type":"object","description":"Name, Purpose, Concept, Description, Parameters, Returns, Actions."},"call_values":{"type":"object","description":"Changing a component whose calls must change: for each parameter the answer named, the value every call without a fitting one gets.","additionalProperties":true},"renamed":{"type":"object","description":"Changing a component: parameters renamed, old name to new name, so the calls keep their values.","additionalProperties":{"type":"string"}}},"required":["component"],"additionalProperties":false}""",
-                false, false, (a, app, c) => SaveComponent(a, app, c)),
+                false, true, (a, app, c) => SaveComponent(a, app, c)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),
@@ -577,7 +577,7 @@ internal sealed partial class AiTools
                 "Gives a loop or macro (Toggle mode only) a floating button for overlay mode, then shows the user your title, description and " +
                 "steps and opens PuppyMacro's placement screen, where the user drags the button and presses Enter (Esc cancels). Saved at once." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The Id of the loop or macro.\"}," + asking + "},\"required\":[\"id\"," + askingRequired + "],\"additionalProperties\":false}",
-                false, false, (a, app, c) => PlaceFloatingButton(a, app, c)),
+                false, true, (a, app, c) => PlaceFloatingButton(a, app, c)),
             new("open_item",
                 "Opens a loop, macro or remap in PuppyMacro's editor on the user's screen, with your title and description at the top, " +
                 "and waits until the user saves or cancels (the user's own changes)." + UserWindow,
@@ -687,7 +687,7 @@ internal sealed partial class AiTools
                     : AiToolResult.Error("Only a macro has an outline: a loop or remap is small, read it whole."));
             string compact = Loc.English(() => AiJson.Compact(item));
             if (Str(args, "path") is { Length: > 0 } path)
-                return Task.FromResult(AtPath(compact, path, out string? problem) is string part
+                return Task.FromResult(AtPath(compact, Serialize(item), path, out string? problem) is string part
                     ? new AiToolResult(part)
                     : AiToolResult.Error(problem!));
             return Task.FromResult(new AiToolResult(compact + (item is MacroDefinition macro ? LinkedList(macro) : "")));
@@ -742,7 +742,7 @@ internal sealed partial class AiTools
         bool remap = Str(args, "for") == "remap";
         string? appExe = AppScope.Normalize(Str(args, "app"));
         bool hold = Str(args, "mode") == "Hold";
-        Guid? ignore = Str(args, "ignore_id") is { Length: > 0 } text ? Guid.Parse(text) : null;
+        Guid? ignore = OptionalIdArg(args, "ignore_id", "the Id of the loop, macro or remap being changed (get_overview lists them)");
         if (!binding.IsSet)
             return AiToolResult.Error("Set Vk: the key's virtual-key code.");
 
@@ -760,7 +760,7 @@ internal sealed partial class AiTools
     {
         if (!args.TryGetProperty("item", out JsonElement item) || item.ValueKind != JsonValueKind.Object)
             return AiToolResult.Error("Give the " + kind + " in \"item\", as a JSON object.");
-        Guid? editId = Str(args, "id") is { Length: > 0 } idText ? Guid.Parse(idText) : null;
+        Guid? editId = OptionalIdArg(args, "id", "the Id of the " + kind + " to rewrite (get_overview lists them); leave it out for a new one");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
@@ -923,7 +923,7 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> SetEnabled(JsonElement args, string app, CancellationToken cancel)
     {
         Guid id = IdArg(args, "id");
-        bool enabled = args.TryGetProperty("enabled", out JsonElement e) && e.ValueKind == JsonValueKind.True;
+        bool enabled = BoolArg(args, "enabled") ?? throw new FormatException("\"enabled\" must be true (to enable it) or false (to disable it).");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         (string? what, string? kind, string? before, bool already, object? found) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
@@ -1335,7 +1335,7 @@ internal sealed partial class AiTools
         var all = _host.Settings.Loops.Cast<object>().Concat(_host.Macros.Macros).Concat(_host.Settings.Remaps).ToList();
         if (ids == null)
             return (all, null);
-        if (ids.FirstOrDefault(id => Find(id) == null) is var unknown && unknown != Guid.Empty)
+        if (ids.Where(id => Find(id) == null).Select(id => (Guid?)id).FirstOrDefault() is Guid unknown)
             return (new List<object>(), unknown.ToString());
         return (all.Where(i => ids.Contains(Id(i))).ToList(), null);
     }
@@ -1346,7 +1346,7 @@ internal sealed partial class AiTools
             return null;
         if (list.ValueKind != JsonValueKind.Array)
             throw new FormatException("\"ids\" must be a list of Ids (get_overview lists them).");
-        return list.EnumerateArray().Select(e => Guid.TryParse(e.GetString(), out Guid id) ? id
+        return list.EnumerateArray().Select(e => e.ValueKind == JsonValueKind.String && Guid.TryParse(e.GetString(), out Guid id) ? id
             : throw new FormatException("\"ids\" must be a list of Ids (get_overview lists them).")).ToList();
     }
 
@@ -1385,8 +1385,10 @@ internal sealed partial class AiTools
     {
         string text = ContentArg(args, required: true)!;
         List<int>? only = null;
-        if (args.TryGetProperty("only", out JsonElement list) && list.ValueKind == JsonValueKind.Array)
-            only = list.EnumerateArray().Select(e => e.TryGetInt32(out int i) ? i : throw new FormatException("\"only\" must be a list of indexes, from 0.")).ToList();
+        if (Given(args, "only", out JsonElement list))
+            only = list.ValueKind != JsonValueKind.Array
+                ? throw new FormatException("\"only\" must be a list of indexes, from 0; leave it out to import every item.")
+                : list.EnumerateArray().Select(e => e.TryGetInt32(out int i) ? i : throw new FormatException("\"only\" must be a list of indexes, from 0.")).ToList();
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
@@ -1413,7 +1415,7 @@ internal sealed partial class AiTools
             ItemFile.AddImages(now, _host.Macros);
             // The Library collections first: the macros may link them.
             if (_host.AddCollections(now.NewCollections, app) is string notAdded)
-                return AiToolResult.Error(Loc.English(() => notAdded));
+                return AiToolResult.Error(notAdded);
             var lines = now.NewCollections.Select(c => $"- Library collection \"{c.Name}\", Id {c.Id}").ToList();
             foreach (ItemFileEntry entry in now.Entries.Where(e => e.Selected))
             {
@@ -1673,8 +1675,18 @@ internal sealed partial class AiTools
             ? value.GetString()
             : null;
 
-    private static Guid IdArg(JsonElement args, string name) =>
-        Guid.TryParse(Str(args, name), out Guid id) ? id : throw new FormatException($"\"{name}\" must be an Id (get_overview lists them).");
+    private static Guid IdArg(JsonElement args, string name, string what = "an Id (get_overview lists them)") =>
+        Guid.TryParse(Str(args, name), out Guid id) ? id : throw new FormatException($"\"{name}\" must be {what}.");
+
+    /// <summary>An Id that may be left out (also null or ""); anything else that is not an Id is an input error naming it.</summary>
+    private static Guid? OptionalIdArg(JsonElement args, string name, string what)
+    {
+        if (!Given(args, name, out JsonElement value) || value.ValueKind == JsonValueKind.String && value.GetString() is "")
+            return null;
+        return value.ValueKind == JsonValueKind.String && Guid.TryParse(value.GetString(), out Guid id)
+            ? id
+            : throw new FormatException($"\"{name}\" must be {what}.");
+    }
 
     private static T Arg<T>(JsonElement args, string name) where T : class =>
         args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement value)

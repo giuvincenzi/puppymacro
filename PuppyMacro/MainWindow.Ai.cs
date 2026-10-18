@@ -442,12 +442,13 @@ public partial class MainWindow : IAiHost
 
     Task<T> IAiHost.Ui<T>(Func<Task<T>> action) => Dispatcher.InvokeAsync(action).Task.Unwrap();
 
+    // Why not in English: it is the AI app's answer (i18n.md); a saved change shows in the user's language.
     string? IAiHost.AddCollections(IReadOnlyList<LibraryCollection> collections, string app) =>
-        SavingAs(app, () => AddCollections(collections));
+        SavingAs(app, () => AddCollections(collections, CultureInfo.InvariantCulture));
 
     string? IAiHost.SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
         IReadOnlyList<MacroDefinition>? macros, IReadOnlyList<LibraryComponent>? callers) =>
-        SavingAs(app, () => SaveComponent(component, created, macros, callers));
+        SavingAs(app, () => SaveComponent(component, created, macros, callers, CultureInfo.InvariantCulture));
 
     void IAiHost.Save(object item, string app) => SavingAs(app, () =>
     {

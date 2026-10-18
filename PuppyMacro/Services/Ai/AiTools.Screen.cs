@@ -128,9 +128,15 @@ internal sealed partial class AiTools
         }
     }
 
-    /// <summary>The part of a look_at_screen picture at a screen area (one monitor), from memory or its files, or why not.</summary>
+    /// <summary>
+    /// The part of a look_at_screen picture at a screen area (one monitor), from memory or its files, or why not: the one
+    /// way to a kept picture (take_image and pick_pixel with snapshot_id), so it needs Let AI apps see the screen as
+    /// look_at_screen and read_resource do.
+    /// </summary>
     private (Mat? Part, string? Problem) FromSnapshot(string id, Rect area)
     {
+        if (!_host.Settings.AiSeeScreen)
+            return (null, SeeScreenOff);
         lock (_sync)
         {
             if (_snapshots.FirstOrDefault(s => s.Id == id) is { Monitors: { } kept })
@@ -155,13 +161,23 @@ internal sealed partial class AiTools
     {
         foreach (var (bounds, picture) in monitors)
         {
-            if (picture.Empty() || !bounds.Contains(area.TopLeft) || !bounds.Contains(new Point(area.Right - 1, area.Bottom - 1)))
+            if (picture.Empty() || !Inside(area, bounds))
                 continue;
             using var view = new Mat(picture, new Rect(area.X - bounds.X, area.Y - bounds.Y, area.Width, area.Height));
             return (view.Clone(), null);
         }
         return (null, "That area is not inside one monitor of the picture. Screen coordinates are physical pixels; look_at_screen gives each monitor's bounds.");
     }
+
+    /// <summary>
+    /// Whether <paramref name="part"/> is wholly inside <paramref name="whole"/>, counted in 64 bits: X + Width can pass the
+    /// largest int and come back negative, which would look inside.
+    /// </summary>
+    internal static bool Inside(Rect part, Rect whole) =>
+        part.Width >= 0 && part.Height >= 0
+        && part.X >= whole.X && part.Y >= whole.Y
+        && (long)part.X + part.Width <= (long)whole.X + whole.Width
+        && (long)part.Y + part.Height <= (long)whole.Y + whole.Height;
 
     private static Rect? AreaArg(JsonElement args, string name, string unit = "screen pixels")
     {
@@ -175,15 +191,27 @@ internal sealed partial class AiTools
         return rect;
     }
 
+    /// <summary>An argument left out (or null), or its value; any other value is an input error naming it.</summary>
+    private static bool Given(JsonElement args, string name, out JsonElement value)
+    {
+        value = default;
+        return args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out value) && value.ValueKind != JsonValueKind.Null;
+    }
+
     private static int? IntArg(JsonElement args, string name) =>
-        args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement v) && v.TryGetInt32(out int n) ? n : null;
+        !Given(args, name, out JsonElement v) ? null
+        : v.ValueKind == JsonValueKind.Number && v.TryGetInt32(out int n) ? n
+        : throw new FormatException($"\"{name}\" must be a whole number.");
 
     private static double? NumberArg(JsonElement args, string name) =>
-        args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement v) && v.TryGetDouble(out double n) ? n : null;
+        !Given(args, name, out JsonElement v) ? null
+        : v.ValueKind == JsonValueKind.Number && v.TryGetDouble(out double n) && double.IsFinite(n) ? n
+        : throw new FormatException($"\"{name}\" must be a number.");
 
     private static bool? BoolArg(JsonElement args, string name) =>
-        args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement v) && v.ValueKind is JsonValueKind.True or JsonValueKind.False
-            ? v.GetBoolean() : null;
+        !Given(args, name, out JsonElement v) ? null
+        : v.ValueKind is JsonValueKind.True or JsonValueKind.False ? v.GetBoolean()
+        : throw new FormatException($"\"{name}\" must be true or false.");
 
     /// <summary>take_image and pick_pixel with snapshot_id: from a look_at_screen picture, without asking the user.</summary>
     private async Task<AiToolResult> FromSnapshotPick(JsonElement args, string app, AiScreenPickKind kind, string snapshotId)

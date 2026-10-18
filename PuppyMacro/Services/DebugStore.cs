@@ -74,17 +74,56 @@ internal static class DebugStore
     public static string UriOf(string path) =>
         UriPrefix + Path.GetRelativePath(Root, path).Replace('\\', '/');
 
-    /// <summary>The file of a resource URI, or null when it is not a file inside the archive (also "..", other schemes).</summary>
+    /// <summary>Characters no name of the archive has: a stream name's ':' (NTFS "x.png::$DATA"), wildcards, control characters.</summary>
+    private static readonly char[] NotInNames = Path.GetInvalidFileNameChars()
+        .Concat(new[] { ':', '*', '?', '"', '<', '>', '|', '\\', '/' })
+        .Concat(Enumerable.Range(0, 32).Select(c => (char)c))
+        .Distinct()
+        .ToArray();
+
+    /// <summary>
+    /// The file of a resource URI, or null when it is not a plain file inside the archive: other schemes, "..", a stream
+    /// name, a character no file name has, a name Windows reads as another one (a short 8.3 name, trailing dots or
+    /// spaces), a folder, or a link (a reparse point) on the way. The path given back is the file's own, so its type is
+    /// read from its real name.
+    /// </summary>
     public static string? PathOf(string uri)
     {
-        if (!uri.StartsWith(UriPrefix, StringComparison.Ordinal))
+        if (uri == null || !uri.StartsWith(UriPrefix, StringComparison.Ordinal))
             return null;
         string relative = Uri.UnescapeDataString(uri[UriPrefix.Length..]);
-        if (relative.Length == 0 || relative.Contains('\\') || relative.Split('/').Any(p => p is "" or "." or ".."))
+        if (relative.Length == 0)
             return null;
-        string root = Path.GetFullPath(Root);
-        string full = Path.GetFullPath(Path.Combine(root, relative.Replace('/', Path.DirectorySeparatorChar)));
-        return full.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) && File.Exists(full) ? full : null;
+        string[] parts = relative.Split('/');
+        if (parts.Any(p => p is "" or "." or ".." || p.IndexOfAny(NotInNames) >= 0 || p.EndsWith('.') || p.EndsWith(' ')))
+            return null;
+        try
+        {
+            var folder = new DirectoryInfo(Path.GetFullPath(Root));
+            if (!folder.Exists)
+                return null;
+            // Each part, from the archive's folder down, must be an entry with exactly that name (not a short name Windows
+            // also matches) and must not be a link to somewhere else.
+            for (int i = 0; i < parts.Length; i++)
+            {
+                bool last = i == parts.Length - 1;
+                FileSystemInfo? entry = folder.EnumerateFileSystemInfos(parts[i])
+                    .FirstOrDefault(e => e.Name.Equals(parts[i], StringComparison.OrdinalIgnoreCase));
+                if (entry == null || entry.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                    return null;
+                if (last)
+                    return entry is FileInfo file && !file.Attributes.HasFlag(FileAttributes.Directory) ? file.FullName : null;
+                if (entry is not DirectoryInfo child)
+                    return null;
+                folder = child;
+            }
+            return null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException
+                                       or System.Security.SecurityException)
+        {
+            return null;
+        }
     }
 
     public static string MimeOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch

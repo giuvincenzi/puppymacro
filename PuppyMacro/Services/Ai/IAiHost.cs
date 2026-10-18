@@ -60,13 +60,14 @@ internal interface IAiHost
     /// </summary>
     void Save(object item, string app);
 
-    /// <summary>Adds the new Library collections of a file being imported, as <paramref name="app"/>'s; why not, or null.</summary>
+    /// <summary>Adds the new Library collections of a file being imported, as <paramref name="app"/>'s; why not (in English,
+    /// for the AI app), or null.</summary>
     string? AddCollections(IReadOnlyList<LibraryCollection> collections, string app);
 
     /// <summary>
     /// Saves a Library component as <paramref name="app"/>'s: a new one into <paramref name="created"/> (a new collection)
     /// or the collection its Id is in, with the macros and components whose calls a new signature changed
-    /// (<c>SignatureUpdate</c>), all together; why not, or null.
+    /// (<c>SignatureUpdate</c>), all together; why not (in English, for the AI app), or null.
     /// </summary>
     string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
         IReadOnlyList<MacroDefinition>? macros = null, IReadOnlyList<LibraryComponent>? callers = null);
