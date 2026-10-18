@@ -137,8 +137,8 @@ internal static class ComponentChecks
             }
             CheckArgument(argument, parameter, scope.Signatures.RuleOf(id, name), path, scope, found, notThere, add);
         }
-        // From a macro every value is known: each cell the call reaches must be in its grid.
-        if (scope.Parameters == null)
+        // From a macro every value is known: each cell the call reaches must be in its grid (when it can reach one).
+        if (scope.Parameters == null && scope.Signatures.UsesCells(id))
             CheckCells(callee, name => Given(arguments.GetValueOrDefault(name) ?? callee.Parameters.FirstOrDefault(p => p.Name == name)?.Default),
                 scope.Signatures, msg => add($"{prefix}Arguments", msg));
     }
@@ -367,8 +367,9 @@ internal static class ComponentChecks
                 add("Returns.Found", Strings.Code_ReturnsFoundOutside);
         }
         // Its own Test plays the Examples: each cell they reach must be in its grid.
-        CheckCells(component, name => component.Parameters.FirstOrDefault(p => p.Name == name)?.Example, signatures,
-            msg => add("Actions", msg));
+        if (signatures.UsesCells(component.Id))
+            CheckCells(component, name => component.Parameters.FirstOrDefault(p => p.Name == name)?.Example, signatures,
+                msg => add("Actions", msg));
         if (signatures.CycleOf(component.Id) is { } cycle)
             add("Actions", Format(Strings.Code_ComponentCycle,
                 string.Join(" → ", cycle.Select(id => signatures.Find(id)?.Name ?? id.ToString()))));

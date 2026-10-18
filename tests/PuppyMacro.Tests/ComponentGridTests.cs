@@ -320,6 +320,23 @@ public class ComponentGridTests : IDisposable
     }
 
     [Fact]
+    public void Only_the_calls_that_can_reach_a_cell_are_checked_for_cells_also_through_other_components()
+    {
+        var strip = Comp("Strip", new[] { GridParam(), CountParam() }, CellClick(cellFrom: "Slot"));
+        var middle = Comp("Middle", new[] { GridParam("Bag"), CountParam("Which") }, Call(strip, ("Inv", From("Bag")), ("Slot", From("Which"))));
+        var top = Comp("Top", new[] { GridParam("Bag"), CountParam("Which") }, Press(), Call(middle, ("Bag", From("Bag")), ("Which", From("Which"))));
+        var plain = Comp("Plain", Press());
+        var signatures = new ComponentSignatures(new[] { strip, middle, top, plain });
+        Assert.True(signatures.UsesCells(strip.Id));
+        Assert.True(signatures.UsesCells(middle.Id));
+        Assert.True(signatures.UsesCells(top.Id)); // two levels down
+        Assert.False(signatures.UsesCells(plain.Id));
+        Assert.False(signatures.UsesCells(Guid.NewGuid()));
+        // So a cell outside the grid two levels down is still found.
+        Assert.Single(Problems(new[] { strip, middle, top }, Macro("Deep", Call(top, ("Bag", Inventory), ("Which", Number(34))))));
+    }
+
+    [Fact]
     public void A_cell_problem_is_said_once_per_component_grid_and_cell()
     {
         var two = Comp("Two clicks", new[] { GridParam(), CountParam() }, CellClick(cellFrom: "Slot"), CellClick(cellFrom: "Slot"));

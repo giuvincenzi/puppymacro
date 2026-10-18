@@ -47,6 +47,24 @@ internal sealed class ComponentSignatures
     public ValueRule RuleOf(Guid component, string parameter) =>
         _rules.TryGetValue(component, out var rules) && rules.TryGetValue(parameter, out var rule) ? rule : ValueRule.Any;
 
+    private readonly Dictionary<Guid, bool> _usesCells = new();
+
+    /// <summary>
+    /// Whether a call to it can reach a cell of a grid: one of its actions or conditions has a Cell, or a component it calls
+    /// does. Only then are a call's cells checked (<see cref="ComponentChecks.CheckCells"/>).
+    /// </summary>
+    public bool UsesCells(Guid component)
+    {
+        if (_usesCells.TryGetValue(component, out bool known))
+            return known;
+        _usesCells[component] = false; // a loop counts once (a loop is refused anyway)
+        bool uses = _components.TryGetValue(component, out var c)
+                    && (MacroDefinition.Walk(c.Actions).Any(a => a.Cell != null || (a.If?.Conditions.Any(x => x.Cell != null) ?? false))
+                        || CallsOf(component).Any(UsesCells));
+        _usesCells[component] = uses;
+        return uses;
+    }
+
     /// <summary>The components a component calls, its linked rows and its Component conditions, directly.</summary>
     public IReadOnlySet<Guid> CallsOf(Guid component) => _calls.GetValueOrDefault(component) ?? new HashSet<Guid>();
 

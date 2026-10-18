@@ -130,9 +130,15 @@ Rules:
     to; every use of a device, the duplication's too, is under its lock. After an error the capture waits longer each
     time and gives up after a few errors in a row (`CaptureRetry`), logged in `logs\screen-capture.log`: a duplication
     made again and again without a pause, with several threads on one device, came before a blue screen on a PC with two
-    monitors.
+    monitors. A capture that gave up is replaced at once when a watch starts, even while other watches still hold it
+    (its thread has ended and its duplication is closed), and released with its last watch; a working capture is never
+    duplicated twice.
   - The same search runs on the graphics card (compute shaders) or on the processor (OpenCV) with the same results
     (unit tested on WARP); `ConditionChecker` chooses by the area's size unless Settings › Screen recognition forces one.
+    The two share one definition of flat (`Flatness`: a one-color image is refused when taken and never found), one
+    choice of candidates (`CpuMatcher.Candidates`) and one tie rule (`ImageMatch.Tie`: the top one, then the left one).
+  - The editor's Now on the screen and an AI app's check_condition follow the run's rule: a place that can't be seen
+    makes no condition true, a Not one either (`ConditionReport.Unseen`).
   - While a condition looks at the screen, and a few seconds after, PuppyMacro's windows are left out of every screen
     capture (`CaptureExclusion`, Windows 10 2004 and later), so a condition never sees PuppyMacro: only then, as the
     user's own screenshots and recordings lose PuppyMacro's windows too.
