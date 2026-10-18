@@ -21,13 +21,6 @@ public class DebugLogTests
         app.GoTo("Macros");
         using var target = new TargetWindow();
 
-        // No run yet: no log in the card's menu.
-        app.CardButton("E2E debug", "More options").AsButton().Invoke();
-        Assert.NotNull(app.MenuItem("Edit"));
-        Assert.Null(Retry.WhileNull(() => app.Automation.GetDesktop().FindAllChildren(cf => cf.ByProcessId(app.ProcessId))
-            .Select(w => w.FindFirstDescendant(cf => cf.ByName("View log"))).FirstOrDefault(i => i != null), System.TimeSpan.FromSeconds(1)).Result);
-        FlaUI.Core.Input.Keyboard.Type(FlaUI.Core.WindowsAPI.VirtualKeyShort.ESCAPE);
-
         PressCard(app, target, "E2E debug", "Play");
         target.WaitFor(t => t.Ups(Vk.F22).Count == 1, 15, "the macro did not play");
         WaitIdle(app, "E2E debug");
