@@ -13,7 +13,9 @@
   fake `IScreen`. Their speed on a real screen is measured by hand with the development build started with
   `PUPPYMACRO_BENCH=1` (a table of image and area sizes, processor and graphics card, text recognition) or
   `PUPPYMACRO_BENCH=load-gpu` / `load-cpu` (a search 30 times a second for a minute, to watch an app's frame rate):
-  `Services/Screen/RecognitionBench.cs`, results in a text file it opens. The AI tools are tested with `FakeAiHost` as the app and the user
+  `Services/Screen/RecognitionBench.cs`, results in a text file it opens. The macros' Debug log (`RunLog.Root`, one
+  folder for the process) is set to a temporary folder by the AI tools' tests, which run one at a time
+  (`[Collection(nameof(RunLog))]`). The AI tools are tested with `FakeAiHost` as the app and the user
   (`AiTools.WaitStep` is short there); the file types' registry keys under a test key in `HKCU\Software\PuppyMacroTests`,
   deleted after.
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a
@@ -37,7 +39,8 @@
 - Every test class has a category, `[Trait("Category", ...)]`: `UI`, `Macros`, `Loops`, `Remaps`, `Recording`,
   `Overlay`, `AI`. Dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably. In
   `AI` the test is the AI app: it starts `PuppyMacro.exe --mcp`, calls the tools and answers in PuppyMacro's windows
-  (the ready window with Start, never Enter); its keys are F22 and F23.
+  (the ready window with Start, never Enter); its keys are F22 and F23, and F18 (the Record hotkey) ends a
+  `record_macro`. The screen tools (`AiScreenTests`) look at, check, test and record on `TargetWindow`.
   `make e2e category=Macros` runs only one category: use it while working on that
   feature; before pushing, and on GitHub, all of them run.
 - They take over the desktop: windows open and close, the mouse moves, keys are pressed.
