@@ -172,8 +172,8 @@ Rules:
   - **A Grid** (the user's decision: one more type, general, not a feature apart) is cells all alike in rows: the same
     point of the first and of the last cell, the columns and the rows. A Point field (a click's, mouse button's or move's,
     a pixel's) bound to a Grid takes one of its cells, `Cell` (counted row by row from 1), fixed or bound to a Number
-    (Count). The step can have decimals; the point is rounded half away from zero (`GridValue.PointOf`, the D4 inventory's
-    33 slots exactly). Only points: a grid has no cell size, so no areas. Every call is checked with its values, down the
+    (Count). The step can have decimals; the distance from the first cell is rounded, a half away from zero
+    (`GridValue.PointOf`, the D4 inventory's 33 slots exactly), so a cell is the same pixels wherever the grid is. Only points: a grid has no cell size, so no areas. Every call is checked with its values, down the
     calls, and the component with its Examples: a cell its grid doesn't have can't be saved nor played, and if one got
     there it is skipped, never played at another point.
   - **The checks and the preparation of components live only in `Services/Components/`**, and everyone calls them (the

@@ -301,12 +301,15 @@ public class ComponentGridTests : IDisposable
         var strip = Comp("Strip one slot", new[] { GridParam(), CountParam() }, CellClick(cellFrom: "Slot"));
         var tidy = Comp("Tidy", new[] { GridParam("Bag"), CountParam("Which", 2) },
             Call(strip, ("Inv", From("Bag")), ("Slot", From("Which"))));
-        var outer = Comp("All", new[] { GridParam("Bag", @default: Grid(0, 0, 30, 0, 4, 1)) },
-            Call(tidy, ("Bag", From("Bag")), ("Which", Number(5))));
+        var outer = Comp("All", new[] { GridParam("Bag") }, Call(tidy, ("Bag", From("Bag")), ("Which", Number(5))));
 
-        var problems = Problems(new[] { strip, tidy, outer }, Macro("Outer", Call(outer)));
+        var problems = Problems(new[] { strip, tidy, outer }, Macro("Outer", Call(outer, ("Bag", Grid(0, 0, 30, 0, 4, 1)))));
         Assert.Equal(new[] { $"Outer: Actions[0].Arguments: {F(Strings.Code_CellOutside, 5, "Inv", 4, "Strip one slot")}" }, problems);
         Assert.Empty(Problems(new[] { strip, tidy, outer }, Macro("Bigger", Call(outer, ("Bag", Inventory)))));
+        // A Default grid without that cell: every call that leaves it out would fail, so the component itself is refused.
+        var withDefault = Comp("All", new[] { GridParam("Bag", @default: Grid(0, 0, 30, 0, 4, 1)) },
+            Call(tidy, ("Bag", From("Bag")), ("Which", Number(5))));
+        Has(F(Strings.Code_CellOutside, 5, "Inv", 4, "Strip one slot"), ComponentProblems(withDefault, strip, tidy));
     }
 
     [Fact]

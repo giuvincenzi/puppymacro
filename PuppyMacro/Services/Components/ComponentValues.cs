@@ -32,7 +32,8 @@ internal readonly record struct GridValue(PointValue First, PointValue Last, int
     /// <summary>
     /// The point of cell <paramref name="cell"/> (1 to <see cref="Cells"/>), or null outside the grid. The step from one cell
     /// to the next is the distance from the first to the last over the steps between them, so it can have decimals (73.5);
-    /// the point is rounded to the nearest pixel, half away from zero.
+    /// the distance from the first cell is rounded to the nearest pixel, a half away from zero, so a cell is the same
+    /// pixels wherever the grid is on the desktop (also at negative coordinates).
     /// </summary>
     public PointValue? PointOf(int cell)
     {

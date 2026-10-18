@@ -140,7 +140,7 @@ internal static class ComponentChecks
         // From a macro every value is known: each cell the call reaches must be in its grid (when it can reach one).
         if (scope.Parameters == null && scope.Signatures.UsesCells(id))
             CheckCells(callee, name => Given(arguments.GetValueOrDefault(name) ?? callee.Parameters.FirstOrDefault(p => p.Name == name)?.Default),
-                scope.Signatures, msg => add($"{prefix}Arguments", msg));
+                scope.Signatures, msg => add($"{prefix}Arguments", msg), asCondition);
     }
 
     /// <summary>A value as it is; null for a {"From"} or {"Found"} (not known here).</summary>
@@ -149,31 +149,44 @@ internal static class ComponentChecks
     /// <summary>
     /// The cells a component reaches with these values of its parameters (<paramref name="valueOf"/>; null: not known) that
     /// their grids don't have: its points from a Grid parameter, and down the calls inside (their {"From"} given the same
-    /// values, their parameters left out their Default). Each one said once.
+    /// values, their parameters left out their Default). Called as a condition (<paramref name="asCondition"/>), only the
+    /// condition it returns plays, so only its cell counts, through the conditions it returns in turn; a Component condition
+    /// inside counts the same way. Each one said once.
     /// </summary>
     public static void CheckCells(LibraryComponent component, Func<string, JsonNode?> valueOf, ComponentSignatures signatures,
-        Action<string> add)
+        Action<string> add, bool asCondition = false)
     {
         var said = new HashSet<string>();
-        Visit(component, valueOf, 0, new HashSet<Guid>());
+        Visit(component, valueOf, 0, new HashSet<Guid>(), asCondition);
 
-        void Visit(LibraryComponent c, Func<string, JsonNode?> values, int depth, HashSet<Guid> visiting)
+        void Visit(LibraryComponent c, Func<string, JsonNode?> values, int depth, HashSet<Guid> visiting, bool returnedOnly)
         {
             if (depth > ComponentSignatures.MaxDepth || !visiting.Add(c.Id))
                 return;
-            foreach (var action in MacroDefinition.Walk(c.Actions))
+            if (returnedOnly)
             {
-                Cell(c, values, action.Bind, action.Cell);
-                if (action.Type == MacroActionType.Component)
-                    Inner(action.ComponentId, action.Arguments, values, depth, visiting);
-                foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+                if (c.Returns is { } returns && FindCondition(c.Actions, returns.Found) is { } returned)
+                    Condition(c, values, returned, depth, visiting);
+            }
+            else
+            {
+                foreach (var action in MacroDefinition.Walk(c.Actions))
                 {
-                    Cell(c, values, condition.Bind, condition.Cell);
-                    if (condition.Kind == ConditionKind.Component)
-                        Inner(condition.ComponentId, condition.Arguments, values, depth, visiting);
+                    Cell(c, values, action.Bind, action.Cell);
+                    if (action.Type == MacroActionType.Component)
+                        Inner(action.ComponentId, action.Arguments, values, depth, visiting, false);
+                    foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+                        Condition(c, values, condition, depth, visiting);
                 }
             }
             visiting.Remove(c.Id);
+        }
+
+        void Condition(LibraryComponent c, Func<string, JsonNode?> values, MacroCondition condition, int depth, HashSet<Guid> visiting)
+        {
+            Cell(c, values, condition.Bind, condition.Cell);
+            if (condition.Kind == ConditionKind.Component)
+                Inner(condition.ComponentId, condition.Arguments, values, depth, visiting, true);
         }
 
         void Cell(LibraryComponent c, Func<string, JsonNode?> values, Dictionary<string, string>? bind, int? fixedCell)
@@ -189,7 +202,8 @@ internal static class ComponentChecks
                 add(Format(Strings.Code_CellOutside, n, gridName, grid.Cells, c.Name));
         }
 
-        void Inner(Guid? id, Dictionary<string, JsonNode?>? arguments, Func<string, JsonNode?> outer, int depth, HashSet<Guid> visiting)
+        void Inner(Guid? id, Dictionary<string, JsonNode?>? arguments, Func<string, JsonNode?> outer, int depth, HashSet<Guid> visiting,
+            bool returnedOnly)
         {
             if (id is not Guid called || signatures.Find(called) is not { } inner)
                 return;
@@ -198,7 +212,7 @@ internal static class ComponentChecks
                 JsonNode? argument = arguments?.GetValueOrDefault(name) ?? inner.Parameters.FirstOrDefault(p => p.Name == name)?.Default;
                 return ComponentValues.Reference(argument) is { From: string from } ? outer(from) : Given(argument);
             }
-            Visit(inner, Value, depth + 1, visiting);
+            Visit(inner, Value, depth + 1, visiting, returnedOnly);
         }
     }
 
@@ -366,10 +380,17 @@ internal static class ComponentChecks
                      && (condition.Arguments ?? new Dictionary<string, JsonNode?>()).Values.Any(v => ComponentValues.Reference(v)?.Found != null))
                 add("Returns.Found", Strings.Code_ReturnsFoundOutside);
         }
-        // Its own Test plays the Examples: each cell they reach must be in its grid.
+        // Its own Test plays the Examples, and a call that leaves a parameter out its Default: each cell they reach must be
+        // in its grid (a Default with the call's own values is checked at each call).
         if (signatures.UsesCells(component.Id))
-            CheckCells(component, name => component.Parameters.FirstOrDefault(p => p.Name == name)?.Example, signatures,
-                msg => add("Actions", msg));
+        {
+            var cells = new List<string>();
+            CheckCells(component, name => component.Parameters.FirstOrDefault(p => p.Name == name)?.Example, signatures, cells.Add);
+            if (component.Parameters.Any(p => p.Default != null))
+                CheckCells(component, name => component.Parameters.FirstOrDefault(p => p.Name == name)?.Default, signatures, cells.Add);
+            foreach (string message in cells.Distinct())
+                add("Actions", message);
+        }
         if (signatures.CycleOf(component.Id) is { } cycle)
             add("Actions", Format(Strings.Code_ComponentCycle,
                 string.Join(" → ", cycle.Select(id => signatures.Find(id)?.Name ?? id.ToString()))));

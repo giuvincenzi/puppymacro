@@ -281,9 +281,11 @@ public partial class ConditionsEditor : UserControl
                 var toCheck = condition.ToModel();
                 bool? effectiveNot = null;
                 // A Component condition is checked as the condition its component returns, with the call's arguments (inside a
-                // component being edited, its parameters' Examples), as the engine checks it.
-                if (toCheck.Kind == ConditionKind.Component)
+                // component being edited, its parameters' Examples), as the engine checks it; a condition with bound fields (a
+                // pixel at a cell of a Grid, at a Point parameter) with those Examples in them.
+                if (toCheck.Kind == ConditionKind.Component || toCheck.Bind is { Count: > 0 })
                 {
+                    bool component = toCheck.Kind == ConditionKind.Component;
                     var programs = Services.Components.ComponentPrograms.Prepare(model.Context.Macros?.Library.AllComponents ?? Enumerable.Empty<LibraryComponent>());
                     var examples = Services.Components.FrameArguments.Examples(model.Context.Parameters ?? Array.Empty<ComponentParameter>());
                     if (programs.Effective(toCheck, examples, new System.Collections.Generic.Dictionary<Guid, OpenCvSharp.Point>()) is not { } effective)
@@ -292,7 +294,8 @@ public partial class ConditionsEditor : UserControl
                         continue;
                     }
                     toCheck = effective;
-                    effectiveNot = effective.Not;
+                    if (component)
+                        effectiveNot = effective.Not;
                 }
                 try
                 {

@@ -323,9 +323,8 @@ internal sealed class MacroLibrary
             action.DelayMs = Math.Clamp(action.DelayMs, 0, 86_400_000);
             action.Repeat = Math.Clamp(action.Repeat, 1, 100000);
             action.RepeatPauseMs = Math.Clamp(action.RepeatPauseMs, 0, 86_400_000);
-            // Recordings of earlier versions could hold for 0 ms (a touchpad's tap) or longer than the editor allows.
-            if (action.Type is MacroActionType.PressKey or MacroActionType.Click)
-                action.HoldMs = Math.Clamp(action.HoldMs, MacroJson.HoldMs.Min, MacroJson.HoldMs.Max);
+            // A hold of an earlier recording outside the editor's limits is kept as it is (the user's choice): it plays as
+            // recorded, never changed behind the user's back; recordings now stay inside them (MacroBuilder).
             if (action.Type != MacroActionType.PressKey)
                 action.ClearModifiers(); // only a Press key is a combination
         }
