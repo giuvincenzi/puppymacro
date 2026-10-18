@@ -598,6 +598,16 @@ public sealed class AppSettings
     /// <summary>An AI app's change of the settings waits for the user's OK (on by default).</summary>
     public bool AiAskBeforeSettings { get; set; } = true;
 
+    /// <summary>
+    /// AI apps can see the screen: pictures of it (look_at_screen, a test's pictures, a recording's frames) and what a
+    /// condition reads there (check_condition). On by default, and in older files (the user's choice); Allow AI access
+    /// stays the switch for everything.
+    /// </summary>
+    public bool AiSeeScreen { get; set; } = true;
+
+    /// <summary>AI apps can run a saved macro to test it (test_macro), after the user presses Start. On by default.</summary>
+    public bool AiTestMacros { get; set; } = true;
+
     /// <summary>An AI app may start PuppyMacro, in the system tray, when it is closed (on by default; read by the bridge).</summary>
     public bool AiStartWhenNeeded { get; set; } = true;
 

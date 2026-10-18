@@ -28,7 +28,15 @@ internal sealed record ConditionResult(bool Met, bool Stopped, IReadOnlyDictiona
 /// similarity, the text read, or why it could not look.
 /// </summary>
 internal sealed record ConditionReport(bool Met, Point? At = null, double Score = 0, string? Color = null, string? Read = null,
-    bool Black = false, bool NoMonitor = false, bool NoLanguage = false);
+    bool Black = false, bool NoMonitor = false, bool NoLanguage = false)
+{
+    /// <summary>
+    /// Whether the condition is true by what was seen (<see cref="Met"/>: what it looks for is there): with Not, when it
+    /// is not there; a part of the screen PuppyMacro could not see never makes it true. The editor and the AI tools say it
+    /// the same way.
+    /// </summary>
+    public bool TrueFor(MacroCondition condition) => condition.Not ? !NoLanguage && !NoMonitor && !Met : Met;
+}
 
 /// <summary>
 /// Checks the conditions of a macro's If on the screen, for one macro run: the images are read and prepared once and kept

@@ -1261,6 +1261,14 @@
   <data name="Ai_AskedPixel" xml:space="preserve"><value>픽셀 요청함: {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>이미지 요청함: {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>검색 영역 요청함: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>화면을 확인함: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>화면에서 조건을 확인함: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>수행한 작업을 기록함: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>매크로 {0}을(를) 테스트함</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>화면의 픽셀을 읽음: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>화면에서 이미지를 가져옴: {0}</value></data>
+  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>기록의 클릭 {0}에서 화면을 확인함</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>매크로의 마지막 실행 로그를 읽음</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>동작</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>조건</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>화면의 텍스트(OCR)</value></data>

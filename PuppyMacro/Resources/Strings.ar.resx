@@ -1426,6 +1426,14 @@
   <data name="Ai_AskedPixel" xml:space="preserve"><value>طلب بكسل: {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>طلب صورة: {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>طلب منطقة بحث: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>نظر إلى الشاشة: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>تحقق من شرط على الشاشة: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>سجّل ما فعلته: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>اختبر الماكرو {0}</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>قرأ بكسلًا من الشاشة: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>التقط صورة من الشاشة: {0}</value></data>
+  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>نظر إلى الشاشة عند النقرة {0} من التسجيل</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>قرأ سجل آخر تشغيل لماكرو</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>إجراء</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>شرط</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>نص على الشاشة (OCR)</value></data>

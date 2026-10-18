@@ -268,9 +268,12 @@ internal sealed class AiServer : IDisposable
                 request.Params?.Arguments ?? new Dictionary<string, JsonElement>());
             string app = FriendlyName(request.Server.ClientInfo);
             AiToolResult result = await _run(_tool, args, app, cancellationToken).ConfigureAwait(false);
+            var content = new List<ContentBlock> { new TextContentBlock { Text = result.Text } };
+            foreach (byte[] jpeg in result.Images)
+                content.Add(ImageContentBlock.FromBytes(jpeg, "image/jpeg"));
             return new CallToolResult
             {
-                Content = new List<ContentBlock> { new TextContentBlock { Text = result.Text } },
+                Content = content,
                 IsError = result.IsError,
             };
         }

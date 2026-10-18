@@ -1383,6 +1383,14 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Ai_AskedPixel" xml:space="preserve"><value>Asked for a pixel: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>Asked for an image: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>Asked for a search area: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>Looked at the screen: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>Checked a condition on the screen: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>Recorded what you did: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>Tested the macro {0}</value><comment>AI activity: {0} the macro's name in quotes</comment></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>Read a pixel of the screen: {0}</value><comment>AI activity: {0} the pixel's position and color</comment></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>Took an image from the screen: {0}</value><comment>AI activity: {0} where the image was taken and its size</comment></data>
+  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>Looked at the screen at click {0} of the recording</value><comment>AI activity: {0} the click's number in the recording</comment></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>Read the log of a macro's last run</value><comment>AI activity: an AI app read the log of a macro's last run</comment></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Action</value><comment>Label under the + of the macro editor's button that adds an action (short: the button's name is Add action)</comment></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condition</value><comment>Label under the + of the macro editor's button that adds a condition (short: the button's name is Add condition)</comment></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Text on screen (OCR)</value><comment>The Text on screen condition in the Add condition menus: OCR, text recognition, stays as it is</comment></data>

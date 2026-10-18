@@ -1338,6 +1338,14 @@ Detalii: {1}</value></data>
   <data name="Ai_AskedPixel" xml:space="preserve"><value>A cerut un pixel: {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>A cerut o imagine: {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>A cerut o zonă de căutare: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>A privit ecranul: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>A verificat o condiție pe ecran: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>A înregistrat ce ați făcut: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>A testat macrocomanda {0}</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>A citit un pixel al ecranului: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>A preluat o imagine de pe ecran: {0}</value></data>
+  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>A privit ecranul la clicul {0} din înregistrare</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>A citit jurnalul ultimei rulări a unei macrocomenzi</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Acțiune</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condiție</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Text pe ecran (OCR)</value></data>

@@ -15,6 +15,9 @@ namespace PuppyMacro.Services.Ai;
 internal sealed record AiToolResult(string Text, bool IsError = false)
 {
     public static AiToolResult Error(string text) => new(text, true);
+
+    /// <summary>Pictures of the screen, as JPEG, after the text (look_at_screen, a test, a recording's frame).</summary>
+    public IReadOnlyList<byte[]> Images { get; init; } = Array.Empty<byte[]>();
 }
 
 /// <summary>One MCP tool: its name, what it does (for the AI), its input JSON Schema and what runs it.</summary>
@@ -28,7 +31,7 @@ internal sealed record AiTool(string Name, string Description, string InputSchem
 /// A request that waits for the user answers "waiting" after <see cref="WaitStep"/> (AI apps cut long calls) and the AI
 /// calls wait_for_user. One such request at a time. Everything is refused while Allow AI access is off.
 /// </summary>
-internal sealed class AiTools
+internal sealed partial class AiTools
 {
     /// <summary>How long a window opened for the AI stays open while nobody uses PuppyMacro.</summary>
     public static readonly TimeSpan AnswerTimeout = TimeSpan.FromMinutes(5);
@@ -188,6 +191,8 @@ internal sealed class AiTools
             "steps":{"type":"array","items":{"type":"string"},"minItems":1,"description":"What to do, in order, one short step each (shown numbered), e.g. [\"Open the game's inventory\", \"Press Enter\", \"Click the 3 items, in order\"]. For PuppyMacro's own screens take them from the user guide (get_help)."}
             """;
         const string askingRequired = "\"title\",\"description\",\"steps\"";
+        const string snapshot = "\"snapshot_id\":{\"type\":\"string\",\"description\":\"A look_at_screen picture: read it at once instead of asking the user. Then title, description and steps are not needed.\"}";
+        const string areaArg = "\"area\":{\"type\":\"object\",\"description\":\"A part of the screen in physical pixels.\",\"properties\":{\"X\":{\"type\":\"integer\"},\"Y\":{\"type\":\"integer\"},\"Width\":{\"type\":\"integer\"},\"Height\":{\"type\":\"integer\"}},\"required\":[\"X\",\"Y\",\"Width\",\"Height\"],\"additionalProperties\":false}";
         const string confirmed = """
             "confirmed_steps":{"type":"array","items":{"type":"string"},"minItems":1,"description":"The steps the loop or macro will play, one per item, each key or click and what it does: for a NEW item, exactly as you wrote them in the chat and the user confirmed (do not call this tool before); for a change to an existing one, the steps as they will be after it."},
             """;
@@ -313,16 +318,19 @@ internal sealed class AiTools
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickApp(a, app, c)),
             new("pick_pixel",
-                "For a macro's Pixel color condition: shows the user your title, description and steps, waits until they are ready, " +
-                "then they click a pixel on a still picture of the screen. Answers X, Y and Color (#RRGGBB), as the condition takes them." + UserWindow,
-                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                "For a Pixel color condition. The user clicks a pixel on a still picture of the screen, after the ready window with " +
+                "your title, description and steps; the answer is X, Y and Color (#RRGGBB), as the condition takes them. With " +
+                "snapshot_id (from look_at_screen) and x, y instead, it reads that pixel of the picture at once, without the user." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + asking + "," + snapshot +
+                ",\"x\":{\"type\":\"integer\",\"description\":\"With snapshot_id: the pixel's screen X (physical pixels).\"},\"y\":{\"type\":\"integer\",\"description\":\"With snapshot_id: the pixel's screen Y.\"}},\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickOnScreen(a, app, AiScreenPickKind.Pixel, c)),
             new("take_image",
-                "For a macro's Image on screen condition: shows the user your title, description and steps, waits until they are ready, " +
-                "then they drag around the image on a still picture of the screen. PuppyMacro keeps the image: answers its Id, X and Y " +
-                "(where it was taken), for an entry of the condition's Images, and its Width and Height. Ask for a small, distinctive " +
-                "image (a button or an icon, not a whole window)." + UserWindow,
-                "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                "For an Image on screen condition. The user drags around the image on a still picture of the screen, after the ready " +
+                "window with your title, description and steps. PuppyMacro keeps the image; the answer is its Id, X and Y (where it " +
+                "was taken: an entry of the condition's Images), Width and Height. With snapshot_id and area instead, it cuts that " +
+                "area of a look_at_screen picture at once, without the user. Small, distinctive images (a button, an icon) are found " +
+                "fastest and most reliably; a flat area of one color can't be found (a Pixel color condition fits it)." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + asking + "," + snapshot + "," + areaArg + "},\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickOnScreen(a, app, AiScreenPickKind.Image, c)),
             new("draw_area",
                 "For an Image or Text condition's search area (Area Drawn): shows the user your title, description and steps, waits " +
@@ -330,6 +338,51 @@ internal sealed class AiTools
                 "AreaHeight." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => PickOnScreen(a, app, AiScreenPickKind.Area, c)),
+            new("look_at_screen",
+                "Shows you the screen as PuppyMacro's conditions see it (PuppyMacro's own windows left out): one picture per monitor, " +
+                "shrunk, with each monitor's bounds and scale to turn a point of a picture into screen coordinates, and a " +
+                "snapshot_id that take_image and pick_pixel can read. With area, only that part at full size (for exact " +
+                "coordinates or small details). First the ready window shows your title, description and steps, so the user can " +
+                "bring the right app in front; the picture is taken when they press Start or Enter. Pictures cost much more of your " +
+                "context than text. Needs Let AI apps see the screen (on by default)." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{" + asking + "," + areaArg + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => LookAtScreen(a, app, c)),
+            new("check_condition",
+                "Checks one condition on the screen now, as the condition window's Now on the screen does, after the ready window " +
+                "with your title, description and steps (the user brings the screen the macro will see in front). The answer: True " +
+                "(with Not applied), There (what it looks for is on the screen), where it was found, the image's similarity in " +
+                "whole percent (100 = identical), the pixel's color seen, the text read, or why it could not look. Checking with the " +
+                "right screen and with a wrong one shows how much Tolerance or Similarity leaves room. Needs Let AI apps see the screen." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{\"condition\":{\"type\":\"object\",\"description\":\"One condition as in a macro's If (get_schema(\\\"macro\\\"), MacroCondition).\"}," + asking + "},\"required\":[\"condition\"," + askingRequired + "],\"additionalProperties\":false}",
+                true, false, (a, app, c) => CheckCondition(a, app, c)),
+            new("record_macro",
+                "Records what the user does with PuppyMacro's recorder: after the ready window with your title, description and " +
+                "steps, a short countdown, then every key and click until the user presses Stop on the recording bar. The answer is " +
+                "the actions as PuppyMacro builds them (not saved: save_macro saves them, as they are or changed) and each click with " +
+                "an image around it, taken a moment after the click and kept as a condition image (its Id), so an If can wait for " +
+                "what was clicked and click where it is found. get_recording_frame shows the screen at a click. Without Let AI apps " +
+                "see the screen, only the actions." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{\"mouse_movement\":{\"type\":\"boolean\",\"description\":\"Also record the mouse's paths (Move along a path). Leave out for the user's own choice in PuppyMacro.\"}," + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
+                false, false, (a, app, c) => RecordMacro(a, app, c)),
+            new("get_recording_frame",
+                "The screen at one click of the last record_macro: the monitor's picture, shrunk, with its bounds and scale. Needs Let AI apps see the screen.",
+                "{\"type\":\"object\",\"properties\":{\"recording_id\":{\"type\":\"string\"},\"click\":{\"type\":\"integer\",\"minimum\":1,\"description\":\"The click's number in the recording's Clicks.\"}},\"required\":[\"recording_id\",\"click\"],\"additionalProperties\":false}",
+                true, false, (a, app, _) => RecordingFrame(a, app)),
+            new("test_macro",
+                "Plays a saved macro on the user's screen, as its Play button would, to see how it goes. First the ready window shows " +
+                "your title, description and steps: the user brings the app the macro works in to the front and presses Start or " +
+                "Enter, and the macro's keys and clicks go there. It ends by itself, at Stop all, or after max_seconds (20 by " +
+                "default). The run is always logged, Debug or not: the answer is why it ended and the log (each action, what each If " +
+                "saw and where it went), with pictures of the screen when an If was not true and at the end (with Let AI apps see " +
+                "the screen). Needs Let AI apps test macros (on by default)." + UserWindow,
+                "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The macro's Id.\"},\"max_seconds\":{\"type\":\"number\",\"minimum\":1,\"maximum\":600,\"description\":\"The longest the test plays; 20 when left out.\"}," + confirmed + asking + "},\"required\":[\"id\",\"confirmed_steps\"," + askingRequired + "],\"additionalProperties\":false}",
+                false, false, (a, app, c) => TestMacro(a, app, c)),
+            new("get_last_run",
+                "The log of a macro's last run: each action, what each If saw and where it went, why it ended. There is one for a macro " +
+                "with Debug on (a field of the macro) or after test_macro, until PuppyMacro closes. With pictures, also its pictures of " +
+                "the screen (when an If was not true, and at the end; Let AI apps see the screen).",
+                "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"The macro's Id.\"},\"pictures\":{\"type\":\"boolean\"}},\"required\":[\"id\"],\"additionalProperties\":false}",
+                true, false, (a, app, _) => GetLastRun(a, app)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),
@@ -436,10 +489,20 @@ internal sealed class AiTools
     private static AiToolResult Schema(JsonElement args) => Str(args, "kind") switch
     {
         "loop" => new AiToolResult(WithoutId(CodeSchema.ForLoop(Guid.Empty, withDefaults: true))),
-        "macro" => new AiToolResult(WithoutId(CodeSchema.ForMacro(Guid.Empty, withDefaults: true))),
+        "macro" => new AiToolResult(WithTextLanguages(WithoutId(CodeSchema.ForMacro(Guid.Empty, withDefaults: true)))),
         "remap" => new AiToolResult(WithoutId(CodeSchema.ForRemap(Guid.Empty, withDefaults: true))),
         _ => AiToolResult.Error("kind must be loop, macro or remap."),
     };
+
+    /// <summary>A Text condition's Language: the languages Windows can read on this PC, named in the macro's schema.</summary>
+    private static string WithTextLanguages(string schema)
+    {
+        IReadOnlyList<string> languages = Screen.TextReader.Languages;
+        return schema.Replace("(one of the languages Windows can read on this PC)",
+            languages.Count == 0
+                ? "(Windows can read no language on this PC: the user adds one in Windows Settings, Time & language, Language & region)"
+                : $"(Windows can read these on this PC: {string.Join(", ", languages)})", StringComparison.Ordinal);
+    }
 
     /// <summary>The Code view's schema without the Id: PuppyMacro gives it (a new one, or the one of the item changed).</summary>
     private static string WithoutId(string schema)
@@ -915,6 +978,9 @@ internal sealed class AiTools
     /// <summary>The ready window, then the pick on a still picture of the screen (pick_pixel, take_image, draw_area).</summary>
     private async Task<AiToolResult> PickOnScreen(JsonElement args, string app, AiScreenPickKind kind, CancellationToken cancel)
     {
+        // From a look_at_screen picture: the AI app chose the place itself, nothing to ask the user.
+        if (kind != AiScreenPickKind.Area && Str(args, "snapshot_id") is string snapshot)
+            return await FromSnapshotPick(args, app, kind, snapshot).ConfigureAwait(false);
         AiAsk ask = Asking(args);
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);

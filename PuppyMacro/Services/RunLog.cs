@@ -23,8 +23,11 @@ internal sealed class RunLog
 
     public const string LogFile = "log.txt";
 
-    /// <summary>%LocalAppData%\PuppyMacro\debug (PuppyMacro Dev for the development build): not user data, not in backups.</summary>
-    public static string Root { get; } = Path.Combine(
+    /// <summary>
+    /// %LocalAppData%\PuppyMacro\debug (PuppyMacro Dev for the development build): not user data, not in backups. The unit
+    /// tests set a temporary folder.
+    /// </summary>
+    public static string Root { get; internal set; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         App.IsDevBuild ? "PuppyMacro Dev" : "PuppyMacro",
         "debug");

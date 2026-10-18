@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OpenCvSharp;
 using PuppyMacro.Models;
+using PuppyMacro.Services.Screen;
 
 namespace PuppyMacro.Services.Ai;
 
@@ -111,7 +113,34 @@ internal interface IAiHost
     void StopAll();
 
     IReadOnlyList<string> RunningApps();
+
+    /// <summary>Checks a condition on the screen now, as the condition window's Now on the screen (off the UI thread).</summary>
+    Task<ConditionReport> CheckCondition(MacroCondition condition);
+
+    /// <summary>A picture of every monitor now, as the macros' conditions see the screen (desktop bounds, physical pixels).</summary>
+    Task<List<(Rect Bounds, Mat Picture)>> TakeScreen();
+
+    /// <summary>
+    /// PuppyMacro's recorder, started at once after a countdown (the ready window was the prompt): the actions recorded
+    /// until the user presses Stop, and the screen at each click. Cancelled during the countdown: nothing.
+    /// </summary>
+    Task<(AiAnswer Answer, AiRecording? Recording)> Record(string app, bool mouseMovement);
+
+    /// <summary>
+    /// Runs a saved macro as the user's Play would, with its Debug log (always), until it ends, Stop all, or
+    /// <paramref name="maxSeconds"/>. Null when the macro can't run (empty, or another item running).
+    /// </summary>
+    Task<AiTestRun?> TestMacro(Guid id, string app, double maxSeconds);
 }
+
+/// <summary>A recording for an AI app: the actions, and for each click the screen at that moment (the caller disposes them).</summary>
+internal sealed record AiRecording(List<MacroAction> Actions, List<AiRecordedClick> Clicks);
+
+/// <summary>One recorded click: where (physical pixels), when (ms from the start), and the monitor it was on as a picture.</summary>
+internal sealed record AiRecordedClick(int X, int Y, double TimeMs, Rect MonitorBounds, Mat? Screen);
+
+/// <summary>A test run's end: why it ended and its Debug log's folder.</summary>
+internal sealed record AiTestRun(string EndReason, string LogFolder);
 
 /// <summary>What an AI app asks the user to do: a short title, why (description) and the steps, shown numbered.</summary>
 public sealed record AiAsk(string Title, string Description, IReadOnlyList<string> Steps);

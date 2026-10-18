@@ -1295,6 +1295,14 @@ Detalles: {1}</value></data>
   <data name="Ai_AskedPixel" xml:space="preserve"><value>Pidió un píxel: {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>Pidió una imagen: {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>Pidió un área de búsqueda: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>Miró la pantalla: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>Comprobó una condición en la pantalla: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>Grabó lo que hiciste: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>Probó la macro {0}</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>Leyó un píxel de la pantalla: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>Tomó una imagen de la pantalla: {0}</value></data>
+  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>Miró la pantalla en el clic {0} de la grabación</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>Leyó el registro de la última ejecución de una macro</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Acción</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condición</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Texto en la pantalla (OCR)</value></data>

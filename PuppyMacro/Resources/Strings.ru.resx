@@ -1338,6 +1338,14 @@
   <data name="Ai_AskedPixel" xml:space="preserve"><value>Запрошен пиксель: {0}</value></data>
   <data name="Ai_AskedImage" xml:space="preserve"><value>Запрошено изображение: {0}</value></data>
   <data name="Ai_AskedArea" xml:space="preserve"><value>Запрошена область поиска: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>Посмотрел на экран: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>Проверил условие на экране: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>Записал ваши действия: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>Протестировал макрос {0}</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>Прочитал пиксель экрана: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>Взял изображение с экрана: {0}</value></data>
+  <data name="Ai_ReadRecordingFrame" xml:space="preserve"><value>Посмотрел на экран при щелчке {0} записи</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>Прочитал журнал последнего запуска макроса</value></data>
   <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Действие</value></data>
   <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Условие</value></data>
   <data name="Condition_TextMenu" xml:space="preserve"><value>Текст на экране (OCR)</value></data>

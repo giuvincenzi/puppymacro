@@ -132,6 +132,7 @@ internal sealed class LoopEngine : IDisposable
 
     // ---- The last app in front other than PuppyMacro (app-specific loops, macros and the overlay) ----
     private string? _foregroundApp;
+    private IntPtr _lastOtherWindow;
 
     private volatile bool _hotkeysSuspended;
 
@@ -174,12 +175,24 @@ internal sealed class LoopEngine : IDisposable
     public event Action<int>? RecordingProgress;
 
     /// <summary>
+    /// A button pressed while recording (X, Y, ms from the start), raised on a thread-pool thread so the hook never waits:
+    /// an AI app's recording takes the screen there.
+    /// </summary>
+    public event Action<int, int, double>? RecordedClick;
+
+    /// <summary>
     /// Raised (asynchronously, on the UI thread) when another app comes in front, with its .exe name ("" when it
     /// cannot be read). PuppyMacro's own windows never count: the last other app stays.
     /// </summary>
     public event Action<string>? ForegroundAppChanged;
 
     /// <summary>The .exe name of the last app in front other than PuppyMacro; null until one is known.</summary>
+    /// <summary>The last window of another app that was in front (PuppyMacro's own windows never count).</summary>
+    public IntPtr LastOtherWindow
+    {
+        get { lock (_sync) return _lastOtherWindow; }
+    }
+
     public string? ForegroundApp
     {
         get { lock (_sync) return _foregroundApp; }
@@ -294,6 +307,28 @@ internal sealed class LoopEngine : IDisposable
     }
 
     /// <summary>
+    /// Plays a saved macro for an AI app's test (test_macro): a running macro as Play makes it (Stop all and its hotkey stop
+    /// it), always with its Debug log, saying <paramref name="why"/>. <paramref name="exited"/> runs on the macro's thread
+    /// when it ends. Null when it can't start (no actions, already running).
+    /// </summary>
+    public MacroRunner? StartMacroTest(MacroDefinition macro, string why, Action<MacroRunner> exited)
+    {
+        lock (_sync)
+        {
+            if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
+                return null;
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: new RunLog(macro.Id, macro.Name, why));
+            runner.Exited += OnMacroExited;
+            runner.Exited += exited;
+            _runningMacros[macro.Id] = runner;
+            runner.Start();
+            RequestSound(macro.SoundEnabled, macro.SoundName, start: true);
+            RaiseStateChanged();
+            return runner;
+        }
+    }
+
+    /// <summary>
     /// Plays <paramref name="action"/> once for the editor's Test (<see cref="MacroDefinition.ForTest"/>).
     /// It is not a running macro: no sound, no state change. <paramref name="finished"/> runs on
     /// the UI thread when it ends.
@@ -307,13 +342,16 @@ internal sealed class LoopEngine : IDisposable
 
     public void StopMacro(Guid macroId) => StopMacro(macroId, playSound: true);
 
-    private void StopMacro(Guid macroId, bool playSound)
+    /// <summary>Stops a macro, saying why in its Debug log (an AI app's test that reached its time limit).</summary>
+    public void StopMacro(Guid macroId, string why) => StopMacro(macroId, playSound: true, why);
+
+    private void StopMacro(Guid macroId, bool playSound, string? why = null)
     {
         lock (_sync)
         {
             if (!_runningMacros.Remove(macroId, out var runner))
                 return;
-            runner.Stop();
+            runner.Stop(why);
             if (playSound)
             {
                 var macro = _snapshot.Macros.FirstOrDefault(m => m.Id == macroId);
@@ -466,6 +504,8 @@ internal sealed class LoopEngine : IDisposable
     {
         double t = (Stopwatch.GetTimestamp() - _recordStart) * 1000.0 / Stopwatch.Frequency;
         _recorded.Add(new RawEvent(kind, vk, x, y, delta, t));
+        if (kind == RawEventKind.ButtonDown && RecordedClick is { } clicked)
+            System.Threading.ThreadPool.QueueUserWorkItem(_ => clicked(x, y, t));
         if (_recorded.Count % 25 == 0 || kind != RawEventKind.Move)
         {
             int count = _recorded.Count;
@@ -1159,7 +1199,10 @@ internal sealed class LoopEngine : IDisposable
         if (pid == 0 || pid == (uint)Environment.ProcessId)
             return; // PuppyMacro's own windows: the app before them stays the app in front
         lock (_sync)
+        {
+            _lastOtherWindow = window;
             OnForegroundApp(ExeName(pid));
+        }
     }
 
     /// <summary>

@@ -465,10 +465,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
 
     internal void ShowReport(ConditionReport report)
     {
-        // What it saw is the same; whether that makes the condition true depends on True when. A screen it could not
-        // see never makes it true.
-        bool seen = !report.NoLanguage && !report.NoMonitor;
-        ResultMet = _not ? seen && !report.Met : report.Met;
+        ResultMet = report.TrueFor(new MacroCondition { Not = _not });
         Result = report switch
         {
             { NoLanguage: true } => Fill(Strings.Condition_NoLanguage, TextReader.NativeName(_language ?? "")),

@@ -9,6 +9,7 @@ using PuppyMacro.Models;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
+using PuppyMacro.Services.Screen;
 using Xunit;
 
 namespace PuppyMacro.Tests;
@@ -177,8 +178,59 @@ internal sealed class FakeAiHost : IAiHost
 
     public void StopAll() => StoppedAll = true;
     public IReadOnlyList<string> RunningApps() => new[] { "notepad.exe" };
+
+    /// <summary>What Now on the screen saw: by default the image found at 10, 20, 97% similar.</summary>
+    public ConditionReport Report { get; set; } = new(true, new OpenCvSharp.Point(10, 20), 0.97);
+    public List<MacroCondition> Checked { get; } = new();
+
+    public Task<ConditionReport> CheckCondition(MacroCondition condition)
+    {
+        Checked.Add(condition);
+        return Task.FromResult(Report);
+    }
+
+    /// <summary>One monitor of 800 × 600 at 0, 0: gray, with a pattern at 100, 100 (40 × 40) and a white pixel at 5, 5.</summary>
+    public static OpenCvSharp.Mat Screen()
+    {
+        var picture = new OpenCvSharp.Mat(600, 800, OpenCvSharp.MatType.CV_8UC3, OpenCvSharp.Scalar.All(128));
+        for (int y = 100; y < 140; y++)
+            for (int x = 100; x < 140; x++)
+                picture.Set(y, x, new OpenCvSharp.Vec3b((byte)(x * 5), (byte)(y * 3), (byte)((x + y) * 2)));
+        picture.Set(5, 5, new OpenCvSharp.Vec3b(255, 255, 255));
+        return picture;
+    }
+
+    public Task<List<(OpenCvSharp.Rect Bounds, OpenCvSharp.Mat Picture)>> TakeScreen() =>
+        Task.FromResult(new List<(OpenCvSharp.Rect, OpenCvSharp.Mat)> { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) });
+
+    public AiAnswer RecordAnswer { get; set; } = AiAnswer.Done;
+
+    /// <summary>As the recorder: Press A, then a click at 120, 120 on the pattern.</summary>
+    public Task<(AiAnswer Answer, AiRecording? Recording)> Record(string app, bool mouseMovement) =>
+        Task.FromResult<(AiAnswer, AiRecording?)>(RecordAnswer != AiAnswer.Done ? (RecordAnswer, null) : (AiAnswer.Done, new AiRecording(
+            new List<MacroAction>
+            {
+                new() { Type = MacroActionType.PressKey, Vk = 0x41 },
+                new() { Type = MacroActionType.Click, Vk = 1, X = 120, Y = 120, DelayMs = 500 },
+            },
+            new List<AiRecordedClick> { new(120, 120, 600, new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) })));
+
+    public List<(Guid Id, double MaxSeconds)> Tested { get; } = new();
+
+    /// <summary>As a test run: its log says it pressed A and ended.</summary>
+    public Task<AiTestRun?> TestMacro(Guid id, string app, double maxSeconds)
+    {
+        Tested.Add((id, maxSeconds));
+        var log = new RunLog(id, "Test", $"a test by {app}");
+        log.Line("#1 Press A, held 50 ms");
+        log.Line("Macro ends: finished");
+        log.WaitWritten(TimeSpan.FromSeconds(10));
+        return Task.FromResult<AiTestRun?>(new AiTestRun("finished", log.Folder));
+    }
 }
 
+// RunLog.Root is one folder for the whole process: these classes set it, one at a time.
+[Collection(nameof(RunLog))]
 public class AiToolsTests : IDisposable
 {
     private const string App = "Claude Desktop";
@@ -192,6 +244,7 @@ public class AiToolsTests : IDisposable
     public AiToolsTests()
     {
         AiTools.WaitStep = TimeSpan.FromMilliseconds(300);
+        RunLog.Root = _folder.File("debug");
         _settings.AllowAiAccess = true;
         _settings.Loops.Clear();
         _host = new FakeAiHost(_settings, new MacroLibrary(_folder.File("macros")));
@@ -919,14 +972,15 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Stop_all_stops_everything_but_nothing_can_be_started()
+    public async Task Stop_all_stops_everything_and_only_a_test_plays_a_macro()
     {
         AiToolResult result = await Call("stop_all");
 
         Assert.True(_host.StoppedAll);
         Assert.False(result.IsError);
-        Assert.DoesNotContain(_tools.All, t => t.Name.StartsWith("start", StringComparison.Ordinal) || t.Name.StartsWith("test", StringComparison.Ordinal));
-        Assert.Contains("Not available: starting, stopping or testing loops and macros", AiTools.Instructions);
+        // An AI app plays a macro only as a test, after the user's Start (test_macro): nothing starts loops or macros.
+        Assert.DoesNotContain(_tools.All, t => t.Name.StartsWith("start", StringComparison.Ordinal));
+        Assert.Contains(_tools.All, t => t.Name == "test_macro");
     }
 
     [Fact]
