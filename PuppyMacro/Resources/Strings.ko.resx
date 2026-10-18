@@ -1378,4 +1378,10 @@
   <data name="Library_ImportConflict" xml:space="preserve"><value>이 파일을 가져올 수 없습니다. 파일 안의 컬렉션 {0}이(가) 라이브러리에 있는 것과 다른 버전이며, 컬렉션은 통째로 공유되므로 둘을 섞을 수 없습니다. 아무것도 가져오지 않았습니다. 가져오려면 사용하는 매크로가 없을 때 먼저 내 컬렉션을 삭제하거나, 내 버전으로 만든 파일을 요청하세요.</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>이 파일의 컬렉션 {0}을(를) 가져올 수 없습니다. {1}</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>매크로 {0}개에서 사용</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>라이브러리를 검색함</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>구성 요소 {0}을(를) 읽음</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>새 구성 요소 {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>구성 요소 {0} 변경됨</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>이 새 구성 요소를 라이브러리에 저장할까요?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>이 구성 요소의 변경 내용을 저장할까요? 이 구성 요소를 연결한 모든 매크로가 새 내용을 실행합니다.</value></data>
 </root>

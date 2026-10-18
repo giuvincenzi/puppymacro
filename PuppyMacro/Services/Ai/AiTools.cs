@@ -68,7 +68,7 @@ internal sealed partial class AiTools
         "one). These tools read and change the user's loops, macros, remaps and settings, and work with the user's screen.\n\n" +
         "How requests work:\n" +
         "- Reads (get_overview, get_item, get_schema, get_settings, check_hotkey, list_apps, get_help, " +
-        "export_items, get_last_run, read_resource) answer at once.\n" +
+        "export_items, get_last_run, read_resource, search_library, get_component) answer at once.\n" +
         "- save_loop, save_macro and save_remap create or rewrite an item; patch_item and update_actions change only what " +
         "they name, which is much faster for a big item, since every character of a call is written by you. delete_item, " +
         "set_enabled and update_settings do what they say. Everything is saved at once and kept in the item's History, " +
@@ -105,6 +105,11 @@ internal sealed partial class AiTools
         "resources/read, or, in an AI app that cannot open resource links, with read_resource, which can also give a part or " +
         "a smaller copy of a picture and some lines of a log. get_last_run links a macro's last run again. The user guide (get_help, topic \"conditions\") has examples of common macros. " +
         "A picture takes much more of your context than text.\n\n" +
+        "The Library: components that already work in the user's apps (a point, an If that finds something, a sequence), " +
+        "kept by earlier work, the user's or an AI app's. Before building a macro, search_library finds what can be linked " +
+        "instead of made again (a linked row plays the component as it is in the Library); after a new piece works, " +
+        "save_component keeps it, with a structured name in English (domain-app-purpose-concept) that later searches find. " +
+        "A component's points are the screen it was made on.\n\n" +
         "New loops and macros: the user knows what each key and click must do in their app, and PuppyMacro's pick tools take " +
         "confirmed_steps, the steps the item will play as the user confirmed them in the chat, before anything is picked. " +
         "Questions that the user's words already answer, or that do not apply to the item, only slow them down. Once saved, " +
@@ -212,6 +217,9 @@ internal sealed partial class AiTools
         ["test_macro"] = "Test a macro",
         ["get_last_run"] = "Read a macro's last run",
         ["read_resource"] = "Read a linked file",
+        ["search_library"] = "Search the Library",
+        ["get_component"] = "Read a component",
+        ["save_component"] = "Save a component",
         ["capture_hotkey"] = "Ask for a key",
         ["place_floating_button"] = "Place a floating button",
         ["open_item"] = "Open an item's editor",
@@ -225,7 +233,7 @@ internal sealed partial class AiTools
     private static readonly HashSet<string> PureReads = new()
     {
         "get_overview", "get_item", "get_schema", "get_settings", "check_hotkey", "list_apps", "get_help", "export_items", "get_last_run",
-        "read_resource",
+        "read_resource", "search_library", "get_component",
     };
 
     private static readonly System.Text.RegularExpressions.Regex ToolWords = new(
@@ -321,12 +329,18 @@ internal sealed partial class AiTools
             new("get_overview",
                 "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running) and the global hotkeys, and says " +
                 "whether overlay mode is on, whether a request waits for the user (its request_id) and whether the user has a " +
-                "PuppyMacro editor or dialog open.",
-                none, true, false, (_, app, _) => Read(app, Phrase.Of("Ai_ReadOverview"), Overview)),
+                "PuppyMacro editor or dialog open. With many items: words keeps those whose name or app has every word, and " +
+                "offset and limit (100 when left out) page each list; Total says how many there are.",
+                """{"type":"object","properties":{"words":{"type":"string","description":"Words the name or the app must have, e.g. \"diablo salvage\"."},"offset":{"type":"integer","minimum":0,"description":"How many of each list to skip; 0 when left out."},"limit":{"type":"integer","minimum":1,"maximum":1000,"description":"How many of each list to give; 100 when left out."}},"additionalProperties":false}""",
+                true, false, (a, app, _) => Read(app, Phrase.Of("Ai_ReadOverview"), () => Overview(a))),
             new("get_item",
                 "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out " +
-                "(get_schema gives the defaults). save_* takes it as it is; patch_item's paths point into it.",
-                idOnly, true, false, (a, app, _) => GetItem(a, app)),
+                "(get_schema gives the defaults). save_* takes it as it is; patch_item's paths point into it. A big macro can be " +
+                "read in pieces: outline gives one line per action with its path (a JSON Pointer), type, name and an If's " +
+                "conditions, down to outline_depth levels of Then and Else; path gives only the part there. A macro's rows " +
+                "linked to Library components are listed after it.",
+                """{"type":"object","properties":{"id":{"type":"string","description":"The Id of a loop, macro or remap (get_overview lists them)."},"outline":{"type":"boolean","description":"A macro: its outline instead of its JSON."},"outline_depth":{"type":"integer","minimum":1,"maximum":20,"description":"How many levels of Then and Else the outline goes into; 1 when left out (the macro's own actions)."},"path":{"type":"string","description":"A JSON Pointer into the item, e.g. /Actions/3 or /Actions/3/If/Then/0: only that part."}},"required":["id"],"additionalProperties":false}""",
+                true, false, (a, app, _) => GetItem(a, app)),
             new("get_schema",
                 "Gives the JSON Schema, with descriptions and defaults, of a loop, a macro or a remap: every field and allowed value.",
                 """{"type":"object","properties":{"kind":{"type":"string","enum":["loop","macro","remap"]}},"required":["kind"],"additionalProperties":false}""",
@@ -498,6 +512,34 @@ internal sealed partial class AiTools
                 "The files themselves never change. Pictures need Let AI apps see the screen.",
                 """{"type":"object","properties":{"uri":{"type":"string","description":"The uri of a resource link another PuppyMacro tool gave (puppymacro://debug/…)."},"area":{"type":"object","description":"Pictures: the part to read, in the picture's own pixels (X and Y from 0 at its top left). Leave out for the whole picture.","properties":{"X":{"type":"integer","minimum":0},"Y":{"type":"integer","minimum":0},"Width":{"type":"integer","minimum":1},"Height":{"type":"integer","minimum":1}},"required":["X","Y","Width","Height"],"additionalProperties":false},"scale":{"type":"number","exclusiveMinimum":0,"maximum":1,"description":"Pictures: the size to read it at, width and height alike: 1 (when left out) its own size, 0.25 a quarter."},"offset":{"type":"integer","minimum":1,"description":"Texts (a log, JSON): the first line to read, from 1."},"limit":{"type":"integer","minimum":1,"description":"Texts: how many lines to read from offset; to the end when left out."}},"required":["uri"],"additionalProperties":false}""",
                 true, false, (a, _, _) => ReadResource(a)),
+            new("search_library",
+                "Searches the user's Library: components that already work (a point, an If that finds something, a sequence), " +
+                "kept to be linked in macros instead of being made again. Each has a structured name in English, " +
+                "domain-app-purpose-concept (\"game-diablo_iv-find-rare_item_in_slot\"), a title in the user's words and maybe a " +
+                "description. Filters narrow it (all optional, all must match): domain, app (as in the name: the exe without " +
+                ".exe, lowercase, '_' for anything else, or any), purpose, and words found in the name, title or description. " +
+                "The answer is short: up to limit components (20 when left out), each with its Id, how many rows link it and its " +
+                "collection with the screen it was made on (its points are that screen's). A component's actions: get_component.",
+                """{"type":"object","properties":{"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app part of the name, e.g. diablo_iv, excel, any."},"purpose":{"type":"string","enum":["find","wait","read","state","point","act"],"description":"find: recognizes something; wait: waits until something shows or goes; read: reads a text; state: which screen the app is in; point: where to click or move; act: a sequence that does an operation."},"words":{"type":"string","description":"Words, in English as the names are, e.g. \"rare item\"."},"limit":{"type":"integer","minimum":1,"maximum":200}},"additionalProperties":false}""",
+                true, false, (a, app, _) => SearchLibrary(a, app)),
+            new("get_component",
+                "Gives one Library component: its actions as compact JSON (the same fields as a macro's), its collection with the " +
+                "screen it was made on, and the macros that link it. A macro links it with the row " +
+                "{\"Type\":\"Component\",\"ComponentId\":\"<its Id>\"}: that row plays the component as it is in the Library, also " +
+                "after it changes; a row like that has no DelayMs or Name of its own and can't be changed inside the macro.",
+                idOnly, true, false, (a, app, _) => GetComponent(a, app)),
+            new("save_component",
+                "Saves a Library component: something that works, to be linked in other macros (and shared with the collection " +
+                "it is in). Without id it is new; with id its content is replaced (every macro that links it plays the new one). " +
+                "component: Name (the user's words), Purpose (Find, Wait, Read, State, Point or Act), Concept (English, lowercase " +
+                "letters, digits and _, as short as clear, e.g. rare_item_in_slot), Description (short, English, optional) and " +
+                "Actions (as a macro's, self-contained: a \"where … was found\" uses a condition inside the component; no linked " +
+                "rows inside). collection, for a new component: {\"id\"} of an existing one, or {\"name\", \"domain\", \"app\"} for a " +
+                "new one (made on the screen its first point is on). The structured name is domain-app-purpose-concept. A " +
+                "component's names are how later searches find it, so the concepts already in the Library (search_library) are " +
+                "worth reusing. Saved at once, kept in its History; the user's OK first when they chose it.",
+                """{"type":"object","properties":{"id":{"type":"string","description":"A component's Id, to change it; leave out for a new one."},"collection":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app's .exe, e.g. Diablo IV.exe; leave out for any app."}},"additionalProperties":false},"component":{"type":"object","description":"Name, Purpose, Concept, Description, Actions."}},"required":["component"],"additionalProperties":false}""",
+                false, false, (a, app, c) => SaveComponent(a, app, c)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),
@@ -541,22 +583,34 @@ internal sealed partial class AiTools
         return new AiToolResult(text);
     }
 
-    private string Overview()
+    /// <summary>Default of get_overview's limit, per list.</summary>
+    public const int DefaultOverviewLimit = 100;
+
+    private string Overview(JsonElement args)
     {
         AppSettings s = _host.Settings;
+        var words = (Str(args, "words") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        int offset = Math.Max(0, IntArg(args, "offset") ?? 0);
+        int limit = Math.Clamp(IntArg(args, "limit") ?? DefaultOverviewLimit, 1, 1000);
+        bool Has(string name, string? appExe) =>
+            words.All(w => name.Contains(w, StringComparison.CurrentCultureIgnoreCase) || (appExe?.Contains(w, StringComparison.OrdinalIgnoreCase) ?? false));
+        var loops = s.Loops.Where(l => Has(l.Name, l.AppExe)).ToList();
+        var macros = _host.Macros.Macros.Where(m => Has(m.Name, m.AppExe)).ToList();
+        var remaps = s.Remaps.Where(r => Has(r.Note, r.AppExe)).ToList();
         var overview = new
         {
-            Loops = s.Loops.Select(l => new
+            Total = new { Loops = loops.Count, Macros = macros.Count, Remaps = remaps.Count },
+            Loops = loops.Skip(offset).Take(limit).Select(l => new
             {
                 l.Id, l.Name, l.Enabled, Running = _host.IsRunning(l.Id), Hotkey = Keys(l.Hotkey), l.Mode,
                 App = l.AppExe, Actions = l.Actions.Count,
             }),
-            Macros = _host.Macros.Macros.Select(m => new
+            Macros = macros.Skip(offset).Take(limit).Select(m => new
             {
                 m.Id, m.Name, m.Enabled, Running = _host.IsRunning(m.Id), Hotkey = Keys(m.Hotkey), m.Mode,
                 App = m.AppExe, Actions = m.Actions.Count,
             }),
-            Remaps = s.Remaps.Select(r => new
+            Remaps = remaps.Skip(offset).Take(limit).Select(r => new
             {
                 r.Id, Source = Keys(r.Source), Target = Keys(r.Target), App = r.AppExe, r.Enabled, r.Note,
             }),
@@ -588,7 +642,16 @@ internal sealed partial class AiTools
             if (item == null)
                 return Task.FromResult(AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them."));
             _log.Add(app, AiActivityKind.Read, About("Ai_Read", item));
-            return Task.FromResult(new AiToolResult(Loc.English(() => AiJson.Compact(item))));
+            if (BoolArg(args, "outline") == true)
+                return Task.FromResult(item is MacroDefinition outlined
+                    ? new AiToolResult(Outline(outlined, Math.Clamp(IntArg(args, "outline_depth") ?? 1, 1, 20)) + LinkedList(outlined))
+                    : AiToolResult.Error("Only a macro has an outline: a loop or remap is small, read it whole."));
+            string compact = Loc.English(() => AiJson.Compact(item));
+            if (Str(args, "path") is { Length: > 0 } path)
+                return Task.FromResult(AtPath(compact, path, out string? problem) is string part
+                    ? new AiToolResult(part)
+                    : AiToolResult.Error(problem!));
+            return Task.FromResult(new AiToolResult(compact + (item is MacroDefinition macro ? LinkedList(macro) : "")));
         }).ConfigureAwait(false);
     }
 
@@ -728,7 +791,7 @@ internal sealed partial class AiTools
             ? LoopJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems)
             : typeof(T) == typeof(MacroDefinition)
                 ? MacroJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems,
-                    _host.Macros.Images.Has)
+                    _host.Macros.Images.Has, id => _host.Macros.Library.Find(id) != null)
                 : RemapJson.Parse(text, itemId, (b, a) => HotkeyConflicts.RemapClash(b, a, _host.Settings, _host.Macros, itemId), out problems);
         return parsed is T ok
             ? (ok, null, existing == null ? null : Serialize(existing))

@@ -1501,4 +1501,10 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>The collection {0} in this file can't be imported. {1}</value><comment>Import refused: {0} the collection's name, {1} what is wrong (a sentence)</comment></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Used in {0} macro</value><comment>How many macros link a component: {0} the number</comment></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Used in {0} macros</value><comment>How many macros link a component: {0} the number</comment></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Searched the Library</value><comment>AI activity: an AI app searched the Library</comment></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Read the component {0}</value><comment>AI activity: an AI app read a Library component; {0} its name</comment></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>New component {0}</value><comment>AI activity and confirmation: a new Library component; {0} its name</comment></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Changed component {0}</value><comment>AI activity and confirmation: a Library component changed; {0} its name</comment></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Save this new component in the Library?</value><comment>Confirmation title: an AI app saves a new Library component</comment></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Save the changes to this component? Every macro that links it will play the new one.</value><comment>Confirmation title: an AI app changes a Library component (every macro that links it follows)</comment></data>
 </root>

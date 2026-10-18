@@ -1378,4 +1378,10 @@
   <data name="Library_ImportConflict" xml:space="preserve"><value>このファイルはインポートできません。ファイル内のコレクション {0} は、ライブラリにあるものとは別のバージョンです。コレクションは丸ごと共有されるため、両方を混ぜることはできません。何もインポートされていません。インポートするには、どのマクロも使っていなければ先にご自分のコレクションを削除するか、ご自分のバージョンから作られたファイルを依頼してください。</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>このファイルのコレクション {0} はインポートできません。{1}</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>{0} 個のマクロで使用</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>ライブラリを検索しました</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>コンポーネント {0} を読み取りました</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>新しいコンポーネント {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>コンポーネント {0} を変更</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>この新しいコンポーネントをライブラリに保存しますか?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>このコンポーネントの変更を保存しますか? リンクしているすべてのマクロが新しい内容を実行します。</value></data>
 </root>

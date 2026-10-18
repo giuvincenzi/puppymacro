@@ -63,6 +63,12 @@ internal interface IAiHost
     /// <summary>Adds the new Library collections of a file being imported, as <paramref name="app"/>'s; why not, or null.</summary>
     string? AddCollections(IReadOnlyList<LibraryCollection> collections, string app);
 
+    /// <summary>
+    /// Saves a Library component as <paramref name="app"/>'s: a new one into <paramref name="created"/> (a new collection)
+    /// or the collection its Id is in; why not, or null.
+    /// </summary>
+    string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app);
+
     /// <summary>Deletes a loop, macro or remap (stopping it first), as its card's Delete does.</summary>
     void Delete(Guid id, string app);
 

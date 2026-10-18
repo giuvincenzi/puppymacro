@@ -1548,4 +1548,10 @@
   <data name="Library_UsedInMacros_few" xml:space="preserve"><value>مستخدم في {0} وحدات ماكرو</value></data>
   <data name="Library_UsedInMacros_many" xml:space="preserve"><value>مستخدم في {0} وحدة ماكرو</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>مستخدم في {0} وحدة ماكرو</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>بحث في المكتبة</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>قرأ المكوّن {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>مكوّن جديد {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>تم تغيير المكوّن {0}</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>هل تريد حفظ هذا المكوّن الجديد في المكتبة؟</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>هل تريد حفظ التغييرات على هذا المكوّن؟ ستشغّل كل وحدات الماكرو المرتبطة به النسخة الجديدة.</value></data>
 </root>

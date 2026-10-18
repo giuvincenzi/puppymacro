@@ -1413,4 +1413,10 @@ Detalles: {1}</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>La colección {0} de este archivo no se puede importar. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Se usa en {0} macro</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Se usa en {0} macros</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Buscó en la biblioteca</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Leyó el componente {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Nuevo componente {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Componente {0} modificado</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>¿Guardar este nuevo componente en la biblioteca?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>¿Guardar los cambios de este componente? Todas las macros que lo vinculan ejecutarán el nuevo.</value></data>
 </root>

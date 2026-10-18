@@ -387,6 +387,15 @@ public partial class MainWindow : IAiHost
             }
             else
             {
+                if (entry.ItemKind == "component")
+                {
+                    if (JsonSerializer.Deserialize<LibraryComponent>(entry.Before, CodeJson.Options) is not { } component)
+                        return Strings.AiActivity_CantRestore;
+                    if (SaveComponent(component, null) is string notRestored)
+                        return notRestored;
+                    _aiLog.MarkRestored(entry);
+                    return null;
+                }
                 object? item = entry.ItemKind switch
                 {
                     "loop" => JsonSerializer.Deserialize<LoopDefinition>(entry.Before, CodeJson.Options),
@@ -396,6 +405,9 @@ public partial class MainWindow : IAiHost
                 };
                 if (item == null)
                     return Strings.AiActivity_CantRestore;
+                // A macro version that links a component the Library doesn't have any more can't play: not restored.
+                if (item is MacroDefinition linking && Library.Missing(linking).Count > 0)
+                    return Strings.Code_ComponentMissing;
                 // The images of the version before the change: the item's History keeps them.
                 if (item is MacroDefinition && entry.ItemId is Guid restoredId)
                     _itemHistory?.RestoreImages(restoredId, entry.Before);
@@ -432,6 +444,9 @@ public partial class MainWindow : IAiHost
 
     string? IAiHost.AddCollections(IReadOnlyList<LibraryCollection> collections, string app) =>
         SavingAs(app, () => AddCollections(collections));
+
+    string? IAiHost.SaveComponent(LibraryComponent component, LibraryCollection? created, string app) =>
+        SavingAs(app, () => SaveComponent(component, created));
 
     void IAiHost.Save(object item, string app) => SavingAs(app, () =>
     {

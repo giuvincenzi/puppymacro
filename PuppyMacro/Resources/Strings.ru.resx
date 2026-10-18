@@ -1457,4 +1457,10 @@
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Используется в {0} макросе</value></data>
   <data name="Library_UsedInMacros_few" xml:space="preserve"><value>Используется в {0} макросах</value></data>
   <data name="Library_UsedInMacros_many" xml:space="preserve"><value>Используется в {0} макросах</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Выполнил поиск в библиотеке</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Прочитал компонент {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Новый компонент {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Изменён компонент {0}</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Сохранить этот новый компонент в библиотеке?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Сохранить изменения этого компонента? Все привязанные к нему макросы будут выполнять новый вариант.</value></data>
 </root>

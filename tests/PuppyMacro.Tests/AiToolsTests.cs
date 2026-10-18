@@ -50,6 +50,22 @@ internal sealed class FakeAiHost : IAiHost
 
     public Task<T> Ui<T>(Func<Task<T>> action) => action();
 
+    public string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app)
+    {
+        if (Macros.Library.Find(component.Id) is { } found)
+        {
+            found.Collection.Components[found.Collection.Components.IndexOf(found.Component)] = component.Clone();
+            return null;
+        }
+        if (created == null)
+            return "no collection";
+        var collection = Macros.Library.FindCollection(created.Id) ?? created;
+        if (!Macros.Library.Collections.Contains(collection))
+            Macros.Library.Collections.Add(collection);
+        collection.Components.Add(component.Clone());
+        return null;
+    }
+
     public string? AddCollections(IReadOnlyList<LibraryCollection> collections, string app)
     {
         foreach (var collection in collections)

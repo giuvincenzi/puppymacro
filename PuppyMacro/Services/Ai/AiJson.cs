@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
+using PuppyMacro.Models;
 
 namespace PuppyMacro.Services.Ai;
 
@@ -129,6 +130,9 @@ internal static class AiJson
         foreach (JsonObject action in AllActions(actions).ToList())
         {
             if (groupId != null && !string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase))
+                continue;
+            // A row linked to a Library component has only its link: it is left as it is.
+            if (action["Type"]?.GetValue<string>() == nameof(MacroActionType.Component))
                 continue;
             if (!match.All(m => action.ContainsKey(m.Name) && JsonNode.DeepEquals(action[m.Name], m.Value)))
                 continue;

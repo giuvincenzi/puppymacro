@@ -62,6 +62,35 @@ public partial class MainWindow
             return null;
         }, onlyAdds: true);
 
+    /// <summary>
+    /// Saves a component (an AI app's, a Restore): one the Library has gets its new content where it is; a new one goes into
+    /// <paramref name="created"/> (a new collection, added). Checked as the Library window checks it. Why not, or null.
+    /// </summary>
+    internal string? SaveComponent(LibraryComponent component, LibraryCollection? created) => SaveLibrary(library =>
+    {
+        if (library.Find(component.Id) is { } found)
+        {
+            int index = found.Collection.Components.IndexOf(found.Component);
+            found.Collection.Components[index] = component.Clone();
+        }
+        else
+        {
+            if (created == null)
+                return Strings.Code_ComponentMissing;
+            if (ComponentLibrary.CheckCollection(created) is string bad)
+                return bad;
+            var collection = library.FindCollection(created.Id);
+            if (collection == null)
+            {
+                collection = created.Clone();
+                collection.Components.Clear();
+                library.Collections.Add(collection);
+            }
+            collection.Components.Add(component.Clone());
+        }
+        return ComponentLibrary.CheckComponent(component, _macros.Images.Has);
+    });
+
     /// <summary>The Library's Import: the same Import as the title bar's (a file's items and collections).</summary>
     private void ImportCollections(LibraryWindow window) => ImportItems(null, null, null);
 

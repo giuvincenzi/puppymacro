@@ -1457,4 +1457,10 @@ Detalii: {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Folosită în {0} macrocomandă</value></data>
   <data name="Library_UsedInMacros_few" xml:space="preserve"><value>Folosită în {0} macrocomenzi</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Folosită în {0} de macrocomenzi</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>A căutat în bibliotecă</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>A citit componenta {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Componentă nouă {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Componenta {0} a fost modificată</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Salvați această componentă nouă în bibliotecă?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Salvați modificările acestei componente? Toate macrocomenzile legate de ea vor rula noua versiune.</value></data>
 </root>

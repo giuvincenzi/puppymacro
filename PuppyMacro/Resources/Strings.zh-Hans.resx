@@ -1378,4 +1378,10 @@
   <data name="Library_ImportConflict" xml:space="preserve"><value>无法导入此文件。其中的集合 {0} 与你库中的版本不同，而集合只能整体共享，因此两者不能混用。未导入任何内容。若要导入，请先删除你的集合（前提是没有宏在使用它），或索取基于你的版本制作的文件。</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>无法导入此文件中的集合 {0}。{1}</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>在 {0} 个宏中使用</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>搜索了库</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>读取了组件 {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>新组件 {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>已更改组件 {0}</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>要将这个新组件保存到库中吗？</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>要保存对此组件的更改吗？所有链接它的宏都将运行新版本。</value></data>
 </root>

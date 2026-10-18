@@ -1423,4 +1423,10 @@ Detajet: {1}</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Koleksioni {0} në këtë skedar nuk mund të importohet. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Përdoret në {0} makro</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Përdoret në {0} makro</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Kërkoi në bibliotekë</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Lexoi komponentin {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Komponent i ri {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Komponenti {0} u ndryshua</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Të ruhet ky komponent i ri në bibliotekë?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Të ruhen ndryshimet e këtij komponenti? Të gjitha makrot që e lidhin do të ekzekutojnë të riun.</value></data>
 </root>

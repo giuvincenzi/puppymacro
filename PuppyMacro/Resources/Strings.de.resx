@@ -1412,4 +1412,10 @@ Details: {1}</value></data>
   <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Die Sammlung {0} in dieser Datei kann nicht importiert werden. {1}</value></data>
   <data name="Library_UsedInMacros_one" xml:space="preserve"><value>In {0} Makro verwendet</value></data>
   <data name="Library_UsedInMacros_other" xml:space="preserve"><value>In {0} Makros verwendet</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Hat die Bibliothek durchsucht</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Hat die Komponente {0} gelesen</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Neue Komponente {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Komponente {0} geändert</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Diese neue Komponente in der Bibliothek speichern?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Änderungen an dieser Komponente speichern? Alle Makros, die sie verknüpfen, führen dann die neue aus.</value></data>
 </root>
