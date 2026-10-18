@@ -128,7 +128,10 @@ public class AiScreenTests
         using var app = new AppSession(seed => seed.Settings.AllowAiAccess = true);
         using var target = new TargetWindow();
         await using McpClient client = await Connect();
-        Point click = TargetWindow.PointAt(0.4, 0.5);
+        // A pattern to click: an image around a click on a flat area is left out (an Image condition can't find one color).
+        Point at = TargetWindow.PointAt(0.4, 0.5);
+        target.ShowPicture(ConditionTests.Pattern(80, 60, 7), at);
+        Point click = new(at.X + 40, at.Y + 30);
 
         Task<CallToolResult> call = Call(client, "record_macro", With(new { mouse_movement = false }));
         PressStart(app);

@@ -14,7 +14,8 @@ public class DebugLogTests
     [Fact]
     public void A_macro_with_Debug_on_shows_the_log_of_its_last_run()
     {
-        MacroDefinition macro = Macro("E2E debug", null, Press(Vk.F22));
+        // After a second and a half: started with Play, the macro waits for the target window to come back in front.
+        MacroDefinition macro = Macro("E2E debug", null, Press(Vk.F22, delayMs: 1500));
         macro.Debug = true;
         using var app = new AppSession(seed => seed.Macros.Add(macro));
         app.GoTo("Macros");

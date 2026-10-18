@@ -101,7 +101,7 @@ public class ConditionTests
     }
 
     /// <summary>A picture of colored squares, the same for a seed: detail an image search finds in one place only.</summary>
-    private static Bitmap Pattern(int width, int height, int seed)
+    internal static Bitmap Pattern(int width, int height, int seed)
     {
         var random = new Random(seed);
         var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
