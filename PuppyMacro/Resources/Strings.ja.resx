@@ -1306,4 +1306,76 @@
   <data name="Code_ChooseComponent" xml:space="preserve"><value>[コンポーネントを追加] でリンクするコンポーネントを選んでください。</value></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>ライブラリにはこのコンポーネントがもうありません。[コンポーネントを追加] で別のものをリンクするか、この行を削除してください。</value></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>コンポーネントにリンクされた行には、独自の待ち時間や名前はありません (それらはコンポーネントのアクションにあります)。DelayMs と Name を削除してください。</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>コンポーネント</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>コンポーネントを追加</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>コンポーネント · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>見つからないコンポーネント</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>コンポーネントとして保存…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>リンク解除</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>先にすべてのループとマクロを停止してください。何かが実行中の間、ライブラリは変更されません。</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro はライブラリを保存できませんでした。{0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>コンポーネント - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>この行はリンクされています。ライブラリにあるとおりにコンポーネントを実行し、コンポーネントが変わると一緒に変わります。このマクロだけで変更するには、リンクを解除してください。</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>コレクション</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>使用先</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>未使用</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>実行する内容</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>この行のリンクを解除</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>ライブラリで開く</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>ライブラリ</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>検索</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>インポート</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>コレクション</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>コンポーネント</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>コレクションをエクスポート</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>詳細を編集</value></data>
+  <data name="Library_History" xml:space="preserve"><value>履歴</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>削除</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>ライブラリは空です。マクロで行を選んで [コンポーネントとして保存] を使うか、AI アプリにうまくいったものを保存するよう頼んでください。</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>リンクして追加</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>すべてのアプリ</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>ゲーム</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>オフィス</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>ブラウザー</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>クリエイティブ</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>開発</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>チャットとメール</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>その他</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>何かを見つける</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>何かを待つ</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>テキストを読む</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>アプリの状態を判別する</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>位置</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>操作を実行する</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>{0} を削除しますか?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>{0} とそのすべてのコンポーネントを削除しますか?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>コレクション名の変更</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>名前の変更</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>コレクションを削除</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>履歴 - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>コンポーネントとして保存</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>選択したアクションはライブラリのコンポーネントになり、これらの行はそのコンポーネントにリンクされます。</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>名前</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>ライブラリとマクロに表示される名前</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>役割</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>AI アプリは役割でコンポーネントを探します</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>コンセプト</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>英語の小文字、数字、_ で入力します (例: remove_one_affix)。AI アプリはこれで検索します。</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>説明</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>省略可能。AI アプリ向けに、役割を英語で記述します。</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>保存および共有に使うコレクション</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>新しいコレクション</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>新しいコレクションの名前</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>アプリの種類</value></data>
+  <data name="Library_App" xml:space="preserve"><value>アプリ</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>.exe ファイル名 (例: Diablo IV.exe)。すべてのアプリが対象なら空のままにします。</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>画面</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>位置を取得したモニターです。別の画面では位置の変更が必要です。</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px、{2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>不明</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>選択したアクション</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>このファイルはインポートできません。ファイル内のコレクション {0} は、ライブラリにあるものとは別のバージョンです。コレクションは丸ごと共有されるため、両方を混ぜることはできません。何もインポートされていません。インポートするには、どのマクロも使っていなければ先にご自分のコレクションを削除するか、ご自分のバージョンから作られたファイルを依頼してください。</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>このファイルのコレクション {0} はインポートできません。{1}</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>{0} 個のマクロで使用</value></data>
 </root>

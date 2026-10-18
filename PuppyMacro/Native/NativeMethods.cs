@@ -242,6 +242,13 @@ internal static class NativeMethods
     public static extern IntPtr WindowFromPoint(POINT point);
 
     [DllImport("user32.dll")]
+    public static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
+
+    /// <summary>MDT_EFFECTIVE_DPI = 0: the DPI Windows' scale gives the monitor (96 = 100%).</summary>
+    [DllImport("shcore.dll")]
+    public static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+
+    [DllImport("user32.dll")]
     public static extern IntPtr GetForegroundWindow();
 
     // ---------------- Z-order (the window behind PuppyMacro, for Test) ----------------

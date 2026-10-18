@@ -113,7 +113,9 @@ public partial class MainWindow
                 return;
             }
             int count = view.ChosenCount;
-            window.SetPrimary(Plurals.Format("ImportItems_Button", count), count > 0);
+            // A file with only Library collections imports them.
+            bool collections = view.FileContent is { NewCollections.Count: > 0 };
+            window.SetPrimary(count == 0 && collections ? Strings.Share_Import : Plurals.Format("ImportItems_Button", count), count > 0 || collections);
         }
         view.ChoiceChanged += RefreshButton;
         view.OtherFileRequested += () =>
@@ -144,7 +146,15 @@ public partial class MainWindow
 
         List<object> items = view.ChosenItems();
         if (view.FileContent is { } content)
+        {
             ItemFile.AddImages(content, _macros);
+            // The collections first: the macros may link them.
+            if (SavingAs(app ?? ItemHistory.You, () => AddCollections(content.NewCollections)) is string problem)
+            {
+                _ = ShowMessage(Strings.Library_Title, problem);
+                return (AiAnswer.Cancelled, new List<object>());
+            }
+        }
         SavingAs(app ?? ItemHistory.You, () =>
         {
             foreach (object item in items)
@@ -227,7 +237,7 @@ public partial class MainWindow
             return false;
         try
         {
-            File.WriteAllText(dialog.FileName, ItemFile.Write(items, ItemFile.AppVersion, _macros.Images));
+            File.WriteAllText(dialog.FileName, ItemFile.Write(items, ItemFile.AppVersion, _macros.Images, _macros.Library));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

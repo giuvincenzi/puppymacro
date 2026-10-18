@@ -206,6 +206,43 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
     public bool IsTextIcon => Action.Type == MacroActionType.PasteText;
     public bool IsIfIcon => Action.Type == MacroActionType.If;
 
+    /// <summary>A row linked to a Library component: one line, greyed, read only; no wait of its own.</summary>
+    public bool IsLinked => Action.Type == MacroActionType.Component;
+
+    public bool ShowsDelay => !IsLinked;
+
+    /// <summary>The linked component's name, or "" when the Library doesn't have it (set by the editor).</summary>
+    public string ComponentName
+    {
+        get => _componentName;
+        set
+        {
+            if (_componentName == value)
+                return;
+            _componentName = value;
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(AccessibleName));
+        }
+    }
+
+    private string _componentName = "";
+
+    /// <summary>Where the linked component is and what it holds: "Component · Diablo IV 5120×1440 · 4 actions" (set by the editor).</summary>
+    public string ComponentDetail
+    {
+        get => _componentDetail;
+        set
+        {
+            if (_componentDetail == value)
+                return;
+            _componentDetail = value;
+            OnPropertyChanged(nameof(Detail));
+            OnPropertyChanged(nameof(AccessibleName));
+        }
+    }
+
+    private string _componentDetail = "";
+
     /// <summary>The icon of a type of action, the same as its row's (used by the Add action menu).</summary>
     public static FontIconData IconOf(MacroActionType type) => type switch
     {
@@ -214,6 +251,7 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
         MacroActionType.MoveTo or MacroActionType.MovePath => SegoeFluentIcons.Move,
         MacroActionType.If => FluentSystemIcons.BranchFork_20_Regular,
         MacroActionType.Scroll => SegoeFluentIcons.ScrollUpDown,
+        MacroActionType.Component => SegoeFluentIcons.Link,
         _ => SegoeFluentIcons.Font,
     };
 
@@ -252,6 +290,7 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
         },
         MacroActionType.PasteText => Strings.ActionWindow_Type_PasteText,
         MacroActionType.If => Strings.Macro_If,
+        MacroActionType.Component => ComponentName.Length > 0 ? ComponentName : Strings.MacroEditor_RowComponentMissing,
         _ => Action.Type.ToString(),
     };
 
@@ -266,6 +305,7 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
         MacroActionType.Scroll => Plurals.Format("MacroEditor_RowScrollSteps", Action.ScrollSteps),
         MacroActionType.PasteText => Fill(Strings.MacroEditor_RowQuoted, Shorten(Action.Text)),
         MacroActionType.If => IfDetail(Action.If),
+        MacroActionType.Component => ComponentDetail,
         _ => "",
     };
 

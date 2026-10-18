@@ -325,4 +325,126 @@ public class ItemFileTests : IDisposable
         Assert.Equal("J to C.puppyitems", ItemFile.FileName(new object[] { Remap(KeyJ, KeyC, "J to C") }));
         Assert.Equal("PuppyMacro items.puppyitems", ItemFile.FileName(new object[] { Loop("A"), Macro("B") }));
     }
+
+    // ================= Library collections =================
+
+    private static LibraryCollection Collection(string name, params LibraryComponent[] components) =>
+        new() { Name = name, Domain = LibraryDomain.Game, AppExe = "Game.exe", Components = components.ToList() };
+
+    private static LibraryComponent Component(string name, int x) => new()
+    {
+        Name = name,
+        Concept = "slot",
+        Purpose = ComponentPurpose.Point,
+        Actions = { new MacroAction { Type = MacroActionType.Click, Vk = 0x01, X = x, Y = 20 } },
+    };
+
+    private static MacroDefinition Linking(string name, LibraryComponent component) => new()
+    {
+        Name = name,
+        Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id } },
+    };
+
+    /// <summary>A PuppyMacro of its own (its library.json in its own folder).</summary>
+    private MacroLibrary Other(string folder) => new(_folder.File(folder + "/macros"));
+
+    [Fact]
+    public void A_macro_s_collections_go_with_it_whole_and_come_in_before_it()
+    {
+        var mine = Other("mine");
+        var slot1 = Component("Slot 1", 10);
+        var slot2 = Component("Slot 2", 20);
+        mine.Library.Collections.Add(Collection("Game 2K", slot1, slot2));
+        string text = ItemFile.Write(new object[] { Linking("Farm", slot1) }, This, mine.Images, mine.Library);
+
+        var collections = JsonNode.Parse(text)!["Collections"]!.AsArray();
+        Assert.Equal(2, collections.Single()!["Components"]!.AsArray().Count); // whole, not only the linked component
+
+        var friend = Other("friend");
+        var content = ItemFile.Read(text, _settings, friend, This);
+        Assert.Null(content.Error);
+        Assert.Equal("Game 2K", content.NewCollections.Single().Name);
+        Assert.Null(content.Entries.Single().Problem); // the macro links a component the file brings
+    }
+
+    [Fact]
+    public void A_collection_already_here_as_it_is_is_not_added_again()
+    {
+        var slot = Component("Slot 1", 10);
+        var collection = Collection("Game 2K", slot);
+        var mine = Other("mine");
+        mine.Library.Collections.Add(collection);
+        string text = ItemFile.Write(new object[] { Linking("Farm", slot) }, This, mine.Images, mine.Library);
+
+        var same = Other("same");
+        same.Library.Collections.Add(collection.Clone());
+        var content = ItemFile.Read(text, _settings, same, This);
+
+        Assert.Null(content.Error);
+        Assert.Empty(content.NewCollections);
+        Assert.Null(content.Entries.Single().Problem);
+    }
+
+    [Fact]
+    public void Another_version_of_a_collection_here_refuses_the_whole_file()
+    {
+        var slot = Component("Slot 1", 10);
+        var collection = Collection("Game 2K", slot);
+        var mine = Other("mine");
+        mine.Library.Collections.Add(collection);
+        string text = ItemFile.Write(new object[] { Linking("Farm", slot), Macro("Plain") }, This, mine.Images, mine.Library);
+
+        var friend = Other("friend");
+        var changed = collection.Clone();
+        changed.Components[0].Actions[0].X = 11;
+        friend.Library.Collections.Add(changed);
+        var content = ItemFile.Read(text, _settings, friend, This);
+
+        Assert.Contains("Game 2K", content.Error);
+        Assert.Empty(content.Entries); // nothing half imported
+        Assert.Empty(content.NewCollections);
+
+        // A rename alone is the same content: no conflict.
+        changed.Components[0].Actions[0].X = 10;
+        changed.Name = "Renamed";
+        Assert.Null(ItemFile.Read(text, _settings, friend, This).Error);
+    }
+
+    [Fact]
+    public void A_component_here_in_another_collection_refuses_the_file()
+    {
+        var slot = Component("Slot 1", 10);
+        var mine = Other("mine");
+        mine.Library.Collections.Add(Collection("Game 2K", slot));
+        string text = ItemFile.Write(new object[] { Linking("Farm", slot) }, This, mine.Images, mine.Library);
+
+        var friend = Other("friend");
+        friend.Library.Collections.Add(Collection("Elsewhere", slot));
+        Assert.Contains("Elsewhere", ItemFile.Read(text, _settings, friend, This).Error);
+    }
+
+    [Fact]
+    public void A_macro_linking_a_component_nowhere_can_t_be_imported()
+    {
+        var gone = Component("Gone", 10);
+        string text = ItemFile.Write(new object[] { Linking("Farm", gone) }, This); // no Library: no collection in the file
+
+        var entry = ItemFile.Read(text, _settings, Other("friend"), This).Entries.Single();
+        Assert.Contains(PuppyMacro.Resources.Strings.Code_ComponentMissing, entry.Problem);
+    }
+
+    [Fact]
+    public void A_collection_alone_can_be_shared()
+    {
+        var mine = Other("mine");
+        var collection = Collection("Excel", Component("Cell A1", 10));
+        mine.Library.Collections.Add(collection);
+        string text = ItemFile.Write(Array.Empty<object>(), This, mine.Images, mine.Library, new[] { collection });
+
+        var content = ItemFile.Read(text, _settings, Other("friend"), This);
+        Assert.Null(content.Error);
+        Assert.Empty(content.Entries);
+        Assert.Equal(collection.Id, content.NewCollections.Single().Id);
+        Assert.Equal("Excel.puppyitems", ItemFile.SafeFileName("Excel"));
+    }
 }

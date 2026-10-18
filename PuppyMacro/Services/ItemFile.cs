@@ -52,6 +52,9 @@ internal sealed class ItemFileContent
     /// <summary>The images of the file's macros, as Base64 by id (<c>Images</c> at the top of the file).</summary>
     public Dictionary<string, string> Images { get; } = new(StringComparer.Ordinal);
 
+    /// <summary>The file's Library collections this PuppyMacro doesn't have yet: added whole before the items.</summary>
+    public List<LibraryCollection> NewCollections { get; } = new();
+
     public IEnumerable<object> SelectedItems => Entries.Where(e => e.Selected && e.Item != null).Select(e => e.Item!);
 }
 
@@ -73,15 +76,23 @@ internal static class ItemFile
     public static Version? AppVersion { get; } = typeof(ItemFile).Assembly.GetName().Version;
 
     /// <param name="images">Where the macros' images are: they go in the file (<c>Images</c>), so it is complete.</param>
-    public static string Write(IEnumerable<object> items, Version? app, ImageStore? images = null)
+    /// <param name="library">The Library: the collections the macros link go in the file (<c>Collections</c>), whole.</param>
+    /// <param name="collections">Collections to share as well (Export collection), whole.</param>
+    public static string Write(IEnumerable<object> items, Version? app, ImageStore? images = null, ComponentLibrary? library = null,
+        IEnumerable<LibraryCollection>? collections = null)
     {
         var list = new JsonArray();
         var ids = new HashSet<string>(StringComparer.Ordinal);
+        var shared = new List<LibraryCollection>(collections ?? Enumerable.Empty<LibraryCollection>());
         foreach (object item in items)
         {
             list.Add(new JsonObject { ["Kind"] = KindName(item), ["Item"] = JsonNode.Parse(Serialize(item)) });
-            if (item is MacroDefinition macro)
-                ids.UnionWith(ImageStore.IdsIn(macro));
+            if (item is not MacroDefinition macro)
+                continue;
+            ids.UnionWith(ImageStore.IdsIn(macro));
+            foreach (var link in macro.AllActions.Where(a => a.Type == MacroActionType.Component))
+                if (link.ComponentId is Guid component && library?.Find(component) is { } found && !shared.Any(c => c.Id == found.Collection.Id))
+                    shared.Add(found.Collection);
         }
         var root = new JsonObject
         {
@@ -89,6 +100,14 @@ internal static class ItemFile
             ["App"] = app == null ? null : VersionText(app),
             ["Items"] = list,
         };
+        // Library collections, whole (a collection is never split): older versions read the file without them.
+        if (shared.Count > 0)
+        {
+            root["Collections"] = JsonNode.Parse(JsonSerializer.Serialize(shared, CodeJson.Options));
+            foreach (var collection in shared)
+                foreach (var component in collection.Components)
+                    ids.UnionWith(ImageStore.IdsIn(new MacroDefinition { Actions = component.Actions }));
+        }
         // A new field around the items: older versions read Format 1 files without looking at it.
         if (images?.Embed(ids) is { } embedded)
         {
@@ -136,18 +155,66 @@ internal static class ItemFile
             foreach (var (id, value) in images)
                 if (MacroJson.IsImageId(id) && value is JsonValue v && v.TryGetValue(out string? base64))
                     content.Images[id] = base64;
+        // An image a macro or a component names is in the file, or already kept here.
+        bool HasImage(string image) => content.Images.ContainsKey(image) || macros.Images.Has(image);
+
+        var fileCollections = new List<LibraryCollection>();
+        if (file["Collections"] is JsonArray collections)
+        {
+            try
+            {
+                fileCollections = JsonSerializer.Deserialize<List<LibraryCollection>>(collections.ToJsonString(), CodeJson.Options) ?? new();
+            }
+            catch (JsonException)
+            {
+                return new ItemFileContent { Error = newer ? update : Strings.ItemFile_NotItemsFile, NeedsUpdate = newer };
+            }
+            if (CollectionsProblem(fileCollections, macros.Library, HasImage, content.NewCollections) is string problem)
+                return new ItemFileContent { Error = newer ? update : problem, NeedsUpdate = newer };
+        }
+        bool HasComponent(Guid id) => macros.Library.Find(id) != null || fileCollections.Any(c => c.Components.Any(k => k.Id == id));
+
         var taken = new Taken(settings, macros);
         for (int index = 0; index < items.Count; index++)
-        {
-            // An image a macro names is in the file, or already kept here.
-            bool HasImage(string image) => content.Images.ContainsKey(image) || macros.Images.Has(image);
-            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken, HasImage));
-        }
+            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken, HasImage, HasComponent));
         return content;
     }
 
+    /// <summary>
+    /// The file's collections against the Library (the user's decision: a collection is a package, its id never changes):
+    /// one the Library doesn't have is new (it must pass the Library's checks); one with the same id and the same content
+    /// (<see cref="ComponentLibrary.Fingerprint"/>) is already here; one with the same id and other content, or a component
+    /// that is here in another collection, refuses the whole file, saying which.
+    /// </summary>
+    private static string? CollectionsProblem(List<LibraryCollection> collections, ComponentLibrary library, Func<string, bool> hasImage,
+        List<LibraryCollection> added)
+    {
+        foreach (var collection in collections)
+        {
+            collection.Components.RemoveAll(c => c == null);
+            if (library.FindCollection(collection.Id) is { } mine)
+            {
+                if (ComponentLibrary.Fingerprint(mine) != ComponentLibrary.Fingerprint(collection))
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportConflict, collection.Name);
+                continue;
+            }
+            foreach (var component in collection.Components)
+            {
+                if (library.Find(component.Id) is { } elsewhere)
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportConflict, elsewhere.Collection.Name);
+            }
+            string? bad = ComponentLibrary.CheckCollection(collection)
+                ?? collection.Components.Select(c => ComponentLibrary.CheckComponent(c, hasImage)).FirstOrDefault(p => p != null);
+            if (bad != null)
+                return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportCollectionProblem, collection.Name, bad);
+            collection.AppExe = AppScope.Normalize(collection.AppExe);
+            added.Add(collection);
+        }
+        return null;
+    }
+
     private static ItemFileEntry ReadEntry(JsonNode? node, int index, bool chosen, string? update, Taken taken,
-        Func<string, bool> hasImage)
+        Func<string, bool> hasImage, Func<Guid, bool> hasComponent)
     {
         string kindName = node is JsonObject o && o["Kind"] is JsonValue k && k.TryGetValue(out string? word) ? word : "";
         string kind = kindName.ToLowerInvariant();
@@ -172,7 +239,7 @@ internal static class ItemFile
         object? parsed = kind switch
         {
             "loop" => LoopJson.Parse(json, id, (_, _) => null, out problems),
-            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems, hasImage),
+            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems, hasImage, hasComponent),
             _ => RemapJson.Parse(json, id, (_, _) => null, out problems, withoutSource: true),
         };
         if (parsed is RemapDefinition remapTitle)
@@ -306,6 +373,14 @@ internal static class ItemFile
             KeyNames.Format(remap.Source), KeyNames.Format(remap.Target), remap.AppExe);
 
     /// <summary>A file name for these items: the item's name for one item, "PuppyMacro items" for more.</summary>
+    /// <summary>A name made safe for a file, with the extension ("Diablo IV 5120×1440.puppyitems").</summary>
+    public static string SafeFileName(string name)
+    {
+        foreach (char bad in System.IO.Path.GetInvalidFileNameChars())
+            name = name.Replace(bad, '_');
+        return (name.Trim().Length == 0 ? Strings.ItemFile_DefaultFileName : name.Trim()) + Extension;
+    }
+
     public static string FileName(IReadOnlyList<object> items)
     {
         string name = items.Count != 1 ? Strings.ItemFile_DefaultFileName : items[0] switch

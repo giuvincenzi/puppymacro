@@ -1306,4 +1306,76 @@
   <data name="Code_ChooseComponent" xml:space="preserve"><value>请使用“添加组件”选择要链接的组件。</value></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>库中已没有此组件。请使用“添加组件”链接其他组件，或删除此行。</value></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>链接到组件的行没有自己的等待时间和名称，它们属于组件的操作。请删除 DelayMs 和 Name。</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>组件</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>添加组件</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>组件 · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>缺少的组件</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>另存为组件…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>取消链接</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>请先停止所有循环和宏：有内容正在运行时，库不会更改。</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro 无法保存库。{0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>组件 - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>此行已链接：它按库中的样子运行组件，组件更改时它也会随之更改。若只想在此宏中更改，请取消链接。</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>集合</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>使用位置</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>未使用</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>运行内容</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>取消此行的链接</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>在库中打开</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>库</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>搜索</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>导入</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>集合</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>组件</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>导出集合</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>编辑详细信息</value></data>
+  <data name="Library_History" xml:space="preserve"><value>历史记录</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>删除</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>库是空的。请在宏中选择行并使用“另存为组件”，或让你的 AI 应用保存行之有效的部分。</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>链接添加</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>任何应用</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>游戏</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>办公</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>浏览器</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>创意</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>开发</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>聊天和邮件</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>其他</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>查找内容</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>等待内容</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>读取文本</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>识别应用状态</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>一个点</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>执行操作</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>要删除 {0} 吗？</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>要删除 {0} 及其所有组件吗？</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>重命名集合</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>重命名</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>删除集合</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>历史记录 - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>另存为组件</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>所选操作将成为库中的一个组件，这些行将链接到它。</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>名称</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>在库和宏中显示的内容</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>作用</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>AI 应用按作用查找组件</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>概念</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>使用英文小写字母、数字和 _，例如 remove_one_affix。AI 应用会据此搜索。</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>描述</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>可选。用英文描述其作用，供 AI 应用使用。</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>保存和共享的位置</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>新建集合</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>新集合的名称</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>应用类型</value></data>
+  <data name="Library_App" xml:space="preserve"><value>应用</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>其 .exe 文件，例如 Diablo IV.exe。适用于任何应用时请留空。</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>屏幕</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>获取这些点所用的显示器。在其他屏幕上需要更改这些点。</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} 像素，{2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>未知</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>所选操作</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>无法导入此文件。其中的集合 {0} 与你库中的版本不同，而集合只能整体共享，因此两者不能混用。未导入任何内容。若要导入，请先删除你的集合（前提是没有宏在使用它），或索取基于你的版本制作的文件。</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>无法导入此文件中的集合 {0}。{1}</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>在 {0} 个宏中使用</value></data>
 </root>

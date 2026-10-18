@@ -721,6 +721,13 @@
                                     <TextBlock Text="{x:Static r:Strings.Macros_Record}" />
                                 </StackPanel>
                             </Button>
+                            <!-- The Library of components the macros link (approved: the Design canvas "PuppyMacro Library") -->
+                            <Button x:Name="LibraryButton" Margin="8,0,0,0" AutomationProperties.Name="{x:Static r:Strings.Library_Title}" Click="OnLibraryClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:FontIcon Margin="0,0,8,0" VerticalAlignment="Center" FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Library}" />
+                                    <TextBlock Text="{x:Static r:Strings.Library_Title}" />
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Grid>
 

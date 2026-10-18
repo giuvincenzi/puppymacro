@@ -682,6 +682,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return;
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, null, PlaceFromEditor, recorded) { Owner = this };
+        PrepareEditor(editor);
         if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
         AddMacro(editor.Result);
@@ -742,6 +743,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return false;
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor);
+        PrepareEditor(editor);
         if (forAi == null)
             editor.Owner = this;
         else
@@ -1564,6 +1566,8 @@ public partial class MainWindow
             _itemHistory.Seed(macro.Id, MacroJson.Serialize(macro));
         foreach (RemapDefinition remap in _settings.Remaps)
             _itemHistory.Seed(remap.Id, RemapJson.Serialize(remap));
+        foreach (var (id, json) in LibraryItems())
+            _itemHistory.Seed(id, json);
         // Images no macro uses (taken and not saved, from an earlier session): the History keeps its own copies.
         _macros.ReleaseUnusedImages();
     }
@@ -1582,7 +1586,7 @@ public partial class MainWindow
         foreach (RemapDefinition remap in _settings.Remaps)
             _itemHistory.Record(remap.Id, RemapJson.Serialize(remap), _savedBy);
         var existing = _settings.Loops.Select(l => l.Id).Concat(_settings.Remaps.Select(r => r.Id))
-            .Concat(_macros.Macros.Select(m => m.Id)).ToHashSet();
+            .Concat(_macros.Macros.Select(m => m.Id)).Concat(LibraryItems().Select(i => i.Id)).ToHashSet();
         foreach (Guid gone in _itemHistory.Known.Where(id => !existing.Contains(id)).ToList())
             _itemHistory.RecordDeleted(gone, _savedBy);
     }

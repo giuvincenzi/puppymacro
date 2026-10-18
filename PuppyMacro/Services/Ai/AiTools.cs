@@ -1268,7 +1268,7 @@ internal sealed partial class AiTools
         (string? text, string? unknown, int count) = await _host.Ui(() =>
         {
             (List<object> items, string? missing) = ItemsByIds(ids);
-            return Task.FromResult(missing != null ? (null, missing, 0) : ((string?)ItemFile.Write(items, ItemFile.AppVersion, _host.Macros.Images), (string?)null, items.Count));
+            return Task.FromResult(missing != null ? (null, missing, 0) : ((string?)ItemFile.Write(items, ItemFile.AppVersion, _host.Macros.Images, _host.Macros.Library), (string?)null, items.Count));
         }).ConfigureAwait(false);
         if (unknown != null)
             return AiToolResult.Error($"No loop, macro or remap has the Id {unknown}. get_overview lists them.");
@@ -1298,7 +1298,7 @@ internal sealed partial class AiTools
         List<ItemFileEntry> chosen = content.Entries.Where(e => e.Selected).ToList();
         string skipped = string.Join("", content.Entries.Where(e => e.Problem != null && (only == null || only.Contains(e.Index)))
             .Select(e => $"\n- Not imported, {e.Kind} {e.Index} \"{e.Title}\": {e.Problem}"));
-        if (chosen.Count == 0)
+        if (chosen.Count == 0 && content.NewCollections.Count == 0)
             return AiToolResult.Error("Nothing was imported." + skipped);
 
         AiToolResult Apply()
@@ -1308,7 +1308,10 @@ internal sealed partial class AiTools
             // Read again: meanwhile the user may have taken a name or a hotkey.
             ItemFileContent now = Loc.English(() => ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only));
             ItemFile.AddImages(now, _host.Macros);
-            var lines = new List<string>();
+            // The Library collections first: the macros may link them.
+            if (_host.AddCollections(now.NewCollections, app) is string notAdded)
+                return AiToolResult.Error(Loc.English(() => notAdded));
+            var lines = now.NewCollections.Select(c => $"- Library collection \"{c.Name}\", Id {c.Id}").ToList();
             foreach (ItemFileEntry entry in now.Entries.Where(e => e.Selected))
             {
                 object item = entry.Item!;

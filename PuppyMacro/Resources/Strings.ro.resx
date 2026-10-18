@@ -1383,4 +1383,78 @@ Detalii: {1}</value></data>
   <data name="Code_ChooseComponent" xml:space="preserve"><value>Alegeți componenta de legat cu Adăugare componentă.</value></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>Biblioteca nu mai conține această componentă. Legați alta cu Adăugare componentă sau ștergeți acest rând.</value></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Un rând legat de o componentă nu are o așteptare sau un nume propriu: le au acțiunile componentei. Eliminați DelayMs și Name.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Componentă</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Adăugare componentă</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Componentă · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Componentă lipsă</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Salvare ca componentă…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Anulare legătură</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Opriți mai întâi toate buclele și macrocomenzile: biblioteca nu se schimbă cât timp rulează ceva.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro nu a putut salva biblioteca. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>Componentă - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>Acest rând este legat: rulează componenta așa cum este în bibliotecă și se schimbă când se schimbă componenta. Pentru a-l modifica doar în această macrocomandă, anulați legătura.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Colecție</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Folosită în</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Nefolosită</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>Ce rulează</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Anulați legătura acestui rând</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Deschideți în bibliotecă</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Bibliotecă</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>Căutare</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Import</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Colecții</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>Componente</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Export colecție</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Editare detalii</value></data>
+  <data name="Library_History" xml:space="preserve"><value>Istoric</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Ștergere</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Biblioteca este goală. Selectați rânduri dintr-o macrocomandă și folosiți Salvare ca componentă sau cereți aplicației AI să salveze ce funcționează.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Adăugare legate</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Orice aplicație</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Joc</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Birou</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Browser</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Creație</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Dezvoltare</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat și e-mail</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Altele</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Găsește ceva</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Așteaptă ceva</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Citește un text</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Recunoaște starea aplicației</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>Un punct</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Execută o operație</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>Ștergeți {0}?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>Ștergeți {0} și toate componentele sale?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Redenumire colecție</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Redenumire</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Ștergere colecție</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>Istoric - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Salvare ca componentă</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>Acțiunile selectate devin o componentă a bibliotecii, iar aceste rânduri sunt legate de ea.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>Ce citiți în bibliotecă și în macrocomandă</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>Ce face</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>Aplicațiile AI caută componentele după ce fac</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Concept</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>În engleză, cu litere mici, cifre și _, de exemplu remove_one_affix. Aplicațiile AI caută după el.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>Descriere</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Opțional. Ce face, în engleză, pentru aplicațiile AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Unde este păstrată și de unde se partajează</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>Colecție nouă</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Numele colecției noi</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Tipul aplicației</value></data>
+  <data name="Library_App" xml:space="preserve"><value>Aplicație</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Fișierul .exe, de exemplu Diablo IV.exe. Lăsați gol pentru orice aplicație.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Ecran</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>Monitorul pe care au fost luate punctele. Pe alt ecran trebuie modificate.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>Necunoscut</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Acțiuni selectate</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>Acest fișier nu poate fi importat. Colecția {0} din el este o versiune diferită de cea din biblioteca dvs., iar o colecție se partajează întreagă, așa că cele două nu pot fi combinate. Nu s-a importat nimic. Pentru a-l importa, ștergeți mai întâi colecția dvs. dacă nu o folosește nicio macrocomandă sau cereți un fișier creat din versiunea dvs.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Colecția {0} din acest fișier nu poate fi importată. {1}</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Folosită în {0} macrocomandă</value></data>
+  <data name="Library_UsedInMacros_few" xml:space="preserve"><value>Folosită în {0} macrocomenzi</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Folosită în {0} de macrocomenzi</value></data>
 </root>

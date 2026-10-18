@@ -1340,4 +1340,77 @@ Detalles: {1}</value></data>
   <data name="Code_ChooseComponent" xml:space="preserve"><value>Elige el componente que quieres vincular con Agregar componente.</value></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>La biblioteca ya no tiene este componente. Vincula otro con Agregar componente o elimina esta fila.</value></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Una fila vinculada a un componente no tiene espera ni nombre propios: los tienen las acciones del componente. Quita DelayMs y Name.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Componente</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Agregar componente</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Componente · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Componente que falta</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Guardar como componente…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Desvincular</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Detén primero todos los bucles y macros: la biblioteca no cambia mientras algo se está ejecutando.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro no pudo guardar la biblioteca. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>Componente - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>Esta fila está vinculada: ejecuta el componente tal como está en la biblioteca y cambia cuando el componente cambia. Para cambiarla solo en esta macro, desvincúlala.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Colección</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Se usa en</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Sin usar</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>Lo que ejecuta</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Desvincular esta fila</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Abrir en la biblioteca</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Biblioteca</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>Buscar</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Importar</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Colecciones</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>Componentes</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Exportar colección</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Editar detalles</value></data>
+  <data name="Library_History" xml:space="preserve"><value>Historial</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>La biblioteca está vacía. Selecciona filas en una macro y usa Guardar como componente, o pide a tu aplicación de AI que guarde lo que funciona.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Agregar vinculados</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Cualquier aplicación</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Juego</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Oficina</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Navegador</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Creatividad</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Desarrollo</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat y correo</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Otro</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Encuentra algo</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Espera algo</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Lee un texto</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Reconoce el estado de la aplicación</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>Un punto</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Realiza una operación</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>¿Eliminar {0}?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>¿Eliminar {0} y todos sus componentes?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Cambiar nombre de la colección</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Cambiar nombre</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Eliminar colección</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>Historial - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Guardar como componente</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>Las acciones seleccionadas se convierten en un componente de la biblioteca, y estas filas quedan vinculadas a él.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>Lo que ves en la biblioteca y en la macro</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>Qué hace</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>Las aplicaciones de AI buscan los componentes por lo que hacen</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Concepto</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>En inglés, con letras minúsculas, números y _, como remove_one_affix. Las aplicaciones de AI lo usan para buscar.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>Descripción</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Opcional. Qué hace, en inglés, para las aplicaciones de AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Dónde se guarda y desde dónde se comparte</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>Nueva colección</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Nombre de la nueva colección</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Tipo de aplicación</value></data>
+  <data name="Library_App" xml:space="preserve"><value>Aplicación</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Su archivo .exe, como Diablo IV.exe. Déjalo vacío para cualquier aplicación.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Pantalla</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>El monitor en el que se tomaron sus puntos. En otra pantalla hay que cambiarlos.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2} %</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>Desconocida</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Acciones seleccionadas</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>Este archivo no se puede importar. La colección {0} que contiene es una versión distinta de la de tu biblioteca, y una colección se comparte completa, así que no se pueden mezclar. No se importó nada. Para importarlo, elimina primero tu colección si ninguna macro la usa, o pide un archivo hecho a partir de tu versión.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>La colección {0} de este archivo no se puede importar. {1}</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Se usa en {0} macro</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Se usa en {0} macros</value></data>
 </root>

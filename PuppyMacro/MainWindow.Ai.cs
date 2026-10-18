@@ -430,6 +430,9 @@ public partial class MainWindow : IAiHost
 
     Task<T> IAiHost.Ui<T>(Func<Task<T>> action) => Dispatcher.InvokeAsync(action).Task.Unwrap();
 
+    string? IAiHost.AddCollections(IReadOnlyList<LibraryCollection> collections, string app) =>
+        SavingAs(app, () => AddCollections(collections));
+
     void IAiHost.Save(object item, string app) => SavingAs(app, () =>
     {
         AiTools.KeepUsersDebug(item, _macros);

@@ -1471,4 +1471,81 @@
   <data name="Code_ChooseComponent" xml:space="preserve"><value>اختر المكوّن المراد ربطه باستخدام إضافة مكوّن.</value></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>لم تعد المكتبة تحتوي على هذا المكوّن. اربط مكوّنًا آخر باستخدام إضافة مكوّن، أو احذف هذا الصف.</value></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>لا يملك الصف المرتبط بمكوّن انتظارًا أو اسمًا خاصًا به، فهما لإجراءات المكوّن. احذف DelayMs وName.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>مكوّن</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>إضافة مكوّن</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>مكوّن · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>مكوّن مفقود</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>حفظ كمكوّن…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>إلغاء الربط</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>أوقف كل الحلقات ووحدات الماكرو أولاً، فالمكتبة لا تتغيّر أثناء تشغيل أي شيء.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>تعذّر على PuppyMacro حفظ المكتبة. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>مكوّن - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>هذا الصف مرتبط: يشغّل المكوّن كما هو في المكتبة، ويتغيّر عندما يتغيّر المكوّن. لتغييره في هذا الماكرو فقط، ألغِ ربطه.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>مستخدم في</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>غير مستخدم</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>ما يشغّله</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>إلغاء ربط هذا الصف</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>فتح في المكتبة</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>المكتبة</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>بحث</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>المجموعات</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>المكوّنات</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>تصدير المجموعة</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>تحرير التفاصيل</value></data>
+  <data name="Library_History" xml:space="preserve"><value>السجل</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>المكتبة فارغة. حدّد صفوفًا في ماكرو واستخدم حفظ كمكوّن، أو اطلب من تطبيق AI حفظ ما ينجح.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>إضافة مرتبطة</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>أي تطبيق</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>لعبة</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>مكتب</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>المستعرض</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>إبداع</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>تطوير</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>الدردشة والبريد</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>يجد شيئًا</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>ينتظر شيئًا</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>يقرأ نصًا</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>يتعرّف على حالة التطبيق</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>نقطة</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>ينفّذ عملية</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>هل تريد حذف {0}؟</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>هل تريد حذف {0} وكل مكوّناتها؟</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>إعادة تسمية المجموعة</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>إعادة تسمية</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>حذف المجموعة</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>السجل - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>حفظ كمكوّن</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>تصبح الإجراءات المحددة مكوّنًا في المكتبة، وتُربط هذه الصفوف به.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>ما تقرؤه في المكتبة وفي الماكرو</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>ما يفعله</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>تبحث تطبيقات AI عن المكوّنات حسب ما تفعله</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>المفهوم</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>بالإنجليزية، بأحرف صغيرة وأرقام و_، مثل remove_one_affix. تبحث به تطبيقات AI.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>اختياري. ما يفعله، بالإنجليزية، لتطبيقات AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>مكان حفظه ومشاركته</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>مجموعة جديدة</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>اسم المجموعة الجديدة</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>نوع التطبيق</value></data>
+  <data name="Library_App" xml:space="preserve"><value>التطبيق</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>ملف .exe الخاص به، مثل Diablo IV.exe. اتركه فارغًا لأي تطبيق.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>الشاشة</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>الشاشة التي أُخذت عليها نقاطه. على شاشة أخرى يجب تغييرها.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} بكسل، ‎{2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>غير معروفة</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>الإجراءات المحددة</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>لا يمكن استيراد هذا الملف. المجموعة {0} الموجودة فيه إصدار مختلف عن الموجودة في مكتبتك، والمجموعة تُشارك كاملة، لذا لا يمكن الجمع بينهما. لم يُستورد أي شيء. لاستيراده، احذف مجموعتك أولاً إن لم يكن أي ماكرو يستخدمها، أو اطلب ملفًا مصنوعًا من إصدارك.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>لا يمكن استيراد المجموعة {0} من هذا الملف. {1}</value></data>
+  <data name="Library_UsedInMacros_zero" xml:space="preserve"><value>مستخدم في {0} ماكرو</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>مستخدم في ماكرو واحد</value></data>
+  <data name="Library_UsedInMacros_two" xml:space="preserve"><value>مستخدم في وحدتي ماكرو</value></data>
+  <data name="Library_UsedInMacros_few" xml:space="preserve"><value>مستخدم في {0} وحدات ماكرو</value></data>
+  <data name="Library_UsedInMacros_many" xml:space="preserve"><value>مستخدم في {0} وحدة ماكرو</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>مستخدم في {0} وحدة ماكرو</value></data>
 </root>

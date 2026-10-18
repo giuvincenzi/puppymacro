@@ -1,0 +1,158 @@
+<Window
+    x:Class="PuppyMacro.LibraryWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Title="{x:Static r:Strings.Library_Title}"
+    Width="1000"
+    Height="680"
+    MinWidth="720"
+    MinHeight="420"
+    ShowInTaskbar="True"
+    WindowStartupLocation="CenterOwner"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica">
+
+    <!-- The Library, one view in two modes (approved: the Design canvas "PuppyMacro Library"): pick (Add component, read
+         only, check boxes) and manage (from the Macros page: change, delete, import, export) -->
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="24,4,24,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="{x:Static r:Strings.Library_Title}" VerticalAlignment="Center" />
+            <TextBox x:Name="SearchBox" Grid.Column="1" Width="280" VerticalAlignment="Center" TextChanged="OnSearchChanged"
+                     ui:ControlHelper.PlaceholderText="{x:Static r:Strings.Library_Search}"
+                     AutomationProperties.Name="{x:Static r:Strings.Library_Search}" />
+            <Button x:Name="ImportButton" Grid.Column="2" Margin="8,0,0,0" VerticalAlignment="Center" Content="{x:Static r:Strings.Library_Import}"
+                    Click="OnImportClick" />
+        </Grid>
+
+        <ui:InfoBar x:Name="ProblemBar" Grid.Row="1" Margin="24,0,24,8" IsOpen="False" IsClosable="True" Severity="Error" />
+
+        <Grid Grid.Row="2" Margin="24,0,24,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Margin="0,0,0,8" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Library_Collections}" />
+            <ListView x:Name="CollectionList" Grid.Row="1" SelectionMode="Single" SelectionChanged="OnCollectionSelected"
+                      AutomationProperties.Name="{x:Static r:Strings.Library_Collections}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,8">
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="{Binding Info}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="CollectionTitle" Margin="0,0,0,8" Style="{StaticResource BodyStrongTextBlockStyle}" TextTrimming="CharacterEllipsis" />
+                <StackPanel x:Name="CollectionCommands" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                    <Button x:Name="ExportButton" Content="{x:Static r:Strings.Library_ExportCollection}" Click="OnExportClick" />
+                    <Button x:Name="CollectionMoreButton" Margin="4,0,0,0" Style="{StaticResource DefaultButtonStyle}"
+                            AutomationProperties.Name="{x:Static r:Strings.Card_MoreOptions}" ToolTip="{x:Static r:Strings.Card_MoreOptions}" Click="OnCollectionMoreClick">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.More}" FontSize="14" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <ListView x:Name="ComponentList" Grid.Row="1" Grid.Column="2" SelectionMode="Single"
+                      AutomationProperties.Name="{x:Static r:Strings.Library_Components}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox VerticalAlignment="Center" MinWidth="0" Margin="0,0,8,0" IsChecked="{Binding IsChecked}"
+                                          AutomationProperties.Name="{Binding Name}"
+                                          Visibility="{Binding Picking, Converter={StaticResource BoolToVisibility}}" />
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Text="{Binding StructuredName}" TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding UseText}" />
+                            </Grid>
+                            <!-- The selected component: what it plays, where it is used, and in manage mode its commands -->
+                            <StackPanel Margin="0,8,0,0"
+                                        Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListViewItem}, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="{Binding Description}" TextWrapping="Wrap" Margin="0,0,0,6"
+                                           Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibility}}" />
+                                <ItemsControl ItemsSource="{Binding Lines}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="{Binding Indent}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap">
+                                                <Run Text="{Binding Title, Mode=OneWay}" />
+                                                <Run Text="  " />
+                                                <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0"
+                                            Visibility="{Binding Managing, Converter={StaticResource BoolToVisibility}}">
+                                    <Button Content="{x:Static r:Strings.Library_EditDetails}" Click="OnEditComponentClick" Tag="{Binding}" />
+                                    <Button Margin="8,0,0,0" Content="{x:Static r:Strings.Library_History}" Click="OnComponentHistoryClick" Tag="{Binding}" />
+                                    <Button Margin="8,0,0,0" Content="{x:Static r:Strings.Library_Delete}" Click="OnDeleteComponentClick" Tag="{Binding}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <TextBlock x:Name="EmptyText" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,0" TextWrapping="Wrap" Visibility="Collapsed"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Library_Empty}" />
+        </Grid>
+
+        <Border x:Name="PickBar" Grid.Row="3" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="AddLinkedButton" MinWidth="120" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Library_AddLinked}"
+                        IsDefault="True" Click="OnAddLinkedClick" />
+                <Button Margin="8,0,0,0" MinWidth="120" Content="{x:Static r:Strings.Editor_Cancel}" IsCancel="True" Click="OnCancelClick" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

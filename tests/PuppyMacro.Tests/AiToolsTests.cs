@@ -50,6 +50,14 @@ internal sealed class FakeAiHost : IAiHost
 
     public Task<T> Ui<T>(Func<Task<T>> action) => action();
 
+    public string? AddCollections(IReadOnlyList<LibraryCollection> collections, string app)
+    {
+        foreach (var collection in collections)
+            if (Macros.Library.FindCollection(collection.Id) == null)
+                Macros.Library.Collections.Add(collection.Clone());
+        return null;
+    }
+
     public void Save(object item, string app)
     {
         Saved.Add((item, app));

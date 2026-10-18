@@ -1350,4 +1350,77 @@ Detajet: {1}</value></data>
   <data name="Code_ChooseComponent" xml:space="preserve"><value>Zgjidhni komponentin që do të lidhni me Shto komponent.</value></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>Biblioteka nuk e ka më këtë komponent. Lidhni një tjetër me Shto komponent ose fshini këtë rresht.</value></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Një rresht i lidhur me një komponent nuk ka pritje ose emër të vetin: i kanë veprimet e komponentit. Hiqni DelayMs dhe Name.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Komponent</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Shto komponent</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Komponent · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Komponent që mungon</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Ruaje si komponent…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Shkëput</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Fillimisht ndalni të gjitha ciklet dhe makrot: biblioteka nuk ndryshon ndërsa diçka është në ekzekutim.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro nuk mundi ta ruante bibliotekën. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>Komponent - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>Ky rresht është i lidhur: ekzekuton komponentin ashtu siç është në bibliotekë dhe ndryshon kur ndryshon komponenti. Për ta ndryshuar vetëm në këtë makro, shkëputeni.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Koleksion</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Përdoret në</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Nuk përdoret</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>Çfarë ekzekuton</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Shkëput këtë rresht</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Hap në bibliotekë</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Biblioteka</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>Kërko</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Importo</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Koleksione</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>Komponentë</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Eksporto koleksionin</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Redakto detajet</value></data>
+  <data name="Library_History" xml:space="preserve"><value>Historiku</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Fshi</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Biblioteka është bosh. Zgjidhni rreshta në një makro dhe përdorni Ruaje si komponent, ose kërkojini aplikacionit tuaj AI të ruajë atë që funksionon.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Shto të lidhur</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Çdo aplikacion</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Lojë</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Zyrë</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Shfletues</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Krijimtari</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Zhvillim</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat dhe email</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Tjetër</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Gjen diçka</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Pret diçka</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Lexon një tekst</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Njeh gjendjen e aplikacionit</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>Një pikë</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Kryen një veprim</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>Të fshihet {0}?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>Të fshihet {0} me të gjithë komponentët e tij?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Riemërto koleksionin</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Riemërto</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Fshi koleksionin</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>Historiku - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Ruaje si komponent</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>Veprimet e zgjedhura bëhen një komponent i bibliotekës dhe këto rreshta lidhen me të.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>Ajo që lexoni në bibliotekë dhe në makro</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>Çfarë bën</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>Aplikacionet AI i kërkojnë komponentët sipas asaj që bëjnë</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Koncepti</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>Në anglisht, me shkronja të vogla, shifra dhe _, si remove_one_affix. Aplikacionet AI kërkojnë sipas tij.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>Përshkrimi</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Opsionale. Çfarë bën, në anglisht, për aplikacionet AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Ku ruhet dhe nga ku ndahet</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>Koleksion i ri</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Emri i koleksionit të ri</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Lloji i aplikacionit</value></data>
+  <data name="Library_App" xml:space="preserve"><value>Aplikacioni</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Skedari i tij .exe, si Diablo IV.exe. Lëreni bosh për çdo aplikacion.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Ekrani</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>Monitori ku janë marrë pikat e tij. Në një ekran tjetër duhen ndryshuar.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>I panjohur</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Veprimet e zgjedhura</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>Ky skedar nuk mund të importohet. Koleksioni {0} në të është një version tjetër nga ai në bibliotekën tuaj, dhe një koleksion ndahet i plotë, prandaj të dy nuk mund të përzihen. Nuk u importua asgjë. Për ta importuar, fillimisht fshini koleksionin tuaj nëse nuk e përdor asnjë makro, ose kërkoni një skedar të bërë nga versioni juaj.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Koleksioni {0} në këtë skedar nuk mund të importohet. {1}</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Përdoret në {0} makro</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Përdoret në {0} makro</value></data>
 </root>

@@ -99,6 +99,14 @@
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
                                     </ui:AppBarButton.Icon>
                                 </ui:AppBarButton>
+                                <!-- A Library component, linked (approved: the Design canvas "PuppyMacro Library") -->
+                                <ui:AppBarButton x:Name="AddComponentButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_ComponentButton}"
+                                                 AutomationProperties.Name="{x:Static r:Strings.Library_AddComponent}" ToolTip="{x:Static r:Strings.Library_AddComponent}"
+                                                 Click="OnAddComponentClick">
+                                    <ui:AppBarButton.Icon>
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                                    </ui:AppBarButton.Icon>
+                                </ui:AppBarButton>
                                 <!-- A red record dot (approved, ui.md: the theme's critical color, as the InfoBadge's) -->
                                 <ui:AppBarButton Label="{x:Static r:Strings.MacroEditor_Record}" VerticalAlignment="Center" AutomationProperties.Name="{x:Static r:Strings.MacroEditor_RecordActions}" ToolTip="{x:Static r:Strings.MacroEditor_RecordActions}" Click="OnRecordClick">
                                     <ui:AppBarButton.Icon>
@@ -158,6 +166,17 @@
                                              ToolTip="{x:Static r:Strings.MacroEditor_UngroupTooltip}" Click="OnUngroupClick">
                                 <ui:AppBarButton.Icon>
                                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.RemoveFrom}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarSeparator />
+                            <ui:AppBarButton x:Name="SaveAsComponentButton" Label="{x:Static r:Strings.MacroEditor_SaveAsComponent}" Click="OnSaveAsComponentClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Library}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarButton x:Name="UnlinkButton" Label="{x:Static r:Strings.MacroEditor_Unlink}" Click="OnUnlinkClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.LinkDismiss_20_Regular}" />
                                 </ui:AppBarButton.Icon>
                             </ui:AppBarButton>
                             <ui:AppBarSeparator />
@@ -319,8 +338,20 @@
                                                      Visibility="{Binding IsTextIcon, Converter={StaticResource BoolToVisibility}}" />
                                         <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.BranchFork_20_Regular}"
                                                      Visibility="{Binding IsIfIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Link}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                     Visibility="{Binding IsLinked, Converter={StaticResource BoolToVisibility}}" />
                                     </Grid>
+                                    <!-- A row linked to a component: greyed, read only (approved: the Design canvas "PuppyMacro Library") -->
                                     <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsLinked}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
                                         <Run Text="{Binding Title, Mode=OneWay}">
                                             <Run.Style>
                                                 <!-- A named action shows its name in bold -->
@@ -338,7 +369,7 @@
                                     </TextBlock>
                                     <TextBlock Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" ToolTip="{x:Static r:Strings.MacroEditor_DelayTooltip}"
-                                               Text="{Binding DelayText}" />
+                                               Text="{Binding DelayText}" Visibility="{Binding ShowsDelay, Converter={StaticResource BoolToVisibility}}" />
                                     <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="{Binding DividerMargin}" BorderThickness="0,1,0,0"
                                             BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
                                 </Grid>

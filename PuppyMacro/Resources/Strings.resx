@@ -1428,4 +1428,77 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Code_ChooseComponent" xml:space="preserve"><value>Choose the component to link with Add component.</value><comment>Code view: a linked component row without the component it links; Add component is the macro editor's button</comment></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>The Library doesn't have this component any more. Link another one with Add component, or delete this row.</value><comment>Code view and editor: a linked row whose component is no longer in the Library; Add component is the macro editor's button</comment></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>A linked component row has no wait or name of its own: the component's actions have them. Remove DelayMs and Name.</value><comment>Code view: a linked component row with a wait or a name; DelayMs and Name are JSON names and stay as they are</comment></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Component</value><comment>Label under the + of the macro editor's button that adds a Library component (short: the button's name is Add component)</comment></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Add component</value><comment>Button and window: add a Library component to the macro, linked</comment></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Component · {0} · {1}</value><comment>A macro row linked to a component: {0} its collection, {1} how many actions (MacroEditor_ActionCount)</comment></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Missing component</value><comment>A macro row linked to a component the Library no longer has</comment></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Save as component…</value><comment>Command: the selected actions become a Library component</comment></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Unlink</value><comment>Command: a linked row becomes the component's actions, normal rows of this macro</comment></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Stop all loops and macros first: the Library doesn't change while something runs.</value><comment>The Library can't change while a loop or macro runs</comment></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro couldn't save the Library. {0}</value><comment>library.json could not be saved: {0} the system's error</comment></data>
+  <data name="Component_Title" xml:space="preserve"><value>Component - {0}</value><comment>Title of a component's window: {0} the component's name</comment></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>This row is linked: it plays the component as it is in the Library, and changes when the component changes. To change it only in this macro, unlink it.</value><comment>Note in the window of a row linked to a component</comment></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Collection</value><comment>A Library collection (header of a card and a field)</comment></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Used in</value><comment>Card header: the macros that link a component</comment></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Not used</value><comment>A component no macro links</comment></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>What it plays</value><comment>Title above a component's actions</comment></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Unlink this row</value><comment>Button in a linked row's window</comment></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Open in Library</value><comment>Button in a linked row's window</comment></data>
+  <data name="Library_Title" xml:space="preserve"><value>Library</value><comment>The Library: its window, its button on the Macros page</comment></data>
+  <data name="Library_Search" xml:space="preserve"><value>Search</value><comment>Placeholder of the Library's search box</comment></data>
+  <data name="Library_Import" xml:space="preserve"><value>Import</value><comment>Library window's button: import a .puppyitems file</comment></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Collections</value><comment>Title of the Library's list of collections</comment></data>
+  <data name="Library_Components" xml:space="preserve"><value>Components</value><comment>Name of the Library's list of components (screen readers)</comment></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Export collection</value><comment>Button: save a collection, whole, in a .puppyitems file</comment></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Edit details</value><comment>Button: change a component's name, purpose, concept and description</comment></data>
+  <data name="Library_History" xml:space="preserve"><value>History</value><comment>Button: a component's History</comment></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Delete</value><comment>Button: delete a component</comment></data>
+  <data name="Library_Empty" xml:space="preserve"><value>The Library is empty. Select rows in a macro and use Save as component, or ask your AI app to save what works.</value><comment>The Library has no collections yet; Save as component and AI are as in the app</comment></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Add linked</value><comment>Button of the Library in pick mode: adds the chosen components to the macro as linked rows</comment></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Any app</value><comment>A collection for any app (no app chosen)</comment></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Game</value><comment>Kind of app of a collection</comment></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Office</value><comment>Kind of app of a collection: spreadsheets, documents, business apps</comment></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Browser</value><comment>Kind of app of a collection: websites and web apps</comment></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Creative</value><comment>Kind of app of a collection: graphics, video, audio</comment></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Development</value><comment>Kind of app of a collection: programming</comment></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat and email</value><comment>Kind of app of a collection: chat and email</comment></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value><comment>Kind of app of a collection: Windows and its windows</comment></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Other</value><comment>Kind of app of a collection: any other</comment></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Finds something</value><comment>What a component does: it recognizes something on the screen</comment></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Waits for something</value><comment>What a component does: it waits until something shows or goes away</comment></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Reads a text</value><comment>What a component does: it reads a text on the screen</comment></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Tells the app's state</value><comment>What a component does: it tells which screen or state the app is in</comment></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>A point</value><comment>What a component does: a point to click or move to</comment></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Does an operation</value><comment>What a component does: an operation, a sequence of actions</comment></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>Delete {0}?</value><comment>Confirmation: {0} the component's name</comment></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>Delete {0} and all its components?</value><comment>Confirmation: {0} the collection's name</comment></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Rename collection</value><comment>Menu item and window title</comment></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Rename</value><comment>Button that renames</comment></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Delete collection</value><comment>Menu item</comment></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>History - {0}</value><comment>Window title: {0} the component's name</comment></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Save as component</value><comment>Window title</comment></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>The selected actions become a component in the Library, and these rows are linked to it.</value><comment>Note in Save as component</comment></data>
+  <data name="Library_Name" xml:space="preserve"><value>Name</value><comment>Field: a component's name</comment></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>What you read in the Library and in the macro</value><comment>Under Name</comment></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>What it does</value><comment>Field: what a component does</comment></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>AI apps look for components by what they do</value><comment>Under What it does</comment></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Concept</value><comment>Field: the end of a component's structured name, in English</comment></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>In English, lowercase letters, digits and _, like remove_one_affix. AI apps search by it.</value><comment>Under Concept; remove_one_affix stays as it is</comment></data>
+  <data name="Library_Description" xml:space="preserve"><value>Description</value><comment>Field: a component's short description</comment></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Optional. What it does, in English, for AI apps.</value><comment>Under Description</comment></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Where it is kept and shared from</value><comment>Under Collection in Save as component</comment></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>New collection</value><comment>Choice in the Collection list: make a new collection</comment></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Name of the new collection</value><comment>Field: the new collection's name</comment></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Kind of app</value><comment>Field: what kind of app a collection is for</comment></data>
+  <data name="Library_App" xml:space="preserve"><value>App</value><comment>Field: the app a collection is for</comment></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Its .exe, like Diablo IV.exe. Leave it empty for any app.</value><comment>Under App; Diablo IV.exe stays as it is</comment></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Screen</value><comment>Field: the screen a collection was made on</comment></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>The monitor its points were taken on. On another screen they need changing.</value><comment>Under Screen</comment></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2}%</value><comment>A monitor: {0} width and {1} height in pixels, {2} Windows' scale in percent</comment></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>Not known</value><comment>The screen could not be read</comment></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Selected actions</value><comment>Title above the actions that become a component</comment></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>This file can't be imported. The collection {0} in it is a different version from the one in your Library, and a collection is shared whole, so the two can't be mixed. Nothing was imported. To import it, delete your collection first if no macro uses it, or ask for a file made from your version.</value><comment>Import refused: {0} the collection's name</comment></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>The collection {0} in this file can't be imported. {1}</value><comment>Import refused: {0} the collection's name, {1} what is wrong (a sentence)</comment></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Used in {0} macro</value><comment>How many macros link a component: {0} the number</comment></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Used in {0} macros</value><comment>How many macros link a component: {0} the number</comment></data>
 </root>

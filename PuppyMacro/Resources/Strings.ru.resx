@@ -1383,4 +1383,78 @@
   <data name="Code_ChooseComponent" xml:space="preserve"><value>Выберите компонент для привязки с помощью кнопки «Добавить компонент».</value></data>
   <data name="Code_ComponentMissing" xml:space="preserve"><value>В библиотеке больше нет этого компонента. Привяжите другой с помощью кнопки «Добавить компонент» или удалите эту строку.</value></data>
   <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>У строки, привязанной к компоненту, нет своей задержки и своего имени: они есть у действий компонента. Удалите DelayMs и Name.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Компонент</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Добавить компонент</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Компонент · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Отсутствующий компонент</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Сохранить как компонент…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Отвязать</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Сначала остановите все циклы и макросы: библиотека не меняется, пока что-то выполняется.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro не удалось сохранить библиотеку. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>Компонент - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>Эта строка привязана: она выполняет компонент таким, какой он в библиотеке, и меняется вместе с ним. Чтобы изменить её только в этом макросе, отвяжите её.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Коллекция</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Используется в</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Не используется</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>Что выполняет</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Отвязать эту строку</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Открыть в библиотеке</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Библиотека</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>Поиск</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Импорт</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Коллекции</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>Компоненты</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Экспортировать коллекцию</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Изменить сведения</value></data>
+  <data name="Library_History" xml:space="preserve"><value>Журнал</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Библиотека пуста. Выделите строки в макросе и выберите «Сохранить как компонент» или попросите приложение AI сохранить то, что работает.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Добавить с привязкой</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Любое приложение</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Игра</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Офис</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Браузер</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Творчество</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Разработка</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Чат и почта</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Другое</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Находит что-то</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Ждёт чего-то</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Читает текст</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Определяет состояние приложения</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>Точка</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Выполняет операцию</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>Удалить {0}?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>Удалить {0} и все её компоненты?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Переименовать коллекцию</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Переименовать</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Удалить коллекцию</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>Журнал - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Сохранить как компонент</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>Выделенные действия станут компонентом библиотеки, а эти строки будут к нему привязаны.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>Имя</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>То, что вы видите в библиотеке и в макросе</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>Что делает</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>Приложения AI ищут компоненты по тому, что они делают</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Концепция</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>На английском: строчные буквы, цифры и _, например remove_one_affix. По нему ищут приложения AI.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>Описание</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Необязательно. Что он делает, на английском, для приложений AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Где он хранится и откуда им делятся</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>Новая коллекция</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Имя новой коллекции</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Тип приложения</value></data>
+  <data name="Library_App" xml:space="preserve"><value>Приложение</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Его файл .exe, например Diablo IV.exe. Оставьте пустым для любого приложения.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Экран</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>Монитор, на котором были взяты точки. На другом экране их нужно изменить.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} пкс, {2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>Неизвестно</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Выделенные действия</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>Этот файл нельзя импортировать. Коллекция {0} в нём — это другая версия той, что есть в вашей библиотеке, а коллекция передаётся только целиком, поэтому их нельзя смешать. Ничего не импортировано. Чтобы импортировать файл, сначала удалите свою коллекцию, если её не использует ни один макрос, или попросите файл, сделанный из вашей версии.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Коллекцию {0} из этого файла нельзя импортировать. {1}</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Используется в {0} макросе</value></data>
+  <data name="Library_UsedInMacros_few" xml:space="preserve"><value>Используется в {0} макросах</value></data>
+  <data name="Library_UsedInMacros_many" xml:space="preserve"><value>Используется в {0} макросах</value></data>
 </root>
