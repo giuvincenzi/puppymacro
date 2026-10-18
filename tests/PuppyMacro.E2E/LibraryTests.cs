@@ -9,7 +9,10 @@ namespace PuppyMacro.E2E;
 /// <summary>
 /// The Library with the development build's samples (the collection "Sample: Notepad", its component "Save the file", and
 /// the macro "Sample: save with a component" that links it): a linked row is one line and opens its component read only;
-/// Add component links one from the Library; the Library window lists them and refuses to delete a linked component.
+/// Add component links one from the Library; the Library window lists them and refuses to delete a linked component. And
+/// components as functions, with the samples "Type a word" (its parameter Word) and "Sample: type with a parameter": a row
+/// shows its values and its window changes them; Edit in the Library opens the component in the macro editor with its
+/// parameters and the parameter window.
 /// </summary>
 [Trait("Category", "UI")]
 public class LibraryTests
@@ -57,6 +60,59 @@ public class LibraryTests
 
         Assert.True(Retry.WhileFalse(() => list.Items.Length == before + 1 && list.Items.Any(i => i.Name.Contains("Save the file")),
             AppSession.Timeout).Success, string.Join(" | ", list.Items.Select(i => i.Name)));
+    }
+
+    [Fact]
+    public void A_linked_row_shows_its_values_and_its_window_changes_them()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.EditItem("Sample: type with a parameter");
+        Window editor = app.Dialog("Edit macro");
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.Contains("Type a word") && i.Name.Contains("Word hello")),
+            AppSession.Timeout).Success, string.Join(" | ", list.Items.Select(i => i.Name)));
+
+        list.Items[0].Select();
+        app.Find(editor, "Edit action").AsButton().Invoke();
+        Window component = ChildDialog(editor, "Component - Type a word");
+        Assert.True(app.Has(component, "Arguments"));
+        var value = Retry.WhileNull(() => component.FindFirstDescendant(cf => cf.ByControlType(ControlType.Edit).And(cf.ByName("Value"))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the argument's value is not there").Result!.AsTextBox();
+        value.Text = "bye";
+        app.FindById(component, "SaveButton").AsButton().Invoke();
+
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.Contains("Word bye")), AppSession.Timeout).Success,
+            string.Join(" | ", list.Items.Select(i => i.Name)));
+    }
+
+    [Fact]
+    public void Edit_in_the_Library_opens_the_component_with_its_parameters()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.FindById(app.MainWindow, "LibraryButton").AsButton().Invoke();
+        Window library = app.Dialog("Library");
+        ListBox collections = app.FindById(library, "CollectionList").AsListBox();
+        Retry.WhileNull(() => collections.Items.FirstOrDefault(i => i.Name == "Sample: typing"), AppSession.Timeout, throwOnTimeout: true,
+            timeoutMessage: "the collection Sample: typing is not there").Result!.Select();
+        ListBox components = app.FindById(library, "ComponentList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => components.Items.Length == 1 && components.Items[0].Name.Contains("Type a word"), AppSession.Timeout).Success);
+        components.Items[0].Select();
+        var edit = Retry.WhileNull(() => components.Items[0].FindFirstDescendant(cf => cf.ByControlType(ControlType.Button).And(cf.ByName("Edit"))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "Edit is not shown").Result!.AsButton();
+        edit.Invoke();
+
+        Window editor = ChildDialog(library, "Edit component - Type a word");
+        Assert.True(app.Has(editor, "Parameters"));
+        Assert.True(app.Has(editor, "Word"));
+        Assert.True(app.Has(editor, "Can be used as a condition"));
+        app.FindById(editor, "AddParameterButton").AsButton().Invoke();
+        Window parameter = ChildDialog(editor, "Add parameter");
+        Assert.True(app.Has(parameter, "Every call gives a value"));
+        parameter.Close();
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+        library.Close();
     }
 
     [Fact]

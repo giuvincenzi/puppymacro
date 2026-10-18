@@ -96,6 +96,28 @@ internal static class DevSampleData
             AppExe = "notepad.exe",
             Components = { saveFile },
         });
+        // A component with a parameter (a function): it pastes the word each call gives it.
+        var typeWord = new LibraryComponent
+        {
+            Name = "Type a word",
+            Purpose = ComponentPurpose.Act,
+            Concept = "type_word",
+            Description = "Pastes Word.",
+            Parameters =
+            {
+                new ComponentParameter { Name = "Word", Type = ParameterType.Text, Example = System.Text.Json.Nodes.JsonValue.Create("hello"), Description = "The word to paste" },
+            },
+            Actions =
+            {
+                new MacroAction { Type = MacroActionType.PasteText, Text = "hello", Bind = new() { ["Text"] = "Word" } },
+            },
+        };
+        macros.Library.Collections.Add(new LibraryCollection
+        {
+            Name = "Sample: typing",
+            Domain = LibraryDomain.Other,
+            Components = { typeWord },
+        });
         if (!macros.Library.TrySave(out string? libraryError))
             Debug.WriteLine($"Sample Library not saved: {libraryError}");
         var typeHi = new MacroGroup { Name = "Type hi" };
@@ -130,6 +152,21 @@ internal static class DevSampleData
                 Enabled = false,
                 AppExe = "notepad.exe",
                 Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = saveFile.Id } },
+            },
+            new()
+            {
+                // A call that gives a component's parameter its value.
+                Name = "Sample: type with a parameter",
+                Enabled = false,
+                Actions =
+                {
+                    new MacroAction
+                    {
+                        Type = MacroActionType.Component,
+                        ComponentId = typeWord.Id,
+                        Arguments = new() { ["Word"] = System.Text.Json.Nodes.JsonValue.Create("hello") },
+                    },
+                },
             },
             new()
             {

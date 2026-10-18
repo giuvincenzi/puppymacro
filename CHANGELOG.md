@@ -23,6 +23,13 @@
   (on the Macros page) keeps each component's History, refuses to delete what a macro links, and exports a collection
   whole to share it; Import refuses a different version of a collection you have. AI apps search the Library before
   building and save what works, so each macro they build helps the next one.
+- **Components with parameters**: a component can take values from the row that calls it (a point, a number, a text, a
+  key, a color, an image, an area), so one component serves every slot of an inventory instead of one copy per slot. A
+  field of its actions takes a parameter with the list before it; each linked row gives its own values, or passes on
+  where a condition around it found something. Components can call other components, and a component that says what it
+  finds is also a condition (**Component** in Add condition). Edit a component's actions and parameters with **Edit** in
+  the Library; when a change affects the macros that call it, PuppyMacro asks one value for all of them and saves
+  everything together.
 
 ### Changed
 - PuppyMacro's tools for AI apps are named `puppymacro_…`, have titles and follow the MCP specification 2025-11-25.

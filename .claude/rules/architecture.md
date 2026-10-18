@@ -152,24 +152,50 @@ Rules:
   - A **component** is one or more actions (a point, an If, a sequence) with a name, and a structured name in English
     the AI apps search by, `domain-app-purpose-concept`, composed from its collection's domain and app. A **collection**
     is the package for one kind of app and screen (its monitor's bounds and scale, `LibraryScreens`): shared whole,
-    never split. Ids never change; a component never moves to another collection; a component holds no other component
-    and its "Where … was found" use its own conditions.
-  - A macro row of type `Component` links a component: it plays it as it is in the Library (one greyed line, read only,
-    no wait of its own). Linking is the default; **Unlink** makes it the component's actions of that moment, normal rows.
-    Nothing else is a copy that remembers where it came from.
-  - The links are resolved once, when the engine's snapshot is made (`EngineSnapshot.From`, each link with new condition
-    ids, `ComponentLibrary.Resolve`), so playing never reads the Library; Play, test_macro and the hotkeys start the
-    snapshot's macro. A macro that links a missing component can't play (`EngineSnapshot.Unplayable`; its hotkey passes)
-    nor be saved.
+    never split. Ids never change; a component never moves to another collection; its "Where … was found" use its own
+    conditions (what comes from outside comes as a parameter).
+  - **A component is a function** (the user's decision, with GitHub Actions' composite actions and Amazon States
+    Language as precedents): a typed signature (`Parameters`: Point, Number with a unit, Text, Key, Color, Image, Area;
+    required when it has no `Default`; one `Example`, which PuppyMacro writes into the bound fields at save), fields bound
+    to parameters next to the field (`Bind` on an action or condition, by slot), calls with `Arguments` (a value,
+    `{"From"}` a parameter of the component around, `{"Found"}` a place an If around the call found), components calling
+    components (never in a loop, at most `ComponentSignatures.MaxDepth` levels), and `Returns` (one of its conditions):
+    such a component is also a condition, `ConditionKind.Component`, checked as the condition it returns with the call's
+    arguments, in the If's own wait. No expressions, no code in the JSON: a field takes a parameter's value as it is.
+  - **The checks and the preparation of components live only in `Services/Components/`**, and everyone calls them (the
+    editors, the Code views, `MacroJson`, `SaveLibrary`, import, the AI tools, the snapshot): `ComponentSlots` (which
+    field of which action or condition can take a parameter, its type, unit and limits, from `MacroJson`'s ranges),
+    `ComponentValues` (each type's JSON and its rule), `ComponentSignatures` (the limits rising from the fields to the
+    parameters, also through `{"From"}` down the calls; loops; depth), `ComponentChecks`, `ComponentPrograms`
+    (preparation and what a frame needs), `SignatureUpdate`, `ComponentEdits` (Unlink, Save as component, rename).
+  - A macro row of type `Component` links a component: it plays it as it is in the Library (one greyed line, no wait of
+    its own; only its arguments change in the macro). Linking is the default; **Unlink** makes it, one level, the
+    component's actions of that moment with the row's values in their fields, normal rows. Nothing else is a copy that
+    remembers where it came from.
+  - The engine prepares each component once in its snapshot (`EngineSnapshot.Components`, never changed after) and plays
+    a call in a **frame** (`MacroRunner`): the call's arguments, which bound fields read when each action starts, and the
+    places its Ifs find, so two calls never mix them up and 33 calls are 33 frames of one prepared component. Playing never
+    reads the Library; Play, test_macro and the hotkeys start the snapshot's macro. A macro whose calls fail the checks
+    (a missing component, a wrong argument, or a component that fails them) can't play (`EngineSnapshot.Unplayable`; its
+    hotkey passes) nor be saved.
+  - A change of a component that existing calls can't follow (a parameter removed, renamed, a new required one, another
+    type) is a **guided update**: one value for all the calls that need it (`SignatureUpdateWindow`, an AI app's
+    `call_values`), then the component and the changed macros and components saved together or not at all
+    (`MacroLibrary.TrySaveTogether`); only what can't be fixed that way is refused.
   - Every change goes through `MainWindow.SaveLibrary`: refused while something runs (an import that only adds
-    collections excepted), then saved, recorded in the History (each collection and component is an item), the snapshot
-    made again and the unused images deleted. A component linked by a saved macro or by the open editor's can't be
+    collections excepted), then every component and every macro's calls are checked against the Library as it would be
+    (`ComponentChecks.CheckAll`; a problem the change brings refuses it), then saved with the macros it changes, recorded in
+    the History (each collection and component is an item), the snapshot made again and the unused images deleted. A component linked by a saved macro or by the open editor's can't be
     deleted, nor its collection.
-  - Import compares a collection by id and fingerprint (`ComponentLibrary.Fingerprint`: the components' ids and actions,
-    recomputed with the current code): a different version of a collection the Library has refuses the whole file.
-  - AI apps: `search_library`, `get_component`, `save_component`; a macro links a component with a `Component` row
-    written like any other; `update_actions` leaves linked rows alone; `get_item` reads a big macro in pieces (`outline`,
-    `path`) and lists the components a macro links.
+  - Import compares a collection by id and fingerprint (`ComponentLibrary.Fingerprint`: the components' ids, signatures
+    and actions, recomputed with the current code): a different version of a collection the Library has refuses the whole
+    file. A file carries the collections its components call, down every call (`ComponentLibrary.WithDependencies`), and
+    its calls are checked against the Library with the file's collections in it.
+  - AI apps: `search_library` (each component's signature), `get_component` (a call to copy), `save_component` (with the
+    guided update); a macro calls a component with a `Component` row or condition written like any other;
+    `update_actions` leaves linked rows alone; `get_item` reads a big macro in pieces (`outline` with the calls' values,
+    `path`) and lists the components a macro calls. The Instructions and the Library tools' descriptions say how
+    functions work and what makes a component reusable.
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version. It is
   recorded in one place, `MainWindow.Save()` and `SaveMacro`, so every path is covered (editors, switches, the overlay's
   right click, AI apps). In the editors' History view, Restore puts the version in the fields and asks to Save.

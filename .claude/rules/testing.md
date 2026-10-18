@@ -18,6 +18,12 @@
   (`[Collection(nameof(DebugStore))]`). The AI tools are tested with `FakeAiHost` as the app and the user
   (`AiTools.WaitStep` is short there); the file types' registry keys under a test key in `HKCU\Software\PuppyMacroTests`,
   deleted after.
+- Components as functions (`Services/Components`) are tested case by case, every case that passes and every one that
+  fails: `ComponentValuesTests` (each type and rule, the slot table), `ComponentChecksTests` (Bind, calls, arguments,
+  limits rising to the signature, parameters, Returns, loops, depth, which macros can't play), `ComponentRuntimeTests`
+  (frames, bound fields, Component conditions; real runs on the fake screen), `ComponentUpdatesTests` (the guided update,
+  Unlink, Save as component, fingerprint, images, files, saving together) and `ComponentPerformanceTests` (the D4 macro
+  made with functions and 1000 like it: the times are in the test's output), with the builders of `ComponentTestKit`.
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a
   test of another language sets it itself.
 - Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
@@ -37,8 +43,8 @@
 - `make e2e` runs them locally; it builds the dev build first. On one machine tests run one at a time (one
   PuppyMacro at a time): they share its desktop, mouse, keyboard, window in front and PuppyMacro's data folder.
 - Every test class has a category, `[Trait("Category", ...)]`: `UI`, `Macros`, `Loops`, `Remaps`, `Recording`,
-  `Overlay`, `AI`. The Library's (`LibraryTests`, `UI`) start from the development build's sample collection and the
-  macro that links it. Dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably. In
+  `Overlay`, `AI`. The Library's (`LibraryTests`, `UI`) start from the development build's sample collections and the
+  macros that link them (also "Type a word", a component with a parameter, and the macro that calls it). Dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably. In
   `AI` the test is the AI app: it starts `PuppyMacro.exe --mcp`, calls the tools and answers in PuppyMacro's windows
   (the ready window with Start, never Enter); its keys are F22 and F23, and F18 (the Record hotkey) ends a
   `record_macro`. The screen tools (`AiScreenTests`) look at, check, test and record on `TargetWindow`.

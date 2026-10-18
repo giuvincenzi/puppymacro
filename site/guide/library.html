@@ -11,22 +11,35 @@
   <li>Give it a <strong>Name</strong> (what you read in the Library and in the macro), choose <strong>What it does</strong> and the <strong>Collection</strong>: one you have, or <strong>New collection</strong> with its <strong>Kind of app</strong>, its <strong>App</strong> (the app's .exe, empty for any app) and the <strong>Screen</strong> PuppyMacro reads from your monitor. The <strong>Concept</strong> (in English, filled in from the name) and the <strong>Description</strong> are what AI apps search by.</li>
   <li>Select <strong>Save</strong>. The component is in the Library at once, and the selected rows become one row linked to it.</li>
 </ol>
-<p>A component holds the actions as they are, also an If with its Then and Else. A click "where … was found" must use a condition inside the same component, and a component can't hold another component.</p>
+<p>A component holds the actions as they are, also an If with its Then and Else, and other linked components. A click "where … was found" uses a condition inside the same component: when the selected rows use a place found by a condition outside them, Save as component makes it a <strong>parameter</strong>, and the new row passes that place on.</p>
 
 <h3>Use a component in a macro</h3>
 <p>In the macro editor, select <strong>Component</strong> (the + button next to <strong>Condition</strong>). The Library opens: check the components you want and select <strong>Add linked</strong>. Each one comes in as a <strong>linked row</strong>: one greyed line with the component's name, its collection and how many actions it has.</p>
 <ul>
   <li>A linked row plays the component as it is in the Library when the macro starts. When the component changes, every macro that links it plays the new one.</li>
-  <li>It has no wait of its own: the component's first action has one. It can be moved, copied and deleted like any row, but not changed inside the macro.</li>
+  <li>It has no wait of its own: the component's first action has one. It can be moved, copied and deleted like any row; inside the macro only its values change.</li>
   <li><strong>Edit</strong>, or a double-click on it, opens the component read only: its collection, the macros that use it and what it plays, with <strong>Unlink this row</strong> and <strong>Open in Library</strong>.</li>
-  <li><strong>Unlink</strong> turns the row into the component's actions as they are now, normal rows of this macro that you can change. To link it again, add it with <strong>Component</strong>.</li>
+  <li><strong>Unlink</strong> turns the row into the component's actions as they are now, normal rows of this macro that you can change, with the row's values in their fields. The components inside stay linked. To link it again, add it with <strong>Component</strong>.</li>
   <li><strong>Test</strong> on a linked row plays the component.</li>
 </ul>
 <p>A macro that links a component the Library doesn't have any more can't play and can't be saved until you delete that row or link another component.</p>
 
+<h3>Parameters: one component for every slot</h3>
+<p>A component can take values from the row that calls it, its <strong>parameters</strong>. A game's inventory with 33 slots needs one component, <em>Strip one slot</em>, with a parameter <em>Slot</em>: each of the 33 rows gives its own slot. When you fix the component, all 33 rows play the fix.</p>
+<ul>
+  <li><strong>Edit</strong> next to a component in the Library opens it in the macro editor: its actions on the left, and on the right <strong>What it does</strong>, its <strong>Parameters</strong> and whether it <strong>Can be used as a condition</strong>.</li>
+  <li><strong>Add parameter</strong> gives it a <strong>Name</strong> (letters, digits and _), a <strong>Type</strong> (Point, Number with its <strong>Unit</strong>, Text, Key, Color, Image or Area), an <strong>Example</strong> and, with <strong>Every call gives a value</strong> off, a <strong>Default</strong> for the rows that leave it out.</li>
+  <li>In the component's action window, a field that a parameter can fill has a list before it: <strong>A value</strong>, or <strong>From</strong> a parameter of its type. A click's <strong>Position</strong> lists the Point parameters next to <strong>Fixed point</strong>. The field holds the parameter's example, which a Test plays.</li>
+  <li>A linked row of a component with parameters shows its values. Opening it shows <strong>Arguments</strong>, one card per parameter: <strong>A value</strong> (with <strong>Pick on screen</strong> for a point), the default, inside a component one of its own parameters, or for a point <strong>Where … was found</strong>, the place a condition around the row found this time.</li>
+  <li>A component can call other components, never in a loop and at most 10 levels deep.</li>
+</ul>
+<p><strong>Can be used as a condition</strong> with <strong>What it finds</strong> (one of its conditions) makes the component a condition too: in an If, <strong>Add condition</strong> › <strong>Component from the Library</strong>. It is true when the condition it finds is, checked as any condition with the If's wait, and a click "where … was found" goes where it found it.</p>
+<p>When a change to a component's parameters affects the rows that call it (a new parameter every call gives, one removed, another type), Save shows <strong>This change updates the calls</strong>: one value for all the calls that need it, the parameters taken out and the macros that change. <strong>Update and save</strong> saves the component and the calls together; if something can't be saved, nothing changes. Renaming a parameter keeps each call's value.</p>
+
 <h3>The Library</h3>
 <p>The Library shows the collections on the left and the components of the selected one on the right, each with its name, the name AI apps search by (for example <em>game-diablo_iv-find-rare_item_in_slot</em>) and the macros that use it. <strong>Search</strong> finds components by any of their names and descriptions. A selected component shows what it plays and:</p>
 <ul>
+  <li><strong>Edit</strong>: its actions, parameters and what it finds, in the macro editor.</li>
   <li><strong>Edit details</strong>: its name, what it does, its concept and description.</li>
   <li><strong>History</strong>: its versions, as an item's History; <strong>Restore this version</strong> puts one back at once, for every macro that links it.</li>
   <li><strong>Delete</strong>: only when no macro links it, also the macro open in the editor. Otherwise the Library names those macros: unlink it there first.</li>
@@ -34,7 +47,7 @@
 <p>⋯ next to a collection renames or deletes it (only when none of its components is linked). The Library can't change while a loop or macro is running.</p>
 
 <h3>Share a collection</h3>
-<p><strong>Export collection</strong> saves a collection, whole, in a <code>.puppyitems</code> file with its images. A macro exported from its card or with Export takes the collections it links along. On another PC, <strong>Import</strong> (in the Library or in the title bar's ⋯) adds the collections it doesn't have yet, then the chosen items.</p>
+<p><strong>Export collection</strong> saves a collection, whole, in a <code>.puppyitems</code> file with its images, and the collections its components call. A macro exported from its card or with Export takes the collections it links along. On another PC, <strong>Import</strong> (in the Library or in the title bar's ⋯) adds the collections it doesn't have yet, then the chosen items.</p>
 <ul>
   <li>A collection is shared whole and is never split. A collection the Library already has, with the same content, is left as it is (a different name alone is the same content).</li>
   <li>When the file holds a different version of a collection you have, nothing is imported, and Import says which one. To import it, delete your collection first, if no macro uses it, or ask for a file made from your version.</li>

@@ -196,6 +196,15 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     boxes, Add linked) and manage (the **Library** button on the Macros page: Edit details, History, Delete, Import,
     Export collection); collections on the left, the components of the chosen one on the right, the selected one showing
     what it plays. A refused import says why in the Import window.
+  - Components as functions (approved: the Design canvas "PuppyMacro Component functions", with the app's existing
+    controls, the user's choice): **Edit** in the Library opens the component in the macro editor, its right column
+    replaced by What it does, Parameters (a card each, Add parameter) and Used as a condition (Can be used as a condition,
+    What it finds); `ParameterWindow`; a field that can take a parameter's value has a list before it, "A value" or "From
+    …", as the If's Wait card, and shows its own control only with "A value" (`Views/SlotBindings`); a click's Position lists
+    the Point parameters with Fixed point and the found places; a linked row shows its values and its window has
+    Arguments (`Views/ArgumentsEditor`, a card per parameter, the same list pattern, `Views/ValueEditor` with the app's own
+    controls for each type) with Save and Cancel; Add condition › Component from the Library; `SignatureUpdateWindow`
+    before a save that changes the calls.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set hotkey" / "Set key"
   button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no other button); set, the keys as accent
