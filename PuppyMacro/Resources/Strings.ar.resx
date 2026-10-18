@@ -1285,6 +1285,7 @@
   <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>يتعذر على PuppyMacro رؤية الشاشة الآن. حاول مرة أخرى بعد قليل.</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>هذه المنطقة بلون واحد بالكامل، لذا لن يتمكن PuppyMacro أبدًا من العثور عليها كصورة. اسحب حول شيء فيه تفاصيل أكثر، أو تحقّق من اللون بشرط من نوع "لون البكسل".</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>نقطة ثابتة</value></data>
   <data name="Action_Point" xml:space="preserve"><value>النقطة</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>حيث تم العثور على {0}</value></data>

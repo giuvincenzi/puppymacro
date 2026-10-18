@@ -15,8 +15,10 @@ namespace PuppyMacro.Services.Screen;
 
 /// <summary>
 /// Image search on a graphics card: the same normalized correlation as <see cref="CpuMatcher"/> (TM_CCOEFF_NORMED on
-/// color), in compute shaders, coarse-to-fine as the image's <see cref="Calibration"/> says. The coarse scores stay on
-/// the card: only the best of each 16 × 16 block comes back. Not thread safe on its own: every call takes its lock.
+/// color), in compute shaders, coarse-to-fine as the image's <see cref="Calibration"/> says. The scores stay on the card:
+/// only the places at or above a threshold come back (the coarse step's candidates, the full-size step's places within
+/// <see cref="ImageMatch.Tie"/> of its best, whose score the best of each 16 × 16 block gives), and the processor chooses
+/// among them as <see cref="CpuMatcher"/> does. Not thread safe on its own: every call takes its lock.
 /// </summary>
 internal sealed unsafe class GpuMatcher : IDisposable
 {
@@ -122,12 +124,24 @@ internal sealed unsafe class GpuMatcher : IDisposable
           }
           if (t == 0) Tiles[g.y * ((OW + 15) / 16) + g.x] = float2(gs[0], asfloat(gi[0]));
         }
+
+        // Every place of Scores (OW x OH) whose score is at least TN: Found[k] = (score's bits, index), Count[0] of them,
+        // in no particular order (the processor sorts them).
+        RWStructuredBuffer<uint2> Found : register(u4);
+        RWStructuredBuffer<uint> Count : register(u5);
+        [numthreads(16,16,1)]
+        void Above(uint3 id : SV_DispatchThreadID) {
+          if (id.x >= OW || id.y >= OH) return;
+          uint index = id.y * OW + id.x;
+          float s = Scores[index];
+          if (s >= TN) { uint k; InterlockedAdd(Count[0], 1, k); Found[k] = uint2(asuint(s), index); }
+        }
         """;
 
     private readonly object _sync = new();
     private readonly ID3D11Device _device;
     private readonly ID3D11DeviceContext _context;
-    private readonly ID3D11ComputeShader _convert, _down, _downGray, _match, _matchGray, _tileMax;
+    private readonly ID3D11ComputeShader _convert, _down, _downGray, _match, _matchGray, _tileMax, _above;
     private readonly ID3D11Buffer _parameters;
     private readonly Dictionary<(string Role, int Count, int Stride), GpuBuffer> _pool = new();
     private readonly Dictionary<int, ID3D11Buffer> _staging = new();
@@ -144,6 +158,7 @@ internal sealed unsafe class GpuMatcher : IDisposable
         _match = Compile("Match");
         _matchGray = Compile("MatchGray");
         _tileMax = Compile("TileMax");
+        _above = Compile("Above");
         var d = new D3D11_BUFFER_DESC { ByteWidth = 64, Usage = D3D11_USAGE.D3D11_USAGE_DEFAULT, BindFlags = D3D11_BIND_FLAG.D3D11_BIND_CONSTANT_BUFFER };
         ID3D11Buffer_unmanaged* p;
         _device.CreateBuffer(&d, null, &p);
@@ -295,9 +310,12 @@ internal sealed unsafe class GpuMatcher : IDisposable
         _staging.Clear();
     }
 
+    /// <summary>The first <paramref name="count"/> values of a buffer: only those bytes come back from the card.</summary>
     private T[] ReadBack<T>(GpuBuffer buffer, int count) where T : unmanaged
     {
         int size = buffer.Count * buffer.Stride, bytes = count * sizeof(T);
+        if (bytes == 0)
+            return Array.Empty<T>();
         if (!_staging.TryGetValue(size, out var staging))
         {
             var d = new D3D11_BUFFER_DESC { ByteWidth = (uint)size, Usage = D3D11_USAGE.D3D11_USAGE_STAGING, CPUAccessFlags = D3D11_CPU_ACCESS_FLAG.D3D11_CPU_ACCESS_READ };
@@ -305,7 +323,8 @@ internal sealed unsafe class GpuMatcher : IDisposable
             _device.CreateBuffer(&d, null, &p);
             _staging[size] = staging = Take<ID3D11Buffer>(p);
         }
-        _context.CopyResource(staging, buffer.Buffer);
+        var box = new D3D11_BOX { left = 0, right = (uint)bytes, top = 0, bottom = 1, front = 0, back = 1 };
+        _context.CopySubresourceRegion(staging, 0, 0, 0, 0, buffer.Buffer, 0, &box);
         D3D11_MAPPED_SUBRESOURCE mapped;
         _context.Map(staging, 0, D3D11_MAP.D3D11_MAP_READ, 0, &mapped);
         var result = new T[count];
@@ -547,20 +566,21 @@ internal sealed unsafe class GpuMatcher : IDisposable
 
     /// <summary>
     /// Searches <paramref name="image"/> in <paramref name="area"/> of <paramref name="picture"/> (all of it when null). The
-    /// image is prepared on the first search and kept, by reference, until <see cref="Forget"/>.
+    /// image is prepared on the first search and kept, by reference, until <see cref="Forget"/>. A flat image
+    /// (<see cref="Flatness"/>) is never found, as on the processor.
     /// </summary>
     public ImageMatch Find(GpuBuffer picture, Mat image, Calibration calibration, double need, Rect? area = null)
     {
         lock (_sync)
         {
             TrimPool();
+            Rect a = (area ?? new Rect(0, 0, picture.W, picture.H)).Intersect(new Rect(0, 0, picture.W, picture.H));
+            if (a.Width < image.Width || a.Height < image.Height || Flatness.IsFlat(image))
+                return ImageMatch.None;
             if (!_prepared.TryGetValue(image, out var prepared))
                 _prepared[image] = prepared = Prepare(image, calibration);
-            Rect a = (area ?? new Rect(0, 0, picture.W, picture.H)).Intersect(new Rect(0, 0, picture.W, picture.H));
-            if (a.Width < image.Width || a.Height < image.Height)
-                return ImageMatch.None;
             if (prepared.Coarse == null)
-                return Best(FullBlocks(picture, prepared, a.X, a.Y, a.Width - image.Width + 1, a.Height - image.Height + 1));
+                return FullBest(picture, prepared, a.X, a.Y, a.Width - image.Width + 1, a.Height - image.Height + 1);
 
             int f = prepared.Calibration.Factor;
             int sx = a.X / f, sy = a.Y / f;
@@ -568,20 +588,17 @@ internal sealed unsafe class GpuMatcher : IDisposable
             if (sw <= 0 || sh <= 0)
                 return ImageMatch.None;
             GpuBuffer source = CoarseSource(picture, prepared);
-            long coarseWork = (long)prepared.CoarseW * prepared.CoarseH;
-            // The blocks' best above the coarse threshold, best first, apart from each other by half the image.
-            var candidates = new List<(int X, int Y)>();
-            foreach (var block in Banded(sw, sh, coarseWork, (y0, rows) => CoarseScores(source, prepared, sx, sy + y0, sw, rows))
-                         .Where(b => b.Score >= calibration.CoarseMin).OrderByDescending(b => b.Score))
+            // Every coarse place at or above the threshold comes back, so the candidates are chosen as on the processor.
+            var above = new List<(float Score, int X, int Y)>();
+            int rows = BandRows(sw, sh, (long)prepared.CoarseW * prepared.CoarseH);
+            for (int y0 = 0; y0 < sh; y0 += rows)
             {
-                if (candidates.Count >= CpuMatcher.MaxCandidates)
-                    break;
-                if (candidates.Any(c => Math.Abs(c.X - block.X) < prepared.CoarseW / 2 && Math.Abs(c.Y - block.Y) < prepared.CoarseH / 2))
-                    continue;
-                candidates.Add((block.X, block.Y));
+                int band = Math.Min(rows, sh - y0);
+                foreach (var (score, index) in Above(CoarseScores(source, prepared, sx, sy + y0, sw, band), sw, band, (float)calibration.CoarseMin))
+                    above.Add((score, index % sw, index / sw + y0));
             }
             var best = ImageMatch.None;
-            foreach (var c in candidates)
+            foreach (var c in CpuMatcher.Candidates(above, prepared.CoarseW, prepared.CoarseH))
             {
                 int m = f * 2;
                 int x0 = Math.Max(a.X, (sx + c.X) * f - m), y0 = Math.Max(a.Y, (sy + c.Y) * f - m);
@@ -589,7 +606,7 @@ internal sealed unsafe class GpuMatcher : IDisposable
                 int ow = x1 - x0 - image.Width + 1, oh = y1 - y0 - image.Height + 1;
                 if (ow <= 0 || oh <= 0)
                     continue;
-                best = ImageMatch.Best(best, Best(FullBlocks(picture, prepared, x0, y0, ow, oh)));
+                best = ImageMatch.Best(best, FullBest(picture, prepared, x0, y0, ow, oh));
             }
             return best;
         }
@@ -603,32 +620,48 @@ internal sealed unsafe class GpuMatcher : IDisposable
     /// </summary>
     public const double MaxWorkPerDispatch = 5e7;
 
-    /// <summary>The best of every 16 × 16 block of a score map made band by band: <paramref name="run"/> scores rows y0 to y0 + rows.</summary>
-    private List<(float Score, int X, int Y)> Banded(int width, int height, long workPerPosition, Func<int, int, GpuBuffer> run)
+    /// <summary>How many rows of a score map one dispatch makes.</summary>
+    private static int BandRows(int width, int height, long workPerPosition) =>
+        (int)Math.Clamp(MaxWorkPerDispatch / Math.Max(1.0, (double)width * workPerPosition), 1, Math.Max(1, height));
+
+    /// <summary>
+    /// The best place of the full-size scores at ox + x, oy + y (x &lt; ow, y &lt; oh), in picture coordinates, as the
+    /// processor chooses it: the best score (the blocks' best), then the first place in reading order within
+    /// <see cref="ImageMatch.Tie"/> of it.
+    /// </summary>
+    private ImageMatch FullBest(GpuBuffer picture, Prepared prepared, int ox, int oy, int ow, int oh)
     {
-        int rows = (int)Math.Clamp(MaxWorkPerDispatch / Math.Max(1.0, (double)width * workPerPosition), 1, height);
-        var all = new List<(float, int, int)>();
-        for (int y0 = 0; y0 < height; y0 += rows)
+        int rows = BandRows(ow, oh, (long)prepared.Full.W * prepared.Full.H);
+        GpuBuffer Band(int y0) => Scores(picture, prepared.Full, prepared.FullNorm, ox, oy + y0, ow, Math.Min(rows, oh - y0));
+        var bandBest = new List<float>();
+        GpuBuffer? last = null;
+        for (int y0 = 0; y0 < oh; y0 += rows)
         {
-            int band = Math.Min(rows, height - y0);
-            foreach (var (score, x, y) in Blocks(run(y0, band), width, band))
-                all.Add((score, x, y + y0));
+            last = Band(y0);
+            float most = float.NegativeInfinity;
+            foreach (var (score, _, _) in Blocks(last, ow, Math.Min(rows, oh - y0)))
+                if (score > -1.5 && score > most)
+                    most = score;
+            bandBest.Add(most);
         }
-        return all;
-    }
-
-    /// <summary>The full-size scores at ox + x, oy + y (x &lt; ow, y &lt; oh), band by band, as block bests in picture coordinates.</summary>
-    private List<(float Score, int X, int Y)> FullBlocks(GpuBuffer picture, Prepared prepared, int ox, int oy, int ow, int oh) =>
-        Banded(ow, oh, (long)prepared.Full.W * prepared.Full.H, (y0, rows) => Scores(picture, prepared.Full, prepared.FullNorm, ox, oy + y0, ow, rows))
-            .Select(b => (b.Score, b.X + ox, b.Y + oy)).ToList();
-
-    private static ImageMatch Best(List<(float Score, int X, int Y)> blocks)
-    {
-        var best = ImageMatch.None;
-        foreach (var (score, x, y) in blocks)
-            if (score > -1.5)
-                best = ImageMatch.Best(best, new ImageMatch(x, y, score));
-        return best;
+        float max = bandBest.Count == 0 ? float.NegativeInfinity : bandBest.Max();
+        if (float.IsNegativeInfinity(max))
+            return ImageMatch.None;
+        float least = (float)(max - ImageMatch.Tie);
+        for (int b = 0; b < bandBest.Count; b++)
+        {
+            if (!(bandBest[b] >= least))
+                continue;
+            int y0 = b * rows, band = Math.Min(rows, oh - y0);
+            // One band: its scores are still on the card; otherwise made again, the same.
+            GpuBuffer scores = bandBest.Count == 1 ? last! : Band(y0);
+            var places = Above(scores, ow, band, least);
+            if (places.Count == 0)
+                continue;
+            var (score, index) = places.MinBy(p => p.Index);
+            return new ImageMatch(ox + index % ow, oy + y0 + index / ow, score);
+        }
+        return ImageMatch.None;
     }
 
     private GpuBuffer Scores(GpuBuffer picture, GpuBuffer template, float norm, int ox, int oy, int ow, int oh)
@@ -697,6 +730,31 @@ internal sealed unsafe class GpuMatcher : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Every place of a score map (width × height) whose score is at least <paramref name="least"/>, with its index (y ×
+    /// width + x): only those come back from the card.
+    /// </summary>
+    private List<(float Score, int Index)> Above(GpuBuffer scores, int width, int height, float least)
+    {
+        var found = Pooled("found", width * height, 8);
+        var count = Pooled("count", 1, 4);
+        uint zero = 0;
+        _context.UpdateSubresource(count.Buffer, 0, null, &zero, 0, 0);
+        Set(new Parameters { OW = (uint)width, OH = (uint)height, TN = least });
+        _context.CSSetShader(_above, null, 0);
+        _context.CSSetShaderResources(3, 1, new[] { scores.Read });
+        _context.CSSetUnorderedAccessViews(4, 2, new[] { found.Write, count.Write }, null);
+        _context.Dispatch(Groups(width), Groups(height), 1);
+        _context.CSSetShaderResources(3, 1, new ID3D11ShaderResourceView[1]);
+        _context.CSSetUnorderedAccessViews(4, 2, new ID3D11UnorderedAccessView[2], null);
+        int n = (int)Math.Min(ReadBack<uint>(count, 1)[0], (uint)(width * height));
+        uint[] raw = ReadBack<uint>(found, n * 2);
+        var result = new List<(float, int)>(n);
+        for (int i = 0; i < n; i++)
+            result.Add((BitConverter.Int32BitsToSingle((int)raw[i * 2]), (int)raw[i * 2 + 1]));
+        return result;
+    }
+
     public void Dispose()
     {
         lock (_sync)
@@ -719,7 +777,7 @@ internal sealed unsafe class GpuMatcher : IDisposable
             catch (COMException)
             {
             }
-            foreach (object com in new object[] { _convert, _down, _downGray, _match, _matchGray, _tileMax, _parameters, _context, _device })
+            foreach (object com in new object[] { _convert, _down, _downGray, _match, _matchGray, _tileMax, _above, _parameters, _context, _device })
                 Release(com);
         }
     }

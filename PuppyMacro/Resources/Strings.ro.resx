@@ -1206,6 +1206,7 @@ Detalii: {1}</value></data>
   <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro nu poate vedea ecranul acum. Încercați din nou peste câteva momente.</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>Această zonă are o singură culoare, așa că PuppyMacro nu ar putea s-o găsească niciodată ca imagine. Glisați în jurul unui element cu mai multe detalii sau verificați culoarea cu o condiție de tip Culoare pixel.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Punct fix</value></data>
   <data name="Action_Point" xml:space="preserve"><value>Punct</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Locul găsit de {0}</value></data>

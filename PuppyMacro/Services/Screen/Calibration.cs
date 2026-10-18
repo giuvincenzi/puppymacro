@@ -34,7 +34,7 @@ internal readonly record struct Calibration(int Factor, double CoarseMin, bool G
         for (int f = Math.Clamp(Math.Min(image.Width, image.Height) / Target, 1, MaxFactor); f > 1; f--)
         {
             int cw = (image.Width - f) / f, ch = (image.Height - f) / f;
-            if (cw < 4 || ch < 4)
+            if (cw < 4 || ch < 4 || CoarseIsFlat(image, f, gray))
                 continue;
             using Mat aligned = Shrink(source, 0, 0, f, cw, ch);
             double worst = 1;
@@ -67,6 +67,19 @@ internal readonly record struct Calibration(int Factor, double CoarseMin, bool G
         Cv2.MeanStdDev(gray, out _, out Scalar brightness);
         double colorSpread = Math.Sqrt((color.Val0 * color.Val0 + color.Val1 * color.Val1 + color.Val2 * color.Val2) / 3);
         return brightness.Val0 >= 0.5 * colorSpread;
+    }
+
+    /// <summary>
+    /// The image shrunk by <paramref name="f"/> as the coarse step searches it is flat (<see cref="Flatness"/>): its detail
+    /// is finer than the factor, so the coarse step would match nothing (or everything); a smaller factor is used.
+    /// </summary>
+    private static bool CoarseIsFlat(Mat image, int f, bool gray)
+    {
+        using Mat shrunk = image.Resize(new Size(image.Width / f, image.Height / f), 0, 0, InterpolationFlags.Area);
+        if (!gray)
+            return Flatness.IsFlat(shrunk);
+        using Mat coarse = shrunk.CvtColor(ColorConversionCodes.BGR2GRAY);
+        return Flatness.IsFlat(coarse);
     }
 
     private static Mat Shrink(Mat source, int px, int py, int f, int cw, int ch)

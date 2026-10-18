@@ -1176,6 +1176,7 @@ Dettagli: {1}</value></data>
   <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>Al momento PuppyMacro non riesce a vedere lo schermo. Riprova tra qualche istante.</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>Quest'area è tutta di un solo colore, quindi PuppyMacro non potrebbe mai trovarla come immagine. Trascina intorno a qualcosa con più dettagli, oppure controlla il colore con una condizione di tipo Colore del pixel.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Punto fisso</value></data>
   <data name="Action_Point" xml:space="preserve"><value>Punto</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Dove si trova {0}</value></data>

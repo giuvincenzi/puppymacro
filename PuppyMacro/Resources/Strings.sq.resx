@@ -1176,6 +1176,7 @@ Detajet: {1}</value></data>
   <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro nuk e sheh dot ekranin tani. Provoni sërish pas pak.</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>Kjo zonë është e gjitha me një ngjyrë, ndaj PuppyMacro nuk do ta gjente dot kurrë si imazh. Zvarritni rreth diçkaje me më shumë detaje, ose kontrolloni ngjyrën me një kusht të llojit Ngjyra e pikselit.</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Pikë fikse</value></data>
   <data name="Action_Point" xml:space="preserve"><value>Pika</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Aty ku u gjet {0}</value></data>

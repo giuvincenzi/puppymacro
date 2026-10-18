@@ -1135,6 +1135,7 @@
   <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro 暂时无法获取屏幕画面。请稍后再试。</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>此区域只有一种颜色，PuppyMacro 无法将其作为图像找到。请框住细节更多的内容，或使用“像素颜色”条件检查颜色。</value></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>固定点</value></data>
   <data name="Action_Point" xml:space="preserve"><value>坐标</value></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>找到 {0} 的位置</value></data>

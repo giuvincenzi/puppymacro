@@ -68,6 +68,12 @@ internal sealed unsafe class ScreenCapture : IScreen
 
     private readonly object _sync = new();
     private readonly List<MonitorCapture> _monitors = new();
+
+    /// <summary>
+    /// Captures that gave up while watches still used them: replaced in <see cref="_monitors"/>, released with their last
+    /// watch (<see cref="Release"/>).
+    /// </summary>
+    private readonly List<MonitorCapture> _retired = new();
     private readonly List<AutoResetEvent> _listeners = new();
     private int _watchers;
     private Timer? _linger;
@@ -137,9 +143,14 @@ internal sealed unsafe class ScreenCapture : IScreen
     private bool _lingering;
 
     /// <summary>
-    /// The monitors as they are now, under <see cref="_sync"/>: a monitor that is not in use any more and changed (its place
-    /// or size in the desktop), went away or gave up is released, and a new or changed one gets a capture of its own. One
-    /// in use keeps running as it is until it is free: Windows lets a process duplicate a monitor only once.
+    /// The monitors as they are now, under <see cref="_sync"/>: a capture that changed (its monitor's place or size in the
+    /// desktop) or went away is released once no watch uses it, and a new or changed monitor gets a capture of its own. One
+    /// in use and working keeps running as it is until it is free: Windows lets a process duplicate a monitor only once.
+    /// A capture that gave up is replaced at once, also while watches use it: it duplicates nothing any more (its thread
+    /// ended and its duplication is closed), so the new one can duplicate the monitor, and the watches still on it, which
+    /// see it failed, never keep the monitor from coming back. The new capture is made only here, when a watch starts (a
+    /// condition tries again at most every <see cref="ConditionChecker.RestartMs"/>), and waits between its own tries
+    /// (<see cref="CaptureRetry"/>): never a duplication made again and again without a pause.
     /// </summary>
     private void RefreshMonitors()
     {
@@ -147,10 +158,13 @@ internal sealed unsafe class ScreenCapture : IScreen
         foreach (var monitor in _monitors.ToList())
         {
             bool same = now.Any(o => o.DeviceName == monitor.DeviceName && o.Bounds == monitor.Bounds);
-            if (monitor.InUse || (same && monitor.Failure == null))
+            if ((same || monitor.InUse) && monitor.Failure == null)
                 continue;
-            monitor.Dispose();
             _monitors.Remove(monitor);
+            if (monitor.InUse)
+                _retired.Add(monitor);
+            else
+                monitor.Dispose();
         }
         foreach (var output in now.Where(o => !_monitors.Any(m => m.DeviceName == o.DeviceName)))
         {
@@ -179,6 +193,8 @@ internal sealed unsafe class ScreenCapture : IScreen
         lock (_sync)
         {
             monitor.Stop();
+            if (!monitor.InUse && _retired.Remove(monitor))
+                monitor.Dispose();
             if (--_watchers > 0)
                 return;
             // Every capture keeps running a moment: a macro that checks again soon (a loop) finds the image ready.
@@ -198,9 +214,10 @@ internal sealed unsafe class ScreenCapture : IScreen
             _linger = null;
             // Monitors may change before the next watch: they are taken again then.
             // Each monitor releases its device and its DXGI objects.
-            foreach (var m in _monitors)
+            foreach (var m in _monitors.Concat(_retired))
                 m.Dispose();
             _monitors.Clear();
+            _retired.Clear();
         }
         ActiveChanged?.Invoke(false);
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -166,14 +167,34 @@ internal static class TextReader
         return best;
     }
 
-    /// <summary>A word without spaces and without the punctuation at its ends; a word of punctuation only, as it is.</summary>
+    /// <summary>
+    /// A word without spaces and without the punctuation at its ends; a word of punctuation only, as it is. In Unicode's
+    /// composed form (NFC), so "é" typed as e and an accent is the "é" Windows reads.
+    /// </summary>
     private static string Bare(string word)
     {
-        string w = WithoutSpaces(word).Trim(Punctuation);
-        return w.Length == 0 ? WithoutSpaces(word) : w;
+        string spaced = WithoutSpaces(word.Normalize(NormalizationForm.FormC));
+        int start = 0, end = spaced.Length;
+        while (start < end && IsEndPunctuation(spaced[start]))
+            start++;
+        while (end > start && IsEndPunctuation(spaced[end - 1]))
+            end--;
+        return start == end ? spaced : spaced[start..end];
     }
 
-    private static readonly char[] Punctuation = ".,:;!?\"'()[]{}…·、。，：；！？「」『』（）".ToCharArray();
+    /// <summary>
+    /// Punctuation that does not count at a word's ends: every quote and bracket of every script (Unicode's opening,
+    /// closing, initial and final punctuation: “ ” ‘ ’ « » „ 「 」 ( )), and the marks that end or split a sentence in the
+    /// app's languages. Not hyphens, % or other signs that are part of what is written ("-5", "50%").
+    /// </summary>
+    private static bool IsEndPunctuation(char c) => char.GetUnicodeCategory(c) switch
+    {
+        UnicodeCategory.OpenPunctuation or UnicodeCategory.ClosePunctuation
+            or UnicodeCategory.InitialQuotePunctuation or UnicodeCategory.FinalQuotePunctuation => true,
+        _ => SentencePunctuation.Contains(c),
+    };
+
+    private const string SentencePunctuation = ".,:;!?\"'…·¿¡、。，：；！？．・؟،؛";
 
     private static string WithoutSpaces(string s) => string.Concat(s.Where(c => !char.IsWhiteSpace(c)));
 }

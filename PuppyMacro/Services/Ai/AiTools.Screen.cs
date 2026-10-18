@@ -251,12 +251,11 @@ internal sealed partial class AiTools
         }
     }
 
-    /// <summary>Nothing but one color (a flat area): normalized correlation finds no shape in it.</summary>
-    internal static bool OneColor(Mat picture)
-    {
-        Cv2.MeanStdDev(picture, out _, out Scalar spread);
-        return spread.Val0 < 1 && spread.Val1 < 1 && spread.Val2 < 1;
-    }
+    /// <summary>
+    /// Nothing but one color (a flat area): normalized correlation finds no shape in it. The search's own definition, so
+    /// what is refused here is what the search would never find (the editor's Take image refuses the same).
+    /// </summary>
+    internal static bool OneColor(Mat picture) => Flatness.IsFlat(picture);
 
     // ================= check_condition =================
 

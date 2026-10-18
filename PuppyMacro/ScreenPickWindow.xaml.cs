@@ -63,10 +63,7 @@ internal partial class ScreenPickWindow
         {
             ShowPictures();
             ShowCellMarks();
-            Instructions.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            Rect work = SystemParameters.WorkArea;
-            Canvas.SetLeft(Instructions, work.Left - Left + (work.Width - Instructions.DesiredSize.Width) / 2);
-            Canvas.SetTop(Instructions, work.Top - Top + 18);
+            PlaceInstructions();
             Activate();
             Focus();
             UpdateLens();
@@ -137,6 +134,15 @@ internal partial class ScreenPickWindow
         snapshot.Dispose();
         error = Strings.ScreenPick_NoScreen;
         return null;
+    }
+
+    /// <summary>The instructions centered at the top of the work area, after their text changes too.</summary>
+    private void PlaceInstructions()
+    {
+        Instructions.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        Rect work = SystemParameters.WorkArea;
+        Canvas.SetLeft(Instructions, work.Left - Left + (work.Width - Instructions.DesiredSize.Width) / 2);
+        Canvas.SetTop(Instructions, work.Top - Top + 18);
     }
 
     /// <summary>Each monitor's picture where the monitor is.</summary>
@@ -326,6 +332,15 @@ internal partial class ScreenPickWindow
             return;
         using (part.Picture)
         {
+            // An image of one color has no shape to find, and the search never finds it: refused here, as the AI tools
+            // refuse it, and the user draws again on the same picture.
+            if (Flatness.IsFlat(part.Picture))
+            {
+                OnRetryClick(this, e);
+                InstructionsText.Text = Strings.ScreenPick_OneColor;
+                PlaceInstructions();
+                return;
+            }
             OpenCvSharp.Cv2.ImEncode(".png", part.Picture, out byte[] png);
             PickedArea = (part.Area, png);
         }

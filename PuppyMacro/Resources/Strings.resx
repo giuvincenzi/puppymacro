@@ -1251,6 +1251,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value><comment>Size of the rectangle drawn: {0} width, {1} height, in pixels</comment></data>
   <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value><comment>Next to the enlarged pixels: {0} the color (#RRGGBB), {1} X, {2} Y</comment></data>
   <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro can't see the screen right now. Try again in a moment.</value><comment>The screen could not be captured for a pick</comment></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>This area is all one color, so PuppyMacro could never find it as an image. Drag around something with more detail, or check the color with a Pixel color condition.</value><comment>Instructions on the full-screen pick when the rectangle drawn as an image is all one color</comment></data>
   <data name="Action_PositionFixed" xml:space="preserve"><value>Fixed point</value><comment>Position choice of a mouse action: the X and Y written in the action</comment></data>
   <data name="Action_Point" xml:space="preserve"><value>Point</value><comment>Header of the card with X, Y and Pick on screen under Position, when Fixed point is chosen</comment></data>
   <data name="Action_PositionFound" xml:space="preserve"><value>Where {0} was found</value><comment>Position choice of a mouse action inside an If: {0} the name of the condition (an image or a text)</comment></data>
