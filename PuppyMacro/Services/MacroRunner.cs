@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
@@ -28,13 +30,18 @@ internal sealed class MacroRunner
     private readonly RecognitionDevice _device;
     private readonly IScreen _screen;
     private ConditionChecker? _checker;
+    private readonly RunLog? _log;
+    private string? _stopReason;
+    private bool _ifStopped;
 
     // Where the conditions checked so far found their image or text, for the mouse actions that use it.
     private readonly Dictionary<Guid, OpenCvSharp.Point> _found = new();
 
+    /// <param name="log">The run's Debug log (Debug on, or a test by an AI app); null writes none.</param>
     public MacroRunner(MacroDefinition macro, ClipboardPaster paster, ImageStore? images = null,
-        RecognitionDevice device = RecognitionDevice.Automatic, IScreen? screen = null)
+        RecognitionDevice device = RecognitionDevice.Automatic, IScreen? screen = null, RunLog? log = null)
     {
+        _log = log;
         _macro = macro.Clone();
         _paster = paster;
         _images = images;
@@ -58,19 +65,27 @@ internal sealed class MacroRunner
         thread.Start();
     }
 
-    public void Stop()
+    /// <param name="why">For the Debug log: why it stops (by the user when null).</param>
+    public void Stop(string? why = null)
     {
+        _stopReason ??= why ?? "stopped by the user";
         _stopRequested = true;
         _stop.Set();
     }
+
+    /// <summary>Why the run ended, as its Debug log says it; null while it runs.</summary>
+    public string? EndReason { get; private set; }
+
+    /// <summary>The run's Debug log, when it has one.</summary>
+    public RunLog? DebugLog => _log;
 
     private double Speed => Math.Clamp(_macro.Speed, 0.25, 4);
 
     private void Run()
     {
+        string end = "finished";
         try
         {
-            MacroTrace.Write($"Macro {_macro.Name} starts");
             using var timer = PreciseTimer.Create();
             _timer = timer;
 
@@ -83,7 +98,9 @@ internal sealed class MacroRunner
 
             for (int round = 0; round < repeats && !_stopRequested; round++)
             {
-                if (!Play(_macro.Actions))
+                if (repeats > 1)
+                    _log?.Line(repeats == int.MaxValue ? $"Round {round + 1}" : $"Round {round + 1} of {repeats}");
+                if (!Play(_macro.Actions, ""))
                     return;
                 if (_macro.Actions.Count == 0 && !Wait(100))
                     return; // empty macro in loop mode: do not spin
@@ -92,51 +109,95 @@ internal sealed class MacroRunner
         catch (Exception ex)
         {
             Debug.WriteLine($"Macro thread failed: {ex}");
-            MacroTrace.Write($"Macro failed: {ex}");
+            end = $"failed: {ex.Message}";
         }
         finally
         {
-            MacroTrace.Write($"Macro {_macro.Name} ends (stopped by the user {_stopRequested})");
+            if (_stopRequested)
+                end = _stopReason ?? "stopped by the user";
+            else if (_ifStopped)
+                end = "an If was not true, and it stops the macro (Stop the macro)";
+            EndReason = end;
+            _log?.Line($"Macro ends: {end}");
+            _log?.ScreenAtEnd(() =>
+            {
+                using var snapshot = ScreenSnapshot.Take(_screen);
+                var pictures = snapshot.Monitors.Select(m => (m.Bounds, m.Picture.Clone())).ToList();
+                return pictures;
+            });
             ReleaseHeld();
             _checker?.Dispose();
             Exited?.Invoke(this);
         }
     }
 
-    /// <summary>Plays a list of actions (the macro's, a Then or an Else). False when the macro ends here.</summary>
-    private bool Play(List<MacroAction> actions)
+    /// <summary>
+    /// Plays a list of actions (the macro's, a Then or an Else). False when the macro ends here. <paramref name="path"/>:
+    /// where the list is, for the Debug log ("" for the macro's own, "3 Then " inside the If of action 3).
+    /// </summary>
+    private bool Play(List<MacroAction> actions, string path)
     {
-        foreach (var action in actions)
+        for (int i = 0; i < actions.Count; i++)
         {
-            MacroTrace.Write($"Action {action.Type}: waits {action.DelayMs} ms");
+            var action = actions[i];
             if (!Wait(action.DelayMs))
-            {
-                MacroTrace.Write("  stopped while waiting");
                 return false;
-            }
-            NativeMethods.GetCursorPos(out var before);
-            bool keepGoing = Execute(action);
-            NativeMethods.GetCursorPos(out var after);
-            MacroTrace.Write($"  done (X {action.X}, Y {action.Y}): cursor {before.X},{before.Y} -> {after.X},{after.Y}, goes on {keepGoing}");
-            if (!keepGoing)
+            _current = $"{path}{i + 1}";
+            if (!Execute(action))
                 return false;
         }
         return true;
     }
 
+    /// <summary>The action playing, as the Debug log numbers it ("2", "2 Then 1").</summary>
+    private string _current = "";
+
+    private void Log(string text) => _log?.Line($"#{_current} {text}");
+
     /// <summary>Checks an If's conditions, then plays Then or Else, or ends the macro (Stop the macro).</summary>
     private bool If(MacroIf block)
     {
         _checker ??= new ConditionChecker(_screen, _images, _device, _macro.ChecksPerSecond);
-        MacroTrace.Write($"If: {block.Conditions.Count} condition(s), {block.Match}, wait {block.Wait} {block.WaitSeconds} s");
-        var result = _checker.Check(block, _stop);
-        MacroTrace.Write($"If: met {result.Met}, stopped {result.Stopped} -> {(result.Met ? $"Then ({block.Then.Count} actions)" : block.OnFail == ConditionFail.Else ? $"Else ({block.Else.Count} actions)" : "stop")}");
+        string me = _current;
+        Log($"If: {(block.Conditions.Count > 1 ? (block.Match == ConditionMatch.All ? "all of " : "one of ") : "")}{block.Conditions.Count} condition(s), " +
+            block.Wait switch
+            {
+                ConditionWait.Once => "checks once",
+                ConditionWait.UpTo => $"waits up to {block.WaitSeconds.ToString("0.#", CultureInfo.InvariantCulture)} s",
+                _ => "waits as long as it takes",
+            });
+        var clock = Stopwatch.StartNew();
+        var result = _checker.Check(block, _stop, describe: _log != null);
+        if (_log != null)
+        {
+            foreach (string line in result.Details)
+                _log.Line($"   {line}");
+            for (int p = 0; p < result.Pictures.Count; p++)
+            {
+                var (bounds, picture) = result.Pictures[p];
+                string name = $"if-{me.Replace(' ', '-')}{(result.Pictures.Count > 1 ? $"-monitor-{p + 1}" : "")}.png";
+                _log.Line($"   screenshot of {bounds.X},{bounds.Y} {bounds.Width}x{bounds.Height}: {name}");
+                _log.Picture(name, picture);
+            }
+        }
+        _current = me;
         if (result.Stopped)
+        {
+            Log($"If: stopped while it was checking, after {clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)} s");
             return false;
+        }
         KeepFound(_found, block, result);
+        Log($"If: {(result.Met ? "true" : "not true")} after {clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)} s -> " +
+            (result.Met ? $"Then ({block.Then.Count} actions)"
+                : block.OnFail == ConditionFail.Else ? $"Else ({block.Else.Count} actions)" : "the macro stops (Stop the macro)"));
         if (result.Met)
-            return Play(block.Then);
-        return block.OnFail == ConditionFail.Else && Play(block.Else);
+            return Play(block.Then, $"{me} Then ");
+        if (block.OnFail != ConditionFail.Else)
+        {
+            _ifStopped = true;
+            return false;
+        }
+        return Play(block.Else, $"{me} Else ");
     }
 
     /// <summary>
@@ -168,14 +229,21 @@ internal sealed class MacroRunner
     private bool Execute(MacroAction a)
     {
         double hold = Math.Max(1, a.HoldMs / Speed);
+        string where = "";
         if (a.Type is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo
             && a.FoundId != null)
         {
             if (PointOf(a) is not { } point)
+            {
+                Log($"{ActionName(a)}: skipped, its condition found nothing this time");
                 return true;
+            }
             a = a.Clone();
             (a.X, a.Y) = point;
+            where = " (where its condition found it)";
         }
+        if (_log != null && a.Type != MacroActionType.If)
+            Log(Describe(a) + where);
         switch (a.Type)
         {
             case MacroActionType.If:
@@ -207,7 +275,10 @@ internal sealed class MacroRunner
 
             case MacroActionType.Click:
                 if (CursorGuard.IsOwnWindowAt(a.X, a.Y))
-                    return true; // never click PuppyMacro's own windows
+                {
+                    Log("   skipped: a PuppyMacro window is at that point"); // never click PuppyMacro's own windows
+                    return true;
+                }
                 InputSender.MoveTo(a.X, a.Y);
                 for (int r = 0; r < Math.Max(1, a.Repeat); r++)
                 {
@@ -225,7 +296,10 @@ internal sealed class MacroRunner
 
             case MacroActionType.MouseDown:
                 if (CursorGuard.IsOwnWindowAt(a.X, a.Y))
+                {
+                    Log("   skipped: a PuppyMacro window is at that point");
                     return true;
+                }
                 InputSender.MoveTo(a.X, a.Y);
                 InputSender.Down(a.Vk);
                 _held.Add(a.Vk);
@@ -259,6 +333,32 @@ internal sealed class MacroRunner
                 return true;
         }
     }
+
+    private static string ActionName(MacroAction a) => a.Type switch
+    {
+        MacroActionType.MouseDown => "Mouse button down",
+        MacroActionType.MouseUp => "Mouse button up",
+        MacroActionType.MoveTo => "Move to",
+        _ => a.Type.ToString(),
+    };
+
+    /// <summary>An action as the Debug log says it, in English (key names too).</summary>
+    private static string Describe(MacroAction a) => Loc.English(() => a.Type switch
+    {
+        MacroActionType.PressKey => $"Press {KeyNames.Format(a.Key)}{Times(a)}, held {a.HoldMs:0} ms",
+        MacroActionType.KeyDown => $"Key down {KeyNames.Get(a.Vk)}",
+        MacroActionType.KeyUp => $"Key up {KeyNames.Get(a.Vk)}",
+        MacroActionType.Click => $"{(a.ClickCount == 2 ? "Double click" : "Click")} {KeyNames.Get(a.Vk)} at {a.X},{a.Y}{Times(a)}",
+        MacroActionType.MouseDown => $"Mouse button down {KeyNames.Get(a.Vk)} at {a.X},{a.Y}",
+        MacroActionType.MouseUp => $"Mouse button up {KeyNames.Get(a.Vk)} at {a.X},{a.Y}",
+        MacroActionType.MoveTo => $"Move to {a.X},{a.Y}{(a.Smooth ? " smoothly" : "")}",
+        MacroActionType.MovePath => $"Move along a recorded path of {a.Path.Count} points",
+        MacroActionType.Scroll => $"Scroll {a.ScrollDirection.ToString().ToLowerInvariant()} {a.ScrollSteps} step(s)",
+        MacroActionType.PasteText => $"Paste {(a.Text ?? "").Length} characters",
+        _ => a.Type.ToString(),
+    });
+
+    private static string Times(MacroAction a) => a.Repeat > 1 ? $" {a.Repeat} times" : "";
 
     private static bool MoveNow(int x, int y)
     {

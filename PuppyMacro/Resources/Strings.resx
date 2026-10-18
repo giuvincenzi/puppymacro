@@ -531,6 +531,15 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Any key or mouse button, like F2 or A. For a combination, hold Ctrl, Alt, Shift or Win first; left and right click, the scroll wheel and Esc need one. Hold needs a hotkey.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sound</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Plays when the macro starts and stops</value></data>
+  <data name="Macro_Debug" xml:space="preserve"><value>Debug</value><comment>GLOBAL: the macro editor's Debug card, the same in every language</comment></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Keeps the log of this macro's last run, with pictures of the screen when an If isn't true and at the end. The log is deleted when PuppyMacro closes.</value><comment>Description of the macro editor's Debug card. If is a global word</comment></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>View log</value><comment>Button and menu item: opens the Debug log of a macro's last run</comment></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Log of {0}</value><comment>Title of the Debug log window: {0} the macro's name</comment></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>The last run of the macro, written in English so you can paste it anywhere. The pictures of the screen are in its folder.</value><comment>Under the Debug log window's title</comment></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Log</value><comment>Accessible name of the Debug log's text</comment></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copy</value><comment>Button: copies the Debug log</comment></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Open folder</value><comment>Button: opens the Debug log's folder in File Explorer</comment></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>This log isn't there any more. Logs are deleted when PuppyMacro closes.</value><comment>In the Debug log window when the log is not there any more</comment></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Click a sound to choose it and hear how it starts and stops</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Save</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Cancel</value></data>

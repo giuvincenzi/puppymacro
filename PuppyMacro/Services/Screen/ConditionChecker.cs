@@ -9,10 +9,18 @@ using PuppyMacro.Models;
 
 namespace PuppyMacro.Services.Screen;
 
-/// <summary>What an If found: whether its conditions are true, and where each Image or Text condition found its match.</summary>
+/// <summary>
+/// What an If found: whether its conditions are true, and where each Image or Text condition found its match. Asked to
+/// describe (a run's Debug log): what each condition saw at the last check, in English, and, when they were not true, a
+/// picture of each monitor they looked at (the caller disposes them).
+/// </summary>
 internal sealed record ConditionResult(bool Met, bool Stopped, IReadOnlyDictionary<Guid, Point> Found)
 {
     public static readonly ConditionResult Stop = new(false, true, new Dictionary<Guid, Point>());
+
+    public IReadOnlyList<string> Details { get; init; } = Array.Empty<string>();
+
+    public IReadOnlyList<(Rect Bounds, Mat Picture)> Pictures { get; init; } = Array.Empty<(Rect, Mat)>();
 }
 
 /// <summary>
@@ -67,10 +75,13 @@ internal sealed class ConditionChecker : IDisposable
         public required Rect Area { get; init; }
         public ConditionImage? Image { get; init; }
         public IScreenWatch? Watch { get; set; }
+
+        /// <summary>What the last check saw here, for the Debug log: a pixel's color, the text read.</summary>
+        public string? Seen { get; set; }
     }
 
     /// <summary>Checks the If's conditions, waiting as it says, until they are true, the wait ends or <paramref name="stop"/>.</summary>
-    public ConditionResult Check(MacroIf block, WaitHandle stop)
+    public ConditionResult Check(MacroIf block, WaitHandle stop, bool describe = false)
     {
         var looks = block.Conditions.SelectMany(Places).ToList();
         using var waiter = new AutoResetEvent(false);
@@ -89,6 +100,7 @@ internal sealed class ConditionChecker : IDisposable
             };
             double gapMs = _checksPerSecond == 0 ? 0 : 1000.0 / _checksPerSecond;
             var seen = new long[looks.Count];
+            List<string>? details = null;
             double lastCheck = double.NegativeInfinity, lastRestart = 0;
             while (true)
             {
@@ -120,14 +132,15 @@ internal sealed class ConditionChecker : IDisposable
                         seen[i] = looks[i].Watch?.Version ?? 0;
                     lastCheck = now;
                     var found = new Dictionary<Guid, Point>();
-                    if (Evaluate(block, looks, found))
-                        return new ConditionResult(true, false, found);
+                    details = describe ? new List<string>() : null;
+                    if (Evaluate(block, looks, found, details))
+                        return new ConditionResult(true, false, found) { Details = details ?? (IReadOnlyList<string>)Array.Empty<string>() };
                     if (block.Wait == ConditionWait.Once)
-                        return new ConditionResult(false, false, found);
+                        return NotTrue(looks, details);
                 }
                 now = clock.Elapsed.TotalMilliseconds;
                 if (block.Wait == ConditionWait.UpTo && now >= limitMs && !double.IsNegativeInfinity(lastCheck))
-                    return new ConditionResult(false, false, new Dictionary<Guid, Point>());
+                    return NotTrue(looks, details);
                 // Wait for a new image, the next allowed check or the end of the wait, whichever comes first.
                 double left = (block.Wait == ConditionWait.UpTo && !double.IsNegativeInfinity(lastCheck) ? limitMs : double.PositiveInfinity) - now;
                 double next = Math.Min(left, changed && ready ? Math.Max(1, gapMs - (now - lastCheck)) : 250);
@@ -142,6 +155,32 @@ internal sealed class ConditionChecker : IDisposable
             foreach (var look in looks)
                 look.Watch?.Dispose();
         }
+    }
+
+    /// <summary>Not true in time: what the last check saw and, when asked to describe, a picture of each monitor looked at.</summary>
+    private static ConditionResult NotTrue(List<Look> looks, List<string>? details)
+    {
+        var pictures = new List<(Rect, Mat)>();
+        if (details != null)
+        {
+            foreach (var watch in looks.Select(l => l.Watch).OfType<IScreenWatch>().Where(w => !w.Failed).DistinctBy(w => w.Bounds))
+            {
+                try
+                {
+                    if (watch.Copy(watch.Bounds) is { } picture)
+                        pictures.Add((watch.Bounds, picture));
+                }
+                catch (Exception ex) when (ex is not OutOfMemoryException)
+                {
+                    // A picture that cannot be taken only leaves the log without it.
+                }
+            }
+        }
+        return new ConditionResult(false, false, new Dictionary<Guid, Point>())
+        {
+            Details = details ?? (IReadOnlyList<string>)Array.Empty<string>(),
+            Pictures = pictures,
+        };
     }
 
     /// <summary>Checks one condition on the screen now and says what it saw (the editor's live check and Test).</summary>
@@ -219,7 +258,7 @@ internal sealed class ConditionChecker : IDisposable
     /// All or Any of the conditions; the places found are those of the conditions found true. A condition true for not
     /// being there is true only when every place it looks at was seen, so a screen it could not see never makes it true.
     /// </summary>
-    private bool Evaluate(MacroIf block, List<Look> looks, Dictionary<Guid, Point> found)
+    private bool Evaluate(MacroIf block, List<Look> looks, Dictionary<Guid, Point> found, List<string>? details = null)
     {
         bool any = false, all = true;
         foreach (var condition in block.Conditions)
@@ -232,6 +271,7 @@ internal sealed class ConditionChecker : IDisposable
                 var (seen, ok, at, score) = Check(look);
                 seenAll &= seen;
                 looked = true;
+                details?.Add(Describe(condition, look, seen, ok, at, score));
                 if (ok && score > bestScore)
                 {
                     there = true;
@@ -240,15 +280,49 @@ internal sealed class ConditionChecker : IDisposable
                 }
             }
             bool met = condition.Not ? looked && seenAll && !there : there;
+            if (details != null)
+            {
+                if (!looked)
+                    details.Add($"{Name(condition)}: nothing to look at (no image PuppyMacro has, or no text)");
+                details.Add($"  -> {Name(condition)} is {(met ? "true" : "not true")}{(condition.Not ? " (true when it is not there)" : "")}");
+            }
             if (met && best is { } point && condition.GivesPlace)
                 found[condition.Id] = point;
             any |= met;
             all &= met;
             if (block.Match == ConditionMatch.All && !met)
+            {
+                if (details != null && condition != block.Conditions[^1])
+                    details.Add("  (the next conditions were not checked: All needs every one)");
                 return false;
+            }
         }
         return block.Match == ConditionMatch.All ? all : any;
     }
+
+    private static string Name(MacroCondition c) => c.Kind switch
+    {
+        ConditionKind.Pixel => $"Pixel {c.X},{c.Y}",
+        ConditionKind.Image => $"Image \"{c.Name}\"",
+        _ => $"Text \"{c.Name}\"",
+    };
+
+    /// <summary>One place of a condition as the Debug log shows it: what was wanted and what PuppyMacro saw.</summary>
+    private string Describe(MacroCondition c, Look look, bool seen, bool there, Point at, double score)
+    {
+        if (!seen)
+            return $"{Name(c)}: PuppyMacro could not see this part of the screen (no monitor there, or its capture failed)";
+        return c.Kind switch
+        {
+            ConditionKind.Pixel => $"{Name(c)}: saw {look.Seen}, wanted {c.Color} within {c.Tolerance}%",
+            ConditionKind.Image when there => $"{Name(c)}: found at {at.X},{at.Y}, {ImageMatch.Percent(score)}% similar (needs {c.Similarity}%)",
+            ConditionKind.Image => $"{Name(c)}: not found, the closest is {ImageMatch.Percent(score)}% similar (needs {c.Similarity}%)",
+            _ when there => $"{Name(c)}: \"{c.Text}\" found at {at.X},{at.Y}",
+            _ => $"{Name(c)}: \"{c.Text}\" not found; read \"{Shorten(look.Seen ?? "")}\"",
+        };
+    }
+
+    private static string Shorten(string text) => text.Length > 200 ? text[..200] + "…" : text;
 
     /// <summary>The places a condition looks at: a pixel, each image near where it was taken or in the area, the text's area.</summary>
     private IEnumerable<Look> Places(MacroCondition c)
@@ -301,7 +375,7 @@ internal sealed class ConditionChecker : IDisposable
                     return (false, false, default, 0);
                 var seen = pixel.At<Vec3b>(0, 0);
                 bool met = PixelMatches(seen, c.Color, c.Tolerance);
-                MacroTrace.Write($"  pixel {c.X},{c.Y}: {ScreenSnapshot.Hex(seen)}, wanted {c.Color} ±{c.Tolerance}% -> {met} (frame {watch.Version})");
+                look.Seen = ScreenSnapshot.Hex(seen);
                 return (true, met, new Point(c.X, c.Y), 1);
             }
             case ConditionKind.Image:
@@ -312,6 +386,7 @@ internal sealed class ConditionChecker : IDisposable
                 if (picture == null || string.IsNullOrWhiteSpace(c.Text))
                     return (false, false, default, 0);
                 var lines = TextReader.Read(picture, c.Language);
+                look.Seen = string.Join(" ", lines.Select(l => string.Join(" ", l.Select(w => w.Text))));
                 if (TextReader.Find(lines, c.Text, c.TextMatch, c.MatchCase) is not { } r)
                     return (true, false, default, 0);
                 return (true, true, new Point(area.X + r.X + r.Width / 2, area.Y + r.Y + r.Height / 2), 1);

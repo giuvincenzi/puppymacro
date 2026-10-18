@@ -481,6 +481,14 @@
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>任意按键或鼠标按钮，如 F2 或 A。若要使用组合键，请先按住 Ctrl、Alt、Shift 或 Win；左键单击、右键单击、滚轮和 Esc 必须使用组合键。“按住”需要热键。</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>声音</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>在宏启动和停止时播放</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>保留此宏上次运行的日志，以及 If 不成立时和结束时的屏幕图像。关闭 PuppyMacro 时会删除日志。</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>查看日志</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>{0} 的日志</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>宏的上次运行，以英文写成，方便粘贴到任何地方。屏幕图像在其文件夹中。</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>日志</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>复制</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>打开文件夹</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>此日志已不存在。关闭 PuppyMacro 时会删除日志。</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>单击某个声音以选择它，并试听启动和停止的效果</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>保存</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>取消</value></data>

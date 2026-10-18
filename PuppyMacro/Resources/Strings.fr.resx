@@ -494,6 +494,14 @@ Détails : {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>N'importe quelle touche ou bouton de la souris, comme F2 ou A. Pour une combinaison, maintenez d'abord Ctrl, Alt, Maj ou Win ; le clic gauche et le clic droit, la roulette et Échap en ont besoin. Maintenir nécessite un raccourci.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Son</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Retentit au démarrage et à l'arrêt de la macro</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Garde le journal de la dernière exécution de cette macro, avec des images de l'écran quand un If n'est pas vrai et à la fin. Le journal est supprimé à la fermeture de PuppyMacro.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Afficher le journal</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Journal de {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>La dernière exécution de la macro, écrite en anglais pour que vous puissiez la coller n'importe où. Les images de l'écran sont dans son dossier.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Journal</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copier</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Ouvrir le dossier</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Ce journal n'existe plus. Les journaux sont supprimés à la fermeture de PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Cliquez sur un son pour le choisir et l'écouter au démarrage et à l'arrêt</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Enregistrer</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Annuler</value></data>

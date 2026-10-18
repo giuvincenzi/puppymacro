@@ -546,6 +546,14 @@
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>أي مفتاح أو زر ماوس، مثل F2 أو A. لمجموعة مفاتيح، اضغط باستمرار على Ctrl أو Alt أو Shift أو Win أولًا؛ يحتاج النقر الأيسر والأيمن وعجلة التمرير وEsc إلى واحد منها. يحتاج الضغط المستمر إلى مفتاح تشغيل سريع.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>الصوت</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>يتم تشغيله عند بدء الماكرو وإيقافه</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>يحتفظ بسجل آخر تشغيل لهذا الماكرو، مع صور للشاشة عندما لا يتحقق If وفي النهاية. يُحذف السجل عند إغلاق PuppyMacro.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>عرض السجل</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>سجل {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>آخر تشغيل للماكرو، مكتوب بالإنجليزية لتتمكن من لصقه في أي مكان. صور الشاشة موجودة في مجلده.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>السجل</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>نسخ</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>فتح المجلد</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>لم يعد هذا السجل موجودًا. تُحذف السجلات عند إغلاق PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>انقر على صوت لاختياره وسماع صوت البدء والإيقاف</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>حفظ</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>إلغاء الأمر</value></data>

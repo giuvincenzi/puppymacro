@@ -503,6 +503,14 @@ Detajet: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Çdo tast ose buton i miut, si F2 ose A. Për një kombinim, mbani fillimisht shtypur Ctrl, Alt, Shift ose Win; klikimi majtas dhe djathtas, rrota e miut dhe Esc kanë nevojë për një të tillë. Mbajtja ka nevojë për një tast të shpejtë.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Tingulli</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Luhet kur makroja niset dhe ndalet</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Ruan regjistrin e ekzekutimit të fundit të kësaj makroje, me pamje të ekranit kur një If nuk është i vërtetë dhe në fund. Regjistri fshihet kur mbyllet PuppyMacro.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Shiko regjistrin</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Regjistri i {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>Ekzekutimi i fundit i makros, i shkruar në anglisht që ta ngjitni kudo. Pamjet e ekranit janë në dosjen e saj.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Regjistri</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Kopjo</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Hap dosjen</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Ky regjistër nuk ekziston më. Regjistrat fshihen kur mbyllet PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Klikoni një tingull për ta zgjedhur dhe për të dëgjuar si niset dhe ndalet</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Ruaj</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Anulo</value></data>

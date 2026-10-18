@@ -494,6 +494,14 @@ Details: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Eine beliebige Taste oder Maustaste, z. B. F2 oder A. Halten Sie für eine Tastenkombination zuerst Strg, Alt, Umschalt oder Win gedrückt; Links- und Rechtsklick, das Mausrad und Esc benötigen eine. „Halten“ benötigt einen Hotkey.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sound</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Wird beim Starten und Stoppen des Makros abgespielt</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Speichert das Protokoll des letzten Durchlaufs dieses Makros, mit Bildern des Bildschirms, wenn ein If nicht erfüllt ist, und am Ende. Das Protokoll wird gelöscht, wenn PuppyMacro geschlossen wird.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Protokoll anzeigen</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Protokoll von {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>Der letzte Durchlauf des Makros, auf Englisch geschrieben, damit Sie ihn überall einfügen können. Die Bilder des Bildschirms liegen in seinem Ordner.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Protokoll</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Kopieren</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Ordner öffnen</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Dieses Protokoll gibt es nicht mehr. Protokolle werden gelöscht, wenn PuppyMacro geschlossen wird.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Klicken Sie auf einen Sound, um ihn auszuwählen und zu hören, wie er startet und stoppt</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Speichern</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Abbrechen</value></data>

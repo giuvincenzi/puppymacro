@@ -446,6 +446,12 @@ public sealed class MacroDefinition
     /// <summary>The values offered for <see cref="ChecksPerSecond"/> (0 = every frame).</summary>
     public static readonly int[] ChecksPerSecondSteps = { 10, 30, 60, 0 };
 
+    /// <summary>
+    /// Keeps the log of its last run (<c>RunLog</c>): what each action did, what each If saw, pictures of the screen when
+    /// an If was not true and at the end. False in older files.
+    /// </summary>
+    public bool Debug { get; set; }
+
     /// <summary>Executable name (e.g. "Diablo IV.exe") it works in; null = all apps (<see cref="AppScope"/>).</summary>
     public string? AppExe { get; set; }
 

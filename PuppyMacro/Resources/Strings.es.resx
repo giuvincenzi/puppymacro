@@ -495,6 +495,14 @@ Detalles: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Cualquier tecla o botón del mouse, como F2 o A. Para una combinación, mantén presionada primero Ctrl, Alt, Mayús o Win; el clic izquierdo y derecho, la rueda del mouse y Esc la necesitan. Mantener necesita una tecla de acceso rápido.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sonido</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Suena cuando la macro se inicia y se detiene</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Guarda el registro de la última ejecución de esta macro, con imágenes de la pantalla cuando un If no se cumple y al final. El registro se elimina al cerrar PuppyMacro.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Ver registro</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Registro de {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>La última ejecución de la macro, escrita en inglés para que puedas pegarla en cualquier sitio. Las imágenes de la pantalla están en su carpeta.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Registro</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copiar</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Abrir carpeta</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Este registro ya no está. Los registros se eliminan al cerrar PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Haz clic en un sonido para elegirlo y oír cómo suena al iniciar y al detener</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Guardar</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Cancelar</value></data>

@@ -282,7 +282,9 @@ internal sealed class LoopEngine : IDisposable
         {
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return;
-            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice);
+            // Debug on: the run writes its log (RunLog only queues, so this does not slow the hook that may call it).
+            var log = macro.Debug ? new RunLog(macro.Id, macro.Name, "started by the user") : null;
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: log);
             runner.Exited += OnMacroExited;
             _runningMacros[macro.Id] = runner;
             runner.Start();

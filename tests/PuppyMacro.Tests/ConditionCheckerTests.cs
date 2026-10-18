@@ -351,7 +351,7 @@ public class ConditionCheckerTests : IDisposable
     }
 
     /// <summary>One monitor of 640 × 400 at the desktop's origin, showing a picture; the software renderer as its card.</summary>
-    private sealed class FakeScreen : IScreen, IDisposable
+    internal sealed class FakeScreen : IScreen, IDisposable
     {
         public const int Width = 640, Height = 400;
 

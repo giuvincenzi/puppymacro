@@ -503,6 +503,14 @@ Dettagli: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Qualsiasi tasto o pulsante del mouse, come F2 o A. Per una combinazione tieni premuto prima Ctrl, Alt, Maiusc o Win; il clic sinistro e destro, la rotellina di scorrimento ed Esc ne richiedono una. La modalità Tieni premuto richiede un tasto di scelta rapida.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Suono</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Viene riprodotto quando la macro si avvia e si arresta</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Tiene il log dell'ultima esecuzione di questa macro, con immagini dello schermo quando un If non è vero e alla fine. Il log viene eliminato quando PuppyMacro si chiude.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Visualizza log</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Log di {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>L'ultima esecuzione della macro, scritta in inglese così puoi incollarla ovunque. Le immagini dello schermo sono nella sua cartella.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Log</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copia</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Apri cartella</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Questo log non c'è più. I log vengono eliminati quando PuppyMacro si chiude.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Fai clic su un suono per sceglierlo e ascoltare come suona all'avvio e all'arresto</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Salva</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Annulla</value></data>

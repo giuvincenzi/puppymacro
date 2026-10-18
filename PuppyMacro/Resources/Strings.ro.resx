@@ -516,6 +516,14 @@ Detalii: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Orice tastă sau buton al mouse-ului, cum ar fi F2 sau A. Pentru o combinație, țineți apăsat mai întâi Ctrl, Alt, Shift sau Win; clicul stânga și dreapta, rotița de defilare și Esc necesită una. Menținere necesită o tastă rapidă.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sunet</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Se redă când macrocomanda pornește și se oprește</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Păstrează jurnalul ultimei rulări a acestei macrocomenzi, cu imagini ale ecranului când un If nu este adevărat și la final. Jurnalul se șterge când se închide PuppyMacro.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Vizualizare jurnal</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Jurnalul pentru {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>Ultima rulare a macrocomenzii, scrisă în engleză ca să o puteți lipi oriunde. Imaginile ecranului sunt în folderul ei.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Jurnal</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copiere</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Deschidere folder</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Acest jurnal nu mai există. Jurnalele se șterg când se închide PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Faceți clic pe un sunet pentru a-l alege și a auzi cum pornește și se oprește</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Salvare</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Anulare</value></data>

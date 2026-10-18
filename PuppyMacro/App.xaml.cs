@@ -191,6 +191,9 @@ public partial class App : Application
             return;
         }
 
+        // The macros' Debug logs last only while PuppyMacro runs: also those of a run that ended badly.
+        RunLog.DeleteAll();
+
         _showWindowRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowEventName);
         _showWindowWait = ThreadPool.RegisterWaitForSingleObject(_showWindowRequest,
             (_, _) => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.ShowFromTray()),
@@ -378,7 +381,10 @@ public partial class App : Application
         _showBackupSettingsWait?.Unregister(null);
         _showBackupSettingsRequest?.Dispose();
         if (_ownsMutex)
+        {
+            RunLog.DeleteAll();
             _singleInstance?.ReleaseMutex();
+        }
         _singleInstance?.Dispose();
         base.OnExit(e);
     }

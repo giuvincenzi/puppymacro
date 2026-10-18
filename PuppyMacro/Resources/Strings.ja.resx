@@ -481,6 +481,14 @@
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>F2 や A など、任意のキーまたはマウス ボタン。組み合わせにするには、先に Ctrl、Alt、Shift、Win のいずれかを押したままにします。左クリック、右クリック、スクロール ホイール、Esc には組み合わせが必要です。長押しにはホットキーが必要です。</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>サウンド</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>マクロの開始時と停止時に再生されます</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>このマクロの最後の実行のログを、If が成立しなかったときと終了時の画面の画像と一緒に保存します。ログは PuppyMacro を閉じると削除されます。</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>ログを表示</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>{0} のログ</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>マクロの最後の実行です。どこにでも貼り付けられるよう英語で書かれています。画面の画像はフォルダーにあります。</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>ログ</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>コピー</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>フォルダーを開く</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>このログはもうありません。ログは PuppyMacro を閉じると削除されます。</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>サウンドをクリックして選び、開始音と停止音を確認します</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>保存</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>キャンセル</value></data>

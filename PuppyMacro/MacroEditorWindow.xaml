@@ -417,6 +417,18 @@
                             </ui:SettingsCard>
                         </ui:SettingsExpander.Items>
                     </views:SwitchSettingsExpander>
+
+                    <!-- Keeps the log of the last run (RunLog); View log when there is one -->
+                    <ui:SettingsCard Header="{x:Static r:Strings.Macro_Debug}" Description="{x:Static r:Strings.Macro_DebugDescription}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Bug}" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                            <Button x:Name="ViewLogButton" VerticalAlignment="Center" Content="{x:Static r:Strings.Macro_ViewLog}"
+                                    Click="OnViewLogClick" Visibility="Collapsed" />
+                            <ui:ToggleSwitch x:Name="DebugSwitch" AutomationProperties.Name="{x:Static r:Strings.Macro_Debug}" />
+                        </ikw:SimpleStackPanel>
+                    </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
             </ScrollViewer>
         </Grid>

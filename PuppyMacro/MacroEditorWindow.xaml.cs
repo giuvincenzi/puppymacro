@@ -138,6 +138,8 @@ public partial class MacroEditorWindow
     private void LoadMacro(MacroDefinition source)
     {
         EnabledSwitch.IsOn = source.Enabled;
+        DebugSwitch.IsOn = source.Debug;
+        ViewLogButton.Visibility = RunLog.Exists(_itemId) ? Visibility.Visible : Visibility.Collapsed;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
 
@@ -189,6 +191,7 @@ public partial class MacroEditorWindow
             Mode = IsHold ? ActivationMode.Hold : ActivationMode.Toggle,
             Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
             Enabled = EnabledSwitch.IsOn,
+            Debug = DebugSwitch.IsOn,
             SoundEnabled = SoundSwitch.IsOn,
             SoundName = _soundName,
             FloatingButton = FloatingEditor.ToModel(),
@@ -200,6 +203,9 @@ public partial class MacroEditorWindow
         macro.NormalizeGroups();
         return macro;
     }
+
+    private void OnViewLogClick(object sender, RoutedEventArgs e) =>
+        new DebugLogWindow(_itemId, NameBox.Text.Trim()) { Owner = this }.ShowDialog();
 
     // ================= Window size =================
 

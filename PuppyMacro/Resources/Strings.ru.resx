@@ -516,6 +516,14 @@
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Любая клавиша или кнопка мыши, например F2 или A. Для сочетания сначала удерживайте Ctrl, Alt, Shift или Win; левый и правый щелчок, колесико прокрутки и Esc можно использовать только в сочетании. Для удержания нужна горячая клавиша.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Звук</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Воспроизводится при запуске и остановке макроса</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Сохраняет журнал последнего запуска этого макроса со снимками экрана, когда If не выполняется, и в конце. Журнал удаляется при закрытии PuppyMacro.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Просмотреть журнал</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Журнал: {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>Последний запуск макроса на английском языке, чтобы его можно было вставить куда угодно. Снимки экрана находятся в его папке.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Журнал</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Копировать</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Открыть папку</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Этого журнала больше нет. Журналы удаляются при закрытии PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Щелкните звук, чтобы выбрать его и послушать звуки запуска и остановки</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Сохранить</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Отмена</value></data>

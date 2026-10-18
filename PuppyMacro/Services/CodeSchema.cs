@@ -79,6 +79,7 @@ internal static class CodeSchema
         ["ConditionImage.Id"] = "The image's id (64 hexadecimal digits).",
         ["ConditionImage.X"] = "Where the image was taken (its top-left corner), in physical pixels; Area Around looks near it.",
         ["ConditionImage.Y"] = "Where the image was taken (its top-left corner), in physical pixels.",
+        ["MacroDefinition.Debug"] = "Keeps the log of the macro's last run: each action, what each If saw and where it went, why it ended, and pictures of the screen when an If was not true and at the end. In English, in a folder that holds only the last run and is deleted when PuppyMacro closes; get_last_run reads it. Writing it does not slow the macro. A test_macro run is always logged, Debug or not.",
         ["MacroDefinition.ChecksPerSecond"] = "How many times a second its screen conditions look while they wait: 10, 30, 60, or 0 for every new frame. More checks notice changes sooner and use more of the computer.",
         ["MacroCondition.Area"] = "Image, Text: where to look. Around (Image only): a little larger than where each image was taken (it does not follow a window that moves). Drawn: the area AreaX, AreaY, AreaWidth, AreaHeight. Screen: the whole screen with those bounds. A smaller area is faster.",
         ["MacroCondition.AreaX"] = "Area Drawn or Screen: left edge, in physical pixels.",

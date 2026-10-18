@@ -496,6 +496,13 @@ public partial class MainWindow
             Placement = PlacementMode.Bottom,
         };
         menu.Items.Add(EditMenuItem(item));
+        // The log of its last run with Debug on (or of an AI app's test): it lasts until PuppyMacro closes.
+        if (RunLog.Exists(item.Definition.Id))
+        {
+            var viewLog = new MenuItem { Header = Strings.Macro_ViewLog, Icon = new FontIcon { Icon = SegoeFluentIcons.Bug } };
+            viewLog.Click += (_, _) => ShowUserDialog(() => new DebugLogWindow(item.Definition.Id, item.Definition.Name) { Owner = this }.ShowDialog());
+            menu.Items.Add(viewLog);
+        }
         menu.Items.Add(new Separator());
         menu.Items.Add(duplicate);
         menu.Items.Add(export);
