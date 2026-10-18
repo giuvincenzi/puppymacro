@@ -14,6 +14,7 @@ using PuppyMacro.Models;
 using PuppyMacro.Native;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Components;
 using PuppyMacro.Views;
 using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
 using ToggleSplitButton = iNKORE.UI.WPF.Modern.Controls.ToggleSplitButton;
@@ -56,8 +57,10 @@ public partial class MacroEditorWindow
     private MacroEditorItem? _selectOnlyOnRelease;
     private ScrollViewer? _listScroll;
 
+    /// <param name="component">Component mode: the Library component to edit (from the Library), instead of a macro.</param>
     internal MacroEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds,
-        MacroDefinition? existing, Func<EditedFloatingButton, Point?>? placeButton = null, IEnumerable<MacroAction>? recorded = null)
+        MacroDefinition? existing, Func<EditedFloatingButton, Point?>? placeButton = null, IEnumerable<MacroAction>? recorded = null,
+        LibraryComponent? component = null)
     {
         InitializeComponent();
         if (settings.MacroEditorWidth is double width)
@@ -70,6 +73,8 @@ public partial class MacroEditorWindow
         _macros = macros;
         _sounds = sounds;
 
+        if (component != null)
+            existing = new MacroDefinition { Id = component.Id, Name = component.Name, Actions = component.Actions.ConvertAll(a => a.Clone()) };
         var source = existing?.Clone() ?? new MacroDefinition();
         _editingId = existing?.Id ?? Guid.Empty;
         _itemId = existing?.Id ?? Guid.NewGuid();
@@ -92,6 +97,8 @@ public partial class MacroEditorWindow
         // The sounds by their names in the user's language; the id (the file's value) is the same position in SoundService.Names.
         SoundChoices.ItemsSource = SoundService.DisplayNames();
         SoundChoices.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
+        if (component != null)
+            StartComponentMode(component);
         LoadMacro(source);
         SoundChoicesScroll.Attach(SoundScroll, () => SoundService.DisplayName(_soundName));
 
@@ -310,6 +317,12 @@ public partial class MacroEditorWindow
 
         EmptyActionsText.Visibility = _list.Actions.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ChecksCard.Visibility = HasConditions ? Visibility.Visible : Visibility.Collapsed;
+        if (IsComponent)
+        {
+            // What it finds is one of its conditions: the list follows the actions.
+            ShowReturns(_pendingReturn ?? SelectedReturn);
+            _pendingReturn = null;
+        }
         UpdateTotals();
         UpdateSelectionBar();
         Validate();
@@ -353,7 +366,10 @@ public partial class MacroEditorWindow
         }
     }
 
-    /// <summary>A linked row's component name and what it is ("Component · Diablo IV 5120×1440 · 4 actions"); empty for other rows.</summary>
+    /// <summary>
+    /// A linked row's component name and what it is: its values when it has parameters ("Slot 3986, 1056 · Settle 150 ms"),
+    /// otherwise "Component · Diablo IV 5120×1440 · 4 actions"; empty for other rows.
+    /// </summary>
     private (string Name, string Detail) LinkInfo(MacroAction action)
     {
         if (action.Type != MacroActionType.Component)
@@ -361,9 +377,25 @@ public partial class MacroEditorWindow
         if (action.ComponentId is not Guid id || _macros.Library.Find(id) is not { } found)
             return ("", Strings.Code_ComponentMissing);
         var (collection, component) = found;
+        if (component.Parameters.Count > 0)
+            return (component.Name, ArgumentsText(component, action.Arguments));
         int count = MacroDefinition.Walk(component.Actions).Count();
         return (component.Name, string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_RowComponent, collection.Name, Count(count)));
     }
+
+    /// <summary>"Slot 3986, 1056 · Settle from Hold · Remove where Remove Affix was found": a call's values, in the parameters' order.</summary>
+    private string ArgumentsText(LibraryComponent component, Dictionary<string, System.Text.Json.Nodes.JsonNode?>? arguments) =>
+        string.Join(" · ", component.Parameters.Select(p =>
+        {
+            var argument = arguments?.GetValueOrDefault(p.Name);
+            string value = ComponentValues.Reference(argument) switch
+            {
+                { From: string from } => string.Format(CultureInfo.CurrentCulture, Strings.Param_FromParameter, from),
+                { Found: Guid condition } => string.Format(CultureInfo.CurrentCulture, Strings.Action_PositionFound, ConditionName(condition)),
+                _ => ComponentValues.Describe(argument ?? p.Default, p.Type, p.Unit),
+            };
+            return string.Format(CultureInfo.CurrentCulture, Strings.Param_ArgumentShown, p.Name, value);
+        }));
 
     /// <summary>The name of the condition with this Id, anywhere in the macro.</summary>
     private string ConditionName(Guid id) =>
@@ -583,9 +615,10 @@ public partial class MacroEditorWindow
             MacroJson.FoundAt(_list.Actions, list), _macros.Images, _settings.RecognitionDevice,
             // The other Ifs' condition names (not this one's own), so a new condition gets a name of its own.
             _list.All.Where(a => !ReferenceEquals(a, action)).SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
-                .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim()).ToList()) { Owner = this };
+                .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim()).ToList(),
+            _macros, EditingParameters) { Owner = this };
 
-    /// <summary>Add condition: the three kinds, each opens the condition window with one condition of it.</summary>
+    /// <summary>Add condition: the kinds, each opens the condition window with one condition of it (Component: after picking it).</summary>
     private void OnAddConditionClick(object sender, RoutedEventArgs e)
     {
         var menu = new ContextMenu { PlacementTarget = AddConditionButton, Placement = PlacementMode.Bottom };
@@ -594,6 +627,7 @@ public partial class MacroEditorWindow
                      (ConditionKind.Pixel, SegoeFluentIcons.Eyedropper),
                      (ConditionKind.Image, SegoeFluentIcons.Photo2),
                      (ConditionKind.Text, FluentSystemIcons.ScanText_20_Regular),
+                     (ConditionKind.Component, SegoeFluentIcons.Link),
                  })
         {
             var item = new MenuItem { Header = ConditionViewModel.MenuName(kind), Icon = new FontIcon { Icon = icon } };
@@ -605,21 +639,46 @@ public partial class MacroEditorWindow
 
     private void AddCondition(ConditionKind kind)
     {
-        var condition = ConditionViewModel.New(kind);
-        if (kind != ConditionKind.Pixel)
-            condition.Name = NewConditionName(kind);
+        var conditions = new List<MacroCondition>();
+        if (kind == ConditionKind.Component)
+        {
+            // The Library's components that say what they find: each chosen one is a condition, its arguments its examples.
+            var picker = new LibraryWindow(_macros, LibraryWindow.Mode.Pick, appExe: SelectedApp, onlyConditions: true) { Owner = this };
+            if (picker.ShowDialog() != true)
+                return;
+            foreach (var component in picker.Picked.Select(id => _macros.Library.Find(id)?.Component).OfType<LibraryComponent>())
+                conditions.Add(new MacroCondition
+                {
+                    Kind = ConditionKind.Component,
+                    Name = NewConditionName(kind, component.Name, conditions),
+                    ComponentId = component.Id,
+                    Arguments = ArgumentViewModel.Starting(component),
+                });
+            if (conditions.Count == 0)
+                return;
+        }
+        else
+        {
+            var condition = ConditionViewModel.New(kind);
+            if (kind != ConditionKind.Pixel)
+                condition.Name = NewConditionName(kind);
+            conditions.Add(condition);
+        }
         AddNew(new MacroAction
         {
             Type = MacroActionType.If,
             DelayMs = _list.Actions.Count == 0 ? 0 : 50,
-            If = new MacroIf { Conditions = { condition }, Wait = ConditionWait.UpTo, WaitSeconds = 5 },
+            If = new MacroIf { Conditions = conditions, Wait = ConditionWait.UpTo, WaitSeconds = 5 },
         });
     }
 
     // ---- Library ----
 
-    /// <summary>The main window's one way to change the Library (Save as component), set when the editor opens.</summary>
-    internal Func<Func<ComponentLibrary, string?>, string?>? SaveLibrary { get; set; }
+    /// <summary>
+    /// The main window's one way to change the Library (Save as component, the component's own Save with the macros whose
+    /// calls change), set when the editor opens.
+    /// </summary>
+    internal Func<Func<ComponentLibrary, string?>, IReadOnlyList<MacroDefinition>?, string?>? SaveLibrary { get; set; }
 
     /// <summary>Opens the Library over the editor (manage), with this macro's links counted as uses; set when the editor opens.</summary>
     internal Action<Window, MacroDefinition>? OpenLibrary { get; set; }
@@ -633,19 +692,35 @@ public partial class MacroEditorWindow
         var picker = new LibraryWindow(_macros, LibraryWindow.Mode.Pick, appExe: SelectedApp) { Owner = this };
         if (picker.ShowDialog() != true || picker.Picked.Count == 0)
             return;
-        InsertActions(picker.Picked.Select(id => new MacroAction { Type = MacroActionType.Component, ComponentId = id }));
+        // Each call starts with its component's examples: it works at once, and the user changes what differs.
+        InsertActions(picker.Picked.Select(id => new MacroAction
+        {
+            Type = MacroActionType.Component,
+            ComponentId = id,
+            Arguments = _macros.Library.Find(id) is { } found ? ArgumentViewModel.Starting(found.Component) : null,
+        }));
     }
 
-    /// <summary>A linked row opens its component, read only, with Unlink this row and Open in Library.</summary>
+    /// <summary>
+    /// A linked row opens its component, read only but for the row's values (its arguments, with Save), with Unlink this row
+    /// and Open in Library.
+    /// </summary>
     private void OpenLinked(MacroActionRowViewModel row)
     {
-        if (row.Action.ComponentId is not Guid id || _macros.Library.Find(id) is not { } found)
+        if (row.Action.ComponentId is not Guid id || _macros.Library.Find(id) is not { } found || _list.ListOf(row.Action) is not { } list)
             return;
-        var window = new ComponentWindow(found.Collection, found.Component, LinkingMacros(), canUnlink: true) { Owner = this };
+        var arguments = ArgumentViewModel.For(found.Component, row.Action.Arguments, _macros.Library.Signatures(), EditingParameters,
+            MacroJson.FoundAt(_list.Actions, list), _macros.Images);
+        var window = new ComponentWindow(found.Collection, found.Component, LinkingMacros(), canUnlink: true, arguments, _engine) { Owner = this };
         if (window.ShowDialog() != true)
             return;
         switch (window.Choice)
         {
+            case ComponentWindowChoice.Save:
+                row.Action.Arguments = window.Arguments;
+                row.Replace(row.Action);
+                Refresh();
+                break;
             case ComponentWindowChoice.Unlink:
                 Unlink(new[] { row.Action });
                 break;
@@ -660,13 +735,12 @@ public partial class MacroEditorWindow
     private IEnumerable<MacroDefinition> LinkingMacros() =>
         _macros.Macros.Where(m => m.Id != _itemId).Append(BuildMacro());
 
-    /// <summary>Selected rows that can become one component: one run of actions in one list, none of them linked.</summary>
+    /// <summary>Selected rows that can become one component: one run of actions in one list (linked rows stay linked inside it).</summary>
     private bool CanSaveAsComponent()
     {
         var actions = SelectedActions;
         return SaveLibrary != null && actions.Count > 0 && SelectedGroups.Count == 0 && _list.CanGroup(actions, SelectedGroups)
-            && _list.ListOf(actions[0]) is { } list && Consecutive(list, actions)
-            && !MacroDefinition.Walk(actions).Any(a => a.Type == MacroActionType.Component);
+            && _list.ListOf(actions[0]) is { } list && Consecutive(list, actions);
     }
 
     private static bool Consecutive(List<MacroAction> list, List<MacroAction> actions)
@@ -677,7 +751,9 @@ public partial class MacroEditorWindow
 
     /// <summary>
     /// Save as component: the selected actions become a component of the Library (saved at once) and are replaced by one
-    /// row linked to it, in their place and group.
+    /// row linked to it, in their place and group. What they took from outside them becomes a parameter, which the row
+    /// passes on: a place found by a condition around them (a Point the row gives with Found), a parameter of the component
+    /// being edited (the row passes it on with From).
     /// </summary>
     private void OnSaveAsComponentClick(object sender, RoutedEventArgs e)
     {
@@ -685,14 +761,16 @@ public partial class MacroEditorWindow
             return;
         var list = _list.ListOf(SelectedActions[0])!;
         var actions = SelectedActions.OrderBy(a => list.IndexOf(a)).ToList();
-        var copies = actions.ConvertAll(a => a.Clone());
+        var outside = _list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).GroupBy(c => c.Id)
+            .ToDictionary(g => g.Key, g => g.First().Name ?? "");
+        var (copies, parameters, arguments) = ComponentEdits.Lift(actions, EditingParameters, outside);
         foreach (var copy in MacroDefinition.Walk(copies))
             copy.GroupId = null;
-        var dialog = ComponentDetailsWindow.ForSave(copies, _macros.Library, _macros.Images.Has, SelectedApp);
+        var dialog = ComponentDetailsWindow.ForSave(copies, _macros.Library, _macros.Images.Has, SelectedApp, parameters);
         dialog.Owner = this;
         if (dialog.ShowDialog() != true || dialog.Details is not { } details)
             return;
-        var component = new LibraryComponent { Actions = copies };
+        var component = new LibraryComponent { Actions = copies, Parameters = parameters };
         details.ApplyTo(component);
         string? problem = SaveLibrary(library =>
         {
@@ -706,7 +784,7 @@ public partial class MacroEditorWindow
                 return Strings.Library_NameMissing;
             collection.Components.Add(component);
             return ComponentLibrary.CheckComponent(component, _macros.Images.Has, library.AllComponents);
-        });
+        }, null);
         if (problem != null)
         {
             ShowLibraryProblem(problem);
@@ -716,7 +794,7 @@ public partial class MacroEditorWindow
         MacroGroup? group = _list.GroupOf(actions[0]);
         _list.Remove(actions, Array.Empty<MacroGroup>());
         var block = new ActionBlock();
-        block.Actions.Add(new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id });
+        block.Actions.Add(new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id, Arguments = arguments });
         var inserted = _list.Insert(block, list, Math.Min(index, list.Count), group);
         Refresh(ItemsFor(inserted, group));
     }
@@ -724,7 +802,11 @@ public partial class MacroEditorWindow
     private void OnUnlinkClick(object sender, RoutedEventArgs e) =>
         Unlink(SelectedActions.Where(a => a.Type == MacroActionType.Component).ToList());
 
-    /// <summary>Unlink: each linked row becomes the component's actions as they are now, normal rows of this macro.</summary>
+    /// <summary>
+    /// Unlink: each linked row becomes the component's actions as they are now, normal rows of this macro, one level, with
+    /// the row's values in their fields (<see cref="ComponentEdits.Unlink"/>); a row whose values have no such place is
+    /// left linked, saying why.
+    /// </summary>
     private void Unlink(IReadOnlyList<MacroAction> rows)
     {
         var shown = new List<MacroEditorItem>();
@@ -732,11 +814,16 @@ public partial class MacroEditorWindow
         {
             if (LinkedComponent(row) is not { } component || _list.ListOf(row) is not { } list)
                 continue;
+            if (ComponentEdits.Unlink(row, component, out string? problem) is not { } actions)
+            {
+                ShowLibraryProblem(problem!);
+                continue;
+            }
             int index = list.IndexOf(row);
             MacroGroup? group = _list.GroupOf(row);
             _list.Remove(new[] { row }, Array.Empty<MacroGroup>());
             var block = new ActionBlock();
-            block.Actions.AddRange(component.Actions.Select(a => a.Clone()));
+            block.Actions.AddRange(actions);
             var inserted = _list.Insert(block, list, Math.Min(index, list.Count), group);
             shown.AddRange(ItemsFor(inserted, group));
         }
@@ -755,14 +842,20 @@ public partial class MacroEditorWindow
         await dialog.ShowAsync(this);
     }
 
-    /// <summary>"Image 1", "Text 2": a name no condition of the macro has.</summary>
-    private string NewConditionName(ConditionKind kind)
+    /// <summary>
+    /// "Image 1", "Text 2" (a Component condition: its component's name, then "Rare item 2"): a name no condition of the
+    /// macro has (nor <paramref name="also"/>, the ones being added with it).
+    /// </summary>
+    private string NewConditionName(ConditionKind kind, string? baseName = null, IEnumerable<MacroCondition>? also = null)
     {
-        var names = _list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).Select(c => c.Name?.Trim() ?? "")
+        var names = _list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).Concat(also ?? Enumerable.Empty<MacroCondition>())
+            .Select(c => c.Name?.Trim() ?? "")
             .ToHashSet(StringComparer.CurrentCultureIgnoreCase);
-        for (int n = 1; ; n++)
+        if (baseName != null && !names.Contains(baseName))
+            return baseName;
+        for (int n = baseName == null ? 1 : 2; ; n++)
         {
-            string name = string.Format(CultureInfo.CurrentCulture, Strings.Condition_NewName, ConditionViewModel.KindShortName(kind), n);
+            string name = string.Format(CultureInfo.CurrentCulture, Strings.Condition_NewName, baseName ?? ConditionViewModel.KindShortName(kind), n);
             if (!names.Contains(name))
                 return name;
         }
@@ -904,8 +997,9 @@ public partial class MacroEditorWindow
     {
         if (SelectedRow is not { } row)
             return;
-        // A linked row plays its component as the Library has it (the engine's snapshot).
-        ActionTestSession.Run(_engine, row.Action, this);
+        // A linked row plays its component as the Library has it (the engine's snapshot); inside a component, with the
+        // examples of its parameters.
+        ActionTestSession.Run(_engine, row.Action, this, EditingParameters);
     }
 
     /// <summary>Double-click: an action opens Edit, a group opens or closes.</summary>
@@ -1439,6 +1533,14 @@ public partial class MacroEditorWindow
             return Strings.MacroEditor_NoActionsError;
         if (ConditionsProblem() is string conditionsProblem)
             return conditionsProblem;
+        // The calls to components and the fields from parameters, as the Library checks them.
+        string? callProblem = null;
+        ComponentChecks.CheckCalls(_list.Actions, "Actions", new CallScope(_macros.Library.Signatures(), EditingParameters, _macros.Images.Has),
+            (_, message) => callProblem ??= message);
+        if (callProblem != null)
+            return callProblem;
+        if (IsComponent)
+            return ComponentProblem();
         if (AppScopeCard.ValidationError is string appError)
             return NoAppError(appError);
         if (_hotkey == null || !_hotkey.IsSet)
@@ -1486,6 +1588,25 @@ public partial class MacroEditorWindow
     private void OnSaveClick(object sender, RoutedEventArgs e)
     {
         SaveButton.Focus(); // commit the delay field being edited
+        if (IsComponent)
+        {
+            if (_code.IsCode)
+            {
+                if (_code.Read() is not MacroDefinition fromCode)
+                {
+                    Validate();
+                    return;
+                }
+                LoadMacro(fromCode);
+            }
+            if (GetValidationError() != null)
+            {
+                Validate();
+                return;
+            }
+            SaveComponent();
+            return;
+        }
         if (_code.IsCode)
         {
             if (_code.Read() is not MacroDefinition fromCode)
@@ -1537,11 +1658,15 @@ public partial class MacroEditorWindow
 
     private CodeViewSwitch<MacroDefinition> CreateCodeSwitch()
     {
-        var code = new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
-            CodeSchema.ForMacro(_itemId), BuildMacro, MacroJson.Serialize,
-            (string text, out List<CodeProblem> problems) => MacroJson.Parse(text, _itemId, HotkeyConflict, out problems, _macros.Images.Has,
-                _macros.Library.Signatures()),
-            LoadMacro, Validate);
+        // Component mode: the component's JSON (its parameters and what it finds too), read back as the Library reads it.
+        var code = IsComponent
+            ? new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
+                CodeSchema.ForComponent(_itemId), BuildMacro, ComponentJson, ParseComponentJson, LoadMacro, Validate)
+            : new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
+                CodeSchema.ForMacro(_itemId), BuildMacro, MacroJson.Serialize,
+                (string text, out List<CodeProblem> problems) => MacroJson.Parse(text, _itemId, HotkeyConflict, out problems, _macros.Images.Has,
+                    _macros.Library.Signatures()),
+                LoadMacro, Validate);
         code.Opening += () =>
         {
             _engine.CancelCapture();

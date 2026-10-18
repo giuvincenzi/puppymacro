@@ -81,16 +81,19 @@ public partial class LibraryWindow
     private readonly IReadOnlyList<MacroDefinition> _alsoLinked;
     private readonly HashSet<Guid> _checked = new();
     private Guid? _selectedCollection;
+    private readonly bool _onlyConditions;
 
     /// <param name="save">Manage: the main window's one way to change the Library (<c>MainWindow.SaveLibrary</c>).</param>
     /// <param name="alsoLinked">Macros not saved yet that link components (the open editor's): they count as uses.</param>
+    /// <param name="onlyConditions">Pick for a Component condition: only the components that say what they find (Returns).</param>
     internal LibraryWindow(MacroLibrary macros, Mode mode, Func<Func<ComponentLibrary, string?>, string?>? save = null,
-        IEnumerable<MacroDefinition>? alsoLinked = null, string? appExe = null)
+        IEnumerable<MacroDefinition>? alsoLinked = null, string? appExe = null, bool onlyConditions = false)
     {
         InitializeComponent();
         WindowFit.Apply(this);
         _macros = macros;
         _mode = mode;
+        _onlyConditions = onlyConditions;
         _save = save;
         _alsoLinked = alsoLinked?.ToList() ?? new List<MacroDefinition>();
         bool picking = mode == Mode.Pick;
@@ -115,17 +118,20 @@ public partial class LibraryWindow
     private string Query => SearchBox.Text.Trim();
 
     private bool Matches(LibraryCollection collection, LibraryComponent component) =>
-        Query.Length == 0
-        || component.Name.Contains(Query, StringComparison.CurrentCultureIgnoreCase)
-        || component.Description.Contains(Query, StringComparison.CurrentCultureIgnoreCase)
-        || ComponentLibrary.StructuredName(collection, component).Contains(Query, StringComparison.OrdinalIgnoreCase)
-        || collection.Name.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
+        (!_onlyConditions || component.Returns != null) && Matches(collection, component, Query);
+
+    private static bool Matches(LibraryCollection collection, LibraryComponent component, string query) => query.Length == 0
+        || component.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)
+        || component.Description.Contains(query, StringComparison.CurrentCultureIgnoreCase)
+        || ComponentLibrary.StructuredName(collection, component).Contains(query, StringComparison.OrdinalIgnoreCase)
+        || collection.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase);
 
     /// <summary>Shows the collections (with something matching the search) and the selected one's components.</summary>
     private void Refresh()
     {
         var collections = _macros.Library.Collections
-            .Where(c => Query.Length == 0 || c.Components.Any(k => Matches(c, k)) || c.Name.Contains(Query, StringComparison.CurrentCultureIgnoreCase))
+            .Where(c => c.Components.Any(k => Matches(c, k))
+                        || (!_onlyConditions && (Query.Length == 0 || c.Name.Contains(Query, StringComparison.CurrentCultureIgnoreCase))))
             .Select(c => new CollectionItem(c, c.Name, CollectionInfo(c)))
             .ToList();
         CollectionList.ItemsSource = collections;
@@ -227,6 +233,18 @@ public partial class LibraryWindow
         SetProblem(problem);
         Refresh();
         return problem == null;
+    }
+
+    /// <summary>Edit: the component's actions, parameters and what it finds, in the macro editor (set by the main window).</summary>
+    internal Action<LibraryWindow, LibraryComponent>? EditRequested { get; set; }
+
+    private void OnEditActionsClick(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.Tag is not ComponentItem item || EditRequested == null)
+            return;
+        EditRequested(this, item.Component);
+        SetProblem(null);
+        Refresh();
     }
 
     private void OnEditComponentClick(object sender, RoutedEventArgs e)

@@ -80,10 +80,14 @@ public partial class ComponentDetailsWindow
         };
     }
 
-    /// <summary>Save as component for these actions of a macro working in <paramref name="appExe"/>.</summary>
-    internal static ComponentDetailsWindow ForSave(List<MacroAction> actions, ComponentLibrary library, Func<string, bool> hasImage, string? appExe)
+    /// <summary>
+    /// Save as component for these actions of a macro working in <paramref name="appExe"/>; <paramref name="parameters"/>: the
+    /// ones made of what the actions took from outside them.
+    /// </summary>
+    internal static ComponentDetailsWindow ForSave(List<MacroAction> actions, ComponentLibrary library, Func<string, bool> hasImage, string? appExe,
+        List<ComponentParameter>? parameters = null)
     {
-        var window = new ComponentDetailsWindow(library, saving: true, actions, hasImage, appExe);
+        var window = new ComponentDetailsWindow(library, saving: true, actions, hasImage, appExe, parameters);
         window.PurposeBox.SelectedIndex = (int)GuessPurpose(actions);
         window.Validate();
         return window;
@@ -92,7 +96,7 @@ public partial class ComponentDetailsWindow
     /// <summary>A component's details in the Library.</summary>
     internal static ComponentDetailsWindow ForEdit(LibraryComponent component, ComponentLibrary library, Func<string, bool> hasImage)
     {
-        var window = new ComponentDetailsWindow(library, saving: false, component.Actions, hasImage, null)
+        var window = new ComponentDetailsWindow(library, saving: false, component.Actions, hasImage, null, component.Parameters)
         {
             Title = string.Format(CultureInfo.CurrentCulture, Strings.Component_Title, component.Name),
         };

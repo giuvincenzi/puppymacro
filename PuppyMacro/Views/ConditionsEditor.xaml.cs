@@ -36,7 +36,11 @@ public partial class ConditionsEditor : UserControl
             if (e.OldValue is IfViewModel old)
                 old.ConditionChanged -= CheckSoon;
             if (e.NewValue is IfViewModel model)
+            {
                 model.ConditionChanged += CheckSoon;
+                // A Component condition needs the Library.
+                AddComponentItem.Visibility = model.Context.Macros != null ? Visibility.Visible : Visibility.Collapsed;
+            }
         };
         Unloaded += (_, _) => _checkLater.Stop();
     }
@@ -57,24 +61,63 @@ public partial class ConditionsEditor : UserControl
 
     private void OnAddTextClick(object sender, RoutedEventArgs e) => Add(ConditionKind.Text);
 
-    private void Add(ConditionKind kind)
+    /// <summary>Component: the Library's components that say what they find, to pick from; each chosen one is a condition.</summary>
+    private void OnAddComponentClick(object sender, RoutedEventArgs e)
     {
-        if (Model is not { } model)
+        if (Model is not { Context.Macros: { } macros } model)
             return;
-        foreach (var other in model.Conditions)
-            other.IsExpanded = false;
-        var condition = new ConditionViewModel(ConditionViewModel.New(kind), model.Store);
-        if (kind != ConditionKind.Pixel)
-            condition.Name = NewName(model, kind);
-        model.Add(condition);
-        Changed?.Invoke();
+        foreach (var component in PickComponents(macros))
+        {
+            var condition = Add(ConditionKind.Component, component.Name);
+            condition?.ChooseComponent(component);
+        }
     }
 
-    /// <summary>"Image 1", "Text 2": a name no other condition here has.</summary>
-    private static string NewName(IfViewModel model, ConditionKind kind)
+    /// <summary>Choose: another component for a Component condition.</summary>
+    private void OnChooseComponentClick(object sender, RoutedEventArgs e)
     {
-        string kindName = ConditionViewModel.KindShortName(kind);
-        for (int n = 1; ; n++)
+        if ((sender as FrameworkElement)?.Tag is not ConditionViewModel condition || Model is not { Context.Macros: { } macros })
+            return;
+        if (PickComponents(macros).FirstOrDefault() is { } component)
+        {
+            condition.ChooseComponent(component);
+            Changed?.Invoke();
+        }
+    }
+
+    /// <summary>The Library to pick from, only the components that say what they find.</summary>
+    private System.Collections.Generic.List<LibraryComponent> PickComponents(MacroLibrary macros)
+    {
+        var picker = new LibraryWindow(macros, LibraryWindow.Mode.Pick, onlyConditions: true) { Owner = Window.GetWindow(this) };
+        if (picker.ShowDialog() != true)
+            return new System.Collections.Generic.List<LibraryComponent>();
+        return picker.Picked.Select(id => macros.Library.Find(id)?.Component).OfType<LibraryComponent>().ToList();
+    }
+
+    private ConditionViewModel? Add(ConditionKind kind, string? name = null)
+    {
+        if (Model is not { } model)
+            return null;
+        foreach (var other in model.Conditions)
+            other.IsExpanded = false;
+        var condition = new ConditionViewModel(ConditionViewModel.New(kind), model.Store, model.Context);
+        if (kind != ConditionKind.Pixel)
+            condition.Name = NewName(model, kind, name);
+        model.Add(condition);
+        Changed?.Invoke();
+        return condition;
+    }
+
+    /// <summary>"Image 1", "Text 2" (a Component condition: its component's name, "Rare item 2"): a name no other condition here has.</summary>
+    private static string NewName(IfViewModel model, ConditionKind kind, string? baseName = null)
+    {
+        bool Taken(string name) =>
+            model.Conditions.Any(c => string.Equals(c.Name.Trim(), name, StringComparison.CurrentCultureIgnoreCase))
+            || model.OtherNames.Contains(name, StringComparer.CurrentCultureIgnoreCase);
+        if (baseName != null && !Taken(baseName))
+            return baseName;
+        string kindName = baseName ?? ConditionViewModel.KindShortName(kind);
+        for (int n = baseName == null ? 1 : 2; ; n++)
         {
             string name = string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.Condition_NewName, kindName, n);
             if (!model.Conditions.Any(c => string.Equals(c.Name.Trim(), name, StringComparison.CurrentCultureIgnoreCase))
@@ -236,6 +279,21 @@ public partial class ConditionsEditor : UserControl
                     continue;
                 }
                 var toCheck = condition.ToModel();
+                bool? effectiveNot = null;
+                // A Component condition is checked as the condition its component returns, with the call's arguments (inside a
+                // component being edited, its parameters' Examples), as the engine checks it.
+                if (toCheck.Kind == ConditionKind.Component)
+                {
+                    var programs = Services.Components.ComponentPrograms.Prepare(model.Context.Macros?.Library.AllComponents ?? Enumerable.Empty<LibraryComponent>());
+                    var examples = Services.Components.FrameArguments.Examples(model.Context.Parameters ?? Array.Empty<ComponentParameter>());
+                    if (programs.Effective(toCheck, examples, new System.Collections.Generic.Dictionary<Guid, OpenCvSharp.Point>()) is not { } effective)
+                    {
+                        condition.ClearReport();
+                        continue;
+                    }
+                    toCheck = effective;
+                    effectiveNot = effective.Not;
+                }
                 try
                 {
                     var report = await Task.Run(() =>
@@ -243,7 +301,7 @@ public partial class ConditionsEditor : UserControl
                         using var checker = new ConditionChecker(ScreenCapture.Shared, model.Store, device, 0);
                         return checker.Inspect(toCheck);
                     });
-                    condition.ShowReport(report);
+                    condition.ShowReport(report, effectiveNot);
                 }
                 catch (Exception ex) when (ex is not OutOfMemoryException)
                 {

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Components;
 using PuppyMacro.Views;
 
 namespace PuppyMacro;
@@ -25,6 +27,9 @@ public partial class MacroActionWindow
     private readonly IReadOnlyDictionary<Guid, string> _found;
     private readonly ImageStore? _images;
     private readonly IReadOnlyCollection<string> _otherConditionNames;
+    private readonly MacroLibrary? _macros;
+    private readonly IReadOnlyList<ComponentParameter>? _parameters;
+    private SlotBindings _delay = SlotBindings.None;
     private bool _ready;
 
     /// <param name="allowedGroups">The groups the action can be in (<see cref="MacroJson.AllowedGroupIds"/>), for its Code view.</param>
@@ -32,12 +37,16 @@ public partial class MacroActionWindow
     /// <param name="found">The conditions whose image or text the action can go to (<see cref="MacroJson.FoundAt"/>).</param>
     /// <param name="images">The conditions' images.</param>
     /// <param name="device">Where an If's images are searched while editing (Settings › Screen recognition).</param>
+    /// <param name="macros">The macros and the Library, for an If's Component conditions; null without them.</param>
+    /// <param name="parameters">Inside a component: its parameters, whose values its fields can take; null in a macro.</param>
     internal MacroActionWindow(LoopEngine engine, MacroAction action, bool isNew,
         IReadOnlyList<Guid?> allowedGroups, IReadOnlyDictionary<Guid, string> groupNames,
         IReadOnlyDictionary<Guid, string>? found = null, ImageStore? images = null, RecognitionDevice device = RecognitionDevice.Automatic,
-        IReadOnlyCollection<string>? otherConditionNames = null)
+        IReadOnlyCollection<string>? otherConditionNames = null, MacroLibrary? macros = null, IReadOnlyList<ComponentParameter>? parameters = null)
     {
         _otherConditionNames = otherConditionNames ?? Array.Empty<string>();
+        _macros = macros;
+        _parameters = parameters;
         InitializeComponent();
         // An If's window holds its conditions and when its Then runs: it opens taller (WindowFit keeps it on the screen).
         if (action.Type == MacroActionType.If)
@@ -58,7 +67,7 @@ public partial class MacroActionWindow
         _code = new CodeViewSwitch<MacroAction>(ViewBar, CodeView, FormBody, CancelButton, ErrorText, SaveButton,
             CodeSchema.ForAction(allowedGroups, groupNames, action.GroupId), FormAction, MacroJson.Serialize,
             (string text, out List<CodeProblem> problems) => MacroJson.ParseAction(text, allowedGroups, groupNames, out problems,
-                _found, images == null ? null : images.Has),
+                _found, images == null ? null : images.Has, macros?.Library.Signatures(), parameters),
             LoadAction, Validate);
         _code.Opening += () => _engine.CancelCapture();
 
@@ -81,10 +90,16 @@ public partial class MacroActionWindow
 
         ActionNameBox.Text = _action.Name;
         DelayBox.Value = _action.DelayMs;
+        // Inside a component: the Delay from a parameter (a list before it, as the If's Wait card).
+        _delay = new SlotBindings(ComponentSlots.Of(_action).Where(s => s.Name == ComponentSlots.DelayMs), _parameters, _action.Bind);
+        DelayFrom.DataContext = _delay;
+        _delay.DelayMs.PropertyChanged += (_, _) => Validate();
         if (_box != null)
             _box.PropertyChanged -= OnBoxChanged;
         _box = new ActionBoxViewModel(_action) { IsExpanded = true };
         _box.SetFounds(_found);
+        if (_parameters != null)
+            _box.SetParameters(_parameters, _action);
         _box.PropertyChanged += OnBoxChanged;
         Box.DataContext = _box;
 
@@ -94,7 +109,8 @@ public partial class MacroActionWindow
         Conditions.Visibility = isIf ? Visibility.Visible : Visibility.Collapsed;
         if (_if != null)
             _if.PropertyChanged -= OnIfChanged;
-        _if = isIf ? new IfViewModel(_action.If ?? new MacroIf(), _images) { OtherNames = _otherConditionNames } : null;
+        var context = new ConditionContext { Macros = _macros, Parameters = _parameters, Found = _found };
+        _if = isIf ? new IfViewModel(_action.If ?? new MacroIf(), _images, context, _action.Bind) { OtherNames = _otherConditionNames } : null;
         if (_if != null)
         {
             _if.PropertyChanged += OnIfChanged;
@@ -205,6 +221,10 @@ public partial class MacroActionWindow
             a.If = _if.ToModel(_action.If ?? new MacroIf());
         a.Name = ActionNameBox.Text.Trim();
         a.DelayMs = double.IsNaN(DelayBox.Value) ? 0 : Math.Max(0, Math.Round(DelayBox.Value));
+        // The fields its component's parameters give: the box's (or the If's wait), and the Delay.
+        var bind = (_if != null ? _if.WaitBind() : a.Bind)?.Where(b => b.Key != ComponentSlots.DelayMs).ToList()
+                   ?? new List<KeyValuePair<string, string>>();
+        a.Bind = _delay.ToBind(ComponentSlots.Of(a).Where(s => s.Name == ComponentSlots.DelayMs), bind);
         return a;
     }
 

@@ -383,9 +383,53 @@
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
             </Grid>
 
-            <!-- Right column: how the macro plays and starts -->
+            <!-- Right column: how the macro plays and starts; for a component, what it is, its parameters and what it finds -->
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                <ikw:SimpleStackPanel Margin="0,8,24,12" Spacing="4">
+              <Grid>
+                <!-- A component (approved: the Design canvas "PuppyMacro Component functions", the component's editor) -->
+                <ikw:SimpleStackPanel x:Name="ComponentOptions" Margin="0,8,24,12" Spacing="4" Visibility="Collapsed">
+                    <ui:SettingsCard x:Name="DetailsCard" Header="{x:Static r:Strings.Component_WhatItDoes}">
+                        <Button Content="{x:Static r:Strings.Library_EditDetails}" Click="OnEditDetailsClick" />
+                    </ui:SettingsCard>
+
+                    <TextBlock Margin="0,16,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Param_Parameters}" />
+                    <TextBlock Margin="0,0,0,4" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Param_ParametersDescription}" />
+                    <ItemsControl x:Name="ParametersList" Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ui:SettingsCard Margin="0,0,0,4" Header="{Binding Name}" Description="{Binding Description}" AutomationProperties.Name="{Binding Name}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Tag="{Binding}" Click="OnEditParameterClick" ToolTip="{x:Static r:Strings.Param_Edit}"
+                                                AutomationProperties.Name="{x:Static r:Strings.Param_Edit}">
+                                            <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Edit}" />
+                                        </Button>
+                                        <Button Margin="4,0,0,0" Tag="{Binding}" Click="OnRemoveParameterClick" ToolTip="{x:Static r:Strings.Param_Remove}"
+                                                AutomationProperties.Name="{x:Static r:Strings.Param_Remove}">
+                                            <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                                        </Button>
+                                    </StackPanel>
+                                </ui:SettingsCard>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button x:Name="AddParameterButton" HorizontalAlignment="Left" Click="OnAddParameterClick" AutomationProperties.Name="{x:Static r:Strings.Param_Add}">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                            <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                            <TextBlock Text="{x:Static r:Strings.Param_Add}" />
+                        </ikw:SimpleStackPanel>
+                    </Button>
+
+                    <TextBlock Margin="0,16,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Component_Returns}" />
+                    <ui:SettingsCard Header="{x:Static r:Strings.Component_AsCondition}" Description="{x:Static r:Strings.Component_AsConditionDescription}">
+                        <ui:ToggleSwitch x:Name="ReturnsSwitch" Toggled="OnReturnsToggled" AutomationProperties.Name="{x:Static r:Strings.Component_AsCondition}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard x:Name="ReturnsCard" Header="{x:Static r:Strings.Component_WhatItFinds}" Description="{x:Static r:Strings.Component_WhatItFindsDescription}">
+                        <ComboBox x:Name="ReturnsBox" MinWidth="220" SelectionChanged="OnReturnsChanged" AutomationProperties.Name="{x:Static r:Strings.Component_WhatItFinds}" />
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
+
+                <ikw:SimpleStackPanel x:Name="MacroOptions" Margin="0,8,24,12" Spacing="4">
                     <ui:SettingsCard Header="{x:Static r:Strings.Editor_Enabled}">
                         <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="{x:Static r:Strings.Editor_Enabled}" />
                     </ui:SettingsCard>
@@ -465,6 +509,7 @@
                         </ikw:SimpleStackPanel>
                     </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
+              </Grid>
             </ScrollViewer>
         </Grid>
 

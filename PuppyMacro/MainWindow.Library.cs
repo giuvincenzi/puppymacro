@@ -147,7 +147,7 @@ public partial class MainWindow
     /// <summary>A macro editor reaches the Library through the main window: Save as component, and Open in Library.</summary>
     private void PrepareEditor(MacroEditorWindow editor)
     {
-        editor.SaveLibrary = change => SaveLibrary(change);
+        editor.SaveLibrary = (change, macros) => SaveLibrary(change, macros);
         editor.OpenLibrary = (owner, editing) => ShowLibrary(owner, editing);
     }
 
@@ -167,11 +167,29 @@ public partial class MainWindow
             HistoryProvider = id => _itemHistory?.Versions(id) ?? new List<HistoryVersion>(),
             ImportRequested = ImportCollections,
             ExportRequested = ExportCollection,
+            EditRequested = EditComponent,
         };
         if (ReferenceEquals(owner, this))
             ShowDialogWithoutHotkeys(window);
         else
             window.ShowDialog();
+    }
+
+    /// <summary>
+    /// The Library's Edit: the component in the macro editor's component mode, over the Library window. It saves itself
+    /// (its Save goes through <see cref="SaveLibrary"/>, with the macros whose calls change).
+    /// </summary>
+    private void EditComponent(LibraryWindow owner, LibraryComponent component)
+    {
+        if (_engine.AnyRunning)
+        {
+            owner.ShowProblem(Strings.Library_StopFirst);
+            return;
+        }
+        var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, null, component: component) { Owner = owner };
+        PrepareEditor(editor);
+        editor.ShowDialog();
+        RefreshMacros();
     }
 
     /// <summary>A collection as the History keeps it: what it is, and its components by id (each has a History of its own).</summary>

@@ -48,6 +48,7 @@
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Eyedropper}" Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}" />
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Photo2}" Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}" />
                             <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.ScanText_20_Regular}" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}" />
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Link}" Visibility="{Binding IsComponent, Converter={StaticResource BoolToVisibility}}" />
                         </Grid>
                     </ui:SettingsExpander.HeaderIcon>
                     <Button Tag="{Binding}" Click="OnRemoveConditionClick"
@@ -68,32 +69,59 @@
                                      AutomationProperties.Name="{x:Static r:Strings.Condition_Name}" />
                         </ui:SettingsCard>
 
+                        <!-- Component: which component, its arguments (as a linked row's) -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Condition_Component}" Description="{x:Static r:Strings.Condition_ComponentDescription}"
+                                         Visibility="{Binding IsComponent, Converter={StaticResource BoolToVisibility}}">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock VerticalAlignment="Center" Text="{Binding ComponentName}" TextTrimming="CharacterEllipsis" MaxWidth="260" />
+                                <Button Content="{x:Static r:Strings.Condition_ChooseComponent}" Tag="{Binding}" Click="OnChooseComponentClick" />
+                            </ikw:SimpleStackPanel>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Param_Arguments}" Description="{x:Static r:Strings.Param_ArgumentsDescription}"
+                                         ContentAlignment="Vertical" HorizontalContentAlignment="Stretch"
+                                         Visibility="{Binding HasArguments, Converter={StaticResource BoolToVisibility}}">
+                            <views:ArgumentsEditor Arguments="{Binding Arguments}" />
+                        </ui:SettingsCard>
+
                         <!-- Pixel -->
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_PixelCard}" Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}">
                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_X}" />
-                                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
-                                              Value="{Binding X, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Position_X}" />
-                                <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_Y}" />
-                                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
-                                              Value="{Binding Y, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Position_Y}" />
-                                <views:PlaceButton Margin="8,0,0,0" VerticalAlignment="Center" Text="{x:Static r:Strings.Position_PickOnScreen}"
-                                                   Tag="{Binding}" Click="OnPickPixelClick" />
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Point.Choices}" SelectedIndex="{Binding Slots.Point.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding Slots.Point.Show, Converter={StaticResource BoolToVisibility}}" />
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8" Visibility="{Binding Slots.Point.ShowValue, Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_X}" />
+                                    <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                                  Value="{Binding X, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Position_X}" />
+                                    <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_Y}" />
+                                    <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                                  Value="{Binding Y, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Position_Y}" />
+                                    <views:PlaceButton Margin="8,0,0,0" VerticalAlignment="Center" Text="{x:Static r:Strings.Position_PickOnScreen}"
+                                                       Tag="{Binding}" Click="OnPickPixelClick" />
+                                </ikw:SimpleStackPanel>
                             </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_Color}" Description="{x:Static r:Strings.Condition_ColorDescription}"
                                          Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}">
                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Color.Choices}" SelectedIndex="{Binding Slots.Color.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding Slots.Color.Show, Converter={StaticResource BoolToVisibility}}" />
                                 <Border Width="32" Height="32" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource ControlStrongStrokeColorDefaultBrush}"
-                                        Background="{Binding Swatch}" />
+                                        Background="{Binding Swatch}" Visibility="{Binding Slots.Color.ShowValue, Converter={StaticResource BoolToVisibility}}" />
                                 <TextBox Width="110" MaxLength="7" Text="{Binding Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         AutomationProperties.Name="{x:Static r:Strings.Condition_Color}" />
+                                         AutomationProperties.Name="{x:Static r:Strings.Condition_Color}" Visibility="{Binding Slots.Color.ShowValue, Converter={StaticResource BoolToVisibility}}" />
                             </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_Tolerance}" Description="{x:Static r:Strings.Condition_ToleranceDescription}"
                                          Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}">
-                            <views:ValueSlider Minimum="0" Maximum="100" Step="1" Label="{x:Static r:Strings.Condition_Tolerance}"
-                                               Tag="Tolerance" Loaded="OnSliderLoaded" ValueChanged="OnSliderChanged" />
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Tolerance.Choices}" SelectedIndex="{Binding Slots.Tolerance.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding Slots.Tolerance.Show, Converter={StaticResource BoolToVisibility}}" />
+                                <views:ValueSlider Minimum="0" Maximum="100" Step="1" Label="{x:Static r:Strings.Condition_Tolerance}"
+                                                   Tag="Tolerance" Loaded="OnSliderLoaded" ValueChanged="OnSliderChanged" Visibility="{Binding Slots.Tolerance.ShowValue, Converter={StaticResource BoolToVisibility}}" />
+                            </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
 
                         <!-- Image -->
@@ -112,15 +140,23 @@
                                     </ItemsControl>
                                 </StackPanel>
                             </ui:SettingsCard.Description>
-                            <views:PlaceButton Text="{Binding TakeText}" Tag="{Binding}" Click="OnTakeImageClick" />
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Images.Choices}" SelectedIndex="{Binding Slots.Images.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding Slots.Images.Show, Converter={StaticResource BoolToVisibility}}" />
+                                <views:PlaceButton Text="{Binding TakeText}" Tag="{Binding}" Click="OnTakeImageClick" Visibility="{Binding Slots.Images.ShowValue, Converter={StaticResource BoolToVisibility}}" />
+                            </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
 
                         <!-- Image and Text: where to look -->
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_SearchArea}" Description="{Binding AreaText}"
-                                         Visibility="{Binding Finds, Converter={StaticResource BoolToVisibility}}">
+                                         Visibility="{Binding ShowsArea, Converter={StaticResource BoolToVisibility}}">
                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                                 <views:PlaceButton VerticalAlignment="Center" Text="{x:Static r:Strings.Condition_DrawOnScreen}" Tag="{Binding}" Click="OnDrawAreaClick"
-                                                   Visibility="{Binding IsDrawn, Converter={StaticResource BoolToVisibility}}" />
+                                                   Visibility="{Binding ShowDraw, Converter={StaticResource BoolToVisibility}}" />
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Area.Choices}" SelectedIndex="{Binding Slots.Area.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding ShowAreaChoice, Converter={StaticResource BoolToVisibility}}" />
                                 <ComboBox MinWidth="200" ItemsSource="{Binding AreaChoices}" SelectedIndex="{Binding AreaIndex, Mode=TwoWay}"
                                           AutomationProperties.Name="{x:Static r:Strings.Condition_SearchArea}" />
                             </ikw:SimpleStackPanel>
@@ -132,14 +168,24 @@
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_Similarity}" Description="{x:Static r:Strings.Condition_SimilarityDescription}"
                                          Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
-                            <views:ValueSlider Minimum="50" Maximum="100" Step="1" Label="{x:Static r:Strings.Condition_Similarity}"
-                                               Tag="Similarity" Loaded="OnSliderLoaded" ValueChanged="OnSliderChanged" />
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Similarity.Choices}" SelectedIndex="{Binding Slots.Similarity.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding Slots.Similarity.Show, Converter={StaticResource BoolToVisibility}}" />
+                                <views:ValueSlider Minimum="50" Maximum="100" Step="1" Label="{x:Static r:Strings.Condition_Similarity}"
+                                                   Tag="Similarity" Loaded="OnSliderLoaded" ValueChanged="OnSliderChanged" Visibility="{Binding Slots.Similarity.ShowValue, Converter={StaticResource BoolToVisibility}}" />
+                            </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
 
                         <!-- Text -->
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_TextCard}" Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
-                            <TextBox Width="300" MaxLength="200" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     AutomationProperties.Name="{x:Static r:Strings.Condition_TextCard}" />
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Text.Choices}" SelectedIndex="{Binding Slots.Text.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding Slots.Text.Show, Converter={StaticResource BoolToVisibility}}" />
+                                <TextBox Width="300" MaxLength="200" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         AutomationProperties.Name="{x:Static r:Strings.Condition_TextCard}" Visibility="{Binding Slots.Text.ShowValue, Converter={StaticResource BoolToVisibility}}" />
+                            </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_Match}" Description="{x:Static r:Strings.Condition_MatchDescription}"
                                          Visibility="{Binding IsText, Converter={StaticResource BoolToVisibility}}">
@@ -206,6 +252,12 @@
                                 <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.ScanText_20_Regular}" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <!-- A Library component that says what it finds (approved: the Design canvas "PuppyMacro Component functions") -->
+                        <MenuItem x:Name="AddComponentItem" Header="{x:Static r:Strings.Condition_ComponentMenu}" Click="OnAddComponentClick">
+                            <MenuItem.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Link}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </ui:MenuFlyout>
                 </ui:DropDownButton.Flyout>
             </ui:DropDownButton>
@@ -231,11 +283,14 @@
                     <ComboBoxItem Content="{x:Static r:Strings.Condition_WaitUpTo}" />
                     <ComboBoxItem Content="{x:Static r:Strings.Condition_WaitForever}" />
                 </ComboBox>
+                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.WaitSeconds.Choices}" SelectedIndex="{Binding Slots.WaitSeconds.Index, Mode=TwoWay}"
+                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                          Visibility="{Binding ShowSecondsChoice, Converter={StaticResource BoolToVisibility}}" />
                 <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0.1" Maximum="86400"
                               Value="{Binding WaitSeconds, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Condition_WaitSecondsName}"
-                              Visibility="{Binding ShowSeconds, Converter={StaticResource BoolToVisibility}}" />
+                              Visibility="{Binding ShowSecondsValue, Converter={StaticResource BoolToVisibility}}" />
                 <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Action_UnitS}"
-                           Visibility="{Binding ShowSeconds, Converter={StaticResource BoolToVisibility}}" />
+                           Visibility="{Binding ShowSecondsValue, Converter={StaticResource BoolToVisibility}}" />
             </ikw:SimpleStackPanel>
         </ui:SettingsCard>
         <ui:SettingsCard Header="{Binding OnFailHeader}" Description="{Binding OnFailDescription}">

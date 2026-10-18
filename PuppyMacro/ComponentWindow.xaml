@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:r="clr-namespace:PuppyMacro.Resources"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
     Width="640"
     Height="600"
     MinWidth="480"
@@ -13,16 +14,23 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:WindowHelper.SystemBackdropType="Mica">
 
-    <!-- A row linked to a Library component, read only (approved: the Design canvas "PuppyMacro Library") -->
+    <!-- A row linked to a Library component (approved: the Design canvas "PuppyMacro Library"): read only, except the
+         values the row gives the component's parameters (the Design canvas "PuppyMacro Component functions", A call and its
+         arguments), with Save and Cancel -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="24,4,24,16">
-                <ui:InfoBar IsOpen="True" IsClosable="False" Severity="Informational" Margin="0,0,0,8"
+                <ui:InfoBar x:Name="InfoBar" IsOpen="True" IsClosable="False" Severity="Informational" Margin="0,0,0,8"
                             Message="{x:Static r:Strings.Component_LinkedInfo}" />
+                <StackPanel x:Name="ArgumentsPanel" Visibility="Collapsed" Margin="0,0,0,16">
+                    <TextBlock Margin="0,8,0,8" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Param_Arguments}" />
+                    <views:ArgumentsEditor x:Name="ArgumentsEditor" />
+                </StackPanel>
                 <ui:SettingsCard x:Name="CollectionCard" Header="{x:Static r:Strings.Library_Collection}" Margin="0,0,0,4">
                     <TextBlock x:Name="CollectionText" TextWrapping="Wrap" />
                 </ui:SettingsCard>
@@ -47,7 +55,10 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Border Grid.Row="1" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+        <TextBlock x:Name="ErrorText" Grid.Row="1" Margin="24,0,24,12" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                   Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
+
+        <Border Grid.Row="2" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 Background="{DynamicResource SubtleFillColorSecondaryBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -56,10 +67,14 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Button x:Name="UnlinkButton" Content="{x:Static r:Strings.Component_UnlinkRow}" Click="OnUnlinkClick" />
                 <Button x:Name="OpenLibraryButton" Grid.Column="2" MinWidth="120" Content="{x:Static r:Strings.Component_OpenInLibrary}" Click="OnOpenLibraryClick" />
-                <Button Grid.Column="4" MinWidth="120" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Editor_Close}"
+                <Button x:Name="SaveButton" Grid.Column="4" MinWidth="120" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Editor_Save}"
+                        IsDefault="True" Visibility="Collapsed" Click="OnSaveClick" />
+                <Button x:Name="CloseButton" Grid.Column="6" MinWidth="120" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Editor_Close}"
                         IsDefault="True" IsCancel="True" Click="OnCloseClick" />
             </Grid>
         </Border>

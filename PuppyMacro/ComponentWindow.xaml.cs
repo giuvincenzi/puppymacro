@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Windows;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
@@ -15,6 +16,9 @@ internal enum ComponentWindowChoice
     Close,
     Unlink,
     OpenLibrary,
+
+    /// <summary>Save: the row's arguments changed (<see cref="ComponentWindow.Arguments"/>).</summary>
+    Save,
 }
 
 /// <summary>
@@ -26,10 +30,34 @@ public partial class ComponentWindow
     /// <summary>One line of what the component plays: an action, or Then / Else, indented under its If.</summary>
     public sealed record Line(Thickness Indent, string Title, string Detail);
 
-    internal ComponentWindow(LibraryCollection collection, LibraryComponent component, IEnumerable<MacroDefinition> macros, bool canUnlink)
+    /// <param name="arguments">A row's values for the component's parameters, editable (null: read only, as the Library shows it).</param>
+    internal ComponentWindow(LibraryCollection collection, LibraryComponent component, IEnumerable<MacroDefinition> macros, bool canUnlink,
+        List<ArgumentViewModel>? arguments = null, LoopEngine? engine = null)
     {
         InitializeComponent();
         WindowFit.Apply(this);
+        if (engine != null)
+        {
+            KeyCaptureField.SetEngine(this, engine); // a Key argument waits for keys through it
+            Closed += (_, _) => engine.CancelCapture();
+        }
+        _arguments = arguments;
+        if (arguments is { Count: > 0 })
+        {
+            ArgumentsPanel.Visibility = Visibility.Visible;
+            ArgumentsEditor.Arguments = arguments;
+            InfoBar.Message = Strings.Component_LinkedInfoArguments;
+            SaveButton.Visibility = Visibility.Visible;
+            CloseButton.Content = Strings.Editor_Cancel;
+            CloseButton.Style = (Style)FindResource("DefaultButtonStyle");
+            CloseButton.IsDefault = false;
+            foreach (var argument in arguments)
+            {
+                argument.PropertyChanged += (_, _) => Validate();
+                argument.Value.PropertyChanged += (_, _) => Validate();
+            }
+            Validate();
+        }
         Title = string.Format(CultureInfo.CurrentCulture, Strings.Component_Title, component.Name);
         CollectionText.Text = collection.Name;
         CollectionCard.Description = ComponentLibrary.StructuredName(collection, component);
@@ -41,6 +69,31 @@ public partial class ComponentWindow
     }
 
     internal ComponentWindowChoice Choice { get; private set; } = ComponentWindowChoice.Close;
+
+    private readonly List<ArgumentViewModel>? _arguments;
+
+    /// <summary>Save: the row's arguments as the cards give them.</summary>
+    internal Dictionary<string, JsonNode?>? Arguments => _arguments == null ? null : ArgumentViewModel.ToArguments(_arguments);
+
+    private void Validate()
+    {
+        string? problem = ArgumentsEditor.Problem;
+        ErrorText.Text = problem ?? "";
+        ErrorText.Visibility = problem == null ? Visibility.Collapsed : Visibility.Visible;
+        SaveButton.IsEnabled = problem == null;
+    }
+
+    private void OnSaveClick(object sender, RoutedEventArgs e)
+    {
+        SaveButton.Focus(); // commit the number being edited
+        if (ArgumentsEditor.Problem != null)
+        {
+            Validate();
+            return;
+        }
+        Choice = ComponentWindowChoice.Save;
+        DialogResult = true;
+    }
 
     /// <summary>"D4 Strip Affixes, D4 Reroll one", or "Not used".</summary>
     internal static string UsedIn(LibraryComponent component, IEnumerable<MacroDefinition> macros)

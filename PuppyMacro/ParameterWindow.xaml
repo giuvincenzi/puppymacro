@@ -1,0 +1,64 @@
+<Window
+    x:Class="PuppyMacro.ParameterWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    Width="720"
+    Height="600"
+    MinWidth="520"
+    MinHeight="420"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica">
+
+    <!-- A component's parameter (approved: the Design canvas "PuppyMacro Component functions", Parameter): its name, type
+         (and a number's unit), the example its fields hold, whether every call gives a value or the default when left out,
+         and a description for AI apps -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24,4,24,16">
+                <ui:SettingsCard Header="{x:Static r:Strings.Param_Name}" Description="{x:Static r:Strings.Param_NameDescription}" Margin="0,0,0,4">
+                    <TextBox x:Name="NameBox" MinWidth="220" MaxLength="40" TextChanged="OnChanged" AutomationProperties.Name="{x:Static r:Strings.Param_Name}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Param_Type}" Description="{x:Static r:Strings.Param_TypeDescription}" Margin="0,0,0,4">
+                    <ComboBox x:Name="TypeBox" MinWidth="220" SelectionChanged="OnTypeChanged" AutomationProperties.Name="{x:Static r:Strings.Param_Type}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard x:Name="UnitCard" Header="{x:Static r:Strings.Param_Unit}" Description="{x:Static r:Strings.Param_UnitDescription}" Margin="0,0,0,4">
+                    <ComboBox x:Name="UnitBox" MinWidth="220" SelectionChanged="OnTypeChanged" AutomationProperties.Name="{x:Static r:Strings.Param_Unit}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Param_Example}" Description="{x:Static r:Strings.Param_ExampleDescription}" Margin="0,0,0,4">
+                    <views:ValueEditor x:Name="ExampleEditor" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Param_EveryCall}" Description="{x:Static r:Strings.Param_EveryCallDescription}" Margin="0,0,0,4">
+                    <ui:ToggleSwitch x:Name="RequiredSwitch" Toggled="OnRequiredToggled" AutomationProperties.Name="{x:Static r:Strings.Param_EveryCall}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard x:Name="DefaultCard" Header="{x:Static r:Strings.Param_Default}" Description="{x:Static r:Strings.Param_DefaultDescription}" Margin="0,0,0,4">
+                    <views:ValueEditor x:Name="DefaultEditor" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Library_Description}" Description="{x:Static r:Strings.Param_DescriptionDescription}"
+                                 ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                    <TextBox x:Name="DescriptionBox" MaxLength="300" TextWrapping="Wrap" AutomationProperties.Name="{x:Static r:Strings.Library_Description}" />
+                </ui:SettingsCard>
+            </StackPanel>
+        </ScrollViewer>
+
+        <TextBlock x:Name="ErrorText" Grid.Row="1" Margin="24,0,24,12" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                   Foreground="{DynamicResource SystemFillColorCriticalBrush}" Visibility="Collapsed" />
+
+        <Border Grid.Row="2" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="OkButton" MinWidth="120" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Group_Ok}" IsDefault="True" Click="OnOkClick" />
+                <Button Margin="8,0,0,0" MinWidth="120" Content="{x:Static r:Strings.Editor_Cancel}" IsCancel="True" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

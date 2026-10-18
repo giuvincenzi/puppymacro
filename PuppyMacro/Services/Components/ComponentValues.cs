@@ -215,7 +215,7 @@ internal static class ComponentValues
             },
             string s => s,
             HotkeyBinding key => KeyNames.Format(key),
-            List<ConditionImage> images => Plurals.Format("Param_Images", images.Count, images.Count),
+            List<ConditionImage> images => Plurals.Format("Param_Images", images.Count),
             AreaValue a => string.Format(CultureInfo.CurrentCulture, "{0}, {1}, {2} × {3}", a.X, a.Y, a.Width, a.Height),
             _ => "",
         };

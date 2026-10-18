@@ -1555,4 +1555,80 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Param_Images_other" xml:space="preserve"><value>{0} images</value><comment>A value of type Image: how many images; {0} the number</comment></data>
   <data name="Library_ChangeBreaks" xml:space="preserve"><value>This change would leave {0} with a problem: {1}</value><comment>Library: a change refused because a macro or component would no longer work; {0} its name, {1} the problem</comment></data>
   <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>This row can't be unlinked: one of its values is where a condition found something, and its component uses that value for a pixel's point, which can't take a found place.</value><comment>Macro editor: Unlink refused for a row whose Found argument goes to a pixel condition's point</comment></data>
+  <data name="Param_AValue" xml:space="preserve"><value>A value</value><comment>Where a field's or an argument's value comes from: a value written here (not a parameter's)</comment></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>From {0}</value><comment>Where a field's or an argument's value comes from: {0} the name of a parameter of the component being edited</comment></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>Where the value comes from</value><comment>Accessible name of the list that chooses where a field's or an argument's value comes from</comment></data>
+  <data name="Param_Value" xml:space="preserve"><value>Value</value><comment>Accessible name of a parameter's value field</comment></data>
+  <data name="Param_Required" xml:space="preserve"><value>every call gives a value</value><comment>After a parameter's type: the parameter has no default</comment></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} when left out</value><comment>After a parameter's type: {0} its default value</comment></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Its default, {0}</value><comment>Where an argument's value comes from: the parameter's default; {0} that value</comment></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Check the value of {0}. {1}</value><comment>A call's argument can't be used: {0} the parameter's name, {1} why (a sentence)</comment></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>at {0}</value><comment>Summary of a mouse action whose point is a parameter's value: {0} the parameter's name</comment></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Arguments</value><comment>The values a call gives a component's parameters</comment></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>The values this call gives the component</value><comment>Under Arguments</comment></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Component</value><comment>A kind of condition: a Library component that says what it finds</comment></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Component from the Library</value><comment>The Component condition in the Add condition menus</comment></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>A Library component that says what it finds</value><comment>Under the Component card of a Component condition</comment></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Choose</value><comment>Button: choose the Library component a Component condition calls</comment></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>No component chosen yet</value><comment>A Component condition without its component</comment></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>It finds it</value><comment>True when choice of a Component condition</comment></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>It doesn't find it</value><comment>True when choice of a Component condition</comment></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} finds it</value><comment>Under a Component condition: {0} the component's name</comment></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} doesn't find it</value><comment>Under a Component condition with Not: {0} the component's name</comment></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>Found now at {0}, {1}.</value><comment>What PuppyMacro sees now for a Component condition: {0} X, {1} Y</comment></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>True now.</value><comment>What PuppyMacro sees now for a Component condition</comment></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Not true now.</value><comment>What PuppyMacro sees now for a Component condition</comment></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Parameters</value><comment>Title over a component's parameters in its editor</comment></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>The values each call gives this component. A field of its actions takes one with its list, From.</value><comment>Under Parameters in a component's editor; From is the start of the lists' choices (Param_FromParameter)</comment></data>
+  <data name="Param_Add" xml:space="preserve"><value>Add parameter</value><comment>Button: add a parameter to a component</comment></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Edit parameter</value><comment>Button (icon) and its tooltip: edit a parameter</comment></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Remove parameter</value><comment>Button (icon) and its tooltip: remove a parameter; its fields keep their values</comment></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Add parameter</value><comment>Title of the window that adds a parameter</comment></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Edit parameter - {0}</value><comment>Title of the window that edits a parameter: {0} its name</comment></data>
+  <data name="Param_Name" xml:space="preserve"><value>Name</value><comment>A parameter's name</comment></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Letters, digits and _, starting with a letter. Calls give the value by this name.</value><comment>Under a parameter's name</comment></data>
+  <data name="Param_Type" xml:space="preserve"><value>Type</value><comment>A parameter's type</comment></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>The kind of field it gives a value to</value><comment>Under a parameter's type</comment></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Unit</value><comment>A number parameter's unit</comment></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>What the number counts. It can only go where the same unit goes.</value><comment>Under a number parameter's unit</comment></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Pixels</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Milliseconds (ms)</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Seconds (s)</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Times</value><comment>A number parameter's unit in the list: a count</comment></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Percent (%)</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_Example" xml:space="preserve"><value>Example</value><comment>A parameter's example value</comment></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>The value its fields hold, what the editor shows and a test plays</value><comment>Under a parameter's example</comment></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Every call gives a value</value><comment>Switch of a parameter: on, it has no default</comment></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>When it's off, a call can leave it out and the default is used.</value><comment>Under Every call gives a value</comment></data>
+  <data name="Param_Default" xml:space="preserve"><value>Default</value><comment>A parameter's default value</comment></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>The value a call that leaves it out gives</value><comment>Under a parameter's default</comment></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Optional, in English, for AI apps</value><comment>Under a parameter's description</comment></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Check the example. {0}</value><comment>A parameter's example can't be used: {0} why (a sentence)</comment></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Check the default. {0}</value><comment>A parameter's default can't be used: {0} why (a sentence)</comment></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value><comment>A call's value on its row in the macro editor: {0} the parameter's name, {1} its value ("Slot 3986, 1056")</comment></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>What it does</value><comment>Card of a component's editor: its purpose and structured name, with Edit details</comment></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Edit component - {0}</value><comment>Title of the macro editor editing a component: {0} its name</comment></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Used as a condition</value><comment>Title over what a component finds, in its editor</comment></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Can be used as a condition</value><comment>Switch of a component: it says what it finds, so a Component condition can call it</comment></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>An If checks it as a condition: true when the condition you choose here is, and "Where … was found" goes where that condition finds it.</value><comment>Under Can be used as a condition; Where … was found is the action's Position choice</comment></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>What it finds</value><comment>The condition of a component that a Component condition checks</comment></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>One of its conditions</value><comment>Under What it finds</comment></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Choose which of its conditions it finds, or turn off Can be used as a condition.</value><comment>A component used as a condition without its condition chosen</comment></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>This row calls a component: it plays it as it is in the Library, with the values below, which are this row's own.</value><comment>Information on the window of a linked row whose component has parameters</comment></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Edit</value><comment>Library: edit a component's actions, parameters and what it finds in the macro editor</comment></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Update the calls</value><comment>Title of the window that updates a component's calls</comment></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>This change updates the calls</value><comment>Heading of the window that updates a component's calls</comment></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>{0} call of {1} changes with it. Everything is saved together: if something can't be saved, nothing changes.</value><comment>{0} how many calls, {1} the component's name</comment></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>{0} calls of {1} change with it. Everything is saved together: if something can't be saved, nothing changes.</value><comment>{0} how many calls, {1} the component's name</comment></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. The calls that don't give a value of this kind get this one; each call can change it later.</value><comment>A parameter every call now needs: {0} its type</comment></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0} is taken out</value><comment>A parameter removed: {0} its name</comment></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Every call's value for it goes.</value><comment>Under a parameter removed</comment></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} is now {1}</value><comment>A parameter renamed: {0} its old name, {1} the new one</comment></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>The calls keep their value under the new name.</value><comment>Under a parameter renamed</comment></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Calls that change</value><comment>Title over the macros and components whose calls change</comment></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Macro</value><comment>What calls a component: a macro</comment></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Component</value><comment>What calls a component: another component</comment></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} call</value><comment>How many calls a macro or component has: {0} the number</comment></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} calls</value><comment>How many calls a macro or component has: {0} the number</comment></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Update and save</value><comment>Button: update the calls and save the component</comment></data>
 </root>

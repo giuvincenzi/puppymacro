@@ -10,9 +10,28 @@ using System.Windows.Media.Imaging;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Components;
 using PuppyMacro.Services.Screen;
 
 namespace PuppyMacro.Views;
+
+/// <summary>
+/// What an If's conditions can use besides themselves: the Library (a Component condition calls one of its components), the
+/// parameters of the component being edited (a field can take one's value, an argument can pass one on), and the places
+/// the Ifs around this one find (a point argument can take one). <see cref="None"/>: a macro with no Library at hand.
+/// </summary>
+public sealed class ConditionContext
+{
+    public static ConditionContext None { get; } = new();
+
+    internal MacroLibrary? Macros { get; init; }
+
+    internal IReadOnlyList<ComponentParameter>? Parameters { get; init; }
+
+    internal IReadOnlyDictionary<Guid, string> Found { get; init; } = new Dictionary<Guid, string>();
+
+    internal ComponentSignatures Signatures => Macros?.Library.Signatures() ?? ComponentSignatures.Empty;
+}
 
 /// <summary>Something the condition editor shows that changes.</summary>
 public abstract class ConditionEditorItem : INotifyPropertyChanged
@@ -94,11 +113,22 @@ public sealed class ConditionViewModel : ConditionEditorItem
     private string? _language;
     private string? _result;
     private bool _resultMet;
+    private readonly ConditionContext _context;
+    private Guid? _componentId;
+    private List<ArgumentViewModel> _arguments = new();
 
-    internal ConditionViewModel(MacroCondition condition, ImageStore? store)
+    internal ConditionViewModel(MacroCondition condition, ImageStore? store, ConditionContext? context = null)
     {
         _condition = condition.Clone();
         _store = store;
+        _context = context ?? ConditionContext.None;
+        Slots = new SlotBindings(ComponentSlots.Of(condition), _context.Parameters, condition.Bind);
+        foreach (var choice in Slots.All)
+            choice.PropertyChanged += (_, _) => Changed(nameof(Slots));
+        Slots.Area.PropertyChanged += (_, _) => Changed(nameof(ShowDraw));
+        _componentId = condition.ComponentId;
+        if (Kind == ConditionKind.Component)
+            LoadArguments(condition.Arguments);
         _name = condition.Name ?? "";
         _not = condition.Not;
         _x = condition.X;
@@ -147,7 +177,53 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public bool IsPixel => Kind == ConditionKind.Pixel;
     public bool IsImage => Kind == ConditionKind.Image;
     public bool IsText => Kind == ConditionKind.Text;
+    public bool IsComponent => Kind == ConditionKind.Component;
     public bool Finds => !IsPixel;
+
+    /// <summary>Image and Text: where they look (a Component condition looks where its component's condition does).</summary>
+    public bool ShowsArea => IsImage || IsText;
+
+    // ---- Inside a component: fields from its parameters ----
+
+    /// <summary>Where each field's value comes from, inside a component (<see cref="SlotBindings"/>).</summary>
+    public SlotBindings Slots { get; }
+
+    // ---- Component ----
+
+    private LibraryComponent? Callee => _componentId is Guid id ? _context.Macros?.Library.Find(id)?.Component : null;
+
+    /// <summary>The component it calls, by name; or that none is chosen, or that the Library doesn't have it.</summary>
+    public string ComponentName => Callee?.Name ?? (_componentId == null ? Strings.Condition_NoComponent : Strings.Code_ComponentMissing);
+
+    /// <summary>The called component's arguments, one card each.</summary>
+    public List<ArgumentViewModel> Arguments
+    {
+        get => _arguments;
+        private set { _arguments = value; Changed(nameof(Arguments), nameof(HasArguments)); }
+    }
+
+    public bool HasArguments => _arguments.Count > 0;
+
+    /// <summary>Calls another component (the Choose button): its arguments start from its examples.</summary>
+    internal void ChooseComponent(LibraryComponent component)
+    {
+        _componentId = component.Id;
+        LoadArguments(ArgumentViewModel.Starting(component));
+        Changed(nameof(ComponentName), nameof(Summary));
+    }
+
+    private void LoadArguments(Dictionary<string, System.Text.Json.Nodes.JsonNode?>? arguments)
+    {
+        var list = Callee is { } callee
+            ? ArgumentViewModel.For(callee, arguments, _context.Signatures, _context.Parameters, _context.Found, _store)
+            : new List<ArgumentViewModel>();
+        foreach (var argument in list)
+        {
+            argument.PropertyChanged += (_, _) => Changed(nameof(Summary));
+            argument.Value.PropertyChanged += (_, _) => Changed(nameof(Summary));
+        }
+        Arguments = list;
+    }
 
     public string Title => KindName(Kind);
 
@@ -155,12 +231,18 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public static string KindShortName(ConditionKind kind) => kind == ConditionKind.Text ? Strings.Condition_TextShort : Strings.Condition_ImageShort;
 
     /// <summary>The kind's name in the Add condition menus: Text on screen says it reads with OCR.</summary>
-    public static string MenuName(ConditionKind kind) => kind == ConditionKind.Text ? Strings.Condition_TextMenu : KindName(kind);
+    public static string MenuName(ConditionKind kind) => kind switch
+    {
+        ConditionKind.Text => Strings.Condition_TextMenu,
+        ConditionKind.Component => Strings.Condition_ComponentMenu,
+        _ => KindName(kind),
+    };
 
     public static string KindName(ConditionKind kind) => kind switch
     {
         ConditionKind.Image => Strings.Condition_Image,
         ConditionKind.Text => Strings.Condition_Text,
+        ConditionKind.Component => Strings.Condition_Component,
         _ => Strings.Condition_Pixel,
     };
 
@@ -177,6 +259,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
     {
         ConditionKind.Pixel => new[] { Strings.Condition_PixelHas, Strings.Condition_PixelHasNot },
         ConditionKind.Image => new[] { Strings.Condition_ImageIs, Strings.Condition_ImageIsNot },
+        ConditionKind.Component => new[] { Strings.Condition_ComponentFinds, Strings.Condition_ComponentFindsNot },
         _ => new[] { Strings.Condition_TextIs, Strings.Condition_TextIsNot },
     };
 
@@ -299,7 +382,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
             _area = area;
             if (area == SearchArea.Screen)
                 SetArea(ScreenAround());
-            Changed(nameof(AreaIndex), nameof(IsDrawn), nameof(AreaText), nameof(Summary));
+            Changed(nameof(AreaIndex), nameof(IsDrawn), nameof(ShowDraw), nameof(ShowAreaChoice), nameof(AreaText), nameof(Summary));
         }
     }
 
@@ -309,6 +392,12 @@ public sealed class ConditionViewModel : ConditionEditorItem
         : new[] { SearchArea.Screen, SearchArea.Drawn };
 
     public bool IsDrawn => _area == SearchArea.Drawn;
+
+    /// <summary>Draw on screen: a drawn area of its own (not a parameter's).</summary>
+    public bool ShowDraw => IsDrawn && Slots.Area.ShowValue;
+
+    /// <summary>Inside a component: a drawn or whole-screen area can take an Area parameter.</summary>
+    public bool ShowAreaChoice => Slots.Area.Show && _area != SearchArea.Around;
 
     /// <summary>The monitor where the image was taken (or the first one), for The whole screen.</summary>
     private OpenCvSharp.Rect ScreenAround()
@@ -399,6 +488,9 @@ public sealed class ConditionViewModel : ConditionEditorItem
     /// <summary>Under the condition's title: what it checks, in one line.</summary>
     public string Summary => Kind switch
     {
+        ConditionKind.Component => Callee is { } callee
+            ? Fill(_not ? Strings.Condition_ComponentSummaryNot : Strings.Condition_ComponentSummary, callee.Name)
+            : ComponentName,
         ConditionKind.Pixel => MacroJson.IsColor(_color.Trim().ToUpperInvariant())
             ? Fill(_not ? Strings.Condition_PixelSummaryNot : Strings.Condition_PixelSummary, _x, _y, _color.Trim().ToUpperInvariant(), _tolerance)
             : Strings.Condition_PixelNotPicked,
@@ -463,14 +555,17 @@ public sealed class ConditionViewModel : ConditionEditorItem
         nameof(ShowNow), nameof(NotChecked), nameof(NowText),
     };
 
-    internal void ShowReport(ConditionReport report)
+    /// <param name="not">A Component condition: the Not of what it checked in the end (its own and its component's); the condition's own otherwise.</param>
+    internal void ShowReport(ConditionReport report, bool? not = null)
     {
-        ResultMet = report.TrueFor(new MacroCondition { Not = _not });
+        ResultMet = report.TrueFor(new MacroCondition { Not = not ?? _not });
         Result = report switch
         {
             { NoLanguage: true } => Fill(Strings.Condition_NoLanguage, TextReader.NativeName(_language ?? "")),
             { NoMonitor: true } => Strings.Condition_NoMonitor,
             { Met: false, Black: true } => Strings.Condition_Black,
+            _ when IsComponent => ResultMet && report.At is { } place && !_not ? Fill(Strings.Condition_ComponentFoundNow, place.X, place.Y)
+                : ResultMet ? Strings.Condition_ComponentTrueNow : Strings.Condition_ComponentNotNow,
             _ => Kind switch
             {
                 ConditionKind.Pixel when report.Met => Fill(Strings.Condition_PixelMatches, report.Color ?? ""),
@@ -511,6 +606,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
     /// <summary>It has what it looks for (the name does not matter for a check).</summary>
     public bool CanCheck => Kind switch
     {
+        ConditionKind.Component => Callee is { Returns: not null } && _arguments.All(a => a.Problem == null),
         ConditionKind.Pixel => MacroJson.IsColor(_color.Trim().ToUpperInvariant()),
         ConditionKind.Image => HasImages && (_area == SearchArea.Around || _areaWidth >= MacroJson.AreaSize.Min),
         _ => !string.IsNullOrWhiteSpace(_text) && _areaWidth >= MacroJson.AreaSize.Min,
@@ -520,11 +616,16 @@ public sealed class ConditionViewModel : ConditionEditorItem
     public string? Problem => Kind switch
     {
         _ when Finds && string.IsNullOrWhiteSpace(_name) => Strings.Code_EnterConditionName,
-        ConditionKind.Pixel when !MacroJson.IsColor(_color.Trim().ToUpperInvariant()) => Strings.Code_ConditionColor,
-        ConditionKind.Image when !HasImages => Strings.Code_TakeImage,
-        ConditionKind.Image when Images.Any(i => i.Preview == null) => Strings.Code_ImageMissing,
-        ConditionKind.Text when string.IsNullOrWhiteSpace(_text) => Strings.Code_EnterConditionText,
-        _ when Finds && _area != SearchArea.Around && (_areaWidth < MacroJson.AreaSize.Min || _areaHeight < MacroJson.AreaSize.Min) => Strings.Condition_DrawArea,
+        ConditionKind.Component when _componentId == null => Strings.Code_ChooseComponent,
+        ConditionKind.Component when Callee == null => Strings.Code_ComponentMissing,
+        ConditionKind.Component when Callee!.Returns == null => Fill(Strings.Code_ComponentNoReturns, Callee.Name),
+        ConditionKind.Component => _arguments.Select(a => a.Problem).FirstOrDefault(p => p != null),
+        // A field a parameter gives takes its Example when the component is saved: it needs no value here.
+        ConditionKind.Pixel when !Slots.Color.IsBound && !MacroJson.IsColor(_color.Trim().ToUpperInvariant()) => Strings.Code_ConditionColor,
+        ConditionKind.Image when !Slots.Images.IsBound && !HasImages => Strings.Code_TakeImage,
+        ConditionKind.Image when !Slots.Images.IsBound && Images.Any(i => i.Preview == null) => Strings.Code_ImageMissing,
+        ConditionKind.Text when !Slots.Text.IsBound && string.IsNullOrWhiteSpace(_text) => Strings.Code_EnterConditionText,
+        _ when ShowsArea && !Slots.Area.IsBound && _area != SearchArea.Around && (_areaWidth < MacroJson.AreaSize.Min || _areaHeight < MacroJson.AreaSize.Min) => Strings.Condition_DrawArea,
         _ => null,
     };
 
@@ -545,8 +646,14 @@ public sealed class ConditionViewModel : ConditionEditorItem
         c.TextMatch = TextMatch.Contains;
         c.MatchCase = false;
         c.Language = null;
+        c.ComponentId = null;
+        c.Arguments = null;
         switch (Kind)
         {
+            case ConditionKind.Component:
+                c.ComponentId = _componentId;
+                c.Arguments = ArgumentViewModel.ToArguments(_arguments);
+                break;
             case ConditionKind.Pixel:
                 c.X = (int)Math.Round(double.IsNaN(_x) ? 0 : _x);
                 c.Y = (int)Math.Round(double.IsNaN(_y) ? 0 : _y);
@@ -567,6 +674,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
                 SetAreaOn(c);
                 break;
         }
+        c.Bind = Slots.ToBind(ComponentSlots.Of(c));
         return c;
     }
 
@@ -585,11 +693,15 @@ public sealed class IfViewModel : ConditionEditorItem
     private int _matchIndex, _waitIndex, _onFailIndex;
     private double _waitSeconds;
 
-    internal IfViewModel(MacroIf block, ImageStore? store)
+    internal IfViewModel(MacroIf block, ImageStore? store, ConditionContext? context = null, Dictionary<string, string>? actionBind = null)
     {
         Store = store;
+        Context = context ?? ConditionContext.None;
+        Slots = new SlotBindings(new[] { new ComponentSlot(ComponentSlots.WaitSeconds, ParameterType.Number, NumberUnit.Seconds, ValueRule.Any, true) },
+            Context.Parameters, actionBind);
+        Slots.WaitSeconds.PropertyChanged += (_, _) => Changed(nameof(ShowSecondsValue), nameof(Problem));
         foreach (var condition in block.Conditions)
-            Add(new ConditionViewModel(condition, store) { IsExpanded = false });
+            Add(new ConditionViewModel(condition, store, Context) { IsExpanded = false });
         foreach (var action in MacroDefinition.Walk(block.Then))
             if (action.FoundId is Guid used)
                 UsedByThen.Add(used);
@@ -603,6 +715,18 @@ public sealed class IfViewModel : ConditionEditorItem
     }
 
     internal ImageStore? Store { get; }
+
+    /// <summary>The Library, the parameters and the places around the If, for its conditions.</summary>
+    internal ConditionContext Context { get; }
+
+    /// <summary>Inside a component: the If's own field that can take a parameter's value, WaitSeconds.</summary>
+    public SlotBindings Slots { get; }
+
+    /// <summary>Up to with its own number of seconds (not a parameter's).</summary>
+    public bool ShowSecondsValue => ShowSeconds && Slots.WaitSeconds.ShowValue;
+
+    /// <summary>Up to inside a component with a parameter in seconds: the list shows.</summary>
+    public bool ShowSecondsChoice => ShowSeconds && Slots.WaitSeconds.Show;
 
     /// <summary>The conditions an action in this If's Then goes to ("Where … was found"): they can't be removed.</summary>
     internal HashSet<Guid> UsedByThen { get; } = new();
@@ -645,7 +769,7 @@ public sealed class IfViewModel : ConditionEditorItem
     public int WaitIndex
     {
         get => _waitIndex;
-        set { _waitIndex = value; Changed(nameof(WaitIndex), nameof(ShowSeconds), nameof(OnFailDescription)); }
+        set { _waitIndex = value; Changed(nameof(WaitIndex), nameof(ShowSeconds), nameof(ShowSecondsValue), nameof(ShowSecondsChoice), nameof(OnFailDescription)); }
     }
 
     public bool ShowSeconds => _waitIndex == (int)ConditionWait.UpTo;
@@ -684,11 +808,15 @@ public sealed class IfViewModel : ConditionEditorItem
             var names = Conditions.Where(c => c.Finds).Select(c => c.Name.Trim()).ToList();
             if (names.Count != names.Distinct(StringComparer.CurrentCultureIgnoreCase).Count())
                 return Strings.Code_ConditionNameTwice;
-            if (ShowSeconds && (double.IsNaN(_waitSeconds) || _waitSeconds < MacroJson.WaitSeconds.Min || _waitSeconds > MacroJson.WaitSeconds.Max))
+            if (ShowSecondsValue && (double.IsNaN(_waitSeconds) || _waitSeconds < MacroJson.WaitSeconds.Min || _waitSeconds > MacroJson.WaitSeconds.Max))
                 return Strings.Condition_WaitSeconds;
             return null;
         }
     }
+
+    /// <summary>The If action's Bind: WaitSeconds from a parameter (with Up to), or null.</summary>
+    internal Dictionary<string, string>? WaitBind() =>
+        Slots.ToBind(new[] { new ComponentSlot(ComponentSlots.WaitSeconds, ParameterType.Number, NumberUnit.Seconds, ValueRule.Any, ShowSeconds) });
 
     /// <summary><paramref name="block"/>'s Then and Else with the editor's conditions and choices.</summary>
     internal MacroIf ToModel(MacroIf block)

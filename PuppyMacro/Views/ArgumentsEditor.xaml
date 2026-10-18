@@ -1,0 +1,42 @@
+<UserControl
+    x:Class="PuppyMacro.Views.ArgumentsEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    xmlns:r="clr-namespace:PuppyMacro.Resources">
+
+    <!-- A call's arguments (ItemsSource: ArgumentViewModels): one card per parameter of the called component, its name and
+         what it is; where its value comes from is a list before the value, as the If's Wait card (the list shows only when
+         there is a choice); a point found by a condition can be moved from the center, as an action's Move from the
+         center. -->
+    <ItemsControl x:Name="Cards" Focusable="False">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type views:ArgumentViewModel}">
+                <ikw:SimpleStackPanel Margin="0,0,0,4" Spacing="4">
+                    <ui:SettingsCard Header="{Binding Name}" Description="{Binding Description}" AutomationProperties.Name="{Binding Name}">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                            <ComboBox MinWidth="160" ItemsSource="{Binding Choices}" SelectedIndex="{Binding Index, Mode=TwoWay}"
+                                      AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                      Visibility="{Binding ShowChoices, Converter={StaticResource BoolToVisibility}}" />
+                            <views:ValueEditor DataContext="{Binding Value}"
+                                               Visibility="{Binding DataContext.ShowValue, RelativeSource={RelativeSource AncestorType=ikw:SimpleStackPanel}, Converter={StaticResource BoolToVisibility}}" />
+                        </ikw:SimpleStackPanel>
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Header="{x:Static r:Strings.Action_MoveFromCenter}" Description="{x:Static r:Strings.Action_MoveFromCenterDescription}"
+                                     Visibility="{Binding ShowOffset, Converter={StaticResource BoolToVisibility}}">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_X}" />
+                            <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                          Value="{Binding OffsetX, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_MoveRight}" />
+                            <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Position_Y}" />
+                            <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="-100000" Maximum="100000"
+                                          Value="{Binding OffsetY, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_MoveDown}" />
+                        </ikw:SimpleStackPanel>
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

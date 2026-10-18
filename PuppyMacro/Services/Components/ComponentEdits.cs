@@ -200,6 +200,87 @@ internal static class ComponentEdits
         return result;
     }
 
+    /// <summary>
+    /// Writes each parameter's Example into the fields bound to it, in the component's actions and conditions: a bound field
+    /// always holds its parameter's Example (what the editor shows, what a test of the component plays).
+    /// </summary>
+    public static void WriteExamples(LibraryComponent component)
+    {
+        object? Example(string parameter, ComponentSlot slot) =>
+            component.Parameters.FirstOrDefault(p => p.Name == parameter) is { Example: { } example }
+                ? ComponentValues.Read(example, slot.Type, ValueRule.Any, out _)
+                : null;
+        foreach (var action in MacroDefinition.Walk(component.Actions))
+        {
+            foreach (var (slot, parameter) in action.Bind ?? new Dictionary<string, string>())
+                if (ComponentSlots.Find(action, slot) is { } s && Example(parameter, s) is { } value)
+                    ComponentSlots.Write(action, slot, value);
+            foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+                foreach (var (slot, parameter) in condition.Bind ?? new Dictionary<string, string>())
+                    if (ComponentSlots.Find(condition, slot) is { } s && Example(parameter, s) is { } value)
+                        ComponentSlots.Write(condition, slot, value);
+        }
+    }
+
+    /// <summary>
+    /// A parameter renamed in the component's editor: its fields' Bind and the {"From"} of the calls inside follow, so the
+    /// component keeps working.
+    /// </summary>
+    public static void Rename(List<MacroAction> actions, string from, string to)
+    {
+        static void Bind(Dictionary<string, string>? bind, string from, string to)
+        {
+            foreach (string slot in bind?.Where(b => b.Value == from).Select(b => b.Key).ToList() ?? new List<string>())
+                bind![slot] = to;
+        }
+        static void Arguments(Dictionary<string, JsonNode?>? arguments, string from, string to)
+        {
+            foreach (string name in arguments?.Where(a => ComponentValues.Reference(a.Value)?.From == from).Select(a => a.Key).ToList() ?? new List<string>())
+                arguments![name] = ComponentValues.FromArgument(to);
+        }
+        foreach (var action in MacroDefinition.Walk(actions))
+        {
+            Bind(action.Bind, from, to);
+            Arguments(action.Arguments, from, to);
+            foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+            {
+                Bind(condition.Bind, from, to);
+                Arguments(condition.Arguments, from, to);
+            }
+        }
+    }
+
+    /// <summary>
+    /// A parameter removed in the component's editor: its fields keep their values (no Bind), and the calls inside that
+    /// passed it on get its Example instead.
+    /// </summary>
+    public static void Forget(List<MacroAction> actions, ComponentParameter parameter)
+    {
+        foreach (var action in MacroDefinition.Walk(actions))
+        {
+            Drop(action.Bind);
+            Replace(action.Arguments);
+            foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+            {
+                Drop(condition.Bind);
+                Replace(condition.Arguments);
+            }
+        }
+
+        void Drop(Dictionary<string, string>? bind)
+        {
+            foreach (string slot in bind?.Where(b => b.Value == parameter.Name).Select(b => b.Key).ToList() ?? new List<string>())
+                bind!.Remove(slot);
+        }
+
+        void Replace(Dictionary<string, JsonNode?>? arguments)
+        {
+            foreach (string name in arguments?.Where(a => ComponentValues.Reference(a.Value)?.From == parameter.Name).Select(a => a.Key).ToList()
+                                    ?? new List<string>())
+                arguments![name] = parameter.Example?.DeepClone();
+        }
+    }
+
     /// <summary>A parameter's name made from a condition's name ("Remove Affix" → "Remove_Affix"), or <paramref name="fallback"/>.</summary>
     public static string NameFrom(string? text, string fallback)
     {

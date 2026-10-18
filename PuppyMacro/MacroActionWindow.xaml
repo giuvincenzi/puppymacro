@@ -66,10 +66,16 @@
                                  ui:ControlHelper.PlaceholderText="{x:Static r:Strings.ActionWindow_NamePlaceholder}" />
                     </ui:SettingsCard>
                     <ui:SettingsCard Header="{x:Static r:Strings.ActionWindow_Delay}" Description="{x:Static r:Strings.ActionWindow_DelayDescription}">
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <!-- Inside a component: a list before it, "A value" or "From …" (as the If's Wait card) -->
+                        <ikw:SimpleStackPanel x:Name="DelayFrom" Orientation="Horizontal" Spacing="8">
+                            <ComboBox MinWidth="160" ItemsSource="{Binding DelayMs.Choices}" SelectedIndex="{Binding DelayMs.Index, Mode=TwoWay}"
+                                      AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                      Visibility="{Binding DelayMs.Show, Converter={StaticResource BoolToVisibility}}" />
                             <ui:NumberBox x:Name="DelayBox" MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="0" Maximum="86400000"
-                                          AutomationProperties.Name="{x:Static r:Strings.ActionWindow_Delay}" />
-                            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Editor_Ms}" />
+                                          AutomationProperties.Name="{x:Static r:Strings.ActionWindow_Delay}"
+                                          Visibility="{Binding DelayMs.ShowValue, Converter={StaticResource BoolToVisibility}}" />
+                            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Editor_Ms}"
+                                       Visibility="{Binding DelayMs.ShowValue, Converter={StaticResource BoolToVisibility}}" />
                         </ikw:SimpleStackPanel>
                     </ui:SettingsCard>
                     <views:ActionBox x:Name="Box" Margin="0,12,0,0" Rejected="ShowError" />
