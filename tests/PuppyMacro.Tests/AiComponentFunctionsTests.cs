@@ -209,6 +209,104 @@ public class AiComponentFunctionsTests : IDisposable
     }
 
     [Fact]
+    public async Task Search_library_writes_each_parameter_with_its_type_unit_and_default()
+    {
+        var all = Comp("All kinds", new[]
+        {
+            Param("Word", ParameterType.Text, Text("x"), Text("hi")), Param("Key", ParameterType.Key, Key(0x41)),
+            Param("Pct", ParameterType.Number, Number(5), Number(5), NumberUnit.Percent), Param("Where", ParameterType.Area, Area(0, 0, 10, 10)),
+        }, Press());
+        _host.Macros.Library.Collections[0].Components.Add(all);
+
+        using var result = JsonDocument.Parse((await Tool("search_library", new { words = "kinds" })).Text);
+        string parameters = result.RootElement.GetProperty("Components")[0].GetProperty("Parameters").GetString()!;
+        Assert.Equal("Word: Text = \"hi\"; Key: Key; Pct: Number (Percent) = 5; Where: Area", parameters);
+
+        using var none = JsonDocument.Parse((await Tool("search_library", new { words = "two" })).Text);
+        Assert.False(none.RootElement.GetProperty("Components")[0].TryGetProperty("Parameters", out _));
+    }
+
+    [Fact]
+    public async Task A_component_without_parameters_has_a_call_without_arguments()
+    {
+        using var answer = JsonDocument.Parse((await Tool("get_component", new { id = _all.Id.ToString() })).Text);
+        var call = answer.RootElement.GetProperty("Call");
+        Assert.Equal(_all.Id, call.GetProperty("ComponentId").GetGuid());
+        Assert.False(call.TryGetProperty("Arguments", out _));
+        Assert.Equal(_strip.Id, answer.RootElement.GetProperty("Component").GetProperty("Actions")[0].GetProperty("ComponentId").GetGuid());
+    }
+
+    [Fact]
+    public async Task A_parameter_taken_out_goes_from_every_call_without_asking_values()
+    {
+        var macro = Macro("D4", Call(_strip, ("Slot", Point(5, 6)), ("Hold", Number(50))));
+        _host.Macros.Macros.Add(macro);
+        var smaller = _strip.Clone();
+        smaller.Parameters.RemoveAll(p => p.Name == "Hold");
+        smaller.Actions[0].Bind!.Remove("HoldMs");
+
+        var saved = await Tool("save_component", new { id = _strip.Id.ToString(), component = Json(smaller) });
+
+        Assert.False(saved.IsError, saved.Text);
+        Assert.Contains("Updated 3 call(s)", saved.Text);
+        Assert.Equal(new[] { "Slot" }, _host.Macros.Find(macro.Id)!.Actions[0].Arguments!.Keys);
+    }
+
+    [Fact]
+    public async Task A_rename_and_a_new_value_go_together()
+    {
+        var macro = Macro("D4", Call(_strip, ("Slot", Point(5, 6))));
+        _host.Macros.Macros.Add(macro);
+        var changed = _strip.Clone();
+        changed.Parameters[0].Name = "Place";
+        changed.Actions[0].Bind!["Point"] = "Place";
+        changed.Parameters.Add(HoldParam("Settle"));
+
+        var asked = await Tool("save_component", new { id = _strip.Id.ToString(), component = Json(changed), renamed = new { Slot = "Place" } });
+        Assert.True(asked.IsError);
+        Assert.Contains("Settle", asked.Text);
+        Assert.DoesNotContain("Place (", asked.Text); // the renamed one keeps its values: nothing asked for it
+
+        var saved = await Tool("save_component", new { id = _strip.Id.ToString(), component = Json(changed), renamed = new { Slot = "Place" },
+            call_values = new { Settle = 20 } });
+        Assert.False(saved.IsError, saved.Text);
+        var arguments = _host.Macros.Find(macro.Id)!.Actions[0].Arguments!;
+        Assert.True(JsonNode.DeepEquals(Point(5, 6), arguments["Place"]));
+        Assert.Equal(20, (int)arguments["Settle"]!);
+    }
+
+    [Fact]
+    public async Task A_value_of_another_type_in_call_values_is_refused()
+    {
+        _host.Macros.Macros.Add(Macro("D4", Call(_strip, ("Slot", Point(5, 6)))));
+        var changed = _strip.Clone();
+        changed.Parameters.Add(HoldParam("Settle"));
+        var refused = await Tool("save_component", new { id = _strip.Id.ToString(), component = Json(changed), call_values = new { Settle = "soon" } });
+        Assert.True(refused.IsError);
+        Assert.Contains("call_values.Settle", refused.Text);
+    }
+
+    [Fact]
+    public async Task Get_item_lists_the_components_a_macro_calls_through_its_conditions_too()
+    {
+        var macro = Macro("Only a condition", If(CallCondition(_rare, "Rare", ("Slot", Point(5, 6))), Press()));
+        _host.Macros.Macros.Add(macro);
+        var item = await Tool("get_item", new { id = macro.Id.ToString() });
+        Assert.Contains("Linked components", item.Text);
+        Assert.Contains(_rare.Id.ToString(), item.Text);
+    }
+
+    [Fact]
+    public async Task Check_condition_refuses_a_Component_condition_whose_call_misses_an_argument()
+    {
+        _settings.AiSeeScreen = true;
+        var result = await Tool("check_condition", With(new { condition = new { Kind = "Component", Name = "Rare", ComponentId = _rare.Id.ToString() } }));
+        Assert.True(result.IsError);
+        Assert.Contains("needs a value for Slot", result.Text);
+        Assert.Empty(_host.Checked);
+    }
+
+    [Fact]
     public void The_texts_for_AI_apps_explain_functions_and_reuse()
     {
         Assert.Contains("A component is a function", AiTools.Instructions);
