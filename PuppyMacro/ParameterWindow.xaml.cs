@@ -81,8 +81,20 @@ public partial class ParameterWindow
         _default.PropertyChanged += (_, _) => Validate();
         ExampleEditor.DataContext = _example;
         DefaultEditor.DataContext = _default;
+        ExampleGrid.DataContext = _example;
+        DefaultGrid.DataContext = _default;
         UnitCard.Visibility = SelectedType == ParameterType.Number ? Visibility.Visible : Visibility.Collapsed;
-        DefaultCard.Visibility = RequiredSwitch.IsOn ? Visibility.Collapsed : Visibility.Visible;
+        ShowValueCards();
+    }
+
+    /// <summary>The example's and default's cards: a grid's that opens, or the one-line card of every other type.</summary>
+    private void ShowValueCards()
+    {
+        bool grid = SelectedType == ParameterType.Grid;
+        ExampleCard.Visibility = grid ? Visibility.Collapsed : Visibility.Visible;
+        ExampleGrid.Visibility = grid ? Visibility.Visible : Visibility.Collapsed;
+        DefaultCard.Visibility = !grid && !RequiredSwitch.IsOn ? Visibility.Visible : Visibility.Collapsed;
+        DefaultGrid.Visibility = grid && !RequiredSwitch.IsOn ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void OnTypeChanged(object sender, SelectionChangedEventArgs e)
@@ -96,7 +108,7 @@ public partial class ParameterWindow
 
     private void OnRequiredToggled(object sender, RoutedEventArgs e)
     {
-        DefaultCard.Visibility = RequiredSwitch.IsOn ? Visibility.Collapsed : Visibility.Visible;
+        ShowValueCards();
         Validate();
     }
 

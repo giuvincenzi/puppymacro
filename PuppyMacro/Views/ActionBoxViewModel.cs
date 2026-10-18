@@ -143,8 +143,10 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
 
     // ---- Inside a component: fields from its parameters ----
 
-    private List<string> _pointParameters = new();
+    /// <summary>The component's parameters Position can take: Points ("From Slot") and Grids ("A cell of Inventory").</summary>
+    private List<(string Name, bool Grid)> _pointParameters = new();
     private string? _pointParameter;
+    private double _cell = 1;
 
     /// <summary>Inside a component, where each field's value comes from (<see cref="SlotBindings"/>); none in a macro or a loop.</summary>
     public SlotBindings Slots { get; private set; } = SlotBindings.None;
@@ -159,35 +161,41 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
         Slots.Key.PropertyChanged += (_, _) => Changed(nameof(KeyFieldShown));
         foreach (var choice in Slots.All)
             choice.PropertyChanged += (_, _) => Changed(nameof(Problem));
-        _pointParameters = parameters?.Where(p => p.Type == ParameterType.Point).Select(p => p.Name).ToList() ?? new List<string>();
-        _pointParameter = action.Bind?.GetValueOrDefault(ComponentSlots.Point) is string bound && _pointParameters.Contains(bound) ? bound : null;
+        Slots.Cell.PropertyChanged += (_, _) => Changed(nameof(Summary));
+        _pointParameters = parameters?.Where(p => p.Type is ParameterType.Point or ParameterType.Grid)
+            .Select(p => (p.Name, p.Type == ParameterType.Grid)).ToList() ?? new List<(string, bool)>();
+        _pointParameter = action.Bind?.GetValueOrDefault(ComponentSlots.Point) is string bound && _pointParameters.Any(p => p.Name == bound) ? bound : null;
+        _cell = action.Cell ?? 1;
         foreach (string name in new[]
         {
             nameof(Slots), nameof(KeyFieldShown), nameof(HasPointParameters), nameof(PositionChoices), nameof(PositionIndex), nameof(UsesFound), nameof(UsesParameter),
-            nameof(ShowFixedPoint), nameof(ShowPositionFirst), nameof(ShowFoundPosition), nameof(ShowHeaderPoint), nameof(Summary),
+            nameof(UsesGrid), nameof(Cell), nameof(ShowFixedPoint), nameof(ShowPositionFirst), nameof(ShowFoundPosition), nameof(ShowHeaderPoint), nameof(Summary),
         })
             Changed(name);
     }
 
-    /// <summary>A mouse action or Move to inside a component with Point parameters: Position can take one.</summary>
+    /// <summary>A mouse action or Move to inside a component with Point or Grid parameters: Position can take one.</summary>
     public bool HasPointParameters => _pointParameters.Count > 0 && InMacro && (IsMouseKind || IsMoveTo);
 
-    /// <summary>The Position list: Fixed point, then "From Slot" for each Point parameter, then "Where … was found" for each condition.</summary>
+    /// <summary>
+    /// The Position list: Fixed point, then "From Slot" for each Point parameter or "A cell of Inventory" for each Grid, then
+    /// "Where … was found" for each condition.
+    /// </summary>
     public IReadOnlyList<string> PositionChoices =>
         new[] { Strings.Action_PositionFixed }
-            .Concat(_pointParameters.Select(p => Fill(Strings.Param_FromParameter, p)))
+            .Concat(_pointParameters.Select(p => Fill(p.Grid ? Strings.Action_PositionCell : Strings.Param_FromParameter, p.Name)))
             .Concat(_founds.Select(f => Fill(Strings.Action_PositionFound, f.Name))).ToList();
 
     public int PositionIndex
     {
-        get => _pointParameter is string p ? _pointParameters.IndexOf(p) + 1
+        get => _pointParameter is string p ? _pointParameters.FindIndex(x => x.Name == p) + 1
             : _foundId is Guid id ? _pointParameters.Count + _founds.ToList().FindIndex(f => f.Id == id) + 1 : 0;
         set
         {
             int parameters = _pointParameters.Count;
-            _pointParameter = value > 0 && value <= parameters ? _pointParameters[value - 1] : null;
+            _pointParameter = value > 0 && value <= parameters ? _pointParameters[value - 1].Name : null;
             _foundId = value > parameters && value <= parameters + _founds.Count ? _founds[value - parameters - 1].Id : null;
-            foreach (string name in new[] { nameof(PositionIndex), nameof(UsesFound), nameof(UsesParameter), nameof(ShowFixedPoint), nameof(Summary) })
+            foreach (string name in new[] { nameof(PositionIndex), nameof(UsesFound), nameof(UsesParameter), nameof(UsesGrid), nameof(ShowFixedPoint), nameof(Summary) })
                 Changed(name);
         }
     }
@@ -197,6 +205,16 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
 
     /// <summary>The action's point is a parameter's value.</summary>
     public bool UsesParameter => _pointParameter != null && HasPointParameters;
+
+    /// <summary>The action's point is a cell of a Grid parameter: the Cell card shows.</summary>
+    public bool UsesGrid => UsesParameter && _pointParameters.Any(p => p.Name == _pointParameter && p.Grid);
+
+    /// <summary>With <see cref="UsesGrid"/>: the cell, when it isn't a parameter's.</summary>
+    public double Cell
+    {
+        get => _cell;
+        set { _cell = value; Changed(); Changed(nameof(Summary)); }
+    }
 
     /// <summary>With Fixed point chosen in the Position list: the Point card under Position.</summary>
     public bool ShowFixedPoint => ShowFoundPosition && !UsesFound && !UsesParameter;
@@ -530,6 +548,7 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
 
     private string Point => UsesFound
         ? Fill(Strings.Action_SummaryWhereFound, FoundName)
+        : UsesGrid ? Fill(Strings.Action_SummaryAtCell, Slots.Cell.Parameter ?? Number(_cell, 1).ToString("0", CultureInfo.CurrentCulture), _pointParameter!)
         : UsesParameter ? Fill(Strings.Param_SummaryAtParameter, _pointParameter!)
         : Fill(Strings.Action_SummaryAt, Number(X, 0).ToString("0", CultureInfo.CurrentCulture), Number(Y, 0).ToString("0", CultureInfo.CurrentCulture));
 
@@ -663,6 +682,7 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
             a.FoundId = UsesFound ? _foundId : null;
             a.FoundOffsetX = UsesFound ? (int)Number(_offsetX, 0) : 0;
             a.FoundOffsetY = UsesFound ? (int)Number(_offsetY, 0) : 0;
+            a.Cell = UsesGrid ? (int)Math.Max(1, Number(_cell, 1)) : null;
         }
         if (IsMoveTo)
         {

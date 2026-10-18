@@ -24,6 +24,10 @@
                                                Visibility="{Binding DataContext.ShowValue, RelativeSource={RelativeSource AncestorType=ikw:SimpleStackPanel}, Converter={StaticResource BoolToVisibility}}" />
                         </ikw:SimpleStackPanel>
                     </ui:SettingsCard>
+                    <!-- A grid given as a value: the same fields as a Grid parameter's Example -->
+                    <views:GridValueEditor DataContext="{Binding Value}" Header="{x:Static r:Strings.Param_GridArgument}"
+                                           Description="{x:Static r:Strings.Param_GridArgumentDescription}"
+                                           Visibility="{Binding DataContext.ShowGridValue, RelativeSource={RelativeSource AncestorType=ikw:SimpleStackPanel}, Converter={StaticResource BoolToVisibility}}" />
                     <ui:SettingsCard Header="{x:Static r:Strings.Action_MoveFromCenter}" Description="{x:Static r:Strings.Action_MoveFromCenterDescription}"
                                      Visibility="{Binding ShowOffset, Converter={StaticResource BoolToVisibility}}">
                         <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">

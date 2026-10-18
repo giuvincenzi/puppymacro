@@ -58,7 +58,7 @@
                 <Border Margin="16,0,6,0" Padding="6,0" CornerRadius="4" BorderThickness="1,1,1,2" BorderBrush="#5A5A5A" Background="#373737">
                     <TextBlock FontSize="12" Text="{x:Static r:Strings.Keys_Esc}" />
                 </Border>
-                <TextBlock FontSize="13" Foreground="#C5C5C5" Text="{x:Static r:Strings.Pick_Cancel}" VerticalAlignment="Center" />
+                <TextBlock x:Name="EscText" FontSize="13" Foreground="#C5C5C5" Text="{x:Static r:Strings.Pick_Cancel}" VerticalAlignment="Center" />
             </StackPanel>
         </Border>
     </Canvas>

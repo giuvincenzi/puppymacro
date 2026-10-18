@@ -101,6 +101,18 @@
                                 </ikw:SimpleStackPanel>
                             </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
+                        <!-- Inside a component, the pixel at a cell of a Grid parameter: which cell, as a click's Cell card -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Action_Cell}" Description="{x:Static r:Strings.Action_CellDescription}"
+                                         Visibility="{Binding ShowCell, Converter={StaticResource BoolToVisibility}}">
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                <ComboBox MinWidth="160" ItemsSource="{Binding Slots.Cell.Choices}" SelectedIndex="{Binding Slots.Cell.Index, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static r:Strings.Param_ValueFrom}"
+                                          Visibility="{Binding Slots.Cell.Show, Converter={StaticResource BoolToVisibility}}" />
+                                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="10000" SmallChange="1"
+                                              Value="{Binding Cell, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Action_Cell}"
+                                              Visibility="{Binding Slots.Cell.ShowValue, Converter={StaticResource BoolToVisibility}}" />
+                            </ikw:SimpleStackPanel>
+                        </ui:SettingsCard>
                         <ui:SettingsCard Header="{x:Static r:Strings.Condition_Color}" Description="{x:Static r:Strings.Condition_ColorDescription}"
                                          Visibility="{Binding IsPixel, Converter={StaticResource BoolToVisibility}}">
                             <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">

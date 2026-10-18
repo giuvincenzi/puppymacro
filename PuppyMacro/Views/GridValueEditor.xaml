@@ -1,0 +1,37 @@
+<UserControl
+    x:Class="PuppyMacro.Views.GridValueEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:views="clr-namespace:PuppyMacro.Views"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    x:Name="Root">
+    <!-- A grid's value (DataContext: ValueEditorViewModel of a Grid), approved: the Design canvas "PuppyMacro Component
+         functions", Add parameter: the type Grid. A card that opens, as the action's card: its header (the editor's own,
+         Header and Description) with the grid in a few words, and inside the same point of the first and of the last cell
+         (Pick on screen), the columns, the rows, and how many cells with Show the cells. -->
+    <ui:SettingsExpander Header="{Binding Header, ElementName=Root}" Description="{Binding Description, ElementName=Root}"
+                         AutomationProperties.Name="{Binding Header, ElementName=Root}">
+        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Description}" />
+        <ui:SettingsExpander.Items>
+            <ui:SettingsCard Header="{x:Static r:Strings.Param_GridFirst}" Description="{x:Static r:Strings.Param_GridFirstDescription}">
+                <views:PositionPicker X="{Binding FirstX, Mode=TwoWay}" Y="{Binding FirstY, Mode=TwoWay}" />
+            </ui:SettingsCard>
+            <ui:SettingsCard Header="{x:Static r:Strings.Param_GridLastCell}" Description="{x:Static r:Strings.Param_GridLastCellDescription}">
+                <views:PositionPicker X="{Binding LastX, Mode=TwoWay}" Y="{Binding LastY, Mode=TwoWay}" />
+            </ui:SettingsCard>
+            <ui:SettingsCard Header="{x:Static r:Strings.Param_GridColumns}">
+                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="1000" SmallChange="1"
+                              Value="{Binding Columns, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Param_GridColumns}" />
+            </ui:SettingsCard>
+            <ui:SettingsCard Header="{x:Static r:Strings.Param_GridRows}">
+                <ui:NumberBox MinWidth="{StaticResource SettingsCardContentMinWidth}" Minimum="1" Maximum="1000" SmallChange="1"
+                              Value="{Binding Rows, Mode=TwoWay}" AutomationProperties.Name="{x:Static r:Strings.Param_GridRows}" />
+            </ui:SettingsCard>
+            <ui:SettingsCard Header="{Binding GridCellsText}" Description="{Binding GridLastText}">
+                <views:PlaceButton x:Name="ShowCellsButton" Text="{x:Static r:Strings.Param_ShowCells}" Click="OnShowCellsClick"
+                                   ToolTip="{x:Static r:Strings.Param_ShowCellsTooltip}" />
+            </ui:SettingsCard>
+        </ui:SettingsExpander.Items>
+    </ui:SettingsExpander>
+</UserControl>

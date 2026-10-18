@@ -27,6 +27,7 @@ public sealed class ValueEditorViewModel : INotifyPropertyChanged
     private string _color = "";
     private List<ConditionImage> _images = new();
     private AreaValue? _area;
+    private double _firstX, _firstY, _lastX, _lastY, _columns = 1, _rows = 1;
 
     internal ValueEditorViewModel(ParameterType type, NumberUnit? unit, JsonNode? value, ImageStore? store, ValueRule? rule = null)
     {
@@ -54,6 +55,10 @@ public sealed class ValueEditorViewModel : INotifyPropertyChanged
     public bool IsColor => Type == ParameterType.Color;
     public bool IsImage => Type == ParameterType.Image;
     public bool IsArea => Type == ParameterType.Area;
+    public bool IsGrid => Type == ParameterType.Grid;
+
+    /// <summary>Every type but a grid fits on one line, on the right of a card (a grid opens: <see cref="GridValueEditor"/>).</summary>
+    public bool IsOneLine => !IsGrid;
 
     public string UnitText => Unit is NumberUnit u ? ComponentChecks.UnitName(u) : "";
 
@@ -118,6 +123,68 @@ public sealed class ValueEditorViewModel : INotifyPropertyChanged
         ? string.Format(CultureInfo.CurrentCulture, Strings.Condition_AreaInfo, a.X, a.Y, a.Width, a.Height)
         : Strings.Condition_AreaNotDrawn;
 
+    // ---- A grid: the first and the last cell's point, the columns and the rows ----
+
+    public double FirstX
+    {
+        get => _firstX;
+        set { _firstX = value; GridChanged(); }
+    }
+
+    public double FirstY
+    {
+        get => _firstY;
+        set { _firstY = value; GridChanged(); }
+    }
+
+    public double LastX
+    {
+        get => _lastX;
+        set { _lastX = value; GridChanged(); }
+    }
+
+    public double LastY
+    {
+        get => _lastY;
+        set { _lastY = value; GridChanged(); }
+    }
+
+    public double Columns
+    {
+        get => _columns;
+        set { _columns = value; GridChanged(); }
+    }
+
+    public double Rows
+    {
+        get => _rows;
+        set { _rows = value; GridChanged(); }
+    }
+
+    /// <summary>The grid as it is now, when it is one (<see cref="Problem"/> says why not).</summary>
+    internal GridValue? Grid => ComponentValues.Read(ToJson(), ParameterType.Grid, ValueRule.Any, out _) as GridValue?;
+
+    /// <summary>"33 cells, counted row by row from the top left, starting at 1", or why it isn't a grid.</summary>
+    public string GridCellsText => Grid is { } g ? Plurals.Format("Param_GridCells", g.Cells) : Problem ?? "";
+
+    /// <summary>"The last cell, 33, is at 4647, 1268."; empty when it isn't a grid.</summary>
+    public string GridLastText => Grid is { } g && g.PointOf(g.Cells) is { } last
+        ? string.Format(CultureInfo.CurrentCulture, Strings.Param_GridLast, g.Cells, last.X, last.Y)
+        : "";
+
+    /// <summary>Every cell's point, cell 1 first, for Show the cells; empty when it isn't a grid.</summary>
+    internal IReadOnlyList<(int X, int Y)> CellPoints => Grid is { } g
+        ? Enumerable.Range(1, g.Cells).Select(c => g.PointOf(c)!.Value).Select(p => (p.X, p.Y)).ToList()
+        : Array.Empty<(int, int)>();
+
+    private void GridChanged([CallerMemberName] string? name = null)
+    {
+        Changed(name);
+        Changed(nameof(GridCellsText));
+        Changed(nameof(GridLastText));
+        Changed(nameof(Description));
+    }
+
     // ---- JSON ----
 
     /// <summary>Shows a value (none: the type's empty one).</summary>
@@ -132,6 +199,9 @@ public sealed class ValueEditorViewModel : INotifyPropertyChanged
             case string s: _text = s; break;
             case List<ConditionImage> images: _images = images; break;
             case AreaValue a: _area = a; break;
+            case GridValue g:
+                (_firstX, _firstY, _lastX, _lastY, _columns, _rows) = (g.First.X, g.First.Y, g.Last.X, g.Last.Y, g.Columns, g.Rows);
+                break;
         }
         Changed(string.Empty);
     }
@@ -145,6 +215,13 @@ public sealed class ValueEditorViewModel : INotifyPropertyChanged
         ParameterType.Key => _key is { IsSet: true } key ? ComponentValues.ToJson(key) : null,
         ParameterType.Color => JsonValue.Create(_color.Trim().ToUpperInvariant()),
         ParameterType.Image => ComponentValues.ToJson(_images),
+        ParameterType.Grid => new JsonObject
+        {
+            ["First"] = new JsonObject { ["X"] = Whole(_firstX), ["Y"] = Whole(_firstY) },
+            ["Last"] = new JsonObject { ["X"] = Whole(_lastX), ["Y"] = Whole(_lastY) },
+            ["Columns"] = Whole(_columns),
+            ["Rows"] = Whole(_rows),
+        },
         _ => _area is { } a ? ComponentValues.ToJson(a) : null,
     };
 

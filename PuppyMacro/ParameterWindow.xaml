@@ -34,15 +34,20 @@
                 <ui:SettingsCard x:Name="UnitCard" Header="{x:Static r:Strings.Param_Unit}" Description="{x:Static r:Strings.Param_UnitDescription}" Margin="0,0,0,4">
                     <ComboBox x:Name="UnitBox" MinWidth="220" SelectionChanged="OnTypeChanged" AutomationProperties.Name="{x:Static r:Strings.Param_Unit}" />
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="{x:Static r:Strings.Param_Example}" Description="{x:Static r:Strings.Param_ExampleDescription}" Margin="0,0,0,4">
+                <ui:SettingsCard x:Name="ExampleCard" Header="{x:Static r:Strings.Param_Example}" Description="{x:Static r:Strings.Param_ExampleDescription}" Margin="0,0,0,4">
                     <views:ValueEditor x:Name="ExampleEditor" />
                 </ui:SettingsCard>
+                <!-- A grid has four fields: the card opens on them (approved: Add parameter: the type Grid) -->
+                <views:GridValueEditor x:Name="ExampleGrid" Margin="0,0,0,4" Header="{x:Static r:Strings.Param_Example}"
+                                       Description="{x:Static r:Strings.Param_ExampleDescription}" Visibility="Collapsed" />
                 <ui:SettingsCard Header="{x:Static r:Strings.Param_EveryCall}" Description="{x:Static r:Strings.Param_EveryCallDescription}" Margin="0,0,0,4">
                     <ui:ToggleSwitch x:Name="RequiredSwitch" Toggled="OnRequiredToggled" AutomationProperties.Name="{x:Static r:Strings.Param_EveryCall}" />
                 </ui:SettingsCard>
                 <ui:SettingsCard x:Name="DefaultCard" Header="{x:Static r:Strings.Param_Default}" Description="{x:Static r:Strings.Param_DefaultDescription}" Margin="0,0,0,4">
                     <views:ValueEditor x:Name="DefaultEditor" />
                 </ui:SettingsCard>
+                <views:GridValueEditor x:Name="DefaultGrid" Margin="0,0,0,4" Header="{x:Static r:Strings.Param_Default}"
+                                       Description="{x:Static r:Strings.Param_DefaultDescription}" Visibility="Collapsed" />
                 <ui:SettingsCard Header="{x:Static r:Strings.Library_Description}" Description="{x:Static r:Strings.Param_DescriptionDescription}"
                                  ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
                     <TextBox x:Name="DescriptionBox" MaxLength="300" TextWrapping="Wrap" AutomationProperties.Name="{x:Static r:Strings.Library_Description}" />

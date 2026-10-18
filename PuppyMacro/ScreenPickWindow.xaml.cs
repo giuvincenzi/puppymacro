@@ -13,12 +13,13 @@ using CvRect = OpenCvSharp.Rect;
 
 namespace PuppyMacro;
 
-/// <summary>What <see cref="ScreenPickWindow"/> asks the user for.</summary>
-internal enum ScreenPickMode { Pixel, Image, Area }
+/// <summary>What <see cref="ScreenPickWindow"/> asks the user for, or (<see cref="Cells"/>) only shows.</summary>
+internal enum ScreenPickMode { Pixel, Image, Area, Cells }
 
 /// <summary>
 /// Full-screen pick over a still picture of the screen as the macros' conditions see it: a pixel and its color, an image
-/// to look for, or a search area. Results are in desktop coordinates, physical pixels.
+/// to look for, or a search area. Results are in desktop coordinates, physical pixels. <see cref="ShowCells"/> shows a
+/// grid's cells there instead, each point with its number, until a click or Esc.
 /// </summary>
 internal partial class ScreenPickWindow
 {
@@ -42,8 +43,14 @@ internal partial class ScreenPickWindow
         {
             ScreenPickMode.Image => (Strings.ScreenPick_ImageTitle, Strings.ScreenPick_Image),
             ScreenPickMode.Area => (Strings.ScreenPick_AreaTitle, Strings.ScreenPick_Area),
+            ScreenPickMode.Cells => (Strings.ScreenPick_CellsTitle, Strings.ScreenPick_Cells),
             _ => (Strings.ScreenPick_PixelTitle, Strings.ScreenPick_Pixel),
         };
+        if (mode == ScreenPickMode.Cells)
+        {
+            Cursor = Cursors.Arrow;
+            EscText.Text = Strings.Editor_Close;
+        }
         if (askedBy != null)
             InstructionsText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Pick_AskedBy, askedBy, reason);
         Closed += (_, _) => _snapshot.Dispose();
@@ -55,6 +62,7 @@ internal partial class ScreenPickWindow
         Loaded += (_, _) =>
         {
             ShowPictures();
+            ShowCellMarks();
             Instructions.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             Rect work = SystemParameters.WorkArea;
             Canvas.SetLeft(Instructions, work.Left - Left + (work.Width - Instructions.DesiredSize.Width) / 2);
@@ -75,7 +83,19 @@ internal partial class ScreenPickWindow
     /// Takes the screen's picture, then asks. <paramref name="owner"/> moves off the screen meanwhile, so neither the
     /// picture nor the pick shows it. Null when the user cancels or the screen cannot be seen (<paramref name="error"/>).
     /// </summary>
-    public static ScreenPickWindow? Ask(Window owner, ScreenPickMode mode, out string? error)
+    public static ScreenPickWindow? Ask(Window owner, ScreenPickMode mode, out string? error) => Ask(owner, mode, null, out error);
+
+    /// <summary>
+    /// Shows a grid's cells (<paramref name="points"/>, cell 1 first) over a still picture of the screen, each with its
+    /// number, until a click or Esc: whether they are where the grid's cells are. False, with why, when the screen can't be seen.
+    /// </summary>
+    public static bool ShowCells(Window owner, IReadOnlyList<(int X, int Y)> points, out string? error)
+    {
+        Ask(owner, ScreenPickMode.Cells, points, out error);
+        return error == null;
+    }
+
+    private static ScreenPickWindow? Ask(Window owner, ScreenPickMode mode, IReadOnlyList<(int X, int Y)>? cells, out string? error)
     {
         error = null;
         // The window and the windows under it (the macro editor) leave the screen.
@@ -92,6 +112,8 @@ internal partial class ScreenPickWindow
             // Let the window move before the picture is taken.
             owner.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
             var window = Create(mode, out error);
+            if (window != null)
+                window._cells = cells;
             return window?.ShowDialog() == true ? window : null;
         }
         finally
@@ -131,6 +153,35 @@ internal partial class ScreenPickWindow
             Canvas.SetLeft(image, topLeft.X);
             Canvas.SetTop(image, topLeft.Y);
             Surface.Children.Insert(at++, image);
+        }
+    }
+
+    /// <summary>The grid's cells to show (<see cref="ScreenPickMode.Cells"/>), physical pixels; null otherwise.</summary>
+    private IReadOnlyList<(int X, int Y)>? _cells;
+
+    /// <summary>Each cell's point, a ring where the pixel is, with its number beside it.</summary>
+    private void ShowCellMarks()
+    {
+        if (_mode != ScreenPickMode.Cells || _cells == null)
+            return;
+        var accent = new SolidColorBrush(Color.FromRgb(0x60, 0xCD, 0xFF));
+        accent.Freeze();
+        int at = Surface.Children.IndexOf(Instructions);
+        for (int i = 0; i < _cells.Count; i++)
+        {
+            Point center = PointFromScreen(new Point(_cells[i].X + 0.5, _cells[i].Y + 0.5));
+            var ring = new System.Windows.Shapes.Ellipse { Width = 12, Height = 12, Stroke = accent, StrokeThickness = 2, IsHitTestVisible = false };
+            Canvas.SetLeft(ring, center.X - 6);
+            Canvas.SetTop(ring, center.Y - 6);
+            var number = new Border
+            {
+                Padding = new Thickness(4, 0, 4, 0), CornerRadius = new CornerRadius(4), Background = accent, IsHitTestVisible = false,
+                Child = new TextBlock { FontSize = 11, Foreground = Brushes.Black, Text = (i + 1).ToString(CultureInfo.CurrentCulture) },
+            };
+            Canvas.SetLeft(number, center.X + 8);
+            Canvas.SetTop(number, center.Y - 18);
+            Surface.Children.Insert(at++, ring);
+            Surface.Children.Insert(at++, number);
         }
     }
 
@@ -185,6 +236,11 @@ internal partial class ScreenPickWindow
 
     private void OnMouseDown(object sender, MouseButtonEventArgs e)
     {
+        if (_mode == ScreenPickMode.Cells)
+        {
+            DialogResult = false;
+            return;
+        }
         if (Instructions.IsMouseOver || SelectionButtons.IsMouseOver)
             return;
         Point at = e.GetPosition(this);

@@ -600,4 +600,150 @@ public class ComponentViewModelsTests : IDisposable
         var images = new ValueEditorViewModel(ParameterType.Image, null, Images(ImageA), store);
         Assert.Equal(Strings.Code_ImageMissing, images.Problem);
     }
+
+    // ================= Grid =================
+
+    private static JsonNode Inventory => new JsonObject
+    {
+        ["First"] = Point(3912, 1056), ["Last"] = Point(4647, 1268), ["Columns"] = 11, ["Rows"] = 3,
+    };
+
+    private static ComponentParameter GridParam(string name = "Inv", JsonNode? @default = null) => Param(name, ParameterType.Grid, Inventory, @default);
+
+    private static ComponentParameter Count(string name = "Slot") => Param(name, ParameterType.Number, Number(1), unit: NumberUnit.Count);
+
+    [Fact]
+    public void Position_offers_a_cell_of_each_Grid_and_its_Cell_card_a_number_or_a_count()
+    {
+        var box = Box(Click(), new[] { SlotParam(), GridParam(), Count(), Ms("Hold") });
+        Assert.Equal(new[] { Strings.Action_PositionFixed, "From Slot", "A cell of Inv" }, box.PositionChoices);
+        Assert.False(box.UsesGrid);
+
+        box.PositionIndex = 2;
+        Assert.True(box.UsesGrid);
+        Assert.True(box.UsesParameter);
+        Assert.False(box.ShowFixedPoint);
+        Assert.Equal(new[] { Strings.Param_AValue, "From Slot" }, box.Slots.Cell.Choices); // a Count only
+        box.Cell = 23;
+        Assert.Contains("at cell 23 of Inv", box.Summary);
+        box.Slots.Cell.Index = 1;
+        Assert.Contains("at cell Slot of Inv", box.Summary);
+
+        box.PositionIndex = 1; // a Point: no cell
+        Assert.False(box.UsesGrid);
+        Assert.Contains("at Slot", box.Summary);
+    }
+
+    [Fact]
+    public void A_click_at_a_cell_is_written_with_its_cell_and_reads_back_as_it_was()
+    {
+        var parameters = new[] { GridParam(), Count() };
+        var box = Box(Click(), parameters);
+        box.PositionIndex = 1;
+        box.Cell = 12;
+        var fixedCell = box.ToMacroAction(Click());
+        Assert.Equal(12, fixedCell.Cell);
+        Assert.Equal(new Dictionary<string, string> { ["Point"] = "Inv" }, fixedCell.Bind);
+        Assert.Empty(ComponentProblems(Comp("Fixed", parameters, fixedCell)));
+
+        box.Slots.Cell.Index = 1;
+        var fromSlot = box.ToMacroAction(Click());
+        Assert.Equal(new Dictionary<string, string> { ["Point"] = "Inv", ["Cell"] = "Slot" }, fromSlot.Bind);
+        Assert.Empty(ComponentProblems(Comp("From slot", parameters, fromSlot)));
+
+        var again = Box(fromSlot, parameters);
+        Assert.Equal(1, again.PositionIndex);
+        Assert.True(again.UsesGrid);
+        Assert.Equal(1, again.Slots.Cell.Index);
+
+        // Back to a fixed point: no cell, no Bind of the point nor of the cell.
+        again.PositionIndex = 0;
+        var plain = again.ToMacroAction(fromSlot);
+        Assert.Null(plain.Cell);
+        Assert.Null(plain.Bind);
+    }
+
+    [Fact]
+    public void A_pixel_at_a_cell_shows_its_Cell_card_and_writes_its_cell()
+    {
+        var context = new ConditionContext { Parameters = new[] { GridParam(), Count(), SlotParam() } };
+        var pixel = new ConditionViewModel(Pixel(), null, context);
+        Assert.Equal(new[] { Strings.Param_AValue, "A cell of Inv", "From Slot" }, pixel.Slots.Point.Choices); // the parameters' order
+        Assert.False(pixel.ShowCell);
+
+        pixel.Slots.Point.Index = 1;
+        Assert.True(pixel.ShowCell);
+        pixel.Cell = 7;
+        var model = pixel.ToModel();
+        Assert.Equal(7, model.Cell);
+        Assert.Equal(new Dictionary<string, string> { ["Point"] = "Inv" }, model.Bind);
+
+        pixel.Slots.Cell.Index = 1;
+        Assert.Equal(new Dictionary<string, string> { ["Point"] = "Inv", ["Cell"] = "Slot" }, pixel.ToModel().Bind);
+
+        pixel.Slots.Point.Index = 2; // a Point parameter: no cell
+        Assert.False(pixel.ShowCell);
+        var point = pixel.ToModel();
+        Assert.Null(point.Cell);
+        Assert.Equal(new Dictionary<string, string> { ["Point"] = "Slot" }, point.Bind);
+
+        var reread = new ConditionViewModel(model, null, context);
+        Assert.True(reread.ShowCell);
+        Assert.Equal(7, reread.Cell);
+    }
+
+    [Fact]
+    public void A_grid_s_value_reads_its_fields_and_says_its_cells()
+    {
+        var grid = new ValueEditorViewModel(ParameterType.Grid, null, Inventory, null);
+        Assert.True(grid.IsGrid);
+        Assert.False(grid.IsOneLine);
+        Assert.Equal((3912d, 1056d, 4647d, 1268d, 11d, 3d), (grid.FirstX, grid.FirstY, grid.LastX, grid.LastY, grid.Columns, grid.Rows));
+        Assert.True(JsonNode.DeepEquals(Inventory, grid.ToJson()));
+        Assert.Null(grid.Problem);
+        Assert.Equal("11 × 3 from 3912, 1056", grid.Description);
+        Assert.Equal(Plurals.Format("Param_GridCells", 33), grid.GridCellsText);
+        Assert.Equal("The last cell, 33, is at 4647, 1268.", grid.GridLastText);
+        Assert.Equal(33, grid.CellPoints.Count);
+        Assert.Equal((3986, 1056), grid.CellPoints[1]);
+
+        var changed = new List<string?>();
+        grid.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+        grid.Columns = 0;
+        Assert.Contains(nameof(ValueEditorViewModel.GridCellsText), changed);
+        Assert.NotNull(grid.Problem);
+        Assert.Equal(grid.Problem, grid.GridCellsText); // why it isn't a grid
+        Assert.Equal("", grid.GridLastText);
+        Assert.Empty(grid.CellPoints);
+
+        // A new grid starts as one cell at 0, 0: a grid already.
+        var fresh = new ValueEditorViewModel(ParameterType.Grid, null, null, null);
+        Assert.Null(fresh.Problem);
+        Assert.Single(fresh.CellPoints);
+        // Fields with decimals or nothing are whole pixels.
+        fresh.LastX = double.NaN;
+        fresh.FirstX = 2.6;
+        Assert.Equal(3, fresh.ToJson()!["First"]!["X"]!.GetValue<int>());
+    }
+
+    [Fact]
+    public void A_grid_argument_opens_its_fields_only_with_A_value()
+    {
+        var parameter = GridParam(@default: Inventory);
+        var argument = new ArgumentViewModel(parameter, ValueRule.Any, null, null, new Dictionary<Guid, string>(), null);
+        Assert.Equal(new[] { Strings.Param_AValue, "Its default, 11 × 3 from 3912, 1056" }, argument.Choices);
+        Assert.Equal(1, argument.Index);
+        Assert.False(argument.ShowGridValue);
+        Assert.Null(argument.ToJson());
+
+        argument.Index = 0;
+        Assert.True(argument.ShowGridValue);
+        argument.Value.Rows = 2;
+        Assert.Equal(2, argument.ToJson()!["Rows"]!.GetValue<int>());
+
+        // Another type's argument never opens a grid's fields.
+        var point = new ArgumentViewModel(SlotParam(), ValueRule.Any, null, null, new Dictionary<Guid, string>(), null);
+        Assert.True(point.ShowValue);
+        Assert.False(point.ShowGridValue);
+    }
 }

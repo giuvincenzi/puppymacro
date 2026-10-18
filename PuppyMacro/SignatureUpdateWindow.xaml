@@ -32,9 +32,17 @@
                 <ItemsControl x:Name="ValuesList" Focusable="False">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <ui:SettingsCard Margin="0,0,0,4" Header="{Binding Header}" Description="{Binding Description}" AutomationProperties.Name="{Binding Header}">
-                                <views:ValueEditor DataContext="{Binding Value}" />
-                            </ui:SettingsCard>
+                            <StackPanel>
+                                <ui:SettingsCard Margin="0,0,0,4" Header="{Binding Header}" Description="{Binding Description}" AutomationProperties.Name="{Binding Header}"
+                                                 Visibility="{Binding Value.IsOneLine, Converter={StaticResource BoolToVisibility}}">
+                                    <views:ValueEditor DataContext="{Binding Value}" />
+                                </ui:SettingsCard>
+                                <!-- A grid: the card opens on its fields -->
+                                <views:GridValueEditor Margin="0,0,0,4" DataContext="{Binding Value}"
+                                                       Header="{Binding DataContext.Header, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                                       Description="{Binding DataContext.Description, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                                       Visibility="{Binding IsGrid, Converter={StaticResource BoolToVisibility}}" />
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

@@ -95,12 +95,16 @@ public sealed class ArgumentViewModel : INotifyPropertyChanged
             _index = Math.Clamp(value, 0, _sources.Count - 1);
             Changed();
             Changed(nameof(ShowValue));
+            Changed(nameof(ShowGridValue));
             Changed(nameof(ShowOffset));
             Changed(nameof(Problem));
         }
     }
 
     public bool ShowValue => _sources[_index].Source == Source.Value;
+
+    /// <summary>A grid given as a value: its fields open under the card (the card itself says it in a few words).</summary>
+    public bool ShowGridValue => ShowValue && Parameter.Type == ParameterType.Grid;
 
     public bool ShowOffset => _sources[_index].Source == Source.Found;
 

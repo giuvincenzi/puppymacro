@@ -35,7 +35,11 @@ public sealed class SlotChoice : INotifyPropertyChanged
     public string Slot { get; }
 
     public IReadOnlyList<string> Choices =>
-        new[] { Strings.Param_AValue }.Concat(_matching.Select(p => string.Format(CultureInfo.CurrentCulture, Strings.Param_FromParameter, p.Name))).ToList();
+        new[] { Strings.Param_AValue }.Concat(_matching.Select(p => string.Format(CultureInfo.CurrentCulture,
+            p.Type == ParameterType.Grid ? Strings.Action_PositionCell : Strings.Param_FromParameter, p.Name))).ToList();
+
+    /// <summary>The parameter chosen is a Grid: the point is one of its cells (a Cell card shows).</summary>
+    public bool IsGrid => _index > 0 && _matching[_index - 1].Type == ParameterType.Grid;
 
     public int Index
     {
@@ -50,6 +54,7 @@ public sealed class SlotChoice : INotifyPropertyChanged
             Changed(nameof(IsBound));
             Changed(nameof(ShowValue));
             Changed(nameof(Parameter));
+            Changed(nameof(IsGrid));
         }
     }
 
@@ -84,7 +89,9 @@ public sealed class SlotBindings
             return;
         foreach (var slot in slots)
         {
-            var matching = parameters.Where(p => p.Type == slot.Type && (p.Type != ParameterType.Number || p.Unit == slot.Unit));
+            // A point can also be a cell of a Grid parameter (ComponentSlots.Read).
+            var matching = parameters.Where(p => (p.Type == slot.Type && (p.Type != ParameterType.Number || p.Unit == slot.Unit))
+                                                 || (slot.Name == ComponentSlots.Point && p.Type == ParameterType.Grid));
             _choices[slot.Name] = new SlotChoice(slot.Name, matching, bind?.GetValueOrDefault(slot.Name));
         }
     }
@@ -103,6 +110,7 @@ public sealed class SlotBindings
     public SlotChoice Text => this[ComponentSlots.Text];
     public SlotChoice WaitSeconds => this[ComponentSlots.WaitSeconds];
     public SlotChoice Point => this[ComponentSlots.Point];
+    public SlotChoice Cell => this[ComponentSlots.Cell];
     public SlotChoice Color => this[ComponentSlots.Color];
     public SlotChoice Tolerance => this[ComponentSlots.Tolerance];
     public SlotChoice Images => this[ComponentSlots.Images];

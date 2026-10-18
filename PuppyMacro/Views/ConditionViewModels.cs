@@ -126,6 +126,8 @@ public sealed class ConditionViewModel : ConditionEditorItem
         foreach (var choice in Slots.All)
             choice.PropertyChanged += (_, _) => Changed(nameof(Slots));
         Slots.Area.PropertyChanged += (_, _) => Changed(nameof(ShowDraw));
+        Slots.Point.PropertyChanged += (_, _) => Changed(nameof(ShowCell));
+        _cell = condition.Cell ?? 1;
         _componentId = condition.ComponentId;
         if (Kind == ConditionKind.Component)
             LoadArguments(condition.Arguments);
@@ -187,6 +189,18 @@ public sealed class ConditionViewModel : ConditionEditorItem
 
     /// <summary>Where each field's value comes from, inside a component (<see cref="SlotBindings"/>).</summary>
     public SlotBindings Slots { get; }
+
+    private double _cell = 1;
+
+    /// <summary>A pixel at a cell of a Grid parameter: the Cell card shows.</summary>
+    public bool ShowCell => IsPixel && Slots.Point.IsGrid;
+
+    /// <summary>With <see cref="ShowCell"/>: the cell, when it isn't a parameter's.</summary>
+    public double Cell
+    {
+        get => _cell;
+        set { _cell = value; Changed(); }
+    }
 
     // ---- Component ----
 
@@ -648,6 +662,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
         c.Language = null;
         c.ComponentId = null;
         c.Arguments = null;
+        c.Cell = ShowCell ? (int)Math.Max(1, Math.Round(double.IsNaN(_cell) ? 1 : _cell)) : null;
         switch (Kind)
         {
             case ConditionKind.Component:

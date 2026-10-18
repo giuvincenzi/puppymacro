@@ -44,5 +44,8 @@
             <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding AreaText}" />
             <views:PlaceButton VerticalAlignment="Center" Text="{x:Static r:Strings.Condition_DrawOnScreen}" Click="OnDrawAreaClick" />
         </ikw:SimpleStackPanel>
+        <!-- A grid in a few words: its fields are in a GridValueEditor, which opens -->
+        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Description}"
+                   Visibility="{Binding IsGrid, Converter={StaticResource BoolToVisibility}}" />
     </Grid>
 </UserControl>

@@ -1642,4 +1642,23 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>This row can't be unlinked: its grid is a value, but its cell comes from a parameter of the component around it, and a normal row can't choose a cell.</value><comment>Macro editor: Unlink refused because the grid would become one point while the cell still changes per call</comment></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Grid</value><comment>A parameter's type: cells all alike in rows, as an inventory</comment></data>
   <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} from {2}, {3}</value><comment>A grid in a few words; {0} columns, {1} rows, {2} and {3} the X and Y of the first cell</comment></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} cell, counted row by row from the top left, starting at 1</value><comment>A grid: how many cells it has and how they are numbered; {0} the number</comment></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} cells, counted row by row from the top left, starting at 1</value><comment>A grid: how many cells it has and how they are numbered; {0} the number</comment></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>The last cell, {0}, is at {1}, {2}.</value><comment>A grid: where its last cell is; {0} its number, {1} and {2} its X and Y in pixels</comment></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>First cell</value><comment>A grid: the cell at the top left</comment></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>The point to use in the cell at the top left</value><comment>A grid: what to pick for the first cell</comment></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Last cell</value><comment>A grid: the cell at the bottom right</comment></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>The same point in the cell at the bottom right</value><comment>A grid: what to pick for the last cell (the same spot as in the first one)</comment></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Columns</value><comment>A grid: how many cells in each row</comment></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Rows</value><comment>A grid: how many rows of cells</comment></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Show the cells</value><comment>Button: marks every cell of the grid on a picture of the screen</comment></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>See every cell's point on the screen with its number, to check the grid</value><comment>Tooltip of Show the cells</comment></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>The grid's cells</value><comment>Title of the window that shows a grid's cells over the screen</comment></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Each ring is a cell's point, with its number. Click anywhere to close.</value><comment>Shown over the screen while a grid's cells are marked</comment></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>A cell of {0}</value><comment>Position list, inside a component: the point is one of the cells of a Grid parameter; {0} the parameter's name</comment></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Cell</value><comment>Card title: which cell of the grid the point is</comment></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Counted row by row from the top left, starting at 1</value><comment>Under the Cell card</comment></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Its grid</value><comment>Card title under a Grid argument given as a value: the grid this call gives</comment></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>The grid this call gives, for example for another screen size</value><comment>Under Its grid</comment></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>at cell {0} of {1}</value><comment>An action's summary, inside a component: its point is a cell of a Grid parameter; {0} the cell (a number, or the Number parameter that gives it), {1} the Grid parameter's name</comment></data>
 </root>
