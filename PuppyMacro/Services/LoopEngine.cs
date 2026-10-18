@@ -359,16 +359,23 @@ internal sealed class LoopEngine : IDisposable
 
     /// <summary>
     /// Plays <paramref name="action"/> once for the editor's Test (<see cref="MacroDefinition.ForTest"/>), with the
-    /// snapshot's components (a linked row plays its component). It is not a running macro: no sound, no state change.
-    /// <paramref name="finished"/> runs on the UI thread when it ends.
+    /// snapshot's components (a linked row plays its component). It runs as a macro of its own (no sound), so Stop all
+    /// stops it like any other. <paramref name="finished"/> runs on the UI thread when it ends, also when it is stopped.
     /// </summary>
     /// <param name="parameters">Inside a component's editor: its parameters, whose Examples the action's calls pass on.</param>
     public void TestMacroAction(MacroAction action, Action finished, IEnumerable<ComponentParameter>? parameters = null)
     {
-        var runner = new MacroRunner(MacroDefinition.ForTest(action), _paster, _snapshot.Images, _snapshot.RecognitionDevice,
-            programs: _snapshot.Components, arguments: parameters == null ? null : FrameArguments.Examples(parameters));
-        runner.Exited += _ => _dispatcher.InvokeAsync(finished);
-        runner.Start();
+        lock (_sync)
+        {
+            var test = MacroDefinition.ForTest(action);
+            var runner = new MacroRunner(test, _paster, _snapshot.Images, _snapshot.RecognitionDevice,
+                programs: _snapshot.Components, arguments: parameters == null ? null : FrameArguments.Examples(parameters));
+            runner.Exited += OnMacroExited;
+            runner.Exited += _ => _dispatcher.InvokeAsync(finished);
+            _runningMacros[test.Id] = runner;
+            runner.Start();
+            RaiseStateChanged();
+        }
     }
 
     /// <summary>The snapshot's macro with this id, or null when it is not there or links a component the Library doesn't have.</summary>
@@ -891,6 +898,14 @@ internal sealed class LoopEngine : IDisposable
                 return Block();
             }
 
+            // With an editor open, the Stop all hotkey still stops what runs: the editor's Test of an action.
+            if (_hotkeysSuspended && Matches(snap.StopAll, pressed) && (_running.Count > 0 || _runningMacros.Count > 0))
+            {
+                StopAll();
+                _heldHotkeys.Add(vk);
+                return Block();
+            }
+
             // A running loop holds this key down (Hold down row): the physical press changes
             // nothing, and its release would let go of the loop's key. Swallow both.
             if (IsHeldByLoop(vk))
@@ -1213,7 +1228,8 @@ internal sealed class LoopEngine : IDisposable
             foreach (var macro in snap.Macros)
             {
                 if (macro.Mode == ActivationMode.Hold)
-                    StopMacro(macro.Id, playSound: false);
+                    StopMacro(macro.Id, playSound: false,
+                        "stopped because the desktop changed (the lock screen, a UAC prompt or Ctrl+Alt+Del), so the release of its hotkey may never arrive");
             }
             foreach (var target in _activeRemaps.Values.ToList())
                 _injector.Post(() => SendRemapTarget(target, isDown: false));
@@ -1263,7 +1279,8 @@ internal sealed class LoopEngine : IDisposable
             foreach (var loop in loops)
                 StopLoop(loop.Id, playSound: false);
             foreach (var macro in macros)
-                StopMacro(macro.Id, playSound: false);
+                StopMacro(macro.Id, playSound: false,
+                    $"stopped because another app came in front ({(appExe.Length == 0 ? "an app whose name can't be read" : appExe)}), and it plays only in {macro.AppExe}");
 
             _dispatcher.InvokeAsync(() => ForegroundAppChanged?.Invoke(appExe));
         }

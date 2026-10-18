@@ -333,7 +333,8 @@ internal sealed class MacroRunner
 
     /// <summary>
     /// The point of a mouse action: its own, or where its condition found the image or text, moved by the offset. Null
-    /// when that condition found nothing (one of Any's that was not true): the action is skipped.
+    /// when that condition found nothing (one of Any's that was not true): the action is skipped, but a Mouse button up
+    /// still releases its button where the pointer is.
     /// </summary>
     private (int X, int Y)? PointOf(MacroAction a)
     {
@@ -352,14 +353,25 @@ internal sealed class MacroRunner
         if (a.Type is MacroActionType.Click or MacroActionType.MouseDown or MacroActionType.MouseUp or MacroActionType.MoveTo
             && a.FoundId != null)
         {
-            if (PointOf(a) is not { } point)
+            if (PointOf(a) is { } point)
+            {
+                a = a.Clone();
+                (a.X, a.Y) = point;
+                where = " (where its condition found it)";
+            }
+            else if (a.Type == MacroActionType.MouseUp)
+            {
+                // A release always happens, or the button would stay down until the macro ends: where the pointer is.
+                Log($"{ActionName(a)}: its condition found nothing this time, released where the pointer is");
+                InputSender.Up(a.Vk);
+                _held.Remove(a.Vk);
+                return true;
+            }
+            else
             {
                 Log($"{ActionName(a)}: skipped, its condition found nothing this time");
                 return true;
             }
-            a = a.Clone();
-            (a.X, a.Y) = point;
-            where = " (where its condition found it)";
         }
         if (_log != null && a.Type is not (MacroActionType.If or MacroActionType.Component))
             Event(Describe(a) + where);
@@ -401,7 +413,6 @@ internal sealed class MacroRunner
                     Log("   skipped: a PuppyMacro window is at that point"); // never click PuppyMacro's own windows
                     return true;
                 }
-                InputSender.MoveTo(a.X, a.Y);
                 for (int r = 0; r < Math.Max(1, a.Repeat); r++)
                 {
                     if (r > 0 && !Wait(a.RepeatPauseMs))
@@ -410,7 +421,9 @@ internal sealed class MacroRunner
                     {
                         if (c > 0 && !Wait(DoubleClickGapMs))
                             return false;
-                        if (!InputSender.Tap(a.Vk, hold, _timer!, _stop))
+                        // Each press moves there with it, as one step: another loop row or macro cannot move the pointer
+                        // in between.
+                        if (!InputSender.Tap(a.Vk, hold, _timer!, _stop, a.X, a.Y))
                             return false;
                     }
                 }
@@ -422,14 +435,12 @@ internal sealed class MacroRunner
                     Log("   skipped: a PuppyMacro window is at that point");
                     return true;
                 }
-                InputSender.MoveTo(a.X, a.Y);
-                InputSender.Down(a.Vk);
+                InputSender.SendAt(a.Vk, isDown: true, a.X, a.Y);
                 _held.Add(a.Vk);
                 return true;
 
             case MacroActionType.MouseUp:
-                InputSender.MoveTo(a.X, a.Y);
-                InputSender.Up(a.Vk);
+                InputSender.SendAt(a.Vk, isDown: false, a.X, a.Y);
                 _held.Remove(a.Vk);
                 return true;
 
@@ -539,6 +550,10 @@ internal sealed class MacroRunner
     {
         if (string.IsNullOrEmpty(a.Text))
             return true;
+        // One paste at a time: another macro or loop row pasting meanwhile would change the clipboard under this one.
+        using var turn = _paster.TakeTurn(_stop);
+        if (turn == null)
+            return false;
         if (a.EnterBefore && !InputSender.Tap(KeyNames.VK_RETURN, hold, _timer!, _stop))
             return false;
 
