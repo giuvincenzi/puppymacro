@@ -154,6 +154,13 @@ public enum ParameterType
 
     /// <summary>A part of the screen, {"X", "Y", "Width", "Height"}.</summary>
     Area,
+
+    /// <summary>
+    /// Cells all alike in rows, as an inventory: {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, the same point
+    /// of the cell at the top left and of the one at the bottom right. A Point field takes one of its cells
+    /// (<see cref="MacroAction.Cell"/>).
+    /// </summary>
+    Grid,
 }
 
 /// <summary>What a <see cref="ParameterType.Number"/> counts: a number can only go where the same unit does.</summary>

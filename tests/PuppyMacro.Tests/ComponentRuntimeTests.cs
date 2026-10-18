@@ -129,17 +129,17 @@ public class ComponentRuntimeTests : IDisposable
         var click = Bound(Click(3912, 1056), ("Point", "Slot"), ("HoldMs", "Hold"), ("DelayMs", "Wait"));
         var frame = new FrameArguments(new Dictionary<string, JsonNode> { ["Slot"] = Point(3986, 1060), ["Hold"] = Number(80), ["Wait"] = Number(5) });
 
-        var bound = ComponentPrograms.Bound(click, frame);
+        var bound = ComponentPrograms.Bound(click, frame)!;
         Assert.NotSame(click, bound);
         Assert.Equal((3986, 1060, 80d, 5d), (bound.X, bound.Y, bound.HoldMs, bound.DelayMs));
         Assert.Equal((3912, 1056, 30d, 0d), (click.X, click.Y, click.HoldMs, click.DelayMs)); // the prepared action never changes
 
         // Nothing bound, or a frame with no values: the action itself.
         var plain = Click();
-        Assert.Same(plain, ComponentPrograms.Bound(plain, frame));
-        Assert.Same(click, ComponentPrograms.Bound(click, FrameArguments.None));
+        Assert.Same(plain, ComponentPrograms.Bound(plain, frame)!);
+        Assert.Same(click, ComponentPrograms.Bound(click, FrameArguments.None)!);
         // A value the frame doesn't have leaves the field's example.
-        var partly = ComponentPrograms.Bound(click, new FrameArguments(new Dictionary<string, JsonNode> { ["Hold"] = Number(70) }));
+        var partly = ComponentPrograms.Bound(click, new FrameArguments(new Dictionary<string, JsonNode> { ["Hold"] = Number(70) }))!;
         Assert.Equal((3912, 1056, 70d), (partly.X, partly.Y, partly.HoldMs));
     }
 
@@ -149,7 +149,7 @@ public class ComponentRuntimeTests : IDisposable
         var block = Bound(If(Pixel(), Press()), ("WaitSeconds", "Wait"));
         block.If!.Wait = ConditionWait.UpTo;
         block.If.WaitSeconds = 2;
-        var bound = ComponentPrograms.Bound(block, new FrameArguments(new Dictionary<string, JsonNode> { ["Wait"] = Number(7.5) }));
+        var bound = ComponentPrograms.Bound(block, new FrameArguments(new Dictionary<string, JsonNode> { ["Wait"] = Number(7.5) }))!;
         Assert.Equal(7.5, bound.If!.WaitSeconds);
         Assert.Equal(2, block.If.WaitSeconds);
         Assert.Same(block.If.Then, bound.If.Then); // each action of Then is bound when it plays
@@ -165,16 +165,16 @@ public class ComponentRuntimeTests : IDisposable
             ["Tolerance"] = Number(9), ["Images"] = Images(ImageB), ["Similarity"] = Number(75), ["Area"] = Area(1, 2, 300, 200),
             ["Slot"] = Point(5, 6), ["Repeat"] = Number(3), ["Pause"] = Number(80),
         });
-        var press = ComponentPrograms.Bound(Bound(Press(), ("Key", "Key"), ("Repeat", "Repeat"), ("RepeatPauseMs", "Pause")), frame);
+        var press = ComponentPrograms.Bound(Bound(Press(), ("Key", "Key"), ("Repeat", "Repeat"), ("RepeatPauseMs", "Pause")), frame)!;
         Assert.Equal((0x53, true, 3, 80d), (press.Vk, press.Ctrl, press.Repeat, press.RepeatPauseMs));
-        Assert.Equal("typed", ComponentPrograms.Bound(Bound(new MacroAction { Type = MacroActionType.PasteText, Text = "x" }, ("Text", "Text")), frame).Text);
-        Assert.Equal(4, ComponentPrograms.Bound(Bound(new MacroAction { Type = MacroActionType.Scroll }, ("ScrollSteps", "Steps")), frame).ScrollSteps);
+        Assert.Equal("typed", ComponentPrograms.Bound(Bound(new MacroAction { Type = MacroActionType.PasteText, Text = "x" }, ("Text", "Text")), frame)!.Text);
+        Assert.Equal(4, ComponentPrograms.Bound(Bound(new MacroAction { Type = MacroActionType.Scroll }, ("ScrollSteps", "Steps")), frame)!.ScrollSteps);
 
-        var pixel = ComponentPrograms.Bound(Bound(Pixel(), ("Point", "Slot"), ("Color", "Color"), ("Tolerance", "Tolerance")), frame);
+        var pixel = ComponentPrograms.Bound(Bound(Pixel(), ("Point", "Slot"), ("Color", "Color"), ("Tolerance", "Tolerance")), frame)!;
         Assert.Equal((5, 6, "#112233", 9), (pixel.X, pixel.Y, pixel.Color, pixel.Tolerance));
         var image = ImageFinder();
         image.Area = SearchArea.Drawn;
-        image = ComponentPrograms.Bound(Bound(image, ("Images", "Images"), ("Similarity", "Similarity"), ("Area", "Area")), frame);
+        image = ComponentPrograms.Bound(Bound(image, ("Images", "Images"), ("Similarity", "Similarity"), ("Area", "Area")), frame)!;
         Assert.Equal((ImageB, 75, 1, 2, 300, 200), (image.Images!.Single().Id, image.Similarity, image.AreaX, image.AreaY, image.AreaWidth, image.AreaHeight));
     }
 

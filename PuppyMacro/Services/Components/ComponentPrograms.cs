@@ -117,38 +117,43 @@ internal sealed class ComponentPrograms
         return new FrameArguments(values);
     }
 
-    /// <summary>The action with its bound fields set from the frame; the action itself when nothing of it is bound.</summary>
-    public static MacroAction Bound(MacroAction action, FrameArguments arguments)
+    /// <summary>
+    /// The action with its bound fields set from the frame; the action itself when nothing of it is bound. Null when its point
+    /// is a cell its grid doesn't have (the checks refuse that before: it is never played somewhere else).
+    /// </summary>
+    public static MacroAction? Bound(MacroAction action, FrameArguments arguments)
     {
         if (action.Bind is not { Count: > 0 } bind || arguments.Count == 0)
             return action;
         MacroAction? copy = null;
-        foreach (var (slot, parameter) in bind)
+        foreach (var (slot, parameter) in ComponentSlots.InOrder(bind))
         {
             if (arguments[parameter] is not { } node || ComponentSlots.Find(action, slot) is not { } s)
                 continue;
-            if (ComponentValues.Read(node, s.Type, ValueRule.Any, out _) is not { } value)
+            if (ComponentSlots.Read(s, node, action.Cell != null) is not { } value)
                 continue;
             copy ??= ShallowForBind(action);
-            ComponentSlots.Write(copy, slot, value);
+            if (!ComponentSlots.Write(copy, slot, value))
+                return null;
         }
         return copy ?? action;
     }
 
-    /// <summary>The condition with its bound fields set from the frame; the condition itself when nothing of it is bound.</summary>
-    public static MacroCondition Bound(MacroCondition condition, FrameArguments arguments)
+    /// <summary>The condition with its bound fields set from the frame, as <see cref="Bound(MacroAction, FrameArguments)"/>.</summary>
+    public static MacroCondition? Bound(MacroCondition condition, FrameArguments arguments)
     {
         if (condition.Bind is not { Count: > 0 } bind || arguments.Count == 0)
             return condition;
         MacroCondition? copy = null;
-        foreach (var (slot, parameter) in bind)
+        foreach (var (slot, parameter) in ComponentSlots.InOrder(bind))
         {
             if (arguments[parameter] is not { } node || ComponentSlots.Find(condition, slot) is not { } s)
                 continue;
-            if (ComponentValues.Read(node, s.Type, ValueRule.Any, out _) is not { } value)
+            if (ComponentSlots.Read(s, node, condition.Cell != null) is not { } value)
                 continue;
             copy ??= condition.Clone();
-            ComponentSlots.Write(copy, slot, value);
+            if (!ComponentSlots.Write(copy, slot, value))
+                return null;
         }
         return copy ?? condition;
     }

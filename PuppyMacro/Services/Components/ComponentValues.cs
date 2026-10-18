@@ -16,6 +16,37 @@ internal readonly record struct PointValue(int X, int Y);
 internal readonly record struct AreaValue(int X, int Y, int Width, int Height);
 
 /// <summary>
+/// Cells all alike in rows (<see cref="ParameterType.Grid"/>): the same point of the first cell (top left) and of the last
+/// (bottom right), and how many columns and rows. Cell n is counted row by row from the top left, starting at 1.
+/// </summary>
+internal readonly record struct GridValue(PointValue First, PointValue Last, int Columns, int Rows)
+{
+    /// <summary>The most columns, and the most rows, a grid can have.</summary>
+    public const int MaxSide = 1000;
+
+    /// <summary>The most cells a grid can have.</summary>
+    public const int MaxCells = 10_000;
+
+    public int Cells => Columns * Rows;
+
+    /// <summary>
+    /// The point of cell <paramref name="cell"/> (1 to <see cref="Cells"/>), or null outside the grid. The step from one cell
+    /// to the next is the distance from the first to the last over the steps between them, so it can have decimals (73.5);
+    /// the point is rounded to the nearest pixel, half away from zero.
+    /// </summary>
+    public PointValue? PointOf(int cell)
+    {
+        if (cell < 1 || cell > Cells)
+            return null;
+        int column = (cell - 1) % Columns, row = (cell - 1) / Columns;
+        return new PointValue(Along(First.X, Last.X, column, Columns), Along(First.Y, Last.Y, row, Rows));
+    }
+
+    private static int Along(int first, int last, int index, int count) =>
+        count == 1 ? first : first + (int)Math.Round((double)(last - first) * index / (count - 1), MidpointRounding.AwayFromZero);
+}
+
+/// <summary>
 /// What a value of a parameter must be: the limits of the fields it goes to, joined. A parameter's rule starts from its type
 /// and unit (<see cref="ComponentValues.BaseRule"/>) and takes the rule of every field bound to it and of every parameter it
 /// passes its value on to (<see cref="ComponentSignatures"/>).
@@ -165,6 +196,22 @@ internal static class ComponentValues
                         return Fail(out problem, Between(MacroJson.AreaSize));
                     return new AreaValue(x, y, w, h);
                 }
+                case ParameterType.Grid:
+                {
+                    if (!Object(node, out var o, "First", "Last", "Columns", "Rows")
+                        || Read(o["First"], ParameterType.Point, ValueRule.Any, out _) is not PointValue first
+                        || Read(o["Last"], ParameterType.Point, ValueRule.Any, out _) is not PointValue last
+                        || !Whole(o["Columns"], out int columns) || !Whole(o["Rows"], out int rows))
+                        return Fail(out problem, Strings.Code_ValueGrid);
+                    if (columns < 1 || rows < 1 || columns > GridValue.MaxSide || rows > GridValue.MaxSide
+                        || (long)columns * rows > GridValue.MaxCells)
+                        return Fail(out problem, string.Format(CultureInfo.CurrentCulture, Strings.Code_GridSize, GridValue.MaxSide, GridValue.MaxCells));
+                    if (columns == 1 && first.X != last.X)
+                        return Fail(out problem, Strings.Code_GridOneColumn);
+                    if (rows == 1 && first.Y != last.Y)
+                        return Fail(out problem, Strings.Code_GridOneRow);
+                    return new GridValue(first, last, columns, rows);
+                }
             }
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException)
@@ -179,6 +226,7 @@ internal static class ComponentValues
             ParameterType.Key => Strings.Code_ValueKey,
             ParameterType.Color => Strings.Code_ConditionColor,
             ParameterType.Image => Strings.Code_ValueImage,
+            ParameterType.Grid => Strings.Code_ValueGrid,
             _ => Strings.Code_ValueArea,
         });
     }
@@ -193,6 +241,7 @@ internal static class ComponentValues
         HotkeyBinding key => JsonSerializer.SerializeToNode(key, CodeJson.Options)!,
         List<ConditionImage> images => new JsonArray(images.Select(i => (JsonNode)new JsonObject { ["Id"] = i.Id, ["X"] = i.X, ["Y"] = i.Y }).ToArray()),
         AreaValue a => new JsonObject { ["X"] = a.X, ["Y"] = a.Y, ["Width"] = a.Width, ["Height"] = a.Height },
+        GridValue g => new JsonObject { ["First"] = ToJson(g.First), ["Last"] = ToJson(g.Last), ["Columns"] = g.Columns, ["Rows"] = g.Rows },
         _ => throw new ArgumentException($"Not a parameter's value: {value.GetType().Name}", nameof(value)),
     };
 
@@ -217,6 +266,7 @@ internal static class ComponentValues
             HotkeyBinding key => KeyNames.Format(key),
             List<ConditionImage> images => Plurals.Format("Param_Images", images.Count),
             AreaValue a => string.Format(CultureInfo.CurrentCulture, "{0}, {1}, {2} × {3}", a.X, a.Y, a.Width, a.Height),
+            GridValue g => string.Format(CultureInfo.CurrentCulture, Strings.Param_GridValue, g.Columns, g.Rows, g.First.X, g.First.Y),
             _ => "",
         };
     }

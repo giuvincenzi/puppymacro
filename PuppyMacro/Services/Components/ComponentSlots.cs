@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using PuppyMacro.Models;
 
 namespace PuppyMacro.Services.Components;
@@ -34,6 +35,16 @@ internal static class ComponentSlots
     public const string Images = "Images";
     public const string Similarity = "Similarity";
     public const string Area = "Area";
+    public const string Cell = "Cell";
+
+    /// <summary>The rule of a cell's number: a whole number from 1; whether the grid has that cell is checked per call.</summary>
+    private static readonly ValueRule CellRule = ValueRule.Number((1, GridValue.MaxCells), whole: true);
+
+    /// <summary>
+    /// The cell of a Point bound to a Grid parameter (<see cref="MacroAction.Cell"/>): a count, used only while the action or
+    /// condition has a cell.
+    /// </summary>
+    private static ComponentSlot CellSlot(bool applies) => new(Cell, ParameterType.Number, NumberUnit.Count, CellRule, applies);
 
     private static ComponentSlot Ms(string name, (double, double) range, bool applies = true) =>
         new(name, ParameterType.Number, NumberUnit.Ms, ValueRule.Number(range), applies);
@@ -64,12 +75,14 @@ internal static class ComponentSlots
                 break;
             case MacroActionType.Click:
                 slots.Add(new ComponentSlot(Point, ParameterType.Point, null, ValueRule.Any, fixedPoint));
+                slots.Add(CellSlot(fixedPoint && a.Cell != null));
                 AddPresses(slots);
                 break;
             case MacroActionType.MouseDown:
             case MacroActionType.MouseUp:
             case MacroActionType.MoveTo:
                 slots.Add(new ComponentSlot(Point, ParameterType.Point, null, ValueRule.Any, fixedPoint));
+                slots.Add(CellSlot(fixedPoint && a.Cell != null));
                 break;
             case MacroActionType.Scroll:
                 slots.Add(Count(ScrollSteps, MacroJson.ScrollSteps));
@@ -101,6 +114,7 @@ internal static class ComponentSlots
         {
             case ConditionKind.Pixel:
                 slots.Add(new ComponentSlot(Point, ParameterType.Point, null, ValueRule.Any, true));
+                slots.Add(CellSlot(c.Cell != null));
                 slots.Add(new ComponentSlot(Color, ParameterType.Color, null, ValueRule.Any, true));
                 slots.Add(Percent(Tolerance, MacroJson.Tolerance));
                 break;
@@ -121,14 +135,42 @@ internal static class ComponentSlots
 
     public static ComponentSlot? Find(MacroCondition c, string slot) => Of(c).FirstOrDefault(s => s.Name == slot);
 
-    /// <summary>Writes a value read by <see cref="ComponentValues.Read"/> into an action's slot.</summary>
-    public static void Write(MacroAction a, string slot, object value)
+    /// <summary>
+    /// A bound field's value: read as its slot's type, except a Point that can take a Grid (it has a cell), whose value is
+    /// then a <see cref="GridValue"/>. Null when the JSON is neither.
+    /// </summary>
+    public static object? Read(ComponentSlot slot, JsonNode node, bool hasCell)
+    {
+        if (slot.Name == Point && hasCell && ComponentValues.Read(node, ParameterType.Grid, ValueRule.Any, out _) is GridValue grid)
+            return grid;
+        return ComponentValues.Read(node, slot.Type, ValueRule.Any, out _);
+    }
+
+    /// <summary>
+    /// A Bind's slots in the order to write them: the cell before the point, so a Point from a Grid finds its cell
+    /// (<see cref="Write(MacroAction,string,object)"/>).
+    /// </summary>
+    public static IEnumerable<KeyValuePair<string, string>> InOrder(Dictionary<string, string>? bind) =>
+        (bind ?? new Dictionary<string, string>()).OrderBy(b => b.Key == Point ? 1 : 0);
+
+    /// <summary>
+    /// Writes a value read by <see cref="ComponentValues.Read"/> (or <see cref="Read(ComponentSlot,JsonNode,bool)"/>) into an
+    /// action's slot. A Grid in the Point slot writes the point of the action's cell; nothing when the grid has no such cell
+    /// (false, so it is never played somewhere else: the checks refuse it before).
+    /// </summary>
+    public static bool Write(MacroAction a, string slot, object value)
     {
         switch (slot)
         {
             case DelayMs: a.DelayMs = (double)value; break;
             case Key: a.Key = ((HotkeyBinding)value).Clone(); break;
+            case Point when value is GridValue grid:
+                if (a.Cell is not int cell || grid.PointOf(cell) is not { } at)
+                    return false;
+                (a.X, a.Y) = at.X_Y();
+                break;
             case Point: (a.X, a.Y) = ((PointValue)value).X_Y(); break;
+            case Cell: a.Cell = (int)(double)value; break;
             case HoldMs: a.HoldMs = (double)value; break;
             case Repeat: a.Repeat = (int)(double)value; break;
             case RepeatPauseMs: a.RepeatPauseMs = (double)value; break;
@@ -136,14 +178,21 @@ internal static class ComponentSlots
             case Text: a.Text = (string)value; break;
             case WaitSeconds when a.If != null: a.If.WaitSeconds = (double)value; break;
         }
+        return true;
     }
 
-    /// <summary>Writes a value read by <see cref="ComponentValues.Read"/> into a condition's slot.</summary>
-    public static void Write(MacroCondition c, string slot, object value)
+    /// <summary>Writes a value into a condition's slot, as <see cref="Write(MacroAction,string,object)"/> does.</summary>
+    public static bool Write(MacroCondition c, string slot, object value)
     {
         switch (slot)
         {
+            case Point when value is GridValue grid:
+                if (c.Cell is not int cell || grid.PointOf(cell) is not { } at)
+                    return false;
+                (c.X, c.Y) = at.X_Y();
+                break;
             case Point: (c.X, c.Y) = ((PointValue)value).X_Y(); break;
+            case Cell: c.Cell = (int)(double)value; break;
             case Color: c.Color = (string)value; break;
             case Tolerance: c.Tolerance = (int)(double)value; break;
             case Images: c.Images = ((List<ConditionImage>)value).ConvertAll(i => i.Clone()); break;
@@ -154,6 +203,7 @@ internal static class ComponentSlots
                 (c.AreaX, c.AreaY, c.AreaWidth, c.AreaHeight) = (area.X, area.Y, area.Width, area.Height);
                 break;
         }
+        return true;
     }
 
     /// <summary>What an action's slot holds now, as a value of its type (what <see cref="Write(MacroAction,string,object)"/> takes).</summary>
@@ -162,6 +212,7 @@ internal static class ComponentSlots
         DelayMs => a.DelayMs,
         Key => a.Key,
         Point => new PointValue(a.X, a.Y),
+        Cell => a.Cell is int cell ? (double)cell : null,
         HoldMs => a.HoldMs,
         Repeat => (double)a.Repeat,
         RepeatPauseMs => a.RepeatPauseMs,
@@ -175,6 +226,7 @@ internal static class ComponentSlots
     public static object? Value(MacroCondition c, string slot) => slot switch
     {
         Point => new PointValue(c.X, c.Y),
+        Cell => c.Cell is int cell ? (double)cell : null,
         Color => c.Color,
         Tolerance => (double)c.Tolerance,
         Images => c.Images?.ConvertAll(i => i.Clone()),

@@ -175,12 +175,12 @@ internal sealed class ComponentGenerator
     public static List<MacroAction> Played(IEnumerable<MacroAction> actions, FrameArguments frame) =>
         actions.Select(a =>
         {
-            var played = ComponentPrograms.Bound(a, frame).Clone();
+            var played = ComponentPrograms.Bound(a, frame)!.Clone();
             played.Bind = null;
             if (played.If != null)
                 played.If.Conditions = a.If!.Conditions.ConvertAll(c =>
                 {
-                    var condition = ComponentPrograms.Bound(c, frame).Clone();
+                    var condition = ComponentPrograms.Bound(c, frame)!.Clone();
                     condition.Bind = null;
                     return condition;
                 });

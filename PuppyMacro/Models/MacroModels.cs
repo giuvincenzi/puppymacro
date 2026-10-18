@@ -143,6 +143,13 @@ public sealed class MacroCondition
     [JsonIgnore(Condition = Default)]
     public int Y { get; set; }
 
+    /// <summary>
+    /// Pixel, inside a component whose Grid parameter gives the point (Bind "Point"): which of its cells, counted row by row
+    /// from the top left, starting at 1 (<see cref="MacroAction.Cell"/>). Null: the point is <see cref="X"/>, <see cref="Y"/>.
+    /// </summary>
+    [JsonIgnore(Condition = Null)]
+    public int? Cell { get; set; }
+
     /// <summary>Pixel: the color, "#RRGGBB".</summary>
     [JsonIgnore(Condition = Null)]
     public string? Color { get; set; }
@@ -330,6 +337,14 @@ public sealed class MacroAction : KeyModifierFields
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public int FoundOffsetY { get; set; }
+
+    /// <summary>
+    /// Click, MouseDown, MouseUp, MoveTo inside a component whose Grid parameter gives the point (Bind "Point"): which of its
+    /// cells, counted row by row from the top left, starting at 1; it can come from a Number parameter too (Bind "Cell").
+    /// <see cref="X"/>, <see cref="Y"/> keep that cell's point in the Example. Null: the point is <see cref="X"/>, <see cref="Y"/>.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Cell { get; set; }
 
     /// <summary>Component: the <see cref="LibraryComponent.Id"/> it links; null for the other types.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

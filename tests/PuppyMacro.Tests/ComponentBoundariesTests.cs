@@ -27,7 +27,7 @@ public class ComponentBoundariesTests
         // What would play: the condition with the call's text, which a condition written in a macro can't have.
         var frame = ComponentPrograms.Evaluate(ComponentPrograms.Prepare(new[] { reads }).Find(reads.Id)!, macro.Actions[0].Arguments,
             FrameArguments.None, new Dictionary<Guid, Point>(), out _)!;
-        var played = ComponentPrograms.Bound(text, frame).Clone();
+        var played = ComponentPrograms.Bound(text, frame)!.Clone();
         played.Bind = null;
         Assert.NotEmpty(MacroProblems(Macro("Played", If(played, Press()))));
 
@@ -47,7 +47,7 @@ public class ComponentBoundariesTests
             FrameArguments.None, found, out _);
         if (frame == null)
             return; // skipped: as a "Where … was found" with no place
-        var click = ComponentPrograms.Bound(strip.Actions[0], frame);
+        var click = ComponentPrograms.Bound(strip.Actions[0], frame)!;
         Assert.False((click.X, click.Y) == (3912, 1056),
             $"the call gives the point {frame["Slot"]?.ToJsonString()}, but the click plays at the component's example 3912, 1056");
     }

@@ -31,14 +31,15 @@ internal static class ComponentChecks
 
     /// <summary>An action's Bind: only inside a component, on a slot of its kind that it uses, to a parameter of the same type and unit.</summary>
     public static void CheckBind(MacroAction a, string prefix, CallScope scope, Action<string, string> add) =>
-        CheckBind(a.Bind, ComponentSlots.Of(a), prefix, scope, add);
+        CheckBind(a.Bind, ComponentSlots.Of(a), a.Cell, prefix, scope, add);
 
     public static void CheckBind(MacroCondition c, string prefix, CallScope scope, Action<string, string> add) =>
-        CheckBind(c.Bind, ComponentSlots.Of(c), prefix, scope, add);
+        CheckBind(c.Bind, ComponentSlots.Of(c), c.Cell, prefix, scope, add);
 
-    private static void CheckBind(Dictionary<string, string>? bind, IReadOnlyList<ComponentSlot> slots, string prefix, CallScope scope,
-        Action<string, string> add)
+    private static void CheckBind(Dictionary<string, string>? bind, IReadOnlyList<ComponentSlot> slots, int? cell, string prefix,
+        CallScope scope, Action<string, string> add)
     {
+        CheckCell(bind, slots, cell, prefix, scope, add);
         if (bind == null)
             return;
         foreach (var (name, parameter) in bind)
@@ -64,9 +65,33 @@ internal static class ComponentChecks
             var p = scope.Parameters.FirstOrDefault(x => x.Name == parameter);
             if (p == null)
                 add(path, Format(Strings.Code_NoParameter, parameter));
+            else if (name == ComponentSlots.Point && p.Type == ParameterType.Grid)
+            {
+                if (cell == null)
+                    add(path, Format(Strings.Code_GridNeedsCell, p.Name));
+            }
             else if (p.Type != slot.Type || (p.Type == ParameterType.Number && p.Unit != slot.Unit))
                 add(path, Format(Strings.Code_ParameterType, p.Name, TypeName(p.Type, p.Unit), name, TypeName(slot.Type, slot.Unit)));
         }
+    }
+
+    /// <summary>
+    /// A cell (<see cref="MacroAction.Cell"/>): only where the point can be bound, inside a component, with the point bound to
+    /// a Grid parameter; from 1 up.
+    /// </summary>
+    private static void CheckCell(Dictionary<string, string>? bind, IReadOnlyList<ComponentSlot> slots, int? cell, string prefix,
+        CallScope scope, Action<string, string> add)
+    {
+        if (cell is not int n)
+            return;
+        string path = $"{prefix}Cell";
+        bool pointFromGrid = bind?.GetValueOrDefault(ComponentSlots.Point) is string grid
+                             && scope.Parameters?.FirstOrDefault(p => p.Name == grid) is { Type: ParameterType.Grid };
+        if (!slots.Any(s => s.Name == ComponentSlots.Cell && s.Applies) || !pointFromGrid)
+            add(path, Strings.Code_CellWithoutGrid);
+        else if (n < 1 || n > GridValue.MaxCells)
+            add(path, string.Format(CultureInfo.CurrentCulture, Strings.Code_Between,
+                1.ToString(CultureInfo.CurrentCulture), GridValue.MaxCells.ToString(CultureInfo.CurrentCulture)));
     }
 
     // ================= Calls =================
@@ -108,6 +133,69 @@ internal static class ComponentChecks
                 continue;
             }
             CheckArgument(argument, parameter, scope.Signatures.RuleOf(id, name), path, scope, found, notThere, add);
+        }
+        // From a macro every value is known: each cell the call reaches must be in its grid.
+        if (scope.Parameters == null)
+            CheckCells(callee, name => Given(arguments.GetValueOrDefault(name) ?? callee.Parameters.FirstOrDefault(p => p.Name == name)?.Default),
+                scope.Signatures, msg => add($"{prefix}Arguments", msg));
+    }
+
+    /// <summary>A value as it is; null for a {"From"} or {"Found"} (not known here).</summary>
+    private static JsonNode? Given(JsonNode? argument) => ComponentValues.Reference(argument) == null ? argument : null;
+
+    /// <summary>
+    /// The cells a component reaches with these values of its parameters (<paramref name="valueOf"/>; null: not known) that
+    /// their grids don't have: its points from a Grid parameter, and down the calls inside (their {"From"} given the same
+    /// values, their parameters left out their Default). Each one said once.
+    /// </summary>
+    public static void CheckCells(LibraryComponent component, Func<string, JsonNode?> valueOf, ComponentSignatures signatures,
+        Action<string> add)
+    {
+        var said = new HashSet<string>();
+        Visit(component, valueOf, 0, new HashSet<Guid>());
+
+        void Visit(LibraryComponent c, Func<string, JsonNode?> values, int depth, HashSet<Guid> visiting)
+        {
+            if (depth > ComponentSignatures.MaxDepth || !visiting.Add(c.Id))
+                return;
+            foreach (var action in MacroDefinition.Walk(c.Actions))
+            {
+                Cell(c, values, action.Bind, action.Cell);
+                if (action.Type == MacroActionType.Component)
+                    Inner(action.ComponentId, action.Arguments, values, depth, visiting);
+                foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
+                {
+                    Cell(c, values, condition.Bind, condition.Cell);
+                    if (condition.Kind == ConditionKind.Component)
+                        Inner(condition.ComponentId, condition.Arguments, values, depth, visiting);
+                }
+            }
+            visiting.Remove(c.Id);
+        }
+
+        void Cell(LibraryComponent c, Func<string, JsonNode?> values, Dictionary<string, string>? bind, int? fixedCell)
+        {
+            if (fixedCell == null || bind?.GetValueOrDefault(ComponentSlots.Point) is not string gridName
+                || ComponentValues.Read(values(gridName), ParameterType.Grid, ValueRule.Any, out _) is not GridValue grid)
+                return;
+            int? cell = fixedCell;
+            if (bind.GetValueOrDefault(ComponentSlots.Cell) is string cellName)
+                cell = ComponentValues.Whole(values(cellName), out int given) ? given : null;
+            // A number below 1 or above the most cells is refused by the cell's own rule: said once, there.
+            if (cell is int n && n >= 1 && n <= GridValue.MaxCells && grid.PointOf(n) == null && said.Add($"{c.Id}|{gridName}|{n}"))
+                add(Format(Strings.Code_CellOutside, n, gridName, grid.Cells, c.Name));
+        }
+
+        void Inner(Guid? id, Dictionary<string, JsonNode?>? arguments, Func<string, JsonNode?> outer, int depth, HashSet<Guid> visiting)
+        {
+            if (id is not Guid called || signatures.Find(called) is not { } inner)
+                return;
+            JsonNode? Value(string name)
+            {
+                JsonNode? argument = arguments?.GetValueOrDefault(name) ?? inner.Parameters.FirstOrDefault(p => p.Name == name)?.Default;
+                return ComponentValues.Reference(argument) is { From: string from } ? outer(from) : Given(argument);
+            }
+            Visit(inner, Value, depth + 1, visiting);
         }
     }
 
@@ -253,6 +341,9 @@ internal static class ComponentChecks
                      && (condition.Arguments ?? new Dictionary<string, JsonNode?>()).Values.Any(v => ComponentValues.Reference(v)?.Found != null))
                 add("Returns.Found", Strings.Code_ReturnsFoundOutside);
         }
+        // Its own Test plays the Examples: each cell they reach must be in its grid.
+        CheckCells(component, name => component.Parameters.FirstOrDefault(p => p.Name == name)?.Example, signatures,
+            msg => add("Actions", msg));
         if (signatures.CycleOf(component.Id) is { } cycle)
             add("Actions", Format(Strings.Code_ComponentCycle,
                 string.Join(" → ", cycle.Select(id => signatures.Find(id)?.Name ?? id.ToString()))));
@@ -351,6 +442,7 @@ internal static class ComponentChecks
             ParameterType.Key => Strings.Param_TypeKey,
             ParameterType.Color => Strings.Param_TypeColor,
             ParameterType.Image => Strings.Param_TypeImage,
+            ParameterType.Grid => Strings.Param_TypeGrid,
             _ => Strings.Param_TypeArea,
         };
         return type == ParameterType.Number && unit is NumberUnit u ? Format(Strings.Param_TypeWithUnit, name, UnitName(u)) : name;

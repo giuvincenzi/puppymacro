@@ -57,8 +57,9 @@ internal static class CodeSchema
         ["MacroAction.FoundId"] = "Click, MouseDown, MouseUp, MoveTo inside an If's Then: the Id of an Image or Text condition of that If (or of an If around it); the action goes to the center of what it found, moved by FoundOffsetX and FoundOffsetY, instead of X, Y. Null = X, Y.",
         ["MacroAction.FoundOffsetX"] = "With FoundId: pixels to the right of the center of what was found (negative: to the left).",
         ["MacroAction.FoundOffsetY"] = "With FoundId: pixels below the center of what was found (negative: above).",
+        ["MacroAction.Cell"] = "Click, MouseDown, MouseUp, MoveTo inside a component, with Bind \"Point\" to a Grid parameter: which cell of the grid, counted row by row from the top left, starting at 1 (Bind \"Cell\" to a Number Count parameter gives it per call). X, Y keep that cell's point in the Example. Every call must reach a cell its grid has. Null: the point is X, Y.",
         ["MacroAction.ComponentId"] = "Component: the Id of the Library component this row calls; it plays the component's actions as they are in the Library, with Arguments. Only on Component rows, which have no DelayMs or Name of their own.",
-        ["MacroAction.Arguments"] = "Component rows: the value of each of the component's Parameters, by name: a value of its type (Point {\"X\", \"Y\"} in physical pixels; Number, in its Unit; Text; Key, written as a hotkey; Color \"#RRGGBB\"; Image [{\"Id\", \"X\", \"Y\"}]; Area {\"X\", \"Y\", \"Width\", \"Height\"}), " +
+        ["MacroAction.Arguments"] = "Component rows: the value of each of the component's Parameters, by name: a value of its type (Point {\"X\", \"Y\"} in physical pixels; Number, in its Unit; Text; Key, written as a hotkey; Color \"#RRGGBB\"; Image [{\"Id\", \"X\", \"Y\"}]; Area {\"X\", \"Y\", \"Width\", \"Height\"}; Grid {\"First\": {\"X\", \"Y\"}, \"Last\": {\"X\", \"Y\"}, \"Columns\", \"Rows\"}), " +
             "{\"From\": \"a parameter\"} (inside a component: one of its own parameters of the same type, passed on) or " +
             "{\"Found\": \"a condition's Id\", \"OffsetX\": 0, \"OffsetY\": 0} (a Point: where an Image, Text or Component condition of an If " +
             "around the row found something, this time). A parameter with a Default can be left out.",
@@ -66,7 +67,8 @@ internal static class CodeSchema
             "(\"Point\": \"Slot\"). Slots: DelayMs (Number, Ms) on every action but a Component row; PressKey: Key, HoldMs (Ms), Repeat " +
             "(Count), RepeatPauseMs (Ms); KeyDown, KeyUp: Key (alone); Click: Point (without FoundId), HoldMs, Repeat, RepeatPauseMs; " +
             "MouseDown, MouseUp, MoveTo: Point (without FoundId); Scroll: ScrollSteps (Count); PasteText: Text; If: WaitSeconds " +
-            "(Seconds, with Wait UpTo). The parameter has the slot's type and unit. The fields keep the parameter's Example.",
+            "(Seconds, with Wait UpTo). The parameter has the slot's type and unit, except Point, which also takes a Grid when the " +
+            "action has a Cell; then Cell (Count) can take a Number too. The fields keep the parameter's Example.",
 
         ["MacroIf.Conditions"] = "What to check on the screen. At least one.",
         ["MacroIf.Match"] = "All: Then runs when every condition is true. Any: when at least one is.",
@@ -80,7 +82,8 @@ internal static class CodeSchema
         ["MacroCondition.Kind"] = "Pixel: a pixel has a color. Image: an image is on the screen. Text: a text is on the screen (Windows' text recognition, slower). Component: a Library component that says what it finds (Returns), with Arguments.",
         ["MacroCondition.ComponentId"] = "Component: the Id of a Library component with Returns: true when the condition it returns is, checked with Arguments as the If checks any condition; it gives FoundId the place that condition finds (an Image or Text without Not there).",
         ["MacroCondition.Arguments"] = "Component: the values of the component's Parameters, written as a Component row's Arguments.",
-        ["MacroCondition.Bind"] = "Inside a component only: fields of this condition that take a value of one of the component's Parameters, by slot. Pixel: Point, Color, Tolerance (Number, Percent); Image: Images, Similarity (Percent), Area (with Area Drawn or Screen); Text: Text, Area. The fields keep the parameter's Example.",
+        ["MacroCondition.Bind"] = "Inside a component only: fields of this condition that take a value of one of the component's Parameters, by slot. Pixel: Point (a Point, or a Grid with Cell), Cell (Count), Color, Tolerance (Number, Percent); Image: Images, Similarity (Percent), Area (with Area Drawn or Screen); Text: Text, Area. The fields keep the parameter's Example.",
+        ["MacroCondition.Cell"] = "Pixel inside a component, with Bind \"Point\" to a Grid parameter: which cell of the grid, counted row by row from the top left, starting at 1 (Bind \"Cell\" gives it per call). Null: the point is X, Y.",
         ["MacroCondition.Not"] = "True when what it looks for is not there: Pixel, the pixel has another color; Image, none of the images is on the screen; Text, the text is not on the screen. Its If's Up to then waits for it to go away. A condition with Not gives no place to FoundId. False by default.",
         ["MacroCondition.Name"] = "Image, Text, Component: a name of your choice, unique in the macro, shown where the actions use what it found.",
 
@@ -93,7 +96,7 @@ internal static class CodeSchema
         ["LibraryComponent.Returns"] = "What it finds, when it can be used as a Component condition: one of its conditions (Found, its Id). Null: it can't be a condition.",
         ["LibraryComponent.Actions"] = "Its actions, as a macro's, self-contained: a FoundId or a {\"Found\"} argument uses a condition inside it; what comes from outside comes as a parameter. Rows of type Component call other components (no loop, at most 10 levels).",
         ["ComponentParameter.Name"] = "Letters, digits and _, starting with a letter, up to 40; unique in the component. Calls give the value by this name.",
-        ["ComponentParameter.Type"] = "Point, Number (with Unit), Text, Key, Color, Image or Area: a slot takes only its own type.",
+        ["ComponentParameter.Type"] = "Point, Number (with Unit), Text, Key, Color, Image, Area or Grid: a slot takes only its own type. A Grid is cells all alike in rows, as an inventory, {\"First\": {\"X\", \"Y\"}, \"Last\": {\"X\", \"Y\"}, \"Columns\", \"Rows\"} (the same point of the top-left and of the bottom-right cell; 1 to 1000 columns and rows, at most 10000 cells; with one column First.X = Last.X, with one row First.Y = Last.Y); a Point slot takes one of its cells (Cell).",
         ["ComponentParameter.Unit"] = "Number only: Pixels, Ms, Seconds, Count or Percent; a slot takes only its own unit.",
         ["ComponentParameter.Example"] = "A value of its type: what its bound fields hold, the editor shows and a test of the component plays.",
         ["ComponentParameter.Default"] = "The value, of its type, that a call leaving it out gives; left out (null): every call gives one.",
@@ -206,6 +209,8 @@ internal static class CodeSchema
         ["MacroAction.ScrollSteps"] = MacroJson.ScrollSteps,
         ["MacroAction.FoundOffsetX"] = MacroJson.Coordinate,
         ["MacroAction.FoundOffsetY"] = MacroJson.Coordinate,
+        ["MacroAction.Cell"] = (1, Components.GridValue.MaxCells),
+        ["MacroCondition.Cell"] = (1, Components.GridValue.MaxCells),
         ["MacroCondition.X"] = MacroJson.Coordinate,
         ["MacroCondition.Y"] = MacroJson.Coordinate,
         ["MacroCondition.Tolerance"] = MacroJson.Tolerance,

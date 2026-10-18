@@ -238,9 +238,13 @@ public class ComponentValuesTests
     public void Each_action_has_its_slots_and_a_linked_row_has_none()
     {
         Assert.Equal(new[] { "DelayMs", "Key", "HoldMs", "Repeat", "RepeatPauseMs" }, Names(ComponentSlots.Of(Press())));
-        Assert.Equal(new[] { "DelayMs", "Point", "HoldMs", "Repeat", "RepeatPauseMs" }, Names(ComponentSlots.Of(Click())));
+        Assert.Equal(new[] { "DelayMs", "Point", "Cell", "HoldMs", "Repeat", "RepeatPauseMs" }, Names(ComponentSlots.Of(Click())));
         foreach (var type in new[] { MacroActionType.MouseDown, MacroActionType.MouseUp, MacroActionType.MoveTo })
-            Assert.Equal(new[] { "DelayMs", "Point" }, Names(ComponentSlots.Of(new MacroAction { Type = type })));
+            Assert.Equal(new[] { "DelayMs", "Point", "Cell" }, Names(ComponentSlots.Of(new MacroAction { Type = type })));
+        // The cell applies only while the action has one (its point from a Grid), and never with a found place.
+        Assert.False(ComponentSlots.Find(Click(), "Cell")!.Applies);
+        Assert.True(ComponentSlots.Find(new MacroAction { Type = MacroActionType.Click, Cell = 2 }, "Cell")!.Applies);
+        Assert.False(ComponentSlots.Find(new MacroAction { Type = MacroActionType.Click, Cell = 2, FoundId = Guid.NewGuid() }, "Cell")!.Applies);
         foreach (var type in new[] { MacroActionType.KeyDown, MacroActionType.KeyUp })
             Assert.Equal(new[] { "DelayMs", "Key" }, Names(ComponentSlots.Of(new MacroAction { Type = type })));
         Assert.Equal(new[] { "DelayMs", "ScrollSteps" }, Names(ComponentSlots.Of(new MacroAction { Type = MacroActionType.Scroll })));
@@ -253,7 +257,9 @@ public class ComponentValuesTests
     [Fact]
     public void Each_condition_has_its_slots_and_a_Component_condition_has_none()
     {
-        Assert.Equal(new[] { "Point", "Color", "Tolerance" }, Names(ComponentSlots.Of(Pixel())));
+        Assert.Equal(new[] { "Point", "Cell", "Color", "Tolerance" }, Names(ComponentSlots.Of(Pixel())));
+        Assert.False(ComponentSlots.Find(Pixel(), "Cell")!.Applies);
+        Assert.True(ComponentSlots.Find(new MacroCondition { Kind = ConditionKind.Pixel, Cell = 1 }, "Cell")!.Applies);
         Assert.Equal(new[] { "Images", "Similarity", "Area" }, Names(ComponentSlots.Of(ImageFinder())));
         Assert.Equal(new[] { "Text", "Area" }, Names(ComponentSlots.Of(new MacroCondition { Kind = ConditionKind.Text })));
         Assert.Empty(ComponentSlots.Of(new MacroCondition { Kind = ConditionKind.Component }));
@@ -353,7 +359,7 @@ public class ComponentValuesTests
         ComponentSlots.Write(image, "Similarity", 80d);
         ComponentSlots.Write(image, "Area", new AreaValue(1, 2, 30, 40));
         Assert.Equal(ImageB, image.Images!.Single().Id);
-        Assert.NotSame(images[0], image.Images[0]); // a copy
+        Assert.NotSame(images[0], image.Images![0]); // a copy
         Assert.Equal((80, 1, 2, 30, 40), (image.Similarity, image.AreaX, image.AreaY, image.AreaWidth, image.AreaHeight));
         Assert.Equal(new AreaValue(1, 2, 30, 40), ComponentSlots.Value(image, "Area"));
 

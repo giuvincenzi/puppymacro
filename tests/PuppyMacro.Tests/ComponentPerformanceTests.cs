@@ -112,6 +112,6 @@ public class ComponentPerformanceTests
         Assert.True(evaluate < 0.5, $"{evaluate} ms");
         Assert.True(bind < 0.5, $"{bind} ms");
         Assert.True(condition < 0.5, $"{condition} ms");
-        Assert.Equal((3912 + 74, 1056 + 74), (ComponentPrograms.Bound(click, frame).X, ComponentPrograms.Bound(click, frame).Y));
+        Assert.Equal((3912 + 74, 1056 + 74), (ComponentPrograms.Bound(click, frame)!.X, ComponentPrograms.Bound(click, frame)!.Y));
     }
 }

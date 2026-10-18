@@ -42,40 +42,44 @@ internal static class ComponentEdits
                     action.FoundOffsetX = found.OffsetX;
                     action.FoundOffsetY = found.OffsetY;
                     return true;
-                }, out var bind))
-            {
-                problem = Strings.Library_UnlinkFoundPixel;
+                }, out var bind, out problem))
                 return null;
-            }
             action.Bind = bind;
+            action.Cell = KeptCell(action.Cell, bind);
             action.Arguments = Passed(action.Arguments, arguments);
             foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
             {
                 if (!Give(condition.Bind, component, arguments, (slot, value) => ComponentSlots.Write(condition, slot, value),
-                        (_, _) => false, out var conditionBind))
-                {
-                    problem = Strings.Library_UnlinkFoundPixel;
+                        (_, _) => false, out var conditionBind, out problem))
                     return null;
-                }
                 condition.Bind = conditionBind;
+                condition.Cell = KeptCell(condition.Cell, conditionBind);
                 condition.Arguments = Passed(condition.Arguments, arguments);
             }
         }
         return actions;
     }
 
+    /// <summary>A cell stays only while the point still comes from a Grid parameter; once the point is written, it is the point.</summary>
+    private static int? KeptCell(int? cell, Dictionary<string, string>? bind) =>
+        bind?.ContainsKey(ComponentSlots.Point) == true ? cell : null;
+
     /// <summary>
     /// Gives each bound field the row's argument: a value is written (<paramref name="write"/>), a {"Found"} goes to
-    /// <paramref name="found"/> (false: no equivalent), a {"From"} stays a Bind to that parameter. The Bind that stays, or null.
+    /// <paramref name="found"/> (false: no equivalent), a {"From"} stays a Bind to that parameter. The Bind that stays, or
+    /// null. False, with why, when a field has no equivalent outside the component.
     /// </summary>
     private static bool Give(Dictionary<string, string>? bind, LibraryComponent component, Dictionary<string, JsonNode?> arguments,
-        Action<string, object> write, Func<string, ArgumentReference, bool> found, out Dictionary<string, string>? stays)
+        Func<string, object, bool> write, Func<string, ArgumentReference, bool> found, out Dictionary<string, string>? stays,
+        out string? problem)
     {
         stays = null;
+        problem = null;
         if (bind == null)
             return true;
         var left = new Dictionary<string, string>();
-        foreach (var (slot, parameter) in bind)
+        bool pointWritten = false;
+        foreach (var (slot, parameter) in ComponentSlots.InOrder(bind))
         {
             var p = component.Parameters.FirstOrDefault(x => x.Name == parameter);
             JsonNode? argument = arguments.GetValueOrDefault(parameter);
@@ -86,11 +90,29 @@ internal static class ComponentEdits
                 if (reference.From is string from)
                     left[slot] = from;
                 else if (!found(slot, reference))
+                {
+                    problem = Strings.Library_UnlinkFoundPixel;
                     return false;
+                }
             }
             else if (ComponentValues.Read(argument, p.Type, ValueRule.Any, out _) is { } value)
-                write(slot, value);
+            {
+                if (!write(slot, value))
+                {
+                    problem = Strings.Library_UnlinkCellOutside;
+                    return false;
+                }
+                pointWritten |= slot == ComponentSlots.Point;
+            }
         }
+        // A point written from a grid is one point: a cell that still comes from outside would have nothing to choose from.
+        if (pointWritten && left.ContainsKey(ComponentSlots.Cell))
+        {
+            problem = Strings.Library_UnlinkCellFrom;
+            return false;
+        }
+        if (pointWritten)
+            left.Remove(ComponentSlots.Cell);
         stays = left.Count == 0 ? null : left;
         return true;
     }
@@ -206,18 +228,19 @@ internal static class ComponentEdits
     /// </summary>
     public static void WriteExamples(LibraryComponent component)
     {
-        object? Example(string parameter, ComponentSlot slot) =>
+        object? Example(string parameter, ComponentSlot slot, bool hasCell) =>
             component.Parameters.FirstOrDefault(p => p.Name == parameter) is { Example: { } example }
-                ? ComponentValues.Read(example, slot.Type, ValueRule.Any, out _)
+                ? ComponentSlots.Read(slot, example, hasCell)
                 : null;
+        // A cell its grid's Example doesn't have leaves the point as it is: the checks name it.
         foreach (var action in MacroDefinition.Walk(component.Actions))
         {
-            foreach (var (slot, parameter) in action.Bind ?? new Dictionary<string, string>())
-                if (ComponentSlots.Find(action, slot) is { } s && Example(parameter, s) is { } value)
+            foreach (var (slot, parameter) in ComponentSlots.InOrder(action.Bind))
+                if (ComponentSlots.Find(action, slot) is { } s && Example(parameter, s, action.Cell != null) is { } value)
                     ComponentSlots.Write(action, slot, value);
             foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
-                foreach (var (slot, parameter) in condition.Bind ?? new Dictionary<string, string>())
-                    if (ComponentSlots.Find(condition, slot) is { } s && Example(parameter, s) is { } value)
+                foreach (var (slot, parameter) in ComponentSlots.InOrder(condition.Bind))
+                    if (ComponentSlots.Find(condition, slot) is { } s && Example(parameter, s, condition.Cell != null) is { } value)
                         ComponentSlots.Write(condition, slot, value);
         }
     }
@@ -259,12 +282,23 @@ internal static class ComponentEdits
         foreach (var action in MacroDefinition.Walk(actions))
         {
             Drop(action.Bind);
+            action.Cell = NoGridNoCell(action.Cell, action.Bind);
             Replace(action.Arguments);
             foreach (var condition in action.If?.Conditions ?? new List<MacroCondition>())
             {
                 Drop(condition.Bind);
+                condition.Cell = NoGridNoCell(condition.Cell, condition.Bind);
                 Replace(condition.Arguments);
             }
+        }
+
+        // The point keeps the cell's point of the Example (written there): without its grid, the cell and its Bind go.
+        int? NoGridNoCell(int? cell, Dictionary<string, string>? bind)
+        {
+            if (cell == null || bind?.ContainsKey(ComponentSlots.Point) == true)
+                return cell;
+            bind?.Remove(ComponentSlots.Cell);
+            return null;
         }
 
         void Drop(Dictionary<string, string>? bind)

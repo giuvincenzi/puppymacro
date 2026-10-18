@@ -168,6 +168,12 @@ internal sealed class MacroRunner
         for (int i = 0; i < actions.Count; i++)
         {
             var action = ComponentPrograms.Bound(actions[i], Top.Arguments);
+            if (action == null)
+            {
+                _current = $"{path}{i + 1}";
+                Log("skipped: its cell is not in its grid");
+                continue;
+            }
             if (!Wait(action.DelayMs))
                 return false;
             _current = $"{path}{i + 1}";
