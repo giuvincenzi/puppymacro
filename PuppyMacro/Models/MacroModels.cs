@@ -546,6 +546,7 @@ public sealed class MacroDefinition
         FloatingButton = other.FloatingButton.Clone();
         AppExe = other.AppExe;
         ChecksPerSecond = other.ChecksPerSecond;
+        Debug = other.Debug;
         ShowInOverlay = other.ShowInOverlay;
         HideInOverlayWhenDisabled = other.HideInOverlayWhenDisabled;
         OverlayClickPassesThrough = other.OverlayClickPassesThrough;

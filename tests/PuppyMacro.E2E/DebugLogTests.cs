@@ -31,6 +31,14 @@ public class DebugLogTests
         PressCard(app, target, "E2E debug", "Play");
         target.WaitFor(t => t.Ups(Vk.F22).Count == 1, 15, "the macro did not play");
         WaitIdle(app, "E2E debug");
+        // The log is written by its own thread: on disk a moment after the run (RunLog.Root of the development build).
+        string debug = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+            "PuppyMacro Dev", "debug");
+        string file = System.IO.Path.Combine(debug, macro.Id.ToString("N"), "log.txt");
+        Assert.True(Retry.WhileFalse(() => System.IO.File.Exists(file), AppSession.Timeout).Success,
+            $"no log at {file}. The debug folder holds: " + (System.IO.Directory.Exists(debug)
+                ? string.Join(", ", System.IO.Directory.GetFileSystemEntries(debug, "*", System.IO.SearchOption.AllDirectories))
+                : "nothing, it does not exist"));
 
         app.CardButton("E2E debug", "More options").AsButton().Invoke();
         app.MenuItem("View log").AsMenuItem().Invoke();
