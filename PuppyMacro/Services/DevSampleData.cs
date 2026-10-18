@@ -22,6 +22,7 @@ internal static class DevSampleData
     private const int KeyH = 0x48;
     private const int KeyI = 0x49;
     private const int KeyJ = 0x4A;
+    private const int KeyS = 0x53;
     private const int KeyW = 0x57;
     private const int F6 = 0x75;
     private const int F7 = 0x76;
@@ -79,6 +80,24 @@ internal static class DevSampleData
         });
 
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
+        // A Library collection with a component, and a macro that links it (the Library's samples).
+        var saveFile = new LibraryComponent
+        {
+            Name = "Save the file",
+            Purpose = ComponentPurpose.Act,
+            Concept = "save_file",
+            Description = "Presses Ctrl+S.",
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = KeyS, Ctrl = true } },
+        };
+        macros.Library.Collections.Add(new LibraryCollection
+        {
+            Name = "Sample: Notepad",
+            Domain = LibraryDomain.Office,
+            AppExe = "notepad.exe",
+            Components = { saveFile },
+        });
+        if (!macros.Library.TrySave(out string? libraryError))
+            Debug.WriteLine($"Sample Library not saved: {libraryError}");
         var typeHi = new MacroGroup { Name = "Type hi" };
         MacroDefinition[] samples =
         {
@@ -103,6 +122,14 @@ internal static class DevSampleData
                     new MacroAction { Type = MacroActionType.Click, Vk = LeftButton },
                     new MacroAction { Type = MacroActionType.Scroll, ScrollDirection = ScrollDirection.Down, ScrollSteps = 3, DelayMs = 300 },
                 },
+            },
+            new()
+            {
+                // A row linked to a Library component.
+                Name = "Sample: save with a component",
+                Enabled = false,
+                AppExe = "notepad.exe",
+                Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = saveFile.Id } },
             },
             new()
             {

@@ -17,6 +17,12 @@
   a picture and some lines of a log), so its conversation does not fill up. A **Done** window says when you can go back to the
   AI app. Two new permissions on the AI page, **Let AI apps see the screen** and **Let AI apps test macros**, are on by
   default. Every AI request is kept 7 days with what was sent and answered: **Open debug** in the AI activity opens it.
+- **Library**: save the pieces of macros that work as components (Save as component), in collections for each app and
+  screen, and link them in other macros (Component in the macro editor): a linked row plays the component as it is in the
+  Library, so fixing it once fixes every macro that links it; Unlink makes it the macro's own rows again. The Library
+  (on the Macros page) keeps each component's History, refuses to delete what a macro links, and exports a collection
+  whole to share it; Import refuses a different version of a collection you have. AI apps search the Library before
+  building and save what works, so each macro they build helps the next one.
 
 ### Changed
 - PuppyMacro's tools for AI apps are named `puppymacro_…`, have titles and follow the MCP specification 2025-11-25.

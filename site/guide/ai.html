@@ -59,6 +59,9 @@
   <li>If Windows only flashes a PuppyMacro window in the taskbar, select it there.</li>
 </ul>
 
+<h3 id="library">What your AI learns: the Library</h3>
+<p>The AI model itself doesn't remember anything from one conversation to the next. PuppyMacro does: what works in your apps is kept as components in the <a href="library.html">Library</a>, and AI apps use it. Before building a macro, the AI app searches the Library and links the components that already do part of the job (for example how to find a rare item, or where each inventory slot is) instead of making them again; after a new piece works, it can save it as a component, with a name in English it searches by later. Saving a component asks for your OK when <strong>Ask before changing a loop, macro or remap</strong> is on. So every macro your AI builds makes the next one faster.</p>
+
 <h3 id="debug-data">What the AI gets, and the debug data</h3>
 <p>Logs and pictures can be large, and everything an AI app receives stays in its conversation. So PuppyMacro keeps them as files and answers with links to them (MCP resource links): the AI app opens only the files it needs, when it needs them. AI apps that cannot open these links read the files through PuppyMacro instead, which can also give only a part of a picture, a smaller copy of it or some lines of a log; the files themselves never change. Every request of an AI app has its folder in <code>%LocalAppData%\PuppyMacro\debug\ai</code>, by app and by connection: what the app sent, what PuppyMacro answered, and what was captured. In <strong>View all</strong> of the AI activity, <strong>Open debug</strong> opens the folder of the request you select. The folders are kept 7 days, then deleted; <strong>Settings › Debug data</strong> shows how much space they take and deletes them.</p>
 

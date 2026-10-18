@@ -23,6 +23,8 @@
   "ai_tag_mcp": "MCP-fähig",
   "ai_tag_beta": "Beta",
   "ai_text": "Verbinden Sie Ihre AI-App, z. B. Claude, und sagen Sie einfach: „Erstelle ein Makro, das …“. Fertig.",
+  "learn_title": "Ihre AI lernt Ihre Apps kennen",
+  "learn_text": "Was funktioniert, wird zur Komponente: eine zu findende Schaltfläche, ein auszufüllendes Feld. Ihre AI nutzt sie, wenn sie Ihr nächstes Makro erstellt. Teilen Sie sie als Sammlung.",
   "loops_title": "Schleifen",
   "loops_text": "Wiederholen Sie eine Taste oder eine Kombination wie Strg+C, einen Klick (auch doppelt, an einer festen Stelle), eine gedrückt gehaltene Taste oder Maustaste oder einen Text zum Einfügen, im Abstand von 10 ms bis 24 h. Mehrere Aktionen, jede mit eigenem Timer.",
   "macros_title": "Makros",

@@ -1,5 +1,6 @@
 # The create_release_pr workflow's take_screenshots: retakes the editor screenshots of the user guide (site/guide/img:
-# loop-editor.png, macro-editor.png, macro-editor-code.png, condition-editor.png, remap-editor.png; the main window on the AI page, ai-page.png)
+# loop-editor.png, macro-editor.png, macro-editor-code.png, condition-editor.png, remap-editor.png, the Library window
+# library.png; the main window on the AI page, ai-page.png)
 # and the home page's (site/assets/loops.png)
 # from the running development build (started before with scripts/dev.ps1 -Screenshots: PUPPYMACRO_SCREENSHOTS=1, so it
 # shows the sample data and no development build marks), on a screen of 1920 x 1080 (scripts/screen-resolution.ps1).
@@ -181,6 +182,18 @@ $remaps.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Patt
 Start-Sleep -Seconds 1
 $editor = OpenEditor 'Sample: Caps Lock to Esc' 'Edit remap'
 Capture $editor (Join-Path $OutDir 'remap-editor.png')
+
+# The guide's Library (library.html): the Library window from the Macros page, with the samples' collection.
+$macrosPage = WaitFor { ByName $main 'Macros' } 'Macros page'
+$macrosPage.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+Start-Sleep -Seconds 1
+$libraryButton = WaitFor { $main.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'LibraryButton'))) } 'Library button'
+$libraryButton.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+$library = WaitFor { $A::RootElement.FindAll($TS::Children, (New-Object $PC($A::ProcessIdProperty, $proc.Id))) |
+    Where-Object { $_.Current.Name -eq 'Library' } | Select-Object -First 1 } 'Library window'
+Capture $library (Join-Path $OutDir 'library.png')
+$library.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern).Close()
+Start-Sleep -Milliseconds 800
 
 $loops = ByName $main 'Loops'
 $loops.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()

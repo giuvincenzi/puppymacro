@@ -43,6 +43,7 @@ public class BackupServiceTests
     [InlineData("settings.json", BackupParts.Data)]
     [InlineData("macros/a.json", BackupParts.Data)]
     [InlineData("images/3bd16f.png", BackupParts.Data)]
+    [InlineData("library.json", BackupParts.Data)]
     [InlineData("future/new-thing.json", BackupParts.Data)]
     [InlineData(@"history\a.json", BackupParts.History)]
     [InlineData("ai-activity.json", BackupParts.AiActivity)]

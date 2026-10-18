@@ -79,7 +79,8 @@ paths:
   | What | Where | Kept |
   |---|---|---|
   | Settings, loops, remaps, macros | data folder | until the user deletes them |
-  | Images of the conditions | data folder, `images\` | while a saved macro uses them or something holds them |
+  | Images of the conditions | data folder, `images\` | while a saved macro or a Library component uses them, or something holds them |
+  | Library (collections and components) | data folder, `library.json` | until the user deletes them (a linked component or its collection can't be) |
   | History | data folder, `history\` | the newest versions, up to `ItemHistory.MaxBytes` per item |
   | AI activity | data folder, `ai-activity.json` | the newest requests, up to `AiActivityLog.MaxBytes` |
   | Screen capture's errors | data folder, `logs\screen-capture.log` | up to `CaptureLog.MaxBytes` |
@@ -89,6 +90,13 @@ paths:
 
   `logs\` in the data folder is for debugging logs only. The debug archive holds the AI apps' requests whole (arguments,
   answers, the app's `_meta`) and the screen's pictures: on this PC only, never sent anywhere (the guide's privacy says so).
+- The Library: `library.json` in the data folder (`ComponentLibrary`, `Format` raised only when its layout changes), part
+  Data of the backup. A missing file is an empty Library; a file it can't read (also a newer format) is copied to
+  `library.invalid.json`, saving the Library is refused and no image is deleted until it is fixed, so linked macros never
+  lose their components. A macro row of type `Component` (`ComponentId`) is new in the macro files: an older version
+  skips such a macro (an unknown enum value), so the Library ships in the same release as the conditions. `.puppyitems`
+  files carry the collections their macros link, whole, in `Collections` next to `Items` (older versions ignore it), with
+  their images; Export collection writes one alone.
 - The images of the macros' conditions: `images\{sha256}.png` in the data folder (`ImageStore`), part Data. A macro
   names them by that Id. An image no saved macro uses and nothing holds (an open editor, the editor's copied actions, an
   AI app's take: `ImageStore.Hold`) is deleted at the next save of a macro or at start; the History keeps a copy of every

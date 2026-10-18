@@ -23,6 +23,8 @@
   "ai_tag_mcp": "Pronto para MCP",
   "ai_tag_beta": "Beta",
   "ai_text": "Conecte seu aplicativo de AI, como o Claude, e é só pedir: “crie uma macro que…”. Pronto.",
+  "learn_title": "Sua AI aprende seus aplicativos",
+  "learn_text": "O que funciona vira um componente: um botão para encontrar, um campo para preencher. Sua AI o usa quando cria sua próxima macro. Compartilhe em uma coleção.",
   "loops_title": "Loops",
   "loops_text": "Pressiona uma tecla ou uma combinação como Ctrl+C, clica (também com clique duplo ou em um ponto fixo), mantém uma tecla ou um botão pressionado ou cola um texto, em intervalos de 10 ms a 24 h. Várias ações, cada uma com seu próprio intervalo.",
   "macros_title": "Macros",

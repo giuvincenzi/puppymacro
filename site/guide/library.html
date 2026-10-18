@@ -1,0 +1,45 @@
+<p>The <strong>Library</strong> keeps the pieces of macros that work, to use them again in other macros: how to find a button in your accounting app, where each slot of a game's inventory is, a few steps that save a file. Each piece is a <strong>component</strong>, and components are kept in <strong>collections</strong>, one for each app and screen (for example <em>Diablo IV 5120×1440</em> or <em>Excel</em>). Select <strong>Library</strong> on the Macros page to open it.</p>
+<figure class="shot">
+  <img src="img/library.png" alt="The Library window with the collection Sample: Notepad and its component Save the file" loading="lazy">
+  <figcaption>The Library: collections on the left, their components on the right.</figcaption>
+</figure>
+
+<h3>Save a piece as a component</h3>
+<ol>
+  <li>In the macro editor, select the rows that work together, one after the other in the same list.</li>
+  <li>Select <strong>Save as component…</strong> in ⋯ or in the right-click menu.</li>
+  <li>Give it a <strong>Name</strong> (what you read in the Library and in the macro), choose <strong>What it does</strong> and the <strong>Collection</strong>: one you have, or <strong>New collection</strong> with its <strong>Kind of app</strong>, its <strong>App</strong> (the app's .exe, empty for any app) and the <strong>Screen</strong> PuppyMacro reads from your monitor. The <strong>Concept</strong> (in English, filled in from the name) and the <strong>Description</strong> are what AI apps search by.</li>
+  <li>Select <strong>Save</strong>. The component is in the Library at once, and the selected rows become one row linked to it.</li>
+</ol>
+<p>A component holds the actions as they are, also an If with its Then and Else. A click "where … was found" must use a condition inside the same component, and a component can't hold another component.</p>
+
+<h3>Use a component in a macro</h3>
+<p>In the macro editor, select <strong>Component</strong> (the + button next to <strong>Condition</strong>). The Library opens: check the components you want and select <strong>Add linked</strong>. Each one comes in as a <strong>linked row</strong>: one greyed line with the component's name, its collection and how many actions it has.</p>
+<ul>
+  <li>A linked row plays the component as it is in the Library when the macro starts. When the component changes, every macro that links it plays the new one.</li>
+  <li>It has no wait of its own: the component's first action has one. It can be moved, copied and deleted like any row, but not changed inside the macro.</li>
+  <li><strong>Edit</strong>, or a double-click on it, opens the component read only: its collection, the macros that use it and what it plays, with <strong>Unlink this row</strong> and <strong>Open in Library</strong>.</li>
+  <li><strong>Unlink</strong> turns the row into the component's actions as they are now, normal rows of this macro that you can change. To link it again, add it with <strong>Component</strong>.</li>
+  <li><strong>Test</strong> on a linked row plays the component.</li>
+</ul>
+<p>A macro that links a component the Library doesn't have any more can't play and can't be saved until you delete that row or link another component.</p>
+
+<h3>The Library</h3>
+<p>The Library shows the collections on the left and the components of the selected one on the right, each with its name, the name AI apps search by (for example <em>game-diablo_iv-find-rare_item_in_slot</em>) and the macros that use it. <strong>Search</strong> finds components by any of their names and descriptions. A selected component shows what it plays and:</p>
+<ul>
+  <li><strong>Edit details</strong>: its name, what it does, its concept and description.</li>
+  <li><strong>History</strong>: its versions, as an item's History; <strong>Restore this version</strong> puts one back at once, for every macro that links it.</li>
+  <li><strong>Delete</strong>: only when no macro links it, also the macro open in the editor. Otherwise the Library names those macros: unlink it there first.</li>
+</ul>
+<p>⋯ next to a collection renames or deletes it (only when none of its components is linked). The Library can't change while a loop or macro is running.</p>
+
+<h3>Share a collection</h3>
+<p><strong>Export collection</strong> saves a collection, whole, in a <code>.puppyitems</code> file with its images. A macro exported from its card or with Export takes the collections it links along. On another PC, <strong>Import</strong> (in the Library or in the title bar's ⋯) adds the collections it doesn't have yet, then the chosen items.</p>
+<ul>
+  <li>A collection is shared whole and is never split. A collection the Library already has, with the same content, is left as it is (a different name alone is the same content).</li>
+  <li>When the file holds a different version of a collection you have, nothing is imported, and Import says which one. To import it, delete your collection first, if no macro uses it, or ask for a file made from your version.</li>
+  <li>A component's points are those of the screen its collection was made on. On another monitor, resolution, position or scale, they need changing.</li>
+</ul>
+
+<h3>The Library and AI apps</h3>
+<p>AI apps search the Library before building a macro and link what already works, and save the pieces that work as components, with names in English they search by later. So the more you build with your AI app, the more your Library knows about your apps. See <a href="ai.html">AI apps</a>.</p>

@@ -23,6 +23,8 @@
   "ai_tag_mcp": "Compatibil MCP",
   "ai_tag_beta": "Beta",
   "ai_text": "Conectați aplicația AI, de exemplu Claude, și cereți simplu: „creează o macrocomandă care…”. Gata.",
+  "learn_title": "AI-ul învață aplicațiile dvs.",
+  "learn_text": "Ce funcționează devine o componentă: un buton de găsit, un câmp de completat. AI-ul o folosește când creează următoarea macrocomandă. Partajați-o într-o colecție.",
   "loops_title": "Bucle",
   "loops_text": "Apasă o tastă sau o combinație precum Ctrl+C, face clic (și dublu clic, într-un punct fix), ține apăsată o tastă sau un buton ori lipește un text, la intervale de la 10 ms la 24 h. Mai multe acțiuni, fiecare cu propriul interval.",
   "macros_title": "Macrocomenzi",

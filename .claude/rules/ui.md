@@ -188,6 +188,14 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `SettingsExpander`s and a card that says what PuppyMacro sees now; the text recognition note is an `InfoBar` above the
     cards. `ScreenPickWindow` (pick a pixel with the enlarged pixels around the pointer, take an image, draw an area) is
     drawn over a still picture of the screen, with the overlays' fixed dark look.
+  - The Library (approved: the Design canvas "PuppyMacro Library", dark): **+ Component** in the macro editor's bar after
+    + Condition (the same + icon, Add component in its tooltip); a linked row is one line, greyed, with a link icon, its
+    component's name and "Component · collection · actions", no delay; a click (Edit, double-click) opens the component
+    read only (`ComponentWindow`: Unlink this row, Open in Library, Close), never the action window; Save as component
+    and Unlink in ⋯ and the right-click menu. One Library view in two modes (`LibraryWindow`): pick (Add component: check
+    boxes, Add linked) and manage (the **Library** button on the Macros page: Edit details, History, Delete, Import,
+    Export collection); collections on the left, the components of the chosen one on the right, the selected one showing
+    what it plays. A refused import says why in the Import window.
 - **Every place that asks the user for a key or hotkey uses `Views/KeyCaptureField`** (approved by
   the user, made of standard controls), always on one line in three states: nothing set, a "Set hotkey" / "Set key"
   button; waiting, a `ProgressRing` and "Press … (Esc cancels)" (Esc cancels, no other button); set, the keys as accent

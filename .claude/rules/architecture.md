@@ -147,6 +147,29 @@ Rules:
   cleaner deletes whole operations older than `DebugStore.Life`, at start and every hour, never one in progress and never
   at close (a crash loses nothing). Debug is the user's alone (`AiTools.KeepUsersDebug` on every AI save); an AI app's
   test is always logged.
+- The Library (`Services/ComponentLibrary.cs`, `Models/LibraryModels.cs`, `MainWindow.Library.cs`, `LibraryWindow`,
+  `ComponentWindow`, `ComponentDetailsWindow`): collections of components that macros link. Decisions (the user's):
+  - A **component** is one or more actions (a point, an If, a sequence) with a name, and a structured name in English
+    the AI apps search by, `domain-app-purpose-concept`, composed from its collection's domain and app. A **collection**
+    is the package for one kind of app and screen (its monitor's bounds and scale, `LibraryScreens`): shared whole,
+    never split. Ids never change; a component never moves to another collection; a component holds no other component
+    and its "Where … was found" use its own conditions.
+  - A macro row of type `Component` links a component: it plays it as it is in the Library (one greyed line, read only,
+    no wait of its own). Linking is the default; **Unlink** makes it the component's actions of that moment, normal rows.
+    Nothing else is a copy that remembers where it came from.
+  - The links are resolved once, when the engine's snapshot is made (`EngineSnapshot.From`, each link with new condition
+    ids, `ComponentLibrary.Resolve`), so playing never reads the Library; Play, test_macro and the hotkeys start the
+    snapshot's macro. A macro that links a missing component can't play (`EngineSnapshot.Unplayable`; its hotkey passes)
+    nor be saved.
+  - Every change goes through `MainWindow.SaveLibrary`: refused while something runs (an import that only adds
+    collections excepted), then saved, recorded in the History (each collection and component is an item), the snapshot
+    made again and the unused images deleted. A component linked by a saved macro or by the open editor's can't be
+    deleted, nor its collection.
+  - Import compares a collection by id and fingerprint (`ComponentLibrary.Fingerprint`: the components' ids and actions,
+    recomputed with the current code): a different version of a collection the Library has refuses the whole file.
+  - AI apps: `search_library`, `get_component`, `save_component`; a macro links a component with a `Component` row
+    written like any other; `update_actions` leaves linked rows alone; `get_item` reads a big macro in pieces (`outline`,
+    `path`) and lists the components a macro links.
 - History (`Services/ItemHistory.cs`, `Views/HistoryView`): every save of a loop, macro or remap keeps a version. It is
   recorded in one place, `MainWindow.Save()` and `SaveMacro`, so every path is covered (editors, switches, the overlay's
   right click, AI apps). In the editors' History view, Restore puts the version in the fields and asks to Save.

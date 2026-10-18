@@ -37,7 +37,8 @@
 - `make e2e` runs them locally; it builds the dev build first. On one machine tests run one at a time (one
   PuppyMacro at a time): they share its desktop, mouse, keyboard, window in front and PuppyMacro's data folder.
 - Every test class has a category, `[Trait("Category", ...)]`: `UI`, `Macros`, `Loops`, `Remaps`, `Recording`,
-  `Overlay`, `AI`. Dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably. In
+  `Overlay`, `AI`. The Library's (`LibraryTests`, `UI`) start from the development build's sample collection and the
+  macro that links it. Dragging a file onto the window is not covered: FlaUI cannot drag from File Explorer reliably. In
   `AI` the test is the AI app: it starts `PuppyMacro.exe --mcp`, calls the tools and answers in PuppyMacro's windows
   (the ready window with Start, never Enter); its keys are F22 and F23, and F18 (the Record hotkey) ends a
   `record_macro`. The screen tools (`AiScreenTests`) look at, check, test and record on `TargetWindow`.

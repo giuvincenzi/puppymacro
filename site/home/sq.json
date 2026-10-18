@@ -23,6 +23,8 @@
   "ai_tag_mcp": "Gati për MCP",
   "ai_tag_beta": "Beta",
   "ai_text": "Lidhni aplikacionin tuaj AI, si Claude, dhe thjesht kërkoni: „krijo një makro që…“. Gati.",
+  "learn_title": "AI juaj mëson aplikacionet tuaja",
+  "learn_text": "Ajo që funksionon bëhet komponent: një buton për t’u gjetur, një fushë për t’u plotësuar. AI juaj e përdor kur krijon makron tuaj të radhës. Ndajeni në një koleksion.",
   "loops_title": "Ciklet",
   "loops_text": "Shtyp një tast ose një kombinim si Ctrl+C, klikon (edhe dy herë, në një pikë fikse), mban shtypur një tast ose buton, ose ngjit një tekst, me intervale nga 10 ms deri në 24 orë. Disa veprime, secili me kohëmatësin e vet.",
   "macros_title": "Makrot",
