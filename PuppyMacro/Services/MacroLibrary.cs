@@ -64,6 +64,9 @@ internal sealed class MacroLibrary
         var read = new List<(string File, MacroDefinition Macro)>();
         if (Directory.Exists(_folder))
         {
+            // The copies a save together left first, so a macro file it left missing is read.
+            foreach (string backup in Directory.GetFiles(_folder, "*.json" + BackupSuffix))
+                RecoverBackup(backup[..^BackupSuffix.Length]);
             foreach (string file in Directory.GetFiles(_folder, "*.json").Order(StringComparer.OrdinalIgnoreCase))
             {
                 string? text = null;
@@ -192,18 +195,19 @@ internal sealed class MacroLibrary
             error = ex.Message;
             return false;
         }
-        // Each file takes its place with the old one kept aside: when one can't (its place is taken by a folder, a file kept
-        // open), those already moved go back, so the Library and the macros stay as they were.
+        // Each file takes its place in one step (a move that replaces it: the place always holds the old file or the new one,
+        // never nothing), after a copy of the old one is kept aside. When one can't (its place is taken by a folder, a file
+        // kept open), those already placed get their old copy back, so the Library and the macros stay as they were.
         var moved = new List<(string Path, string? Backup, bool Placed)>();
         try
         {
             foreach (var (temp, path) in files)
             {
-                string? backup = File.Exists(path) ? path + ".bak" : null;
+                string? backup = File.Exists(path) ? path + BackupSuffix : null;
                 if (backup != null)
-                    File.Move(path, backup, overwrite: true);
+                    File.Copy(path, backup, overwrite: true);
                 moved.Add((path, backup, false));
-                File.Move(temp, path);
+                File.Move(temp, path, overwrite: true);
                 moved[^1] = (path, backup, true);
             }
         }
@@ -224,19 +228,54 @@ internal sealed class MacroLibrary
         return true;
     }
 
-    /// <summary>A file of <see cref="TrySaveTogether"/> that took its place goes, and the one it replaced comes back.</summary>
+    /// <summary>
+    /// The copy <see cref="TrySaveTogether"/> keeps of a file it replaces, next to it, deleted when the save ends. Never in a
+    /// backup (<see cref="BackupService.PartOf"/>).
+    /// </summary>
+    internal const string BackupSuffix = ".bak";
+
+    /// <summary>
+    /// A file of <see cref="TrySaveTogether"/> that took its place gets its old copy back (replaced in one step, as it was
+    /// placed), or goes when there was none; a file that had not taken its place is untouched and its copy goes.
+    /// </summary>
     private static void PutBack(string path, string? backup, bool placed)
     {
         try
         {
-            if (placed)
-                File.Delete(path);
-            if (backup != null)
+            if (placed && backup != null)
                 File.Move(backup, path, overwrite: true);
+            else if (placed)
+                File.Delete(path);
+            else if (backup != null)
+                File.Delete(backup);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // The disk refuses even this: the old file stays as its .bak next to it, never lost.
+            // The disk refuses even this: the copy stays next to the file, and the next load resolves it (RecoverBackup).
+        }
+    }
+
+    /// <summary>
+    /// At load, the copy a save together left next to <paramref name="path"/> when it was stopped before it ended (the app
+    /// killed, the PC turned off). The file is replaced in one step, so when it is there it is whole: it wins and the copy
+    /// goes. When it is missing (a save of an earlier build, which moved the file aside first) the copy takes its place, so
+    /// the data is never read as missing.
+    /// </summary>
+    internal static void RecoverBackup(string path)
+    {
+        string backup = path + BackupSuffix;
+        try
+        {
+            if (!File.Exists(backup))
+                return;
+            if (File.Exists(path))
+                File.Delete(backup);
+            else
+                File.Move(backup, path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Left as it is: the next load tries again.
         }
     }
 
@@ -248,7 +287,7 @@ internal sealed class MacroLibrary
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // A leftover .tmp file is never read.
+            // A leftover .tmp file is never read; a leftover .bak is resolved at the next load (RecoverBackup).
         }
     }
 

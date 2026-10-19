@@ -23,7 +23,8 @@ public enum BackupParts
 
 /// <summary>
 /// Exports the data folder to one .puppymacro file (a zip) and imports it back. Export with every part is an identical
-/// copy: every file of the data folder goes in, except the copies made before an import and temporary files.
+/// copy: every file of the data folder goes in, except the copies made before an import, temporary files and the copies a save together keeps while it replaces
+/// files.
 /// </summary>
 internal static class BackupService
 {
@@ -38,7 +39,8 @@ internal static class BackupService
     public static BackupParts PartOf(string relativePath)
     {
         string path = relativePath.Replace('\\', '/');
-        if (path == ManifestName || path.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase))
+        if (path == ManifestName || path.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)
+                                 || path.EndsWith(MacroLibrary.BackupSuffix, StringComparison.OrdinalIgnoreCase))
             return BackupParts.None;
         if (!path.Contains('/') && path.StartsWith(SafetyPrefix, StringComparison.OrdinalIgnoreCase)
                                 && path.EndsWith(Extension, StringComparison.OrdinalIgnoreCase))
@@ -124,6 +126,11 @@ internal static class BackupService
             if (parts.HasFlag(part))
                 File.Delete(file);
         }
+        // A copy a save together left belongs to the data replaced (always imported): kept, the next start would put it back
+        // in place of a file the import removed (MacroLibrary.RecoverBackup).
+        foreach (string file in Directory.EnumerateFiles(root, "*" + MacroLibrary.BackupSuffix, SearchOption.AllDirectories)
+                     .Where(f => f.EndsWith(MacroLibrary.BackupSuffix, StringComparison.OrdinalIgnoreCase)).ToList())
+            File.Delete(file);
         foreach (var (entry, target) in entries)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);

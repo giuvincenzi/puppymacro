@@ -57,6 +57,8 @@ internal sealed class ComponentLibrary
         warning = null;
         Broken = false;
         Collections = new List<LibraryCollection>();
+        // The copy a save together left: a library.json it left missing is never read as an empty Library.
+        MacroLibrary.RecoverBackup(_file);
         if (!File.Exists(_file))
             return;
         try

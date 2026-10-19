@@ -21,6 +21,7 @@ public class BackupServiceTests
         Write(data, "future/new-thing.json", "a file a later version adds");
         Write(data, "backup-before-import-20260101-120000.puppymacro", "old copy");
         Write(data, "settings.json.tmp", "half written");
+        Write(data, "macros/a.json.bak", "macro a before a save together");
         return data;
     }
 
@@ -50,6 +51,8 @@ public class BackupServiceTests
     [InlineData("logs/ai-calls.jsonl", BackupParts.Logs)]
     [InlineData("backup-before-import-20260101-120000.puppymacro", BackupParts.None)]
     [InlineData("history/a.json.tmp", BackupParts.None)]
+    [InlineData("library.json.bak", BackupParts.None)]
+    [InlineData(@"macros\a.json.bak", BackupParts.None)]
     [InlineData("puppymacro-backup.json", BackupParts.None)]
     public void Every_file_belongs_to_a_part_or_is_never_exported(string path, BackupParts expected) =>
         Assert.Equal(expected, BackupService.PartOf(path));
@@ -123,6 +126,26 @@ public class BackupServiceTests
         Assert.False(File.Exists(Path.Combine(other, "history/b.json")));
         Assert.False(File.Exists(Path.Combine(other, "logs/old.log")));
         Assert.False(File.Exists(Path.Combine(other, "puppymacro-backup.json")));
+    }
+
+    [Fact]
+    public void Import_removes_the_copies_a_save_together_left_so_they_never_come_back()
+    {
+        using var temp = new TempFolder();
+        string data = FillDataFolder(temp);
+        string file = temp.File("all.puppymacro");
+        BackupService.Export(data, file, BackupParts.All);
+
+        string other = Path.Combine(temp.Path, "other");
+        Write(other, "settings.json", "{\"other\":1}");
+        Write(other, "macros/b.json.bak", "macro b before a save together");
+        Write(other, "library.json.bak", "library before a save together");
+        BackupService.Import(other, file);
+
+        Assert.False(File.Exists(Path.Combine(other, "macros/b.json.bak")));
+        Assert.False(File.Exists(Path.Combine(other, "library.json.bak")));
+        Assert.False(File.Exists(Path.Combine(other, "macros/a.json.bak")));
+        Assert.Equal("macro a", Read(other, "macros/a.json"));
     }
 
     [Fact]

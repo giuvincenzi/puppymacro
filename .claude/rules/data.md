@@ -56,7 +56,8 @@ paths:
   Everything else keeps its rules: the editors, the Code views and the AI tools' saves still refuse a remap without a
   hotkey, and a remap without one never clashes with anything.
 - Not in the backup: `backup-before-import-*.puppymacro` (copies of earlier data; inside a backup they would
-  grow every time), `*.tmp` (files being written), the WebView2 cache in `%LocalAppData%` (not user data), the debug
+  grow every time), `*.tmp` (files being written), `*.bak` (the copies a save together keeps, below; an import deletes
+  them, so one never brings back a file the import removed), the WebView2 cache in `%LocalAppData%` (not user data), the debug
   archive (`DebugStore.Root` in `%LocalAppData%`: debugging data, kept 7 days). The
   Start with Windows Run entry is outside the data folder: Release builds set it from `StartWithWindows` at every
   start (`MainWindow`), so an import, a reinstall or another PC gets it back. So are the file types (`Services/FileTypes.cs`:
@@ -91,6 +92,7 @@ paths:
   | AI activity | data folder, `ai-activity.json` | the newest requests, up to `AiActivityLog.MaxBytes` |
   | Screen capture's errors | data folder, `logs\screen-capture.log` | up to `CaptureLog.MaxBytes` |
   | Copy before an Import | data folder, `backup-before-import-*.puppymacro` | until the user deletes it |
+  | Copy during a save together | data folder, `library.json.bak`, `macros\*.json.bak` | until that save ends, or the next start |
   | Code view's cache | `%LocalAppData%`, `WebView2` | as WebView2 keeps it |
   | Debug archive (AI requests, Debug runs) | `%LocalAppData%`, `debug\` | 7 days per operation (`DebugStore.Life`); Settings › Debug data deletes it |
 
@@ -108,6 +110,13 @@ paths:
   skips such a macro (an unknown enum value), so the Library ships in the same release as the conditions. `.puppyitems`
   files carry the collections their macros link, whole, in `Collections` next to `Items` (older versions ignore it), with
   their images; Export collection writes one alone.
+- **Saving together** (`MacroLibrary.TrySaveTogether`: `library.json` and the macros a component's change touches) is all
+  or nothing: every file is written as `.tmp` first, then each one keeps a copy of its old version as `.bak` and is
+  replaced in one step (a move over it), so its place never stays empty. When one can't be replaced, those already
+  replaced get their copy back and the save fails saying why. The copies go when the save ends. At load (`MacroLibrary`,
+  `ComponentLibrary`) a leftover `.bak` (the app stopped during the save) is resolved: when its file is there, the file
+  wins (it is whole) and the copy is deleted; when its file is missing, the copy takes its place, so a Library or a
+  macro is never read as missing.
 - The images of the macros' conditions: `images\{sha256}.png` in the data folder (`ImageStore`), part Data. A macro
   names them by that Id. An image no saved macro uses and nothing holds (an open editor, the editor's copied actions, an
   AI app's take: `ImageStore.Hold`) is deleted at the next save of a macro or at start; the History keeps a copy of every

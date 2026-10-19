@@ -112,7 +112,112 @@ public class ComponentEdgeCasesTests : IDisposable
         Assert.Null(thrown);
         Assert.False(saved);
         Assert.Equal(libraryBefore, File.ReadAllText(_folder.File("library.json")));
+        Assert.Empty(Leftovers());
     }
+
+    [Fact]
+    public void When_a_macro_file_is_kept_open_saving_together_fails_and_puts_back_what_it_replaced()
+    {
+        var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
+        var strip = Comp("Strip", new[] { SlotParam() }, Bound(Click(), ("Point", "Slot")));
+        macros.Library.Collections.Add(new LibraryCollection { Name = "D4", Components = { strip } });
+        Assert.True(macros.Library.TrySave(out _));
+        var macro = Macro("D4", Call(strip, ("Slot", Point(1, 2))));
+        Assert.True(macros.TrySave(macro, out _));
+        string libraryBefore = File.ReadAllText(_folder.File("library.json"));
+        string macroFile = Path.Combine(_folder.File("macros"), $"{macro.Id}.json");
+        string macroBefore = File.ReadAllText(macroFile);
+
+        macros.Library.Collections[0].Name = "Changed";
+        macro.Name = "Changed";
+        bool saved;
+        string? error;
+        // Another program has the macro file open without letting it be replaced: the library.json already placed goes back.
+        using (new FileStream(macroFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            saved = macros.TrySaveTogether(new[] { macro }, out error);
+
+        Assert.False(saved);
+        Assert.NotNull(error);
+        Assert.Equal(libraryBefore, File.ReadAllText(_folder.File("library.json")));
+        Assert.Equal(macroBefore, File.ReadAllText(macroFile));
+        Assert.Empty(Leftovers());
+    }
+
+    [Fact]
+    public void Saving_together_leaves_no_copy_nor_temporary_file()
+    {
+        var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
+        var strip = Comp("Strip", new[] { SlotParam() }, Bound(Click(), ("Point", "Slot")));
+        macros.Library.Collections.Add(new LibraryCollection { Name = "D4", Components = { strip } });
+        Assert.True(macros.Library.TrySave(out _));
+        var macro = Macro("D4", Call(strip, ("Slot", Point(1, 2))));
+        Assert.True(macros.TrySave(macro, out _));
+
+        macros.Library.Collections[0].Name = "Changed";
+        macro.Name = "Changed";
+        var added = Macro("New", Call(strip, ("Slot", Point(3, 4))));
+        Assert.True(macros.TrySaveTogether(new[] { macro, added }, out var error), error);
+
+        Assert.Contains("Changed", File.ReadAllText(_folder.File("library.json")));
+        Assert.Contains("Changed", File.ReadAllText(Path.Combine(_folder.File("macros"), $"{macro.Id}.json")));
+        Assert.True(File.Exists(Path.Combine(_folder.File("macros"), $"{added.Id}.json")));
+        Assert.Empty(Leftovers());
+    }
+
+    [Fact]
+    public void A_save_together_stopped_halfway_never_reads_a_file_as_missing()
+    {
+        var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
+        var strip = Comp("Strip", new[] { SlotParam() }, Bound(Click(), ("Point", "Slot")));
+        macros.Library.Collections.Add(new LibraryCollection { Name = "D4", Components = { strip } });
+        Assert.True(macros.Library.TrySave(out _));
+        var macro = Macro("D4", Call(strip, ("Slot", Point(1, 2))));
+        Assert.True(macros.TrySave(macro, out _));
+        string macroFile = Path.Combine(_folder.File("macros"), $"{macro.Id}.json");
+        // The app was stopped with the files moved aside and not yet replaced (a save of an earlier build).
+        File.Move(_folder.File("library.json"), _folder.File("library.json.bak"));
+        File.Move(macroFile, macroFile + ".bak");
+
+        var again = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
+        again.Library.Load(out var libraryWarning);
+        again.Load(new List<Guid>(), out var warning);
+
+        Assert.Null(libraryWarning);
+        Assert.Null(warning);
+        Assert.Equal("D4", Assert.Single(again.Library.Collections).Name);
+        Assert.Equal(macro.Id, Assert.Single(again.Macros).Id);
+        Assert.Empty(Leftovers());
+    }
+
+    [Fact]
+    public void After_a_save_together_stopped_halfway_the_files_in_place_win_over_their_copies()
+    {
+        var macros = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
+        var strip = Comp("Strip", new[] { SlotParam() }, Bound(Click(), ("Point", "Slot")));
+        macros.Library.Collections.Add(new LibraryCollection { Name = "New", Components = { strip } });
+        Assert.True(macros.Library.TrySave(out _));
+        var macro = Macro("New", Call(strip, ("Slot", Point(1, 2))));
+        Assert.True(macros.TrySave(macro, out _));
+        string macroFile = Path.Combine(_folder.File("macros"), $"{macro.Id}.json");
+        File.WriteAllText(_folder.File("library.json.bak"), "{ the library before");
+        File.WriteAllText(macroFile + ".bak", "{ the macro before");
+
+        var again = new MacroLibrary(_folder.File("macros"), _folder.File("images"));
+        again.Library.Load(out var libraryWarning);
+        again.Load(new List<Guid>(), out var warning);
+
+        Assert.Null(libraryWarning);
+        Assert.Null(warning);
+        Assert.Equal("New", Assert.Single(again.Library.Collections).Name);
+        Assert.Equal("New", Assert.Single(again.Macros).Name);
+        Assert.Empty(Leftovers());
+    }
+
+    /// <summary>The copies and temporary files a save left in the test's folder.</summary>
+    private string[] Leftovers() =>
+        Directory.GetFiles(_folder.Path, "*", SearchOption.AllDirectories)
+            .Where(f => f.EndsWith(".bak", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
 
     // ================= null where a list goes =================
 
