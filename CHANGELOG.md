@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.24.0
+
 ### Added
 - Macros can look at the screen: an **If** checks a pixel's color, an image or a text on the screen, or that it is not
   there (one or all of them), waits for them as long as you choose, then plays its **Then** actions, or its **Else** actions or stops the
