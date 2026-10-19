@@ -61,4 +61,56 @@ public class MacroBuilderEdgesTests
         Assert.Equal(1, actions.Single(a => a.Type == MacroActionType.PressKey).HoldMs);
         Assert.Empty(Problems(actions));
     }
+
+    /// <summary>
+    /// A key held while Windows repeats it (a Key down every 30 ms after the first 500 ms): the first downs stay Key downs,
+    /// the last down and the release are one press, and the whole is a macro the Code view accepts, with the same time.
+    /// </summary>
+    [Fact]
+    public void A_key_held_with_its_repeats_plays_for_as_long_as_it_was_held()
+    {
+        var events = new List<RawEvent> { Key(true, KeyA, 0), Key(true, KeyA, 500), Key(true, KeyA, 530), Key(false, KeyA, 545) };
+
+        List<MacroAction> actions = MacroBuilder.Build(events);
+
+        Assert.Equal(new[] { MacroActionType.KeyDown, MacroActionType.KeyDown, MacroActionType.PressKey }, actions.Select(a => a.Type));
+        Assert.Equal(545, actions.Sum(a => a.DelayMs + a.DurationMs));
+        Assert.Empty(Problems(actions));
+    }
+
+    /// <summary>Three quick clicks in place: a double click, then a click (a double click never takes a third one).</summary>
+    [Fact]
+    public void Three_quick_clicks_are_a_double_click_and_a_click()
+    {
+        var events = new List<RawEvent>();
+        for (int i = 0; i < 3; i++)
+        {
+            events.Add(new RawEvent(RawEventKind.ButtonDown, KeyNames.VK_LBUTTON, 50, 50, 0, i * 100));
+            events.Add(new RawEvent(RawEventKind.ButtonUp, KeyNames.VK_LBUTTON, 50, 50, 0, i * 100 + 20));
+        }
+
+        List<MacroAction> actions = MacroBuilder.Build(events);
+
+        Assert.Equal(new[] { 2, 1 }, actions.Select(a => a.ClickCount));
+        Assert.Empty(Problems(actions));
+    }
+
+    /// <summary>A drag with the mouse's moves recorded: button down where it started, its path, button up where it ended.</summary>
+    [Fact]
+    public void A_drag_with_moves_is_down_path_up()
+    {
+        var events = new List<RawEvent>
+        {
+            new(RawEventKind.ButtonDown, KeyNames.VK_LBUTTON, 10, 10, 0, 0),
+            new(RawEventKind.Move, 0, 40, 10, 0, 10),
+            new(RawEventKind.Move, 0, 80, 10, 0, 20),
+            new(RawEventKind.ButtonUp, KeyNames.VK_LBUTTON, 80, 10, 0, 30),
+        };
+
+        List<MacroAction> actions = MacroBuilder.Build(events);
+
+        Assert.Equal(new[] { MacroActionType.MouseDown, MacroActionType.MovePath, MacroActionType.MouseUp }, actions.Select(a => a.Type));
+        Assert.Equal((80, 10), (actions[2].X, actions[2].Y));
+        Assert.Empty(Problems(actions));
+    }
 }
