@@ -22,7 +22,8 @@ internal enum ComponentWindowChoice
 }
 
 /// <summary>
-/// A row linked to a Library component, read only: which collection it is in, the macros that link it, and what it plays;
+/// A row linked to a Library component, read only: which collection it is in, the macros and components that use it, and
+/// what it plays;
 /// Unlink this row and Open in Library (approved: the Design canvas "PuppyMacro Library").
 /// </summary>
 public partial class ComponentWindow
@@ -30,8 +31,10 @@ public partial class ComponentWindow
     /// <summary>One line of what the component plays: an action, or Then / Else, indented under its If.</summary>
     public sealed record Line(Thickness Indent, string Title, string Detail);
 
+    /// <param name="usedBy">The macros and the components that use it (<see cref="ComponentLibrary.CallersOf"/>), by name.</param>
     /// <param name="arguments">A row's values for the component's parameters, editable (null: read only, as the Library shows it).</param>
-    internal ComponentWindow(LibraryCollection collection, LibraryComponent component, IEnumerable<MacroDefinition> macros, bool canUnlink,
+    internal ComponentWindow(LibraryCollection collection, LibraryComponent component, (List<string> Macros, List<string> Components) usedBy,
+        bool canUnlink,
         List<ArgumentViewModel>? arguments = null, LoopEngine? engine = null)
     {
         InitializeComponent();
@@ -61,7 +64,7 @@ public partial class ComponentWindow
         Title = string.Format(CultureInfo.CurrentCulture, Strings.Component_Title, component.Name);
         CollectionText.Text = collection.Name;
         CollectionCard.Description = ComponentLibrary.StructuredName(collection, component);
-        UsedInText.Text = UsedIn(component, macros);
+        UsedInText.Text = UsedIn(usedBy.Macros, usedBy.Components);
         UnlinkButton.Visibility = canUnlink ? Visibility.Visible : Visibility.Collapsed;
         var lines = new List<Line>();
         AddLines(component.Actions, 0, lines, ConditionNames(component.Actions));
@@ -95,15 +98,9 @@ public partial class ComponentWindow
         DialogResult = true;
     }
 
-    /// <summary>"D4 Strip Affixes, D4 Reroll one", or "Not used".</summary>
-    internal static string UsedIn(LibraryComponent component, IEnumerable<MacroDefinition> macros)
-    {
-        var names = macros
-            .Where(m => ComponentLibrary.Called(m).Contains(component.Id))
-            .Select(m => m.Name)
-            .ToList();
-        return names.Count == 0 ? Strings.Library_NotUsed : string.Join(Strings.ListSeparator, names);
-    }
+    /// <summary>"D4 Strip Affixes, D4 Reroll one, Strip one slot": the macros, then the components; or "Not used".</summary>
+    internal static string UsedIn(List<string> macros, List<string> components) =>
+        macros.Count + components.Count == 0 ? Strings.Library_NotUsed : string.Join(Strings.ListSeparator, macros.Concat(components));
 
     internal static Dictionary<System.Guid, string> ConditionNames(IEnumerable<MacroAction> actions) =>
         MacroDefinition.Walk(actions).SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())

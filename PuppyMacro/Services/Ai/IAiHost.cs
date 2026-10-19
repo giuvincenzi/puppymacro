@@ -75,6 +75,12 @@ internal interface IAiHost
     string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
         IReadOnlyList<MacroDefinition>? macros = null, IReadOnlyList<LibraryComponent>? callers = null);
 
+    /// <summary>
+    /// Deletes a Library component as <paramref name="app"/>'s, as the Library's Delete does (refused while a macro or
+    /// another component uses it); why not (in English, for the AI app), or null.
+    /// </summary>
+    string? DeleteComponent(Guid id, string app);
+
     /// <summary>Deletes a loop, macro or remap (stopping it first), as its card's Delete does.</summary>
     void Delete(Guid id, string app);
 

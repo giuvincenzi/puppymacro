@@ -1625,4 +1625,17 @@
   <data name="Code_CellOutside_one" xml:space="preserve"><value>В «{3}» нет ячейки {1} сетки {2}. В этой сетке всего {0} ячейка.</value></data>
   <data name="Code_CellOutside_few" xml:space="preserve"><value>В «{3}» нет ячейки {1} сетки {2}. В этой сетке всего {0} ячейки.</value></data>
   <data name="Code_CellOutside_many" xml:space="preserve"><value>В «{3}» нет ячейки {1} сетки {2}. В этой сетке всего {0} ячеек.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} используется в этих компонентах: {1}. Сначала уберите его оттуда.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} привязан в этих макросах: {1} и используется в этих компонентах: {2}. Сначала уберите его оттуда.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Некоторые компоненты из {0} используются в компонентах других коллекций: {1}. Сначала уберите их оттуда.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Некоторые компоненты из {0} привязаны в этих макросах: {1} и используются в компонентах других коллекций: {2}. Сначала уберите их оттуда.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Используется в {0} компоненте</value></data>
+  <data name="Library_UsedInComponents_few" xml:space="preserve"><value>Используется в {0} компонентах</value></data>
+  <data name="Library_UsedInComponents_many" xml:space="preserve"><value>Используется в {0} компонентах</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Его используют {0} и {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} компонент</value></data>
+  <data name="Library_ComponentCount_few" xml:space="preserve"><value>{0} компонента</value></data>
+  <data name="Library_ComponentCount_many" xml:space="preserve"><value>{0} компонентов</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Удалён компонент {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Удалить этот компонент из библиотеки?</value></data>
 </root>

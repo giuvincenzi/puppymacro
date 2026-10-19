@@ -408,4 +408,38 @@ public class ConditionCheckerEdgesTests : IDisposable
             Assert.True(Check(_screen, _images, If(ConditionWait.Once, 0, condition), device).Met);
         }
     }
+
+    // ================= What the Debug log says of a text =================
+
+    [Fact]
+    public void A_text_found_names_the_line_it_was_found_in_and_one_not_found_what_was_read()
+    {
+        // Needs a language Windows can read; every Windows has the one of its display language.
+        if (TextReader.Languages.Count == 0)
+            return;
+        using var screen = new Mat(ConditionCheckerTests.FakeScreen.Height, ConditionCheckerTests.FakeScreen.Width, MatType.CV_8UC3, Scalar.All(255));
+        Cv2.PutText(screen, "Salvage all", new Point(30, 90), HersheyFonts.HersheySimplex, 1.4, Scalar.All(0), 3);
+        Cv2.PutText(screen, "Craft Unique Charm", new Point(30, 220), HersheyFonts.HersheySimplex, 1.4, Scalar.All(0), 3);
+        _screen.Show(screen);
+        var condition = new MacroCondition
+        {
+            Kind = ConditionKind.Text, Name = "Recipe", Text = "Unique", TextMatch = TextMatch.Contains,
+            AreaX = 0, AreaY = 0, AreaWidth = ConditionCheckerTests.FakeScreen.Width, AreaHeight = ConditionCheckerTests.FakeScreen.Height,
+        };
+
+        using var checker = new ConditionChecker(_screen, _images, RecognitionDevice.Cpu, 30);
+        using var never = new ManualResetEvent(false);
+        var found = checker.Check(If(ConditionWait.Once, 0, condition), never, describe: true);
+        Assert.True(found.Met);
+        // The line holds more than what was looked for: the log shows it (a recipe with "Charm" in it, not the one wanted).
+        string line = Assert.Single(found.Details, d => d.Contains("found at"));
+        Assert.Contains("in the line \"", line);
+        Assert.Contains("Charm", line);
+        Assert.DoesNotContain("Salvage", line);
+
+        condition.Text = "Transmute";
+        var missing = checker.Check(If(ConditionWait.Once, 0, condition), never, describe: true);
+        Assert.False(missing.Met);
+        Assert.Contains(missing.Details, d => d.Contains("\"Transmute\" not found; read \"") && d.Contains("Salvage"));
+    }
 }

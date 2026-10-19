@@ -35,8 +35,15 @@
   the last cell, the columns and the rows. A click, a mouse button, a move or a pixel inside a component goes to one of
   its cells, a number or one a parameter gives, so each row of a macro only says which cell. **Show the cells** marks
   every cell on a picture of the screen to check the grid.
+- AI apps change only the part of a component that needs it and delete the components nothing uses any more: PuppyMacro
+  tells them to leave nothing behind, names in each answer the components a change left unused, and refuses to delete one
+  that a macro or another component uses. **Ask before deleting a loop, macro or remap** asks for components too, and
+  **Restore** in the AI activity puts a deleted component back in its collection.
 
 ### Changed
+- The Library counts the components that call a component too ("Used in 2 macros and 1 component"), and **Delete** and
+  **Delete collection** are off, with a tooltip that names what uses them, while a macro or another component uses them.
+- A macro's Debug log names the line a text was found in, so a text found inside a longer line shows.
 - PuppyMacro's tools for AI apps are named `puppymacro_…`, have titles and follow the MCP specification 2025-11-25.
 - Claude's apps show "Claude" and the name each gives itself, so Claude Desktop's chat, its agent mode and Claude Code
   read apart in the status bar and the AI activity, for example **Claude (claude-ai)**.

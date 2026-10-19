@@ -200,13 +200,18 @@ Rules:
     collections excepted), then every component and every macro's calls are checked against the Library as it would be
     (`ComponentChecks.CheckAll`; a problem the change brings refuses it), then saved with the macros it changes, recorded in
     the History (each collection and component is an item), the snapshot made again and the unused images deleted. A component called (a linked row or a Component condition) by a
-    saved macro or by the open editor's can't be deleted, nor its collection (`ComponentLibrary.Called`).
+    saved macro, the open editor's or another component can't be deleted, nor its collection by anything outside it
+    (`ComponentLibrary.CallersOf`, `CanDeleteComponent`, `CanDeleteCollection`): the Library's Delete and Delete collection
+    are off then (the user's choice), their tooltip naming what uses them, and the Library counts both ("Used in 2 macros
+    and 1 component").
   - Import compares a collection by id and fingerprint (`ComponentLibrary.Fingerprint`: the components' ids, signatures
     and actions, recomputed with the current code): a different version of a collection the Library has refuses the whole
     file. A file carries the collections its components call, down every call (`ComponentLibrary.WithDependencies`), and
     its calls are checked against the Library with the file's collections in it.
   - AI apps: `search_library` (each component's signature), `get_component` (a call to copy), `save_component` (with the
-    guided update); a macro calls a component with a `Component` row or condition written like any other;
+    guided update), `patch_component` (a JSON Patch, then the same save), `delete_component` (refused while something
+    uses it, confirmed as a deletion, its Restore puts it back in its collection); every change's answer names the
+    components it left called by nothing (a fact, `AiTools.LeftUnused`); a macro calls a component with a `Component` row or condition written like any other;
     `update_actions` leaves linked rows alone; `get_item` reads a big macro in pieces (`outline` with the calls' values,
     `path`) and lists the components a macro calls. The Instructions and the Library tools' descriptions say how
     functions work and what makes a component reusable.
@@ -269,7 +274,8 @@ Rules:
     gives it what it reads: the first tool answer of each connection adds them once, with what the Library holds (each
     collection, its app and how many components: `AiTools.FirstAnswer`, from `AiServer`), in a text block of its own after
     the answer's (`AiToolResult.Notes`), so an answer in JSON stays JSON; the Instructions repeat them. The first, the user's: when an AI app builds or changes something, it never duplicates what already exists, it
-    links or extends what the Library has and makes only what is missing.
+    links or extends what the Library has and makes only what is missing. The second, the user's: it leaves nothing
+    behind, a component it made that its change stopped using is used again or deleted.
   - AI apps cut long tool calls: a request that waits for the user answers "waiting" and the AI calls `wait_for_user`.
   - One request that waits for the user at a time; none while the user has a PuppyMacro editor or dialog open. Request
     windows open centered on the screen and in front, and close after a timeout without input.

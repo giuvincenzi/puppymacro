@@ -15,7 +15,8 @@ namespace PuppyMacro.Services.Ai;
 /// <summary>
 /// The Library for AI apps: search_library (by the structured name's parts and words, short answers with each component's
 /// signature), get_component (with a call to copy), save_component (checked as the Library checks it, the guided update of
-/// the calls when its signature changes, confirmed as a save is), and the parts of get_item that read a big macro in pieces
+/// the calls when its signature changes, confirmed as a save is), patch_component (a JSON Patch, then save_component),
+/// delete_component (as the Library's Delete, confirmed as a deletion is), and the parts of get_item that read a big macro in pieces
 /// (an outline with the calls' values, one path). A macro calls a component with a row {"Type":"Component","ComponentId":…,
 /// "Arguments":…} or a condition {"Kind":"Component",…}, written with save_macro or patch_item like any other.
 /// </summary>
@@ -155,6 +156,7 @@ internal sealed partial class AiTools
         List<MacroDefinition> updatedMacros = new();
         List<LibraryComponent> updatedComponents = new();
         string updatedText = "";
+        bool examplesWritten = false;
         var (problem, before, collectionName) = await _host.Ui(() => Task.FromResult(Loc.English(() =>
         {
             var library = _host.Macros.Library;
@@ -168,8 +170,10 @@ internal sealed partial class AiTools
                 : CollectionArg(args, component, out bad)?.Name;
             if (name == null)
                 return (bad, (string?)null, "");
-            // A bound field holds its parameter's Example.
+            // A bound field holds its parameter's Example: what the AI app wrote there is replaced.
+            string asGiven = CodeJson.Serialize(component);
             ComponentEdits.WriteExamples(component);
+            examplesWritten = asGiven != CodeJson.Serialize(component);
             var others = library.AllComponents.Where(c => c.Id != component.Id).ToList();
             var problems = ComponentLibrary.Problems(component, _host.Macros.Images.Has, others.Append(component));
             if (problems.Count > 0)
@@ -182,6 +186,11 @@ internal sealed partial class AiTools
             return AiToolResult.Error($"The component has problems, nothing was saved: {problem}");
 
         string json = JsonSerializer.Serialize(component, CodeJson.Options);
+        const string BoundNote = " A field bound to a parameter holds the parameter's Example, written there at save: what was " +
+                                 "written in such a field was replaced; the parameter's Example or Default changes it.";
+        string bound = examplesWritten ? BoundNote : "";
+        if (before == json && updatedText.Length == 0)
+            return new AiToolResult("Nothing to change: the component is already like this." + bound);
         Phrase label = Phrase.Of(before == null ? "Ai_NewComponent" : "Ai_ChangedComponent", component.Name);
 
         AiToolResult Apply()
@@ -189,6 +198,7 @@ internal sealed partial class AiTools
             if (BusyNow() is AiToolResult busyNow)
                 return busyNow;
             LibraryCollection? created = editId == null ? CollectionArg(args, component, out _) : null;
+            var called = CalledNow();
             // The host answers in English (IAiHost.SaveComponent), while the user's own windows stay in their language.
             string? notSaved = _host.SaveComponent(component, created, app, updatedMacros, updatedComponents);
             if (notSaved != null)
@@ -198,7 +208,7 @@ internal sealed partial class AiTools
             string call = JsonSerializer.Serialize(new { Type = "Component", ComponentId = component.Id, Arguments = ExampleArguments(component) }, CompactAnswer);
             return new AiToolResult($"Saved the {(before == null ? "new " : "")}component " +
                                     $"\"{ComponentLibrary.StructuredName(collection, component)}\" in the collection \"{collection.Name}\". Its Id: {component.Id}. " +
-                                    $"A macro calls it with the row {call}." + updatedText);
+                                    $"A macro calls it with the row {call}." + updatedText + bound + LeftUnused(called));
         }
 
         if (!_host.Settings.AiAskBeforeChanging)
@@ -214,6 +224,114 @@ internal sealed partial class AiTools
             return Answered(answer, "");
         }, cancel).ConfigureAwait(false);
     }
+
+    // ================= patch_component =================
+
+    /// <summary>The patch on the component's whole JSON (every field there), then save_component's checks, guided update, permissions and History.</summary>
+    private async Task<AiToolResult> PatchComponent(JsonElement args, string app, CancellationToken cancel)
+    {
+        Guid id = IdArg(args, "id", "a component's Id (search_library finds them)");
+        if (!args.TryGetProperty("patch", out JsonElement patch))
+            throw new FormatException("Give the \"patch\": the operations that change the component.");
+        (string? json, string? missing) = await _host.Ui(() => Task.FromResult(_host.Macros.Library.Find(id) is { } found
+            ? ((string?)CodeJson.Serialize(found.Component), (string?)null)
+            : (null, Find(id) is { } item
+                ? $"The Id {id} is a {Kind(item)}, not a component. patch_item changes it."
+                : $"No component has the Id {id}. search_library finds them."))).ConfigureAwait(false);
+        if (json == null)
+            return AiToolResult.Error(missing!);
+
+        var save = new JsonObject { ["id"] = id.ToString(), ["component"] = AiJson.Patch(JsonNode.Parse(json)!, patch) };
+        foreach (string passed in new[] { "call_values", "renamed" })
+            if (Given(args, passed, out JsonElement value))
+                save[passed] = JsonNode.Parse(value.GetRawText());
+        return await SaveComponent(JsonSerializer.SerializeToElement(save), app, cancel).ConfigureAwait(false);
+    }
+
+    // ================= delete_component =================
+
+    private async Task<AiToolResult> DeleteComponent(JsonElement args, string app, CancellationToken cancel)
+    {
+        Guid id = IdArg(args, "id", "a component's Id (search_library finds them)");
+        if (await Refusal().ConfigureAwait(false) is string busy)
+            return AiToolResult.Error(busy);
+        // In English: the refusal that names what uses it is the AI app's answer.
+        (string? problem, LibraryComponent? component, string? name, string? before) = await _host.Ui(() => Task.FromResult(Loc.English(() =>
+        {
+            var library = _host.Macros.Library;
+            if (library.Find(id) is not { } found)
+                return (Find(id) is { } item
+                    ? $"The Id {id} is a {Kind(item)}, not a component. delete_item deletes it."
+                    : $"No component has the Id {id}. search_library finds them.", (LibraryComponent?)null, (string?)null, (string?)null);
+            if (library.CanDeleteComponent(found.Component, _host.Macros.Macros) is string used)
+                return (used, null, null, null);
+            // What Restore puts back: the collection with only this component, so it returns where it was.
+            var kept = found.Collection.Clone();
+            kept.Components.Clear();
+            kept.Components.Add(found.Component.Clone());
+            return ((string?)null, found.Component, ComponentLibrary.StructuredName(found.Collection, found.Component),
+                CodeJson.Serialize(kept));
+        }))).ConfigureAwait(false);
+        if (problem != null || component == null)
+            return AiToolResult.Error(problem!);
+
+        Phrase label = Phrase.Of("Ai_DeletedComponent", component.Name);
+        AiToolResult Apply()
+        {
+            if (BusyNow() is AiToolResult busyNow)
+                return busyNow;
+            if (_host.Macros.Library.Find(id) == null)
+                return AiToolResult.Error("The component is already gone.");
+            var called = CalledNow();
+            if (_host.DeleteComponent(id, app) is string notDeleted)
+                return AiToolResult.Error(notDeleted);
+            _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied, "", null, id, "collection", before);
+            return new AiToolResult($"Deleted the component \"{name}\". The user can restore it in PuppyMacro." + LeftUnused(called));
+        }
+
+        if (!_host.Settings.AiAskBeforeDeleting)
+            return await _host.Ui(() => Task.FromResult(Apply())).ConfigureAwait(false);
+        return await StartForUser(app, async () =>
+        {
+            AiAnswer answer = await _host.Confirm(app, Strings.Ai_ConfirmDeleteComponent, new[] { component.Name }, Strings.Ai_Delete);
+            if (answer == AiAnswer.Done)
+                return Apply();
+            Log(app, AiActivityKind.Confirmation, label, answer, "");
+            return Answered(answer, "");
+        }, cancel).ConfigureAwait(false);
+    }
+
+    // ================= Components left unused =================
+
+    /// <summary>The components something calls now: a macro (a linked row or a Component condition) or another component.</summary>
+    private HashSet<Guid> CalledNow() =>
+        _host.Macros.Macros.SelectMany(ComponentLibrary.Called)
+            .Concat(_host.Macros.Library.AllComponents.SelectMany(c => ComponentSignatures.Callees(c.Actions)))
+            .ToHashSet();
+
+    /// <summary>
+    /// After a change, on the UI thread: the components that <paramref name="before"/> had called and nothing calls now, said
+    /// for the AI app (a fact: the AI app decides what to do), or "".
+    /// </summary>
+    private string LeftUnused(HashSet<Guid> before)
+    {
+        var library = _host.Macros.Library;
+        var unused = before.Except(CalledNow())
+            .Select(id => library.Find(id))
+            .OfType<(LibraryCollection Collection, LibraryComponent Component)>()
+            .Select(f => $"\"{ComponentLibrary.StructuredName(f.Collection, f.Component)}\" (Id {f.Component.Id})")
+            .ToList();
+        return unused.Count == 0 ? "" : "\nNo macro or component calls these components any more: " + string.Join(", ", unused) + ".";
+    }
+
+    /// <summary>
+    /// The error for an Id that is no <paramref name="kinds"/>, on the UI thread: a component's names it and
+    /// <paramref name="forComponent"/> (what does this to a component); otherwise <paramref name="otherwise"/> follows.
+    /// </summary>
+    private string NotAnItem(Guid id, string kinds, string forComponent, string otherwise = "") =>
+        _host.Macros.Library.Find(id) is { } found
+            ? $"The Id {id} is the component \"{ComponentLibrary.StructuredName(found.Collection, found.Component)}\", not a {kinds}. {forComponent}"
+            : $"No {kinds} has the Id {id}.{otherwise}";
 
     /// <summary>
     /// The guided update of the calls when a component's signature changes (SignatureUpdate): the macros and components whose

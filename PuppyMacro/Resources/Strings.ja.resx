@@ -1536,4 +1536,13 @@
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>この呼び出しが渡すグリッドです (画面サイズが違う場合など)</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>{1} のセル {0}</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>{3} で、{2} のセル {1} は存在しません。このグリッドのセルは {0} 個です。</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} は次のコンポーネントで使用されています: {1}。先にそこでの使用をやめてください。</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} は次のマクロでリンクされています: {1}。また、次のコンポーネントで使用されています: {2}。先にそこでの使用をやめてください。</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>{0} の一部のコンポーネントは、ほかのコレクションの次のコンポーネントで使用されています: {1}。先にそこでの使用をやめてください。</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>{0} の一部のコンポーネントは次のマクロでリンクされています: {1}。また、ほかのコレクションの次のコンポーネントで使用されています: {2}。先にそこでの使用をやめてください。</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>{0} 個のコンポーネントで使用</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>{0}と{1}で使用</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} 個のコンポーネント</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>コンポーネント {0} を削除しました</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>このコンポーネントをライブラリから削除しますか?</value></data>
 </root>

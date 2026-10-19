@@ -48,14 +48,14 @@
 <p>When a change to a component's parameters affects the rows that call it (a new parameter every call gives, one removed, another type), Save shows <strong>This change updates the calls</strong>: one value for all the calls that need it, the parameters taken out and the macros that change. <strong>Update and save</strong> saves the component and the calls together; if something can't be saved, nothing changes. Renaming a parameter keeps each call's value.</p>
 
 <h3>The Library</h3>
-<p>The Library shows the collections on the left and the components of the selected one on the right, each with its name, the name AI apps search by (for example <em>game-diablo_iv-find-rare_item_in_slot</em>) and the macros that use it. <strong>Search</strong> finds components by any of their names and descriptions. A selected component shows what it plays and:</p>
+<p>The Library shows the collections on the left and the components of the selected one on the right, each with its name, the name AI apps search by (for example <em>game-diablo_iv-find-rare_item_in_slot</em>) and how many macros and other components use it ("Used in 2 macros and 1 component", or "Not used"). The window of a linked row names them. <strong>Search</strong> finds components by any of their names and descriptions. A selected component shows what it plays and:</p>
 <ul>
   <li><strong>Edit</strong>: its actions, parameters and what it finds, in the macro editor.</li>
   <li><strong>Edit details</strong>: its name, what it does, its concept and description.</li>
   <li><strong>History</strong>: its versions, as an item's History; <strong>Restore this version</strong> puts one back at once, for every macro that links it.</li>
-  <li><strong>Delete</strong>: only when no macro links it, also the macro open in the editor. Otherwise the Library names those macros: unlink it there first.</li>
+  <li><strong>Delete</strong>: only when nothing uses it: no macro links it, also the macro open in the editor, and no other component calls it. Otherwise Delete is off, and its tooltip names the macros and components that use it.</li>
 </ul>
-<p>⋯ next to a collection renames or deletes it (only when none of its components is linked). The Library can't change while a loop or macro is running.</p>
+<p>⋯ next to a collection renames or deletes it. <strong>Delete collection</strong> is off while a macro links one of its components or a component of another collection calls one, and its tooltip names them. The Library can't change while a loop or macro is running.</p>
 
 <h3>Share a collection</h3>
 <p><strong>Export collection</strong> saves a collection, whole, in a <code>.puppyitems</code> file with its images, and the collections its components call. A macro exported from its card or with Export takes the collections it links along. On another PC, <strong>Import</strong> (in the Library or in the title bar's ⋯) adds the collections it doesn't have yet, then the chosen items.</p>

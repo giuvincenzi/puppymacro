@@ -1625,4 +1625,17 @@ Detalii: {1}</value></data>
   <data name="Code_CellOutside_one" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are doar {0} celulă.</value></data>
   <data name="Code_CellOutside_few" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are {0} celule.</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are {0} de celule.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} este folosită de aceste componente: {1}. Mai întâi eliminați-o de acolo.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} este legată în aceste macrocomenzi: {1} și este folosită de aceste componente: {2}. Mai întâi eliminați-o de acolo.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Unele componente din {0} sunt folosite de componente din alte colecții: {1}. Mai întâi eliminați-le de acolo.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Unele componente din {0} sunt legate în aceste macrocomenzi: {1} și sunt folosite de componente din alte colecții: {2}. Mai întâi eliminați-le de acolo.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Folosită în {0} componentă</value></data>
+  <data name="Library_UsedInComponents_few" xml:space="preserve"><value>Folosită în {0} componente</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Folosită în {0} de componente</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Folosită în {0} și {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} componentă</value></data>
+  <data name="Library_ComponentCount_few" xml:space="preserve"><value>{0} componente</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} de componente</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>A șters componenta {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Ștergeți această componentă din bibliotecă?</value></data>
 </root>

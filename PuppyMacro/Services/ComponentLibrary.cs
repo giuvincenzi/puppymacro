@@ -259,30 +259,77 @@ internal sealed class ComponentLibrary
         }
     }
 
-    /// <summary>The macros that call a component (a row or a condition), by name, or none.</summary>
-    private static List<string> LinkedIn(IEnumerable<Guid> components, IEnumerable<MacroDefinition> macros)
+    /// <summary>
+    /// The macros and the other components that call a component directly (a linked row or a Component condition), by name.
+    /// <paramref name="open"/>: what open editors hold now (a macro, or a component in the component editor, by its Id),
+    /// counted instead of its saved version.
+    /// </summary>
+    public (List<string> Macros, List<string> Components) CallersOf(Guid id, IEnumerable<MacroDefinition> macros,
+        IEnumerable<MacroDefinition>? open = null)
     {
-        var ids = components.ToHashSet();
-        return macros
+        var (linking, calling) = Callers(new HashSet<Guid> { id }, macros, open);
+        return (linking.Select(m => m.Name).ToList(), calling.Select(c => c.Name).ToList());
+    }
+
+    /// <summary>
+    /// The macros and the components outside <paramref name="ids"/> that call one of them directly, each once; see
+    /// <see cref="CallersOf"/>.
+    /// </summary>
+    private (List<(Guid Id, string Name)> Macros, List<(Guid Id, string Name)> Components) Callers(HashSet<Guid> ids,
+        IEnumerable<MacroDefinition> macros, IEnumerable<MacroDefinition>? open)
+    {
+        // The last version of each open item counts, instead of the saved one.
+        var editing = (open ?? Enumerable.Empty<MacroDefinition>()).GroupBy(m => m.Id).Select(g => g.Last()).ToList();
+        var editingIds = editing.Select(m => m.Id).ToHashSet();
+        var linking = macros.Where(m => !editingIds.Contains(m.Id))
+            .Concat(editing.Where(m => Find(m.Id) == null))
             .Where(m => Called(m).Any(ids.Contains))
-            .Select(m => m.Name)
+            .Select(m => (m.Id, m.Name))
             .ToList();
+        var calling = AllComponents.Where(c => !editingIds.Contains(c.Id))
+            .Select(c => (c.Id, c.Name, c.Actions))
+            .Concat(editing.Where(m => Find(m.Id) != null).Select(m => (m.Id, m.Name, m.Actions)))
+            .Where(c => !ids.Contains(c.Id) && ComponentSignatures.Callees(c.Actions).Any(ids.Contains))
+            .Select(c => (c.Id, c.Name))
+            .ToList();
+        return (linking, calling);
     }
 
-    /// <summary>Why a component can't be deleted (macros link it, the open editors' too), or null.</summary>
-    public static string? CanDeleteComponent(LibraryComponent component, IEnumerable<MacroDefinition> macros)
+    /// <summary>
+    /// Why a component can't be deleted (macros link it, other components call it, the open editors' too: see
+    /// <see cref="CallersOf"/>), or null.
+    /// </summary>
+    public string? CanDeleteComponent(LibraryComponent component, IEnumerable<MacroDefinition> macros, IEnumerable<MacroDefinition>? open = null)
     {
-        var linked = LinkedIn(new[] { component.Id }, macros);
-        return linked.Count == 0 ? null
-            : string.Format(CultureInfo.CurrentCulture, Strings.Library_ComponentInUse, component.Name, string.Join(Strings.ListSeparator, linked));
+        var (linking, calling) = Callers(new HashSet<Guid> { component.Id }, macros, open);
+        return InUse(component.Name, linking, calling,
+            Strings.Library_ComponentInUse, Strings.Library_ComponentCalled, Strings.Library_ComponentInUseAndCalled);
     }
 
-    /// <summary>Why a collection can't be deleted (macros link one of its components), or null.</summary>
-    public static string? CanDeleteCollection(LibraryCollection collection, IEnumerable<MacroDefinition> macros)
+    /// <summary>
+    /// Why a collection can't be deleted (macros link one of its components, components of other collections call one), or
+    /// null.
+    /// </summary>
+    public string? CanDeleteCollection(LibraryCollection collection, IEnumerable<MacroDefinition> macros, IEnumerable<MacroDefinition>? open = null)
     {
-        var linked = LinkedIn(collection.Components.Select(c => c.Id), macros);
-        return linked.Count == 0 ? null
-            : string.Format(CultureInfo.CurrentCulture, Strings.Library_CollectionInUse, collection.Name, string.Join(Strings.ListSeparator, linked));
+        var (linking, calling) = Callers(collection.Components.Select(c => c.Id).ToHashSet(), macros, open);
+        return InUse(collection.Name, linking, calling,
+            Strings.Library_CollectionInUse, Strings.Library_CollectionCalled, Strings.Library_CollectionInUseAndCalled);
+    }
+
+    /// <summary>The refusal that names who uses it: the macros, the components, or both; null when nothing does.</summary>
+    private static string? InUse(string name, List<(Guid Id, string Name)> linking, List<(Guid Id, string Name)> calling,
+        string byMacros, string byComponents, string byBoth)
+    {
+        string macroNames = string.Join(Strings.ListSeparator, linking.Select(m => m.Name));
+        string componentNames = string.Join(Strings.ListSeparator, calling.Select(c => c.Name));
+        return (linking.Count, calling.Count) switch
+        {
+            (0, 0) => null,
+            (_, 0) => string.Format(CultureInfo.CurrentCulture, byMacros, name, macroNames),
+            (0, _) => string.Format(CultureInfo.CurrentCulture, byComponents, name, componentNames),
+            _ => string.Format(CultureInfo.CurrentCulture, byBoth, name, macroNames, componentNames),
+        };
     }
 
     /// <summary>The ids of the images the components use (kept while the Library has them).</summary>

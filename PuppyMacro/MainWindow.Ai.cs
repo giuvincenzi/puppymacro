@@ -387,6 +387,22 @@ public partial class MainWindow : IAiHost
             }
             else
             {
+                // A deleted component: Before is its collection with only it, so it goes back where it was, with its
+                // collection if that was deleted too.
+                if (entry.ItemKind == "collection")
+                {
+                    if (JsonSerializer.Deserialize<LibraryCollection>(entry.Before, CodeJson.Options) is not { Components: [var deleted] } collection)
+                        return Strings.AiActivity_CantRestore;
+                    // Back already (restored from its History): nothing to put back.
+                    if (Library.Find(deleted.Id) == null)
+                    {
+                        _itemHistory?.RestoreImages(deleted.Id, CodeJson.Serialize(deleted));
+                        if (SaveComponent(deleted, collection) is string notRestored)
+                            return notRestored;
+                    }
+                    _aiLog.MarkRestored(entry);
+                    return null;
+                }
                 if (entry.ItemKind == "component")
                 {
                     if (JsonSerializer.Deserialize<LibraryComponent>(entry.Before, CodeJson.Options) is not { } component)
@@ -485,6 +501,17 @@ public partial class MainWindow : IAiHost
     string? IAiHost.SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
         IReadOnlyList<MacroDefinition>? macros, IReadOnlyList<LibraryComponent>? callers) =>
         SavingAs(app, () => SaveComponent(component, created, macros, callers, CultureInfo.InvariantCulture));
+
+    string? IAiHost.DeleteComponent(Guid id, string app) => SavingAs(app, () => SaveLibrary(library =>
+    {
+        if (library.Find(id) is not { } found)
+            return null;
+        // Checked again here, in the answer's language: meanwhile a macro may have started to use it.
+        if (library.CanDeleteComponent(found.Component, _macros.Macros) is string used)
+            return used;
+        found.Collection.Components.Remove(found.Component);
+        return null;
+    }, onlyAdds: false, refusals: CultureInfo.InvariantCulture));
 
     void IAiHost.Save(object item, string app) => SavingAs(app, () =>
     {

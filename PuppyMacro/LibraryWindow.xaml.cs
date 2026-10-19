@@ -36,12 +36,14 @@ public partial class LibraryWindow
     {
         private bool _isChecked;
 
-        internal ComponentItem(LibraryCollection collection, LibraryComponent component, bool picking, string useText)
+        internal ComponentItem(LibraryCollection collection, LibraryComponent component, bool picking, string useText,
+            string? deleteRefusal = null)
         {
             Collection = collection;
             Component = component;
             Picking = picking;
             UseText = useText;
+            DeleteRefusal = deleteRefusal;
             Lines = ComponentLines(component.Actions);
         }
 
@@ -54,6 +56,10 @@ public partial class LibraryWindow
         public string Description => Component.Description;
         public bool HasDescription => !string.IsNullOrWhiteSpace(Component.Description);
         public string UseText { get; }
+
+        /// <summary>Why Delete is off (what uses the component), or null when it can be deleted.</summary>
+        public string? DeleteRefusal { get; }
+        public bool CanDelete => DeleteRefusal == null;
         public IReadOnlyList<ComponentWindow.Line> Lines { get; }
         public string AccessibleName => AccessibleNames.Join(Name, StructuredName, UseText);
 
@@ -112,8 +118,6 @@ public partial class LibraryWindow
     /// <summary>Pick: the components chosen, in the order they show.</summary>
     internal List<Guid> Picked { get; private set; } = new();
 
-    /// <summary>The macros that link components: the saved ones and those of the open editor.</summary>
-    private IEnumerable<MacroDefinition> LinkingMacros => _macros.Macros.Concat(_alsoLinked);
 
     private string Query => SearchBox.Text.Trim();
 
@@ -154,11 +158,20 @@ public partial class LibraryWindow
     internal static string PurposeName(ComponentPurpose purpose) =>
         Strings.ResourceManager.GetString($"Library_Purpose_{purpose}", CultureInfo.CurrentUICulture) ?? purpose.ToString();
 
-    /// <summary>"Used in 2 macros", or "Not used".</summary>
+    /// <summary>"Used in 2 macros", "Used in 1 component", "Used in 2 macros and 1 component", or "Not used".</summary>
+    internal static string UseText(int macros, int components) => (macros, components) switch
+    {
+        (0, 0) => Strings.Library_NotUsed,
+        (_, 0) => Plurals.Format("Library_UsedInMacros", macros),
+        (0, _) => Plurals.Format("Library_UsedInComponents", components),
+        _ => string.Format(CultureInfo.CurrentCulture, Strings.Library_UsedInMacrosAndComponents,
+            Plurals.Format("Macros_Count", macros), Plurals.Format("Library_ComponentCount", components)),
+    };
+
     private string UseText(LibraryComponent component)
     {
-        int macros = LinkingMacros.Count(m => ComponentLibrary.Called(m).Contains(component.Id));
-        return macros == 0 ? Strings.Library_NotUsed : Plurals.Format("Library_UsedInMacros", macros);
+        var (macros, components) = _macros.Library.CallersOf(component.Id, _macros.Macros, _alsoLinked);
+        return UseText(macros.Count, components.Count);
     }
 
     private void ShowComponents(LibraryCollection? collection)
@@ -169,7 +182,8 @@ public partial class LibraryWindow
         CollectionMoreButton.IsEnabled = collection != null;
         var items = collection == null ? new List<ComponentItem>()
             : collection.Components.Where(c => Matches(collection, c))
-                .Select(c => new ComponentItem(collection, c, _mode == Mode.Pick, UseText(c)) { IsChecked = _checked.Contains(c.Id) })
+                .Select(c => new ComponentItem(collection, c, _mode == Mode.Pick, UseText(c),
+                    _macros.Library.CanDeleteComponent(c, _macros.Macros, _alsoLinked)) { IsChecked = _checked.Contains(c.Id) })
                 .ToList();
         foreach (var item in items)
         {
@@ -303,7 +317,7 @@ public partial class LibraryWindow
     {
         if ((sender as FrameworkElement)?.Tag is not ComponentItem item)
             return;
-        if (ComponentLibrary.CanDeleteComponent(item.Component, LinkingMacros) is string refused)
+        if (_macros.Library.CanDeleteComponent(item.Component, _macros.Macros, _alsoLinked) is string refused)
         {
             SetProblem(refused);
             return;
@@ -326,7 +340,10 @@ public partial class LibraryWindow
         var menu = new ContextMenu { PlacementTarget = CollectionMoreButton, Placement = PlacementMode.Bottom };
         var rename = new MenuItem { Header = Strings.Library_RenameCollection };
         rename.Click += (_, _) => RenameCollection(collection);
-        var delete = new MenuItem { Header = Strings.Library_DeleteCollection };
+        // Off, with why in its tooltip, while something outside the collection uses one of its components.
+        string? refused = _macros.Library.CanDeleteCollection(collection, _macros.Macros, _alsoLinked);
+        var delete = new MenuItem { Header = Strings.Library_DeleteCollection, IsEnabled = refused == null, ToolTip = refused };
+        ToolTipService.SetShowOnDisabled(delete, true);
         delete.Click += (_, _) => DeleteCollection(collection);
         menu.Items.Add(rename);
         menu.Items.Add(delete);
@@ -349,7 +366,7 @@ public partial class LibraryWindow
 
     private async void DeleteCollection(LibraryCollection collection)
     {
-        if (ComponentLibrary.CanDeleteCollection(collection, LinkingMacros) is string refused)
+        if (_macros.Library.CanDeleteCollection(collection, _macros.Macros, _alsoLinked) is string refused)
         {
             SetProblem(refused);
             return;

@@ -104,6 +104,16 @@ internal sealed class FakeAiHost : IAiHost
         }
     }
 
+    public string? DeleteComponent(Guid id, string app)
+    {
+        if (Macros.Library.Find(id) is not { } found)
+            return null;
+        if (Macros.Library.CanDeleteComponent(found.Component, Macros.Macros) is string used)
+            return used;
+        found.Collection.Components.Remove(found.Component);
+        return null;
+    }
+
     public void Delete(Guid id, string app)
     {
         Settings.Loops.RemoveAll(l => l.Id == id);

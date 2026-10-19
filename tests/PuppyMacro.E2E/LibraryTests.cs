@@ -254,7 +254,7 @@ public class LibraryTests
     }
 
     [Fact]
-    public void The_Library_lists_its_collections_and_refuses_to_delete_a_linked_component()
+    public void The_Library_counts_who_uses_a_component_and_keeps_Delete_off_while_a_macro_links_it()
     {
         using var app = new AppSession();
         app.GoTo("Macros");
@@ -264,14 +264,16 @@ public class LibraryTests
 
         ListBox components = app.FindById(library, "ComponentList").AsListBox();
         Assert.True(Retry.WhileFalse(() => components.Items.Length == 1, AppSession.Timeout).Success);
+        // The row's name holds the use line: one macro links it, no component calls it.
+        Assert.True(Retry.WhileFalse(() => components.Items[0].Name.Contains("Used in 1 macro"), AppSession.Timeout).Success,
+            $"the component's row does not say it is used: \"{components.Items[0].Name}\"");
         components.Items[0].Select();
         var delete = Retry.WhileNull(() => components.Items[0].FindFirstDescendant(cf => cf.ByControlType(ControlType.Button).And(cf.ByName("Delete"))),
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "Delete is not shown").Result!.AsButton();
-        delete.Invoke();
 
-        AutomationElement problem = app.FindById(library, "ProblemBar");
-        Assert.True(Retry.WhileFalse(() => problem.Name.Contains("Sample: save with a component"), AppSession.Timeout).Success,
-            $"the Library does not say which macro links the component: \"{problem.Name}\"");
+        // Off, and its tooltip names the macro that links it.
+        Assert.False(delete.IsEnabled);
+        Assert.Contains("Sample: save with a component", delete.HelpText);
         Assert.Equal(1, components.Items.Length);
         library.Close();
     }

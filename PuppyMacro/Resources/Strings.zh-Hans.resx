@@ -1536,4 +1536,13 @@
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>此调用传入的网格，例如用于其他屏幕尺寸</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>位于 {1} 的单元格 {0}</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>在 {3} 中，{2} 的单元格 {1} 不存在。该网格共有 {0} 个单元格。</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} 正被以下组件使用：{1}。请先在那里停止使用它。</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} 已链接到以下宏：{1}，并正被以下组件使用：{2}。请先在那里停止使用它。</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>{0} 中的部分组件正被其他集合的以下组件使用：{1}。请先在那里停止使用它们。</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>{0} 中的部分组件已链接到以下宏：{1}，并正被其他集合的以下组件使用：{2}。请先在那里停止使用它们。</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>在 {0} 个组件中使用</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>在 {0}和 {1}中使用</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} 个组件</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>删除了组件 {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>要从库中删除此组件吗？</value></data>
 </root>

@@ -136,7 +136,8 @@
                                     <Button Content="{x:Static r:Strings.Library_Edit}" Click="OnEditActionsClick" Tag="{Binding}" />
                                     <Button Margin="8,0,0,0" Content="{x:Static r:Strings.Library_EditDetails}" Click="OnEditComponentClick" Tag="{Binding}" />
                                     <Button Margin="8,0,0,0" Content="{x:Static r:Strings.Library_History}" Click="OnComponentHistoryClick" Tag="{Binding}" />
-                                    <Button Margin="8,0,0,0" Content="{x:Static r:Strings.Library_Delete}" Click="OnDeleteComponentClick" Tag="{Binding}" />
+                                    <Button Margin="8,0,0,0" Content="{x:Static r:Strings.Library_Delete}" Click="OnDeleteComponentClick" Tag="{Binding}"
+                                            IsEnabled="{Binding CanDelete, Mode=OneTime}" ToolTip="{Binding DeleteRefusal, Mode=OneTime}" ToolTipService.ShowOnDisabled="True" />
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>

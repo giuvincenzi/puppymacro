@@ -1586,4 +1586,15 @@ Detajet: {1}</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>te qeliza {0} e {1}</value></data>
   <data name="Code_CellOutside_one" xml:space="preserve"><value>Në {3}, qeliza {1} e {2} nuk ekziston. Ajo rrjetë ka vetëm {0} qelizë.</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>Në {3}, qeliza {1} e {2} nuk ekziston. Ajo rrjetë ka {0} qeliza.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} përdoret nga këta komponentë: {1}. Fillimisht hiqeni prej andej.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} është i lidhur në këto makro: {1} dhe përdoret nga këta komponentë: {2}. Fillimisht hiqeni prej andej.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Disa komponentë të {0} përdoren nga komponentë të koleksioneve të tjera: {1}. Fillimisht hiqini prej andej.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Disa komponentë të {0} janë të lidhur në këto makro: {1} dhe përdoren nga komponentë të koleksioneve të tjera: {2}. Fillimisht hiqini prej andej.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Përdoret në {0} komponent</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Përdoret në {0} komponentë</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Përdoret në {0} dhe {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} komponent</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} komponentë</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Fshiu komponentin {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Të fshihet ky komponent nga biblioteka?</value></data>
 </root>

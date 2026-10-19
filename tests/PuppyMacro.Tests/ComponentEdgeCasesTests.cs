@@ -42,8 +42,9 @@ public class ComponentEdgeCasesTests : IDisposable
         // The macro (an open editor's, not saved yet, counts too) uses it only as a Component condition, no linked row.
         var heal = Macro("Heal", If(CallCondition(low, "Low"), Press()));
 
-        Assert.NotNull(ComponentLibrary.CanDeleteComponent(low, new[] { heal }));
-        Assert.NotNull(ComponentLibrary.CanDeleteCollection(collection, new[] { heal }));
+        var library = new ComponentLibrary("library.json") { Collections = { collection } };
+        Assert.NotNull(library.CanDeleteComponent(low, new[] { heal }));
+        Assert.NotNull(library.CanDeleteCollection(collection, new[] { heal }));
     }
 
     // ================= Save as component =================

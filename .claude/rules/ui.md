@@ -198,7 +198,8 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     and Unlink in ⋯ and the right-click menu. One Library view in two modes (`LibraryWindow`): pick (Add component: check
     boxes, Add linked) and manage (the **Library** button on the Macros page: Edit details, History, Delete, Import,
     Export collection); collections on the left, the components of the chosen one on the right, the selected one showing
-    what it plays. A refused import says why in the Import window.
+    what it plays. A refused import says why in the Import window. Delete, and Delete collection in the collection's ⋯, are
+    disabled while something uses them, with why in their tooltip (`ToolTipService.ShowOnDisabled`; the user's choice).
   - Components as functions (approved: the Design canvas "PuppyMacro Component functions", with the app's existing
     controls, the user's choice): **Edit** in the Library opens the component in the macro editor, its right column
     replaced by What it does, Parameters (a card each, Add parameter) and Used as a condition (Can be used as a condition,

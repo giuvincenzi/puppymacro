@@ -88,6 +88,9 @@ internal sealed class ConditionChecker : IDisposable
 
         /// <summary>What the last check saw here, for the Debug log: a pixel's color, the text read.</summary>
         public string? Seen { get; set; }
+
+        /// <summary>A text found: the line it was found in, as read (a line can hold more than what was looked for).</summary>
+        public string? FoundIn { get; set; }
     }
 
     /// <summary>Checks the If's conditions, waiting as it says, until they are true, the wait ends or <paramref name="stop"/>.</summary>
@@ -317,7 +320,8 @@ internal sealed class ConditionChecker : IDisposable
             ConditionKind.Pixel => $"{Name(c)}: saw {look.Seen}, wanted {c.Color} within {c.Tolerance}%",
             ConditionKind.Image when there => $"{Name(c)}: found at {at.X},{at.Y}, {ImageMatch.Percent(score)}% similar (needs {c.Similarity}%)",
             ConditionKind.Image => $"{Name(c)}: not found, the closest is {ImageMatch.Percent(score)}% similar (needs {c.Similarity}%)",
-            _ when there => $"{Name(c)}: \"{c.Text}\" found at {at.X},{at.Y}",
+            _ when there => $"{Name(c)}: \"{c.Text}\" found at {at.X},{at.Y}" +
+                            (look.FoundIn is { } line ? $" in the line \"{Shorten(line)}\"" : ""),
             _ => $"{Name(c)}: \"{c.Text}\" not found; read \"{Shorten(look.Seen ?? "")}\"",
         };
     }
@@ -387,8 +391,11 @@ internal sealed class ConditionChecker : IDisposable
                     return (false, false, default, 0);
                 var lines = TextReader.Read(picture, c.Language);
                 look.Seen = string.Join(" ", lines.Select(l => string.Join(" ", l.Select(w => w.Text))));
+                look.FoundIn = null;
                 if (TextReader.Find(lines, c.Text, c.TextMatch, c.MatchCase) is not { } r)
                     return (true, false, default, 0);
+                look.FoundIn = lines.FirstOrDefault(l => l.Any(w => w.Bounds.IntersectsWith(r))) is { } line
+                    ? string.Join(" ", line.Select(w => w.Text)) : null;
                 return (true, true, new Point(area.X + r.X + r.Width / 2, area.Y + r.Y + r.Height / 2), 1);
             }
         }

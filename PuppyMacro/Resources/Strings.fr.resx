@@ -1575,4 +1575,15 @@ Détails : {1}</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>dans la cellule {0} de {1}</value></data>
   <data name="Code_CellOutside_one" xml:space="preserve"><value>Dans {3}, la cellule {1} de {2} n'existe pas. Cette grille n'a que {0} cellule.</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>Dans {3}, la cellule {1} de {2} n'existe pas. Cette grille a {0} cellules.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} est utilisé par ces composants : {1}. Cessez d'abord de l'y utiliser.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} est lié dans ces macros : {1}, et utilisé par ces composants : {2}. Cessez d'abord de l'y utiliser.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Certains composants de {0} sont utilisés par des composants d'autres collections : {1}. Cessez d'abord de les y utiliser.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Certains composants de {0} sont liés dans ces macros : {1}, et utilisés par des composants d'autres collections : {2}. Cessez d'abord de les y utiliser.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Utilisé dans {0} composant</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Utilisé dans {0} composants</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Utilisé dans {0} et {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} composant</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} composants</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Composant {0} supprimé</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Supprimer ce composant de la bibliothèque ?</value></data>
 </root>

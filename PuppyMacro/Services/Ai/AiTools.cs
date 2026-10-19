@@ -78,8 +78,10 @@ internal sealed partial class AiTools
         "- save_loop, save_macro and save_remap create or rewrite an item; patch_item and update_actions change only what " +
         "they name, which is much faster for a big item, since every character of a call is written by you. delete_item, " +
         "set_enabled and update_settings do what they say. Everything is saved at once and kept in the item's History, " +
-        "where the user can restore any version. Some changes wait for the user's OK, as the user chose on PuppyMacro's AI " +
-        "page; the answer says whether they confirmed.\n" +
+        "where the user can restore any version. save_component, patch_component and delete_component do the same for the " +
+        "Library's components. Some changes wait for the user's OK, as the user chose on PuppyMacro's AI page; the answer " +
+        "says whether they confirmed. When a change leaves a component that something called before called by nothing, " +
+        "its answer names it.\n" +
         "- Some tools need the user: pick_points, pick_app, capture_hotkey, pick_pixel, take_image, draw_area, " +
         "look_at_screen, check_condition, record_macro, test_macro and place_floating_button. PuppyMacro first shows a " +
         "window in the middle of the screen, on top of everything, with your title, a short description of what you are " +
@@ -231,6 +233,7 @@ internal sealed partial class AiTools
     {
         "When you build or change a loop, a macro or a component, never duplicate what already exists: link or extend what " +
         "the user's Library has (a component, a parameter, a Grid), and make only what is missing.",
+        "Leave nothing behind: when a change of yours stops using a component you made, use it again or delete it.",
     };
 
     private static string RulesText => "PuppyMacro's rules for AI apps:\n" + string.Join("\n", GlobalRules.Select(r => "- " + r));
@@ -284,6 +287,8 @@ internal sealed partial class AiTools
         ["search_library"] = "Search the Library",
         ["get_component"] = "Read a component",
         ["save_component"] = "Save a component",
+        ["patch_component"] = "Change part of a component",
+        ["delete_component"] = "Delete a component",
         ["capture_hotkey"] = "Ask for a key",
         ["place_floating_button"] = "Place a floating button",
         ["open_item"] = "Open an item's editor",
@@ -372,6 +377,7 @@ internal sealed partial class AiTools
     {
         const string none = """{"type":"object","properties":{},"additionalProperties":false}""";
         const string idOnly = """{"type":"object","properties":{"id":{"type":"string","description":"The Id of a loop, macro or remap (get_overview lists them)."}},"required":["id"],"additionalProperties":false}""";
+        const string componentId = """{"type":"object","properties":{"id":{"type":"string","description":"A component's Id (search_library finds them)."}},"required":["id"],"additionalProperties":false}""";
         const string asking = """
             "title":{"type":"string","description":"Short title shown big, e.g. \"Pick the 3 items to destroy\"."},
             "description":{"type":"string","description":"One or two short sentences: what you are making together and why the user does this step."},
@@ -598,7 +604,7 @@ internal sealed partial class AiTools
                 "macro's, with Bind), its collection with the screen it was made on, the macros and components that call it, and a " +
                 "call to copy (Call; AsCondition when it can be a condition) with each required parameter's example. " +
                 ComponentsAreFunctions + " A linked row has no DelayMs or Name of its own.",
-                idOnly, true, false, (a, app, _) => GetComponent(a, app)),
+                componentId, true, false, (a, app, _) => GetComponent(a, app)),
             new("save_component",
                 "Saves a Library component: something that works, to be linked in other macros (and shared with the collection " +
                 "it is in). Without id it is new; with id its content is replaced (every macro and component that calls it plays " +
@@ -616,6 +622,30 @@ internal sealed partial class AiTools
                 "they chose it.",
                 """{"type":"object","properties":{"id":{"type":"string","description":"A component's Id, to change it; leave out for a new one."},"collection":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"domain":{"type":"string","enum":["game","office","browser","creative","dev","chat","system","other"]},"app":{"type":"string","description":"The app's .exe, e.g. Diablo IV.exe; leave out for any app."}},"additionalProperties":false},"component":{"type":"object","description":"Name, Purpose, Concept, Description, Parameters, Returns, Actions."},"call_values":{"type":"object","description":"Changing a component whose calls must change: for each parameter the answer named, the value every call without a fitting one gets.","additionalProperties":true},"renamed":{"type":"object","description":"Changing a component: parameters renamed, old name to new name, so the calls keep their values.","additionalProperties":{"type":"string"}}},"required":["component"],"additionalProperties":false}""",
                 false, true, (a, app, c) => SaveComponent(a, app, c)),
+            new("patch_component",
+                "Changes part of a Library component with a JSON Patch (RFC 6902): only what changes, so it is fast even for a " +
+                "big component. Then it is checked and saved as save_component saves it: kept in its History, and every macro " +
+                "and component that calls it plays the new one. A change that existing calls can't follow (a parameter removed, " +
+                "renamed, a new one without a Default, another type) gets the same answer as with save_component, which lists " +
+                "the calls, and takes the same call_values and renamed. The user's OK first when they chose it.",
+                """
+                {"type":"object","properties":{
+                  "id":{"type":"string","description":"The component's Id (search_library finds them)."},
+                  "patch":{"type":"array","minItems":1,"description":"Operations applied in order, all or nothing. Paths are JSON Pointers into the component as get_component gives it in Component, with list indexes from 0; a field get_component left out exists with its default, so replace works on it. E.g. [{\"op\":\"replace\",\"path\":\"/Actions/0/If/Conditions/1/Tolerance\",\"value\":12}, {\"op\":\"replace\",\"path\":\"/Parameters/0/Default\",\"value\":400}].",
+                    "items":{"type":"object","properties":{
+                      "op":{"type":"string","enum":["add","remove","replace","move","copy","test"]},
+                      "path":{"type":"string"},
+                      "from":{"type":"string","description":"move and copy: where the value comes from."},
+                      "value":{"description":"add, replace and test: the value."}},
+                     "required":["op","path"]}},
+                  "call_values":{"type":"object","description":"A change whose calls must change: for each parameter the answer named, the value every call without a fitting one gets.","additionalProperties":true},
+                  "renamed":{"type":"object","description":"Parameters renamed, old name to new name, so the calls keep their values.","additionalProperties":{"type":"string"}}},
+                 "required":["id","patch"],"additionalProperties":false}
+                """, false, true, (a, app, c) => PatchComponent(a, app, c)),
+            new("delete_component",
+                "Deletes a Library component. One that a macro links or another component calls stays, and the answer names " +
+                "them (get_component lists them too). The user may be asked to confirm; it can be restored in PuppyMacro.",
+                componentId, false, true, (a, app, c) => DeleteComponent(a, app, c)),
             new("capture_hotkey", "Shows the user your title, description and steps and waits until they press a key, mouse button or combination: it as a HotkeyBinding." + UserWindow,
                 "{\"type\":\"object\",\"properties\":{" + asking + "},\"required\":[" + askingRequired + "],\"additionalProperties\":false}",
                 true, false, (a, app, c) => CaptureKeys(a, app, c)),
@@ -734,7 +764,7 @@ internal sealed partial class AiTools
         {
             object? item = Find(id);
             if (item == null)
-                return Task.FromResult(AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them."));
+                return Task.FromResult(AiToolResult.Error(NotAnItem(id, "loop, macro or remap", "get_component reads it.", " get_overview lists them.")));
             _log.Add(app, AiActivityKind.Read, About("Ai_Read", item));
             if (outline)
                 return Task.FromResult(item is MacroDefinition outlined
@@ -849,10 +879,11 @@ internal sealed partial class AiTools
             if (before != null && Find(id) == null)
                 return AiToolResult.Error($"The {kind} was deleted meanwhile: nothing was saved.");
             bool wasRunning = _host.IsRunning(id);
+            var called = CalledNow();
             _host.Save(parsed, app);
             _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", json, id, kind, before);
             return new AiToolResult((before == null ? $"Saved the new {kind}. Its Id: {id}." : $"Saved the changes to the {kind}:\n" + ChangeList(changes))
-                + (wasRunning ? "\nIt was running: it stopped." : ""));
+                + (wasRunning ? "\nIt was running: it stopped." : "") + LeftUnused(called));
         }
 
         if (!_host.Settings.AiAskBeforeChanging)
@@ -901,11 +932,11 @@ internal sealed partial class AiTools
         Guid id = IdArg(args, "id");
         if (!args.TryGetProperty("patch", out JsonElement patch))
             throw new FormatException("Give the \"patch\": the operations that change the item.");
-        (string? kind, string? json) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
-            ? ((string?)Kind(item), (string?)Serialize(item))
-            : (null, null))).ConfigureAwait(false);
+        (string? kind, string? json, string? missing) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
+            ? ((string?)Kind(item), (string?)Serialize(item), (string?)null)
+            : (null, null, NotAnItem(id, "loop, macro or remap", "patch_component changes it.", " get_overview lists them.")))).ConfigureAwait(false);
         if (kind == null || json == null)
-            return AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them.");
+            return AiToolResult.Error(missing!);
 
         JsonNode patched = AiJson.Patch(JsonNode.Parse(json)!, patch);
         JsonElement save = JsonSerializer.SerializeToElement(new JsonObject { ["item"] = patched, ["id"] = id.ToString() });
@@ -925,11 +956,11 @@ internal sealed partial class AiTools
             throw new FormatException("Give \"set\": the fields to change, e.g. {\"DelayMs\": 1200}.");
         args.TryGetProperty("where", out JsonElement where);
         string? group = Str(args, "group");
-        (string? kind, string? json) = await _host.Ui(() => Task.FromResult(Find(id) is { } item and (LoopDefinition or MacroDefinition)
-            ? ((string?)Kind(item), (string?)Serialize(item))
-            : (null, null))).ConfigureAwait(false);
+        (string? kind, string? json, string? missing) = await _host.Ui(() => Task.FromResult(Find(id) is { } item and (LoopDefinition or MacroDefinition)
+            ? ((string?)Kind(item), (string?)Serialize(item), (string?)null)
+            : (null, null, NotAnItem(id, "loop or macro", "patch_component changes it.", " get_overview lists them.")))).ConfigureAwait(false);
         if (kind == null || json == null)
-            return AiToolResult.Error($"No loop or macro has the Id {id}. get_overview lists them.");
+            return AiToolResult.Error(missing!);
 
         (JsonNode changed, _) = AiJson.SetWhere(JsonNode.Parse(json)!, where, set, group);
         JsonElement save = JsonSerializer.SerializeToElement(new JsonObject { ["item"] = changed, ["id"] = id.ToString() });
@@ -949,9 +980,9 @@ internal sealed partial class AiTools
             return AiToolResult.Error(busy);
         (string? what, string? kind, string? before, object? found) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
             ? ((string?)Loc.English(() => Describe(item)), (string?)Kind(item), (string?)Serialize(item), (object?)item)
-            : (null, null, null, null))).ConfigureAwait(false);
+            : (null, null, NotAnItem(id, "loop, macro or remap", "delete_component deletes it."), null))).ConfigureAwait(false);
         if (what == null || found == null)
-            return AiToolResult.Error($"No loop, macro or remap has the Id {id}.");
+            return AiToolResult.Error(before!);
 
         Phrase label = About("Ai_Deleted", found);
         AiToolResult Apply()
@@ -960,9 +991,10 @@ internal sealed partial class AiTools
                 return busy;
             if (Find(id) == null)
                 return AiToolResult.Error($"The {kind} is already gone.");
+            var called = CalledNow();
             _host.Delete(id, app);
             _log.Add(app, AiActivityKind.Confirmation, label, AiActivityResult.Applied, "", null, id, kind, before);
-            return new AiToolResult($"Deleted {what}. The user can restore it in PuppyMacro.");
+            return new AiToolResult($"Deleted {what}. The user can restore it in PuppyMacro." + LeftUnused(called));
         }
 
         if (!_host.Settings.AiAskBeforeDeleting)
@@ -986,9 +1018,10 @@ internal sealed partial class AiTools
             return AiToolResult.Error(busy);
         (string? what, string? kind, string? before, bool already, object? found) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
             ? ((string?)Loc.English(() => Describe(item)), (string?)Kind(item), (string?)Serialize(item), IsEnabled(item) == enabled, (object?)item)
-            : (null, null, null, false, null))).ConfigureAwait(false);
+            : (null, null, NotAnItem(id, "loop, macro or remap", "A component has no on or off: it plays where a macro links it."), false, null)))
+            .ConfigureAwait(false);
         if (what == null || found == null)
-            return AiToolResult.Error($"No loop, macro or remap has the Id {id}.");
+            return AiToolResult.Error(before!);
         if (already)
             return new AiToolResult($"{Capital(what)} is already {(enabled ? "enabled" : "disabled")}.");
         if (enabled && found is RemapDefinition { Source: not { IsSet: true } })
@@ -1345,7 +1378,7 @@ internal sealed partial class AiTools
             return AiToolResult.Error(busy);
         (string? what, string? problem, object? found) = await _host.Ui(() => Task.FromResult(Find(id) switch
         {
-            null => (null, $"No loop, macro or remap has the Id {id}.", null),
+            null => (null, NotAnItem(id, "loop, macro or remap", "open_item opens loops, macros and remaps; get_component reads a component."), null),
             LoopDefinition or MacroDefinition when _host.AnyRunning =>
                 (null, "Loops or macros are running: their editors open only when nothing runs. Ask the user to stop them (or call stop_all).", null),
             { } item => ((string?)Loc.English(() => Describe(item)), (string?)null, (object?)item),

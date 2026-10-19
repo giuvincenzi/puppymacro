@@ -712,7 +712,8 @@ public partial class MacroEditorWindow
         var signatures = _macros.Library.Signatures();
         var arguments = ArgumentViewModel.For(found.Component, row.Action.Arguments, signatures, EditingParameters,
             MacroJson.FoundAt(_list.Actions, list, signatures), _macros.Images);
-        var window = new ComponentWindow(found.Collection, found.Component, LinkingMacros(), canUnlink: true, arguments, _engine) { Owner = this };
+        var window = new ComponentWindow(found.Collection, found.Component,
+            _macros.Library.CallersOf(id, _macros.Macros, new[] { BuildMacro() }), canUnlink: true, arguments, _engine) { Owner = this };
         if (window.ShowDialog() != true)
             return;
         switch (window.Choice)
@@ -731,10 +732,6 @@ public partial class MacroEditorWindow
                 break;
         }
     }
-
-    /// <summary>The saved macros, this one as it is now in the editor instead of as it was saved.</summary>
-    private IEnumerable<MacroDefinition> LinkingMacros() =>
-        _macros.Macros.Where(m => m.Id != _itemId).Append(BuildMacro());
 
     /// <summary>Selected rows that can become one component: one run of actions in one list (linked rows stay linked inside it).</summary>
     private bool CanSaveAsComponent()

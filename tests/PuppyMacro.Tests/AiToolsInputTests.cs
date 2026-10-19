@@ -35,6 +35,7 @@ internal sealed class LibraryCheckingHost(FakeAiHost inner) : IAiHost
             ? bad
             : inner.SaveComponent(component, created, app, macros, callers);
 
+    public string? DeleteComponent(Guid id, string app) => inner.DeleteComponent(id, app);
     public void Delete(Guid id, string app) => inner.Delete(id, app);
     public void SetEnabled(Guid id, bool enabled, string app) => inner.SetEnabled(id, enabled, app);
     public void ApplySettings(AiSettingsValues values) => inner.ApplySettings(values);

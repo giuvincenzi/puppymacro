@@ -212,16 +212,17 @@ public class ComponentLibraryTests : IDisposable
         var collection = Collection(linked, free);
         var macro = new MacroDefinition { Name = "D4 Strip Affixes", Actions = { Link(linked) } };
         var macros = new[] { macro };
+        var library = new ComponentLibrary("library.json") { Collections = { collection } };
 
-        string? refused = ComponentLibrary.CanDeleteComponent(linked, macros);
+        string? refused = library.CanDeleteComponent(linked, macros);
         Assert.NotNull(refused);
         Assert.Contains("D4 Strip Affixes", refused);
-        Assert.Null(ComponentLibrary.CanDeleteComponent(free, macros));
-        Assert.Contains("D4 Strip Affixes", ComponentLibrary.CanDeleteCollection(collection, macros));
+        Assert.Null(library.CanDeleteComponent(free, macros));
+        Assert.Contains("D4 Strip Affixes", library.CanDeleteCollection(collection, macros));
 
         // Inside a Then too.
         var nested = new MacroDefinition { Name = "Nested", Actions = { new MacroAction { Type = MacroActionType.If, If = new MacroIf { Then = { Link(free) } } } } };
-        Assert.Contains("Nested", ComponentLibrary.CanDeleteComponent(free, new[] { nested }));
+        Assert.Contains("Nested", library.CanDeleteComponent(free, new[] { nested }));
         Assert.Equal(2, ComponentLibrary.Links(new[] { macro, nested }).Values.Sum());
     }
 

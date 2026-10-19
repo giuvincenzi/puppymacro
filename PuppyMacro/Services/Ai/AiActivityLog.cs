@@ -62,7 +62,10 @@ public sealed class AiActivity
     /// <summary>The loop, macro or remap it changed or deleted (null: none, or the settings).</summary>
     public Guid? ItemId { get; set; }
 
-    /// <summary>"loop", "macro", "remap" or "settings": what <see cref="Before"/> is.</summary>
+    /// <summary>
+    /// "loop", "macro", "remap", "settings", "component" (a changed one) or "collection" (a deleted component: its
+    /// collection with only it): what <see cref="Before"/> is.
+    /// </summary>
     public string? ItemKind { get; set; }
 
     /// <summary>The item (or the settings) before this change, JSON: Restore puts it back. Null for something new.</summary>

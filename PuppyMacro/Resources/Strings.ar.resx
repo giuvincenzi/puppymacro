@@ -1731,4 +1731,23 @@
   <data name="Code_CellOutside_few" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على {0} خلايا.</value></data>
   <data name="Code_CellOutside_many" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على {0} خلية.</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على {0} خلية.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} مستخدم في هذه المكوّنات: {1}. أوقف استخدامه هناك أولاً.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} مرتبط في وحدات الماكرو هذه: {1}، ومستخدم في هذه المكوّنات: {2}. أوقف استخدامه هناك أولاً.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>بعض مكوّنات {0} مستخدمة في مكوّنات من مجموعات أخرى: {1}. أوقف استخدامها هناك أولاً.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>بعض مكوّنات {0} مرتبطة في وحدات الماكرو هذه: {1}، ومستخدمة في مكوّنات من مجموعات أخرى: {2}. أوقف استخدامها هناك أولاً.</value></data>
+  <data name="Library_UsedInComponents_zero" xml:space="preserve"><value>مستخدم في {0} مكوّن</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>مستخدم في مكوّن واحد</value></data>
+  <data name="Library_UsedInComponents_two" xml:space="preserve"><value>مستخدم في مكوّنين</value></data>
+  <data name="Library_UsedInComponents_few" xml:space="preserve"><value>مستخدم في {0} مكوّنات</value></data>
+  <data name="Library_UsedInComponents_many" xml:space="preserve"><value>مستخدم في {0} مكوّنًا</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>مستخدم في {0} مكوّن</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>يستخدمه {0} و{1}</value></data>
+  <data name="Library_ComponentCount_zero" xml:space="preserve"><value>{0} مكوّن</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>مكوّن واحد</value></data>
+  <data name="Library_ComponentCount_two" xml:space="preserve"><value>مكوّنان</value></data>
+  <data name="Library_ComponentCount_few" xml:space="preserve"><value>{0} مكوّنات</value></data>
+  <data name="Library_ComponentCount_many" xml:space="preserve"><value>{0} مكوّنًا</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} مكوّن</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>حذف المكوّن {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>هل تريد حذف هذا المكوّن من المكتبة؟</value></data>
 </root>

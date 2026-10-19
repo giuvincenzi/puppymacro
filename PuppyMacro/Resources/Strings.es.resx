@@ -1576,4 +1576,15 @@ Detalles: {1}</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>en la celda {0} de {1}</value></data>
   <data name="Code_CellOutside_one" xml:space="preserve"><value>En {3}, la celda {1} de {2} no existe. Esa cuadrícula solo tiene {0} celda.</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>En {3}, la celda {1} de {2} no existe. Esa cuadrícula tiene {0} celdas.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} se usa en estos componentes: {1}. Primero deja de usarlo allí.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} está vinculado en estas macros: {1}, y se usa en estos componentes: {2}. Primero deja de usarlo allí.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Algunos componentes de {0} se usan en componentes de otras colecciones: {1}. Primero deja de usarlos allí.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Algunos componentes de {0} están vinculados en estas macros: {1}, y se usan en componentes de otras colecciones: {2}. Primero deja de usarlos allí.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Se usa en {0} componente</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Se usa en {0} componentes</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Se usa en {0} y {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} componente</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} componentes</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Eliminó el componente {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>¿Eliminar este componente de la biblioteca?</value></data>
 </root>

@@ -1575,4 +1575,15 @@ Details: {1}</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>bei Zelle {0} von {1}</value></data>
   <data name="Code_CellOutside_one" xml:space="preserve"><value>In {3} gibt es die Zelle {1} von {2} nicht. Dieses Raster hat nur {0} Zelle.</value></data>
   <data name="Code_CellOutside_other" xml:space="preserve"><value>In {3} gibt es die Zelle {1} von {2} nicht. Dieses Raster hat {0} Zellen.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} wird von diesen Komponenten verwendet: {1}. Beenden Sie dort zuerst die Verwendung.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} ist in diesen Makros verknüpft: {1}, und wird von diesen Komponenten verwendet: {2}. Beenden Sie dort zuerst die Verwendung.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Einige Komponenten von {0} werden von Komponenten anderer Sammlungen verwendet: {1}. Beenden Sie dort zuerst die Verwendung.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Einige Komponenten von {0} sind in diesen Makros verknüpft: {1}, und werden von Komponenten anderer Sammlungen verwendet: {2}. Beenden Sie dort zuerst die Verwendung.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>In {0} Komponente verwendet</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>In {0} Komponenten verwendet</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>In {0} und {1} verwendet</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} Komponente</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} Komponenten</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Komponente {0} gelöscht</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Diese Komponente aus der Bibliothek löschen?</value></data>
 </root>
