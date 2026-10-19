@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using OpenCvSharp;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
@@ -47,6 +46,16 @@ public class ConditionCheckerTests : IDisposable
         Cv2.ImEncode(".png", part, out byte[] png);
         return new ConditionImage { Id = _images.Add(png), X = piece.X, Y = piece.Y };
     }
+
+    /// <summary>
+    /// Does <paramref name="change"/> after <paramref name="ms"/> on a thread of its own: a busy thread pool (many tests at
+    /// once on GitHub) would delay a Task.Delay past the wait the test checks.
+    /// </summary>
+    private static void After(int ms, Action change) => new Thread(() =>
+    {
+        Thread.Sleep(ms);
+        change();
+    }) { IsBackground = true }.Start();
 
     private static MacroIf If(ConditionWait wait, params MacroCondition[] conditions) =>
         new() { Conditions = new List<MacroCondition>(conditions), Wait = wait, WaitSeconds = 2 };
@@ -236,11 +245,7 @@ public class ConditionCheckerTests : IDisposable
         using var gone = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(0));
         _screen.Show(shown);
         var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 5, Y = 5, Color = "#FFFFFF", Not = true };
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(300, TestContext.Current.CancellationToken);
-            _screen.Show(gone);
-        }, TestContext.Current.CancellationToken);
+        After(300, () => _screen.Show(gone));
 
         var clock = Stopwatch.StartNew();
         var result = Check(If(ConditionWait.UpTo, white));
@@ -256,11 +261,7 @@ public class ConditionCheckerTests : IDisposable
         using var shown = new Mat(FakeScreen.Height, FakeScreen.Width, MatType.CV_8UC3, Scalar.All(255));
         _screen.Show(empty);
         var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 5, Y = 5, Color = "#FFFFFF" };
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(300, TestContext.Current.CancellationToken);
-            _screen.Show(shown);
-        }, TestContext.Current.CancellationToken);
+        After(300, () => _screen.Show(shown));
 
         var clock = Stopwatch.StartNew();
         var result = Check(If(ConditionWait.UpTo, white));
@@ -292,11 +293,7 @@ public class ConditionCheckerTests : IDisposable
         _screen.Show(empty);
         var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 5, Y = 5, Color = "#FFFFFF" };
         using var stop = new ManualResetEvent(false);
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(200, TestContext.Current.CancellationToken);
-            stop.Set();
-        }, TestContext.Current.CancellationToken);
+        After(200, () => stop.Set());
 
         var result = Check(If(ConditionWait.Forever, white), stop: stop);
 
@@ -341,14 +338,8 @@ public class ConditionCheckerTests : IDisposable
         var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 5, Y = 5, Color = "#FFFFFF" };
         var block = If(ConditionWait.UpTo, white);
         block.WaitSeconds = 0.1;
-        // The first image comes after the 0.1 s of the wait, well before the 1 s the first check waits: on a thread of its own,
-        // so a busy thread pool (many tests at once on GitHub) never delays it past that second.
-        var shower = new Thread(() =>
-        {
-            Thread.Sleep(300);
-            _screen.Show(picture);
-        }) { IsBackground = true };
-        shower.Start();
+        // The first image comes after the 0.1 s of the wait, well before the 1 s the first check waits.
+        After(300, () => _screen.Show(picture));
 
         Assert.True(Check(block).Met);
     }
