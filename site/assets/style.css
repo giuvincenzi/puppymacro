@@ -64,9 +64,45 @@ kbd {
   font-family: var(--display); font-weight: 700; font-size: 20px;
 }
 .brand img { width: 32px; height: 32px; }
-.site-nav { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; font-size: 15px; }
+.header-tools { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; font-size: 15px; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
 .site-nav a:not(.button) { color: var(--muted); text-decoration: none; }
-.site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--text); }
+.site-nav a:not(.button):hover, .site-nav a[aria-current="page"] { color: var(--text); }
+/* Download: in the header on wide screens, at the end of the menu on phones */
+.site-nav .nav-download { display: none; }
+/* The phones' menu button, shown by site.js */
+.nav-toggle { display: none; }
+
+/* Phones (site.js adds has-menu): one line with the brand, the language menu and the menu button. The links open
+   under the header, as the languages do, across the whole width so they never leave the screen. */
+@media (max-width: 760px) {
+  .site-header.has-menu { position: relative; }
+  .has-menu .wrap { flex-wrap: nowrap; gap: 8px; }
+  .has-menu .header-tools { flex-wrap: nowrap; gap: 8px; }
+  .has-menu .header-download { display: none; }
+  .has-menu .nav-toggle {
+    display: flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px;
+    padding: 0; border-radius: 10px; cursor: pointer;
+    background: transparent; border: 1px solid #343846; color: var(--text);
+  }
+  .has-menu .nav-toggle:hover, .has-menu .nav-toggle[aria-expanded="true"] { background: var(--surface); border-color: #4a5063; }
+  .nav-toggle svg { width: 22px; height: 22px; }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-open, .nav-toggle[aria-expanded="false"] .nav-toggle-close { display: none; }
+  .has-menu .site-nav {
+    display: none; position: absolute; top: calc(100% + 8px); inset-inline: 16px; z-index: 20;
+    flex-direction: column; align-items: stretch; gap: 4px; padding: 10px; border-radius: 14px;
+    background: var(--surface); border: 1px solid #343846; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+  .has-menu.nav-open .site-nav { display: flex; }
+  .has-menu .site-nav a:not(.button) { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: 10px; }
+  .has-menu .site-nav a:not(.button):hover { background: #232630; }
+  .has-menu .site-nav a[aria-current="page"] { background: #262933; }
+  .has-menu .nav-download { display: flex; justify-content: center; min-height: 48px; margin-top: 6px; }
+  .has-menu .language-menu { position: static; }
+  .has-menu .language-menu summary { min-height: 44px; gap: 6px; padding: 0 10px 0 9px; }
+  .has-menu .language-name { display: none; }
+  .has-menu .language-popup { inset-inline: 16px; width: auto; }
+}
 
 /* Round flags (assets/flags, flag-icons) and the letter used for Arabic, which no single country's flag stands for */
 .flag {
@@ -96,12 +132,12 @@ kbd {
 }
 .language-popup p { margin: 0 6px 10px; font-size: 13px; color: var(--faint); }
 .language-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
-.site-nav .language-grid a {
+.language-grid a {
   display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 10px;
   border-radius: 10px; color: var(--muted); text-decoration: none;
 }
-.site-nav .language-grid a:hover { color: var(--text); background: #232630; }
-.site-nav .language-grid a[aria-current="true"] { color: var(--text); background: #262933; }
+.language-grid a:hover { color: var(--text); background: #232630; }
+.language-grid a[aria-current="true"] { color: var(--text); background: #262933; }
 .language-grid .flag { width: 30px; height: 30px; }
 .language-grid a[aria-current="true"] .flag { box-shadow: 0 0 0 2px var(--accent); }
 .language-grid .flag-letter { font-size: 16px; }

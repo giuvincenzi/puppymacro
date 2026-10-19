@@ -75,6 +75,31 @@ if (languageMenu) {
   });
 }
 
+// Phones' menu (style.css): the button opens the links under the header; a link, a click outside or Esc closes them.
+// Without this script the header shows the links as they are.
+const header = document.querySelector('.site-header');
+const navToggle = header && header.querySelector('.nav-toggle');
+if (navToggle) {
+  const setMenuOpen = (open) => {
+    header.classList.toggle('nav-open', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+  };
+  header.classList.add('has-menu');
+  navToggle.hidden = false;
+  navToggle.addEventListener('click', () => setMenuOpen(navToggle.getAttribute('aria-expanded') !== 'true'));
+  header.querySelectorAll('.site-nav a').forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
+  document.addEventListener('click', (event) => {
+    if (header.classList.contains('nav-open') && !navToggle.contains(event.target) &&
+        !header.querySelector('.site-nav').contains(event.target)) setMenuOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && header.classList.contains('nav-open')) {
+      setMenuOpen(false);
+      navToggle.focus();
+    }
+  });
+}
+
 // English home: when the browser prefers one of the other languages and the visitor has not chosen yet, a banner offers
 // that language's home. The page never changes language by itself (search engines read the English one).
 const offers = document.getElementById('language-offers');

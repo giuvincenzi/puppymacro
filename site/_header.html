@@ -1,13 +1,17 @@
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="{{HOME}}"><img src="{{ROOT}}assets/logo.png" alt="">PuppyMacro</a>
-    <nav class="site-nav" aria-label="{{NAV_LABEL}}">
-      <a href="{{HOME}}#features">{{NAV_FEATURES}}</a>
-      <a href="{{ROOT}}guide/latest/"{{GUIDE_CURRENT}}>{{NAV_GUIDE}}</a>
-      <a href="{{HOME}}#privacy">{{NAV_PRIVACY}}</a>
-      <a href="https://github.com/giuvincenzi/puppymacro">GitHub</a>
+    <div class="header-tools">
+      <nav class="site-nav" id="site-nav" aria-label="{{NAV_LABEL}}">
+        <a href="{{HOME}}#features">{{NAV_FEATURES}}</a>
+        <a href="{{ROOT}}guide/latest/"{{GUIDE_CURRENT}}>{{NAV_GUIDE}}</a>
+        <a href="{{HOME}}#privacy">{{NAV_PRIVACY}}</a>
+        <a href="https://github.com/giuvincenzi/puppymacro">GitHub</a>
+        <a class="button button-primary button-small nav-download" href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">{{NAV_DOWNLOAD}}</a>
+      </nav>
 {{LANGUAGE_MENU}}
-      <a class="button button-primary button-small" href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">{{NAV_DOWNLOAD}}</a>
-    </nav>
+      <a class="button button-primary button-small header-download" href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">{{NAV_DOWNLOAD}}</a>
+      <button type="button" class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="{{NAV_MENU}}" hidden><svg class="nav-toggle-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="nav-toggle-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
   </div>
 </header>
