@@ -381,4 +381,135 @@ public class AiToolsEdgesTests : IDisposable
         Assert.Equal(250, _host.Macros.Find(macro.Id)!.Actions[0].DelayMs);
         Assert.False(saved.IsError && !saved.Text.Contains(macro.Id.ToString(), StringComparison.Ordinal), saved.Text);
     }
+
+    // ================= PuppyMacro's own notes name tools by their full names =================
+
+    /// <summary>A tool named without its prefix: an AI app has no tool of that name.</summary>
+    private static readonly Regex BareTool = new(@"(?<!puppymacro_)\b(get_component|set_enabled|check_hotkey|patch_item|search_library)\b");
+
+    [Fact]
+    public async Task Get_item_s_list_of_linked_components_names_get_component_in_full()
+    {
+        var component = new LibraryComponent
+        {
+            Name = "Press E", Purpose = ComponentPurpose.Act, Concept = "press_e",
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 0x45 } },
+        };
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "Diablo", Domain = LibraryDomain.Game, Components = { component } });
+        var macro = new MacroDefinition { Name = "Linked", Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id } } };
+        _host.Macros.Macros.Add(macro);
+
+        AiToolResult read = await Call("get_item", new { id = macro.Id.ToString() });
+
+        // AiTools.Call writes the tools' full names only in errors and "Waiting:"; LinkedList writes "get_component".
+        Assert.Contains("Linked components", read.Text);
+        Assert.False(BareTool.IsMatch(read.Text), read.Text);
+    }
+
+    [Fact]
+    public async Task Import_items_names_set_enabled_in_full()
+    {
+        _settings.Loops.Add(new LoopDefinition { Name = "Spam", Actions = { new LoopAction { KeyVk = 0x87 } } });
+        string file = (await Call("export_items")).Text;
+
+        AiToolResult imported = await Call("import_items", new { content = file });
+
+        Assert.StartsWith("Imported 1 item", imported.Text);
+        Assert.False(BareTool.IsMatch(imported.Text), imported.Text);
+    }
+
+    [Fact]
+    public async Task Import_items_counts_the_items_not_the_Library_collections_they_bring()
+    {
+        var component = new LibraryComponent
+        {
+            Name = "Press E", Purpose = ComponentPurpose.Act, Concept = "press_e",
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 0x45 } },
+        };
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "Diablo", Domain = LibraryDomain.Game, Components = { component } });
+        _host.Macros.Macros.Add(new MacroDefinition { Name = "Linked", Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id } } });
+        string file = (await Call("export_items")).Text;
+        // Another PC: no such collection yet.
+        _host.Macros.Library.Collections.Clear();
+        _host.Macros.Macros.Clear();
+
+        AiToolResult imported = await Call("import_items", new { content = file });
+
+        // One macro, and its collection added to the Library: ImportItems counts its lines, the collection's too.
+        Assert.False(imported.IsError, imported.Text);
+        Assert.Single(_host.Macros.Macros);
+        Assert.StartsWith("Imported 1 item,", imported.Text);
+    }
+
+    [Fact]
+    public async Task Import_items_asks_the_user_also_for_the_Library_collections_it_adds()
+    {
+        var component = new LibraryComponent
+        {
+            Name = "Press E", Purpose = ComponentPurpose.Act, Concept = "press_e",
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 0x45 } },
+        };
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "Diablo raid", Domain = LibraryDomain.Game, Components = { component } });
+        _host.Macros.Macros.Add(new MacroDefinition { Name = "Linked", Actions = { new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id } } });
+        string file = (await Call("export_items")).Text;
+        _host.Macros.Library.Collections.Clear();
+        _host.Macros.Macros.Clear();
+        _settings.AiAskBeforeChanging = true;
+
+        AiToolResult imported = await Call("import_items", new { content = file });
+
+        // The window lists the items only ("Import 1 item?"); Apply also adds the collection to the user's Library.
+        Assert.False(imported.IsError, imported.Text);
+        Assert.Single(_host.Macros.Library.Collections);
+        var (title, lines) = Assert.Single(_host.Confirmed);
+        Assert.True(lines.Any(l => l.Contains("Diablo raid", StringComparison.Ordinal)), title + "\n" + string.Join("\n", lines));
+    }
+
+    [Fact]
+    public async Task A_component_change_that_rewrites_macros_names_them_in_the_user_s_confirmation()
+    {
+        LibraryComponent strip = Kit.Comp("Strip one slot", new[] { Kit.SlotParam() }, Kit.Bound(Kit.Click(3912, 1056), ("Point", "Slot")));
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "Diablo IV", Domain = LibraryDomain.Game, AppExe = "Diablo IV.exe", Components = { strip } });
+        MacroDefinition macro = Kit.Macro("D4 salvage", Kit.Call(strip, ("Slot", Kit.Point(5, 6))));
+        _host.Macros.Macros.Add(macro);
+        _settings.AiAskBeforeChanging = true;
+        var settle = new { Name = "Settle", Type = "Number", Unit = "Ms", Example = 100 };
+
+        AiToolResult saved = await Call("patch_component", new
+        {
+            id = strip.Id.ToString(),
+            patch = new[] { new { op = "add", path = "/Parameters/-", value = settle } },
+            call_values = new { Settle = 120 },
+        });
+
+        // Saved: the macro's call now gives Settle 120. The user's window said only "Strip one slot" changes.
+        Assert.False(saved.IsError, saved.Text);
+        Assert.Contains("Updated 1 call(s)", saved.Text);
+        var (title, lines) = Assert.Single(_host.Confirmed);
+        Assert.True(lines.Any(l => l.Contains("D4 salvage", StringComparison.Ordinal)), title + "\n" + string.Join("\n", lines));
+    }
+
+    [Fact]
+    public async Task A_component_change_that_rewrites_macros_keeps_them_for_Restore_in_the_activity()
+    {
+        LibraryComponent strip = Kit.Comp("Strip one slot", new[] { Kit.SlotParam() }, Kit.Bound(Kit.Click(3912, 1056), ("Point", "Slot")));
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "Diablo IV", Domain = LibraryDomain.Game, AppExe = "Diablo IV.exe", Components = { strip } });
+        MacroDefinition macro = Kit.Macro("D4 salvage", Kit.Call(strip, ("Slot", Kit.Point(5, 6))));
+        _host.Macros.Macros.Add(macro);
+        string macroBefore = MacroJson.Serialize(macro);
+        var settle = new { Name = "Settle", Type = "Number", Unit = "Ms", Example = 100 };
+
+        AiToolResult saved = await Call("patch_component", new
+        {
+            id = strip.Id.ToString(),
+            patch = new[] { new { op = "add", path = "/Parameters/-", value = settle } },
+            call_values = new { Settle = 120 },
+        });
+
+        // The activity keeps the component before the change (Restore puts it back), not the macro whose call was
+        // rewritten: after Restore the component takes only Slot again while the macro's call still gives Settle.
+        Assert.False(saved.IsError, saved.Text);
+        Assert.NotEqual(macroBefore, MacroJson.Serialize(_host.Macros.Find(macro.Id)!));
+        Assert.Contains(_log.Entries(), e => e.ItemId == macro.Id && e.Before == macroBefore);
+    }
 }
