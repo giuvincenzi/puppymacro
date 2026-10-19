@@ -3,6 +3,6 @@
      workflow fails any other pull request that changes it. -->
 <Project>
   <PropertyGroup>
-    <Version>1.24.0</Version>
+    <Version>1.24.1</Version>
   </PropertyGroup>
 </Project>
