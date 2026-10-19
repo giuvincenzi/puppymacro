@@ -273,35 +273,38 @@ internal sealed class ComponentLibrary
 
     /// <summary>
     /// The macros and the components outside <paramref name="ids"/> that call one of them directly, each once; see
-    /// <see cref="CallersOf"/>.
+    /// <see cref="CallersOf"/>. <paramref name="savedToo"/>: an open item counts also by its saved version (a deletion is
+    /// refused while either uses it: the saved one stays if the editor is cancelled).
     /// </summary>
     private (List<(Guid Id, string Name)> Macros, List<(Guid Id, string Name)> Components) Callers(HashSet<Guid> ids,
-        IEnumerable<MacroDefinition> macros, IEnumerable<MacroDefinition>? open)
+        IEnumerable<MacroDefinition> macros, IEnumerable<MacroDefinition>? open, bool savedToo = false)
     {
-        // The last version of each open item counts, instead of the saved one.
+        // The last version of each open item counts, instead of the saved one (or with it).
         var editing = (open ?? Enumerable.Empty<MacroDefinition>()).GroupBy(m => m.Id).Select(g => g.Last()).ToList();
-        var editingIds = editing.Select(m => m.Id).ToHashSet();
-        var linking = macros.Where(m => !editingIds.Contains(m.Id))
+        var replaced = savedToo ? new HashSet<Guid>() : editing.Select(m => m.Id).ToHashSet();
+        var linking = macros.Where(m => !replaced.Contains(m.Id))
             .Concat(editing.Where(m => Find(m.Id) == null))
             .Where(m => Called(m).Any(ids.Contains))
             .Select(m => (m.Id, m.Name))
+            .DistinctBy(m => m.Id)
             .ToList();
-        var calling = AllComponents.Where(c => !editingIds.Contains(c.Id))
+        var calling = AllComponents.Where(c => !replaced.Contains(c.Id))
             .Select(c => (c.Id, c.Name, c.Actions))
             .Concat(editing.Where(m => Find(m.Id) != null).Select(m => (m.Id, m.Name, m.Actions)))
             .Where(c => !ids.Contains(c.Id) && ComponentSignatures.Callees(c.Actions).Any(ids.Contains))
             .Select(c => (c.Id, c.Name))
+            .DistinctBy(c => c.Id)
             .ToList();
         return (linking, calling);
     }
 
     /// <summary>
-    /// Why a component can't be deleted (macros link it, other components call it, the open editors' too: see
-    /// <see cref="CallersOf"/>), or null.
+    /// Why a component can't be deleted (macros link it, other components call it, as saved or as the open editors hold
+    /// them), or null.
     /// </summary>
     public string? CanDeleteComponent(LibraryComponent component, IEnumerable<MacroDefinition> macros, IEnumerable<MacroDefinition>? open = null)
     {
-        var (linking, calling) = Callers(new HashSet<Guid> { component.Id }, macros, open);
+        var (linking, calling) = Callers(new HashSet<Guid> { component.Id }, macros, open, savedToo: true);
         return InUse(component.Name, linking, calling,
             Strings.Library_ComponentInUse, Strings.Library_ComponentCalled, Strings.Library_ComponentInUseAndCalled);
     }
@@ -312,7 +315,7 @@ internal sealed class ComponentLibrary
     /// </summary>
     public string? CanDeleteCollection(LibraryCollection collection, IEnumerable<MacroDefinition> macros, IEnumerable<MacroDefinition>? open = null)
     {
-        var (linking, calling) = Callers(collection.Components.Select(c => c.Id).ToHashSet(), macros, open);
+        var (linking, calling) = Callers(collection.Components.Select(c => c.Id).ToHashSet(), macros, open, savedToo: true);
         return InUse(collection.Name, linking, calling,
             Strings.Library_CollectionInUse, Strings.Library_CollectionCalled, Strings.Library_CollectionInUseAndCalled);
     }

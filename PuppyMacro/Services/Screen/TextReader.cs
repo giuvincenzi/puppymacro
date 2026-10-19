@@ -20,7 +20,11 @@ namespace PuppyMacro.Services.Screen;
 /// </summary>
 internal static class TextReader
 {
+    /// <summary>One engine per language, for what Windows reads (its language, whether it can): never used to read.</summary>
     private static readonly ConcurrentDictionary<string, OcrEngine?> Engines = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The engines not reading now, per language: each read takes one (<see cref="Read"/>).</summary>
+    private static readonly ConcurrentDictionary<string, ConcurrentBag<OcrEngine>> Free = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>The languages Windows can read (their tags: "en-US", "it-IT"…).</summary>
     public static IReadOnlyList<string> Languages => OcrEngine.AvailableRecognizerLanguages.Select(l => l.LanguageTag).ToList();
@@ -29,24 +33,24 @@ internal static class TextReader
     /// The engine of a language; Windows' languages when it is null or Windows has not that language (any more). Null when
     /// Windows can read none of them.
     /// </summary>
-    private static OcrEngine? Engine(string? language)
+    private static OcrEngine? Engine(string? language) => Engines.GetOrAdd(language ?? "", Create);
+
+    /// <summary>A new engine of a language ("": Windows' languages), as <see cref="Engine"/> describes.</summary>
+    private static OcrEngine? Create(string tag)
     {
-        return Engines.GetOrAdd(language ?? "", tag =>
+        if (tag.Length > 0)
         {
-            if (tag.Length > 0)
+            try
             {
-                try
-                {
-                    var lang = new Language(tag);
-                    if (OcrEngine.IsLanguageSupported(lang))
-                        return OcrEngine.TryCreateFromLanguage(lang);
-                }
-                catch (ArgumentException)
-                {
-                }
+                var lang = new Language(tag);
+                if (OcrEngine.IsLanguageSupported(lang))
+                    return OcrEngine.TryCreateFromLanguage(lang);
             }
-            return OcrEngine.TryCreateFromUserProfileLanguages();
-        });
+            catch (ArgumentException)
+            {
+            }
+        }
+        return OcrEngine.TryCreateFromUserProfileLanguages();
     }
 
     /// <summary>Whether Windows can read a language on this PC (null: Windows' languages).</summary>
@@ -99,7 +103,21 @@ internal static class TextReader
         var bytes = new byte[bgra.Total() * 4];
         Marshal.Copy(bgra.Data, bytes, 0, bytes.Length);
         using var bitmap = SoftwareBitmap.CreateCopyFromBuffer(bytes.AsBuffer(), BitmapPixelFormat.Bgra8, bgra.Width, bgra.Height);
-        OcrResult result = engine.RecognizeAsync(bitmap).AsTask().GetAwaiter().GetResult();
+        // An engine reads one picture at a time (a second RecognizeAsync on it is refused): each read takes a free one of the
+        // language, made when all are busy, so two macros, or a macro and the editor, read at once (measured: 4 at once on
+        // engines of their own took 637 ms, one after the other on one engine 1526 ms).
+        var free = Free.GetOrAdd(language ?? "", _ => new ConcurrentBag<OcrEngine>());
+        if (!free.TryTake(out OcrEngine? reader) && (reader = Create(language ?? "")) == null)
+            return lines;
+        OcrResult result;
+        try
+        {
+            result = reader.RecognizeAsync(bitmap).AsTask().GetAwaiter().GetResult();
+        }
+        finally
+        {
+            free.Add(reader);
+        }
 
         // When Windows finds the text tilted it reads a straightened picture, and its places are turned by that angle
         // around the picture's center: they are turned back.

@@ -248,6 +248,49 @@ internal static class ComponentEdits
     }
 
     /// <summary>
+    /// Whether <see cref="WriteExamples"/> replaced a value someone wrote in a bound field: <paramref name="given"/> is the
+    /// component as written, <paramref name="written"/> the same after WriteExamples. A field counts when its value differs
+    /// from the Example written, from the Example its parameter had in <paramref name="before"/> (a field still holding the
+    /// old Example only follows a new one) and from its default (a field left out).
+    /// </summary>
+    public static bool ReplacedWritten(LibraryComponent given, LibraryComponent written, LibraryComponent? before)
+    {
+        static string Text(object? value) => System.Text.Json.JsonSerializer.Serialize(value, CodeJson.Options);
+        // The same actions with the Examples the parameters had before written in.
+        var old = given.Clone();
+        if (before != null)
+        {
+            old.Parameters = before.Parameters.ConvertAll(p => p.Clone());
+            WriteExamples(old);
+        }
+        var givenActions = MacroDefinition.Walk(given.Actions).ToList();
+        var writtenActions = MacroDefinition.Walk(written.Actions).ToList();
+        var oldActions = MacroDefinition.Walk(old.Actions).ToList();
+        bool Mine(string mine, object? writtenValue, object? oldValue, object? defaultValue) =>
+            mine != Text(writtenValue) && (before == null || mine != Text(oldValue)) && mine != Text(defaultValue);
+        for (int i = 0; i < givenActions.Count && i < writtenActions.Count && i < oldActions.Count; i++)
+        {
+            MacroAction g = givenActions[i], w = writtenActions[i], o = oldActions[i];
+            foreach (var (slot, _) in ComponentSlots.InOrder(g.Bind))
+                if (Mine(Text(ComponentSlots.Value(g, slot)), ComponentSlots.Value(w, slot), ComponentSlots.Value(o, slot),
+                        ComponentSlots.Value(new MacroAction { Type = g.Type }, slot)))
+                    return true;
+            var givenConditions = g.If?.Conditions ?? new List<MacroCondition>();
+            var writtenConditions = w.If?.Conditions ?? new List<MacroCondition>();
+            var oldConditions = o.If?.Conditions ?? new List<MacroCondition>();
+            for (int j = 0; j < givenConditions.Count && j < writtenConditions.Count && j < oldConditions.Count; j++)
+            {
+                MacroCondition gc = givenConditions[j], wc = writtenConditions[j], oc = oldConditions[j];
+                foreach (var (slot, _) in ComponentSlots.InOrder(gc.Bind))
+                    if (Mine(Text(ComponentSlots.Value(gc, slot)), ComponentSlots.Value(wc, slot), ComponentSlots.Value(oc, slot),
+                            ComponentSlots.Value(new MacroCondition { Kind = gc.Kind }, slot)))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
     /// A parameter renamed in the component's editor: its fields' Bind and the {"From"} of the calls inside follow, so the
     /// component keeps working.
     /// </summary>

@@ -148,6 +148,8 @@ public partial class MacroActionWindow
     {
         if (!_ready)
             return;
+        // An action that goes where an If found something has no place to go alone: no Test (the user's choice: not shown).
+        TestButton.Visibility = _if == null && _box.UsesFound ? Visibility.Collapsed : Visibility.Visible;
         if (_code.ValidateCode())
         {
             TestButton.IsEnabled = SaveButton.IsEnabled;
@@ -197,7 +199,7 @@ public partial class MacroActionWindow
                 _ = Conditions.CheckAllAsync();
             return;
         }
-        if ((_code.IsCode ? _code.Read() : BuildAction(TestButton)) is { } action)
+        if ((_code.IsCode ? _code.Read() : BuildAction(TestButton)) is { FoundId: null } action)
             ActionTestSession.Run(_engine, action, this);
     }
 

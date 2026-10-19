@@ -192,4 +192,43 @@ public class ConditionEditorTests
         app.GoTo("Settings");
         app.Find(app.MainWindow, "Look for images with");
     }
+
+    [Fact]
+    public void An_action_that_goes_where_an_If_found_something_has_no_Test()
+    {
+        var ready = new MacroCondition { Kind = ConditionKind.Text, Name = "Ready", Text = "Ready", AreaX = 0, AreaY = 0, AreaWidth = 300, AreaHeight = 100 };
+        MacroAction ifAction = new()
+        {
+            Type = MacroActionType.If,
+            Name = "E2E find",
+            If = new MacroIf
+            {
+                Conditions = { ready },
+                Then = { new MacroAction { Type = MacroActionType.Click, Vk = Vk.LButton, Name = "E2E click it", FoundId = ready.Id } },
+            },
+        };
+        MacroAction press = Press(Vk.F24);
+        press.Name = "E2E press";
+        using var app = new AppSession(seed => seed.Macros.Add(Macro("E2E no test", null, ifAction, press)));
+        app.GoTo("Macros");
+        app.EditItem("E2E no test");
+        Window editor = app.Dialog("Edit macro");
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.Contains("E2E click it")), AppSession.Timeout).Success,
+            $"no click row. Rows: {string.Join(" | ", list.Items.Select(i => i.Name))}");
+
+        // A plain action has Test.
+        list.Items.First(i => i.Name.Contains("E2E press")).Select();
+        Assert.NotNull(app.EditorCommand(editor, "TestActionButton"));
+
+        // The click where the text was found: no Test on the bar nor in ⋯, nor in its window.
+        list.Items.First(i => i.Name.Contains("E2E click it")).Select();
+        Assert.True(Retry.WhileFalse(() => editor.FindFirstDescendant(cf => cf.ByAutomationId("TestActionButton")) == null,
+            AppSession.Timeout).Success, "Test is shown for an action that goes where the If found something");
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
+        Window action = ChildDialog(editor, "Edit click");
+        app.FindById(action, "SaveButton");
+        Assert.Null(action.FindFirstDescendant(cf => cf.ByAutomationId("TestButton")));
+        app.FindById(action, "CancelButton").AsButton().Invoke();
+    }
 }

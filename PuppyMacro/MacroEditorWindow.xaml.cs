@@ -517,8 +517,10 @@ public partial class MacroEditorWindow
         // A group alone is already a group.
         GroupButton.IsEnabled = any && SelectedGroup == null && _list.CanGroup(SelectedActions, SelectedGroups);
         PasteButton.IsEnabled = s_clipboard is { IsEmpty: false };
-        // An If is not played by Test: its Then would run on whatever is on the screen.
+        // An If is not played by Test: its Then would run on whatever is on the screen. An action that goes where an If found
+        // something has no place to go alone, so it has no Test (the user's choice: not shown).
         TestActionButton.IsEnabled = SelectedRow is { Action.Type: not MacroActionType.If };
+        TestActionButton.Visibility = SelectedRow is { Action.FoundId: not null } ? Visibility.Collapsed : Visibility.Visible;
         SaveAsComponentButton.IsEnabled = CanSaveAsComponent();
         UnlinkButton.IsEnabled = SelectedActions.Any(a => a.Type == MacroActionType.Component && LinkedComponent(a) != null);
         EditActionButton.IsEnabled = SelectedRow != null || SelectedGroup != null || SelectedBranch != null;

@@ -103,7 +103,7 @@ internal sealed partial class AiTools
     {
         Guid id = IdArg(args, "id", "a component's Id (search_library finds them)");
         if (_host.Macros.Library.Find(id) is not { } found)
-            return Task.FromResult(AiToolResult.Error($"No component has the Id {id}. search_library finds them."));
+            return Task.FromResult(AiToolResult.Error(NotAComponent(id, "get_item reads it.")));
         var (collection, component) = found;
         _log.Add(app, AiActivityKind.Read, Phrase.Of("Ai_ReadComponent", component.Name));
         var usedIn = _host.Macros.Macros
@@ -141,6 +141,10 @@ internal sealed partial class AiTools
         ObjectArg(args, "call_values", "for each parameter the answer named, the value every call without a fitting one gets");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
+        // An Id that is no component is said as such, not as a problem of the component.
+        if (editId is Guid editing && await _host.Ui(() => Task.FromResult(_host.Macros.Library.Find(editing) == null
+                ? NotAComponent(editing, "save_loop, save_macro, save_remap or patch_item changes it.") : null)).ConfigureAwait(false) is string notOne)
+            return AiToolResult.Error(notOne);
 
         LibraryComponent component;
         try
@@ -171,9 +175,9 @@ internal sealed partial class AiTools
             if (name == null)
                 return (bad, (string?)null, "");
             // A bound field holds its parameter's Example: what the AI app wrote there is replaced.
-            string asGiven = CodeJson.Serialize(component);
+            var given = component.Clone();
             ComponentEdits.WriteExamples(component);
-            examplesWritten = asGiven != CodeJson.Serialize(component);
+            examplesWritten = ComponentEdits.ReplacedWritten(given, component, existing);
             var others = library.AllComponents.Where(c => c.Id != component.Id).ToList();
             var problems = ComponentLibrary.Problems(component, _host.Macros.Images.Has, others.Append(component));
             if (problems.Count > 0)
@@ -235,9 +239,7 @@ internal sealed partial class AiTools
             throw new FormatException("Give the \"patch\": the operations that change the component.");
         (string? json, string? missing) = await _host.Ui(() => Task.FromResult(_host.Macros.Library.Find(id) is { } found
             ? ((string?)CodeJson.Serialize(found.Component), (string?)null)
-            : (null, Find(id) is { } item
-                ? $"The Id {id} is a {Kind(item)}, not a component. patch_item changes it."
-                : $"No component has the Id {id}. search_library finds them."))).ConfigureAwait(false);
+            : (null, NotAComponent(id, "patch_item changes it.")))).ConfigureAwait(false);
         if (json == null)
             return AiToolResult.Error(missing!);
 
@@ -260,16 +262,15 @@ internal sealed partial class AiTools
         {
             var library = _host.Macros.Library;
             if (library.Find(id) is not { } found)
-                return (Find(id) is { } item
-                    ? $"The Id {id} is a {Kind(item)}, not a component. delete_item deletes it."
-                    : $"No component has the Id {id}. search_library finds them.", (LibraryComponent?)null, (string?)null, (string?)null);
+                return (NotAComponent(id, "delete_item deletes it."), (LibraryComponent?)null, (string?)null, (string?)null);
             if (library.CanDeleteComponent(found.Component, _host.Macros.Macros) is string used)
                 return (used, null, null, null);
             // What Restore puts back: the collection with only this component, so it returns where it was.
             var kept = found.Collection.Clone();
             kept.Components.Clear();
             kept.Components.Add(found.Component.Clone());
-            return ((string?)null, found.Component, ComponentLibrary.StructuredName(found.Collection, found.Component),
+            // A copy: the label and the confirmation read it off the UI thread.
+            return ((string?)null, found.Component.Clone(), ComponentLibrary.StructuredName(found.Collection, found.Component),
                 CodeJson.Serialize(kept));
         }))).ConfigureAwait(false);
         if (problem != null || component == null)
@@ -332,6 +333,15 @@ internal sealed partial class AiTools
         _host.Macros.Library.Find(id) is { } found
             ? $"The Id {id} is the component \"{ComponentLibrary.StructuredName(found.Collection, found.Component)}\", not a {kinds}. {forComponent}"
             : $"No {kinds} has the Id {id}.{otherwise}";
+
+    /// <summary>
+    /// The error for an Id that is no component, on the UI thread: a loop's, macro's or remap's names its kind and
+    /// <paramref name="forItem"/> (what does this to it); otherwise where components' Ids are found.
+    /// </summary>
+    private string NotAComponent(Guid id, string forItem) =>
+        Find(id) is { } item
+            ? $"The Id {id} is a {Kind(item)}, not a component. {forItem}"
+            : $"No component has the Id {id}. search_library finds them.";
 
     /// <summary>
     /// The guided update of the calls when a component's signature changes (SignatureUpdate): the macros and components whose

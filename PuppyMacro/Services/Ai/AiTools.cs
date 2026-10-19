@@ -907,7 +907,7 @@ internal sealed partial class AiTools
     {
         object? existing = editId is Guid id ? Find(id) : null;
         if (editId != null && existing is not T)
-            return (null, $"No {typeof(T).Name.Replace("Definition", "").ToLowerInvariant()} has the Id {editId}.", null);
+            return (null, NotAnItem(editId.Value, typeof(T).Name.Replace("Definition", "").ToLowerInvariant(), "save_component or patch_component changes it."), null);
         Guid itemId = editId ?? Guid.NewGuid();
 
         JsonObject node = JsonNode.Parse(item.GetRawText()) as JsonObject ?? new JsonObject();

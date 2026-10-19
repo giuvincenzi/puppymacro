@@ -120,13 +120,15 @@ public class ComponentUsesTests
     }
 
     [Fact]
-    public void An_open_editor_s_link_blocks_deleting_and_its_removed_link_does_not()
+    public void An_open_editor_s_link_blocks_deleting_and_so_does_the_saved_link_it_removed()
     {
         var saved = Macro("D4", Call(_free));
         var edited = saved.Clone();
         edited.Actions.Clear();
         Assert.NotNull(_library.CanDeleteComponent(_free, new MacroDefinition[0], new[] { Macro("Open", Call(_free)) }));
-        Assert.Null(_library.CanDeleteComponent(_free, new[] { saved }, new[] { edited }));
+        // The editor may still be cancelled: the saved macro keeps its link, named once.
+        Assert.Equal("Free is linked in these macros: D4. Unlink it there first.", _library.CanDeleteComponent(_free, new[] { saved }, new[] { edited }));
+        Assert.Equal("Free is linked in these macros: D4. Unlink it there first.", _library.CanDeleteComponent(_free, new[] { saved }, new[] { saved.Clone() }));
     }
 
     [Fact]
