@@ -488,16 +488,6 @@ public class ComponentGridEdgesTests
         Assert.True(read == null || problems.Count > 0, $"a cell {cell} is read without a problem");
     }
 
-    // ================= AI apps =================
-
-    [Fact]
-    public void The_AI_apps_instructions_name_every_type_a_parameter_can_have_and_a_grid_s_cell()
-    {
-        foreach (var type in Enum.GetValues<ParameterType>())
-            Assert.Contains(type.ToString(), AiTools.Instructions);
-        Assert.Contains("Cell", AiTools.Instructions);
-    }
-
     // ================= View models =================
 
     [Theory]

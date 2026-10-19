@@ -181,9 +181,11 @@ internal sealed partial class AiTools
 
     private static Rect? AreaArg(JsonElement args, string name, string unit = "screen pixels")
     {
-        if (args.ValueKind != JsonValueKind.Object || !args.TryGetProperty(name, out JsonElement a) || a.ValueKind != JsonValueKind.Object)
+        if (!Given(args, name, out JsonElement a))
             return null;
-        int Get(string field) => a.TryGetProperty(field, out JsonElement v) && v.TryGetInt32(out int n)
+        if (a.ValueKind != JsonValueKind.Object)
+            throw new FormatException($"\"{name}\" must be an object with X, Y, Width and Height (whole numbers, {unit}), not {JsonKind(a)}.");
+        int Get(string field) => a.TryGetProperty(field, out JsonElement v) && v.ValueKind == JsonValueKind.Number && v.TryGetInt32(out int n)
             ? n : throw new FormatException($"\"{name}\" needs X, Y, Width and Height (whole numbers, {unit}).");
         var rect = new Rect(Get("X"), Get("Y"), Get("Width"), Get("Height"));
         if (rect.Width < 1 || rect.Height < 1)
@@ -202,6 +204,14 @@ internal sealed partial class AiTools
         !Given(args, name, out JsonElement v) ? null
         : v.ValueKind == JsonValueKind.Number && v.TryGetInt32(out int n) ? n
         : throw new FormatException($"\"{name}\" must be a whole number.");
+
+    /// <summary>A whole number from <paramref name="min"/> to <paramref name="max"/>, or null when left out; outside them is an input error.</summary>
+    private static int? IntArg(JsonElement args, string name, int min, int max = int.MaxValue) =>
+        IntArg(args, name) is not int n ? null
+        : n >= min && n <= max ? n
+        : throw new FormatException(max == int.MaxValue
+            ? $"\"{name}\" must be at least {min}; it is {n}."
+            : $"\"{name}\" must be from {min} to {max}; it is {n}.");
 
     private static double? NumberArg(JsonElement args, string name) =>
         !Given(args, name, out JsonElement v) ? null
@@ -436,7 +446,10 @@ internal sealed partial class AiTools
             return AiToolResult.Error(TestOff);
         Guid id = IdArg(args, "id");
         AiAsk ask = Asking(args);
-        double seconds = Math.Clamp(NumberArg(args, "max_seconds") ?? DefaultTestSeconds, 1, 600);
+        RequireConfirmedSteps(args);
+        double seconds = NumberArg(args, "max_seconds") ?? DefaultTestSeconds;
+        if (seconds is < 1 or > 600)
+            throw new FormatException(FormattableString.Invariant($"\"max_seconds\" must be from 1 to 600; it is {seconds}."));
         (string? name, string? problem) = await _host.Ui(() => Task.FromResult(_host.Macros.Find(id) switch
         {
             null => ((string?)null, (string?)"No macro has this Id (get_overview lists them)."),

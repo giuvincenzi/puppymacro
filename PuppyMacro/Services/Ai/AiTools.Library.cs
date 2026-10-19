@@ -32,11 +32,11 @@ internal sealed partial class AiTools
         Guid? collectionId = Str(args, "collection") is { Length: > 0 } idText
             ? Guid.TryParse(idText, out Guid parsed) ? parsed : throw new FormatException("\"collection\" must be a collection's Id.")
             : null;
-        string? domain = Str(args, "domain")?.Trim().ToLowerInvariant();
+        string? domain = OneOf(args, "domain", Domains, "every domain");
         string? appSlug = Str(args, "app")?.Trim().ToLowerInvariant();
-        string? purpose = Str(args, "purpose")?.Trim().ToLowerInvariant();
+        string? purpose = OneOf(args, "purpose", Enum.GetNames<ComponentPurpose>().Select(n => n.ToLowerInvariant()).ToList(), "every purpose");
         var words = (Str(args, "words") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        int limit = Math.Clamp(IntArg(args, "limit") ?? DefaultSearchLimit, 1, 200);
+        int limit = IntArg(args, "limit", 1, 200) ?? DefaultSearchLimit;
         var links = ComponentLibrary.Links(_host.Macros.Macros);
 
         var found = _host.Macros.Library.Collections
@@ -70,6 +70,9 @@ internal sealed partial class AiTools
         };
         return Task.FromResult(new AiToolResult(JsonSerializer.Serialize(answer, CompactAnswer)));
     });
+
+    /// <summary>The Library's domains as the AI tools write them: "game", "office"…</summary>
+    private static readonly string[] Domains = Enum.GetNames<LibraryDomain>().Select(n => n.ToLowerInvariant()).ToArray();
 
     private static readonly JsonSerializerOptions CompactAnswer = new(AnswerOptions)
     {
@@ -133,6 +136,8 @@ internal sealed partial class AiTools
         if (!args.TryGetProperty("component", out JsonElement item) || item.ValueKind != JsonValueKind.Object)
             return AiToolResult.Error("Give the component in \"component\": Name, Purpose, Concept, Description and Actions.");
         Guid? editId = OptionalIdArg(args, "id", "the Id of the component to change (search_library finds them); leave it out for a new one");
+        RenamedArg(args);
+        ObjectArg(args, "call_values", "for each parameter the answer named, the value every call without a fitting one gets");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
@@ -159,7 +164,8 @@ internal sealed partial class AiTools
             component.Id = editId ?? Guid.NewGuid();
             // A new component's collection is checked here, before the user is asked, as the Library will check it.
             string? bad = null;
-            string? name = editId is Guid known ? library.Find(known)!.Value.Collection.Name : CollectionArg(args, component, out bad)?.Name;
+            string? name = editId is Guid known ? KeptCollection(args, library.Find(known)!.Value.Collection, out bad)
+                : CollectionArg(args, component, out bad)?.Name;
             if (name == null)
                 return (bad, (string?)null, "");
             // A bound field holds its parameter's Example.
@@ -220,18 +226,14 @@ internal sealed partial class AiTools
         macros = new List<MacroDefinition>();
         components = new List<LibraryComponent>();
         text = "";
-        var renamed = new Dictionary<string, string>();
-        if (args.TryGetProperty("renamed", out JsonElement r) && r.ValueKind == JsonValueKind.Object)
-            foreach (var p in r.EnumerateObject())
-                if (p.Value.ValueKind == JsonValueKind.String)
-                    renamed[p.Name] = p.Value.GetString()!;
+        Dictionary<string, string> renamed = RenamedArg(args);
         var update = SignatureUpdate.Compare(existing, after, _host.Macros.Macros, others, renamed);
         if (!update.Needed)
             return null;
         var signatures = new ComponentSignatures(others.Append(after));
         var values = new Dictionary<string, JsonNode>();
         var missing = new List<string>();
-        JsonElement given = args.TryGetProperty("call_values", out JsonElement v) && v.ValueKind == JsonValueKind.Object ? v : default;
+        JsonElement given = Given(args, "call_values", out JsonElement v) ? v : default;
         foreach (var parameter in update.NeedValue)
         {
             JsonNode? value = given.ValueKind == JsonValueKind.Object && given.TryGetProperty(parameter.Name, out JsonElement e)
@@ -275,8 +277,13 @@ internal sealed partial class AiTools
     private LibraryCollection? CollectionArg(JsonElement args, LibraryComponent component, out string? problem)
     {
         problem = "Give the collection in \"collection\": {\"id\": an existing collection's Id}, or {\"name\", \"domain\", \"app\"} for a new one.";
-        if (!args.TryGetProperty("collection", out JsonElement c) || c.ValueKind != JsonValueKind.Object)
+        if (!Given(args, "collection", out JsonElement c))
             return null;
+        if (c.ValueKind != JsonValueKind.Object)
+        {
+            problem = $"\"collection\" must be an object, not {JsonKind(c)}: " + problem;
+            return null;
+        }
         if (Given(c, "id", out JsonElement idValue))
         {
             if (idValue.ValueKind == JsonValueKind.String && Guid.TryParse(idValue.GetString(), out Guid id)
@@ -314,7 +321,7 @@ internal sealed partial class AiTools
         {
             Name = nameValue.GetString()!.Trim(),
             Domain = domain,
-            AppExe = AppScope.Normalize(Str(c, "app")),
+            AppExe = AppScope.Normalize(Str(c, "app", "collection.app")),
             Screen = LibraryScreens.Of(component.Actions),
         };
         if (ComponentLibrary.CheckCollection(collection) is string bad)
@@ -325,6 +332,36 @@ internal sealed partial class AiTools
         problem = null;
         return collection;
     }
+
+    /// <summary>
+    /// A changed component stays in its collection: its name, or null with why when "collection" names another one or a new
+    /// one (left out, or {"id"} of its own, is fine).
+    /// </summary>
+    private static string? KeptCollection(JsonElement args, LibraryCollection own, out string? problem)
+    {
+        problem = null;
+        if (!Given(args, "collection", out JsonElement c)
+            || c.ValueKind == JsonValueKind.Object && c.EnumerateObject().All(p => p.Name == "id")
+               && c.TryGetProperty("id", out JsonElement id) && id.ValueKind == JsonValueKind.String
+               && Guid.TryParse(id.GetString(), out Guid given) && given == own.Id)
+            return own.Name;
+        problem = $"A component never moves to another collection: this one stays in \"{own.Name}\" (Id {own.Id}). " +
+                  "\"collection\" is for a new component; with \"id\" it is left out.";
+        return null;
+    }
+
+    /// <summary>save_component's renamed: each old parameter name with its new one; anything else is an input error naming it.</summary>
+    private static Dictionary<string, string> RenamedArg(JsonElement args) =>
+        ObjectArg(args, "renamed", "each old name with its new name, {\"Old\": \"New\"}").ToDictionary(p => p.Name, p =>
+            p.Value.ValueKind == JsonValueKind.String && p.Value.GetString()!.Trim().Length > 0
+                ? p.Value.GetString()!
+                : throw new FormatException($"\"renamed.{p.Name}\" must be the parameter's new name, a text with something in it."));
+
+    /// <summary>An object argument's fields, none when left out (or null); anything else is an input error naming it.</summary>
+    private static IEnumerable<JsonProperty> ObjectArg(JsonElement args, string name, string what) =>
+        !Given(args, name, out JsonElement value) ? Enumerable.Empty<JsonProperty>()
+        : value.ValueKind == JsonValueKind.Object ? value.EnumerateObject().ToList()
+        : throw new FormatException($"\"{name}\" must be an object ({what}), not {JsonKind(value)}.");
 
     // ================= get_item in pieces =================
 
@@ -366,12 +403,41 @@ internal sealed partial class AiTools
     }
 
     /// <summary>
-    /// A macro's outline: one line per action with its JSON Pointer, type, name and, for an If, its conditions' kinds and
-    /// names; down to <paramref name="depth"/> levels of Then and Else. A linked row names its component.
+    /// "Settings: Mode Hold, Hotkey F5, Repeat Loop, ChecksPerSecond 60, Debug on": the item's fields that differ from their
+    /// defaults (the ones get_item's compact JSON keeps), without its Id, name and actions, on one line, in English.
+    /// </summary>
+    internal static string SettingsLine(object item) => Loc.English(() =>
+    {
+        var node = (JsonObject)JsonNode.Parse(AiJson.Compact(item))!;
+        var info = CodeJson.Options.GetTypeInfo(item.GetType());
+        var parts = new List<string>();
+        foreach (var (name, value) in node)
+        {
+            if (name is "Id" or "Name" or "Actions")
+                continue;
+            object? field = info.Properties.FirstOrDefault(p => p.Name == name)?.Get?.Invoke(item);
+            parts.Add(name + " " + (field, value) switch
+            {
+                (HotkeyBinding keys, _) => KeyNames.Format(keys),
+                (_, JsonValue v) when v.GetValueKind() == JsonValueKind.True => "on",
+                (_, JsonValue v) when v.GetValueKind() == JsonValueKind.False => "off",
+                (_, JsonValue v) when v.GetValueKind() == JsonValueKind.String => v.GetValue<string>(),
+                (_, JsonArray list) => list.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                _ => value?.ToJsonString(CompactJson) ?? "null",
+            });
+        }
+        return "Settings: " + (parts.Count == 0 ? "all at their defaults" : string.Join(", ", parts));
+    });
+
+    /// <summary>
+    /// A macro's outline: first its settings that differ from their defaults (<see cref="SettingsLine"/>), so a model that
+    /// reads only the outline of a big macro sees them too; then one line per action with its JSON Pointer, type, name and,
+    /// for an If, its conditions' kinds and names; down to <paramref name="depth"/> levels of Then and Else. A linked row
+    /// names its component.
     /// </summary>
     internal string Outline(MacroDefinition macro, int depth)
     {
-        var text = new StringBuilder();
+        var text = new StringBuilder(SettingsLine(macro)).Append('\n');
         void Walk(List<MacroAction> actions, string path, int level)
         {
             for (int i = 0; i < actions.Count; i++)

@@ -28,7 +28,7 @@ internal sealed class FakeAiHost : IAiHost
     public HashSet<Guid> Running { get; } = new();
     public bool AnyRunning => Running.Count > 0;
     public bool OverlayModeActive { get; set; }
-    public bool UserIsEditing { get; set; }
+    public string? UserHasOpen { get; set; }
 
     /// <summary>Set: the user's windows (confirmation, ready) wait until the test completes it.</summary>
     public TaskCompletionSource<bool>? Hold { get; set; }
@@ -1004,15 +1004,22 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Nothing_runs_while_the_user_has_a_PuppyMacro_window_open()
+    public async Task Nothing_runs_while_the_user_has_a_PuppyMacro_window_open_and_the_answer_names_it()
     {
-        _host.UserIsEditing = true;
+        _host.UserHasOpen = "the macro editor of \"Salvage\"";
 
         AiToolResult result = await Call("save_remap", CtrlXToA);
+        AiToolResult picked = await Call("pick_app", new { title = "Pick", description = "Why", steps = new[] { "Click it" } });
+        using JsonDocument overview = JsonDocument.Parse((await Call("get_overview", new { })).Text);
 
         Assert.True(result.IsError);
-        Assert.Contains("PuppyMacro window open", result.Text);
+        Assert.StartsWith("The user has the macro editor of \"Salvage\" open in PuppyMacro.", result.Text);
+        Assert.True(picked.IsError);
+        Assert.Contains("the macro editor of \"Salvage\"", picked.Text);
         Assert.Empty(_host.Saved);
+        Assert.Empty(_host.ReadyShown);
+        Assert.True(overview.RootElement.GetProperty("UserIsEditing").GetBoolean());
+        Assert.Equal("the macro editor of \"Salvage\"", overview.RootElement.GetProperty("UserHasOpen").GetString());
     }
 
     [Fact]
@@ -1219,5 +1226,190 @@ public class AiToolsTests : IDisposable
         Assert.Equal(farm.Id, Assert.Single(Assert.Single(_host.ExportShown)));
         Assert.Equal("The user exported 1 item to Farm.puppyitems.", exported.Text);
         Assert.True(unknown.IsError);
+    }
+
+    // ================= Arguments: a wrong one is an error naming it =================
+
+    /// <summary>
+    /// An argument of the wrong type, an unknown value of a list of values, a number out of its range or an argument that
+    /// goes with another one left out: an input error (isError) that names the argument, never read as left out (ID: a new
+    /// Id, for the tools that read the arguments before looking for the item).
+    /// </summary>
+    [Theory]
+    [InlineData("get_item", """{"id":"ID","path":5}""", "\"path\"")]
+    [InlineData("get_item", """{"id":"ID","outline":true,"path":"/Actions/0"}""", "\"path\"")]
+    [InlineData("get_item", """{"id":"ID","outline_depth":2}""", "\"outline_depth\"")]
+    [InlineData("get_item", """{"id":"ID","outline":true,"outline_depth":30}""", "\"outline_depth\"")]
+    [InlineData("get_item", """{"id":5}""", "\"id\"")]
+    [InlineData("get_overview", """{"limit":0}""", "\"limit\"")]
+    [InlineData("get_overview", """{"offset":-1}""", "\"offset\"")]
+    [InlineData("get_overview", """{"words":["diablo"]}""", "\"words\"")]
+    [InlineData("get_schema", """{"kind":"button"}""", "\"kind\"")]
+    [InlineData("get_schema", """{"kind":1}""", "\"kind\"")]
+    [InlineData("get_help", """{"topic":2}""", "\"topic\"")]
+    [InlineData("check_hotkey", """{"hotkey":{"Vk":112},"for":"macro"}""", "\"for\"")]
+    [InlineData("check_hotkey", """{"hotkey":{"Vk":112},"mode":"Press"}""", "\"mode\"")]
+    [InlineData("check_hotkey", """{"hotkey":{"Vk":112},"app":5}""", "\"app\"")]
+    [InlineData("check_hotkey", """{"hotkey":"F1"}""", "\"hotkey\"")]
+    [InlineData("search_library", """{"domain":"games"}""", "\"domain\"")]
+    [InlineData("search_library", """{"purpose":"click"}""", "\"purpose\"")]
+    [InlineData("search_library", """{"app":3}""", "\"app\"")]
+    [InlineData("search_library", """{"collection":7}""", "\"collection\"")]
+    [InlineData("search_library", """{"limit":500}""", "\"limit\"")]
+    [InlineData("update_actions", """{"id":"ID","set":{"DelayMs":5},"group":3}""", "\"group\"")]
+    [InlineData("update_settings", """{"settings":{"Theme":true}}""", "\"settings\"")]
+    [InlineData("import_items", """{"content":"{}","only":["a"]}""", "\"only\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"count":"2","labels":["A","B"]}""", "\"count\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"count":1,"labels":"A"}""", "\"labels\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"count":1,"labels":[1]}""", "\"labels\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":"C","count":1,"labels":["A"]}""", "\"confirmed_steps\"")]
+    [InlineData("pick_app", """{"title":"T","description":"D","steps":"Click it"}""", "\"steps\"")]
+    [InlineData("pick_app", """{"title":"T","description":"D","steps":["Click it",2]}""", "\"steps\"")]
+    [InlineData("pick_app", """{"title":5,"description":"D","steps":["S"]}""", "\"title\"")]
+    [InlineData("pick_pixel", """{"title":"T","description":"D","steps":["S"],"x":5,"y":6}""", "\"x\"")]
+    [InlineData("pick_pixel", """{"snapshot_id":5,"x":5,"y":6}""", "\"snapshot_id\"")]
+    [InlineData("take_image", """{"title":"T","description":"D","steps":["S"],"area":{"X":0,"Y":0,"Width":9,"Height":9}}""", "\"area\"")]
+    [InlineData("test_macro", """{"id":"ID","title":"T","description":"D","steps":["S"]}""", "\"confirmed_steps\"")]
+    [InlineData("test_macro", """{"id":"ID","title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"max_seconds":900}""", "\"max_seconds\"")]
+    [InlineData("record_macro", """{"title":"T","description":"D","steps":["S"],"mouse_movement":"yes"}""", "\"mouse_movement\"")]
+    [InlineData("wait_for_user", """{"request_id":5}""", "\"request_id\"")]
+    [InlineData("wait_for_user", """{}""", "\"request_id\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"renamed":"Slot"}""", "\"renamed\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"renamed":{"Old":5}}""", "\"renamed.Old\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"call_values":3}""", "\"call_values\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"collection":"Diablo"}""", "\"collection\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"collection":{"name":"Diablo","app":5}}""", "\"collection.app\"")]
+    [InlineData("open_item", """{"id":"ID","title":"T","description":["D"]}""", "\"description\"")]
+    public async Task A_wrong_argument_is_an_error_that_names_it(string tool, string args, string named)
+    {
+        AiToolResult result = await _tools.Call(AiTools.Name(tool),
+            JsonDocument.Parse(args.Replace("ID", Guid.NewGuid().ToString(), StringComparison.Ordinal)).RootElement,
+            App, TestContext.Current.CancellationToken);
+
+        Assert.True(result.IsError, result.Text);
+        Assert.Contains(named, result.Text);
+        Assert.Empty(_host.ReadyShown);
+        Assert.Empty(_host.Saved);
+    }
+
+    [Fact]
+    public async Task An_argument_left_out_or_null_keeps_meaning_not_given_and_values_are_read_in_any_case()
+    {
+        AiToolResult nulls = await Call("check_hotkey", new { hotkey = new { Vk = 0x87 }, @for = (string?)null, mode = (string?)null, app = (string?)null });
+        AiToolResult hold = await Call("check_hotkey", new { hotkey = new { Vk = 0x87 }, @for = "HOTKEY", mode = "hold" });
+        AiToolResult search = await Call("search_library", new { domain = "Game", purpose = (string?)null, collection = "" });
+
+        Assert.False(nulls.IsError, nulls.Text);
+        Assert.False(hold.IsError, hold.Text);
+        Assert.False(search.IsError, search.Text);
+    }
+
+    [Fact]
+    public async Task The_name_of_a_debug_folder_never_fails_on_a_wrong_id()
+    {
+        Assert.Null(await _tools.SubjectOf(JsonSerializer.SerializeToElement(new { id = 5 })));
+        Assert.Null(await _tools.SubjectOf(JsonSerializer.SerializeToElement(new { id = "abc" })));
+    }
+
+    [Fact]
+    public async Task A_picture_s_area_that_is_not_an_object_is_an_error_naming_it()
+    {
+        AiToolResult look = await Call("look_at_screen", new { title = "T", description = "D", steps = new[] { "S" } });
+        string uri = DebugStore.UriOf(Assert.Single(look.Files, f => f.EndsWith(".png", StringComparison.Ordinal)));
+
+        AiToolResult read = await Call("read_resource", new { uri, area = "all" });
+
+        Assert.True(read.IsError, read.Text);
+        Assert.Contains("\"area\" must be an object", read.Text);
+    }
+
+    [Fact]
+    public async Task A_changed_component_never_moves_to_another_collection()
+    {
+        var component = new LibraryComponent
+        {
+            Name = "Slot", Purpose = ComponentPurpose.Point, Concept = "slot",
+            Actions = { new MacroAction { Type = MacroActionType.Click, Vk = 0x01, X = 5, Y = 6 } },
+        };
+        var collection = new LibraryCollection { Name = "Diablo", Domain = LibraryDomain.Game, Components = { component } };
+        _host.Macros.Library.Collections.Add(collection);
+        object item = new { Name = "Slot", Purpose = "Point", Concept = "slot", Actions = new[] { new { Type = "Click", Vk = 1, X = 7, Y = 8 } } };
+
+        AiToolResult moved = await Call("save_component", new { id = component.Id.ToString(), collection = new { name = "Other" }, component = item });
+        AiToolResult kept = await Call("save_component", new { id = component.Id.ToString(), collection = new { id = collection.Id.ToString() }, component = item });
+
+        Assert.True(moved.IsError);
+        Assert.Contains("never moves to another collection", moved.Text);
+        Assert.False(kept.IsError, kept.Text);
+        Assert.Equal(7, Assert.Single(collection.Components).Actions[0].X);
+    }
+
+    // ================= get_item's outline =================
+
+    [Fact]
+    public async Task The_outline_starts_with_the_macro_s_settings_that_differ_from_their_defaults()
+    {
+        var plain = new MacroDefinition { Name = "Plain", Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 65 } } };
+        var tuned = new MacroDefinition
+        {
+            Name = "Salvage", Hotkey = new HotkeyBinding { Vk = 0x74 }, Mode = ActivationMode.Hold, Repeat = RepeatMode.Loop,
+            ChecksPerSecond = 60, Debug = true, AppExe = "Diablo IV.exe",
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 65 } },
+        };
+        _host.Macros.Macros.Add(plain);
+        _host.Macros.Macros.Add(tuned);
+
+        string[] plainLines = (await Call("get_item", new { id = plain.Id.ToString(), outline = true })).Text.Split('\n');
+        string[] tunedLines = (await Call("get_item", new { id = tuned.Id.ToString(), outline = true })).Text.Split('\n');
+
+        Assert.Equal("Settings: all at their defaults", plainLines[0]);
+        Assert.StartsWith("/Actions/0 PressKey", plainLines[1]);
+        Assert.StartsWith("Settings: ", tunedLines[0]);
+        foreach (string setting in new[] { "Hotkey F5", "Mode Hold", "Repeat Loop", "ChecksPerSecond 60", "Debug on", "AppExe Diablo IV.exe" })
+            Assert.Contains(setting, tunedLines[0]);
+        Assert.DoesNotContain("Salvage", tunedLines[0]);
+        Assert.DoesNotContain("Actions", tunedLines[0]);
+        Assert.StartsWith("/Actions/0 PressKey", tunedLines[1]);
+    }
+
+    [Fact]
+    public void The_settings_line_names_a_loop_s_and_a_remap_s_settings_too()
+    {
+        var loop = new LoopDefinition { Name = "Spam", Enabled = false, Hotkey = new HotkeyBinding { Vk = 0x74 } };
+        var remap = new RemapDefinition { Source = CtrlX.Clone(), Target = new HotkeyBinding { Vk = 0x41 } };
+
+        string loopLine = AiTools.SettingsLine(loop);
+        string remapLine = AiTools.SettingsLine(remap);
+
+        Assert.Contains("Enabled off", loopLine);
+        Assert.Contains("Hotkey F5", loopLine);
+        Assert.DoesNotContain("Spam", loopLine);
+        Assert.Contains("Source ", remapLine);
+        Assert.Contains("Target A", remapLine);
+    }
+
+    // ================= Instructions =================
+
+    [Fact]
+    public void The_instructions_and_save_component_name_every_type_a_parameter_can_have_and_a_grid_s_cell()
+    {
+        string saveComponent = AiTools.Definitions().Single(t => t.Name == AiTools.Name("save_component")).Description;
+        foreach (string text in new[] { AiTools.Instructions, saveComponent })
+        {
+            foreach (var type in Enum.GetValues<ParameterType>())
+                Assert.Contains(type.ToString(), text);
+            Assert.Contains("Cell", text);
+        }
+    }
+
+    [Fact]
+    public void The_instructions_and_save_component_say_a_shared_value_can_be_one_parameter_passed_down()
+    {
+        string saveComponent = AiTools.Definitions().Single(t => t.Name == AiTools.Name("save_component")).Description;
+        foreach (string text in new[] { AiTools.Instructions, saveComponent })
+        {
+            Assert.Contains("passed down with {\"From\"}", text);
+            Assert.Contains("a Default copied into each component has to be changed in each", text);
+        }
     }
 }

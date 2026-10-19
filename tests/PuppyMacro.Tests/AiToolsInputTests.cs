@@ -24,7 +24,7 @@ internal sealed class LibraryCheckingHost(FakeAiHost inner) : IAiHost
     public bool IsRunning(Guid id) => inner.IsRunning(id);
     public bool AnyRunning => inner.AnyRunning;
     public bool OverlayModeActive => inner.OverlayModeActive;
-    public bool UserIsEditing => inner.UserIsEditing;
+    public string? UserHasOpen => inner.UserHasOpen;
     public Task<T> Ui<T>(Func<Task<T>> action) => inner.Ui(action);
     public void Save(object item, string app) => inner.Save(item, app);
     public string? AddCollections(IReadOnlyList<LibraryCollection> collections, string app) => inner.AddCollections(collections, app);

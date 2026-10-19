@@ -147,7 +147,10 @@ internal sealed partial class AiTools
         "does three things. What changes between uses (a slot's position, a key, a wait) is a parameter, so one component " +
         "serves every slot instead of a copy per value; slots in rows and columns the same distance apart are a Grid, so the " +
         "calls give a number instead of 33 points. A component that finds something with an image or a text and returns " +
-        "it works wherever the thing is, where fixed coordinates tie it to one place.";
+        "it works wherever the thing is, where fixed coordinates tie it to one place. A value that several nested components " +
+        "share, such as a Grid, can be a parameter of the top component, given once by its call and passed down with " +
+        "{\"From\"}: it then lives in one place, and a change of screen size edits one value, while a Default copied into " +
+        "each component has to be changed in each.";
 
     /// <summary>In the descriptions of the tools that make a new loop or macro: AI apps may not pass <see cref="Instructions"/> to the model.</summary>
     private const string NewItemRule =
@@ -279,7 +282,9 @@ internal sealed partial class AiTools
     /// <summary>The item a call is about, for its debug folder's name: the loop's, macro's or remap's name from "id".</summary>
     public async Task<string?> SubjectOf(JsonElement args)
     {
-        if (args.ValueKind != JsonValueKind.Object || !Guid.TryParse(Str(args, "id"), out Guid id))
+        // Only a name for the folder: a wrong "id" is the tool's own input error, said by the call.
+        if (args.ValueKind != JsonValueKind.Object || !args.TryGetProperty("id", out JsonElement given)
+            || given.ValueKind != JsonValueKind.String || !Guid.TryParse(given.GetString(), out Guid id))
             return null;
         return await _host.Ui(() => Task.FromResult(Find(id) switch
         {
@@ -356,17 +361,17 @@ internal sealed partial class AiTools
             new("get_overview",
                 "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running, and Characters: how long " +
                 "the item's compact JSON is) and the global hotkeys, says whether overlay mode is on, whether a request waits " +
-                "for the user (its request_id) and whether the user has a PuppyMacro editor or dialog open, and lists the " +
-                "Library's collections of reusable components (Id, name, how many components). With many items: words keeps " +
+                "for the user (its request_id) and whether the user has a PuppyMacro editor or dialog open (UserHasOpen " +
+                "names it), and lists the Library's collections of reusable components (Id, name, how many components). With many items: words keeps " +
                 "those whose name or app has every word, and offset and limit (100 when left out) page each list; Total and " +
                 "Library.Collections say how many there are.",
                 """{"type":"object","properties":{"words":{"type":"string","description":"Words the name or the app must have, e.g. \"diablo salvage\"."},"offset":{"type":"integer","minimum":0,"description":"How many of each list to skip; 0 when left out."},"limit":{"type":"integer","minimum":1,"maximum":1000,"description":"How many of each list to give; 100 when left out."}},"additionalProperties":false}""",
                 true, false, (a, app, _) => Read(app, Phrase.Of("Ai_ReadOverview"), () => Overview(a))),
             new("get_item",
                 "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out. " +
-                "Saves take it as it is, and patch paths point into it. A big item reads better in pieces: outline gives one " +
-                "line per action with its path (a JSON Pointer), type, name and an If's conditions, down to outline_depth " +
-                "levels of Then and Else; path gives only the part there. A macro's rows linked to Library components are " +
+                "Saves take it as it is, and patch paths point into it. A big item reads better in pieces: outline gives a " +
+                "line with the macro's settings that differ from their defaults, then one line per action with its path (a " +
+                "JSON Pointer), type, name and an If's conditions, down to outline_depth levels of Then and Else; path gives only the part there. A macro's rows linked to Library components are " +
                 "listed after it.",
                 """{"type":"object","properties":{"id":{"type":"string","description":"The Id of a loop, macro or remap (get_overview lists them)."},"outline":{"type":"boolean","description":"A macro: its outline instead of its JSON."},"outline_depth":{"type":"integer","minimum":1,"maximum":20,"description":"How many levels of Then and Else the outline goes into; 1 when left out (the macro's own actions)."},"path":{"type":"string","description":"A JSON Pointer into the item, e.g. /Actions/3 or /Actions/3/If/Then/0: only that part."}},"required":["id"],"additionalProperties":false}""",
                 true, false, (a, app, _) => GetItem(a, app)),
@@ -626,14 +631,15 @@ internal sealed partial class AiTools
     {
         AppSettings s = _host.Settings;
         var words = (Str(args, "words") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        int offset = Math.Max(0, IntArg(args, "offset") ?? 0);
-        int limit = Math.Clamp(IntArg(args, "limit") ?? DefaultOverviewLimit, 1, 1000);
+        int offset = IntArg(args, "offset", 0) ?? 0;
+        int limit = IntArg(args, "limit", 1, 1000) ?? DefaultOverviewLimit;
         bool Has(string name, string? appExe) =>
             words.All(w => name.Contains(w, StringComparison.CurrentCultureIgnoreCase) || (appExe?.Contains(w, StringComparison.OrdinalIgnoreCase) ?? false));
         var loops = s.Loops.Where(l => Has(l.Name, l.AppExe)).ToList();
         var macros = _host.Macros.Macros.Where(m => Has(m.Name, m.AppExe)).ToList();
         var remaps = s.Remaps.Where(r => Has(r.Note, r.AppExe)).ToList();
         var collections = _host.Macros.Library.Collections.Where(c => Has(c.Name, c.AppExe)).ToList();
+        string? open = _host.UserHasOpen;
         var overview = new
         {
             Total = new { Loops = loops.Count, Macros = macros.Count, Remaps = remaps.Count },
@@ -663,7 +669,8 @@ internal sealed partial class AiTools
             },
             OverlayModeOn = _host.OverlayModeActive,
             WaitingForUser = WaitingId(),
-            UserIsEditing = _host.UserIsEditing,
+            UserIsEditing = open != null,
+            UserHasOpen = open,
         };
         return JsonSerializer.Serialize(overview, AnswerOptions);
     }
@@ -681,18 +688,25 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> GetItem(JsonElement args, string app)
     {
         Guid id = IdArg(args, "id");
+        bool outline = BoolArg(args, "outline") ?? false;
+        int? depth = IntArg(args, "outline_depth", 1, 20);
+        string? path = Str(args, "path");
+        if (outline && path != null)
+            throw new FormatException("\"outline\" and \"path\" are two ways to read an item: the outline lists every action's path, path reads one part. Give one of them.");
+        if (depth != null && !outline)
+            throw new FormatException("\"outline_depth\" is how deep the outline goes, so it needs \"outline\": true.");
         return await _host.Ui(() =>
         {
             object? item = Find(id);
             if (item == null)
                 return Task.FromResult(AiToolResult.Error($"No loop, macro or remap has the Id {id}. get_overview lists them."));
             _log.Add(app, AiActivityKind.Read, About("Ai_Read", item));
-            if (BoolArg(args, "outline") == true)
+            if (outline)
                 return Task.FromResult(item is MacroDefinition outlined
-                    ? new AiToolResult(Outline(outlined, Math.Clamp(IntArg(args, "outline_depth") ?? 1, 1, 20)) + LinkedList(outlined))
+                    ? new AiToolResult(Outline(outlined, depth ?? 1) + LinkedList(outlined))
                     : AiToolResult.Error("Only a macro has an outline: a loop or remap is small, read it whole."));
             string compact = Loc.English(() => AiJson.Compact(item));
-            if (Str(args, "path") is { Length: > 0 } path)
+            if (path is { Length: > 0 })
                 return Task.FromResult(AtPath(compact, Serialize(item), path, out string? problem) is string part
                     ? new AiToolResult(part)
                     : AiToolResult.Error(problem!));
@@ -700,14 +714,16 @@ internal sealed partial class AiTools
         }).ConfigureAwait(false);
     }
 
-    private static AiToolResult Schema(JsonElement args) => Str(args, "kind") switch
+    private static AiToolResult Schema(JsonElement args) => OneOf(args, "kind", SchemaKinds) switch
     {
         "loop" => new AiToolResult(WithoutId(CodeSchema.ForLoop(Guid.Empty, withDefaults: true))),
         "macro" => new AiToolResult(WithTextLanguages(WithoutId(CodeSchema.ForMacro(Guid.Empty, withDefaults: true)))),
         "remap" => new AiToolResult(WithoutId(CodeSchema.ForRemap(Guid.Empty, withDefaults: true))),
         "component" => new AiToolResult(WithTextLanguages(WithoutId(CodeSchema.ForComponent(Guid.Empty, withDefaults: true)))),
-        _ => AiToolResult.Error("kind must be loop, macro, remap or component."),
+        _ => AiToolResult.Error("Give \"kind\": loop, macro, remap or component."),
     };
+
+    private static readonly string[] SchemaKinds = { "loop", "macro", "remap", "component" };
 
     /// <summary>A Text condition's Language: the languages Windows can read on this PC, named in the macro's schema.</summary>
     private static string WithTextLanguages(string schema)
@@ -745,9 +761,9 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> CheckHotkey(JsonElement args, string app)
     {
         HotkeyBinding binding = Arg<HotkeyBinding>(args, "hotkey");
-        bool remap = Str(args, "for") == "remap";
+        bool remap = OneOf(args, "for", new[] { "hotkey", "remap" }, "hotkey") == "remap";
         string? appExe = AppScope.Normalize(Str(args, "app"));
-        bool hold = Str(args, "mode") == "Hold";
+        bool hold = OneOf(args, "mode", new[] { "Toggle", "Hold" }, "Toggle") == "Hold";
         Guid? ignore = OptionalIdArg(args, "ignore_id", "the Id of the loop, macro or remap being changed (get_overview lists them)");
         if (!binding.IsSet)
             return AiToolResult.Error("Set Vk: the key's virtual-key code.");
@@ -873,13 +889,14 @@ internal sealed partial class AiTools
         if (!args.TryGetProperty("set", out JsonElement set))
             throw new FormatException("Give \"set\": the fields to change, e.g. {\"DelayMs\": 1200}.");
         args.TryGetProperty("where", out JsonElement where);
+        string? group = Str(args, "group");
         (string? kind, string? json) = await _host.Ui(() => Task.FromResult(Find(id) is { } item and (LoopDefinition or MacroDefinition)
             ? ((string?)Kind(item), (string?)Serialize(item))
             : (null, null))).ConfigureAwait(false);
         if (kind == null || json == null)
             return AiToolResult.Error($"No loop or macro has the Id {id}. get_overview lists them.");
 
-        (JsonNode changed, _) = AiJson.SetWhere(JsonNode.Parse(json)!, where, set, Str(args, "group"));
+        (JsonNode changed, _) = AiJson.SetWhere(JsonNode.Parse(json)!, where, set, group);
         JsonElement save = JsonSerializer.SerializeToElement(new JsonObject { ["item"] = changed, ["id"] = id.ToString() });
         return kind == "loop"
             ? await SaveItem<LoopDefinition>(save, app, kind, cancel).ConfigureAwait(false)
@@ -973,8 +990,7 @@ internal sealed partial class AiTools
     {
         if (!args.TryGetProperty("settings", out JsonElement json) || json.ValueKind != JsonValueKind.Object)
             return AiToolResult.Error("Give the values to change in \"settings\", as a JSON object.");
-        AiSettingsValues wanted = JsonSerializer.Deserialize<AiSettingsValues>(json.GetRawText(), ReadOptions)
-            ?? throw new JsonException("settings must be an object.");
+        AiSettingsValues wanted = Arg<AiSettingsValues>(args, "settings");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
@@ -1052,9 +1068,12 @@ internal sealed partial class AiTools
     }
 
     /// <summary>On the UI thread, while a request starts: the user opened a PuppyMacro window meanwhile.</summary>
-    private AiToolResult? BusyNow() => _host.UserIsEditing
-        ? AiToolResult.Error("The user has a PuppyMacro window open (an editor or a dialog). Ask them to close it, then try again.")
-        : null;
+    private AiToolResult? BusyNow() => _host.UserHasOpen is string open ? AiToolResult.Error(UserHasOpen(open)) : null;
+
+    /// <summary>Why nothing happens while the user has a PuppyMacro window open, naming it.</summary>
+    private static string UserHasOpen(string open) =>
+        $"The user has {open} open in PuppyMacro. While a PuppyMacro editor or dialog is open, PuppyMacro changes nothing and " +
+        "opens no window for an AI app: once the user closes it, the same call works.";
 
     /// <summary>On the UI thread: what would change, or why it can't.</summary>
     private (List<AiSettingChange> Changes, string? Problem) SettingChanges(AiSettingsValues wanted)
@@ -1130,18 +1149,9 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> PickPoints(JsonElement args, string app, CancellationToken cancel)
     {
         AiAsk ask = Asking(args);
-        if (!(args.TryGetProperty("confirmed_steps", out JsonElement plan) && plan.ValueKind == JsonValueKind.Array
-              && plan.EnumerateArray().Any(step => step.ValueKind == JsonValueKind.String && step.GetString()!.Trim().Length > 0)))
-            throw new FormatException("Give \"confirmed_steps\": the steps the loop or macro will play. For a new one, write them " +
-                "in the chat first and wait for the user's OK.");
-        List<string> labels = args.TryGetProperty("labels", out JsonElement list) && list.ValueKind == JsonValueKind.Array
-            ? list.EnumerateArray().Select(l => l.ValueKind == JsonValueKind.String ? l.GetString()!.Trim() : "").ToList()
-            : new List<string>();
-        if (labels.Any(l => l.Length == 0))
-            throw new FormatException("Every one of the \"labels\" must say what its point is.");
-        int points = args.TryGetProperty("count", out JsonElement c) && c.TryGetInt32(out int n) ? n : 0;
-        if (points < 1 || points > MaxPoints)
-            return AiToolResult.Error($"count must be from 1 to {MaxPoints}.");
+        RequireConfirmedSteps(args);
+        List<string> labels = StringList(args, "labels", "what its point is") ?? new List<string>();
+        int points = IntArg(args, "count", 1, MaxPoints) ?? throw new FormatException($"Give \"count\": how many points, from 1 to {MaxPoints}.");
         if (labels.Count != points)
             return AiToolResult.Error($"Give one label per point: {points} points, {labels.Count} labels.");
         if (await Refusal().ConfigureAwait(false) is string busy)
@@ -1192,6 +1202,11 @@ internal sealed partial class AiTools
         // From a look_at_screen picture: the AI app chose the place itself, nothing to ask the user.
         if (kind != AiScreenPickKind.Area && Str(args, "snapshot_id") is string snapshot)
             return await FromSnapshotPick(args, app, kind, snapshot).ConfigureAwait(false);
+        // x and y, area: a place in a look_at_screen picture, read only with its snapshot_id.
+        if (kind == AiScreenPickKind.Pixel && (Given(args, "x", out _) || Given(args, "y", out _)))
+            throw new FormatException("\"x\" and \"y\" are a pixel of a look_at_screen picture, so they go with its \"snapshot_id\". Without them the user clicks the pixel.");
+        if (kind == AiScreenPickKind.Image && Given(args, "area", out _))
+            throw new FormatException("\"area\" is a part of a look_at_screen picture, so it goes with its \"snapshot_id\". Without them the user drags around the image.");
         AiAsk ask = Asking(args);
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
@@ -1394,7 +1409,8 @@ internal sealed partial class AiTools
         if (Given(args, "only", out JsonElement list))
             only = list.ValueKind != JsonValueKind.Array
                 ? throw new FormatException("\"only\" must be a list of indexes, from 0; leave it out to import every item.")
-                : list.EnumerateArray().Select(e => e.TryGetInt32(out int i) ? i : throw new FormatException("\"only\" must be a list of indexes, from 0.")).ToList();
+                : list.EnumerateArray().Select(e => e.ValueKind == JsonValueKind.Number && e.TryGetInt32(out int i) ? i
+                    : throw new FormatException("\"only\" must be a list of indexes (whole numbers), from 0.")).ToList();
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
@@ -1497,9 +1513,7 @@ internal sealed partial class AiTools
     {
         if (WaitingId() is string waiting)
             return $"Another request is waiting for the user (request_id \"{waiting}\"). Call wait_for_user with it first.";
-        return await _host.Ui(() => Task.FromResult<string?>(_host.UserIsEditing
-                ? "The user has a PuppyMacro window open (an editor or a dialog). Ask them to close it, then try again."
-                : null))
+        return await _host.Ui(() => Task.FromResult(_host.UserHasOpen is string open ? UserHasOpen(open) : null))
             .ConfigureAwait(false);
     }
 
@@ -1528,7 +1542,7 @@ internal sealed partial class AiTools
     /// <summary>wait_for_user: only the app that asked gets the answer.</summary>
     private async Task<AiToolResult> WaitAgain(JsonElement args, string app, CancellationToken cancel)
     {
-        string id = Str(args, "request_id") ?? "";
+        string id = RequiredStr(args, "request_id", "the request_id of the request that answered \"waiting\"");
         Pending? pending;
         lock (_sync)
         {
@@ -1676,13 +1690,73 @@ internal sealed partial class AiTools
 
     private static string Capital(string text) => text.Length == 0 ? text : char.ToUpperInvariant(text[0]) + text[1..];
 
-    private static string? Str(JsonElement args, string name) =>
-        args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement value) && value.ValueKind == JsonValueKind.String
-            ? value.GetString()
-            : null;
+    /// <summary>
+    /// A text argument: null when left out (or null). Any other value than a text is an input error naming it
+    /// (<paramref name="label"/>, "collection.app", for one inside an object), never read as left out.
+    /// </summary>
+    private static string? Str(JsonElement args, string name, string? label = null) =>
+        !Given(args, name, out JsonElement value) ? null
+        : value.ValueKind == JsonValueKind.String ? value.GetString()
+        : throw new FormatException($"\"{label ?? name}\" must be a text (a JSON string), not {JsonKind(value)}.");
+
+    /// <summary>A required text argument: missing, null or blank is an input error saying what to give.</summary>
+    private static string RequiredStr(JsonElement args, string name, string what) =>
+        Str(args, name) is { } text && text.Trim().Length > 0 ? text : throw new FormatException($"Give \"{name}\": {what}.");
+
+    /// <summary>
+    /// One of <paramref name="allowed"/> (in any case), or null when left out; any other value is an input error naming
+    /// the argument and its values (<paramref name="whenLeftOut"/>: what leaving it out means), never read as left out.
+    /// </summary>
+    private static string? OneOf(JsonElement args, string name, IReadOnlyList<string> allowed, string? whenLeftOut = null)
+    {
+        string? text = Str(args, name);
+        if (text == null)
+            return null;
+        return allowed.FirstOrDefault(a => a.Equals(text.Trim(), StringComparison.OrdinalIgnoreCase))
+            ?? throw new FormatException($"\"{name}\" must be {Or(allowed)}" + (whenLeftOut == null ? "." : $"; left out, it is {whenLeftOut}."));
+    }
+
+    /// <summary>"a, b or c".</summary>
+    private static string Or(IReadOnlyList<string> values) =>
+        values.Count == 1 ? values[0] : string.Join(", ", values.Take(values.Count - 1)) + " or " + values[^1];
+
+    /// <summary>
+    /// A list of texts, each with something in it, or null when left out (or null). Anything else (not a list, an entry that
+    /// is not a text or is blank) is an input error naming the argument and the entry.
+    /// </summary>
+    private static List<string>? StringList(JsonElement args, string name, string what)
+    {
+        if (!Given(args, name, out JsonElement list))
+            return null;
+        if (list.ValueKind != JsonValueKind.Array)
+            throw new FormatException($"\"{name}\" must be a list of texts ({what}), not {JsonKind(list)}.");
+        var texts = new List<string>();
+        foreach (JsonElement entry in list.EnumerateArray())
+        {
+            if (entry.ValueKind != JsonValueKind.String)
+                throw new FormatException($"Every one of the \"{name}\" must be a text ({what}); the one at index {texts.Count} (from 0) is {JsonKind(entry)}.");
+            if (entry.GetString()!.Trim() is not { Length: > 0 } text)
+                throw new FormatException($"Every one of the \"{name}\" must say something ({what}); the one at index {texts.Count} (from 0) is blank.");
+            texts.Add(text);
+        }
+        return texts;
+    }
+
+    /// <summary>What a JSON value is, for an input error: "a number", "a list".</summary>
+    private static string JsonKind(JsonElement value) => value.ValueKind switch
+    {
+        JsonValueKind.String => "a text",
+        JsonValueKind.Number => "a number",
+        JsonValueKind.True or JsonValueKind.False => "true or false",
+        JsonValueKind.Object => "an object",
+        JsonValueKind.Array => "a list",
+        _ => "null",
+    };
 
     private static Guid IdArg(JsonElement args, string name, string what = "an Id (get_overview lists them)") =>
-        Guid.TryParse(Str(args, name), out Guid id) ? id : throw new FormatException($"\"{name}\" must be {what}.");
+        Given(args, name, out JsonElement value) && value.ValueKind == JsonValueKind.String && Guid.TryParse(value.GetString(), out Guid id)
+            ? id
+            : throw new FormatException($"\"{name}\" must be {what}.");
 
     /// <summary>An Id that may be left out (also null or ""); anything else that is not an Id is an input error naming it.</summary>
     private static Guid? OptionalIdArg(JsonElement args, string name, string what)
@@ -1694,10 +1768,22 @@ internal sealed partial class AiTools
             : throw new FormatException($"\"{name}\" must be {what}.");
     }
 
-    private static T Arg<T>(JsonElement args, string name) where T : class =>
-        args.ValueKind == JsonValueKind.Object && args.TryGetProperty(name, out JsonElement value)
-            ? JsonSerializer.Deserialize<T>(value.GetRawText(), ReadOptions) ?? throw new JsonException($"\"{name}\" is empty.")
-            : throw new JsonException($"\"{name}\" is missing.");
+    /// <summary>An object argument read as <typeparamref name="T"/>; missing, null or unreadable is an input error naming it.</summary>
+    private static T Arg<T>(JsonElement args, string name) where T : class
+    {
+        if (!Given(args, name, out JsonElement value))
+            throw new JsonException($"\"{name}\" is missing.");
+        if (value.ValueKind != JsonValueKind.Object)
+            throw new JsonException($"\"{name}\" must be an object, not {JsonKind(value)}.");
+        try
+        {
+            return JsonSerializer.Deserialize<T>(value.GetRawText(), ReadOptions) ?? throw new JsonException($"\"{name}\" is empty.");
+        }
+        catch (JsonException ex) when (!ex.Message.StartsWith($"\"{name}\"", StringComparison.Ordinal))
+        {
+            throw new JsonException($"\"{name}\" can't be read: {ex.Message}");
+        }
+    }
 
     /// <summary>The title (shown big), the description (what and why) and the numbered steps the AI writes for the user.</summary>
     private static AiAsk Asking(JsonElement args)
@@ -1708,13 +1794,20 @@ internal sealed partial class AiTools
             throw new FormatException("Give a short \"title\": it is shown big to the user.");
         if (description.Length == 0)
             throw new FormatException("Give a \"description\": one or two short sentences on what you are making and why.");
-        var steps = new List<string>();
-        if (args.TryGetProperty("steps", out JsonElement list) && list.ValueKind == JsonValueKind.Array)
-            foreach (JsonElement step in list.EnumerateArray())
-                if (step.ValueKind == JsonValueKind.String && step.GetString()!.Trim() is { Length: > 0 } text)
-                    steps.Add(text);
+        List<string> steps = StringList(args, "steps", "what the user does, one short step each") ?? new List<string>();
         if (steps.Count == 0)
             throw new FormatException("Give the \"steps\": what the user does, in order, one short step each.");
         return new AiAsk(title, description, steps);
+    }
+
+    /// <summary>
+    /// confirmed_steps (pick_points, test_macro): the steps the item will play, as the user confirmed them; missing or empty
+    /// is an input error.
+    /// </summary>
+    private static void RequireConfirmedSteps(JsonElement args)
+    {
+        if (StringList(args, "confirmed_steps", "one step the item will play") is not { Count: > 0 })
+            throw new FormatException("Give \"confirmed_steps\": the steps the loop or macro will play. For a new one, write them " +
+                "in the chat first and wait for the user's OK.");
     }
 }

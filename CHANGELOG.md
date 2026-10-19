@@ -41,6 +41,8 @@
   read apart in the status bar and the AI activity, for example **Claude (claude-ai)**.
 - PuppyMacro asks Windows not to slow it down to save power (efficiency mode), so loops, macros and screen checks keep
   their timing also while it waits in the tray.
+- When a PuppyMacro editor or dialog is open, AI apps are told which one, so they can tell you what to close, and a
+  macro's outline for AI apps starts with its settings that are not at their defaults.
 
 ### Fixed
 - Stopping a loop or macro while it pastes a text no longer loses the paste or pastes the previous clipboard.
@@ -55,8 +57,9 @@
 - A recorded tap shorter than a millisecond or a key held longer than a minute no longer makes a macro that the Code
   view, AI apps and imports refuse.
 - Export offers a file name Windows can save for an item with a very long name.
-- AI apps: a wrong value for an argument (enabled, only, an Id) is refused with what to change instead of turning an
-  item off, importing everything or failing without saying why.
+- AI apps: a wrong value for an argument (enabled, only, an Id, a text where a number goes, a value that is not one of
+  its choices, a number out of its range) is refused with the argument's name and what to change instead of turning an
+  item off, importing everything, being left out or failing without saying why.
 
 ## 1.23.0
 

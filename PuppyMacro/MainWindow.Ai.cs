@@ -439,9 +439,42 @@ public partial class MainWindow : IAiHost
 
     /// <summary>
     /// An editor, a confirmation, the placement overlay or a recording (they all suspend the hotkeys), or another dialog
-    /// (<see cref="ShowUserDialog"/>) is open.
+    /// (<see cref="ShowUserDialog"/>) is open: PuppyMacro's windows on the screen, named in English for the AI app (i18n.md),
+    /// or a dialog of this window (a confirmation, a file dialog, a message), which is not a window of its own.
     /// </summary>
-    bool IAiHost.UserIsEditing => _engine.HotkeysSuspended || _userDialogs > 0;
+    string? IAiHost.UserHasOpen
+    {
+        get
+        {
+            if (!_engine.HotkeysSuspended && _userDialogs == 0)
+                return null;
+            var open = Application.Current.Windows.OfType<Window>()
+                .Where(w => w != this && w.IsVisible && w is not (OverlayPanelWindow or FloatingButtonWindow or AiFinishedWindow))
+                .Select(EnglishName)
+                .ToList();
+            return open.Count == 0
+                ? "a dialog in PuppyMacro's main window (a confirmation, a file dialog or a message)"
+                : string.Join(" and ", open);
+        }
+    }
+
+    /// <summary>"the macro editor of \"Salvage\"", "the library window": a window as an AI app reads it, in English.</summary>
+    private static string EnglishName(Window window)
+    {
+        static string Of(string what, string name) => string.IsNullOrWhiteSpace(name) ? $"the {what}" : $"the {what} of \"{name.Trim()}\"";
+        switch (window)
+        {
+            case LoopEditorWindow loop:
+                return Of("loop editor", loop.NameBox.Text);
+            case MacroEditorWindow macro:
+                return Of("macro editor", macro.NameBox.Text);
+            case RemapEditorWindow remap:
+                return Of("remap editor", remap.NoteBox.Text);
+        }
+        // The others by their kind: "MacroActionWindow" is "the macro action window", "AiActivityWindow" "the AI activity window".
+        string kind = System.Text.RegularExpressions.Regex.Replace(window.GetType().Name, "(?<=[a-z])(?=[A-Z])", " ").ToLowerInvariant();
+        return "the " + (kind.StartsWith("ai ", StringComparison.Ordinal) ? "AI" + kind[2..] : kind);
+    }
 
     Task<T> IAiHost.Ui<T>(Func<Task<T>> action) => Dispatcher.InvokeAsync(action).Task.Unwrap();
 
@@ -827,7 +860,7 @@ public partial class MainWindow : IAiHost
     /// <summary>Dialogs open that do not suspend the hotkeys (file dialogs, AI activity, Import's confirmation).</summary>
     private int _userDialogs;
 
-    /// <summary>Shows a dialog that does not suspend the hotkeys: meanwhile AI requests wait (<see cref="IAiHost.UserIsEditing"/>).</summary>
+    /// <summary>Shows a dialog that does not suspend the hotkeys: meanwhile AI requests wait (<see cref="IAiHost.UserHasOpen"/>).</summary>
     private bool? ShowUserDialog(Func<bool?> show)
     {
         _userDialogs++;

@@ -48,8 +48,11 @@ internal interface IAiHost
 
     bool OverlayModeActive { get; }
 
-    /// <summary>The user has an editor or a dialog of PuppyMacro open: an AI window would open on top of it.</summary>
-    bool UserIsEditing { get; }
+    /// <summary>
+    /// What the user has open in PuppyMacro, an editor or a dialog (an AI window would open on top of it), said in English for
+    /// the AI app ("the macro editor of \"Salvage\""), or null when nothing is open.
+    /// </summary>
+    string? UserHasOpen { get; }
 
     /// <summary>Runs <paramref name="action"/> on the UI thread.</summary>
     Task<T> Ui<T>(Func<Task<T>> action);
