@@ -272,7 +272,7 @@ public class AiLibraryToolsTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_overview_lists_the_library_s_collections_with_their_components_and_pages_them()
+    public async Task Get_overview_lists_the_library_s_collections_with_their_components()
     {
         using var all = JsonDocument.Parse((await Call("get_overview")).Text);
         var library = all.RootElement.GetProperty("Library");
@@ -281,18 +281,25 @@ public class AiLibraryToolsTests : IDisposable
         Assert.Equal(2, diablo.GetProperty("Components").GetInt32());
         Assert.Equal(_host.Macros.Library.Collections[0].Id, diablo.GetProperty("Id").GetGuid());
 
-        using var paged = JsonDocument.Parse((await Call("get_overview", new { offset = 1, limit = 1 })).Text);
-        var page = paged.RootElement.GetProperty("Library");
-        Assert.Equal(2, page.GetProperty("Collections").GetInt32()); // the count is of all of them
-        Assert.Equal("Excel", Assert.Single(page.GetProperty("List").EnumerateArray()).GetProperty("Name").GetString());
-
-        using var words = JsonDocument.Parse((await Call("get_overview", new { words = "excel" })).Text);
-        Assert.Equal(1, words.RootElement.GetProperty("Library").GetProperty("Collections").GetInt32()); // by name or app
-
         _host.Macros.Library.Collections.Clear();
         using var empty = JsonDocument.Parse((await Call("get_overview")).Text);
         Assert.Equal(0, empty.RootElement.GetProperty("Library").GetProperty("Collections").GetInt32());
         Assert.Empty(empty.RootElement.GetProperty("Library").GetProperty("List").EnumerateArray());
+    }
+
+    [Fact]
+    public async Task Get_overview_lists_the_whole_library_whatever_words_offset_and_limit_say()
+    {
+        // An AI app looking for its macro "Sell all inventory" asked get_overview with words "sell": the collections, none
+        // of them named "sell", were left out, and it believed the Library had no components (19 Oct 2026).
+        foreach (object args in new object[] { new { words = "sell" }, new { offset = 100 }, new { offset = 1, limit = 1 } })
+        {
+            using var answer = JsonDocument.Parse((await Call("get_overview", args)).Text);
+            var library = answer.RootElement.GetProperty("Library");
+            Assert.Equal(2, library.GetProperty("Collections").GetInt32());
+            Assert.Equal(["Diablo IV 5120x1440", "Excel"],
+                library.GetProperty("List").EnumerateArray().Select(c => c.GetProperty("Name").GetString()));
+        }
     }
 
     [Fact]

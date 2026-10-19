@@ -452,10 +452,11 @@ internal sealed partial class AiTools
                 "Lists the user's loops, macros and remaps (Id, name, hotkey, app, enabled, running, and Characters: how long " +
                 "the item's compact JSON is) and the global hotkeys, says whether overlay mode is on, whether a request waits " +
                 "for the user (its request_id) and whether the user has a PuppyMacro editor or dialog open (UserHasOpen " +
-                "names it), and lists the Library's collections of reusable components (Id, name, how many components). With many items: words keeps " +
-                "those whose name or app has every word, and offset and limit (100 when left out) page each list; Total and " +
-                "Library.Collections say how many there are.",
-                """{"type":"object","properties":{"words":{"type":"string","description":"Words the name or the app must have, e.g. \"diablo salvage\"."},"offset":{"type":"integer","minimum":0,"description":"How many of each list to skip; 0 when left out."},"limit":{"type":"integer","minimum":1,"maximum":1000,"description":"How many of each list to give; 100 when left out."}},"additionalProperties":false}""",
+                "names it), and lists all the Library's collections of reusable components (Id, name, how many components). With many " +
+                "items: words keeps the loops, macros and remaps whose name or app has every word, and offset and limit (100 when " +
+                "left out) page those three lists; Total says how many there are. The Library is always listed whole, whatever " +
+                "words, offset and limit say.",
+                """{"type":"object","properties":{"words":{"type":"string","description":"Words a loop's, macro's or remap's name or app must have, e.g. \"diablo salvage\". The Library is not filtered."},"offset":{"type":"integer","minimum":0,"description":"How many loops, macros and remaps of each list to skip; 0 when left out."},"limit":{"type":"integer","minimum":1,"maximum":1000,"description":"How many loops, macros and remaps of each list to give; 100 when left out."}},"additionalProperties":false}""",
                 true, false, (a, app, _) => Read(app, Phrase.Of("Ai_ReadOverview"), () => Overview(a))),
             new("get_item",
                 "Gives one loop, macro or remap as compact JSON: one line, and the fields that have their default value left out. " +
@@ -753,7 +754,9 @@ internal sealed partial class AiTools
         var loops = s.Loops.Where(l => Has(l.Name, l.AppExe)).ToList();
         var macros = _host.Macros.Macros.Where(m => Has(m.Name, m.AppExe)).ToList();
         var remaps = s.Remaps.Where(r => Has(r.Note, r.AppExe)).ToList();
-        var collections = _host.Macros.Library.Collections.Where(c => Has(c.Name, c.AppExe)).ToList();
+        // The Library is always given whole: words and offset look for loops, macros and remaps, and an AI app that took
+        // a filtered or later page for the whole Library would think it has no components to reuse.
+        var collections = _host.Macros.Library.Collections;
         string? open = _host.UserHasOpen;
         var overview = new
         {
@@ -775,7 +778,7 @@ internal sealed partial class AiTools
             Library = new
             {
                 Collections = collections.Count,
-                List = collections.Skip(offset).Take(limit).Select(c => new { c.Id, c.Name, Components = c.Components.Count }),
+                List = collections.Select(c => new { c.Id, c.Name, Components = c.Components.Count }),
             },
             GlobalHotkeys = new
             {

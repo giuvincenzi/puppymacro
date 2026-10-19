@@ -5,6 +5,8 @@
 ### Fixed
 - Website on phones: the header stays on one line, with the language's flag and a menu button that opens the links and
   Download, and the list of languages no longer opens off the screen.
+- An AI app that looks for a loop or macro by name, or reads the next page of them, still sees all of the Library's
+  collections: before, it could believe the Library had no components to reuse.
 
 ## 1.24.0
 
