@@ -220,7 +220,120 @@ public class AiComponentChangesTests : IDisposable
         Assert.Equal(4000, Stored(_strip).Actions[0].X);
     }
 
+    [Fact]
+    public async Task A_patch_of_only_the_Example_does_not_say_a_written_field_was_replaced()
+    {
+        // The AI app changes the parameter's Example, as the note itself tells it to: it wrote nothing in the bound field.
+        var result = await Tool("patch_component", new { id = _strip.Id.ToString(), patch = new[] { Replace("/Parameters/0/Example", new { X = 4000, Y = 1056 }) } });
+        Assert.False(result.IsError, result.Text);
+        Assert.Equal(4000, Stored(_strip).Actions[0].X);
+        Assert.DoesNotContain("what was written in such a field was replaced", result.Text);
+    }
+
+    [Fact]
+    public async Task A_new_component_that_leaves_its_bound_field_out_does_not_say_it_was_replaced()
+    {
+        // The click's point is bound to Slot: the AI app leaves X and Y out, PuppyMacro writes Slot's Example there.
+        var component = JsonNode.Parse(CodeJson.Serialize(Comp("Strip again", new[] { SlotParam() }, Bound(Click(3912, 1056), ("Point", "Slot")))))!;
+        component["Actions"]![0]!.AsObject().Remove("X");
+        component["Actions"]![0]!.AsObject().Remove("Y");
+        component.AsObject().Remove("Id");
+
+        var result = await Tool("save_component", new { collection = new { id = _d4.Id.ToString() }, component });
+        Assert.False(result.IsError, result.Text);
+        Assert.Contains("Saved the new component", result.Text);
+        Assert.DoesNotContain("what was written in such a field was replaced", result.Text);
+    }
+
+    [Fact]
+    public async Task A_patch_of_the_Id_keeps_the_component_s_own_Id()
+    {
+        var other = Guid.NewGuid();
+        var result = await Tool("patch_component", new
+        {
+            id = _strip.Id.ToString(),
+            patch = new object[] { Replace("/Id", other.ToString()), Replace("/Actions/0/DelayMs", 250) },
+        });
+        Assert.False(result.IsError, result.Text);
+        Assert.Equal(250, Stored(_strip).Actions[0].DelayMs);
+        Assert.Null(_host.Macros.Library.Find(other));
+        Assert.Equal(3, _d4.Components.Count);
+        // Strip two still calls it.
+        Assert.NotNull(_host.Macros.Library.Find(_all.Id));
+        Assert.All(_all.Actions, a => Assert.Equal(_strip.Id, a.ComponentId));
+    }
+
+    [Fact]
+    public async Task A_patch_with_no_change_still_fixes_calls_that_lack_a_value()
+    {
+        // A macro whose call lacks the required Slot (made before Slot lost its default): the component is the same, the
+        // call needs a value, so it isn't "Nothing to change".
+        var macro = Macro("D4", Call(_strip));
+        _host.Macros.Macros.Add(macro);
+        var test = new { op = "test", path = "/Name", value = "Strip one slot" };
+
+        var asked = await Tool("patch_component", new { id = _strip.Id.ToString(), patch = new[] { test } });
+        Assert.True(asked.IsError, asked.Text);
+        Assert.Contains("call_values", asked.Text);
+
+        var fixedCalls = await Tool("patch_component", new { id = _strip.Id.ToString(), patch = new[] { test }, call_values = new { Slot = new { X = 7, Y = 8 } } });
+        Assert.False(fixedCalls.IsError, fixedCalls.Text);
+        Assert.Contains("Updated 3 call(s): \"D4\" (macro, 1)", fixedCalls.Text);
+        Assert.True(JsonNode.DeepEquals(Point(7, 8), _host.Macros.Find(macro.Id)!.Actions[0].Arguments!["Slot"]));
+    }
+
+    [Fact]
+    public async Task Get_component_on_an_Id_that_is_no_component_says_which_tool_reads_it()
+    {
+        var macro = Macro("D4");
+        _host.Macros.Macros.Add(macro);
+        var result = await Tool("get_component", new { id = macro.Id.ToString() });
+        Assert.True(result.IsError);
+        // As patch_component and delete_component say it.
+        Assert.Contains($"The Id {macro.Id} is a macro, not a component.", result.Text);
+    }
+
+    [Fact]
+    public async Task Save_component_on_an_Id_that_is_no_component_says_which_tool_changes_it()
+    {
+        var macro = Macro("D4");
+        _host.Macros.Macros.Add(macro);
+        var result = await Tool("save_component", new { id = macro.Id.ToString(), component = JsonNode.Parse(CodeJson.Serialize(_free)) });
+        Assert.True(result.IsError);
+        Assert.Contains($"The Id {macro.Id} is a macro, not a component.", result.Text);
+        Assert.Equal("Select remove affix", Stored(_free).Name);
+    }
+
     // ================= delete_component =================
+
+    [Fact]
+    public async Task Delete_component_refuses_one_a_macro_uses_only_as_a_condition()
+    {
+        var found = Bound(Pixel(3912, 1056, "#463405"), ("Point", "Slot"));
+        var rare = Comp("Rare item in slot", new[] { SlotParam() }, If(found));
+        rare.Returns = new ComponentReturns { Found = found.Id };
+        _d4.Components.Add(rare);
+        _host.Macros.Macros.Add(Macro("D4 Check", If(CallCondition(rare, "Rare", ("Slot", Point(5, 6))), Press())));
+
+        var used = await Tool("delete_component", new { id = rare.Id.ToString() });
+        Assert.True(used.IsError);
+        Assert.Equal("Rare item in slot is linked in these macros: D4 Check. Unlink it there first.", used.Text);
+        Assert.NotNull(_host.Macros.Library.Find(rare.Id));
+    }
+
+    [Fact]
+    public async Task Delete_component_keeps_its_collection_s_details_for_Restore()
+    {
+        _d4.Screen = new LibraryScreen { Width = 5120, Height = 1440, ScalePercent = 100 };
+        await Tool("delete_component", new { id = _free.Id.ToString() });
+
+        var kept = JsonSerializer.Deserialize<LibraryCollection>(_log.Entries().Single(e => e.ItemId == _free.Id).Before!, CodeJson.Options)!;
+        Assert.Equal(("Diablo IV", LibraryDomain.Game, "Diablo IV.exe"), (kept.Name, kept.Domain, kept.AppExe));
+        Assert.Equal(5120, kept.Screen!.Width);
+        Assert.Equal(_free.Id, Assert.Single(kept.Components).Id);
+        // The Library's collection keeps its other components.
+        Assert.Equal(new[] { _strip.Id, _all.Id }, _d4.Components.Select(c => c.Id));
+    }
 
     [Fact]
     public async Task Delete_component_deletes_one_nothing_uses_and_keeps_it_for_Restore()
@@ -389,6 +502,36 @@ public class AiComponentChangesTests : IDisposable
     }
 
     [Fact]
+    public async Task Deleting_a_macro_names_a_component_it_used_only_as_a_condition()
+    {
+        var found = Bound(Pixel(3912, 1056, "#463405"), ("Point", "Slot"));
+        var rare = Comp("Rare item in slot", new[] { SlotParam() }, If(found));
+        rare.Returns = new ComponentReturns { Found = found.Id };
+        _d4.Components.Add(rare);
+        var macro = Macro("D4 Check", If(CallCondition(rare, "Rare", ("Slot", Point(5, 6))), Press()));
+        _host.Macros.Macros.Add(macro);
+
+        var result = await Tool("delete_item", new { id = macro.Id.ToString() });
+        Assert.False(result.IsError, result.Text);
+        Assert.EndsWith($"\nNo macro or component calls these components any more: \"game-diablo_iv-act-rare_item_in_slot\" (Id {rare.Id}).", result.Text);
+    }
+
+    [Fact]
+    public async Task A_save_macro_that_swaps_one_component_for_another_names_only_the_one_left()
+    {
+        var macro = Macro("D4", Call(_free));
+        _host.Macros.Macros.Add(macro);
+        var changed = macro.Clone();
+        changed.Actions[0] = Call(_all);
+
+        var result = await Tool("save_macro", new { id = macro.Id.ToString(), item = JsonNode.Parse(CodeJson.Serialize(changed)) });
+        Assert.False(result.IsError, result.Text);
+        Assert.Contains("\"game-diablo_iv-act-select_remove_affix\"", result.Text);
+        Assert.DoesNotContain("strip_two", result.Text);
+        Assert.DoesNotContain("strip_one_slot", result.Text);
+    }
+
+    [Fact]
     public async Task A_change_that_leaves_every_component_used_says_nothing_about_it()
     {
         var macro = Macro("D4", Call(_free), Press());
@@ -422,6 +565,19 @@ public class AiComponentChangesTests : IDisposable
         Assert.Equal($"The Id {_free.Id} is the component \"game-diablo_iv-act-select_remove_affix\", not a loop, macro or remap. " + AiTools.Prefixed(hint),
             result.Text);
         Assert.NotNull(_host.Macros.Library.Find(_free.Id));
+    }
+
+    [Theory]
+    [InlineData("save_macro")]
+    [InlineData("save_loop")]
+    [InlineData("save_remap")]
+    public async Task A_save_tool_given_a_component_s_Id_names_it_and_the_tool_for_components(string tool)
+    {
+        // The AI app rewrites a component with save_macro: the answer names the component, as patch_item's does.
+        var result = await Tool(tool, new { id = _free.Id.ToString(), item = new { Name = "X" } });
+        Assert.True(result.IsError);
+        Assert.Contains($"The Id {_free.Id} is the component \"game-diablo_iv-act-select_remove_affix\"", result.Text);
+        Assert.Equal("Select remove affix", Stored(_free).Name);
     }
 
     [Fact]

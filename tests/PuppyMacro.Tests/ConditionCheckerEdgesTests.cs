@@ -442,4 +442,29 @@ public class ConditionCheckerEdgesTests : IDisposable
         Assert.False(missing.Met);
         Assert.Contains(missing.Details, d => d.Contains("\"Transmute\" not found; read \"") && d.Contains("Salvage"));
     }
+
+    [Fact]
+    public void A_text_found_names_its_own_line_when_the_line_above_reaches_down_to_it()
+    {
+        if (TextReader.Languages.Count == 0)
+            return;
+        // Two lines one line height apart, as in a list: the descenders of the first (y, g, p, j) reach the second's
+        // words, so their rectangles overlap. Windows reads them as two lines; the text is found in the second.
+        using var screen = new Mat(ConditionCheckerTests.FakeScreen.Height, ConditionCheckerTests.FakeScreen.Width, MatType.CV_8UC3, Scalar.All(255));
+        Cv2.PutText(screen, "Typing gypsy jumping", new Point(30, 100), HersheyFonts.HersheySimplex, 1.4, Scalar.All(0), 3);
+        Cv2.PutText(screen, "Tall Unique Hat", new Point(30, 145), HersheyFonts.HersheySimplex, 1.4, Scalar.All(0), 3);
+        _screen.Show(screen);
+        var condition = new MacroCondition
+        {
+            Kind = ConditionKind.Text, Name = "Recipe", Text = "Unique", TextMatch = TextMatch.Contains,
+            AreaX = 0, AreaY = 0, AreaWidth = ConditionCheckerTests.FakeScreen.Width, AreaHeight = ConditionCheckerTests.FakeScreen.Height,
+        };
+
+        using var checker = new ConditionChecker(_screen, _images, RecognitionDevice.Cpu, 30);
+        using var never = new ManualResetEvent(false);
+        var found = checker.Check(If(ConditionWait.Once, 0, condition), never, describe: true);
+        Assert.True(found.Met);
+        string line = Assert.Single(found.Details, d => d.Contains("found at"));
+        Assert.Contains("in the line \"Tall Unique Hat\"", line);
+    }
 }

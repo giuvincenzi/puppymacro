@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PuppyMacro.Models;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Components;
 using Xunit;
 using static PuppyMacro.Tests.Kit;
 
@@ -150,6 +151,91 @@ public class ComponentUsesTests
             _library.CanDeleteCollection(_d4, new[] { macro }));
         // General's own components call nothing in it.
         Assert.Null(_library.CanDeleteCollection(other, new[] { macro }));
+    }
+
+    /// <summary>
+    /// What SaveLibrary checks after a deletion (MainWindow.Library.cs): every component and the saved macros' calls, against
+    /// the Library as it would be. An open editor's version is not saved: if the user cancels it, the saved one stays.
+    /// </summary>
+    private List<string> ProblemsAfterSaving(IEnumerable<MacroDefinition> savedMacros) =>
+        ComponentChecks.CheckAll(_library.Signatures(), savedMacros, null).Select(p => $"{p.Where}: {p.Message}").ToList();
+
+    [Fact]
+    public void Delete_is_on_only_when_the_Library_accepts_the_deletion_with_a_macro_editor_open()
+    {
+        // The saved macro links the component; its open editor removed the row, not saved yet.
+        var saved = Macro("D4", Call(_free));
+        var edited = saved.Clone();
+        edited.Actions.Clear();
+        string? refused = _library.CanDeleteComponent(_free, new[] { saved }, new[] { edited });
+
+        _d4.Components.Remove(_free);
+        var broken = ProblemsAfterSaving(new[] { saved });
+        // Delete is on (no refusal) but SaveLibrary refuses the deletion: the saved macro would link a missing component.
+        Assert.True(refused != null || broken.Count == 0,
+            $"Delete is on, but the Library refuses the deletion: {string.Join("; ", broken)}");
+    }
+
+    [Fact]
+    public void Delete_is_on_only_when_the_Library_accepts_the_deletion_with_a_component_editor_open()
+    {
+        // Strip if rare (saved) calls the slot; its component editor removed the call, not saved yet.
+        var editing = new MacroDefinition { Id = _strip.Id, Name = _strip.Name, Actions = { Press() } };
+        string? refused = _library.CanDeleteComponent(_slot, new MacroDefinition[0], new[] { editing });
+
+        _d4.Components.Remove(_slot);
+        var broken = ProblemsAfterSaving(new MacroDefinition[0]);
+        Assert.True(refused != null || broken.Count == 0,
+            $"Delete is on, but the Library refuses the deletion: {string.Join("; ", broken)}");
+    }
+
+    [Fact]
+    public void Delete_collection_is_on_only_when_the_Library_accepts_the_deletion_with_an_editor_open()
+    {
+        var caller = Comp("Strip from General", Call(_slot, ("Slot", Point(1, 1))));
+        var general = new LibraryCollection { Name = "General", Components = { caller } };
+        _library.Collections.Add(general);
+        // The component editor of General's component removed its call to Diablo IV's slot, not saved yet.
+        var editing = new MacroDefinition { Id = caller.Id, Name = caller.Name, Actions = { Press() } };
+        string? refused = _library.CanDeleteCollection(_d4, new MacroDefinition[0], new[] { editing });
+
+        _library.Collections.Remove(_d4);
+        var broken = ProblemsAfterSaving(new MacroDefinition[0]);
+        Assert.True(refused != null || broken.Count == 0,
+            $"Delete collection is on, but the Library refuses the deletion: {string.Join("; ", broken)}");
+    }
+
+    [Fact]
+    public void A_component_a_macro_uses_only_as_a_condition_can_t_be_deleted()
+    {
+        var macro = Macro("D4 Check", If(CallCondition(_rare, "Rare", ("Slot", Point(5, 6))), Press()));
+        _d4.Components.Remove(_strip); // the only component that called it
+        Assert.Equal("Rare item in slot is linked in these macros: D4 Check. Unlink it there first.",
+            _library.CanDeleteComponent(_rare, new[] { macro }));
+    }
+
+    [Fact]
+    public void Components_of_two_collections_that_call_each_other_block_both_collections()
+    {
+        var general = new LibraryCollection { Name = "General" };
+        var callsD4 = Comp("Calls D4", Call(_free));
+        general.Components.Add(callsD4);
+        _library.Collections.Add(general);
+        var callsGeneral = Comp("Calls General", Call(callsD4));
+        _d4.Components.Add(callsGeneral);
+
+        Assert.Equal("Some components of Diablo IV are used by components of other collections: Calls D4. Stop using them there first.",
+            _library.CanDeleteCollection(_d4, new MacroDefinition[0]));
+        Assert.Equal("Some components of General are used by components of other collections: Calls General. Stop using them there first.",
+            _library.CanDeleteCollection(general, new MacroDefinition[0]));
+    }
+
+    [Fact]
+    public void A_new_macro_in_an_open_editor_blocks_deleting_the_collection_it_links()
+    {
+        var unsaved = Macro("Not saved yet", Call(_free));
+        Assert.Equal("Some components of Diablo IV are linked in these macros: Not saved yet. Unlink them there first.",
+            _library.CanDeleteCollection(_d4, new MacroDefinition[0], new[] { unsaved }));
     }
 
     // ================= What the Library shows =================
