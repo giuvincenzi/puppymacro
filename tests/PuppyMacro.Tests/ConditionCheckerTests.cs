@@ -341,11 +341,14 @@ public class ConditionCheckerTests : IDisposable
         var white = new MacroCondition { Kind = ConditionKind.Pixel, X = 5, Y = 5, Color = "#FFFFFF" };
         var block = If(ConditionWait.UpTo, white);
         block.WaitSeconds = 0.1;
-        _ = Task.Run(async () =>
+        // The first image comes after the 0.1 s of the wait, well before the 1 s the first check waits: on a thread of its own,
+        // so a busy thread pool (many tests at once on GitHub) never delays it past that second.
+        var shower = new Thread(() =>
         {
-            await Task.Delay(400, TestContext.Current.CancellationToken);
-            _screen.Show(picture); // the first image comes after the 0.1 s of the wait
-        }, TestContext.Current.CancellationToken);
+            Thread.Sleep(300);
+            _screen.Show(picture);
+        }) { IsBackground = true };
+        shower.Start();
 
         Assert.True(Check(block).Met);
     }

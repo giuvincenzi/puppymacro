@@ -95,7 +95,11 @@ public class LoopTests
         target.Tap(Vk.F14);
         AssertStopped(target, Vk.Return, "the text loop");
         pastes = target.Downs(Vk.Return).Count;
-        Assert.Equal(string.Concat(System.Linq.Enumerable.Repeat("\nxyz", pastes)), target.Text.Replace("\r\n", "\n"));
+        // A stop during the last Enter before pastes nothing after it (input.md): only the last one may stand alone.
+        string pasted = target.Text.Replace("\r\n", "\n");
+        string every = string.Concat(System.Linq.Enumerable.Repeat("\nxyz", pastes));
+        string lastAlone = string.Concat(System.Linq.Enumerable.Repeat("\nxyz", pastes - 1)) + "\n";
+        Assert.True(pasted == every || pasted == lastAlone, $"pasted \"{pasted}\" for {pastes} Enter");
 
         Assert.True(FlaUI.Core.Tools.Retry.WhileFalse(() => target.ClipboardText == "E2E clipboard before", AppSession.Timeout).Success,
             $"the clipboard was not restored: \"{target.ClipboardText}\"");
