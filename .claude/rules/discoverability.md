@@ -13,16 +13,22 @@ paths:
 
 ## Title and description
 
-- PuppyMacro has one **title** and one **description**, written once in `site/home/en.json` and translated in
-  `site/home/<code>.json`.
+- PuppyMacro has one **title** and one **description**, written once in `site/home/en.json` (`title`; the description is
+  `summary` + " " + `free_and_open_source`) and translated in `site/home/<code>.json`:
+  - title: "Auto clicker, macros and hotkeys for PC. AI-ready";
+  - description: "Automate clicks, keys and text, record macros and remap keys, all on hotkeys and from an overlay. Your AI
+    app can set it all up. Free and open source."
 - Who reads them:
-  - the home page of every language (`scripts/site.ps1`): page title, description for search engines, link previews,
-    structured data;
-  - the MCP Registry entry (`scripts/mcp-server-json.ps1`);
-  - `README.md`, checked by the test workflow (`readme_and_mcp_registry_test`, `scripts/check-readme.ps1`);
-  - the repository's About on GitHub, set by hand (`gh repo edit --description "…"`) whenever they change: the
-    workflows' token has no Administration permission, and a personal token with it would be a secret only for this.
-- Titles and descriptions say "Windows"; the requirements say "Windows 10 / 11" (the home's badge, the structured data's
+  - the home page of every language (`scripts/site.ps1`): the page title ("PuppyMacro: " + title), the description for
+    search engines, the link previews, the `SoftwareApplication` structured data and, without "Free and open source.",
+    the sentence under the slogan;
+  - the MCP Registry entry (`scripts/mcp-server-json.ps1`): title + ". Needs the PuppyMacro app installed.";
+  - `README.md`: title + ". " + description between its "Title and description" comments, checked by the test workflow
+    (`readme_and_mcp_registry_test`, `scripts/check-readme.ps1`);
+  - the repository's About on GitHub: title + ". " + description, set by hand
+    (`gh repo edit --description "…"`) whenever they change: the workflows' token has no Administration permission, and a
+    personal token with it would be a secret only for this.
+- Titles and descriptions say "PC" and never name Windows versions; the requirements say "Windows 10 / 11" (the home's badge, the structured data's
   `operatingSystem`, the guide's install page).
 - The slogan is not the title: it stays in English in every language (only `en.json` has it, `site.ps1` stops when a
   translation adds it).
