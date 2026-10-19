@@ -121,20 +121,79 @@ internal static class BackupService
         if (File.Exists(Path.Combine(root, "settings.json")))
             Export(root, Path.Combine(root, $"{SafetyPrefix}{DateTime.Now:yyyyMMdd-HHmmss}{Extension}"), BackupParts.All);
 
-        foreach (var (file, part) in Files(root).ToList())
+        // All or nothing: the file's entries are extracted apart first (a damaged entry, a full disk: nothing changed yet),
+        // every file replaced is checked to be free (read only, held by another program: nothing changed yet), then the old
+        // files go aside and the new ones take their place; a failure there puts the old ones back.
+        // A copy a save together left belongs to the data replaced (always imported): it goes too, or the next start would
+        // put it back in place of a file the import removed (MacroLibrary.RecoverBackup).
+        var replaced = Files(root).Where(f => parts.HasFlag(f.Part)).Select(f => f.File)
+            .Concat(Directory.EnumerateFiles(root, "*" + MacroLibrary.BackupSuffix, SearchOption.AllDirectories)
+                .Where(f => f.EndsWith(MacroLibrary.BackupSuffix, StringComparison.OrdinalIgnoreCase)))
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        string staging = Sibling(root, "import");
+        string aside = Sibling(root, "replaced");
+        try
         {
-            if (parts.HasFlag(part))
-                File.Delete(file);
+            foreach (var (entry, target) in entries)
+            {
+                string staged = Path.Combine(staging, Path.GetRelativePath(root, target));
+                Directory.CreateDirectory(Path.GetDirectoryName(staged)!);
+                entry.ExtractToFile(staged, overwrite: true);
+            }
+            foreach (string file in replaced)
+            {
+                using var free = new FileStream(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            }
+
+            var movedAside = new List<string>();
+            var movedIn = new List<string>();
+            try
+            {
+                foreach (string file in replaced)
+                {
+                    string to = Path.Combine(aside, Path.GetRelativePath(root, file));
+                    Directory.CreateDirectory(Path.GetDirectoryName(to)!);
+                    File.Move(file, to);
+                    movedAside.Add(file);
+                }
+                foreach (var (_, target) in entries)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+                    File.Move(Path.Combine(staging, Path.GetRelativePath(root, target)), target, overwrite: true);
+                    movedIn.Add(target);
+                }
+            }
+            catch
+            {
+                foreach (string file in movedIn)
+                    File.Delete(file);
+                foreach (string file in movedAside)
+                    File.Move(Path.Combine(aside, Path.GetRelativePath(root, file)), file, overwrite: true);
+                throw;
+            }
         }
-        // A copy a save together left belongs to the data replaced (always imported): kept, the next start would put it back
-        // in place of a file the import removed (MacroLibrary.RecoverBackup).
-        foreach (string file in Directory.EnumerateFiles(root, "*" + MacroLibrary.BackupSuffix, SearchOption.AllDirectories)
-                     .Where(f => f.EndsWith(MacroLibrary.BackupSuffix, StringComparison.OrdinalIgnoreCase)).ToList())
-            File.Delete(file);
-        foreach (var (entry, target) in entries)
+        finally
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
-            entry.ExtractToFile(target, overwrite: true);
+            DeleteFolder(staging);
+            DeleteFolder(aside);
+        }
+    }
+
+    /// <summary>A new folder next to the data folder (the same drive, so files move in one step), for an import's files.</summary>
+    private static string Sibling(string root, string what) =>
+        Path.Combine(Path.GetDirectoryName(root)!, $"{Path.GetFileName(root)}.{what}-{Guid.NewGuid():N}");
+
+    private static void DeleteFolder(string folder)
+    {
+        if (!Directory.Exists(folder))
+            return;
+        try
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // A folder left next to the data folder costs nothing: the data is already in place.
         }
     }
 

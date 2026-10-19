@@ -243,6 +243,13 @@ internal sealed partial class AiTools
     /// <see cref="GlobalRules"/> and what the user's Library holds (each collection, its app and how many components), so
     /// the AI app knows them before it builds anything.
     /// </summary>
+    /// <summary>
+    /// <see cref="FirstAnswer"/> read on the UI thread, or null while Allow AI access is off: a refused call gives nothing of
+    /// the Library, and the rules come with the first answer once access is on.
+    /// </summary>
+    public Task<string?> FirstAnswerIfAllowed() =>
+        _host.Ui(() => Task.FromResult(_host.Settings.AllowAiAccess ? FirstAnswer() : null));
+
     public string FirstAnswer()
     {
         var collections = _host.Macros.Library.Collections.Where(c => c.Components.Count > 0).ToList();
@@ -359,6 +366,8 @@ internal sealed partial class AiTools
             _log.Add(app, AiActivityKind.Connection, Phrase.Of("Ai_CalledWhileOff", name), AiActivityResult.Refused);
             return AiToolResult.Error(AccessOff);
         }
+        if (UnknownArguments(tool, args) is string unknown)
+            return AiToolResult.Error(unknown);
         try
         {
             AiToolResult result = await tool.Run(args, app, cancel).ConfigureAwait(false);
@@ -369,6 +378,28 @@ internal sealed partial class AiTools
         {
             return AiToolResult.Error(Prefixed(ex.Message));
         }
+    }
+
+    /// <summary>
+    /// Arguments the tool's schema doesn't have (it allows no others), named with the ones it takes, or null: an argument
+    /// written another way ("Where" for "where") is an input error, never left out (update_actions without where changes
+    /// every action).
+    /// </summary>
+    private static string? UnknownArguments(AiTool tool, JsonElement args)
+    {
+        if (args.ValueKind != JsonValueKind.Object)
+            return null;
+        using var schema = JsonDocument.Parse(tool.InputSchema);
+        var root = schema.RootElement;
+        if (!root.TryGetProperty("additionalProperties", out JsonElement more) || more.ValueKind != JsonValueKind.False)
+            return null;
+        var known = root.TryGetProperty("properties", out JsonElement properties)
+            ? properties.EnumerateObject().Select(p => p.Name).ToList() : new List<string>();
+        var unknown = args.EnumerateObject().Select(p => p.Name).Where(n => !known.Contains(n)).ToList();
+        if (unknown.Count == 0)
+            return null;
+        return $"{tool.Name} has no argument {string.Join(", ", unknown.Select(n => $"\"{n}\""))}: nothing was done. " +
+               (known.Count == 0 ? "It takes no arguments." : $"It takes {string.Join(", ", known.Select(n => $"\"{n}\""))}.");
     }
 
     // ================= Tool list =================

@@ -139,8 +139,6 @@ internal sealed class LoopEngine : IDisposable
 
     // ---- Clickable overlay panel ----
     private IReadOnlyList<PanelTarget>? _panelTargets;
-    private bool _swallowLeftUp;
-    private bool _swallowRightUp;
 
     // ---- Dragging the overlay panel by its move handle ----
     private bool _panelDragging;
@@ -625,14 +623,9 @@ internal sealed class LoopEngine : IDisposable
             if (_panelTargets != null && vk is KeyNames.VK_LBUTTON or KeyNames.VK_RBUTTON)
             {
                 bool left = vk == KeyNames.VK_LBUTTON;
-                if (kind == InputHook.MouseKind.ButtonUp && (left ? _swallowLeftUp : _swallowRightUp))
-                {
-                    if (left)
-                        _swallowLeftUp = false;
-                    else
-                        _swallowRightUp = false;
+                // The release of a press on the overlay: here, or in OnKey when overlay mode ended before it (its exit button).
+                if (kind == InputHook.MouseKind.ButtonUp && _swallowUp.Remove(vk))
                     return true;
-                }
                 if (kind == InputHook.MouseKind.ButtonDown && !_hotkeysSuspended && TargetAt(x, y) is PanelTarget target)
                 {
                     if (left && target.Id == PanelTarget.MoveOverlayId)
@@ -661,10 +654,7 @@ internal sealed class LoopEngine : IDisposable
                     }
                     if (target.PassThrough)
                         return false;
-                    if (left)
-                        _swallowLeftUp = true;
-                    else
-                        _swallowRightUp = true;
+                    _swallowUp.Add(vk);
                     return true;
                 }
             }
@@ -1236,7 +1226,6 @@ internal sealed class LoopEngine : IDisposable
             _activeRemaps.Clear();
             _heldHotkeys.Clear();
             _swallowUp.Clear();
-            _swallowLeftUp = false;
             ModifierTracker.Reset();
         }
     }

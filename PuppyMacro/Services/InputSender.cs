@@ -305,6 +305,19 @@ internal static class InputSender
         return input;
     }
 
+    /// <summary>
+    /// The keys whose scan code is extended (E0), as KEYBDINPUT's documentation lists them: MapVirtualKey gives the arrows,
+    /// Insert, Delete, Home, End, Page Up and Page Down without E0 (measured on Windows 11), the same scan codes as the
+    /// number pad's keys, so without the flag Left would be Number pad 4.
+    /// </summary>
+    private static bool IsExtended(int vk) => vk is
+        0x21 or 0x22 or 0x23 or 0x24 or 0x25 or 0x26 or 0x27 or 0x28 // Page Up, Page Down, End, Home, the arrows
+        or 0x2C or 0x2D or 0x2E // Print Screen, Insert, Delete
+        or 0x5B or 0x5C or 0x5D // Windows keys, Menu
+        or 0x6F or 0x90 // number pad's Divide, Num Lock
+        or 0xA3 or 0xA5 // right Ctrl, right Alt
+        or >= 0xA6 and <= 0xB7; // browser, volume, media and launch keys
+
     private static NativeMethods.INPUT BuildKeyboard(int vk, bool isDown)
     {
         // Many fullscreen apps read scan codes, so send the scan code when Windows knows one.
@@ -312,16 +325,17 @@ internal static class InputSender
         uint flags;
         ushort scan = 0;
 
-        if (scanCode != 0)
+        // Pause's scan code is E1 1D 45, which one event can't carry (E0 1D is right Ctrl): it goes by its virtual-key code.
+        if (scanCode != 0 && (scanCode & 0xFF00) != 0xE100)
         {
             flags = NativeMethods.KEYEVENTF_SCANCODE;
-            if ((scanCode & 0xFF00) is 0xE000 or 0xE100)
+            if ((scanCode & 0xFF00) == 0xE000 || IsExtended(vk))
                 flags |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
             scan = (ushort)(scanCode & 0xFF);
         }
         else
         {
-            flags = 0; // fall back to the virtual-key code
+            flags = 0; // the virtual-key code
         }
 
         if (!isDown)

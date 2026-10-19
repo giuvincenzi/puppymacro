@@ -146,7 +146,11 @@ internal sealed class AiServer : IDisposable
             return Debugged(debug, limit, tool.Name, _tools.SubjectOf(args), args, request.Params?.Meta, async () =>
             {
                 AiToolResult result = await _tools.Call(tool.Name, args, FriendlyName(request.Server.ClientInfo), cancel).ConfigureAwait(false);
-                return Interlocked.Exchange(ref answered, 1) == 0 ? result with { Notes = result.Notes.Append(_tools.FirstAnswer()).ToList() } : result;
+                // Given once, with the first answer while AI access is on.
+                if (Volatile.Read(ref answered) == 0 && await _tools.FirstAnswerIfAllowed().ConfigureAwait(false) is string first
+                    && Interlocked.Exchange(ref answered, 1) == 0)
+                    return result with { Notes = result.Notes.Append(first).ToList() };
+                return result;
             }, cancel);
         });
 
@@ -430,7 +434,7 @@ internal sealed class AiServer : IDisposable
                     opened.Missing ? ModelContextProtocol.McpErrorCode.ResourceNotFound : ModelContextProtocol.McpErrorCode.InvalidRequest);
             ResourceContents contents = file.IsImage
                 ? BlobResourceContents.FromBytes(File.ReadAllBytes(file.Path), uri, file.MimeType)
-                : new TextResourceContents { Uri = uri, MimeType = file.MimeType, Text = File.ReadAllText(file.Path) };
+                : new TextResourceContents { Uri = uri, MimeType = file.MimeType, Text = opened.Text ?? "" };
             return new ReadResourceResult { Contents = new List<ResourceContents> { contents } };
         }
     }

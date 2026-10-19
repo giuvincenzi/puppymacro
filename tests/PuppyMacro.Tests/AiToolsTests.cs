@@ -326,6 +326,14 @@ public class AiToolsTests : IDisposable
         steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
     };
 
+    /// <summary>What every request that opens a window takes (pick_points also takes count, labels and confirmed_steps).</summary>
+    private static readonly object AskingWindow = new
+    {
+        title = "Pick the Send button",
+        description = "We are making a macro that sends a message.",
+        steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
+    };
+
     private static string RequestId(AiToolResult waiting) =>
         Regex.Match(waiting.Text, "request_id \"([0-9a-f]+)\"").Groups[1].Value;
 
@@ -930,8 +938,8 @@ public class AiToolsTests : IDisposable
     [Fact]
     public async Task App_and_key_requests_give_what_the_user_picked_or_pressed()
     {
-        AiToolResult app = await Call("pick_app", Asking);
-        AiToolResult keys = await Call("capture_hotkey", Asking);
+        AiToolResult app = await Call("pick_app", AskingWindow);
+        AiToolResult keys = await Call("capture_hotkey", AskingWindow);
 
         Assert.Contains("notepad.exe", app.Text);
         Assert.StartsWith(KeyNames.Format(CtrlX), keys.Text);
@@ -940,9 +948,9 @@ public class AiToolsTests : IDisposable
     [Fact]
     public async Task Screen_picks_give_a_pixel_and_its_color_an_image_kept_by_PuppyMacro_and_an_area()
     {
-        AiToolResult pixel = await Call("pick_pixel", Asking);
-        AiToolResult image = await Call("take_image", Asking);
-        AiToolResult area = await Call("draw_area", Asking);
+        AiToolResult pixel = await Call("pick_pixel", AskingWindow);
+        AiToolResult image = await Call("take_image", AskingWindow);
+        AiToolResult area = await Call("draw_area", AskingWindow);
 
         Assert.False(pixel.IsError || image.IsError || area.IsError);
         Assert.Equal("{\"X\":640,\"Y\":360,\"Color\":\"#3BD16F\"}", pixel.Text);
@@ -970,7 +978,7 @@ public class AiToolsTests : IDisposable
 
         AiToolResult first = await Call("pick_points", Asking);
         string id = RequestId(first);
-        AiToolResult other = await Call("pick_app", Asking);
+        AiToolResult other = await Call("pick_app", AskingWindow);
         AiToolResult stillWaiting = await Call("wait_for_user", new { request_id = id });
         _host.Hold.SetResult(true);
         AiToolResult answer = await Call("wait_for_user", new { request_id = id });
@@ -992,7 +1000,7 @@ public class AiToolsTests : IDisposable
         _host.Hold.SetResult(true);
         _host.Hold = null;
 
-        AiToolResult app = await Call("pick_app", Asking);
+        AiToolResult app = await Call("pick_app", AskingWindow);
         AiToolResult answer = await Call("wait_for_user", new { request_id = id });
 
         Assert.False(app.IsError, app.Text);

@@ -18,8 +18,11 @@ internal sealed partial class AiTools
 {
     private const string AccessOff = "AI access is off in PuppyMacro. Ask the user to turn on Allow AI access on PuppyMacro's AI page.";
 
-    /// <summary>A debug file an AI app may read, or why not (<paramref name="Missing"/>: there is no such file).</summary>
-    internal sealed record OpenedResource(DebugFile? File, string? Problem, bool Missing);
+    /// <summary>
+    /// A debug file an AI app may read, or why not (<paramref name="Missing"/>: there is no such file); a text file's text
+    /// as the AI app may read it (<see cref="TextOf"/>).
+    /// </summary>
+    internal sealed record OpenedResource(DebugFile? File, string? Problem, bool Missing, string? Text = null);
 
     /// <summary>
     /// The one way to a debug file for an AI app (resources/read and read_resource): the URI resolved inside the debug
@@ -35,7 +38,7 @@ internal sealed partial class AiTools
                 $"for {DebugStore.Life.TotalDays} days.", true);
         if (file.IsImage && !_host.Settings.AiSeeScreen)
             return new OpenedResource(null, SeeScreenOff, false);
-        return new OpenedResource(file, null, false);
+        return new OpenedResource(file, null, false, file.IsImage ? null : TextOf(file));
     }
 
     // ================= read_resource =================
@@ -93,24 +96,39 @@ internal sealed partial class AiTools
     }
 
     /// <summary>A text as it is, or some of its lines (offset, limit), with where they are in it.</summary>
-    private static AiToolResult ReadText(DebugFile file, JsonElement args)
+    private AiToolResult ReadText(DebugFile file, JsonElement args)
     {
         if (Has(args, "area") || Has(args, "scale"))
             return AiToolResult.Error("area and scale are for pictures. For a text, offset and limit choose its lines.");
         int? offset = IntArg(args, "offset");
         int? limit = IntArg(args, "limit");
+        string text = TextOf(file);
         if (offset == null && limit == null)
-            return new AiToolResult(File.ReadAllText(file.Path));
+            return new AiToolResult(text);
         if (offset is < 1 || limit is < 1)
             return AiToolResult.Error("\"offset\" (the first line, from 1) and \"limit\" (how many lines) must be at least 1.");
         string name = Path.GetFileName(file.Path);
-        string[] lines = File.ReadAllLines(file.Path);
+        string[] lines = text.Split('\n').Select(l => l.TrimEnd('\r')).ToArray();
+        if (lines.Length > 0 && lines[^1].Length == 0)
+            lines = lines[..^1];
         int first = offset ?? 1;
         if (first > lines.Length)
             return AiToolResult.Error(Invariant($"\"offset\" is past the end: {name} has {lines.Length} lines."));
         // In 64 bits: first - 1 + limit can pass the largest int (limit int.MaxValue: to the end).
         int last = (int)Math.Min(lines.Length, first - 1L + (limit ?? lines.Length));
         return new AiToolResult(Invariant($"Lines {first}–{last} of {lines.Length} of {name}:\n") + string.Join("\n", lines[(first - 1)..last]));
+    }
+
+    /// <summary>
+    /// A text file as an AI app may read it (read_resource and resources/read): a run's log without what the conditions saw
+    /// on the screen (the text read, a pixel's color, how similar an image was) while Let AI apps see the screen is off.
+    /// </summary>
+    public string TextOf(DebugFile file)
+    {
+        string text = File.ReadAllText(file.Path);
+        return !_host.Settings.AiSeeScreen && Path.GetFileName(file.Path).Equals(RunLog.LogFile, StringComparison.OrdinalIgnoreCase)
+            ? RunLog.WithoutWhatWasSeen(text)
+            : text;
     }
 
     private static string Invariant(FormattableString text) => text.ToString(CultureInfo.InvariantCulture);

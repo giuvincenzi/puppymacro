@@ -68,31 +68,36 @@ internal sealed unsafe class GpuMatcher : IDisposable
           Dst[id.y * OW + id.x] = packBgr(s / (F * F));
         }
 
-        // Area average by F to gray: Img (IW x IH) to Gray (OW x OH).
+        // Area average by F to gray: Img (IW x IH) to Gray (OW x OH), in whole values as the template's (OpenCV's area
+        // resize to 8 bits, then its BGR2GRAY in fixed point): with little contrast, a gray with fractions against a
+        // rounded template did not correlate.
         [numthreads(16,16,1)]
         void DownGray(uint3 id : SV_DispatchThreadID) {
           if (id.x >= OW || id.y >= OH) return;
           float3 s = 0;
           for (uint y = 0; y < F; y++) for (uint x = 0; x < F; x++) s += unpackBgr(Img[(id.y * F + y) * IW + id.x * F + x]);
-          s /= F * F;
-          Gray[id.y * OW + id.x] = dot(s, float3(0.114, 0.587, 0.299));
+          uint3 c = (uint3)clamp(round(s / (F * F)), 0, 255);
+          Gray[id.y * OW + id.x] = (float)((c.x * 1868 + c.y * 9617 + c.z * 4899 + 8192) >> 14);
         }
 
         // The correlation of the zero-mean template at every position OX + x, OY + y (x < OW, y < OH). A flat window
-        // (no variation) matches nothing.
+        // (no variation) matches nothing. The window's values are taken from its first pixel (k): the correlation and the
+        // variance don't change, while the sums stay small enough for 32-bit floats (bright windows with little contrast
+        // otherwise lost their variance to rounding, as the processor's doubles don't).
         [numthreads(16,16,1)]
         void Match(uint3 id : SV_DispatchThreadID) {
           if (id.x >= OW || id.y >= OH) return;
           float3 s = 0, si = 0, sii = 0;
+          float3 k = unpackBgr(Img[(OY + id.y) * IW + OX + id.x]);
           for (uint y = 0; y < TH; y++) {
             uint row = (OY + id.y + y) * IW + OX + id.x; uint trow = y * TW;
             for (uint x = 0; x < TW; x++) {
-              float3 v = unpackBgr(Img[row + x]); float4 t = Tpl[trow + x];
+              float3 v = unpackBgr(Img[row + x]) - k; float4 t = Tpl[trow + x];
               s += v * t.xyz; si += v * t.w; sii += v * v * t.w;
             }
           }
           float var = dot(sii - si * si / N, 1);
-          Out[id.y * OW + id.x] = var > N * 0.5 ? dot(s, 1) / sqrt(var * TN) : -2;
+          Out[id.y * OW + id.x] = var > N * 0.5 ? min(dot(s, 1) / sqrt(var * TN), 1) : -2;
         }
 
         // The same on gray, for the coarse step.
@@ -100,12 +105,13 @@ internal sealed unsafe class GpuMatcher : IDisposable
         void MatchGray(uint3 id : SV_DispatchThreadID) {
           if (id.x >= OW || id.y >= OH) return;
           float s = 0, si = 0, sii = 0;
+          float k = Small[(OY + id.y) * IW + OX + id.x];
           for (uint y = 0; y < TH; y++) {
             uint row = (OY + id.y + y) * IW + OX + id.x; uint trow = y * TW;
-            for (uint x = 0; x < TW; x++) { float v = Small[row + x]; s += v * TplG[trow + x]; si += v; sii += v * v; }
+            for (uint x = 0; x < TW; x++) { float v = Small[row + x] - k; s += v * TplG[trow + x]; si += v; sii += v * v; }
           }
           float var = sii - si * si / N;
-          Out[id.y * OW + id.x] = var > N * 0.5 ? s / sqrt(var * TN) : -2;
+          Out[id.y * OW + id.x] = var > N * 0.5 ? min(s / sqrt(var * TN), 1) : -2;
         }
 
         // The best score of each 16 x 16 block of Scores (OW x OH) and where it is: Tiles[block] = (score, index). On a

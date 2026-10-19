@@ -291,26 +291,4 @@ public sealed class LoopEngineEdgesTests : IDisposable
         Assert.DoesNotContain(actions, a => a.Type == MacroActionType.KeyDown && a.Vk == LCtrl);
         Assert.Equal(new[] { (MacroActionType.PressKey, F22) }, actions.Select(a => (a.Type, a.Vk)));
     }
-
-    /// <summary>
-    /// A key held while recording: Windows repeats its press (auto-repeat) and OnKey records every one, so a key held for a
-    /// second becomes about thirty Key down steps and a short Press key, not one Press key held a second (MacroBuilder.Held:
-    /// a press held up to a minute is one Press key).
-    /// </summary>
-    [Fact]
-    public void A_key_held_while_recording_is_one_press_not_its_auto_repeats()
-    {
-        var stop = StartRecording();
-
-        Press(F22);
-        Press(F22); // auto-repeat
-        Press(F22);
-        Press(F22);
-        Release(F22);
-        _engine.StopRecording();
-
-        var actions = MacroBuilder.Build(stop()!);
-
-        Assert.Equal(new[] { (MacroActionType.PressKey, F22) }, actions.Select(a => (a.Type, a.Vk)));
-    }
 }

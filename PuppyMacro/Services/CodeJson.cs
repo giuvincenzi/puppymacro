@@ -103,10 +103,13 @@ internal static class CodeJson
     /// Code views makes each of them a problem instead (<see cref="Read{T}"/>). Throws <see cref="JsonException"/> when the
     /// text is not JSON or does not fit the model.
     /// </summary>
-    public static T? ReadFile<T>(string text) where T : class
+    public static T? ReadFile<T>(string text) where T : class => ReadFile<T>(text, Options);
+
+    /// <summary>The same with a file's own options (settings.json's).</summary>
+    public static T? ReadFile<T>(string text, JsonSerializerOptions options) where T : class
     {
         using var document = JsonDocument.Parse(text);
-        return JsonSerializer.Deserialize<T>(WithoutMisplacedNulls(document.RootElement, typeof(T)), Options);
+        return JsonSerializer.Deserialize<T>(WithoutMisplacedNulls(document.RootElement, typeof(T)), options);
     }
 
     /// <summary>The same JSON without the nulls <see cref="MisplacedNulls"/> finds.</summary>

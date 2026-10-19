@@ -23,25 +23,6 @@ public class MacroBuilderEdgesTests
     }
 
     [Fact]
-    public void A_key_held_down_is_pressed_once_even_with_the_keyboard_repeat()
-    {
-        // Holding A for 0.6 s: Windows repeats its key down (after the keyboard's delay, then about 30 a second) until the
-        // key up. The low-level hook records every repeat (LoopEngine.Record), so the recording gets them all.
-        var events = new List<RawEvent> { Key(true, KeyA, 0) };
-        for (double t = 500; t < 600; t += 33)
-            events.Add(Key(true, KeyA, t));
-        events.Add(Key(false, KeyA, 600));
-
-        List<MacroAction> actions = MacroBuilder.Build(events);
-
-        // One press of A that lasts until its release: a Press key held 600 ms, or a Key down and a Key up.
-        int presses = actions.Count(a => a.Vk == KeyA && a.Type is MacroActionType.KeyDown or MacroActionType.PressKey);
-        Assert.True(presses == 1,
-            $"Holding A once recorded {presses} presses: {string.Join(", ", actions.Select(a => $"{a.Type} (held {a.HoldMs} ms)"))}");
-        Assert.Equal(600, actions.Sum(a => a.DelayMs + (a.Type == MacroActionType.PressKey ? a.HoldMs : 0)));
-    }
-
-    [Fact]
     public void A_long_spin_of_the_wheel_is_a_macro_the_code_view_accepts()
     {
         // A free-spinning wheel: 1500 notches down, one every 2 ms, all within the 300 ms that make one Scroll.

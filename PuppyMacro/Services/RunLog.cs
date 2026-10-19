@@ -77,8 +77,34 @@ internal sealed class RunLog
         return number;
     }
 
-    /// <summary>A detail of the event before it (what a condition saw), without a number.</summary>
+    /// <summary>A detail of the event before it, without a number.</summary>
     public void Line(string text) => Append($"     {Time()} {text}");
+
+    /// <summary>
+    /// What a condition saw on the screen (a pixel's color, the text read, how similar an image was), under the event of its
+    /// If, indented: <see cref="WithoutWhatWasSeen"/> takes these lines out for an AI app that may not see the screen.
+    /// </summary>
+    public void Seen(string text) => Append($"     {Time()}   {text}");
+
+    private static readonly System.Text.RegularExpressions.Regex SeenLine =
+        new(@"^ {5}\+\d+:\d\d\.\d{3}   ", System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+    /// <summary>A log without the lines of what the conditions saw (<see cref="Seen"/>), with one line saying so where they were.</summary>
+    public static string WithoutWhatWasSeen(string log)
+    {
+        var kept = new List<string>();
+        bool dropping = false;
+        foreach (string line in log.Split('\n'))
+        {
+            bool seen = SeenLine.IsMatch(line);
+            if (seen && !dropping)
+                kept.Add("     (what the conditions saw is left out: Let AI apps see the screen is off)");
+            if (!seen)
+                kept.Add(line);
+            dropping = seen;
+        }
+        return string.Join('\n', kept);
+    }
 
     /// <summary>The run ended: its last event (with the screen at the end) and why, also in <see cref="RunFile"/>.</summary>
     public void End(string why, IReadOnlyList<(Rect Bounds, Mat Picture)>? pictures = null)

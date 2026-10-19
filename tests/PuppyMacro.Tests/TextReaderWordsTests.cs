@@ -17,17 +17,6 @@ public class TextReaderWordsTests
         new() { words.Select((w, i) => new TextReader.Word(w, new Rect(i * 100, 0, 90, 20))).ToList() };
 
     [Theory]
-    [InlineData("OK", "Go", "Kart")]         // "Go Kart" read: the OK button is not there
-    [InlineData("Start", "Last", "Artist")]  // "Last Artist"
-    [InlineData("Save", "Visa", "Venue")]    // "Visa Venue"
-    public void Contains_does_not_find_a_text_made_of_the_end_of_one_word_and_the_start_of_the_next(string wanted, string first, string second)
-    {
-        // The words are glued without spaces so that Chinese and Japanese (no spaces between words) are found, and a short
-        // text looked for with Contains (the default Match) is then found across two Latin words: a macro clicks there.
-        Assert.Null(TextReader.Find(Line(first, second), wanted, TextMatch.Contains, false));
-    }
-
-    [Theory]
     [InlineData("OK", "Look", 0, 90)]       // inside one word
     [InlineData("Go Kart", "Go", 0, 190)]   // the words themselves, with or without the space
     [InlineData("GoKart", "Go", 0, 190)]

@@ -282,7 +282,7 @@ internal sealed class MacroRunner
             (result.Met ? $"Then ({block.Then.Count} actions)"
                 : block.OnFail == ConditionFail.Else ? $"Else ({block.Else.Count} actions)" : "the macro stops (Stop the macro)"));
         foreach (string line in result.Details)
-            _log?.Line($"  {line}");
+            _log?.Seen(line);
         if (result.Met)
             return Play(block.Then, $"{me} Then ");
         if (block.OnFail != ConditionFail.Else)
