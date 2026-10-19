@@ -229,7 +229,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
     private void LoadArguments(Dictionary<string, System.Text.Json.Nodes.JsonNode?>? arguments)
     {
         var list = Callee is { } callee
-            ? ArgumentViewModel.For(callee, arguments, _context.Signatures, _context.Parameters, _context.Found, _store)
+            ? ArgumentViewModel.For(callee, arguments, _context.Signatures, _context.Parameters, _context.Found, _store, asCondition: true)
             : new List<ArgumentViewModel>();
         foreach (var argument in list)
         {
@@ -807,7 +807,10 @@ public sealed class IfViewModel : ConditionEditorItem
     public string OnFailDescription => (ConditionWait)_waitIndex switch
     {
         ConditionWait.Once => Strings.Condition_IfNotTrueOnce,
-        ConditionWait.UpTo => Plurals.Format("Condition_IfNotTrueAfter", (long)Math.Round(double.IsNaN(_waitSeconds) ? 0 : _waitSeconds)),
+        // Whole seconds in words ("30 seconds"); tenths with the unit's symbol, which needs no plural form in any language.
+        ConditionWait.UpTo => double.IsNaN(_waitSeconds) || _waitSeconds == Math.Floor(_waitSeconds)
+            ? Plurals.Format("Condition_IfNotTrueAfter", (long)(double.IsNaN(_waitSeconds) ? 0 : _waitSeconds))
+            : string.Format(CultureInfo.CurrentCulture, Strings.Condition_IfNotTrueAfterSeconds, _waitSeconds.ToString("0.#", CultureInfo.CurrentCulture)),
         _ => Strings.Condition_IfNotTrueForever,
     };
 

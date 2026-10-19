@@ -330,6 +330,7 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
     {
         ConditionKind.Pixel => Fill(c.Not ? Strings.MacroEditor_RowIfPixelNot : Strings.MacroEditor_RowIfPixel, c.X, c.Y, c.Color ?? ""),
         ConditionKind.Image => Fill(c.Not ? Strings.MacroEditor_RowIfImageNot : Strings.MacroEditor_RowIfImage, c.Name ?? ""),
+        ConditionKind.Component => Fill(c.Not ? Strings.MacroEditor_RowIfComponentNot : Strings.MacroEditor_RowIfComponent, c.Name ?? ""),
         _ => Fill(c.Not ? Strings.MacroEditor_RowIfTextNot : Strings.MacroEditor_RowIfText, Shorten(c.Text ?? "")),
     };
 

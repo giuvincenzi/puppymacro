@@ -29,7 +29,17 @@ internal sealed class FrameArguments
 {
     private readonly Dictionary<string, JsonNode> _values;
 
-    public FrameArguments(Dictionary<string, JsonNode> values) => _values = values;
+    public FrameArguments(Dictionary<string, JsonNode> values, IReadOnlySet<string>? notFound = null)
+    {
+        _values = values;
+        NotFound = notFound ?? new HashSet<string>();
+    }
+
+    /// <summary>
+    /// The parameters whose place was not found this time (a <c>{"Found"}</c> of a condition that wasn't, also passed on with
+    /// <c>{"From"}</c>): what uses them plays as a "Where … was found" action does then (<see cref="ComponentPrograms.Bound(MacroAction, FrameArguments)"/>).
+    /// </summary>
+    public IReadOnlySet<string> NotFound { get; }
 
     public static readonly FrameArguments None = new(new Dictionary<string, JsonNode>());
 
@@ -84,15 +94,18 @@ internal sealed class ComponentPrograms
     /// <summary>
     /// The values a call gives its component's parameters, in the frame of the caller: a value as it is, a <c>{"From"}</c>
     /// the caller's own parameter, a <c>{"Found"}</c> where the caller's condition found something plus the offset; a
-    /// parameter left out its Default. Null, with <paramref name="missing"/>, when a <c>{"Found"}</c> condition found nothing
-    /// this time (one of an Any's that wasn't true) or its offset moves the place past the screen's limits, or a value is
-    /// missing: the call is skipped, as a "Where … was found" click is.
+    /// parameter left out its Default. A <c>{"Found"}</c> whose condition found nothing this time (one of an Any's that wasn't
+    /// true), or whose offset moves the place past the screen's limits, is <see cref="FrameArguments.NotFound"/>: the call plays
+    /// as its actions would as rows, each that goes there skipped as a "Where … was found" one is (the user's choice: a
+    /// component behaves as its rows, so Unlink and Save as component change nothing). Null, with <paramref name="missing"/>,
+    /// only when another value is missing: the call is skipped.
     /// </summary>
     public static FrameArguments? Evaluate(PreparedComponent callee, Dictionary<string, JsonNode?>? arguments, FrameArguments caller,
         IReadOnlyDictionary<Guid, OpenCvSharp.Point> found, out string? missing)
     {
         missing = null;
         var values = new Dictionary<string, JsonNode>();
+        var notFound = new HashSet<string>();
         foreach (var parameter in callee.Parameters)
         {
             JsonNode? argument = arguments?.GetValueOrDefault(parameter.Name) ?? parameter.Default;
@@ -101,12 +114,26 @@ internal sealed class ComponentPrograms
             {
                 value = null;
                 if (reference.From is string from)
-                    value = caller[from]?.DeepClone();
-                else if (reference.Found is Guid id && found.TryGetValue(id, out var point))
                 {
-                    var at = new JsonObject { ["X"] = (long)point.X + reference.OffsetX, ["Y"] = (long)point.Y + reference.OffsetY };
+                    value = caller[from]?.DeepClone();
+                    if (value == null && caller.NotFound.Contains(from))
+                    {
+                        notFound.Add(parameter.Name);
+                        continue;
+                    }
+                }
+                else if (reference.Found is Guid id)
+                {
+                    var at = found.TryGetValue(id, out var point)
+                        ? new JsonObject { ["X"] = (long)point.X + reference.OffsetX, ["Y"] = (long)point.Y + reference.OffsetY }
+                        : null;
                     // The offset can move the place past the screen's limits: then there is no point this time, never another one.
-                    value = ComponentValues.Read(at, ParameterType.Point, ValueRule.Any, out _) != null ? at : null;
+                    if (at == null || ComponentValues.Read(at, ParameterType.Point, ValueRule.Any, out _) == null)
+                    {
+                        notFound.Add(parameter.Name);
+                        continue;
+                    }
+                    value = at;
                 }
             }
             else
@@ -118,7 +145,7 @@ internal sealed class ComponentPrograms
             }
             values[parameter.Name] = value;
         }
-        return new FrameArguments(values);
+        return new FrameArguments(values, notFound);
     }
 
     /// <summary>
@@ -128,11 +155,19 @@ internal sealed class ComponentPrograms
     /// </summary>
     public static MacroAction? Bound(MacroAction action, FrameArguments arguments)
     {
-        if (action.Bind is not { Count: > 0 } bind || arguments.Count == 0)
+        if (action.Bind is not { Count: > 0 } bind || arguments.Count == 0 && arguments.NotFound.Count == 0)
             return action;
         MacroAction? copy = null;
         foreach (var (slot, parameter) in ComponentSlots.InOrder(bind))
         {
+            if (slot == ComponentSlots.Point && arguments.NotFound.Contains(parameter))
+            {
+                // Its place was not found this time: it plays as a "Where … was found" action does then (MacroRunner.Execute:
+                // a click or a move skipped, a release where the pointer is), going where no condition of the frame found.
+                copy ??= ShallowForBind(action);
+                copy.FoundId = Guid.Empty;
+                continue;
+            }
             if (arguments[parameter] is not { } node || ComponentSlots.Find(action, slot) is not { } s)
                 continue;
             if (ComponentSlots.Read(s, node, action.Cell != null) is not { } value)
@@ -147,11 +182,14 @@ internal sealed class ComponentPrograms
     /// <summary>The condition with its bound fields set from the frame, as <see cref="Bound(MacroAction, FrameArguments)"/>.</summary>
     public static MacroCondition? Bound(MacroCondition condition, FrameArguments arguments)
     {
-        if (condition.Bind is not { Count: > 0 } bind || arguments.Count == 0)
+        if (condition.Bind is not { Count: > 0 } bind || arguments.Count == 0 && arguments.NotFound.Count == 0)
             return condition;
         MacroCondition? copy = null;
         foreach (var (slot, parameter) in ComponentSlots.InOrder(bind))
         {
+            // A place not found this time: the condition can't be checked, so it is never true, nor its Not.
+            if (arguments.NotFound.Contains(parameter))
+                return null;
             if (arguments[parameter] is not { } node || ComponentSlots.Find(condition, slot) is not { } s)
                 continue;
             if (ComponentSlots.Read(s, node, condition.Cell != null) is not { } value)

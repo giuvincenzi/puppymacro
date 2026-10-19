@@ -424,7 +424,8 @@ internal sealed class ItemHistory
         if (value.TryGetValue(out string? text))
             return $"\"{text}\"";
         if (value.TryGetValue(out double number))
-            return number.ToString("0.##", CultureInfo.InvariantCulture);
+            // Every decimal the value has (up to 6): a change in the third decimal shows, and is not taken for none.
+            return number.ToString("0.######", CultureInfo.InvariantCulture);
         return value.ToJsonString();
     }
 

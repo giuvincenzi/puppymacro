@@ -91,6 +91,9 @@ internal sealed class ConditionChecker : IDisposable
 
         /// <summary>A text found: the line it was found in, as read (a line can hold more than what was looked for).</summary>
         public string? FoundIn { get; set; }
+
+        /// <summary>A text in a language Windows can't read on this PC: never read, as the editor says (NoLanguage).</summary>
+        public bool NoLanguage { get; init; }
     }
 
     /// <summary>Checks the If's conditions, waiting as it says, until they are true, the wait ends or <paramref name="stop"/>.</summary>
@@ -313,6 +316,8 @@ internal sealed class ConditionChecker : IDisposable
     /// <summary>One place of a condition as the Debug log shows it: what was wanted and what PuppyMacro saw.</summary>
     private string Describe(MacroCondition c, Look look, bool seen, bool there, Point at, double score)
     {
+        if (look.NoLanguage)
+            return $"{Name(c)}: not read, Windows can't read {c.Language} on this PC (its language isn't installed)";
         if (!seen)
             return $"{Name(c)}: PuppyMacro could not see this part of the screen (no monitor there, or its capture failed)";
         return c.Kind switch
@@ -347,7 +352,11 @@ internal sealed class ConditionChecker : IDisposable
                 }
                 break;
             case ConditionKind.Text:
-                yield return new Look { Condition = c, Area = new Rect(c.AreaX, c.AreaY, c.AreaWidth, c.AreaHeight) };
+                yield return new Look
+                {
+                    Condition = c, Area = new Rect(c.AreaX, c.AreaY, c.AreaWidth, c.AreaHeight),
+                    NoLanguage = !TextReader.CanRead(c.Language),
+                };
                 break;
         }
     }
@@ -386,6 +395,9 @@ internal sealed class ConditionChecker : IDisposable
                 return FindImage(watch, area, look.Image!, c);
             case ConditionKind.Text:
             {
+                // Not read in another language: a place it can't read is not seen, so neither it nor its Not is true.
+                if (look.NoLanguage)
+                    return (false, false, default, 0);
                 using var picture = watch.Copy(area);
                 if (picture == null || string.IsNullOrWhiteSpace(c.Text))
                     return (false, false, default, 0);

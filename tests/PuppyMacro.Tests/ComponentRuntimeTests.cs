@@ -92,9 +92,15 @@ public class ComponentRuntimeTests : IDisposable
         values = ComponentPrograms.Evaluate(prepared, new() { ["Slot"] = Found(condition, 5, -10) }, FrameArguments.None, found, out _)!;
         Assert.True(JsonNode.DeepEquals(Point(405, 290), values["Slot"]));
 
-        // A condition that found nothing this time, or a value that isn't there: no frame, the parameter named.
-        Assert.Null(ComponentPrograms.Evaluate(prepared, new() { ["Slot"] = Found(Guid.NewGuid()) }, FrameArguments.None, found, out missing));
-        Assert.Equal("Slot", missing);
+        // A condition that found nothing this time: a frame whose Slot is not found (what goes there is skipped, as a row's
+        // "Where … was found" is), passed on to a call inside that takes it with From.
+        values = ComponentPrograms.Evaluate(prepared, new() { ["Slot"] = Found(Guid.NewGuid()) }, FrameArguments.None, found, out missing)!;
+        Assert.Null(missing);
+        Assert.Equal(new[] { "Slot" }, values.NotFound);
+        Assert.Null(values["Slot"]);
+        var inner = ComponentPrograms.Evaluate(prepared, new() { ["Slot"] = From("Slot") }, values, Nothing, out missing)!;
+        Assert.Equal(new[] { "Slot" }, inner.NotFound);
+        // A value that isn't there: no frame, the parameter named.
         Assert.Null(ComponentPrograms.Evaluate(prepared, new() { ["Slot"] = From("Nowhere") }, caller, Nothing, out missing));
         Assert.Equal("Slot", missing);
         Assert.Null(ComponentPrograms.Evaluate(prepared, null, FrameArguments.None, Nothing, out missing));
@@ -349,7 +355,7 @@ public class ComponentRuntimeTests : IDisposable
     }
 
     [Fact]
-    public void A_call_whose_place_was_not_found_this_time_is_skipped()
+    public void A_call_whose_place_was_not_found_this_time_plays_as_its_rows_would()
     {
         var look = LookAt();
         var missing = new MacroCondition
@@ -361,7 +367,10 @@ public class ComponentRuntimeTests : IDisposable
 
         string log = Run(Macro("Any", any), new[] { look });
 
-        Assert.Contains("Component \"Look at\": skipped, Slot has no value this time", log);
+        // The call plays: its pixel at the place not found can't be checked (never true), so its Then doesn't play.
+        Assert.Contains("Component \"Look at\": 1 action(s)", log);
+        Assert.Contains("can't be checked this time", log);
+        Assert.DoesNotContain("held 10 ms", log);
         Assert.Contains("held 17 ms", log); // the macro goes on
     }
 

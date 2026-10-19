@@ -165,7 +165,9 @@ Rules:
     Language as precedents): a typed signature (`Parameters`: Point, Number with a unit, Text, Key, Color, Image, Area, Grid;
     required when it has no `Default`; one `Example`, which PuppyMacro writes into the bound fields at save), fields bound
     to parameters next to the field (`Bind` on an action or condition, by slot), calls with `Arguments` (a value,
-    `{"From"}` a parameter of the component around, `{"Found"}` a place an If around the call found), components calling
+    `{"From"}` a parameter of the component around, `{"Found"}` a place an If around the call found; not found this time,
+    what goes there is skipped as a row's "Where … was found" is and the rest plays: a component behaves as its rows, the
+    user's choice, so Unlink and Save as component change nothing), components calling
     components (never in a loop, at most `ComponentSignatures.MaxDepth` levels), and `Returns` (one of its conditions):
     such a component is also a condition, `ConditionKind.Component`, checked as the condition it returns with the call's
     arguments, in the If's own wait. No expressions, no code in the JSON: a field takes a parameter's value as it is.

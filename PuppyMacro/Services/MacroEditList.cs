@@ -149,6 +149,10 @@ internal sealed class MacroEditList
             Groups.Add(copy);
         }
         RenameConditions(inserted, All);
+        // A group whose only rows were just taken out (Unlink, Save as component: the rows' place keeps their group) comes
+        // back with the actions put in it.
+        if (into != null && !Groups.Any(g => g.Id == into.Id))
+            Groups.Add(into);
         list.InsertRange(OutsideGroups(list, Math.Clamp(index, 0, list.Count), into), inserted);
         Normalize();
         return inserted;

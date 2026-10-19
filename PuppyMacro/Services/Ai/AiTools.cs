@@ -143,7 +143,7 @@ internal sealed partial class AiTools
         "are two Grids used with the same cell. Every call's cells are checked against its grid. A parameter with no Default is given by " +
         "every call. A row calls it: {\"Type\":\"Component\",\"ComponentId\":…,\"Arguments\":{\"Slot\":{\"X\":3986,\"Y\":1056}}}; an argument " +
         "is a value, {\"From\":\"a parameter\"} (inside a component, one of its own passed on) or {\"Found\":\"a condition's Id\"} (a Point: " +
-        "where an If around the call found an image or a text this time, with OffsetX and OffsetY). A component with Returns " +
+        "where an If around the call found an image or a text this time, with OffsetX and OffsetY; when it found nothing, what goes there is skipped and the rest plays, as rows would). A component with Returns " +
         "(one of its conditions) is also a condition: {\"Kind\":\"Component\",\"Name\":…,\"ComponentId\":…,\"Arguments\":…} in an If is true " +
         "when that condition is, checked as the If checks any condition, and a \"Where … was found\" goes where it found it. " +
         "Components call components (never in a loop, at most 10 levels). A call costs microseconds when the macro plays, where " +
@@ -474,11 +474,11 @@ internal sealed partial class AiTools
                 """{"type":"object","properties":{"topic":{"type":"string","description":"A topic from the list, e.g. \"macros\"."}},"additionalProperties":false}""",
                 true, false, (a, app, _) => Task.FromResult(Help(a, app))),
 
-            new("save_loop", "Creates a loop, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
+            new("save_loop", "Creates a loop, or rewrites the one with this id (or with the Id inside item, as get_item gives it). Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
                 Save("loop"), false, true, (a, app, c) => SaveItem<LoopDefinition>(a, app, "loop", c)),
-            new("save_macro", "Creates a macro, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
+            new("save_macro", "Creates a macro, or rewrites the one with this id (or with the Id inside item, as get_item gives it). Saved at once (kept in its History)." + RewriteRule + NewItemRule + AfterNewItem,
                 Save("macro"), false, true, (a, app, c) => SaveItem<MacroDefinition>(a, app, "macro", c)),
-            new("save_remap", "Creates a remap, or rewrites the one with this id. Saved at once (kept in its History)." + RewriteRule,
+            new("save_remap", "Creates a remap, or rewrites the one with this id (or with the Id inside item, as get_item gives it). Saved at once (kept in its History)." + RewriteRule,
                 Save("remap"), false, true, (a, app, c) => SaveItem<RemapDefinition>(a, app, "remap", c)),
             new("patch_item",
                 "Changes part of a loop, macro or remap with a JSON Patch (RFC 6902): only what changes, so it is fast even for a " +
@@ -881,6 +881,10 @@ internal sealed partial class AiTools
         Guid? editId = OptionalIdArg(args, "id", "the Id of the " + kind + " to rewrite (get_overview lists them); leave it out for a new one");
         if (await Refusal().ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
+        // get_item's JSON sent back as it is: the Id inside names the item it rewrites, never a copy of it.
+        if (editId == null && item.TryGetProperty("Id", out JsonElement own) && own.ValueKind == JsonValueKind.String
+            && Guid.TryParse(own.GetString(), out Guid ownId))
+            editId = await _host.Ui(() => Task.FromResult(Find(ownId) is T ? (Guid?)ownId : null)).ConfigureAwait(false);
 
         // The checks of the editor's Code view, with the Id the item has (a new one for a new item).
         // The checks' problems in English: they are the AI app's answer (and the activity's detail).
@@ -898,7 +902,7 @@ internal sealed partial class AiTools
         List<string> changes = diff.Select(c => c.English).ToList();
         Phrase label = before == null ? About("Ai_New", parsed)
             : Phrase.Of($"Ai_Changed_{kind}", TitleArg(parsed), diff.Count == 1 ? diff[0] : Phrase.Plural("History_Changes", diff.Count));
-        if (before != null && changes.Count == 0)
+        if (before != null && before == json)
             return new AiToolResult($"Nothing to change: the {kind} is already like this.");
         Guid id = Id(parsed);
 
@@ -952,9 +956,11 @@ internal sealed partial class AiTools
                 ? MacroJson.Parse(text, itemId, (b, a) => HotkeyConflicts.Find(b, _host.Settings, _host.Macros, itemId, appExe: a), out problems,
                     _host.Macros.Images.Has, _host.Macros.Library.Signatures())
                 : RemapJson.Parse(text, itemId, (b, a) => HotkeyConflicts.RemapClash(b, a, _host.Settings, _host.Macros, itemId), out problems);
-        return parsed is T ok
-            ? (ok, null, existing == null ? null : Serialize(existing))
-            : (null, string.Join("\n", problems.Select(p => "- " + p.Message)), null);
+        if (parsed is not T ok)
+            return (null, string.Join("\n", problems.Select(p => "- " + p.Message)), null);
+        // Debug is the user's: the item keeps what it has before anything is compared, shown or saved.
+        KeepUsersDebug(ok, _host.Macros);
+        return (ok, null, existing == null ? null : Serialize(existing));
     }
 
     /// <summary>The patch on the item's whole JSON (every field there), then save_*'s checks, permissions and History.</summary>
@@ -1538,14 +1544,16 @@ internal sealed partial class AiTools
             if (_host.AddCollections(now.NewCollections, app) is string notAdded)
                 return AiToolResult.Error(notAdded);
             var lines = now.NewCollections.Select(c => $"- Library collection \"{c.Name}\", Id {c.Id}").ToList();
+            int imported = 0;
             foreach (ItemFileEntry entry in now.Entries.Where(e => e.Selected))
             {
                 object item = entry.Item!;
                 _host.Save(item, app);
                 _log.Add(app, AiActivityKind.Proposal, About("Ai_Imported", item), AiActivityResult.Saved, "", Serialize(item), Id(item), Kind(item));
                 lines.Add($"- {Capital(Loc.English(() => Describe(item)))}, Id {Id(item)}" + string.Concat(entry.Notes.Select(n => " " + n)));
+                imported++;
             }
-            return new AiToolResult($"Imported {lines.Count} item{(lines.Count == 1 ? "" : "s")}, all disabled: the user turns them on " +
+            return new AiToolResult($"Imported {imported} item{(imported == 1 ? "" : "s")}, all disabled: the user turns them on " +
                                     $"(set_enabled, or the switch on their card).\n{string.Join("\n", lines)}{skipped}");
         }
 
@@ -1554,10 +1562,14 @@ internal sealed partial class AiTools
 
         return await StartForUser(app, async () =>
         {
-            // The user's window: the file read again in the user's language (its notes), each item named as the cards do.
-            List<string> shown = ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only).Entries
+            // The user's window: the file read again in the user's language (its notes), each item named as the cards do,
+            // and the Library collections it adds with them.
+            ItemFileContent read = ItemFile.Read(text, _host.Settings, _host.Macros, ItemFile.AppVersion, only);
+            List<string> shown = read.Entries
                 .Where(e => e.Selected)
-                .Select(e => About("Ai_Item", e.Item!).ToString() + string.Concat(e.Notes.Select(n => " " + n))).ToList();
+                .Select(e => About("Ai_Item", e.Item!).ToString() + string.Concat(e.Notes.Select(n => " " + n)))
+                .Concat(read.NewCollections.Select(c => string.Format(CultureInfo.CurrentCulture, Strings.Ai_ImportCollection, c.Name)))
+                .ToList();
             AiAnswer answer = await _host.Confirm(app, Plurals.Format("Ai_ConfirmImport", chosen.Count), shown, Strings.Ai_Import);
             if (answer == AiAnswer.Done)
                 return Apply();

@@ -199,8 +199,9 @@ public partial class MacroActionWindow
                 _ = Conditions.CheckAllAsync();
             return;
         }
+        // Inside a component: its parameters' Examples, as the editor's Test passes them.
         if ((_code.IsCode ? _code.Read() : BuildAction(TestButton)) is { FoundId: null } action)
-            ActionTestSession.Run(_engine, action, this);
+            ActionTestSession.Run(_engine, action, this, _parameters);
     }
 
     /// <summary>The action with the values in the window, or null (and the error shown) when they are not valid.</summary>

@@ -44,12 +44,12 @@ public class ComponentBoundariesTests
 
         var found = new Dictionary<Guid, Point> { [seen.Id] = new Point(5000, 10) };
         var frame = ComponentPrograms.Evaluate(ComponentPrograms.Prepare(new[] { strip }).Find(strip.Id)!, row.Arguments,
-            FrameArguments.None, found, out _);
-        if (frame == null)
-            return; // skipped: as a "Where … was found" with no place
+            FrameArguments.None, found, out _)!;
+        // No place this time: the click goes where nothing was found, so it is skipped as a "Where … was found" one, never at
+        // the component's example.
+        Assert.Contains("Slot", frame.NotFound);
         var click = ComponentPrograms.Bound(strip.Actions[0], frame)!;
-        Assert.False((click.X, click.Y) == (3912, 1056),
-            $"the call gives the point {frame["Slot"]?.ToJsonString()}, but the click plays at the component's example 3912, 1056");
+        Assert.Equal(Guid.Empty, click.FoundId);
     }
 
     [Theory]

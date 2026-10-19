@@ -161,6 +161,8 @@ internal sealed partial class AiTools
         List<LibraryComponent> updatedComponents = new();
         string updatedText = "";
         bool examplesWritten = false;
+        // The macros and components whose calls the change rewrites, as they were: shown, and kept for Restore.
+        var callersBefore = new Dictionary<Guid, string>();
         var (problem, before, collectionName) = await _host.Ui(() => Task.FromResult(Loc.English(() =>
         {
             var library = _host.Macros.Library;
@@ -184,6 +186,12 @@ internal sealed partial class AiTools
                 return (string.Join(" ", problems.Select(p => p.Message)), (string?)null, "");
             if (existing != null && UpdateCalls(args, existing, component, others, out updatedMacros, out updatedComponents, out updatedText) is string calls)
                 return (calls, (string?)null, "");
+            foreach (var macro in updatedMacros)
+                if (_host.Macros.Find(macro.Id) is { } saved)
+                    callersBefore[macro.Id] = Serialize(saved);
+            foreach (var caller in updatedComponents)
+                if (library.Find(caller.Id) is { } saved)
+                    callersBefore[caller.Id] = JsonSerializer.Serialize(saved.Component, CodeJson.Options);
             return ((string?)null, existing == null ? null : JsonSerializer.Serialize(existing, CodeJson.Options), name ?? "");
         }))).ConfigureAwait(false);
         if (problem != null)
@@ -197,6 +205,13 @@ internal sealed partial class AiTools
             return new AiToolResult("Nothing to change: the component is already like this." + bound);
         Phrase label = Phrase.Of(before == null ? "Ai_NewComponent" : "Ai_ChangedComponent", component.Name);
 
+        // "Changed macro D4 salvage: Arguments: …": a macro whose calls the change rewrites, as the History says it.
+        Phrase CallsChanged(MacroDefinition macro)
+        {
+            var diff = callersBefore.TryGetValue(macro.Id, out string? was) ? ItemHistory.Diff(was, Serialize(macro)) : new List<Phrase>();
+            return Phrase.Of("Ai_Changed_macro", TitleArg(macro), diff.Count == 1 ? diff[0] : Phrase.Plural("History_Changes", diff.Count));
+        }
+
         AiToolResult Apply()
         {
             if (BusyNow() is AiToolResult busyNow)
@@ -208,6 +223,13 @@ internal sealed partial class AiTools
             if (notSaved != null)
                 return AiToolResult.Error(notSaved);
             _log.Add(app, AiActivityKind.Proposal, label, AiActivityResult.Saved, "", json, component.Id, "component", before);
+            // Each macro and component whose calls changed with it, restorable on its own.
+            foreach (var macro in updatedMacros)
+                _log.Add(app, AiActivityKind.Proposal, CallsChanged(macro), AiActivityResult.Saved, "", Serialize(macro), macro.Id, "macro",
+                    callersBefore.GetValueOrDefault(macro.Id));
+            foreach (var caller in updatedComponents)
+                _log.Add(app, AiActivityKind.Proposal, Phrase.Of("Ai_ChangedComponent", caller.Name), AiActivityResult.Saved, "",
+                    JsonSerializer.Serialize(caller, CodeJson.Options), caller.Id, "component", callersBefore.GetValueOrDefault(caller.Id));
             var collection = _host.Macros.Library.Find(component.Id)!.Value.Collection;
             string call = JsonSerializer.Serialize(new { Type = "Component", ComponentId = component.Id, Arguments = ExampleArguments(component) }, CompactAnswer);
             return new AiToolResult($"Saved the {(before == null ? "new " : "")}component " +
@@ -220,8 +242,11 @@ internal sealed partial class AiTools
 
         return await StartForUser(app, async () =>
         {
+            var lines = new List<string> { label.ToString() };
+            lines.AddRange(updatedMacros.Select(m => CallsChanged(m).ToString()));
+            lines.AddRange(updatedComponents.Select(c => Phrase.Of("Ai_ChangedComponent", c.Name).ToString()));
             AiAnswer answer = await _host.Confirm(app, before == null ? Strings.Ai_ConfirmNewComponent : Strings.Ai_ConfirmChangedComponent,
-                new List<string> { label.ToString() }, Strings.Ai_Save);
+                lines, Strings.Ai_Save);
             if (answer == AiAnswer.Done)
                 return Apply();
             Log(app, AiActivityKind.Proposal, label, answer, "", json);

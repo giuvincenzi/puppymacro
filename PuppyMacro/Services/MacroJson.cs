@@ -77,6 +77,10 @@ internal static class MacroJson
         var scope = new CallScope(components, parameters, hasImage);
         MacroAction? action = CodeJson.Read<MacroAction>(text, (a, check) =>
         {
+            // Inside a component a bound field holds its parameter's Example, as the component's save writes it: the form
+            // leaves such a field empty, and both views check it alike.
+            if (parameters != null)
+                ComponentEdits.WriteExamples(new[] { a }, parameters);
             var finders = (found ?? new Dictionary<Guid, string>()).ToDictionary(f => f.Key, _ => (MacroCondition?)null);
             CheckActions(new List<MacroAction> { a }, "", finders, scope, check, single: true);
             CheckNames(new[] { a }, check, "");

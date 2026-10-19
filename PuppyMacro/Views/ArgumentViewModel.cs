@@ -135,10 +135,41 @@ public sealed class ArgumentViewModel : INotifyPropertyChanged
 
     private static int Whole(double value) => double.IsNaN(value) ? 0 : (int)Math.Round(value);
 
-    /// <summary>Why the argument can't be used as it is ("Slot: write a point…"), or null.</summary>
-    public string? Problem => ShowValue && Value.Problem is string problem
+    /// <summary>
+    /// Why the argument can't be used as it is ("Slot: write a point…"), or null. A Grid's card also says a cell the call
+    /// reaches with all the cards' values that its grid doesn't have, as the macro's checks do (<see cref="CellsProblem"/>).
+    /// </summary>
+    public string? Problem => OwnProblem ?? CellsProblem;
+
+    private string? OwnProblem => ShowValue && Value.Problem is string problem
         ? string.Format(CultureInfo.CurrentCulture, Strings.Param_ArgumentProblem, Parameter.Name, problem)
         : null;
+
+    /// <summary>The call these cards make: the component, its signatures, all its cards, and whether it is a condition.</summary>
+    private (LibraryComponent Callee, ComponentSignatures Signatures, List<ArgumentViewModel> Cards, bool AsCondition)? _call;
+
+    /// <summary>
+    /// On the first Grid card: the first cell the call reaches with the cards' values that its grid doesn't have
+    /// (<see cref="ComponentChecks.CheckCells"/>, as a macro's call is checked), once every card's own value is right.
+    /// </summary>
+    private string? CellsProblem
+    {
+        get
+        {
+            if (_call is not { } call || Parameter.Type != ParameterType.Grid || !call.Signatures.UsesCells(call.Callee.Id)
+                || call.Cards.First(c => c.Parameter.Type == ParameterType.Grid) != this || call.Cards.Any(c => c.OwnProblem != null))
+                return null;
+            var values = call.Cards.ToDictionary(c => c.Name, c => c.ToJson());
+            string? first = null;
+            ComponentChecks.CheckCells(call.Callee, name =>
+                {
+                    JsonNode? value = values.GetValueOrDefault(name) ?? call.Callee.Parameters.FirstOrDefault(p => p.Name == name)?.Default;
+                    return ComponentValues.Reference(value) == null ? value : null; // a {"From"} or {"Found"} is not known here
+                },
+                call.Signatures, problem => first ??= problem, call.AsCondition);
+            return first;
+        }
+    }
 
     private void Changed([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -147,10 +178,31 @@ public sealed class ArgumentViewModel : INotifyPropertyChanged
     /// <paramref name="arguments"/>; <paramref name="outer"/>: the parameters of the component around the call (none in a
     /// macro); <paramref name="found"/>: the conditions around it whose place a point can take.
     /// </summary>
+    /// <param name="asCondition">The call is a Component condition: only the condition it returns plays, so only its cells count.</param>
     internal static List<ArgumentViewModel> For(LibraryComponent callee, Dictionary<string, JsonNode?>? arguments, ComponentSignatures signatures,
-        IReadOnlyList<ComponentParameter>? outer, IReadOnlyDictionary<Guid, string> found, ImageStore? store) =>
-        callee.Parameters.Select(p => new ArgumentViewModel(p, signatures.RuleOf(callee.Id, p.Name), arguments?.GetValueOrDefault(p.Name),
+        IReadOnlyList<ComponentParameter>? outer, IReadOnlyDictionary<Guid, string> found, ImageStore? store, bool asCondition = false)
+    {
+        var cards = callee.Parameters.Select(p => new ArgumentViewModel(p, signatures.RuleOf(callee.Id, p.Name), arguments?.GetValueOrDefault(p.Name),
             outer, found, store)).ToList();
+        foreach (var card in cards)
+        {
+            card._call = (callee, signatures, cards, asCondition);
+            // A change in one card (its value or where it comes from) can change the cells the call reaches: the others say
+            // their Problem again (that raises only Problem, so it goes no further).
+            void Others()
+            {
+                foreach (var other in cards.Where(c => c != card))
+                    other.Changed(nameof(Problem));
+            }
+            card.Value.PropertyChanged += (_, _) => Others();
+            card.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName != nameof(Problem))
+                    Others();
+            };
+        }
+        return cards;
+    }
 
     /// <summary>The call's arguments from the cards; null when every one is left to its default.</summary>
     internal static Dictionary<string, JsonNode?>? ToArguments(IEnumerable<ArgumentViewModel> cards)

@@ -104,11 +104,13 @@ public class ComponentEditsPlaybackTests : IDisposable
         string linked = Run(Macro("Linked", AnyIf(missing, row)), new[] { strip });
         string flat = Run(Macro("Unlinked", AnyIf(missing, unlinked.ToArray())), new[] { strip });
 
-        // The row: the whole call is skipped, F24 is not pressed.
-        Assert.Contains("Component \"Strip\": skipped, Slot has no value this time", linked);
-        Assert.DoesNotContain("held 23 ms", linked);
-        // Its unlinked actions must play the same: no F24 either.
-        Assert.DoesNotContain("held 23 ms", flat);
+        // The row plays as its rows do (the user's choice): F24 is pressed, only the click where nothing was found is skipped.
+        Assert.Contains("held 23 ms", linked);
+        Assert.Contains("skipped, its condition found nothing this time", linked);
+        Assert.DoesNotContain("has no value this time", linked);
+        // Its unlinked actions play the same.
+        Assert.Contains("held 23 ms", flat);
+        Assert.Contains("skipped, its condition found nothing this time", flat);
     }
 
     [Fact]

@@ -228,14 +228,17 @@ internal static class ComponentEdits
     /// Writes each parameter's Example into the fields bound to it, in the component's actions and conditions: a bound field
     /// always holds its parameter's Example (what the editor shows, what a test of the component plays).
     /// </summary>
-    public static void WriteExamples(LibraryComponent component)
+    public static void WriteExamples(LibraryComponent component) => WriteExamples(component.Actions, component.Parameters);
+
+    /// <summary>The same for some of a component's actions (the action window inside the component's editor) and its parameters.</summary>
+    public static void WriteExamples(IEnumerable<MacroAction> actions, IReadOnlyList<ComponentParameter> parameters)
     {
         object? Example(string parameter, ComponentSlot slot, bool hasCell) =>
-            component.Parameters.FirstOrDefault(p => p.Name == parameter) is { Example: { } example }
+            parameters.FirstOrDefault(p => p.Name == parameter) is { Example: { } example }
                 ? ComponentSlots.Read(slot, example, hasCell)
                 : null;
         // A cell its grid's Example doesn't have leaves the point as it is: the checks name it.
-        foreach (var action in MacroDefinition.Walk(component.Actions))
+        foreach (var action in MacroDefinition.Walk(actions))
         {
             foreach (var (slot, parameter) in ComponentSlots.InOrder(action.Bind))
                 if (ComponentSlots.Find(action, slot) is { } s && Example(parameter, s, action.Cell != null) is { } value)
