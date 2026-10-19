@@ -218,4 +218,42 @@ public class AiJsonTests
         Assert.Equal(1, count);
         Assert.Equal("If", result["Actions"]![0]!["If"]!["Then"]![0]!["Type"]!.GetValue<string>());
     }
+    /// <summary>
+    /// update_actions with group: an If in the group is one of the group's actions, and so are the actions inside its Then
+    /// and Else (they have no GroupId of their own: only top-level actions may). Without group, SetWhere changes the actions
+    /// inside an If; with group it must change those of an If in the group too, not only the group's top-level actions.
+    /// </summary>
+    [Fact]
+    public void Set_where_in_a_group_also_changes_the_actions_inside_its_ifs()
+    {
+        var group = new MacroGroup { Name = "Slot 1" };
+        var macro = new MacroDefinition
+        {
+            Name = "M",
+            Groups = { group },
+            Actions =
+            {
+                new MacroAction { Type = MacroActionType.PressKey, Vk = 65, DelayMs = 800, GroupId = group.Id },
+                new MacroAction
+                {
+                    Type = MacroActionType.If,
+                    GroupId = group.Id,
+                    If = new MacroIf
+                    {
+                        Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, Color = "#000000" } },
+                        Then = { new MacroAction { Type = MacroActionType.PressKey, Vk = 66, DelayMs = 800 } },
+                    },
+                },
+                new MacroAction { Type = MacroActionType.PressKey, Vk = 67, DelayMs = 800 },
+            },
+        };
+        Assert.NotNull(MacroJson.Parse(MacroJson.Serialize(macro), macro.Id, NoClash, out _)); // a macro the editor takes
+        JsonNode doc = JsonNode.Parse(MacroJson.Serialize(macro))!;
+
+        (JsonNode result, int count) = AiJson.SetWhere(doc, Ops(new { DelayMs = 800 }), Ops(new { DelayMs = 1200 }), "Slot 1");
+
+        Assert.Equal(1200, result["Actions"]![1]!["If"]!["Then"]![0]!["DelayMs"]!.GetValue<double>());
+        Assert.Equal(800, result["Actions"]![2]!["DelayMs"]!.GetValue<double>()); // outside the group
+        Assert.Equal(2, count);
+    }
 }
