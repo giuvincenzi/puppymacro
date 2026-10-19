@@ -54,7 +54,8 @@ public class AiTests
             : JsonSerializer.SerializeToElement(args).EnumerateObject().ToDictionary(p => p.Name, p => (object?)p.Value.Clone());
         // The tools' full names (puppymacro_…): the tests name them without the prefix.
         CallToolResult result = await client.CallToolAsync("puppymacro_" + tool, arguments, cancellationToken: TestContext.Current.CancellationToken);
-        string text = string.Join("\n", result.Content.OfType<TextContentBlock>().Select(c => c.Text));
+        // The answer is the first text block; a note after it (the first answer's rules and Library) is a block of its own.
+        string text = result.Content.OfType<TextContentBlock>().FirstOrDefault()?.Text ?? "";
         return (text, result.IsError == true);
     }
 
@@ -105,6 +106,26 @@ public class AiTests
         // The status bar names the connected app (its own text: the Apps row says "Connected: …").
         Assert.True(app.Has(app.MainWindow, ClientName));
         Assert.True(app.HasRow(app.FindById(app.MainWindow, "AiStatusList"), ClientName));
+    }
+
+    [Fact]
+    public async Task The_first_answer_of_a_connection_gives_the_rules_and_the_Library_once_in_a_block_of_its_own()
+    {
+        using var app = new AppSession();
+        app.GoTo("AI");
+        app.FindById(app.MainWindow, "AiAccessSwitch").AsToggleButton().Toggle();
+        Assert.True(Retry.WhileFalse(() => SavedSettings().AllowAiAccess, AppSession.Timeout).Success);
+        await using McpClient client = await Connect();
+
+        CallToolResult first = await client.CallToolAsync("puppymacro_get_settings", cancellationToken: TestContext.Current.CancellationToken);
+        CallToolResult second = await client.CallToolAsync("puppymacro_get_settings", cancellationToken: TestContext.Current.CancellationToken);
+
+        var blocks = first.Content.OfType<TextContentBlock>().Select(b => b.Text).ToList();
+        Assert.Equal(2, blocks.Count);
+        using (JsonDocument.Parse(blocks[0])) { } // the answer itself stays JSON
+        Assert.StartsWith("PuppyMacro's rules for AI apps:", blocks[1]);
+        Assert.Contains("\"Sample: Notepad\" (notepad.exe) 1", blocks[1]); // the development build's sample collections
+        Assert.Single(second.Content.OfType<TextContentBlock>()); // once per connection
     }
 
     [Fact]

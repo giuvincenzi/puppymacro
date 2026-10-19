@@ -146,7 +146,7 @@ internal sealed class AiServer : IDisposable
             return Debugged(debug, limit, tool.Name, _tools.SubjectOf(args), args, request.Params?.Meta, async () =>
             {
                 AiToolResult result = await _tools.Call(tool.Name, args, FriendlyName(request.Server.ClientInfo), cancel).ConfigureAwait(false);
-                return Interlocked.Exchange(ref answered, 1) == 0 ? result with { Text = result.Text + "\n\n" + _tools.FirstAnswer() } : result;
+                return Interlocked.Exchange(ref answered, 1) == 0 ? result with { Notes = result.Notes.Append(_tools.FirstAnswer()).ToList() } : result;
             }, cancel);
         });
 
@@ -376,6 +376,8 @@ internal sealed class AiServer : IDisposable
                 request.Params?.Arguments ?? new Dictionary<string, JsonElement>());
             AiToolResult result = await _run(_tool, args, request, cancellationToken).ConfigureAwait(false);
             var content = new List<ContentBlock> { new TextContentBlock { Text = result.Text } };
+            foreach (string note in result.Notes)
+                content.Add(new TextContentBlock { Text = note });
             foreach (string file in result.Files)
             {
                 var info = new FileInfo(file);

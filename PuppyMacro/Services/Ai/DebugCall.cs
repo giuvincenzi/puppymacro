@@ -111,6 +111,7 @@ internal sealed class DebugCall
             ["IsError"] = result.IsError,
             ["Ms"] = Math.Round(ms, 1),
             ["Text"] = result.Text,
+            ["Notes"] = result.Notes,
             ["Links"] = links,
         }, DebugJson.Options);
         string folder = Folder;

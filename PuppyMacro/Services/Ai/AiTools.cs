@@ -24,6 +24,12 @@ internal sealed record AiToolResult(string Text, bool IsError = false)
 
     /// <summary>Pictures given in the answer itself (only read_resource, when the AI app asks for one).</summary>
     public IReadOnlyList<AiImage> Images { get; init; } = Array.Empty<AiImage>();
+
+    /// <summary>
+    /// Texts given after the answer, each in a text block of its own, so the answer's own text (often JSON) stays whole (the
+    /// first answer's <see cref="AiTools.FirstAnswer"/>).
+    /// </summary>
+    public IReadOnlyList<string> Notes { get; init; } = Array.Empty<string>();
 }
 
 /// <summary>A picture in an answer: its encoded bytes and type.</summary>

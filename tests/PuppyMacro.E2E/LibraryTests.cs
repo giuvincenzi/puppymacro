@@ -115,6 +115,14 @@ public class LibraryTests
         library.Close();
     }
 
+    /// <summary>
+    /// A list named <paramref name="name"/> in <paramref name="window"/> has <paramref name="text"/> chosen (a ComboBox's chosen
+    /// item is its selection, not a text UI Automation finds by name).
+    /// </summary>
+    private static bool Chosen(Window window, string name, string text) =>
+        Retry.WhileFalse(() => window.FindAllDescendants(cf => cf.ByControlType(ControlType.ComboBox).And(cf.ByName(name)))
+            .Any(c => c.AsComboBox().SelectedItem?.Text == text), AppSession.Timeout).Success;
+
     /// <summary>The Library on "Sample: grid", its component "Click a cell" opened in the component's editor.</summary>
     private static (Window Library, Window Editor) EditClickACell(AppSession app)
     {
@@ -146,9 +154,9 @@ public class LibraryTests
 
         // Position is "A cell of Cells", and the Cell card takes it From Slot.
         Window click = ChildDialog(editor, "Edit click");
-        Assert.True(app.Has(click, "A cell of Cells"));
+        Assert.True(Chosen(click, "Position", "A cell of Cells"), "Position is not A cell of Cells");
         Assert.True(app.Has(click, "Cell"));
-        Assert.True(app.Has(click, "From Slot"));
+        Assert.True(Chosen(click, "Where the value comes from", "From Slot"), "no field From Slot");
         click.Close();
         app.FindById(editor, "CancelButton").AsButton().Invoke();
         library.Close();
@@ -193,7 +201,7 @@ public class LibraryTests
         app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
 
         Window component = ChildDialog(editor, "Component - Click a cell");
-        Assert.True(app.Has(component, "Its default, 3 × 2 from 100, 100"));
+        Assert.True(Chosen(component, "Where the value comes from", "Its default, 3 × 2 from 100, 100"), "the grid is not its default");
         var source = Retry.WhileNull(() => component.FindFirstDescendant(cf => cf.ByControlType(ControlType.ComboBox).And(cf.ByName("Where the value comes from"))),
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the grid argument's list is not there").Result!.AsComboBox();
         source.Expand();

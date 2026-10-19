@@ -46,7 +46,8 @@ public class AiScreenTests
         return await client.CallToolAsync("puppymacro_" + tool, arguments, cancellationToken: TestContext.Current.CancellationToken);
     }
 
-    private static string Text(CallToolResult result) => string.Join("\n", result.Content.OfType<TextContentBlock>().Select(c => c.Text));
+    /// <summary>The answer: the first text block (a note after it, the first answer's rules and Library, is a block of its own).</summary>
+    private static string Text(CallToolResult result) => result.Content.OfType<TextContentBlock>().FirstOrDefault()?.Text ?? "";
 
     /// <summary>The answer's links (MCP resource links) by file name: the answer itself carries no file's content.</summary>
     private static Dictionary<string, ResourceLinkBlock> Links(CallToolResult result)
