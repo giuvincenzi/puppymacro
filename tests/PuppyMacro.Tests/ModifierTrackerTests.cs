@@ -4,6 +4,14 @@ using Xunit;
 
 namespace PuppyMacro.Tests;
 
+/// <summary>
+/// The collection of the classes that change ModifierTracker (static). It runs alone, after the others: the classes
+/// that send keys through InputSender (which reads ModifierTracker) but are in another collection, as those that also
+/// write in the debug archive (DebugStore), never run while ModifierTracker is changed. A class has one collection only.
+/// </summary>
+[CollectionDefinition(nameof(ModifierTracker), DisableParallelization = true)]
+public sealed class ModifierTrackerCollection;
+
 // ModifierTracker is static: every test starts and ends from "nothing held", and the classes that
 // use it share a collection so they never run at the same time.
 [Collection(nameof(ModifierTracker))]

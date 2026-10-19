@@ -70,6 +70,18 @@ internal sealed class PreciseTimer : IDisposable
     public void Dispose() => _handle.Dispose();
 }
 
+/// <summary>
+/// The keys a loop's Paste text sends: Enter (before and after) and Ctrl+V. <see cref="ActionRunner"/> sends them with
+/// <see cref="InputSender"/>; a unit test gives its own, so a paste runs without pressing keys on the PC.
+/// </summary>
+internal interface IPasteKeys
+{
+    /// <summary>Presses and releases Enter as <see cref="InputSender.Tap"/> does; false when <paramref name="stop"/> ended the hold.</summary>
+    bool TapEnter(double holdMs, PreciseTimer timer, WaitHandle stop);
+
+    void SendPasteShortcut();
+}
+
 /// <summary>Runs one action of a loop on its own thread, at the action's interval.</summary>
 internal sealed class ActionRunner
 {
@@ -79,13 +91,25 @@ internal sealed class ActionRunner
 
     private readonly LoopAction _action;
     private readonly ClipboardPaster _paster;
+    private readonly IPasteKeys _pasteKeys;
     private readonly ManualResetEvent _stop = new(false);
     private volatile bool _stopRequested;
 
-    public ActionRunner(LoopAction action, ClipboardPaster paster)
+    public ActionRunner(LoopAction action, ClipboardPaster paster, IPasteKeys? pasteKeys = null)
     {
         _action = action.Clone();
         _paster = paster;
+        _pasteKeys = pasteKeys ?? SentPasteKeys.Instance;
+    }
+
+    private sealed class SentPasteKeys : IPasteKeys
+    {
+        public static readonly SentPasteKeys Instance = new();
+
+        public bool TapEnter(double holdMs, PreciseTimer timer, WaitHandle stop) =>
+            InputSender.Tap(KeyNames.VK_RETURN, holdMs, timer, stop);
+
+        public void SendPasteShortcut() => InputSender.SendPasteShortcut();
     }
 
     /// <summary>Raised on the runner thread when it ends.</summary>
@@ -244,7 +268,7 @@ internal sealed class ActionRunner
         using var turn = _paster.TakeTurn(_stop);
         if (turn == null)
             return false;
-        if (_action.EnterBefore && !InputSender.Tap(KeyNames.VK_RETURN, holdMs, timer, _stop))
+        if (_action.EnterBefore && !_pasteKeys.TapEnter(holdMs, timer, _stop))
             return false; // stopped during Enter before: nothing is pasted
 
         var previous = _paster.Replace(_action.Text);
@@ -252,11 +276,11 @@ internal sealed class ActionRunner
         {
             // Once Ctrl+V is sent the paste always completes: a stop meanwhile must not restore the clipboard before the
             // target has read it (the paste would be lost or paste the previous clipboard). A stop skips only Enter after.
-            InputSender.SendPasteShortcut();
+            _pasteKeys.SendPasteShortcut();
             timer.WaitFully(PasteSettleMs);
 
             if (_action.EnterAfter && !_stop.WaitOne(0))
-                InputSender.Tap(KeyNames.VK_RETURN, holdMs, timer, _stop);
+                _pasteKeys.TapEnter(holdMs, timer, _stop);
 
             // Give the target time to read the clipboard before restoring it.
             timer.WaitFully(ClipboardRestoreDelayMs);

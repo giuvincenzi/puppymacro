@@ -269,8 +269,9 @@ public sealed class MacroRunnerTests : IDisposable
     // ================= Other input meanwhile =================
 
     /// <summary>
-    /// A macro's Press key held long (its Hold for: 3 s) holds InputSender's lock for the whole hold, as a loop's long
-    /// press no longer does (InputSender.PressFor): every loop row, other macro and remap that sends input waits for it.
+    /// A macro's Press key held long (its Hold for: 3 s) holds InputSender's lock only to send the press and the release,
+    /// never during the hold (InputSender.Tap), as a loop's: the loop rows, other macros and remaps that send input
+    /// meanwhile do not wait for it.
     /// </summary>
     [Fact]
     public async Task A_macros_long_press_does_not_hold_up_what_others_send_meanwhile()

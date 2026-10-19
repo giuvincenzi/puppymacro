@@ -25,6 +25,7 @@ internal sealed class ClipboardPaster
     private const string CanUploadToCloud = "CanUploadToCloudClipboard";
 
     private readonly Dispatcher _dispatcher;
+    private readonly IClipboard _clipboard;
 
     // One paste at a time: signaled while no paste has the turn.
     private readonly AutoResetEvent _turn = new(true);
@@ -33,7 +34,33 @@ internal sealed class ClipboardPaster
     private readonly List<(DataObject Paste, string Text)> _open = new();
     private DataObject? _users;
 
-    public ClipboardPaster(Dispatcher dispatcher) => _dispatcher = dispatcher;
+    /// <summary>A paster of the Windows clipboard; the unit tests give their own <paramref name="clipboard"/>.</summary>
+    public ClipboardPaster(Dispatcher dispatcher, IClipboard? clipboard = null)
+    {
+        _dispatcher = dispatcher;
+        _clipboard = clipboard ?? WindowsClipboard.Instance;
+    }
+
+    /// <summary>The clipboard a <see cref="ClipboardPaster"/> reads and writes, on the UI thread.</summary>
+    internal interface IClipboard
+    {
+        IDataObject? Get();
+
+        void Set(DataObject data);
+
+        void Clear();
+    }
+
+    private sealed class WindowsClipboard : IClipboard
+    {
+        public static readonly WindowsClipboard Instance = new();
+
+        public IDataObject? Get() => Clipboard.GetDataObject();
+
+        public void Set(DataObject data) => Clipboard.SetDataObject(data, copy: true);
+
+        public void Clear() => Clipboard.Clear();
+    }
 
     /// <summary>
     /// Waits for this paste's turn: the one before it has restored the clipboard. Dispose the result to give the turn to
@@ -65,7 +92,7 @@ internal sealed class ClipboardPaster
             {
                 DataObject? users = _open.Count == 0 ? TakeSnapshot() : _users;
                 var data = TextData(text);
-                Clipboard.SetDataObject(data, copy: true);
+                _clipboard.Set(data);
                 _users = users;
                 _open.Add((data, text));
                 return data;
@@ -98,18 +125,18 @@ internal sealed class ClipboardPaster
                     return; // a newer paste's text is on the clipboard, and stays there
                 if (_open.Count > 0)
                 {
-                    Clipboard.SetDataObject(TextData(_open[^1].Text), copy: true);
+                    _clipboard.Set(TextData(_open[^1].Text));
                     return;
                 }
                 var users = _users;
                 _users = null;
                 if (users == null)
                 {
-                    Clipboard.Clear();
+                    _clipboard.Clear();
                     return;
                 }
                 MarkPrivate(users);
-                Clipboard.SetDataObject(users, copy: true);
+                _clipboard.Set(users);
             });
         }
         catch (Exception ex)
@@ -119,12 +146,12 @@ internal sealed class ClipboardPaster
     }
 
     /// <summary>Copies every format that can be read (text, images, files...). Best effort.</summary>
-    private static DataObject? TakeSnapshot()
+    private DataObject? TakeSnapshot()
     {
         IDataObject? current;
         try
         {
-            current = Clipboard.GetDataObject();
+            current = _clipboard.Get();
         }
         catch
         {

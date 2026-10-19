@@ -3,22 +3,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using PuppyMacro.Models;
 using PuppyMacro.Services;
 using Xunit;
 
 namespace PuppyMacro.Tests;
 
 /// <summary>
-/// ClipboardPaster, the one the engine shares between every loop row and macro that pastes. It uses the PC's real
-/// clipboard (on an STA thread of its own, as the UI's): what was there before the test is put back at the end. No key
-/// is sent.
+/// ClipboardPaster, the one the engine shares between every loop row and macro that pastes, and a loop's Paste text
+/// (ActionRunner). The paster works on a clipboard of the test (on an STA thread of its own, as the UI's), never the
+/// PC's: a copy the user makes while the tests run stays theirs. No key is sent: the loop's paste gets keys of the test.
 /// </summary>
 public sealed class ClipboardPasterTests : IDisposable
 {
     private readonly Thread _ui;
     private readonly Dispatcher _dispatcher;
+    private readonly FakeClipboard _clipboard = new();
     private readonly ClipboardPaster _paster;
-    private readonly DataObject? _users;
 
     public ClipboardPasterTests()
     {
@@ -35,32 +36,110 @@ public sealed class ClipboardPasterTests : IDisposable
         _ui.Start();
         ready.Wait();
         _dispatcher = dispatcher!;
-        _paster = new ClipboardPaster(_dispatcher);
-        // The user's clipboard, put back at the end; the test starts from a text of its own.
-        _users = _paster.Replace("the user's text");
+        _paster = new ClipboardPaster(_dispatcher, _clipboard);
+        // The user's clipboard: the test starts from a text of its own.
+        var users = new DataObject();
+        users.SetText("the user's text", TextDataFormat.UnicodeText);
+        _clipboard.Set(users);
     }
 
     public void Dispose()
     {
-        _paster.Restore(_users);
         _dispatcher.InvokeShutdown();
         _ui.Join(TimeSpan.FromSeconds(5));
     }
 
-    /// <summary>
-    /// The clipboard's text. A read can find "" for a moment: another process that reads every change of the clipboard
-    /// (a clipboard sync) keeps it open, and WPF's GetText gives "" when it cannot read it. No test pastes "", so it is
-    /// read again for up to a second.
-    /// </summary>
-    private string? ClipboardText()
+    /// <summary>A clipboard of the test, read and written only through the paster's UI thread.</summary>
+    private sealed class FakeClipboard : ClipboardPaster.IClipboard
     {
-        for (int attempt = 0; ; attempt++)
+        private IDataObject? _data;
+
+        public IDataObject? Get() => _data;
+
+        public void Set(DataObject data) => _data = data;
+
+        public void Clear() => _data = null;
+
+        public string? Text => _data?.GetDataPresent(DataFormats.UnicodeText) == true
+            ? (string)_data.GetData(DataFormats.UnicodeText)
+            : null;
+    }
+
+    private string? ClipboardText() => _dispatcher.Invoke(() => _clipboard.Text);
+
+    /// <summary>The keys of a loop's paste, recorded instead of sent.</summary>
+    private sealed class FakePasteKeys : IPasteKeys
+    {
+        public Func<double, PreciseTimer, WaitHandle, bool> OnEnter = (holdMs, timer, stop) => timer.Wait(holdMs, stop);
+        public Action OnPaste = () => { };
+        public int Enters, Pastes;
+
+        public bool TapEnter(double holdMs, PreciseTimer timer, WaitHandle stop)
         {
-            string? text = _dispatcher.Invoke(() => Clipboard.ContainsText() ? Clipboard.GetText() : null);
-            if (text != "" || attempt == 20)
-                return text;
-            Thread.Sleep(50);
+            Enters++;
+            return OnEnter(holdMs, timer, stop);
         }
+
+        public void SendPasteShortcut()
+        {
+            Pastes++;
+            OnPaste();
+        }
+    }
+
+    /// <summary>Runs a loop's Paste text row with the keys of the test until it exits.</summary>
+    private void RunLoopPaste(LoopAction action, FakePasteKeys keys, Action<ActionRunner> setUp)
+    {
+        var runner = new ActionRunner(action, _paster, keys);
+        using var exited = new ManualResetEventSlim();
+        runner.Exited += _ => exited.Set();
+        setUp(runner);
+        runner.Start();
+        Assert.True(exited.Wait(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken), "the paste did not end");
+    }
+
+    private static LoopAction LoopPaste(bool enterBefore, bool enterAfter) => new()
+    {
+        Type = ActionType.Text,
+        Text = "pasted",
+        EnterBefore = enterBefore,
+        EnterAfter = enterAfter,
+        IntervalValue = 10,
+        IntervalUnit = IntervalUnit.Seconds,
+    };
+
+    /// <summary>Stopped while Enter before is held: Ctrl+V is never sent and the clipboard is never changed.</summary>
+    [Fact]
+    public void A_loops_paste_stopped_during_Enter_before_never_pastes()
+    {
+        var keys = new FakePasteKeys();
+        RunLoopPaste(LoopPaste(enterBefore: true, enterAfter: true), keys, runner =>
+            keys.OnEnter = (holdMs, timer, stop) =>
+            {
+                runner.Stop();
+                return timer.Wait(holdMs, stop); // as InputSender.Tap: false, the hold ended by the stop
+            });
+
+        Assert.Equal((1, 0), (keys.Enters, keys.Pastes));
+        Assert.Equal("the user's text", ClipboardText());
+    }
+
+    /// <summary>Stopped once Ctrl+V is sent: the paste completes and the clipboard comes back; only Enter after is skipped.</summary>
+    [Fact]
+    public void A_loops_paste_stopped_after_Ctrl_V_completes_and_skips_only_Enter_after()
+    {
+        var keys = new FakePasteKeys();
+        string? onClipboard = null;
+        RunLoopPaste(LoopPaste(enterBefore: true, enterAfter: true), keys, runner =>
+            keys.OnPaste = () =>
+            {
+                onClipboard = ClipboardText();
+                runner.Stop();
+            });
+
+        Assert.Equal("pasted", onClipboard);
+        Assert.Equal((1, 1), (keys.Enters, keys.Pastes)); // Enter before only
+        Assert.Equal("the user's text", ClipboardText());
     }
 
     [Fact]

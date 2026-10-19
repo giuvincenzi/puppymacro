@@ -8,7 +8,9 @@
   (which locks `bin/Debug`) does not block it.
 - On GitHub they are the required check `unit_test` ("Which changes run the tests on GitHub" below), and
   `publish_release` runs them before a release is built.
-- One test class per area, named `<Area>Tests`. The screen recognition is tested without a screen: the graphics card's
+- One test class per area, named `<Area>Tests`. A large area splits by aspect into classes named `<Area><Aspect>Tests`
+  next to it (`ConditionCheckerEdgesTests` for the edge cases, `ComponentGridInvariantsTests` for invariants checked on
+  generated cases); a class that only builds test data has no `Tests` in its name (`ComponentGenerator`). The screen recognition is tested without a screen: the graphics card's
   search on WARP (the software renderer, on every PC and on GitHub) against the processor's, and the conditions on a
   fake `IScreen`. Their speed on a real screen is measured by hand with the development build started with
   `PUPPYMACRO_BENCH=1` (a table of image and area sizes, processor and graphics card, text recognition) or
@@ -19,18 +21,19 @@
   (`AiTools.WaitStep` is short there); the file types' registry keys under a test key in `HKCU\Software\PuppyMacroTests`,
   deleted after.
 - Components as functions (`Services/Components`) are tested case by case, every case that passes and every one that
-  fails: `ComponentValuesTests` (each type and rule, the slot table), `ComponentChecksTests` (Bind, calls, arguments,
-  limits rising to the signature, parameters, Returns, loops, depth, which macros can't play), `ComponentRuntimeTests`
-  (frames, bound fields, Component conditions; real runs on the fake screen), `ComponentUpdatesTests` (the guided update,
-  Unlink, Save as component, fingerprint, images, files, saving together), `ComponentGridTests` (the Grid: its value and
-  every rule, each cell's point, Cell and its checks per call, a run on the fake screen, the edits) and
-  `ComponentPerformanceTests` (the D4 macro made with functions and 1000 like it: the times are in the test's output),
-  with the builders of `ComponentTestKit`.
+  fails, in the `Component<Aspect>Tests` classes, with the builders of `ComponentTestKit` and the cases made by
+  `ComponentGenerator` and `ComponentGridGenerator`. `ComponentPerformanceTests` measures the D4 macro made with
+  functions and 1000 like it: the times are in the test's output.
 - The unit tests run in English with en-US numbers whatever the PC's language (`TestCulture`, a module initializer); a
   test of another language sets it itself.
-- Use `TempFolder` for files. `ModifierTracker` is static: reset it before and after each test,
-  and put the test class in `[Collection(nameof(ModifierTracker))]` so they never run at the
-  same time. A unit test that starts a loop makes it press F24 only.
+- Use `TempFolder` for files. A unit test that starts a loop makes it press F24 only. A paste's test gives the
+  `ClipboardPaster` a clipboard of its own and the loop's paste keys of its own (`IPasteKeys`), never the PC's clipboard
+  or a real Enter: the unit tests run while the user works.
+- `ModifierTracker` is static, and `InputSender` reads it for every key it sends. A test class that changes it, or that
+  sends keys and needs no other collection, resets it before and after each test and is in
+  `[Collection(nameof(ModifierTracker))]`. That collection runs alone, after the others (`DisableParallelization` on
+  its `CollectionDefinition`): a class has one collection only, so the classes that send keys from another one (those
+  that write in the debug archive, `DebugStore`'s) never run while `ModifierTracker` changes.
 
 ## End-to-end tests: `make e2e`
 
