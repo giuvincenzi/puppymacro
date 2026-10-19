@@ -97,6 +97,9 @@ public class ComponentEditsPlaybackTests : IDisposable
         var row = Call(strip, ("Slot", Found(missing.Id)));
         var unlinked = ComponentEdits.Unlink(row, strip, out string? problem)!;
         Assert.Null(problem);
+        // Both macros pass the checks: the user can save either.
+        Assert.Empty(MacroProblems(Macro("Linked", AnyIf(missing, row)), strip));
+        Assert.Empty(MacroProblems(Macro("Unlinked", AnyIf(missing, unlinked.Select(a => a.Clone()).ToArray())), strip));
 
         string linked = Run(Macro("Linked", AnyIf(missing, row)), new[] { strip });
         string flat = Run(Macro("Unlinked", AnyIf(missing, unlinked.ToArray())), new[] { strip });
