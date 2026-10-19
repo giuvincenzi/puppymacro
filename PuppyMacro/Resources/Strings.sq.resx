@@ -1597,4 +1597,11 @@ Detajet: {1}</value></data>
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} komponentë</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>Fshiu komponentin {0}</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Të fshihet ky komponent nga biblioteka?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro nuk mundi ta hapte skedarin e cilësimeve. Ndoshta po e përdor një program tjetër. Ciklet, ricaktimet dhe cilësimet tuaja janë ende aty, të paprekura. PuppyMacro u nis me cilësimet e parazgjedhura dhe nuk ruan asnjë ndryshim derisa ta nisni përsëri.
+Detajet: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro nuk mundi ta hapte skedarin e cilësimeve kur u nis, prandaj nuk ruan asgjë, që skedari juaj të mbetet siç është. Niseni përsëri PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Koleksioni i bibliotekës {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>{0} plotësohet</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>{0} nuk plotësohet</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>Pasi pret {0} s.</value></data>
 </root>

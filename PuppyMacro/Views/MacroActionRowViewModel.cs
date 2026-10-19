@@ -367,6 +367,6 @@ public sealed class MacroActionRowViewModel : MacroEditorItem
     private static string Shorten(string text)
     {
         text = text.Replace("\r", " ").Replace("\n", " ").Trim();
-        return text.Length > 32 ? text[..32] + "…" : text;
+        return TextCut.Shorten(text, 32);
     }
 }

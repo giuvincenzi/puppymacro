@@ -317,6 +317,8 @@ internal sealed class MacroLibrary
         if (Library.Broken || _unreadFile)
             return;
         var keep = _imagesOf.Values.SelectMany(s => s).ToHashSet(StringComparer.Ordinal);
+        // The macros as the app has them too: one whose last save failed names images its file doesn't yet.
+        keep.UnionWith(Macros.SelectMany(ImageStore.IdsIn));
         keep.UnionWith(_imagesOfUnread);
         keep.UnionWith(Library.ImageIds());
         keep.UnionWith(Images.Held());

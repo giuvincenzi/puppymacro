@@ -1545,4 +1545,11 @@
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} 個のコンポーネント</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>コンポーネント {0} を削除しました</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>このコンポーネントをライブラリから削除しますか?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro は設定ファイルを開けませんでした。別のプログラムが使用している可能性があります。ループ、リマップ、設定はそのファイルに変更されずに残っています。PuppyMacro は既定の設定で起動したため、再起動するまで変更は保存されません。
+詳細: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>起動時に PuppyMacro が設定ファイルを開けなかったため、ファイルをそのまま残すように何も保存しません。PuppyMacro を再起動してください。</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>ライブラリのコレクション {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>{0} が満たされる</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>{0} が満たされない</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>{0} 秒待機した後。</value></data>
 </root>

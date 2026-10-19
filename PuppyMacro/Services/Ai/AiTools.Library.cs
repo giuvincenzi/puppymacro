@@ -139,7 +139,7 @@ internal sealed partial class AiTools
         Guid? editId = OptionalIdArg(args, "id", "the Id of the component to change (search_library finds them); leave it out for a new one");
         RenamedArg(args);
         ObjectArg(args, "call_values", "for each parameter the answer named, the value every call without a fitting one gets");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         // An Id that is no component is said as such, not as a problem of the component.
         if (editId is Guid editing && await _host.Ui(() => Task.FromResult(_host.Macros.Library.Find(editing) == null
@@ -149,7 +149,7 @@ internal sealed partial class AiTools
         LibraryComponent component;
         try
         {
-            component = JsonSerializer.Deserialize<LibraryComponent>(item.GetRawText(), CodeJson.StrictOptions)
+            component = Loc.English(() => JsonSerializer.Deserialize<LibraryComponent>(item.GetRawText(), CodeJson.StrictOptions))
                 ?? throw new JsonException("\"component\" is empty.");
         }
         catch (JsonException ex)
@@ -280,7 +280,7 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> DeleteComponent(JsonElement args, string app, CancellationToken cancel)
     {
         Guid id = IdArg(args, "id", "a component's Id (search_library finds them)");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         // In English: the refusal that names what uses it is the AI app's answer.
         (string? problem, LibraryComponent? component, string? name, string? before) = await _host.Ui(() => Task.FromResult(Loc.English(() =>
@@ -629,7 +629,7 @@ internal sealed partial class AiTools
         var ids = ComponentSignatures.Callees(macro.Actions).Distinct().ToList();
         if (ids.Count == 0)
             return "";
-        return "\nLinked components (get_component reads one):\n" + string.Join("\n", ids.Select(id =>
+        return $"\nLinked components ({Name("get_component")} reads one):\n" + string.Join("\n", ids.Select(id =>
             _host.Macros.Library.Find(id) is { } f ? $"- {id}: {ComponentLibrary.StructuredName(f.Collection, f.Component)}" : $"- {id}: missing from the Library"));
     }
 }

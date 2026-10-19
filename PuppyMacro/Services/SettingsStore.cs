@@ -75,6 +75,13 @@ internal sealed class SettingsStore
         {
             // A null where none can be (a list's entry) is left out, never a crash (data.md).
             var settings = CodeJson.ReadFile<AppSettings>(json, JsonOptions) ?? AppSettings.CreateDefault();
+            // Version 1.0 wrote no SchemaVersion: such a file is of the first schema, not of the current one (the property's
+            // default), so every migration since runs on it.
+            using (var document = JsonDocument.Parse(json))
+            {
+                if (document.RootElement.ValueKind == JsonValueKind.Object && !document.RootElement.TryGetProperty(nameof(AppSettings.SchemaVersion), out _))
+                    settings.SchemaVersion = 1;
+            }
             Sanitize(settings);
             TrySave(settings, out _); // writes v1.0 files back in the current format
             return settings;

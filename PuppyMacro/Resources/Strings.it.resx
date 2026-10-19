@@ -1597,4 +1597,11 @@ Dettagli: {1}</value></data>
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} componenti</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>Ha eliminato il componente {0}</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Vuoi eliminare questo componente dalla libreria?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro non è riuscito ad aprire il file delle impostazioni, forse perché un altro programma lo sta usando. I tuoi loop, le rimappature e le impostazioni sono ancora lì, intatti. PuppyMacro si è avviato con le impostazioni predefinite e non salverà nessuna modifica finché non lo riavvii.
+Dettagli: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro non è riuscito ad aprire il file delle impostazioni all'avvio, quindi non salva nulla per lasciare il file così com'è. Riavvia PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Raccolta della libreria {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>la condizione {0} è vera</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>la condizione {0} non è vera</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>Dopo aver atteso {0} s.</value></data>
 </root>

@@ -262,8 +262,10 @@ public class SettingsStoreTests : IDisposable
     [Fact]
     public void The_macro_editor_size_is_kept_and_invalid_sizes_are_dropped()
     {
-        AppSettings kept = LoadJson("""{ "MacroEditorWidth": 800, "MacroEditorHeight": 1000 }""", out _);
-        AppSettings dropped = LoadJson("""{ "MacroEditorWidth": -5, "MacroEditorHeight": 0 }""", out _);
+        // A file of today: every save since 1.6 writes its SchemaVersion (one without it is of version 1.0).
+        string schema = $"\"SchemaVersion\": {AppSettings.CurrentSchemaVersion}";
+        AppSettings kept = LoadJson($$"""{ {{schema}}, "MacroEditorWidth": 800, "MacroEditorHeight": 1000 }""", out _);
+        AppSettings dropped = LoadJson($$"""{ {{schema}}, "MacroEditorWidth": -5, "MacroEditorHeight": 0 }""", out _);
         AppSettings missing = LoadJson("""{ "SchemaVersion": 4 }""", out _);
 
         Assert.Equal(800, kept.MacroEditorWidth);

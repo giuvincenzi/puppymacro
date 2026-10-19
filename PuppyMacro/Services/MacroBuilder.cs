@@ -138,6 +138,11 @@ internal static class MacroBuilder
                         total += Math.Abs(events[j].Delta);
                     }
                     int steps = Math.Max(1, (int)Math.Round(total / 120.0));
+                    // A long spin (a free-spinning wheel) is more than one Scroll can hold: Scrolls of at most the most it takes,
+                    // one right after the other.
+                    int most = (int)MacroJson.ScrollSteps.Max;
+                    for (; steps > most; steps -= most)
+                        Add(new MacroAction { Type = MacroActionType.Scroll, ScrollDirection = direction, ScrollSteps = most }, e.T, e.T);
                     Add(new MacroAction { Type = MacroActionType.Scroll, ScrollDirection = direction, ScrollSteps = steps }, e.T, events[j].T);
                     i = j + 1;
                     break;

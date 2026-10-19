@@ -599,6 +599,8 @@ public partial class MainWindow : IAiHost
             _settings.RecordHotkey = record.Clone();
         if (values.OpenMainHotkey is { IsSet: true } openMain)
             _settings.OpenMainHotkey = openMain.Clone();
+        else if (values.OpenMainHotkey is { IsSet: false })
+            _settings.OpenMainHotkey = null; // a Restore of "none" (AiTools.RestoreSettings): changes refuse an unset hotkey
         UpdateHotkeyLabels();
         Save();
     }

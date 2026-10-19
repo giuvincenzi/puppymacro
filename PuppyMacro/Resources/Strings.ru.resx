@@ -1638,4 +1638,11 @@
   <data name="Library_ComponentCount_many" xml:space="preserve"><value>{0} компонентов</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>Удалён компонент {0}</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Удалить этот компонент из библиотеки?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro не удалось открыть файл параметров. Возможно, его использует другая программа. Ваши циклы, переназначения и параметры по-прежнему в нем и остались без изменений. PuppyMacro запущен с параметрами по умолчанию и не будет сохранять изменения до следующего запуска.
+Подробности: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro не удалось открыть файл параметров при запуске, поэтому ничего не сохраняется, чтобы ваш файл остался без изменений. Перезапустите PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Коллекция библиотеки {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>условие «{0}» выполнено</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>условие «{0}» не выполнено</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>После ожидания в {0} с.</value></data>
 </root>

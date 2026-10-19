@@ -585,7 +585,7 @@ public sealed class ActionBoxViewModel : INotifyPropertyChanged
     private static string FirstLine(string text)
     {
         string line = text.Split('\n')[0].TrimEnd('\r');
-        return line.Length > 40 ? line[..40] + "…" : line;
+        return TextCut.Shorten(line, 40);
     }
 
     // ---- Checks ----

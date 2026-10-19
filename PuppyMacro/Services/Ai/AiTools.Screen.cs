@@ -63,7 +63,7 @@ internal sealed partial class AiTools
             return AiToolResult.Error(SeeScreenOff);
         AiAsk ask = Asking(args);
         string folder = CallFolder(Name("look_at_screen"));
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_LookedAtScreen", ask.Title);
         return await StartForUser(app, async () =>
@@ -294,7 +294,7 @@ internal sealed partial class AiTools
             return AiToolResult.Error("The condition has problems: " + problems);
         if (condition.Kind == ConditionKind.Component)
             return AiToolResult.Error("The component's condition can't be checked: a value its call needs has none (a Found argument has no place outside a macro's If).");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_CheckedCondition", ask.Title);
         return await StartForUser(app, async () =>
@@ -332,7 +332,7 @@ internal sealed partial class AiTools
         AiAsk ask = Asking(args);
         bool moves = BoolArg(args, "mouse_movement") ?? _host.Settings.RecordMouseMovement;
         string folder = CallFolder(Name("record_macro"));
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_Recorded", ask.Title);
         return await StartForUser(app, async () =>
@@ -460,7 +460,7 @@ internal sealed partial class AiTools
         if (problem != null)
             return AiToolResult.Error(problem);
         string folder = CallFolder(Name("test_macro"));
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_TestedMacro", $"\"{name}\"");
         return await StartForUser(app, async () =>

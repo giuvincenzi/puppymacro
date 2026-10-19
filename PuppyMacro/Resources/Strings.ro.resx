@@ -1638,4 +1638,11 @@ Detalii: {1}</value></data>
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} de componente</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>A șters componenta {0}</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Ștergeți această componentă din bibliotecă?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro nu a putut deschide fișierul de setări. Este posibil ca un alt program să îl folosească. Buclele, remapările și setările dvs. sunt încă în el, neatinse. PuppyMacro a pornit cu setările implicite și nu salvează nicio modificare până când nu îl reporniți.
+Detalii: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro nu a putut deschide fișierul de setări la pornire, așa că nu salvează nimic, pentru a vă păstra fișierul așa cum este. Reporniți PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Colecția din bibliotecă {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>condiția {0} este adevărată</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>condiția {0} nu este adevărată</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>După {0} s de așteptare.</value></data>
 </root>

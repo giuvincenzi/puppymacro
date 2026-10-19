@@ -1586,4 +1586,11 @@ Details: {1}</value></data>
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} Komponenten</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>Komponente {0} gelöscht</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Diese Komponente aus der Bibliothek löschen?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro konnte die Einstellungsdatei nicht öffnen. Möglicherweise wird sie von einem anderen Programm verwendet. Ihre Schleifen, Neuzuordnungen und Einstellungen sind darin unverändert erhalten. PuppyMacro wurde mit den Standardeinstellungen gestartet und speichert keine Änderungen, bis Sie es neu starten.
+Details: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro konnte die Einstellungsdatei beim Start nicht öffnen und speichert daher nichts, damit Ihre Datei unverändert bleibt. Starten Sie PuppyMacro neu.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Bibliothekssammlung {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>{0} ist erfüllt</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>{0} ist nicht erfüllt</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>Nach {0} s Wartezeit.</value></data>
 </root>

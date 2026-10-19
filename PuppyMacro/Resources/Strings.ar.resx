@@ -1750,4 +1750,11 @@
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} مكوّن</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>حذف المكوّن {0}</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>هل تريد حذف هذا المكوّن من المكتبة؟</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>تعذّر على PuppyMacro فتح ملف الإعدادات، فربما يستخدمه برنامج آخر. لا تزال الحلقات وعمليات إعادة التعيين والإعدادات محفوظة فيه دون أي تغيير. بدأ PuppyMacro بالإعدادات الافتراضية ولن يحفظ أي تغيير حتى تعيد تشغيله.
+التفاصيل: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>تعذّر على PuppyMacro فتح ملف الإعدادات عند بدء التشغيل، لذا لن يحفظ أي شيء حتى يبقى ملفك كما هو. أعد تشغيل PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>مجموعة المكتبة {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>تحقُّق {0}</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>عدم تحقُّق {0}</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>بعد انتظار {0} ثانية.</value></data>
 </root>

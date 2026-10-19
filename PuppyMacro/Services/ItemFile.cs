@@ -136,7 +136,8 @@ internal static class ItemFile
         JsonNode? root;
         try
         {
-            root = JsonNode.Parse(text);
+            // A name twice in one object is not an items file: JsonNode would otherwise throw where it first reads that object.
+            root = JsonNode.Parse(text, documentOptions: new JsonDocumentOptions { AllowDuplicateProperties = false });
         }
         catch (JsonException)
         {

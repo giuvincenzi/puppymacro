@@ -68,6 +68,26 @@
 - AI apps: a wrong value for an argument (enabled, only, an Id, a text where a number goes, a value that is not one of
   its choices, a number out of its range) is refused with the argument's name and what to change instead of turning an
   item off, importing everything, being left out or failing without saying why.
+- Loops, macros and remaps press the arrow keys, Insert, Delete, Home, End, Page Up and Page Down as those keys: with
+  Num Lock on they typed the number pad's digits. Pause is pressed as Pause, not as the right Ctrl.
+- After you leave overlay mode with the panel's exit or Open PuppyMacro button, your next click in overlay mode is no
+  longer left held down in the app.
+- A remapped key, or a Hold loop's or macro's hotkey, released while a key field waits for a key or while you record
+  no longer leaves its target held or the loop running. With an editor open, a Stop all hotkey on the scroll wheel
+  stops a Test as the keyboard's does.
+- A recording stopped with a record hotkey that has Ctrl, Alt, Shift or Win no longer ends with that key held down,
+  and a long spin of the wheel is recorded as Scrolls the editor takes.
+- Importing a backup that is damaged, or whose files can't be replaced, leaves your data as it was.
+- Settings that another program holds open when PuppyMacro starts are no longer replaced by the defaults: they stay
+  as they are and nothing is saved until the next start. An empty entry in settings.json no longer stops PuppyMacro
+  from starting, and settings from version 1.0 get the Open PuppyMacro hotkey as every older file does.
+- A shared file with a name twice in one place is refused instead of failing, an image taken in the editor is kept
+  when the macro's save fails, and a text shortened in a list never cuts an emoji in half.
+- AI apps: an argument a tool doesn't take is refused instead of left out (a misspelled filter could change every
+  action); a Debug change, which only you make, is no longer confirmed nor announced as saved; a change in the third
+  decimal is saved; Restore of settings takes away a hotkey an AI app gave where you had none; an AI app can't see
+  your Library while AI access is off, nor what the screen showed through a run's log while Let AI apps see the screen
+  is off; their errors are always in English.
 
 ## 1.23.0
 

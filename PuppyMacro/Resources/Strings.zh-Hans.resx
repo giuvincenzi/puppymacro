@@ -1545,4 +1545,11 @@
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} 个组件</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>删除了组件 {0}</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>要从库中删除此组件吗？</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro 无法打开其设置文件，可能有其他程序正在使用它。你的循环、重映射和设置仍在该文件中，没有任何改动。PuppyMacro 已使用默认设置启动，在你重新启动它之前不会保存任何更改。
+详细信息：{0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro 启动时无法打开设置文件，因此不会保存任何内容，以保持你的文件原样。请重新启动 PuppyMacro。</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>库集合 {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>满足 {0}</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>不满足 {0}</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>等待 {0} 秒后执行。</value></data>
 </root>

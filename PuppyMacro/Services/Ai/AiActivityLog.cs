@@ -135,7 +135,7 @@ internal sealed class AiActivityLog
     public List<AiActivity> Entries()
     {
         lock (_sync)
-            return _entries.OrderByDescending(e => e.Time).ToList();
+            return Enumerable.Reverse(_entries).ToList(); // in the order they came, not by Time: the clock can go back
     }
 
     /// <summary>Adds an entry with the current time and saves the file.</summary>
@@ -193,7 +193,7 @@ internal sealed class AiActivityLog
     {
         var kept = new List<AiActivity>();
         long size = 2; // [ ]
-        foreach (AiActivity entry in entries.OrderByDescending(e => e.Time))
+        foreach (AiActivity entry in Enumerable.Reverse(entries)) // newest first, in the order they came
         {
             size += ItemHistory.SizeInList(JsonSerializer.Serialize(entry, JsonOptions));
             if (size > _maxBytes && kept.Count > 0)

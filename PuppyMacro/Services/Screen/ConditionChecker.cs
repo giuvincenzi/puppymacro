@@ -94,6 +94,9 @@ internal sealed class ConditionChecker : IDisposable
 
         /// <summary>A text in a language Windows can't read on this PC: never read, as the editor says (NoLanguage).</summary>
         public bool NoLanguage { get; init; }
+
+        /// <summary>An image the last check could not compare with the screen, and why (no similarity to tell), or null.</summary>
+        public string? NotCompared { get; set; }
     }
 
     /// <summary>Checks the If's conditions, waiting as it says, until they are true, the wait ends or <paramref name="stop"/>.</summary>
@@ -116,6 +119,7 @@ internal sealed class ConditionChecker : IDisposable
             };
             double gapMs = _checksPerSecond == 0 ? 0 : 1000.0 / _checksPerSecond;
             var seen = new long[looks.Count];
+            var started = new double[looks.Count]; // when each watch started: one still without an image after FirstImageMs
             List<string>? details = null;
             double lastCheck = double.NegativeInfinity, lastRestart = 0;
             while (true)
@@ -137,11 +141,13 @@ internal sealed class ConditionChecker : IDisposable
                     {
                         looks[i].Watch = _screen.Start(looks[i].Area);
                         seen[i] = 0;
+                        started[i] = now;
                     }
                 }
-                // Ready when every capture gave its first image; one that has none (gone, failed) does not hold the others
-                // back: its conditions are simply not true.
-                bool ready = looks.All(l => l.Watch is not { Version: 0, Failed: false });
+                // Ready when every capture gave its first image; one that has none (gone, failed, or none yet FirstImageMs
+                // after it started: a capture Windows keeps refusing) does not hold the others back: its conditions are simply
+                // not true until it has one.
+                bool ready = looks.Select((l, i) => l.Watch is not { Version: 0, Failed: false } || now - started[i] >= FirstImageMs).All(r => r);
                 bool changed = looks.Select((l, i) => l.Watch != null && l.Watch.Version != seen[i]).Any(c => c);
                 bool firstWait = double.IsNegativeInfinity(lastCheck);
                 // The first check waits for the first images, up to FirstImageMs, whatever the wait: an Up to shorter than
@@ -324,6 +330,7 @@ internal sealed class ConditionChecker : IDisposable
         {
             ConditionKind.Pixel => $"{Name(c)}: saw {look.Seen}, wanted {c.Color} within {c.Tolerance}%",
             ConditionKind.Image when there => $"{Name(c)}: found at {at.X},{at.Y}, {ImageMatch.Percent(score)}% similar (needs {c.Similarity}%)",
+            ConditionKind.Image when look.NotCompared is { } why => $"{Name(c)}: not found, never compared: {why}",
             ConditionKind.Image => $"{Name(c)}: not found, the closest is {ImageMatch.Percent(score)}% similar (needs {c.Similarity}%)",
             _ when there => $"{Name(c)}: \"{c.Text}\" found at {at.X},{at.Y}" +
                             (look.FoundIn is { } line ? $" in the line \"{Shorten(line)}\"" : ""),
@@ -331,7 +338,24 @@ internal sealed class ConditionChecker : IDisposable
         };
     }
 
-    private static string Shorten(string text) => text.Length > 200 ? text[..200] + "…" : text;
+    private static string Shorten(string text) => TextCut.Shorten(text, 200);
+
+    /// <summary>
+    /// Why an image can't be compared with the part of the screen it looks in (the search skips it: no similarity to tell),
+    /// or null: an image of one color, or an area smaller than the image at every size it is looked for.
+    /// </summary>
+    private string? NotCompared(Look look, Rect area, MacroCondition c)
+    {
+        if (look.Image is not { } image || Image(image.Id, 1.0) is not { } mat)
+            return null;
+        if (Flatness.IsFlat(mat))
+            return "the image is all one color, so it has no shape to find";
+        double smallest = c.NearbySizes ? NearbyScales.Min() : 1.0;
+        int width = (int)Math.Round(mat.Width * smallest), height = (int)Math.Round(mat.Height * smallest);
+        return area.Width < width || area.Height < height
+            ? $"the area it looks in ({area.Width} × {area.Height}) is smaller than the image ({mat.Width} × {mat.Height})"
+            : null;
+    }
 
     /// <summary>The places a condition looks at: a pixel, each image near where it was taken or in the area, the text's area.</summary>
     private IEnumerable<Look> Places(MacroCondition c)
@@ -392,6 +416,7 @@ internal sealed class ConditionChecker : IDisposable
                 return (true, met, new Point(c.X, c.Y), 1);
             }
             case ConditionKind.Image:
+                look.NotCompared = NotCompared(look, area, c);
                 return FindImage(watch, area, look.Image!, c);
             case ConditionKind.Text:
             {

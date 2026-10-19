@@ -1586,4 +1586,11 @@ Détails : {1}</value></data>
   <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} composants</value></data>
   <data name="Ai_DeletedComponent" xml:space="preserve"><value>Composant {0} supprimé</value></data>
   <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Supprimer ce composant de la bibliothèque ?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro n'a pas pu ouvrir son fichier de paramètres. Un autre programme l'utilise peut-être. Vos boucles, remappages et paramètres y sont toujours, intacts. PuppyMacro a démarré avec les paramètres par défaut et n'enregistrera aucune modification avant d'être redémarré.
+Détails : {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro n'a pas pu ouvrir le fichier de paramètres au démarrage, il n'enregistre donc rien afin de laisser votre fichier intact. Redémarrez PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Collection de la bibliothèque {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>la condition {0} est vraie</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>la condition {0} n'est pas vraie</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>Après {0} s d'attente.</value></data>
 </root>

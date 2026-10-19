@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
@@ -318,6 +319,24 @@ internal sealed partial class AiTools
     /// <summary>A text with every tool's name written in full ("call wait_for_user" → "call puppymacro_wait_for_user").</summary>
     public static string Prefixed(string text) => ToolWords.Replace(text, Prefix + "$1");
 
+    private static readonly System.Text.RegularExpressions.Regex Quoted = new("\"[^\"\\n]*\"");
+
+    /// <summary>
+    /// An answer with every tool's name written in full, but what is between quotes as it is: the user's data (a name, a
+    /// component's structured name with "get_item" in it) is always quoted in PuppyMacro's sentences.
+    /// </summary>
+    private static string PrefixedAnswer(string text)
+    {
+        var result = new StringBuilder();
+        int at = 0;
+        foreach (System.Text.RegularExpressions.Match quoted in Quoted.Matches(text))
+        {
+            result.Append(Prefixed(text[at..quoted.Index])).Append(quoted.Value);
+            at = quoted.Index + quoted.Length;
+        }
+        return result.Append(Prefixed(text[at..])).ToString();
+    }
+
     /// <summary>Debug is the user's alone: an AI app's save keeps the value the macro had (off for a new one).</summary>
     public static void KeepUsersDebug(object item, MacroLibrary macros)
     {
@@ -372,11 +391,11 @@ internal sealed partial class AiTools
         {
             AiToolResult result = await tool.Run(args, app, cancel).ConfigureAwait(false);
             // Errors and PuppyMacro's own notes name tools by their full names; an item's data is given as it is.
-            return result.IsError || result.Text.StartsWith("Waiting:", StringComparison.Ordinal) ? result with { Text = Prefixed(result.Text) } : result;
+            return result.IsError || result.Text.StartsWith("Waiting:", StringComparison.Ordinal) ? result with { Text = PrefixedAnswer(result.Text) } : result;
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException or KeyNotFoundException)
         {
-            return AiToolResult.Error(Prefixed(ex.Message));
+            return AiToolResult.Error(PrefixedAnswer(ex.Message));
         }
     }
 
@@ -764,7 +783,7 @@ internal sealed partial class AiTools
                 Record = Keys(s.RecordHotkey),
             },
             OverlayModeOn = _host.OverlayModeActive,
-            WaitingForUser = WaitingId(),
+            WaitingForUser = Waiting()?.Id,
             UserIsEditing = open != null,
             UserHasOpen = open,
         };
@@ -879,7 +898,7 @@ internal sealed partial class AiTools
         if (!args.TryGetProperty("item", out JsonElement item) || item.ValueKind != JsonValueKind.Object)
             return AiToolResult.Error("Give the " + kind + " in \"item\", as a JSON object.");
         Guid? editId = OptionalIdArg(args, "id", "the Id of the " + kind + " to rewrite (get_overview lists them); leave it out for a new one");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         // get_item's JSON sent back as it is: the Id inside names the item it rewrites, never a copy of it.
         if (editId == null && item.TryGetProperty("Id", out JsonElement own) && own.ValueKind == JsonValueKind.String
@@ -1013,7 +1032,7 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> Delete(JsonElement args, string app, CancellationToken cancel)
     {
         Guid id = IdArg(args, "id");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         (string? what, string? kind, string? before, object? found) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
             ? ((string?)Loc.English(() => Describe(item)), (string?)Kind(item), (string?)Serialize(item), (object?)item)
@@ -1051,7 +1070,7 @@ internal sealed partial class AiTools
     {
         Guid id = IdArg(args, "id");
         bool enabled = BoolArg(args, "enabled") ?? throw new FormatException("\"enabled\" must be true (to enable it) or false (to disable it).");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         (string? what, string? kind, string? before, bool already, object? found) = await _host.Ui(() => Task.FromResult(Find(id) is { } item
             ? ((string?)Loc.English(() => Describe(item)), (string?)Kind(item), (string?)Serialize(item), IsEnabled(item) == enabled, (object?)item)
@@ -1096,7 +1115,7 @@ internal sealed partial class AiTools
         if (!args.TryGetProperty("settings", out JsonElement json) || json.ValueKind != JsonValueKind.Object)
             return AiToolResult.Error("Give the values to change in \"settings\", as a JSON object.");
         AiSettingsValues wanted = Arg<AiSettingsValues>(args, "settings");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
         // The problems in English: the AI app's answer.
@@ -1149,7 +1168,9 @@ internal sealed partial class AiTools
             StopAllHotkey = wanted.StopAllHotkey != null ? now.StopAllHotkey : null,
             OverlayModeHotkey = wanted.OverlayModeHotkey != null ? now.OverlayModeHotkey : null,
             RecordHotkey = wanted.RecordHotkey != null ? now.RecordHotkey : null,
-            OpenMainHotkey = wanted.OpenMainHotkey != null ? now.OpenMainHotkey : null,
+            // Open PuppyMacro is the global hotkey the user can clear: "none" is kept as an unset binding, so Restore clears it
+            // (null would mean "leave it as it is").
+            OpenMainHotkey = wanted.OpenMainHotkey != null ? now.OpenMainHotkey ?? new HotkeyBinding() : null,
             ShowOverlayPanel = wanted.ShowOverlayPanel != null ? now.ShowOverlayPanel : null,
             ClickItemsInPanel = wanted.ClickItemsInPanel != null ? now.ClickItemsInPanel : null,
             OverlayPanelOpacity = wanted.OverlayPanelOpacity != null ? now.OverlayPanelOpacity : null,
@@ -1164,8 +1185,17 @@ internal sealed partial class AiTools
     /// </summary>
     public string? RestoreSettings(AiSettingsValues values)
     {
+        // "No Open PuppyMacro hotkey", as the user had it before (Previous): only Restore clears it, so the checks of a change
+        // (which refuse an unset hotkey from an AI app) see the others.
+        bool clearOpenMain = values.OpenMainHotkey is { IsSet: false };
+        AiSettingsValues checkedValues = values;
+        if (clearOpenMain)
+        {
+            checkedValues = JsonSerializer.Deserialize<AiSettingsValues>(JsonSerializer.Serialize(values, CodeJson.Options), CodeJson.Options)!;
+            checkedValues.OpenMainHotkey = null;
+        }
         // Shown to the user (Restore on the AI page): in the user's language.
-        (_, string? problem) = SettingChanges(values);
+        (_, string? problem) = SettingChanges(checkedValues);
         if (problem != null)
             return string.Format(CultureInfo.CurrentCulture, Strings.Ai_CantRestoreSettings, problem);
         _host.ApplySettings(values);
@@ -1259,7 +1289,7 @@ internal sealed partial class AiTools
         int points = IntArg(args, "count", 1, MaxPoints) ?? throw new FormatException($"Give \"count\": how many points, from 1 to {MaxPoints}.");
         if (labels.Count != points)
             return AiToolResult.Error($"Give one label per point: {points} points, {labels.Count} labels.");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = points == 1 ? Phrase.Of("Ai_AskedPoint", ask.Title) : Phrase.Plural("Ai_AskedPoints", points, ask.Title);
         return await StartForUser(app, async () =>
@@ -1282,7 +1312,7 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> PickApp(JsonElement args, string app, CancellationToken cancel)
     {
         AiAsk ask = Asking(args);
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_AskedApp", ask.Title);
         return await StartForUser(app, async () =>
@@ -1313,7 +1343,7 @@ internal sealed partial class AiTools
         if (kind == AiScreenPickKind.Image && Given(args, "area", out _))
             throw new FormatException("\"area\" is a part of a look_at_screen picture, so it goes with its \"snapshot_id\". Without them the user drags around the image.");
         AiAsk ask = Asking(args);
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of(kind switch
         {
@@ -1348,7 +1378,7 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> CaptureKeys(JsonElement args, string app, CancellationToken cancel)
     {
         AiAsk ask = Asking(args);
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         Phrase label = Phrase.Of("Ai_AskedKey", ask.Title);
         return await StartForUser(app, async () =>
@@ -1365,7 +1395,7 @@ internal sealed partial class AiTools
     {
         Guid id = IdArg(args, "id");
         AiAsk ask = Asking(args);
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         (string? what, string? problem, object? found) = await _host.Ui(() => Task.FromResult(Find(id) switch
         {
@@ -1411,7 +1441,7 @@ internal sealed partial class AiTools
         string description = (Str(args, "description") ?? "").Trim();
         if (title.Length == 0)
             throw new FormatException("Give a short \"title\": it is shown to the user.");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         (string? what, string? problem, object? found) = await _host.Ui(() => Task.FromResult(Find(id) switch
         {
@@ -1516,7 +1546,7 @@ internal sealed partial class AiTools
                 ? throw new FormatException("\"only\" must be a list of indexes, from 0; leave it out to import every item.")
                 : list.EnumerateArray().Select(e => e.ValueKind == JsonValueKind.Number && e.TryGetInt32(out int i) ? i
                     : throw new FormatException("\"only\" must be a list of indexes (whole numbers), from 0.")).ToList();
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
 
         // In English: its problems and notes are the AI app's answer (the user's window reads the file in their language).
@@ -1554,7 +1584,7 @@ internal sealed partial class AiTools
                 imported++;
             }
             return new AiToolResult($"Imported {imported} item{(imported == 1 ? "" : "s")}, all disabled: the user turns them on " +
-                                    $"(set_enabled, or the switch on their card).\n{string.Join("\n", lines)}{skipped}");
+                                    $"({Name("set_enabled")}, or the switch on their card).\n{string.Join("\n", lines)}{skipped}");
         }
 
         if (!_host.Settings.AiAskBeforeChanging)
@@ -1581,7 +1611,7 @@ internal sealed partial class AiTools
     private async Task<AiToolResult> OpenImport(JsonElement args, string app, CancellationToken cancel)
     {
         string? text = ContentArg(args, required: false);
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         return await StartForUser(app, async () =>
         {
@@ -1605,7 +1635,7 @@ internal sealed partial class AiTools
         string? unknown = await _host.Ui(() => Task.FromResult(ItemsByIds(ids).Unknown)).ConfigureAwait(false);
         if (unknown != null)
             return AiToolResult.Error($"No loop, macro or remap has the Id {unknown}. get_overview lists them.");
-        if (await Refusal().ConfigureAwait(false) is string busy)
+        if (await Refusal(app).ConfigureAwait(false) is string busy)
             return AiToolResult.Error(busy);
         return await StartForUser(app, async () =>
         {
@@ -1620,19 +1650,28 @@ internal sealed partial class AiTools
     // ================= Waiting for the user =================
 
     /// <summary>Why a request can't run now, or null.</summary>
-    private async Task<string?> Refusal()
+    private async Task<string?> Refusal(string app)
     {
-        if (WaitingId() is string waiting)
-            return $"Another request is waiting for the user (request_id \"{waiting}\"). Call wait_for_user with it first.";
+        if (Waiting() is { } waiting)
+            return Busy(waiting, app);
         return await _host.Ui(() => Task.FromResult(_host.UserHasOpen is string open ? UserHasOpen(open) : null))
             .ConfigureAwait(false);
     }
 
-    private string? WaitingId()
+    private Pending? Waiting()
     {
         lock (_sync)
-            return _pending is { Answer.IsCompleted: false } p ? p.Id : null;
+            return _pending is { Answer.IsCompleted: false } p ? p : null;
     }
+
+    /// <summary>
+    /// Why a request can't start while another waits for the user: the app that made it waits with wait_for_user; another app
+    /// can't (wait_for_user answers only the app that asked), so it is told to try again.
+    /// </summary>
+    private static string Busy(Pending waiting, string app) => waiting.App == app
+        ? $"Another request is waiting for the user (request_id \"{waiting.Id}\"). Call wait_for_user with it first."
+        : "The user is answering another AI app's request in PuppyMacro: one request waits for the user at a time. Try again " +
+          "once it is over.";
 
     /// <summary>Opens the user's window (on the UI thread) and waits for the answer, at most <see cref="WaitStep"/>.</summary>
     private async Task<AiToolResult> StartForUser(string app, Func<Task<AiToolResult>> ask, CancellationToken cancel)
@@ -1641,7 +1680,7 @@ internal sealed partial class AiTools
         lock (_sync)
         {
             if (_pending is { Answer.IsCompleted: false } other)
-                return AiToolResult.Error($"Another request is waiting for the user (request_id \"{other.Id}\"). Call wait_for_user with it first.");
+                return AiToolResult.Error(Busy(other, app));
             if (_pending != null)
                 Keep(_pending); // answered, not given yet: kept for wait_for_user
             pending = new Pending(Guid.NewGuid().ToString("N")[..8], app, _host.Ui(ask));
@@ -1888,7 +1927,8 @@ internal sealed partial class AiTools
             throw new JsonException($"\"{name}\" must be an object, not {JsonKind(value)}.");
         try
         {
-            return JsonSerializer.Deserialize<T>(value.GetRawText(), ReadOptions) ?? throw new JsonException($"\"{name}\" is empty.");
+            // In English: a wrong value (a name a list doesn't have) is said by a converter in the language of the moment.
+            return Loc.English(() => JsonSerializer.Deserialize<T>(value.GetRawText(), ReadOptions)) ?? throw new JsonException($"\"{name}\" is empty.");
         }
         catch (JsonException ex) when (!ex.Message.StartsWith($"\"{name}\"", StringComparison.Ordinal))
         {

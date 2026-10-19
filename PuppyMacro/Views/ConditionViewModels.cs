@@ -613,7 +613,7 @@ public sealed class ConditionViewModel : ConditionEditorItem
         return Math.Round(most * 100 / 255.0);
     }
 
-    private static string Shorten(string text) => text.Length > 60 ? text[..60] + "…" : text;
+    private static string Shorten(string text) => TextCut.Shorten(text, 60);
 
     // ---- Back to the model ----
 
