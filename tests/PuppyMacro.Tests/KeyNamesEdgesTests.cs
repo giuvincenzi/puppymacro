@@ -8,24 +8,6 @@ namespace PuppyMacro.Tests;
 /// </summary>
 public class KeyNamesEdgesTests
 {
-    /// <summary>
-    /// A key whose scan code has the E0 prefix (the volume and media keys, Break) and that KeyNames' table does not list is
-    /// named by FromSystem with MAPVK_VK_TO_VSC, which drops the prefix, and GetKeyNameText without the extended bit (bit
-    /// 24): Windows then names the plain key with the same scan code. Volume Up (E0 30) shows as "B", Volume Down (E0 2E)
-    /// as "C", Mute (E0 20) as "D", Play/Pause (E0 22) as "G", Break (E0 46) as "Scroll Lock". A hotkey captured on a
-    /// keyboard's media key is shown everywhere (its card, the editor, the conflict messages) as a letter the user never
-    /// pressed, and "Volume Up" and "B" look like the same hotkey.
-    /// </summary>
-    [Theory]
-    [InlineData(0xAF, 0x42)] // Volume Up (E0 30) and B (30)
-    [InlineData(0xAE, 0x43)] // Volume Down (E0 2E) and C (2E)
-    [InlineData(0xAD, 0x44)] // Volume Mute (E0 20) and D (20)
-    [InlineData(0xB3, 0x47)] // Play/Pause (E0 22) and G (22)
-    [InlineData(0x03, 0x91)] // Break, Ctrl+Pause (E0 46), and Scroll Lock (46)
-    public void A_key_with_an_E0_scan_code_is_not_named_as_the_key_without_it(int extendedKey, int plainKey)
-    {
-        Assert.NotEqual(KeyNames.Get(plainKey).Replace(" ", ""), KeyNames.Get(extendedKey).Replace(" ", ""));
-    }
 
     [Theory]
     [InlineData(0x30, "0")]

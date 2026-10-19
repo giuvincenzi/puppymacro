@@ -523,7 +523,7 @@ internal sealed partial class AiTools
                 {"type":"object","properties":{
                   "id":{"type":"string","description":"The Id of the loop or macro."},
                   "where":{"type":"object","description":"Fields an action must have to change, with these values, e.g. {\"DelayMs\": 800} or {\"Type\": \"Click\", \"Vk\": 2}. Leave out to change every action."},
-                  "group":{"type":"string","description":"Only the actions in the macro group with this name."},
+                  "group":{"type":"string","description":"Only the actions in the macro group with this name, also those inside its Ifs' Then and Else."},
                   "set":{"type":"object","description":"The fields to change and their new values, e.g. {\"DelayMs\": 1200}."}},
                  "required":["id","set"],"additionalProperties":false}
                 """, false, true, (a, app, c) => UpdateActions(a, app, c)),

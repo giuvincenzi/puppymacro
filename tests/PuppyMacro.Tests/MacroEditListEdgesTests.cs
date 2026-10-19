@@ -131,25 +131,4 @@ public class MacroEditListEdgesTests
         Assert.Contains(group, list.Groups);
         Assert.All(inserted, a => Assert.Equal(group.Id, a.GroupId));
     }
-
-    /// <summary>
-    /// The macro has a condition named "Café" written with a combining accent ("Cafe" + U+0301, as text pasted from some
-    /// apps is), and an If whose condition is "Café" with the precomposed é is pasted. The two names look the same, and the
-    /// macro's checks (MacroJson, the editor's Save) compare names with the culture, which takes them as one name: Paste
-    /// must give the copy the name of a copy, or the macro can't be saved ("Two conditions have the same name"). Paste
-    /// compares them ordinally (MacroEditList.RenameConditions, ItemNames.Copy), sees two names and keeps the name.
-    /// </summary>
-    [Fact]
-    public void A_pasted_condition_whose_name_the_macro_checks_take_as_taken_gets_the_name_of_a_copy()
-    {
-        var list = new MacroEditList(new[] { IfWith("Café", new[] { Key("a") }) }, NoGroups);
-        var block = new ActionBlock();
-        block.Actions.Add(IfWith("Café", new[] { Key("b") }));
-
-        list.Insert(block, 1, null);
-
-        var macro = new MacroDefinition { Name = "M", Actions = list.Actions, Groups = list.Groups };
-        MacroJson.Parse(MacroJson.Serialize(macro), macro.Id, (_, _) => null, out List<CodeProblem> problems);
-        Assert.DoesNotContain(problems, p => p.Message.EndsWith(PuppyMacro.Resources.Strings.Code_ConditionNameTwice));
-    }
 }

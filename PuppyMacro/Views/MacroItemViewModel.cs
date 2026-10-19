@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
@@ -75,7 +76,8 @@ public sealed class MacroItemViewModel : INotifyPropertyChanged, IListItem
     {
         get
         {
-            int count = Definition.Actions.Count;
+            // Every action, those inside Then and Else too, as the editor counts them.
+            int count = MacroDefinition.Walk(Definition.Actions).Count();
             string repeat = Definition.Repeat switch
             {
                 RepeatMode.Loop => Strings.Macros_RepeatLoop,

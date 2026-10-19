@@ -192,8 +192,20 @@ public partial class App : Application
             return;
         }
 
-        // The debug data older than its days goes, now and every hour; nothing goes when PuppyMacro closes or crashes.
-        _debugCleaner = new Timer(_ => DebugStore.DeleteOlderThan(DebugStore.Life, DateTime.UtcNow), null, TimeSpan.Zero, TimeSpan.FromHours(1));
+        // The debug data older than its days goes, now and every hour; nothing goes when PuppyMacro closes or crashes. Not
+        // while Delete debug data runs (it deletes everything). An error here is only this hour's cleaning lost: on the
+        // timer's thread it would end PuppyMacro.
+        _debugCleaner = new Timer(_ =>
+        {
+            try
+            {
+                DebugStore.TryDeleteOlderThan(DebugStore.Life, DateTime.UtcNow);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+            }
+        }, null, TimeSpan.Zero, TimeSpan.FromHours(1));
 
         _showWindowRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowEventName);
         _showWindowWait = ThreadPool.RegisterWaitForSingleObject(_showWindowRequest,

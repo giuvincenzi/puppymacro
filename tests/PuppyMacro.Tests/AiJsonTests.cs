@@ -220,8 +220,8 @@ public class AiJsonTests
     }
     /// <summary>
     /// update_actions with group: an If in the group is one of the group's actions, and so are the actions inside its Then
-    /// and Else (they have no GroupId of their own: only top-level actions may). Without group, SetWhere changes the actions
-    /// inside an If; with group it must change those of an If in the group too, not only the group's top-level actions.
+    /// and Else (the editor shows them under the group; they have no GroupId of their own). Without group, SetWhere changes
+    /// the actions inside an If; with group it must change those of an If in the group too, not only its own rows.
     /// </summary>
     [Fact]
     public void Set_where_in_a_group_also_changes_the_actions_inside_its_ifs()
@@ -254,6 +254,93 @@ public class AiJsonTests
 
         Assert.Equal(1200, result["Actions"]![1]!["If"]!["Then"]![0]!["DelayMs"]!.GetValue<double>());
         Assert.Equal(800, result["Actions"]![2]!["DelayMs"]!.GetValue<double>()); // outside the group
+        Assert.Equal(2, count);
+    }
+
+    /// <summary>
+    /// The group's If holds an Else and another If: every action under the group changes, at any depth. An If outside the
+    /// group changes nothing inside it, although its actions match.
+    /// </summary>
+    [Fact]
+    public void Set_where_in_a_group_changes_its_else_and_deeper_ifs_and_nothing_in_an_if_outside_it()
+    {
+        var group = new MacroGroup { Name = "Slot 1" };
+        static MacroAction Key(int vk) => new() { Type = MacroActionType.PressKey, Vk = vk, DelayMs = 800 };
+        static MacroIf Pixel(params MacroAction[] then) => new()
+        {
+            Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, Name = "P" + then[0].Vk, Color = "#000000" } },
+            Then = then.ToList(),
+        };
+        var deeper = Pixel(Key(67));
+        var inGroup = Pixel(Key(66), new MacroAction { Type = MacroActionType.If, If = deeper });
+        inGroup.OnFail = ConditionFail.Else;
+        inGroup.Else.Add(Key(68));
+        var macro = new MacroDefinition
+        {
+            Name = "M",
+            Groups = { group },
+            Actions =
+            {
+                new MacroAction { Type = MacroActionType.If, GroupId = group.Id, If = inGroup },
+                new MacroAction { Type = MacroActionType.If, If = Pixel(Key(69)) },
+            },
+        };
+        Assert.NotNull(MacroJson.Parse(MacroJson.Serialize(macro), macro.Id, NoClash, out var problems)); // a macro the editor takes
+        Assert.Empty(problems);
+        JsonNode doc = JsonNode.Parse(MacroJson.Serialize(macro))!;
+
+        (JsonNode result, int count) = AiJson.SetWhere(doc, Ops(new { DelayMs = 800 }), Ops(new { DelayMs = 1200 }), "Slot 1");
+
+        JsonNode first = result["Actions"]![0]!["If"]!;
+        Assert.Equal(1200, first["Then"]![0]!["DelayMs"]!.GetValue<double>());
+        Assert.Equal(1200, first["Then"]![1]!["If"]!["Then"]![0]!["DelayMs"]!.GetValue<double>());
+        Assert.Equal(1200, first["Else"]![0]!["DelayMs"]!.GetValue<double>());
+        Assert.Equal(800, result["Actions"]![1]!["If"]!["Then"]![0]!["DelayMs"]!.GetValue<double>()); // an If outside the group
+        Assert.Equal(3, count);
+    }
+
+    /// <summary>
+    /// A group inside an If's Then (outside any group): only its own actions change, never the rest of that Then nor the
+    /// actions outside, as before update_actions took the actions inside a group's Ifs.
+    /// </summary>
+    [Fact]
+    public void Set_where_in_a_group_inside_a_then_changes_only_that_groups_actions()
+    {
+        var group = new MacroGroup { Name = "Inner" };
+        var macro = new MacroDefinition
+        {
+            Name = "M",
+            Groups = { group },
+            Actions =
+            {
+                new MacroAction { Type = MacroActionType.PressKey, Vk = 65, DelayMs = 800 },
+                new MacroAction
+                {
+                    Type = MacroActionType.If,
+                    If = new MacroIf
+                    {
+                        Conditions = { new MacroCondition { Kind = ConditionKind.Pixel, Name = "P", Color = "#000000" } },
+                        Then =
+                        {
+                            new MacroAction { Type = MacroActionType.PressKey, Vk = 66, DelayMs = 800 },
+                            new MacroAction { Type = MacroActionType.PressKey, Vk = 67, DelayMs = 800, GroupId = group.Id },
+                            new MacroAction { Type = MacroActionType.PressKey, Vk = 68, DelayMs = 800, GroupId = group.Id },
+                        },
+                    },
+                },
+            },
+        };
+        Assert.NotNull(MacroJson.Parse(MacroJson.Serialize(macro), macro.Id, NoClash, out var problems)); // a macro the editor takes
+        Assert.Empty(problems);
+        JsonNode doc = JsonNode.Parse(MacroJson.Serialize(macro))!;
+
+        (JsonNode result, int count) = AiJson.SetWhere(doc, Ops(new { DelayMs = 800 }), Ops(new { DelayMs = 1200 }), "Inner");
+
+        JsonNode then = result["Actions"]![1]!["If"]!["Then"]!;
+        Assert.Equal(800, result["Actions"]![0]!["DelayMs"]!.GetValue<double>());
+        Assert.Equal(800, then[0]!["DelayMs"]!.GetValue<double>());
+        Assert.Equal(1200, then[1]!["DelayMs"]!.GetValue<double>());
+        Assert.Equal(1200, then[2]!["DelayMs"]!.GetValue<double>());
         Assert.Equal(2, count);
     }
 }

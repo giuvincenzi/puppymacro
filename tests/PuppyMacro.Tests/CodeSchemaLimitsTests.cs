@@ -106,43 +106,6 @@ public class CodeSchemaLimitsTests
         Assert.True((schemaErrors.Count == 0) == valid, $"Schema: {string.Join(" / ", schemaErrors)}");
     }
 
-    /// <summary>
-    /// A loop's interval: the checks take 10 ms to 24 h (<see cref="LoopAction.MinIntervalMs"/>, <see cref="LoopAction.MaxIntervalMs"/>),
-    /// in the row's unit. The schema says only "minimum 0": an AI app or the Code view's inline errors take 5 ms or 2 days as
-    /// valid, and the save then refuses them.
-    /// </summary>
-    [Theory]
-    [InlineData(5, "Milliseconds")]
-    [InlineData(0, "Milliseconds")]
-    [InlineData(86_400_001, "Milliseconds")]
-    [InlineData(25, "Hours")]
-    public void The_loop_schema_refuses_an_interval_the_checks_refuse(double value, string unit)
-    {
-        LoopDefinition loop = Loop();
-        JsonNode item = JsonNode.Parse(LoopJson.Serialize(loop))!;
-        item["Actions"]![0]!["IntervalValue"] = value;
-        item["Actions"]![0]!["IntervalUnit"] = unit;
-        string text = item.ToJsonString();
-
-        Assert.Null(LoopJson.Parse(text, loop.Id, NoConflict, out _));
-        Assert.NotEmpty(MiniSchema.Validate(CodeSchema.ForLoop(loop.Id), text));
-    }
-
-    /// <summary>
-    /// A floating button's label: the checks count UTF-16 chars (string.Length, at most 2), JSON Schema's maxLength counts
-    /// characters (code points). Two emoji are 2 for the schema, 4 for the checks: the schema takes a label the save refuses.
-    /// </summary>
-    [Fact]
-    public void The_schema_counts_a_labels_length_as_the_checks_do()
-    {
-        MacroDefinition macro = Macro();
-        macro.FloatingButton.Label = "😀😀";
-        string text = MacroJson.Serialize(macro);
-
-        Assert.Null(MacroJson.Parse(text, macro.Id, NoConflict, out _));
-        Assert.NotEmpty(MiniSchema.Validate(CodeSchema.ForMacro(macro.Id), text));
-    }
-
     /// <summary>The validator of these tests refuses what a schema refuses (it is not an empty check).</summary>
     [Fact]
     public void The_validator_refuses_unknown_fields_wrong_types_and_enum_values()

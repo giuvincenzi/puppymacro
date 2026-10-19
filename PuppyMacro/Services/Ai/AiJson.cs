@@ -127,10 +127,8 @@ internal static class AiJson
         var changes = set.EnumerateObject().Select(p => (p.Name, Value: JsonNode.Parse(p.Value.GetRawText()))).ToList();
         int count = 0;
         // The actions as they are before any change: a new value can hold actions (an If's Then), never walked into.
-        foreach (JsonObject action in AllActions(actions).ToList())
+        foreach (JsonObject action in AllActions(actions, groupId, false).ToList())
         {
-            if (groupId != null && !string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase))
-                continue;
             // A row linked to a Library component has only its link: it is left as it is.
             if (action["Type"]?.GetValue<string>() == nameof(MacroActionType.Component))
                 continue;
@@ -150,16 +148,24 @@ internal static class AiJson
     }
 
     /// <summary>Every action of a macro's JSON, also those inside an If's Then and Else.</summary>
-    private static IEnumerable<JsonObject> AllActions(JsonArray actions)
+    /// <summary>
+    /// Every action, those inside Then and Else too; with <paramref name="groupId"/>, only the group's: its own actions
+    /// (in whichever list the group is) and every action inside an If of the group, as the editor shows them under the
+    /// group (<paramref name="inGroup"/>: an If around is in it).
+    /// </summary>
+    private static IEnumerable<JsonObject> AllActions(JsonArray actions, string? groupId, bool inGroup)
     {
         foreach (JsonObject action in actions.OfType<JsonObject>().ToList())
         {
-            yield return action;
+            bool mine = groupId == null || inGroup
+                        || string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase);
+            if (mine)
+                yield return action;
             if (action["If"] is not JsonObject block)
                 continue;
             foreach (string branch in new[] { "Then", "Else" })
                 if (block[branch] is JsonArray inner)
-                    foreach (JsonObject each in AllActions(inner))
+                    foreach (JsonObject each in AllActions(inner, groupId, mine))
                         yield return each;
         }
     }

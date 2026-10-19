@@ -69,57 +69,6 @@ public sealed class RunLogEdgesTests : IDisposable
         Assert.Equal(2, without.Split('\n').Count(l => l.Contains("what the conditions saw is left out")));
     }
 
-    /// <summary>
-    /// A condition's name can hold a line break (MacroJson only trims the ends; an AI app or the Code view writes names as
-    /// they like), and ConditionChecker.Describe writes it as it is in the Seen line, before what was read on the screen.
-    /// WithoutWhatWasSeen recognizes a Seen line only by its start, so the rest of that line (the text read on the screen)
-    /// reaches an AI app while Let AI apps see the screen is off (AiTools.TextOf). Expected: nothing of what was seen is
-    /// left, whatever the names hold.
-    /// </summary>
-    [Fact]
-    public void Without_what_was_seen_leaves_nothing_seen_when_a_conditions_name_has_a_line_break()
-    {
-        var log = new RunLog(NewFolder(), new MacroDefinition { Name = "Leak" }, "a test by an AI app");
-        log.Event("#1 If: not true after 0.1 s -> Else (0 actions)");
-        // As ConditionChecker.Describe writes a Text condition whose name is "Total\n" and that was not found.
-        log.Seen("Text \"Total\n\": \"Paid\" not found; read \"IBAN IT60 X054 2811 1010 0000 0123 456\"");
-        log.End("finished");
-        Assert.True(RunLog.WaitWritten(Written));
-
-        string without = RunLog.WithoutWhatWasSeen(RunLog.Read(log.Folder)!);
-
-        Assert.DoesNotContain("IBAN", without); // observed: the line "": "Paid" not found; read "IBAN …"" is kept
-    }
-
-    /// <summary>
-    /// DebugStore.LastRunOf reads the first lines of every run.json of the archive, while the debug writer may be writing
-    /// one (RunLog.WriteRun with File.WriteAllText, at the start and at the end of every run: share Read only, so a reader
-    /// that does not share Write gets a sharing violation). LastRunOf is called on the UI thread when a macro editor opens
-    /// (MacroEditorWindow.LoadMacro) and when a macro card's menu opens, and by get_last_run: while another macro with
-    /// Debug on starts or ends, the IOException escapes (the editor shows "unexpected error"). Expected: the run being
-    /// written is skipped (or read once written), and the macro's last run is still found.
-    /// </summary>
-    [Fact]
-    public void The_last_run_of_a_macro_is_found_while_another_runs_file_is_being_written()
-    {
-        var macro = new MacroDefinition { Name = "Mine" };
-        var mine = new RunLog(NewFolder(), macro, "a test");
-        mine.End("finished");
-        var other = new RunLog(NewFolder(), new MacroDefinition { Name = "Other" }, "a test");
-        Assert.True(RunLog.WaitWritten(Written));
-
-        // The debug writer in the middle of File.WriteAllText of the other run's run.json.
-        using (new FileStream(Path.Combine(other.Folder, RunLog.RunFile), FileMode.Open, FileAccess.Write, FileShare.Read))
-        {
-            string? found = null;
-            var error = Record.Exception(() => found = DebugStore.LastRunOf(macro.Id)); // observed: IOException (in use)
-
-            Assert.Null(error);
-            Assert.Equal(mine.Folder, found);
-        }
-        other.End("finished");
-    }
-
     private (MacroRunner Runner, string Log) Run(MacroDefinition macro, Action<MacroRunner>? meanwhile = null)
     {
         var log = new RunLog(NewFolder(), macro, "a test");

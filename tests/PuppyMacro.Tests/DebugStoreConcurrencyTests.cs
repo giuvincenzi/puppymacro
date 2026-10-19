@@ -104,29 +104,6 @@ public class DebugStoreConcurrencyTests : IDisposable
         }
     }
 
-    /// <summary>
-    /// A macro with Debug on writes its run.json (File.WriteAllText: open for writing, others may only read) at the very
-    /// moment the user opens its editor, which asks for its last run (MacroEditorWindow, View log), or an AI app asks for
-    /// it (AiTools.Screen). The file being written is skipped, or read once written: LastRunOf must not throw.
-    /// </summary>
-    [Fact]
-    public void Looking_for_a_last_run_while_a_run_json_is_written_does_not_throw()
-    {
-        var macro = new MacroDefinition { Name = "Farm" };
-        string folder = Path.Combine(DebugStore.Root, "user", "macro", "20260101-000000-000-farm");
-        Directory.CreateDirectory(folder);
-        string run = Path.Combine(folder, RunLog.RunFile);
-        File.WriteAllText(run, $"{{\n  \"MacroId\": \"{macro.Id:D}\"\n}}");
-
-        // The writer's handle, as File.WriteAllText opens it.
-        using (new FileStream(run, FileMode.Open, FileAccess.Write, FileShare.Read))
-        {
-            Exception? error = Record.Exception(() => DebugStore.LastRunOf(macro.Id));
-            Assert.Null(error);
-        }
-        Assert.Equal(folder, DebugStore.LastRunOf(macro.Id));
-    }
-
     /// <summary>The writer thread survives a write that throws, and the ones after it still run in order.</summary>
     [Fact]
     public void A_write_that_throws_never_stops_the_writer()

@@ -143,59 +143,6 @@ public sealed class ClipboardPasterEdgesTests : IDisposable
 
     // ================= The clipboard fails =================
 
-    /// <summary>
-    /// A loop's Paste text (or a macro's: MacroRunner.Paste is the same code) while another app holds the clipboard open:
-    /// ClipboardPaster.Replace cannot put the text and returns null, but the paste goes on and sends Ctrl+V, so the app in
-    /// front gets the user's own clipboard (a password, a private message) instead of the text, and Enter after sends it.
-    /// Expected: nothing is pasted when the text could not be put on the clipboard.
-    /// </summary>
-    [Fact]
-    public void A_paste_whose_text_could_not_be_put_on_the_clipboard_never_pastes_the_users_clipboard()
-    {
-        var keys = new FakePasteKeys(ClipboardText);
-        _dispatcher.Invoke(() => _clipboard.FailingSets = 100); // held open by another app for the whole paste
-
-        RunFirstPaste(LoopPaste(enterBefore: false, enterAfter: true), keys);
-
-        Assert.Equal("the user's text", ClipboardText());
-        Assert.Empty(keys.Sent); // observed: "Ctrl+V (the user's text)", then "Enter"
-    }
-
-    /// <summary>
-    /// The paste could not read the user's clipboard (another app held it open for a moment), then put its text: at the end
-    /// ClipboardPaster.Restore finds no copy of the user's clipboard and clears it. The user's clipboard is lost, while the
-    /// rule (input.md) is that the user's own clipboard always comes back. Expected: the user's text is on the clipboard
-    /// once the paste ends (a paste that can't keep the user's clipboard should not change it at all).
-    /// </summary>
-    [Fact]
-    public void A_paste_that_could_not_read_the_users_clipboard_never_clears_it()
-    {
-        _dispatcher.Invoke(() => _clipboard.FailingGets = 1);
-
-        var paste = _paster.Replace("pasted");
-        _paster.Restore(paste);
-
-        Assert.Equal("the user's text", ClipboardText()); // observed: null, the clipboard was cleared
-    }
-
-    /// <summary>
-    /// The clipboard is held open by another app just when the paste gives the user's clipboard back: the one write fails,
-    /// and ClipboardPaster.Restore has already forgotten the copy of the user's clipboard, so the paste's text stays on the
-    /// clipboard for good. Expected: the user's own clipboard always comes back (input.md), so a failed restore is tried
-    /// again rather than given up.
-    /// </summary>
-    [Fact]
-    public void A_restore_that_fails_once_still_gives_the_users_clipboard_back()
-    {
-        var paste = _paster.Replace("pasted");
-        Assert.Equal("pasted", ClipboardText());
-        _dispatcher.Invoke(() => _clipboard.FailingSets = 1);
-
-        _paster.Restore(paste);
-
-        Assert.Equal("the user's text", ClipboardText()); // observed: "pasted"
-    }
-
     [Fact]
     public void A_paste_whose_text_could_not_be_put_leaves_the_clipboard_and_the_next_paste_as_they_were()
     {

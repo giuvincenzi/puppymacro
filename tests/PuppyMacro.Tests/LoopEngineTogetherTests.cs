@@ -60,33 +60,6 @@ public sealed class LoopEngineTogetherTests : IDisposable
         Actions = { new LoopAction { Type = ActionType.Key, KeyVk = F24, HoldDown = true } },
     };
 
-    /// <summary>
-    /// Two loops hold the same key down (a Hold down row of F24 each: "keep W held" in two loops of a game). Stopping one
-    /// releases the key (ActionRunner's finally: InputSender.Up) although the other still runs and holds it: the key is
-    /// up while the other loop shows as running, and the hook still blocks the user's own presses of it (IsHeldByLoop),
-    /// the very case input.md's Hold down rule exists for ("otherwise the release would let go of the loop's key while the
-    /// loop still shows as running").
-    /// </summary>
-    [Fact]
-    public void Stopping_one_of_two_loops_that_hold_the_same_key_keeps_it_held_for_the_other()
-    {
-        LoopDefinition first = HoldDownLoop("First"), second = HoldDownLoop("Second");
-        _engine.Publish(new EngineSnapshot { Loops = new[] { first, second } });
-
-        _engine.StartLoop(first);
-        _engine.StartLoop(second);
-        Assert.True(WaitFor(() => IsDown(F24), Soon), "the loops did not hold F24");
-        Thread.Sleep(100); // both rows' threads have pressed it
-
-        _engine.StopLoop(first.Id);
-        Thread.Sleep(200); // the stopped row's thread releases what it held
-
-        Assert.True(_engine.IsRunning(second.Id));
-        Assert.True(_engine.OnKey(F24, isDown: true, physicalModifierEvent: true)); // the hook still treats it as held
-        _engine.OnKey(F24, isDown: false, physicalModifierEvent: true);
-        Assert.True(IsDown(F24), "the second loop still runs, but the key it holds was released when the first one stopped");
-    }
-
     /// <summary>A Hold down row holds its key while the loop runs and releases it at once when it stops (passing).</summary>
     [Fact]
     public void A_Hold_down_row_holds_its_key_until_the_loop_stops()

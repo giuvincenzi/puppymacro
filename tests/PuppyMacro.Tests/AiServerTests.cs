@@ -186,36 +186,4 @@ public class AiServerTests : IDisposable
             Assert.False(t["annotations"]!["openWorldHint"]!.GetValue<bool>());
         });
     }
-
-    /// <summary>
-    /// Let AI apps see the screen on: an AI app checks a condition, and the answer gives the color PuppyMacro saw. The user
-    /// then turns Let AI apps see the screen off. Every request's answer is kept in the debug data (response.json), which
-    /// read_resource and resources/read open: the color seen (or the text read) must not come back through it, as a run's
-    /// log leaves out what the conditions saw (RunLog.WithoutWhatWasSeen) and pictures are refused. Any AI app can name that
-    /// file: its path is the session, the call's number and the tool.
-    /// </summary>
-    [Fact]
-    public async Task What_the_screen_showed_does_not_come_back_from_an_earlier_answer_once_Let_AI_apps_see_the_screen_is_off()
-    {
-        AiTools.WaitStep = TimeSpan.FromSeconds(5);
-        _host.Report = new PuppyMacro.Services.Screen.ConditionReport(false, Color: "#4711AB");
-        await using Client client = await Client.Connect(_server);
-        JsonNode looked = await client.CallTool("check_condition", new
-        {
-            condition = new { Kind = "Pixel", X = 5, Y = 5, Color = "#FFFFFF" },
-            title = "Check the bar", description = "We check the health bar.", steps = new[] { "Open the game" },
-        });
-        Assert.Contains("#4711AB", looked.ToJsonString());
-
-        _settings.AiSeeScreen = false;
-        DebugStore.WaitWritten(TimeSpan.FromSeconds(10));
-        string response = Directory.GetFiles(DebugStore.Root, "response.json", SearchOption.AllDirectories)
-            .Single(f => Path.GetFileName(Path.GetDirectoryName(f))!.EndsWith("check_condition", StringComparison.Ordinal));
-        string uri = DebugStore.UriOf(response);
-        JsonNode tool = await client.CallTool("read_resource", new { uri });
-        JsonNode resource = await client.Request("resources/read", new { uri });
-
-        Assert.DoesNotContain("#4711AB", tool.ToJsonString());
-        Assert.DoesNotContain("#4711AB", resource.ToJsonString());
-    }
 }

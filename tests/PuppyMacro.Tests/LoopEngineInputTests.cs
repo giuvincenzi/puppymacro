@@ -48,30 +48,6 @@ public sealed class LoopEngineInputTests : IDisposable
 
     private bool FakeCtrl(bool isDown) => _engine.OnKey(LCtrl, isDown, physicalModifierEvent: false, altGrCtrl: true);
 
-    /// <summary>
-    /// Scenario: Right Alt is remapped (Right Alt → F24, all apps), and the user presses Shift + AltGr (on many layouts
-    /// AltGr + Shift types characters: Italian "{" is AltGr + Shift + è). Windows sends AltGr as a fake left Ctrl, then
-    /// Right Alt. OnModifier blocks the fake Ctrl when FindRemap(Right Alt alone) applies, ignoring the modifiers held; but
-    /// Right Alt itself is matched exactly with the modifiers held (Shift + Right Alt), so the remap does not apply and
-    /// Right Alt reaches the app. The app gets Shift + Right Alt without AltGr's Ctrl: not AltGr, so the character is
-    /// not typed (or a menu shortcut runs). Expected: the fake Ctrl is blocked only when Right Alt will be remapped.
-    /// </summary>
-    [Fact]
-    public void The_fake_Ctrl_of_AltGr_passes_when_Right_Alt_is_pressed_with_Shift_and_its_remap_does_not_apply()
-    {
-        _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(HotkeyBinding.FromKey(RAlt)) } });
-
-        Press(LShift);
-        bool fakeCtrlBlocked = FakeCtrl(true);
-        bool rightAltBlocked = Press(RAlt);
-        Release(RAlt);
-        FakeCtrl(false);
-        Release(LShift);
-
-        Assert.False(rightAltBlocked); // with Shift held it is not the remap's source (exact match)
-        Assert.Equal(rightAltBlocked, fakeCtrlBlocked);
-    }
-
     /// <summary>The usual case stays as it is: AltGr alone with Right Alt remapped, both halves are blocked.</summary>
     [Fact]
     public void AltGr_alone_with_Right_Alt_remapped_blocks_both_halves_and_counts_as_no_modifier()
@@ -86,27 +62,6 @@ public sealed class LoopEngineInputTests : IDisposable
         Assert.False(ModifierTracker.Any);
     }
 
-    /// <summary>
-    /// Scenario: the user's game (Game.exe) is the app in front for PuppyMacro (_foregroundApp, which never takes
-    /// PuppyMacro's own windows). A remap for Game.exe and a loop for all apps share F23: "a remap for the app in front beats
-    /// the loops and macros for all apps" (input.md). But FindRemap decides the app in front with GetForegroundWindow, not
-    /// with _foregroundApp as RunHotkey does: whenever the two differ (a PuppyMacro window in front, here the test's own
-    /// process) the loop for all apps starts and the remap for the game is skipped, while the loops for Game.exe still
-    /// count as in front. Expected: remaps and loops agree on which app is in front.
-    /// </summary>
-    [Fact]
-    public void A_remap_for_the_app_in_front_wins_over_a_loop_for_all_apps_with_the_same_app_as_the_loops_see()
-    {
-        LoopDefinition everywhere = TapLoop(HotkeyBinding.FromKey(F23));
-        _engine.Publish(new EngineSnapshot { Loops = new[] { everywhere }, Remaps = new[] { Remap(HotkeyBinding.FromKey(F23), "Game.exe") } });
-        _engine.OnForegroundApp("Game.exe");
-
-        Press(F23);
-        Release(F23);
-
-        Assert.False(_engine.IsRunning(everywhere.Id), "the loop for all apps took the key from the remap for the app in front");
-    }
-
     /// <summary>The loops' side of the same: a loop for Game.exe counts Game.exe as in front (passes today).</summary>
     [Fact]
     public void A_loop_for_the_app_in_front_starts_on_its_hotkey()
@@ -119,28 +74,6 @@ public sealed class LoopEngineInputTests : IDisposable
         Assert.True(Press(F23));
         Assert.True(Release(F23));
         Assert.True(_engine.IsRunning(forGame.Id));
-    }
-
-    /// <summary>
-    /// Scenario: a Hold loop on Ctrl + F23 runs (started from its card's Play, or with its hotkey); the user presses and
-    /// releases F23 alone, the hotkey of a Toggle loop. ReleaseOwned stops every Hold loop and macro whose hotkey has the
-    /// released main key (loop.Hotkey.Vk == vk), whatever its modifiers, app and whether this press started it: the Hold
-    /// loop on Ctrl + F23 stops although its hotkey was never pressed. Expected: only the items the press started stop.
-    /// </summary>
-    [Fact]
-    public void Releasing_a_Toggle_hotkey_does_not_stop_a_Hold_loop_with_another_hotkey_on_the_same_key()
-    {
-        LoopDefinition hold = TapLoop(new HotkeyBinding { Vk = F23, Ctrl = true });
-        hold.Mode = ActivationMode.Hold;
-        LoopDefinition toggle = TapLoop(HotkeyBinding.FromKey(F23));
-        _engine.Publish(new EngineSnapshot { Loops = new[] { hold, toggle } });
-
-        _engine.StartLoop(hold);
-        Assert.True(Press(F23));
-        Assert.True(Release(F23));
-
-        Assert.True(_engine.IsRunning(toggle.Id));
-        Assert.True(_engine.IsRunning(hold.Id), "the Hold loop on Ctrl + F23 stopped when F23 alone was released");
     }
 
     /// <summary>

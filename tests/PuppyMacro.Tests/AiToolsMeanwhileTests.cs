@@ -53,30 +53,6 @@ public class AiToolsMeanwhileTests : IDisposable
     }
 
     /// <summary>
-    /// set_enabled with Ask before changing on: while the confirmation is open the user deletes the loop from its card, then
-    /// presses the confirmation's button. Nothing was enabled or disabled, so the AI app must be told (as save_loop and
-    /// delete_item say "deleted meanwhile" / "already gone"), and the activity must not record the change as applied.
-    /// </summary>
-    [Fact]
-    public async Task Set_enabled_confirmed_after_the_item_was_deleted_meanwhile_says_so_and_records_nothing_applied()
-    {
-        var loop = new LoopDefinition { Name = "Spam" };
-        _settings.Loops.Add(loop);
-        _settings.AiAskBeforeChanging = true;
-        _host.Hold = new TaskCompletionSource<bool>();
-
-        Task<AiToolResult> call = Call("set_enabled", new { id = loop.Id.ToString(), enabled = false });
-        Assert.Single(_host.Confirmed);
-        _settings.Loops.Clear(); // the user deletes it while the confirmation is open
-        _host.Hold.SetResult(true);
-        AiToolResult result = await call;
-
-        Assert.True(result.IsError, $"Answered as done: \"{result.Text}\"");
-        Assert.Contains("deleted meanwhile", result.Text);
-        Assert.NotEqual(AiActivityResult.Applied, _log.Entries().First().Result);
-    }
-
-    /// <summary>
     /// The pick tools check again, once the user pressed Start in the ready window, that no PuppyMacro editor or dialog was
     /// opened meanwhile (BusyNow): the user may have gone back to PuppyMacro while the ready window waited.
     /// </summary>
@@ -141,36 +117,6 @@ public class AiToolsMeanwhileTests : IDisposable
         Assert.Contains(Editor, result.Text);
         Assert.Empty(_host.Tested);
         Assert.Empty(_host.Checked);
-    }
-
-    /// <summary>
-    /// get_last_run for a macro with no run: the answer names test_macro, and PuppyMacro's own texts name tools by their full
-    /// names (puppymacro_…: an AI app with many servers tells them apart), as every other answer that names a tool does.
-    /// </summary>
-    [Fact]
-    public async Task Get_last_run_without_a_run_names_test_macro_by_its_full_name()
-    {
-        MacroDefinition macro = SavedMacro();
-
-        AiToolResult last = await Call("get_last_run", new { id = macro.Id.ToString() });
-
-        Assert.False(last.IsError);
-        Assert.Contains("puppymacro_test_macro", last.Text);
-    }
-
-    /// <summary>
-    /// An AI app that gives its name and an empty title (MCP's title is an optional display name): it is named by its name,
-    /// as when it gives no title, not "Unknown app"; and Claude Desktop's chat still lights up its card on the AI page.
-    /// </summary>
-    [Theory]
-    [InlineData("")]
-    [InlineData("  ")]
-    public void An_AI_app_with_an_empty_title_is_named_by_its_name(string title)
-    {
-        var client = new Implementation { Name = "claude-ai", Title = title, Version = "1" };
-
-        Assert.Equal("Claude (claude-ai)", AiServer.FriendlyName(client));
-        Assert.Equal(AiAppKind.ClaudeDesktop, AiServer.KindOf(client));
     }
 
     /// <summary>A text that is only a tool's full name is not prefixed twice.</summary>

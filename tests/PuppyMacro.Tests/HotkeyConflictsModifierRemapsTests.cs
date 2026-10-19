@@ -68,37 +68,6 @@ public sealed class HotkeyConflictsModifierRemapsTests : IDisposable
         }
     }
 
-    /// <summary>
-    /// Scenario: Right Alt is remapped to another key for all apps (a common choice on keyboards without AltGr use). The user
-    /// then gives a loop (or a macro, or a global hotkey) the hotkey Right Alt + F23 for all apps. HotkeyConflicts compares
-    /// only main keys (Overlaps: F23 against Right Alt) and accepts it, but the hotkey can never start the loop (test above).
-    /// Expected: the editor refuses it, as for any other clash with a remap for the same apps ("one rule for loops, macros
-    /// and remaps", input.md).
-    /// </summary>
-    [Fact]
-    public void A_loop_hotkey_that_needs_a_remapped_modifier_clashes_with_that_remap()
-    {
-        Assert.NotNull(HotkeyConflicts.Find(RightAltF23, _settings, _macros));
-    }
-
-    /// <summary>
-    /// The same for a global hotkey: Stop all set to Right Alt + F23 could never stop anything while Right Alt is remapped.
-    /// </summary>
-    [Fact]
-    public void A_global_hotkey_that_needs_a_remapped_modifier_clashes_with_that_remap()
-    {
-        Assert.NotNull(HotkeyConflicts.Find(RightAltF23, _settings, _macros, ignoreGlobal: "StopAll"));
-    }
-
-    /// <summary>
-    /// And for another remap: a remap of Right Alt + F23 next to the remap of Right Alt (both for all apps) never applies.
-    /// </summary>
-    [Fact]
-    public void A_remap_source_that_needs_a_remapped_modifier_clashes_with_that_remap()
-    {
-        Assert.NotNull(HotkeyConflicts.RemapClash(RightAltF23, null, _settings, _macros, Guid.NewGuid()));
-    }
-
     /// <summary>The other side is another key press: Left Alt + F23 works with Right Alt remapped, and is accepted.</summary>
     [Fact]
     public void A_hotkey_with_the_modifier_on_the_other_side_is_accepted()

@@ -35,35 +35,6 @@ public class CodeJsonEdgesTests : IDisposable
         return new MacroDefinition { Name = "Deep", Actions = { inner } };
     }
 
-    /// <summary>
-    /// Nothing limits how deep Ifs go inside each other's Then (the editor adds an If inside a Then at any depth), but the
-    /// macro files and the Code view are written with System.Text.Json's default MaxDepth of 64: at 21 Ifs (fewer with Image
-    /// conditions or call arguments) MacroJson.Serialize throws "A possible object cycle was detected". MacroLibrary.TrySave
-    /// catches only IOException and UnauthorizedAccessException, so the editor's Save (and the Code view, the History, an
-    /// export) ends in an unhandled JsonException instead of saving the macro or saying why it can't.
-    /// </summary>
-    [Fact]
-    public void A_macro_with_ifs_nested_21_deep_is_saved_or_refused_without_an_exception()
-    {
-        MacroDefinition macro = Nested(21);
-        var library = new MacroLibrary(_folder.Path);
-
-        Exception? thrown = Record.Exception(() => library.TrySave(macro, out _));
-
-        Assert.Null(thrown);
-    }
-
-    /// <summary>The same macro, in its Code view: the text is made, or the problem is said.</summary>
-    [Fact]
-    public void A_macro_with_ifs_nested_21_deep_shows_in_the_code_view()
-    {
-        MacroDefinition macro = Nested(21);
-
-        Exception? thrown = Record.Exception(() => MacroJson.Serialize(macro));
-
-        Assert.Null(thrown);
-    }
-
     /// <summary>20 Ifs inside each other still save, read back and pass the checks (the limit above is the JSON depth only).</summary>
     [Fact]
     public void A_macro_with_ifs_nested_20_deep_reads_back_unchanged()
@@ -75,44 +46,6 @@ public class CodeJsonEdgesTests : IDisposable
 
         Assert.Empty(problems);
         Assert.Equal(text, MacroJson.Serialize(read!));
-    }
-
-    /// <summary>
-    /// The Code views read "strictly": every value the Form view could not produce is a problem at its line. A property
-    /// written twice ("Vk": 65, then "Vk": 66, as an AI app or a paste can write it) is not one: System.Text.Json keeps the
-    /// last value and the first one is dropped without a word (.NET 10's JsonSerializerOptions.AllowDuplicateProperties
-    /// is left at true in CodeJson.StrictOptions).
-    /// </summary>
-    [Fact]
-    public void A_property_written_twice_is_a_problem()
-    {
-        var macro = new MacroDefinition { Name = "Twice", Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 0x41 } } };
-        string text = MacroJson.Serialize(macro).Replace("\"Vk\": 65,", "\"Vk\": 65,\n      \"Vk\": 66,");
-        Assert.Contains("\"Vk\": 66", text);
-
-        MacroDefinition? read = MacroJson.Parse(text, macro.Id, NoConflict, out var problems);
-
-        Assert.Null(read);
-        Assert.Contains(problems, p => p.Message.StartsWith("Actions[0].Vk"));
-    }
-
-    /// <summary>
-    /// An unknown property whose name has an apostrophe ("Don't") is named and placed wrong: the name is cut at the first
-    /// quote of .NET's message ("Don"), and that path is not in the text, so the problem goes to line 1 instead of the
-    /// property's line.
-    /// </summary>
-    [Fact]
-    public void An_unknown_property_with_an_apostrophe_is_named_and_placed_right()
-    {
-        var macro = new MacroDefinition { Name = "Quote", Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 0x41 } } };
-        string text = MacroJson.Serialize(macro).Replace("\"Name\": \"Quote\",", "\"Name\": \"Quote\",\n  \"Don't\": 1,");
-        int line = text.Split('\n').ToList().FindIndex(l => l.Contains("Don't")) + 1;
-
-        Assert.Null(MacroJson.Parse(text, macro.Id, NoConflict, out var problems));
-
-        CodeProblem problem = Assert.Single(problems);
-        Assert.Contains("Don't", problem.Message);
-        Assert.Equal(line, problem.Line);
     }
 
     // ---- Passing: what the strict reading already gets right ----

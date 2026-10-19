@@ -55,6 +55,22 @@ internal sealed partial class AiTools
         return DebugSession.Detached.NewCall(tool, null, none.RootElement.Clone(), null).Folder;
     }
 
+    /// <summary>
+    /// On the UI thread: the ready window, then the check before anything starts, as a save checks after its confirmation
+    /// (<see cref="BusyNow"/>): while the window waited the user may have opened a PuppyMacro editor or dialog, and with it
+    /// open the hotkeys are off, Stop all's too. Null when the request goes on; otherwise its answer.
+    /// </summary>
+    private async Task<AiToolResult?> AfterReady(string app, AiAsk ask, Phrase label)
+    {
+        AiAnswer ready = await _host.Ready(app, ask);
+        if (ready != AiAnswer.Done)
+        {
+            Log(app, AiActivityKind.Interaction, label, ready, "");
+            return Answered(ready, "");
+        }
+        return BusyNow();
+    }
+
     // ================= look_at_screen =================
 
     private async Task<AiToolResult> LookAtScreen(JsonElement args, string app, CancellationToken cancel)
@@ -68,12 +84,8 @@ internal sealed partial class AiTools
         Phrase label = Phrase.Of("Ai_LookedAtScreen", ask.Title);
         return await StartForUser(app, async () =>
         {
-            AiAnswer ready = await _host.Ready(app, ask);
-            if (ready != AiAnswer.Done)
-            {
-                Log(app, AiActivityKind.Interaction, label, ready, "");
-                return Answered(ready, "");
-            }
+            if (await AfterReady(app, ask, label) is AiToolResult notNow)
+                return notNow;
             var monitors = await _host.TakeScreen();
             if (monitors.Count == 0)
                 return AiToolResult.Error("PuppyMacro could not see the screen (no monitor gave a picture). Ask the user to try again.");
@@ -299,12 +311,8 @@ internal sealed partial class AiTools
         Phrase label = Phrase.Of("Ai_CheckedCondition", ask.Title);
         return await StartForUser(app, async () =>
         {
-            AiAnswer ready = await _host.Ready(app, ask);
-            if (ready != AiAnswer.Done)
-            {
-                Log(app, AiActivityKind.Interaction, label, ready, "");
-                return Answered(ready, "");
-            }
+            if (await AfterReady(app, ask, label) is AiToolResult notNow)
+                return notNow;
             ConditionReport report = await _host.CheckCondition(condition);
             bool isTrue = report.TrueFor(condition);
             Log(app, AiActivityKind.Interaction, label, AiAnswer.Done, isTrue ? "true" : "not true");
@@ -337,12 +345,8 @@ internal sealed partial class AiTools
         Phrase label = Phrase.Of("Ai_Recorded", ask.Title);
         return await StartForUser(app, async () =>
         {
-            AiAnswer ready = await _host.Ready(app, ask);
-            if (ready != AiAnswer.Done)
-            {
-                Log(app, AiActivityKind.Interaction, label, ready, "");
-                return Answered(ready, "");
-            }
+            if (await AfterReady(app, ask, label) is AiToolResult notNow)
+                return notNow;
             var (answer, recording) = await _host.Record(app, moves);
             Log(app, AiActivityKind.Interaction, label, answer, recording == null ? "" : $"{recording.Actions.Count}");
             if (answer != AiAnswer.Done || recording == null)
@@ -465,12 +469,8 @@ internal sealed partial class AiTools
         Phrase label = Phrase.Of("Ai_TestedMacro", $"\"{name}\"");
         return await StartForUser(app, async () =>
         {
-            AiAnswer ready = await _host.Ready(app, ask);
-            if (ready != AiAnswer.Done)
-            {
-                Log(app, AiActivityKind.Interaction, label, ready, "");
-                return Answered(ready, "");
-            }
+            if (await AfterReady(app, ask, label) is AiToolResult notNow)
+                return notNow;
             AiTestRun? run = await _host.TestMacro(id, app, seconds, folder);
             if (run == null)
                 return AiToolResult.Error("PuppyMacro could not start the macro (another item started meanwhile, or it has no actions).");

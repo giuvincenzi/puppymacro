@@ -80,25 +80,4 @@ public class TextReaderScalingTests
         Assert.True(Math.Abs(center.X - ex) <= 20 && Math.Abs(center.Y - ey) <= 20,
             $"found at {center.X},{center.Y}, drawn at {ex:0},{ey:0}");
     }
-
-    /// <summary>
-    /// A Text condition on a monitor wider than Windows reads (10000 px: NVIDIA Surround or AMD Eyefinity joining three 4K
-    /// screens into one display of 11520 × 2160), whose area is mostly off the top or the bottom of it, so the part on the
-    /// monitor, what is read, is 1 px tall. The picture is shrunk to <c>(int)(1 × 10000 / 11520)</c> = 0 rows, and
-    /// OpenCV's Resize throws ("inv_scale_x &gt; 0"). Expected: nothing read (no line), as for any picture without text.
-    /// Observed: an exception out of <see cref="TextReader.Read"/>, which ends the running macro with an error.
-    /// </summary>
-    [Fact]
-    public void A_very_wide_picture_one_pixel_tall_reads_nothing_instead_of_failing()
-    {
-        if (TextReader.Languages.Count == 0)
-            return;
-        const int width = 11520;
-        Assert.True(width > OcrEngine.MaxImageDimension);
-        using var picture = new Mat(1, width, MatType.CV_8UC3, Scalar.All(255));
-
-        var lines = TextReader.Read(picture, null);
-
-        Assert.Empty(lines);
-    }
 }

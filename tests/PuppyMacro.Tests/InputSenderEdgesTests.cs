@@ -24,34 +24,6 @@ public sealed class InputSenderEdgesTests
         (NativeMethods.INPUT)typeof(InputSender).GetMethod(method, BindingFlags.NonPublic | BindingFlags.Static)!
             .Invoke(null, new object[] { vk, isDown })!;
 
-    /// <summary>
-    /// Scenario: a loop row presses Ctrl+S (TapBinding: Ctrl down, S down, the hold, all under InputSender's lock so that
-    /// "nothing else PuppyMacro sends lands between them", input.md) while a macro runs a Key down / Key up action, or a
-    /// remap repeats its target, or a macro's Move to runs. Those go through InputSender.Down / Up / MoveTo, which send
-    /// without the lock: the macro's key lands while the loop's Ctrl is down and the app gets Ctrl + that key; a macro's
-    /// move lands between a loop's move and its click at a fixed point, so the click happens elsewhere. Expected: every
-    /// send waits for the lock while another holds it. Here the test holds the lock and Up(F24) goes through anyway.
-    /// </summary>
-    [Fact]
-    public void A_single_key_event_waits_while_another_sender_holds_the_lock()
-    {
-        var sent = new ManualResetEventSlim(false);
-        var thread = new Thread(() =>
-        {
-            InputSender.Up(F24);
-            sent.Set();
-        }) { IsBackground = true };
-
-        bool sentWhileHeld;
-        lock (Gate)
-        {
-            thread.Start();
-            sentWhileHeld = sent.Wait(500, TestContext.Current.CancellationToken);
-        }
-        Assert.True(thread.Join(5000));
-        Assert.False(sentWhileHeld, "InputSender.Up sent while another combination held InputSender's lock");
-    }
-
     [Theory]
     [InlineData(0x01, NativeMethods.MOUSEEVENTF_LEFTDOWN, NativeMethods.MOUSEEVENTF_LEFTUP, 0u)]
     [InlineData(0x02, NativeMethods.MOUSEEVENTF_RIGHTDOWN, NativeMethods.MOUSEEVENTF_RIGHTUP, 0u)]

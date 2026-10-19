@@ -246,31 +246,85 @@ internal static class DebugStore
 
     // ================= Keeping =================
 
-    /// <summary>The operations' folders: those with files of their own (an AI call, a run).</summary>
-    private static IEnumerable<string> Operations(string root) =>
-        Directory.Exists(root)
-            ? Directory.EnumerateDirectories(root, "*", SearchOption.AllDirectories)
-                .Where(d => Directory.EnumerateFiles(d).Any(f => !Path.GetFileName(f).Equals("session.json", StringComparison.OrdinalIgnoreCase))
-                            && !Directory.EnumerateDirectories(d).Any())
-            : Enumerable.Empty<string>();
+    /// <summary>Held by the cleaner that runs: two never run at once, as one would list what the other deletes.</summary>
+    private static readonly object Cleaning = new();
+
+    /// <summary>
+    /// The operations' folders: those with files of their own (an AI call, a run). A folder that can't be listed (gone
+    /// meanwhile, deleted in File Explorer; access refused) is left out.
+    /// </summary>
+    private static List<string> Operations(string root)
+    {
+        var found = new List<string>();
+        if (Directory.Exists(root))
+            AddOperations(root, found);
+        return found;
+    }
+
+    private static void AddOperations(string folder, List<string> found)
+    {
+        foreach (string child in Listed(() => Directory.GetDirectories(folder)))
+        {
+            string[] inside = Listed(() => Directory.GetDirectories(child));
+            if (inside.Length > 0)
+                AddOperations(child, found);
+            else if (Listed(() => Directory.GetFiles(child)).Any(f => !Path.GetFileName(f).Equals("session.json", StringComparison.OrdinalIgnoreCase)))
+                found.Add(child);
+        }
+    }
+
+    /// <summary>What a folder holds, or nothing when it can't be listed (gone meanwhile, access refused).</summary>
+    private static string[] Listed(Func<string[]> list)
+    {
+        try
+        {
+            return list();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return Array.Empty<string>();
+        }
+    }
 
     /// <summary>
     /// Deletes the operations last written more than <paramref name="age"/> before <paramref name="nowUtc"/> (all of them
-    /// with <see cref="TimeSpan.Zero"/>), never one in progress, then the folders left empty. A folder that can't be deleted
-    /// (a file open) stays for the next time.
+    /// with <see cref="TimeSpan.Zero"/>), never one in progress, then the folders left empty. A folder that can't be read or
+    /// deleted (a file open, gone meanwhile) stays for the next time. Waits while another cleaner runs.
     /// </summary>
     public static void DeleteOlderThan(TimeSpan age, DateTime nowUtc)
     {
+        lock (Cleaning)
+            Clean(age, nowUtc);
+    }
+
+    /// <summary>The same, only when no other cleaner runs (the hourly one: the other is already deleting). False when it did not run.</summary>
+    public static bool TryDeleteOlderThan(TimeSpan age, DateTime nowUtc)
+    {
+        if (!Monitor.TryEnter(Cleaning))
+            return false;
+        try
+        {
+            Clean(age, nowUtc);
+            return true;
+        }
+        finally
+        {
+            Monitor.Exit(Cleaning);
+        }
+    }
+
+    private static void Clean(TimeSpan age, DateTime nowUtc)
+    {
         string root = Root;
-        foreach (string folder in Operations(root).ToList())
+        foreach (string folder in Operations(root))
         {
             if (InProgress.ContainsKey(Path.GetFullPath(folder)))
                 continue;
-            DateTime last = Directory.EnumerateFiles(folder).Select(File.GetLastWriteTimeUtc).DefaultIfEmpty(Directory.GetLastWriteTimeUtc(folder)).Max();
-            if (nowUtc - last < age)
-                continue;
             try
             {
+                DateTime last = Directory.EnumerateFiles(folder).Select(File.GetLastWriteTimeUtc).DefaultIfEmpty(Directory.GetLastWriteTimeUtc(folder)).Max();
+                if (nowUtc - last < age)
+                    continue;
                 Directory.Delete(folder, recursive: true);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -285,22 +339,20 @@ internal static class DebugStore
     {
         if (!Directory.Exists(folder))
             return;
-        foreach (string child in Directory.EnumerateDirectories(folder).ToList())
+        foreach (string child in Listed(() => Directory.GetDirectories(folder)))
             DeleteEmpty(child, root, nowUtc, age);
         if (folder == root || InProgress.ContainsKey(Path.GetFullPath(folder)))
             return;
-        var files = Directory.EnumerateFiles(folder).ToList();
-        bool onlySession = files.All(f => Path.GetFileName(f).Equals("session.json", StringComparison.OrdinalIgnoreCase))
-                           && files.All(f => nowUtc - File.GetLastWriteTimeUtc(f) >= age);
-        if (!Directory.EnumerateDirectories(folder).Any() && onlySession)
+        try
         {
-            try
-            {
+            var files = Directory.EnumerateFiles(folder).ToList();
+            bool onlySession = files.All(f => Path.GetFileName(f).Equals("session.json", StringComparison.OrdinalIgnoreCase))
+                               && files.All(f => nowUtc - File.GetLastWriteTimeUtc(f) >= age);
+            if (!Directory.EnumerateDirectories(folder).Any() && onlySession)
                 Directory.Delete(folder, recursive: true);
-            }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-            {
-            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
         }
     }
 
