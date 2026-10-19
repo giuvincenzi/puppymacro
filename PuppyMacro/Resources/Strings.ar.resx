@@ -1620,7 +1620,7 @@
   <data name="Param_Arguments" xml:space="preserve"><value>الوسيطات</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>القيم التي يعطيها هذا الاستدعاء للمكوّن</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>مكوّن</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>مكوّن من المكتبة</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>شرط من مكوّن</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>مكوّن من المكتبة يحدد ما يعثر عليه</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>اختيار</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>لم يتم اختيار مكوّن بعد</value></data>
@@ -1698,7 +1698,6 @@
   <data name="Code_GridOneRow" xml:space="preserve"><value>عندما يكون هناك صف واحد فقط، يجب أن يكون للخلية الأولى والأخيرة قيمة Y نفسها.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} شبكة، لذا تحتاج هذه النقطة إلى خلية. حدد الخلية باستخدام Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>لا تُستخدم الخلية إلا داخل مكوّن، عندما تأتي النقطة من معلمة من نوع شبكة.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>في {3}، لا توجد الخلية {0} في {1}، فعدد خلايا هذه الشبكة {2}.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>لا يمكن إلغاء ربط هذا الصف. إحدى خلاياه تقع خارج شبكتها.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>لا يمكن إلغاء ربط هذا الصف. شبكته قيمة ثابتة، لكن خليته تأتي من معلمة في المكوّن الذي يحتويه، ولا يمكن للصف العادي اختيار خلية.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>شبكة</value></data>
@@ -1726,4 +1725,10 @@
   <data name="Param_GridArgument" xml:space="preserve"><value>شبكة هذا الاستدعاء</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>الشبكة التي يعطيها هذا الاستدعاء، مثلاً لحجم شاشة آخر</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>عند الخلية {0} من {1}</value></data>
+  <data name="Code_CellOutside_zero" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. لا تحتوي هذه الشبكة على أي خلية.</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على خلية واحدة فقط.</value></data>
+  <data name="Code_CellOutside_two" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على خليتين فقط.</value></data>
+  <data name="Code_CellOutside_few" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على {0} خلايا.</value></data>
+  <data name="Code_CellOutside_many" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على {0} خلية.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>في {3}، لا توجد الخلية {1} في {2}. تحتوي هذه الشبكة على {0} خلية.</value></data>
 </root>

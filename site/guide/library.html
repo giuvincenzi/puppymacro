@@ -41,9 +41,10 @@
   <li><strong>Show the cells</strong> shows every cell's point over a picture of the screen, with its number, until you click or press Esc: a quick way to check the grid.</li>
   <li>In the component's actions, a click's, a mouse button's or a move's <strong>Position</strong>, and a pixel's point, list <strong>A cell of</strong> each Grid parameter. The <strong>Cell</strong> card under it takes a number, or <strong>From</strong> a Number parameter of unit Count, so each row gives its own cell.</li>
   <li>Two kinds of points in the same slots, such as where to read a color and where to click, are two Grid parameters used with the same cell.</li>
-  <li>Every call is checked with its values: a cell its grid doesn't have can't be saved, and a macro with such a call can't play. Unlink turns the cell into its point.</li>
+  <li>Every call is checked with its values: a cell its grid doesn't have can't be saved, and a macro with such a call can't play. A component whose Example or Default grid doesn't have one of its cells can't be saved either.</li>
+  <li>Unlink turns the cell into its point. It is refused when the cell isn't in the grid, and when the grid is a value but the cell comes from a parameter of the component around the row: a normal row can't choose a cell.</li>
 </ul>
-<p><strong>Can be used as a condition</strong> with <strong>What it finds</strong> (one of its conditions) makes the component a condition too: in an If, <strong>Add condition</strong> › <strong>Component from the Library</strong>. It is true when the condition it finds is, checked as any condition with the If's wait, and a click "where … was found" goes where it found it.</p>
+<p><strong>Can be used as a condition</strong> with <strong>What it finds</strong> (one of its conditions) makes the component a condition too: in an If, <strong>Add condition</strong> › <strong>Condition from component</strong>. It is true when the condition it finds is, checked as any condition with the If's wait, and a click "where … was found" goes where it found it.</p>
 <p>When a change to a component's parameters affects the rows that call it (a new parameter every call gives, one removed, another type), Save shows <strong>This change updates the calls</strong>: one value for all the calls that need it, the parameters taken out and the macros that change. <strong>Update and save</strong> saves the component and the calls together; if something can't be saved, nothing changes. Renaming a parameter keeps each call's value.</p>
 
 <h3>The Library</h3>

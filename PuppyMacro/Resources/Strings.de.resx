@@ -1480,7 +1480,7 @@ Details: {1}</value></data>
   <data name="Param_Arguments" xml:space="preserve"><value>Argumente</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Die Werte, die dieser Aufruf an die Komponente übergibt</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Komponente</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Komponente aus der Bibliothek</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Bedingung aus Komponente</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>Eine Komponente der Bibliothek, die angibt, was sie findet</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Auswählen</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Noch keine Komponente ausgewählt</value></data>
@@ -1550,7 +1550,6 @@ Details: {1}</value></data>
   <data name="Code_GridOneRow" xml:space="preserve"><value>Bei nur einer Zeile müssen die erste und die letzte Zelle dasselbe Y haben.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} ist ein Raster, daher braucht dieser Punkt eine Zelle. Geben Sie mit Cell an, welche.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Eine Zelle wird nur innerhalb einer Komponente verwendet, wenn der Punkt aus einem Parameter vom Typ Raster stammt.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>In {3} gibt es die Zelle {0} von {1} nicht, denn dieses Raster hat {2} Zellen.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Die Verknüpfung dieser Zeile kann nicht aufgehoben werden. Eine ihrer Zellen liegt außerhalb ihres Rasters.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Die Verknüpfung dieser Zeile kann nicht aufgehoben werden. Ihr Raster ist ein fester Wert, aber ihre Zelle stammt aus einem Parameter der umgebenden Komponente, und eine normale Zeile kann keine Zelle auswählen.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Raster</value></data>
@@ -1574,4 +1573,6 @@ Details: {1}</value></data>
   <data name="Param_GridArgument" xml:space="preserve"><value>Raster dieses Aufrufs</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Das Raster, das dieser Aufruf übergibt, zum Beispiel für eine andere Bildschirmgröße</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>bei Zelle {0} von {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>In {3} gibt es die Zelle {1} von {2} nicht. Dieses Raster hat nur {0} Zelle.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>In {3} gibt es die Zelle {1} von {2} nicht. Dieses Raster hat {0} Zellen.</value></data>
 </root>

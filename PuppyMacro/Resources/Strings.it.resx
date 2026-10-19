@@ -1491,7 +1491,7 @@ Dettagli: {1}</value></data>
   <data name="Param_Arguments" xml:space="preserve"><value>Argomenti</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>I valori che questa chiamata passa al componente</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Componente</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Componente della libreria</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condizione da componente</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>Un componente della libreria che indica cosa trova</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Scegli</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Nessun componente ancora scelto</value></data>
@@ -1561,7 +1561,6 @@ Dettagli: {1}</value></data>
   <data name="Code_GridOneRow" xml:space="preserve"><value>Con una sola riga, la prima e l'ultima cella devono avere la stessa Y.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} è una griglia, quindi questo punto ha bisogno di una cella. Indica quale con Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Una cella si usa solo dentro un componente, quando il punto viene da un parametro di tipo Griglia.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>In {3} la cella {0} di {1} non esiste, perché quella griglia ha {2} celle.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Questa riga non può essere scollegata. Una delle sue celle è fuori dalla sua griglia.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Questa riga non può essere scollegata. La sua griglia è un valore fisso, ma la sua cella viene da un parametro del componente che la contiene, e una riga normale non può scegliere una cella.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Griglia</value></data>
@@ -1585,4 +1584,6 @@ Dettagli: {1}</value></data>
   <data name="Param_GridArgument" xml:space="preserve"><value>Griglia di questa chiamata</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>La griglia che questa chiamata passa, ad esempio per un'altra dimensione dello schermo</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>nella cella {0} di {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>In {3} la cella {1} di {2} non esiste. Quella griglia ha solo {0} cella.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>In {3} la cella {1} di {2} non esiste. Quella griglia ha {0} celle.</value></data>
 </root>

@@ -118,6 +118,42 @@ internal static class DevSampleData
             Domain = LibraryDomain.Other,
             Components = { typeWord },
         });
+        // A component with a Grid parameter: it clicks the cell each call gives (Slot), of 3 × 2 cells.
+        var clickCell = new LibraryComponent
+        {
+            Name = "Click a cell",
+            Purpose = ComponentPurpose.Act,
+            Concept = "click_cell",
+            Description = "Clicks cell Slot of Cells.",
+            Parameters =
+            {
+                new ComponentParameter
+                {
+                    Name = "Cells", Type = ParameterType.Grid, Description = "The cells, 3 × 2",
+                    Example = System.Text.Json.Nodes.JsonNode.Parse("""{"First":{"X":100,"Y":100},"Last":{"X":300,"Y":200},"Columns":3,"Rows":2}"""),
+                    Default = System.Text.Json.Nodes.JsonNode.Parse("""{"First":{"X":100,"Y":100},"Last":{"X":300,"Y":200},"Columns":3,"Rows":2}"""),
+                },
+                new ComponentParameter
+                {
+                    Name = "Slot", Type = ParameterType.Number, Unit = NumberUnit.Count, Description = "Which cell, 1 to 6",
+                    Example = System.Text.Json.Nodes.JsonValue.Create(1),
+                },
+            },
+            Actions =
+            {
+                new MacroAction
+                {
+                    Type = MacroActionType.Click, Vk = LeftButton, X = 100, Y = 100, Cell = 1,
+                    Bind = new() { ["Point"] = "Cells", ["Cell"] = "Slot" },
+                },
+            },
+        };
+        macros.Library.Collections.Add(new LibraryCollection
+        {
+            Name = "Sample: grid",
+            Domain = LibraryDomain.Other,
+            Components = { clickCell },
+        });
         if (!macros.Library.TrySave(out string? libraryError))
             Debug.WriteLine($"Sample Library not saved: {libraryError}");
         var typeHi = new MacroGroup { Name = "Type hi" };
@@ -165,6 +201,21 @@ internal static class DevSampleData
                         Type = MacroActionType.Component,
                         ComponentId = typeWord.Id,
                         Arguments = new() { ["Word"] = System.Text.Json.Nodes.JsonValue.Create("hello") },
+                    },
+                },
+            },
+            new()
+            {
+                // A call that gives only a cell's number: the grid is the component's Default.
+                Name = "Sample: click a cell",
+                Enabled = false,
+                Actions =
+                {
+                    new MacroAction
+                    {
+                        Type = MacroActionType.Component,
+                        ComponentId = clickCell.Id,
+                        Arguments = new() { ["Slot"] = System.Text.Json.Nodes.JsonValue.Create(5) },
                     },
                 },
             },

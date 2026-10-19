@@ -1554,7 +1554,7 @@ Detalhes: {1}</value></data>
   <data name="Param_Arguments" xml:space="preserve"><value>Argumentos</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Os valores que esta chamada passa ao componente</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Componente</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Componente da biblioteca</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condição a partir de um componente</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>Um componente da biblioteca que indica o que encontra</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Escolher</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Nenhum componente escolhido ainda</value></data>
@@ -1624,7 +1624,6 @@ Detalhes: {1}</value></data>
   <data name="Code_GridOneRow" xml:space="preserve"><value>Com uma só linha, a primeira e a última célula devem ter o mesmo Y.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} é uma grade, então este ponto precisa de uma célula. Informe qual com Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Uma célula só é usada dentro de um componente, quando o ponto vem de um parâmetro do tipo Grade.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>Em {3}, a célula {0} de {1} não existe, porque essa grade tem {2} células.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Esta linha não pode ser desvinculada. Uma das suas células está fora da sua grade.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Esta linha não pode ser desvinculada. A grade dela é um valor fixo, mas a célula vem de um parâmetro do componente que a contém, e uma linha normal não pode escolher uma célula.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Grade</value></data>
@@ -1648,4 +1647,6 @@ Detalhes: {1}</value></data>
   <data name="Param_GridArgument" xml:space="preserve"><value>Grade desta chamada</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>A grade que esta chamada passa, por exemplo para outro tamanho de tela</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>na célula {0} de {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>Em {3}, a célula {1} de {2} não existe. Essa grade tem apenas {0} célula.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>Em {3}, a célula {1} de {2} não existe. Essa grade tem {0} células.</value></data>
 </root>

@@ -99,8 +99,9 @@ public class ComponentGridInvariantsTests
                 continue;
             }
             // Refused only because a cell isn't in its grid: then something of it is skipped at play.
-            var pieces = Regex.Split(Strings.Code_CellOutside, @"\{\d\}").Where(t => t.Length > 2).ToList();
-            if (problems.All(p => pieces.All(t => p.Contains(t, StringComparison.Ordinal))))
+            var forms = new[] { Strings.Code_CellOutside_one, Strings.Code_CellOutside_other }
+                .Select(f => Regex.Split(f, @"\{\d\}").Where(t => t.Length > 2).ToList()).ToList();
+            if (problems.All(p => forms.Any(pieces => pieces.All(t => p.Contains(t, StringComparison.Ordinal)))))
             {
                 refused++;
                 if (!played.Contains("skipped"))

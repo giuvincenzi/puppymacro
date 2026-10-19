@@ -1480,7 +1480,7 @@ Détails : {1}</value></data>
   <data name="Param_Arguments" xml:space="preserve"><value>Arguments</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Les valeurs que cet appel transmet au composant</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Composant</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Composant de la bibliothèque</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condition à partir d'un composant</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>Un composant de la bibliothèque qui indique ce qu'il trouve</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Choisir</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Aucun composant choisi pour l'instant</value></data>
@@ -1550,7 +1550,6 @@ Détails : {1}</value></data>
   <data name="Code_GridOneRow" xml:space="preserve"><value>Avec une seule ligne, la première et la dernière cellule doivent avoir le même Y.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} est une grille, ce point a donc besoin d'une cellule. Indiquez laquelle avec Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Une cellule ne s'utilise que dans un composant, quand le point vient d'un paramètre de type Grille.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>Dans {3}, la cellule {0} de {1} n'existe pas, car cette grille a {2} cellules.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Cette ligne ne peut pas être dissociée. L'une de ses cellules est en dehors de sa grille.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Cette ligne ne peut pas être dissociée. Sa grille est une valeur fixe, mais sa cellule vient d'un paramètre du composant qui la contient, et une ligne normale ne peut pas choisir de cellule.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Grille</value></data>
@@ -1574,4 +1573,6 @@ Détails : {1}</value></data>
   <data name="Param_GridArgument" xml:space="preserve"><value>Grille de cet appel</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>La grille que cet appel transmet, par exemple pour une autre taille d'écran</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>dans la cellule {0} de {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>Dans {3}, la cellule {1} de {2} n'existe pas. Cette grille n'a que {0} cellule.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>Dans {3}, la cellule {1} de {2} n'existe pas. Cette grille a {0} cellules.</value></data>
 </root>

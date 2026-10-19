@@ -1526,7 +1526,7 @@
   <data name="Param_Arguments" xml:space="preserve"><value>Аргументы</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Значения, которые этот вызов передает компоненту</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Компонент</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Компонент из библиотеки</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Условие из компонента</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>Компонент библиотеки, который указывает, что он находит</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Выбрать</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Компонент еще не выбран</value></data>
@@ -1598,7 +1598,6 @@
   <data name="Code_GridOneRow" xml:space="preserve"><value>Если строка одна, у первой и последней ячейки должен быть одинаковый Y.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} — это сетка, поэтому для этой точки нужна ячейка. Укажите ее в Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Ячейка используется только внутри компонента, когда точка берется из параметра типа «Сетка».</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>В «{3}» нет ячейки {0} сетки {1}: всего ячеек в этой сетке — {2}.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Эту строку нельзя отвязать. Одна из ее ячеек находится за пределами сетки.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Эту строку нельзя отвязать. Ее сетка — фиксированное значение, но ячейка берется из параметра компонента, в который она входит, а обычная строка не может выбирать ячейку.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Сетка</value></data>
@@ -1623,4 +1622,7 @@
   <data name="Param_GridArgument" xml:space="preserve"><value>Сетка этого вызова</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Сетка, которую передает этот вызов, например для другого размера экрана</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>в ячейке {0} сетки {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>В «{3}» нет ячейки {1} сетки {2}. В этой сетке всего {0} ячейка.</value></data>
+  <data name="Code_CellOutside_few" xml:space="preserve"><value>В «{3}» нет ячейки {1} сетки {2}. В этой сетке всего {0} ячейки.</value></data>
+  <data name="Code_CellOutside_many" xml:space="preserve"><value>В «{3}» нет ячейки {1} сетки {2}. В этой сетке всего {0} ячеек.</value></data>
 </root>

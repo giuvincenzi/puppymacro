@@ -33,7 +33,7 @@ public class LibraryTests
             AppSession.Timeout).Success, string.Join(" | ", list.Items.Select(i => i.Name)));
 
         list.Items[0].Select();
-        app.Find(editor, "Edit action").AsButton().Invoke();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
         Window component = ChildDialog(editor, "Component - Save the file");
         Assert.True(app.Has(component, "Sample: Notepad"));
         Assert.True(app.Has(component, "office-notepad-act-save_file"));
@@ -74,7 +74,7 @@ public class LibraryTests
             AppSession.Timeout).Success, string.Join(" | ", list.Items.Select(i => i.Name)));
 
         list.Items[0].Select();
-        app.Find(editor, "Edit action").AsButton().Invoke();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
         Window component = ChildDialog(editor, "Component - Type a word");
         Assert.True(app.Has(component, "Arguments"));
         var value = Retry.WhileNull(() => component.FindFirstDescendant(cf => cf.ByControlType(ControlType.Edit).And(cf.ByName("Value"))),
@@ -113,6 +113,94 @@ public class LibraryTests
         parameter.Close();
         app.FindById(editor, "CancelButton").AsButton().Invoke();
         library.Close();
+    }
+
+    /// <summary>The Library on "Sample: grid", its component "Click a cell" opened in the component's editor.</summary>
+    private static (Window Library, Window Editor) EditClickACell(AppSession app)
+    {
+        app.GoTo("Macros");
+        app.FindById(app.MainWindow, "LibraryButton").AsButton().Invoke();
+        Window library = app.Dialog("Library");
+        ListBox collections = app.FindById(library, "CollectionList").AsListBox();
+        Retry.WhileNull(() => collections.Items.FirstOrDefault(i => i.Name == "Sample: grid"), AppSession.Timeout, throwOnTimeout: true,
+            timeoutMessage: "the collection Sample: grid is not there").Result!.Select();
+        ListBox components = app.FindById(library, "ComponentList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => components.Items.Length == 1 && components.Items[0].Name.Contains("Click a cell"), AppSession.Timeout).Success);
+        components.Items[0].Select();
+        Retry.WhileNull(() => components.Items[0].FindFirstDescendant(cf => cf.ByControlType(ControlType.Button).And(cf.ByName("Edit"))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "Edit is not shown").Result!.AsButton().Invoke();
+        return (library, ChildDialog(library, "Edit component - Click a cell"));
+    }
+
+    [Fact]
+    public void A_click_at_a_cell_of_a_Grid_shows_its_Cell_card()
+    {
+        using var app = new AppSession();
+        var (library, editor) = EditClickACell(app);
+        Assert.True(app.Has(editor, "Cells"));
+        Assert.True(app.Has(editor, "Slot"));
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => list.Items.Length == 1, AppSession.Timeout).Success);
+        list.Items[0].Select();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
+
+        // Position is "A cell of Cells", and the Cell card takes it From Slot.
+        Window click = ChildDialog(editor, "Edit click");
+        Assert.True(app.Has(click, "A cell of Cells"));
+        Assert.True(app.Has(click, "Cell"));
+        Assert.True(app.Has(click, "From Slot"));
+        click.Close();
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+        library.Close();
+    }
+
+    [Fact]
+    public void Show_the_cells_marks_a_grid_s_cells_over_the_screen()
+    {
+        using var app = new AppSession();
+        var (library, editor) = EditClickACell(app);
+        var cells = Retry.WhileNull(() => editor.FindFirstDescendant(cf => cf.ByControlType(ControlType.Button).And(cf.ByName("Edit parameter"))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the Cells parameter's Edit is not there").Result!.AsButton();
+        cells.Invoke();
+        Window parameter = ChildDialog(editor, "Edit parameter");
+        var example = app.FindById(parameter, "ExampleGrid");
+        var expander = Retry.WhileNull(() => new[] { example }.Concat(example.FindAllDescendants()).FirstOrDefault(e => e.Patterns.ExpandCollapse.IsSupported),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the grid's card does not open").Result!;
+        expander.Patterns.ExpandCollapse.Pattern.Expand();
+        Assert.True(app.Has(parameter, "6 cells, counted row by row from the top left, starting at 1"));
+
+        app.FindButton(parameter, "Show the cells").Invoke();
+        Window shown = app.Dialog("The grid's cells");
+        Assert.True(app.Has(shown, "Each ring is a cell's point, with its number. Click anywhere to close."));
+        Assert.True(app.Has(shown, "6"));
+        shown.Close();
+        parameter.Close();
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+        library.Close();
+    }
+
+    [Fact]
+    public void A_call_s_Grid_argument_takes_its_default_or_opens_a_grid_of_its_own()
+    {
+        using var app = new AppSession();
+        app.GoTo("Macros");
+        app.EditItem("Sample: click a cell");
+        Window editor = app.Dialog("Edit macro");
+        ListBox list = app.FindById(editor, "ActionList").AsListBox();
+        Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.Contains("Click a cell")), AppSession.Timeout).Success,
+            string.Join(" | ", list.Items.Select(i => i.Name)));
+        list.Items[0].Select();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
+
+        Window component = ChildDialog(editor, "Component - Click a cell");
+        Assert.True(app.Has(component, "Its default, 3 × 2 from 100, 100"));
+        var source = Retry.WhileNull(() => component.FindFirstDescendant(cf => cf.ByControlType(ControlType.ComboBox).And(cf.ByName("Where the value comes from"))),
+            AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the grid argument's list is not there").Result!.AsComboBox();
+        source.Expand();
+        source.Select("A value");
+        source.Collapse();
+        Assert.True(app.Has(component, "Its grid"));
+        component.Close();
     }
 
     [Fact]

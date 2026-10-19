@@ -158,7 +158,7 @@ public class ComponentGridEdgesTests
         // Every call that leaves the grid out would reach cell 9 of a 2 × 2 grid: none of them could play.
         var component = Comp("Ninth", new[] { GridParam(@default: Grid(0, 0, 10, 10, 2, 2)) }, CellClick(cell: 9));
         Assert.NotEmpty(Problems(new[] { component }, Macro("Leaves it out", Call(component))));
-        Has(F(Strings.Code_CellOutside, 9, "Inv", 4, "Ninth"), ComponentProblems(component));
+        Has(Plurals.Format("Code_CellOutside", 4, 9, "Inv", "Ninth"), ComponentProblems(component));
     }
 
     // ================= Arguments that can't give a grid =================
@@ -274,7 +274,7 @@ public class ComponentGridEdgesTests
         var white = WhiteSlot();
         var call = CallCondition(white, "Slot 40", ("Bag", Inventory), ("Slot", Number(40)));
         var macro = Macro("Check", If(call, Press()));
-        Has(F(Strings.Code_CellOutside, 40, "Bag", 33, "White slot"), Problems(new[] { white }, macro));
+        Has(Plurals.Format("Code_CellOutside", 33, 40, "Bag", "White slot"), Problems(new[] { white }, macro));
         Assert.Contains(macro.Id, ComponentChecks.Unplayable(new ComponentSignatures(new[] { white }), new[] { macro }));
         Assert.Null(ComponentPrograms.Prepare(new[] { white }).Effective(call, FrameArguments.None, Nothing));
     }
@@ -312,7 +312,7 @@ public class ComponentGridEdgesTests
         Assert.Equal((30, 30), (effective.X, effective.Y));
 
         var past = CallCondition(wrapper, "Outer", ("Pack", Grid(0, 0, 30, 30, 4, 4)), ("Which", Number(17)));
-        Has(F(Strings.Code_CellOutside, 17, "Bag", 16, "White slot"), Problems(library, Macro("Past", If(past, Press()))));
+        Has(Plurals.Format("Code_CellOutside", 16, 17, "Bag", "White slot"), Problems(library, Macro("Past", If(past, Press()))));
     }
 
     [Fact]
@@ -324,7 +324,7 @@ public class ComponentGridEdgesTests
         var library = new[] { white, user };
         Assert.Empty(ComponentProblems(user, white));
         var macro = Macro("Small", Call(user, ("Pack", Grid(0, 0, 10, 10, 2, 2))));
-        Has(F(Strings.Code_CellOutside, 9, "Bag", 4, "White slot"), Problems(library, macro));
+        Has(Plurals.Format("Code_CellOutside", 4, 9, "Bag", "White slot"), Problems(library, macro));
         Assert.Contains(macro.Id, ComponentChecks.Unplayable(new ComponentSignatures(library), new[] { macro }));
     }
 

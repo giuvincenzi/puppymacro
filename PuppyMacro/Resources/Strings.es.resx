@@ -1481,7 +1481,7 @@ Detalles: {1}</value></data>
   <data name="Param_Arguments" xml:space="preserve"><value>Argumentos</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Los valores que esta llamada pasa al componente</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Componente</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Componente de la biblioteca</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condición a partir de un componente</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>Un componente de la biblioteca que indica qué encuentra</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Elegir</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Aún no se eligió ningún componente</value></data>
@@ -1551,7 +1551,6 @@ Detalles: {1}</value></data>
   <data name="Code_GridOneRow" xml:space="preserve"><value>Con una sola fila, la primera y la última celda deben tener la misma Y.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} es una cuadrícula, así que este punto necesita una celda. Indica cuál con Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Una celda solo se usa dentro de un componente, cuando el punto viene de un parámetro de tipo Cuadrícula.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>En {3}, la celda {0} de {1} no existe, porque esa cuadrícula tiene {2} celdas.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Esta fila no se puede desvincular. Una de sus celdas está fuera de su cuadrícula.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Esta fila no se puede desvincular. Su cuadrícula es un valor fijo, pero su celda viene de un parámetro del componente que la contiene, y una fila normal no puede elegir una celda.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Cuadrícula</value></data>
@@ -1575,4 +1574,6 @@ Detalles: {1}</value></data>
   <data name="Param_GridArgument" xml:space="preserve"><value>Cuadrícula de esta llamada</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>La cuadrícula que pasa esta llamada, por ejemplo para otro tamaño de pantalla</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>en la celda {0} de {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>En {3}, la celda {1} de {2} no existe. Esa cuadrícula solo tiene {0} celda.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>En {3}, la celda {1} de {2} no existe. Esa cuadrícula tiene {0} celdas.</value></data>
 </root>

@@ -80,7 +80,7 @@ public class ConditionEditorTests
             $"no If row. Rows: {string.Join(" | ", list.Items.Select(i => i.Name))}");
         list.Items.First(i => i.Name.StartsWith("1. E2E ready")).Select();
 
-        app.Find(editor, "Edit action").AsButton().Invoke();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
         Window condition = ChildDialog(editor, "Edit condition");
         TextBox color = Retry.WhileNull(() => condition.FindFirstDescendant(cf => cf.ByName("Color").And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Edit))),
             AppSession.Timeout, throwOnTimeout: true, timeoutMessage: "the Color box not found").Result!.AsTextBox();
@@ -104,7 +104,7 @@ public class ConditionEditorTests
         ListBox list = app.FindById(editor, "ActionList").AsListBox();
         Assert.True(Retry.WhileFalse(() => list.Items.Any(i => i.Name.StartsWith("1. E2E check")), AppSession.Timeout).Success);
         list.Items.First(i => i.Name.StartsWith("1. E2E check")).Select();
-        app.Find(editor, "Edit action").AsButton().Invoke();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
         return (app, editor, ChildDialog(editor, "Edit condition"));
     }
 

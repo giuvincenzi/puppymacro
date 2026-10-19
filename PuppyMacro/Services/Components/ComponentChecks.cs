@@ -199,7 +199,7 @@ internal static class ComponentChecks
                 cell = ComponentValues.Whole(values(cellName), out int given) ? given : null;
             // A number below 1 or above the most cells is refused by the cell's own rule: said once, there.
             if (cell is int n && n >= 1 && n <= GridValue.MaxCells && grid.PointOf(n) == null && said.Add($"{c.Id}|{gridName}|{n}"))
-                add(Format(Strings.Code_CellOutside, n, gridName, grid.Cells, c.Name));
+                add(Plurals.Format("Code_CellOutside", grid.Cells, n, gridName, c.Name));
         }
 
         void Inner(Guid? id, Dictionary<string, JsonNode?>? arguments, Func<string, JsonNode?> outer, int depth, HashSet<Guid> visiting,

@@ -144,6 +144,22 @@ public sealed class AppSession : IDisposable
         }
     }
 
+    /// <summary>
+    /// A command of an editor's bar by its x:Name: on the bar when it fits, else in ⋯, which opens (the bar moves the
+    /// commands that don't fit into ⋯, and on the runner's 1024 × 768 screen most of them don't; a closed ⋯ shows none).
+    /// </summary>
+    public AutomationElement EditorCommand(Window editor, string automationId)
+    {
+        AutomationElement? Shown() => NotYet(() => Automation.GetDesktop()
+            .FindFirstDescendant(cf => cf.ByAutomationId(automationId).And(cf.ByProcessId(ProcessId))) is { IsOffscreen: false } command
+            ? command : null);
+        if (Shown() is { } open)
+            return open;
+        // ⋯ is a ToggleButton bound to the bar's IsOverflowOpen (iNKORE's CommandBar template).
+        FindById(editor, "MoreButton").AsToggleButton().Toggle();
+        return Retry.WhileNull(Shown, Timeout, throwOnTimeout: true, timeoutMessage: $"\"{automationId}\" not shown on the bar nor in ⋯").Result!;
+    }
+
     /// <summary>A button by its name (a text with the same words is skipped).</summary>
     public Button FindButton(AutomationElement root, string name) =>
         Retry.WhileNull(() => NotYet(() => root.FindFirstDescendant(cf => cf.ByName(name).And(cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button)))),

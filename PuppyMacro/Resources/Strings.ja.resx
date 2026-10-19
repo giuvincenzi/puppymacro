@@ -1445,7 +1445,7 @@
   <data name="Param_Arguments" xml:space="preserve"><value>引数</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>この呼び出しがコンポーネントに渡す値</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>コンポーネント</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>ライブラリのコンポーネント</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>コンポーネントを使った条件</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>何を見つけるかが指定された、ライブラリのコンポーネント</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>選択</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>コンポーネントがまだ選択されていません</value></data>
@@ -1513,7 +1513,6 @@
   <data name="Code_GridOneRow" xml:space="preserve"><value>行が 1 つの場合、最初と最後のセルの Y は同じである必要があります。</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} はグリッドなので、この座標にはセルが必要です。Cell でどのセルかを指定してください。</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>セルを使えるのは、コンポーネント内で座標がグリッドのパラメーターから来る場合だけです。</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>{3} で、{1} のセル {0} は存在しません。このグリッドのセルは {2} 個です。</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>この行のリンクは解除できません。セルの 1 つがグリッドの外にあります。</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>この行のリンクは解除できません。グリッドは固定の値ですが、セルはこの行を含むコンポーネントのパラメーターから来ており、通常の行ではセルを選べません。</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>グリッド</value></data>
@@ -1536,4 +1535,5 @@
   <data name="Param_GridArgument" xml:space="preserve"><value>この呼び出しのグリッド</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>この呼び出しが渡すグリッドです (画面サイズが違う場合など)</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>{1} のセル {0}</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>{3} で、{2} のセル {1} は存在しません。このグリッドのセルは {0} 個です。</value></data>
 </root>

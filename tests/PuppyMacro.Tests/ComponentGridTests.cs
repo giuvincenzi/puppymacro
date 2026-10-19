@@ -281,14 +281,14 @@ public class ComponentGridTests : IDisposable
         Assert.Empty(Problems(new[] { strip }, ok));
 
         var past = Macro("Past the end", Call(strip, ("Slot", Number(34))));
-        Assert.Equal(new[] { $"Past the end: Actions[0].Arguments: {F(Strings.Code_CellOutside, 34, "Inv", 33, "Strip one slot")}" },
+        Assert.Equal(new[] { $"Past the end: Actions[0].Arguments: {Plurals.Format("Code_CellOutside", 33, 34, "Inv", "Strip one slot")}" },
             Problems(new[] { strip }, past));
         Assert.Contains(past.Id, ComponentChecks.Unplayable(new ComponentSignatures(new[] { strip }), new[] { ok, past }));
         Assert.DoesNotContain(ok.Id, ComponentChecks.Unplayable(new ComponentSignatures(new[] { strip }), new[] { ok, past }));
 
         // A smaller grid given by the call, with the default cell number.
         var small = Macro("Small grid", Call(strip, ("Inv", Grid(0, 0, 10, 10, 2, 2)), ("Slot", Number(5))));
-        Assert.Contains(F(Strings.Code_CellOutside, 5, "Inv", 4, "Strip one slot"), Problems(new[] { strip }, small).Single());
+        Assert.Contains(Plurals.Format("Code_CellOutside", 4, 5, "Inv", "Strip one slot"), Problems(new[] { strip }, small).Single());
         // A fixed cell, a grid the call gives.
         var fixedCell = Comp("Fixed", new[] { GridParam() }, CellClick(cell: 9));
         Assert.Single(Problems(new[] { fixedCell }, Macro("Too small", Call(fixedCell, ("Inv", Grid(0, 0, 10, 10, 2, 2))))));
@@ -304,22 +304,22 @@ public class ComponentGridTests : IDisposable
         var outer = Comp("All", new[] { GridParam("Bag") }, Call(tidy, ("Bag", From("Bag")), ("Which", Number(5))));
 
         var problems = Problems(new[] { strip, tidy, outer }, Macro("Outer", Call(outer, ("Bag", Grid(0, 0, 30, 0, 4, 1)))));
-        Assert.Equal(new[] { $"Outer: Actions[0].Arguments: {F(Strings.Code_CellOutside, 5, "Inv", 4, "Strip one slot")}" }, problems);
+        Assert.Equal(new[] { $"Outer: Actions[0].Arguments: {Plurals.Format("Code_CellOutside", 4, 5, "Inv", "Strip one slot")}" }, problems);
         Assert.Empty(Problems(new[] { strip, tidy, outer }, Macro("Bigger", Call(outer, ("Bag", Inventory)))));
         // A Default grid without that cell: every call that leaves it out would fail, so the component itself is refused.
         var withDefault = Comp("All", new[] { GridParam("Bag", @default: Grid(0, 0, 30, 0, 4, 1)) },
             Call(tidy, ("Bag", From("Bag")), ("Which", Number(5))));
-        Has(F(Strings.Code_CellOutside, 5, "Inv", 4, "Strip one slot"), ComponentProblems(withDefault, strip, tidy));
+        Has(Plurals.Format("Code_CellOutside", 4, 5, "Inv", "Strip one slot"), ComponentProblems(withDefault, strip, tidy));
     }
 
     [Fact]
     public void A_component_s_examples_must_reach_cells_its_example_grid_has()
     {
         var past = Comp("Past", new[] { GridParam(example: Grid(0, 0, 10, 0, 2, 1)) }, CellClick(cell: 3));
-        Has(F(Strings.Code_CellOutside, 3, "Inv", 2, "Past"), ComponentProblems(past));
+        Has(Plurals.Format("Code_CellOutside", 2, 3, "Inv", "Past"), ComponentProblems(past));
         var fromExample = Comp("From example", new[] { GridParam(example: Grid(0, 0, 10, 0, 2, 1)), CountParam(example: 3) },
             CellClick(cellFrom: "Slot"));
-        Has(F(Strings.Code_CellOutside, 3, "Inv", 2, "From example"), ComponentProblems(fromExample));
+        Has(Plurals.Format("Code_CellOutside", 2, 3, "Inv", "From example"), ComponentProblems(fromExample));
     }
 
     [Fact]

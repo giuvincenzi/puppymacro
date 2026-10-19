@@ -113,9 +113,11 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
   - The status dots in the lists are the library's `InfoBadge` dots; Idle is Windows' default blue per theme, not the
     accent color: it can be green, like Running.
   - The macro editor's commands (`AppBarButton`s, label under the icon; iNKORE's default is
-    `DefaultLabelPosition="Right"`, so set `Bottom`): on the left one `CommandBar` with Add action and Record in its
-    `Content`, then the selection's commands and ⋯ (`IsDynamicOverflowEnabled="False"`, otherwise it moves commands into
-    ⋯ before the bar is full). Expand all and Collapse all groups are in ⋯, not on the right-click menu, which acts on
+    `DefaultLabelPosition="Right"`, so set `Bottom`): on the left one `CommandBar` with Add action, Add condition,
+    Component and Record in its `Content` (the bar's header: always shown), then the selection's commands, on the bar
+    while they fit and moved into ⋯ from the last one when the window narrows (the library's dynamic overflow, the
+    user's choice: every button is 68 px wide with its label under it, so at the default width the last ones may already
+    not fit), and the secondary commands, always in ⋯. Expand all and Collapse all groups are in ⋯, not on the right-click menu, which acts on
     the clicked rows. Alone on the right the density `ToggleSplitButton` (it acts on the list, not on the actions);
     compact merges the library's `DensityStyles/Compact.xaml` into the list, as its Gallery does; normal by default.
     Opening ⋯ does not light up the bar (its `…Open` brushes are transparent: WinUI joins the open bar and its menu into
@@ -188,8 +190,9 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     `SettingsExpander`s and a card that says what PuppyMacro sees now; the text recognition note is an `InfoBar` above the
     cards. `ScreenPickWindow` (pick a pixel with the enlarged pixels around the pointer, take an image, draw an area) is
     drawn over a still picture of the screen, with the overlays' fixed dark look.
-  - The Library (approved: the Design canvas "PuppyMacro Library", dark): **+ Component** in the macro editor's bar after
-    + Condition (the same + icon, Add component in its tooltip); a linked row is one line, greyed, with a link icon, its
+  - The Library (approved: the Design canvas "PuppyMacro Library", dark): **Component** in the macro editor's bar after
+    + Condition (the user's choice: the component's Link icon, as its linked rows, in the theme's success green
+    `SystemFillColorSuccessBrush`; Add component in its tooltip); a linked row is one line, greyed, with a link icon, its
     component's name and "Component · collection · actions", no delay; a click (Edit, double-click) opens the component
     read only (`ComponentWindow`: Unlink this row, Open in Library, Close), never the action window; Save as component
     and Unlink in ⋯ and the right-click menu. One Library view in two modes (`LibraryWindow`): pick (Add component: check
@@ -203,7 +206,7 @@ Toolkit's SettingsCard / SettingsExpander that Windows Settings uses.
     …", as the If's Wait card, and shows its own control only with "A value" (`Views/SlotBindings`); a click's Position lists
     the Point parameters with Fixed point and the found places; a linked row shows its values and its window has
     Arguments (`Views/ArgumentsEditor`, a card per parameter, the same list pattern, `Views/ValueEditor` with the app's own
-    controls for each type) with Save and Cancel; Add condition › Component from the Library; `SignatureUpdateWindow`
+    controls for each type) with Save and Cancel; Add condition › Condition from component (the user's name, with the component's Link icon); `SignatureUpdateWindow`
     before a save that changes the calls.
   - Grid parameters (approved: the same canvas, boards 1-4, drawn on the real windows): Grid in the parameter window's
     Type list; a grid's value is a `SettingsExpander` (`Views/GridValueEditor`: first and last cell with Pick on screen,

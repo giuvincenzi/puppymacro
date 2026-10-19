@@ -1491,7 +1491,7 @@ Detajet: {1}</value></data>
   <data name="Param_Arguments" xml:space="preserve"><value>Argumentet</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Vlerat që kjo thirrje i jep komponentit</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Komponent</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Komponent nga biblioteka</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Kusht nga një komponent</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>Një komponent i bibliotekës që tregon çfarë gjen</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Zgjidh</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Ende nuk është zgjedhur asnjë komponent</value></data>
@@ -1561,7 +1561,6 @@ Detajet: {1}</value></data>
   <data name="Code_GridOneRow" xml:space="preserve"><value>Kur ka vetëm një rresht, qeliza e parë dhe e fundit duhet të kenë të njëjtin Y.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} është një rrjetë, prandaj kjo pikë ka nevojë për një qelizë. Tregoni se cila me Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Një qelizë përdoret vetëm brenda një komponenti, kur pika vjen nga një parametër i llojit Rrjetë.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>Në {3}, qeliza {0} e {1} nuk ekziston, sepse ajo rrjetë ka {2} qeliza.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Një nga qelizat e tij është jashtë rrjetës së vet.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Rrjeta e tij është një vlerë fikse, por qeliza e tij vjen nga një parametër i komponentit që e përmban, dhe një rresht i zakonshëm nuk mund të zgjedhë një qelizë.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Rrjetë</value></data>
@@ -1585,4 +1584,6 @@ Detajet: {1}</value></data>
   <data name="Param_GridArgument" xml:space="preserve"><value>Rrjeta e kësaj thirrjeje</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Rrjeta që jep kjo thirrje, për shembull për një madhësi tjetër ekrani</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>te qeliza {0} e {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>Në {3}, qeliza {1} e {2} nuk ekziston. Ajo rrjetë ka vetëm {0} qelizë.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>Në {3}, qeliza {1} e {2} nuk ekziston. Ajo rrjetë ka {0} qeliza.</value></data>
 </root>

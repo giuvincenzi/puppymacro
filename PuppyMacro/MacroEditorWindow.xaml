@@ -62,8 +62,9 @@
                 <TextBlock Grid.Row="1" Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Editor_Actions}" />
 
                 <!-- The commands, on the left in one command bar (standard AppBarButtons, label under the icon): adding
-                     and recording in its content, a separator, what works on the selected rows, more in ⋯ (dynamic
-                     overflow off, so no command moves into ⋯ while it fits). On the right the list's density (it acts on
+                     and recording in its content, always shown; a separator; what works on the selected rows, on the bar
+                     while they fit and in ⋯ when the window is too narrow (the library's dynamic overflow, from the last
+                     one: the user's choice); more always in ⋯ (its secondary commands). On the right the list's density (it acts on
                      the view, not on the actions). The same commands on right-click (OnListContextMenuOpening). The
                      buttons are centered in the bar (their style puts them at the top, and the bar is taller than them
                      because of ⋯). -->
@@ -73,7 +74,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <ui:CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Bottom"
-                                   VerticalContentAlignment="Center" IsDynamicOverflowEnabled="False">
+                                   VerticalContentAlignment="Center" IsDynamicOverflowEnabled="True">
                         <!-- Opening ⋯ does not light up the whole bar (approved, ui.md): its open background and border
                              transparent -->
                         <ui:CommandBar.Resources>
@@ -99,12 +100,13 @@
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
                                     </ui:AppBarButton.Icon>
                                 </ui:AppBarButton>
-                                <!-- A Library component, linked (approved: the Design canvas "PuppyMacro Library") -->
+                                <!-- A Library component, linked (approved: the Design canvas "PuppyMacro Library"), with the
+                                     component's Link icon in the theme's success green (the user's choice, ui.md) -->
                                 <ui:AppBarButton x:Name="AddComponentButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_ComponentButton}"
                                                  AutomationProperties.Name="{x:Static r:Strings.Library_AddComponent}" ToolTip="{x:Static r:Strings.Library_AddComponent}"
-                                                 Click="OnAddComponentClick">
+                                                 Foreground="{DynamicResource SystemFillColorSuccessBrush}" Click="OnAddComponentClick">
                                     <ui:AppBarButton.Icon>
-                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Link}" />
                                     </ui:AppBarButton.Icon>
                                 </ui:AppBarButton>
                                 <!-- A red record dot (approved, ui.md: the theme's critical color, as the InfoBadge's) -->

@@ -1526,7 +1526,7 @@ Detalii: {1}</value></data>
   <data name="Param_Arguments" xml:space="preserve"><value>Argumente</value></data>
   <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Valorile pe care acest apel le dă componentei</value></data>
   <data name="Condition_Component" xml:space="preserve"><value>Componentă</value></data>
-  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Componentă din bibliotecă</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condiție dintr-o componentă</value></data>
   <data name="Condition_ComponentDescription" xml:space="preserve"><value>O componentă din bibliotecă ce spune ce găsește</value></data>
   <data name="Condition_ChooseComponent" xml:space="preserve"><value>Alegere</value></data>
   <data name="Condition_NoComponent" xml:space="preserve"><value>Nicio componentă aleasă încă</value></data>
@@ -1598,7 +1598,6 @@ Detalii: {1}</value></data>
   <data name="Code_GridOneRow" xml:space="preserve"><value>Când există un singur rând, prima și ultima celulă trebuie să aibă același Y.</value></data>
   <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} este o grilă, deci acest punct are nevoie de o celulă. Indicați care cu Cell.</value></data>
   <data name="Code_CellWithoutGrid" xml:space="preserve"><value>O celulă se folosește doar într-o componentă, când punctul provine dintr-un parametru de tip Grilă.</value></data>
-  <data name="Code_CellOutside" xml:space="preserve"><value>În {3}, celula {0} din {1} nu există, deoarece grila respectivă are {2} celule.</value></data>
   <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Una dintre celulele sale se află în afara grilei sale.</value></data>
   <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Grila sa este o valoare fixă, dar celula sa provine dintr-un parametru al componentei care îl conține, iar un rând obișnuit nu poate alege o celulă.</value></data>
   <data name="Param_TypeGrid" xml:space="preserve"><value>Grilă</value></data>
@@ -1623,4 +1622,7 @@ Detalii: {1}</value></data>
   <data name="Param_GridArgument" xml:space="preserve"><value>Grila acestui apel</value></data>
   <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Grila pe care o dă acest apel, de exemplu pentru o altă dimensiune a ecranului</value></data>
   <data name="Action_SummaryAtCell" xml:space="preserve"><value>în celula {0} din {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are doar {0} celulă.</value></data>
+  <data name="Code_CellOutside_few" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are {0} celule.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are {0} de celule.</value></data>
 </root>
