@@ -139,8 +139,10 @@ internal partial class ScreenPickWindow
     /// <summary>The instructions centered at the top of the work area, after their text changes too.</summary>
     private void PlaceInstructions()
     {
-        Instructions.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         Rect work = SystemParameters.WorkArea;
+        // As wide as the text, at most the main screen's work area less a margin on each side: a longer text wraps.
+        Instructions.MaxWidth = Math.Max(240, work.Width - 2 * 24);
+        Instructions.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         Canvas.SetLeft(Instructions, work.Left - Left + (work.Width - Instructions.DesiredSize.Width) / 2);
         Canvas.SetTop(Instructions, work.Top - Top + 18);
     }
