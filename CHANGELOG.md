@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+- Website on phones: the header stays on one line, with the language's flag and a menu button that opens the links and
+  Download, and the list of languages no longer opens off the screen.
+
 ## 1.24.0
 
 ### Added

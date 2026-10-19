@@ -6,7 +6,9 @@ Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built 
 - `site/index.html`: the home page (features, privacy), a template filled once per language with the texts of
   `site/home/<code>.json` (placeholders: `scripts/site.ps1`). The home is translated, the guide only in English
   (`discoverability.md`).
-- `site/_header.html`, `site/_footer.html`: shared header and footer, with the texts of the page's language.
+- `site/_header.html`, `site/_footer.html`: shared header and footer, with the texts of the page's language. On phones
+  the header stays on one line (brand, the language's flag, a menu button that opens the links and Download); the
+  header's popups open across the whole width, so they never leave the screen.
 - `site/guide/sections.txt`: guide sections in order (`file|Title`). One file per section,
   `site/guide/<file>.html`, with the section content only; `site/guide/_page.html` is the
   page around it (sticky sidebar, version select, previous/next).

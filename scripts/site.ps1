@@ -103,7 +103,7 @@ function Get-LanguageMenu($current, [string]$rootPath) {
     }
     @(
         '      <details class="language-menu">'
-        "        <summary aria-label=""${label}: $name"">$(Get-Flag $current $rootPath)<span>$name</span><svg viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2.2"" stroke-linecap=""round"" stroke-linejoin=""round"" aria-hidden=""true""><path d=""M6 9l6 6 6-6""/></svg></summary>"
+        "        <summary aria-label=""${label}: $name"">$(Get-Flag $current $rootPath)<span class=""language-name"">$name</span><svg viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2.2"" stroke-linecap=""round"" stroke-linejoin=""round"" aria-hidden=""true""><path d=""M6 9l6 6 6-6""/></svg></summary>"
         '        <div class="language-popup">'
         "          <p>$label</p>"
         '          <div class="language-grid">'
@@ -142,6 +142,7 @@ function Set-NavTexts([string]$html, $texts) {
         Replace('{{NAV_FEATURES}}', (Encode $texts['nav_features'])).
         Replace('{{NAV_GUIDE}}', (Encode $texts['nav_guide'])).
         Replace('{{NAV_PRIVACY}}', (Encode $texts['nav_privacy'])).
+        Replace('{{NAV_MENU}}', (Encode $texts['nav_menu'])).
         Replace('{{NAV_DOWNLOAD}}', (Encode $texts['nav_download']))
 }
 
