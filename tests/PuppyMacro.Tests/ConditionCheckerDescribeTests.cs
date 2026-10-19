@@ -111,4 +111,29 @@ public class ConditionCheckerDescribeTests : IDisposable
         Assert.Contains(details, d => d.StartsWith("Image \"Gone\": not found, the closest is ", StringComparison.Ordinal) && d.EndsWith("% similar (needs 90%)", StringComparison.Ordinal));
         Assert.Contains("  -> Image \"Gone\" is not true", details);
     }
+
+    /// <summary>
+    /// A Text condition with no text to look for (a component's Text parameter given an empty value, a condition written by
+    /// hand in the Code view): the monitor is there and shows its picture. Expected: the Debug log says there was nothing to
+    /// look for, as Evaluate's own line "nothing to look at (no image PuppyMacro has, or no text)" means to. Observed: Check
+    /// treats the blank text as a place it could not see, so the log says "PuppyMacro could not see this part of the screen
+    /// (no monitor there, or its capture failed)", sending the user to look for a monitor or capture problem.
+    /// </summary>
+    [Fact]
+    public void A_text_condition_with_no_text_is_not_described_as_a_part_of_the_screen_it_could_not_see()
+    {
+        if (!TextReader.CanRead(null))
+            return;
+        using var screen = Picture(ConditionCheckerTests.FakeScreen.Width, ConditionCheckerTests.FakeScreen.Height, 61);
+        _screen.Show(screen);
+        var condition = new MacroCondition
+        {
+            Kind = ConditionKind.Text, Name = "Label", Text = "  ", Area = SearchArea.Screen,
+            AreaX = 0, AreaY = 0, AreaWidth = ConditionCheckerTests.FakeScreen.Width, AreaHeight = ConditionCheckerTests.FakeScreen.Height,
+        };
+
+        string line = Describe(condition).First(d => d.StartsWith("Text", StringComparison.Ordinal));
+
+        Assert.DoesNotContain("could not see", line);
+    }
 }
