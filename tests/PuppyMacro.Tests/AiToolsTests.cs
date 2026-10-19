@@ -84,6 +84,7 @@ internal sealed class FakeAiHost : IAiHost
 
     public void Save(object item, string app)
     {
+        AiTools.KeepUsersDebug(item, Macros); // as the app's IAiHost.Save (MainWindow.Ai.cs)
         Saved.Add((item, app));
         switch (item)
         {
