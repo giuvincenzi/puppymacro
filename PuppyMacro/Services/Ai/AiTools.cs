@@ -213,8 +213,36 @@ internal sealed partial class AiTools
     /// <summary>A tool's full name.</summary>
     public static string Name(string bare) => Prefix + bare;
 
-    /// <summary>The <see cref="Instructions"/>, with the tools' full names.</summary>
-    public static string InstructionsText => Prefixed(Instructions);
+    /// <summary>The <see cref="Instructions"/> and the <see cref="GlobalRules"/>, with the tools' full names.</summary>
+    public static string InstructionsText => Prefixed(Instructions + "\n\n" + RulesText);
+
+    /// <summary>
+    /// The global rules for AI apps: the one exception to texts that describe (architecture.md), as few as can be, each added
+    /// or changed only with the user's approval. Given in the first answer of every conversation (<see cref="FirstAnswer"/>:
+    /// the answers are what every AI app reads) and in the <see cref="InstructionsText"/>.
+    /// </summary>
+    internal static readonly IReadOnlyList<string> GlobalRules = new[]
+    {
+        "When you build or change a loop, a macro or a component, never duplicate what already exists: link or extend what " +
+        "the user's Library has (a component, a parameter, a Grid), and make only what is missing.",
+    };
+
+    private static string RulesText => "PuppyMacro's rules for AI apps:\n" + string.Join("\n", GlobalRules.Select(r => "- " + r));
+
+    /// <summary>
+    /// What the first answer of a conversation adds after its own text, once (<see cref="AiServer"/>): the
+    /// <see cref="GlobalRules"/> and what the user's Library holds (each collection, its app and how many components), so
+    /// the AI app knows them before it builds anything.
+    /// </summary>
+    public string FirstAnswer()
+    {
+        var collections = _host.Macros.Library.Collections.Where(c => c.Components.Count > 0).ToList();
+        string library = collections.Count == 0 ? "The user's Library has no components yet."
+            : "The user's Library has components that already work: " + string.Join(", ", collections.Select(c =>
+                  $"\"{c.Name}\" ({(string.IsNullOrEmpty(c.AppExe) ? "any app" : c.AppExe)}) {c.Components.Count}")) +
+              $". {Name("search_library")} lists them with what each takes.";
+        return Prefixed(RulesText) + "\n" + library;
+    }
 
     /// <summary>The short names people read in the AI app's interface (MCP's title).</summary>
     private static readonly Dictionary<string, string> Titles = new()
@@ -548,8 +576,9 @@ internal sealed partial class AiTools
                 """{"type":"object","properties":{"uri":{"type":"string","description":"The uri of a resource link another PuppyMacro tool gave (puppymacro://debug/…)."},"area":{"type":"object","description":"Pictures: the part to read, in the picture's own pixels (X and Y from 0 at its top left). Leave out for the whole picture.","properties":{"X":{"type":"integer","minimum":0},"Y":{"type":"integer","minimum":0},"Width":{"type":"integer","minimum":1},"Height":{"type":"integer","minimum":1}},"required":["X","Y","Width","Height"],"additionalProperties":false},"scale":{"type":"number","exclusiveMinimum":0,"maximum":1,"description":"Pictures: the size to read it at, width and height alike: 1 (when left out) its own size, 0.25 a quarter."},"offset":{"type":"integer","minimum":1,"description":"Texts (a log, JSON): the first line to read, from 1."},"limit":{"type":"integer","minimum":1,"description":"Texts: how many lines to read from offset; to the end when left out."}},"required":["uri"],"additionalProperties":false}""",
                 true, false, (a, _, _) => ReadResource(a)),
             new("search_library",
-                "Searches the user's Library: components that already work (a point, an If that finds something, a sequence), " +
-                "kept to be linked in macros instead of being made again; each is a function, with the parameters a call gives it " +
+                "Finds what already works in the user's apps, to link or extend instead of making it again: PuppyMacro never " +
+                "duplicates what exists. The Library's components (a point, an If that finds something, a sequence) are kept to " +
+                "be linked in macros; each is a function, with the parameters a call gives it " +
                 "(their names and types are in the answer) and, when it can be a condition, Condition. Each has a structured name in English, " +
                 "domain-app-purpose-concept (\"game-diablo_iv-find-rare_item_in_slot\"), a title in the user's words and maybe a " +
                 "description. Filters narrow it (all optional, all must match): collection (an Id: its components), domain, app " +

@@ -264,6 +264,12 @@ Rules:
     PuppyMacro works and what each choice brings (what is faster, sturdier, costlier), and the model decides. The limits
     that matter are in the code: the ready window before anything on the user's screen, `confirmed_steps`, the AI page's
     permissions, the checks of a save.
+  - **The one exception: the global rules for AI apps** (`AiTools.GlobalRules`), as few as can be: **each one is added or
+    changed only with the user's approval** (more rules box in a capable model). They reach the model where every AI app
+    gives it what it reads: the first tool answer of each connection adds them once, with what the Library holds (each
+    collection, its app and how many components: `AiTools.FirstAnswer`, from `AiServer`), and the Instructions repeat
+    them. The first, the user's: when an AI app builds or changes something, it never duplicates what already exists, it
+    links or extends what the Library has and makes only what is missing.
   - AI apps cut long tool calls: a request that waits for the user answers "waiting" and the AI calls `wait_for_user`.
   - One request that waits for the user at a time; none while the user has a PuppyMacro editor or dialog open. Request
     windows open centered on the screen and in front, and close after a timeout without input.

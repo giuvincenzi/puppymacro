@@ -123,6 +123,8 @@ internal sealed class AiServer : IDisposable
         // One debug session and one rate limit for this connection.
         DebugSession? debug = null;
         var limit = new AiRateLimit();
+        // The first tool answer of the connection also gives the global rules and what the Library holds (AiTools.FirstAnswer).
+        int answered = 0;
         McpServerOptions options = Options(_tools.All, AiTools.InstructionsText, async request =>
         {
             // resources/read: the same reading as read_resource (AiTools.OpenResource), logged and limited as a tool call.
@@ -141,8 +143,11 @@ internal sealed class AiServer : IDisposable
         }, (tool, args, request, cancel) =>
         {
             debug ??= StartDebug(request.Server);
-            return Debugged(debug, limit, tool.Name, _tools.SubjectOf(args), args, request.Params?.Meta,
-                () => _tools.Call(tool.Name, args, FriendlyName(request.Server.ClientInfo), cancel), cancel);
+            return Debugged(debug, limit, tool.Name, _tools.SubjectOf(args), args, request.Params?.Meta, async () =>
+            {
+                AiToolResult result = await _tools.Call(tool.Name, args, FriendlyName(request.Server.ClientInfo), cancel).ConfigureAwait(false);
+                return Interlocked.Exchange(ref answered, 1) == 0 ? result with { Text = result.Text + "\n\n" + _tools.FirstAnswer() } : result;
+            }, cancel);
         });
 
         try

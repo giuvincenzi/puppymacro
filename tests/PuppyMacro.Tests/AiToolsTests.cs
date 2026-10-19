@@ -1324,6 +1324,41 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
+    public void The_first_answer_gives_the_global_rules_and_what_the_Library_holds()
+    {
+        // An empty Library: the rules, and that it has no components yet.
+        string empty = _tools.FirstAnswer();
+        Assert.StartsWith("PuppyMacro's rules for AI apps:\n- ", empty);
+        Assert.All(AiTools.GlobalRules, rule => Assert.Contains("- " + rule, empty));
+        Assert.Contains("never duplicate what already exists", empty);
+        Assert.EndsWith("The user's Library has no components yet.", empty);
+
+        static LibraryComponent Point(string concept) => new()
+        {
+            Name = concept, Purpose = ComponentPurpose.Point, Concept = concept,
+            Actions = { new MacroAction { Type = MacroActionType.Click, Vk = 0x01, X = 5, Y = 6 } },
+        };
+        _host.Macros.Library.Collections.Add(new LibraryCollection
+        {
+            Name = "Diablo IV", Domain = LibraryDomain.Game, AppExe = "Diablo IV.exe", Components = { Point("slot"), Point("cube") },
+        });
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "General", Domain = LibraryDomain.Other, Components = { Point("any") } });
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "Empty", Domain = LibraryDomain.Other });
+
+        string full = _tools.FirstAnswer();
+        Assert.Contains("The user's Library has components that already work: \"Diablo IV\" (Diablo IV.exe) 2, \"General\" (any app) 1. " +
+            "puppymacro_search_library lists them with what each takes.", full);
+        Assert.DoesNotContain("\"Empty\"", full); // a collection without components says nothing
+    }
+
+    [Fact]
+    public void The_instructions_give_the_global_rules_too()
+    {
+        Assert.Contains("PuppyMacro's rules for AI apps:", AiTools.InstructionsText);
+        Assert.All(AiTools.GlobalRules, rule => Assert.Contains("- " + rule, AiTools.InstructionsText));
+    }
+
+    [Fact]
     public async Task A_changed_component_never_moves_to_another_collection()
     {
         var component = new LibraryComponent

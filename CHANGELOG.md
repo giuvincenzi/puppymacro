@@ -22,7 +22,8 @@
   Library, so fixing it once fixes every macro that links it; Unlink makes it the macro's own rows again. The Library
   (on the Macros page) keeps each component's History, refuses to delete what a macro links, and exports a collection
   whole to share it; Import refuses a different version of a collection you have. AI apps search the Library before
-  building and save what works, so each macro they build helps the next one.
+  building and save what works, so each macro they build helps the next one: at the start of each conversation
+  PuppyMacro tells them what the Library holds and that what exists is linked or extended, never made again.
 - **Components with parameters**: a component can take values from the row that calls it (a point, a number, a text, a
   key, a color, an image, an area), so one component serves every slot of an inventory instead of one copy per slot. A
   field of its actions takes a parameter with the list before it; each linked row gives its own values, or passes on
