@@ -21,7 +21,8 @@ internal static class ActionTestSession
     /// the dialogs under it are moved off screen, because a modal dialog cannot be hidden safely;
     /// the main window at the bottom of the chain is hidden.
     /// </param>
-    public static void Run(LoopEngine engine, MacroAction action, Window from)
+    /// <param name="parameters">Inside a component's editor: its parameters, whose Examples the action's calls pass on.</param>
+    public static void Run(LoopEngine engine, MacroAction action, Window from, IEnumerable<Models.ComponentParameter>? parameters = null)
     {
         var moved = new List<(Window Window, double Left, double Top)>();
         Window? main = null;
@@ -54,7 +55,7 @@ internal static class ActionTestSession
                     window.Top = top;
                 }
                 from.Activate();
-            });
+            }, parameters);
         };
         timer.Start();
     }

@@ -24,10 +24,14 @@
   "ai_tag_mcp": "MCP ready",
   "ai_tag_beta": "Beta",
   "ai_text": "Connect your AI app, like Claude, and just ask: \"make a macro that…\". Done.",
+  "learn_title": "Your AI learns your apps",
+  "learn_text": "What works becomes a component: a button to find, a field to fill. Your AI uses it when it builds your next macro. Share it as a collection.",
   "loops_title": "Loops",
   "loops_text": "Press a key or a combination like Ctrl+C, click (also double, at a fixed point), keep a key or button held down, or paste a text, every 10 ms to 24 h. Several actions, each on its own timer.",
   "macros_title": "Macros",
   "macros_text": "Record keys, clicks, scroll and mouse movement, then edit every step, in a list or as code with suggestions and live checks. Play once, N times or in a loop, at ×0.25 to ×4 speed.",
+  "conditions_title": "Conditions on the screen",
+  "conditions_text": "A macro can wait for a pixel's color, an image or a text on the screen, then click where it was found, or do something else when it does not show up. Fast, also with HDR.",
   "remap_title": "Remap",
   "remap_text": "A key, a mouse button or a combination like Alt+J sends another key, button or combination, in all apps or only in the app you choose. Ctrl, Alt, Shift and Win can be remapped too, left and right apart.",
   "overlay_title": "Overlay mode",
@@ -42,7 +46,7 @@
   "language_text": "In your Windows language, or the one you choose: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 and 中文.",
   "privacy_title": "Privacy",
   "privacy_updates": "PuppyMacro does not collect or send personal data. With <strong>Check for updates automatically</strong> (on by default), it contacts GitHub when it starts and every 12 hours to check for and download updates; the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a> applies to those requests. Turn it off in Settings > Data and updates.",
-  "privacy_ai": "PuppyMacro sends nothing to AI services. With <strong>Allow AI access</strong> on (off by default), the AI apps on your PC that you connect can read your loops, macros, remaps and settings through PuppyMacro: what they read goes to that app's provider, under its own privacy policy.",
+  "privacy_ai": "PuppyMacro sends nothing to AI services. With <strong>Allow AI access</strong> on (off by default), the AI apps on your PC that you connect can read your loops, macros, remaps and settings through PuppyMacro: what they read goes to that app's provider, under its own privacy policy. With <strong>Let AI apps see the screen</strong> (on by default), they can also see pictures of your screen, to build macros that look at it.",
   "footer_license": "MIT License",
   "footer_releases": "All releases"
 }

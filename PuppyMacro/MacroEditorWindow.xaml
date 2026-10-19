@@ -62,8 +62,9 @@
                 <TextBlock Grid.Row="1" Margin="0,16,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Editor_Actions}" />
 
                 <!-- The commands, on the left in one command bar (standard AppBarButtons, label under the icon): adding
-                     and recording in its content, a separator, what works on the selected rows, more in ⋯ (dynamic
-                     overflow off, so no command moves into ⋯ while it fits). On the right the list's density (it acts on
+                     and recording in its content, always shown; a separator; what works on the selected rows, on the bar
+                     while they fit and in ⋯ when the window is too narrow (the library's dynamic overflow, from the last
+                     one: the user's choice); more always in ⋯ (its secondary commands). On the right the list's density (it acts on
                      the view, not on the actions). The same commands on right-click (OnListContextMenuOpening). The
                      buttons are centered in the bar (their style puts them at the top, and the bar is taller than them
                      because of ⋯). -->
@@ -73,7 +74,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <ui:CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Bottom"
-                                   VerticalContentAlignment="Center" IsDynamicOverflowEnabled="False">
+                                   VerticalContentAlignment="Center" IsDynamicOverflowEnabled="True">
                         <!-- Opening ⋯ does not light up the whole bar (approved, ui.md): its open background and border
                              transparent -->
                         <ui:CommandBar.Resources>
@@ -83,10 +84,29 @@
                         <ui:CommandBar.Content>
                             <StackPanel Orientation="Horizontal">
                                 <!-- The main command in the accent color (approved, ui.md: an AppBarButton has no accent style) -->
-                                <ui:AppBarButton x:Name="AddActionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_AddAction}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                <ui:AppBarButton x:Name="AddActionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_ActionButton}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                 AutomationProperties.Name="{x:Static r:Strings.MacroEditor_AddAction}" ToolTip="{x:Static r:Strings.MacroEditor_AddAction}"
                                                  Click="OnAddActionClick">
                                     <ui:AppBarButton.Icon>
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                                    </ui:AppBarButton.Icon>
+                                </ui:AppBarButton>
+                                <!-- An If: its conditions on the screen, with Then and Else (approved: the Design canvas "Macro
+                                     Conditions"), in the accent color as Add action -->
+                                <ui:AppBarButton x:Name="AddConditionButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_ConditionButton}"
+                                                 AutomationProperties.Name="{x:Static r:Strings.Condition_Add}" ToolTip="{x:Static r:Strings.Condition_Add}"
+                                                 Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Click="OnAddConditionClick">
+                                    <ui:AppBarButton.Icon>
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                                    </ui:AppBarButton.Icon>
+                                </ui:AppBarButton>
+                                <!-- A Library component, linked (approved: the Design canvas "PuppyMacro Library"), with the
+                                     component's Link icon in the theme's success green (the user's choice, ui.md) -->
+                                <ui:AppBarButton x:Name="AddComponentButton" VerticalAlignment="Center" Label="{x:Static r:Strings.MacroEditor_ComponentButton}"
+                                                 AutomationProperties.Name="{x:Static r:Strings.Library_AddComponent}" ToolTip="{x:Static r:Strings.Library_AddComponent}"
+                                                 Foreground="{DynamicResource SystemFillColorSuccessBrush}" Click="OnAddComponentClick">
+                                    <ui:AppBarButton.Icon>
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Link}" />
                                     </ui:AppBarButton.Icon>
                                 </ui:AppBarButton>
                                 <!-- A red record dot (approved, ui.md: the theme's critical color, as the InfoBadge's) -->
@@ -151,6 +171,17 @@
                                 </ui:AppBarButton.Icon>
                             </ui:AppBarButton>
                             <ui:AppBarSeparator />
+                            <ui:AppBarButton x:Name="SaveAsComponentButton" Label="{x:Static r:Strings.MacroEditor_SaveAsComponent}" Click="OnSaveAsComponentClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Library}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarButton x:Name="UnlinkButton" Label="{x:Static r:Strings.MacroEditor_Unlink}" Click="OnUnlinkClick">
+                                <ui:AppBarButton.Icon>
+                                    <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.LinkDismiss_20_Regular}" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarSeparator />
                             <!-- All the groups at once: not on the right-click menu, which acts on the clicked rows -->
                             <ui:AppBarButton x:Name="ExpandAllGroupsButton" Label="{x:Static r:Strings.MacroEditor_ExpandAllGroups}" Click="OnExpandAllGroupsClick">
                                 <ui:AppBarButton.Icon>
@@ -205,6 +236,10 @@
                             <EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnRowMouseUp" />
                             <EventSetter Event="PreviewMouseMove" Handler="OnRowMouseMove" />
                             <Style.Triggers>
+                                <!-- An Else its If never plays (Stop the macro): greyed, not selectable -->
+                                <DataTrigger Binding="{Binding NotPlayed}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
                                 <!-- Drag to move: a line where the dragged actions go -->
                                 <DataTrigger Binding="{Binding DropBefore}" Value="True">
                                     <Setter Property="BorderBrush" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
@@ -225,7 +260,7 @@
                             <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
                             <!-- A group: open / close, its name and what it holds -->
                             <DataTemplate DataType="{x:Type views:MacroGroupViewModel}">
-                                <Grid>
+                                <Grid Margin="{Binding IndentMargin}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -259,23 +294,30 @@
                                         <Run Text="  " />
                                         <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info, Mode=OneWay}" />
                                     </TextBlock>
-                                    <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="-12,0,-12,0" BorderThickness="0,1,0,0"
+                                    <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="{Binding DividerMargin}" BorderThickness="0,1,0,0"
+                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
+                                </Grid>
+                            </DataTemplate>
+                            <!-- An If's Then or Else: its name (a global word) and when it runs; its actions are indented under it -->
+                            <DataTemplate DataType="{x:Type views:MacroBranchViewModel}">
+                                <Grid Margin="{Binding IndentMargin}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                        <Run FontWeight="SemiBold" Text="{Binding Name, Mode=OneWay}" />
+                                        <Run Text="  " />
+                                        <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Info, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <Border Grid.Row="1" Margin="{Binding DividerMargin}" BorderThickness="0,1,0,0"
                                             BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
                                 </Grid>
                             </DataTemplate>
                             <!-- An action: its icon, its name or description and its details, its delay -->
                             <DataTemplate DataType="{x:Type views:MacroActionRowViewModel}">
-                                <Grid>
-                                    <Grid.Style>
-                                        <Style TargetType="Grid">
-                                            <Style.Triggers>
-                                                <!-- The actions of a group are indented under it -->
-                                                <DataTrigger Binding="{Binding IsInGroup}" Value="True">
-                                                    <Setter Property="Margin" Value="24,0,0,0" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Grid.Style>
+                                <!-- The actions of a group, a Then or an Else are indented under it -->
+                                <Grid Margin="{Binding IndentMargin}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -296,8 +338,22 @@
                                                      Visibility="{Binding IsScrollIcon, Converter={StaticResource BoolToVisibility}}" />
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Font}"
                                                      Visibility="{Binding IsTextIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static fsi:FluentSystemIcons.BranchFork_20_Regular}"
+                                                     Visibility="{Binding IsIfIcon, Converter={StaticResource BoolToVisibility}}" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Link}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                     Visibility="{Binding IsLinked, Converter={StaticResource BoolToVisibility}}" />
                                     </Grid>
+                                    <!-- A row linked to a component: greyed, read only (approved: the Design canvas "PuppyMacro Library") -->
                                     <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsLinked}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
                                         <Run Text="{Binding Title, Mode=OneWay}">
                                             <Run.Style>
                                                 <!-- A named action shows its name in bold -->
@@ -315,21 +371,9 @@
                                     </TextBlock>
                                     <TextBlock Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" ToolTip="{x:Static r:Strings.MacroEditor_DelayTooltip}"
-                                               Text="{Binding DelayText}" />
-                                    <Border Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="0,1,0,0"
-                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <!-- Out of the item's 12 px padding, and of the group indent -->
-                                                <Setter Property="Margin" Value="-12,0,-12,0" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsInGroup}" Value="True">
-                                                        <Setter Property="Margin" Value="-36,0,-12,0" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                    </Border>
+                                               Text="{Binding DelayText}" Visibility="{Binding ShowsDelay, Converter={StaticResource BoolToVisibility}}" />
+                                    <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="{Binding DividerMargin}" BorderThickness="0,1,0,0"
+                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" />
                                 </Grid>
                             </DataTemplate>
                         </ResourceDictionary>
@@ -341,9 +385,53 @@
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
             </Grid>
 
-            <!-- Right column: how the macro plays and starts -->
+            <!-- Right column: how the macro plays and starts; for a component, what it is, its parameters and what it finds -->
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                <ikw:SimpleStackPanel Margin="0,8,24,12" Spacing="4">
+              <Grid>
+                <!-- A component (approved: the Design canvas "PuppyMacro Component functions", the component's editor) -->
+                <ikw:SimpleStackPanel x:Name="ComponentOptions" Margin="0,8,24,12" Spacing="4" Visibility="Collapsed">
+                    <ui:SettingsCard x:Name="DetailsCard" Header="{x:Static r:Strings.Component_WhatItDoes}">
+                        <Button Content="{x:Static r:Strings.Library_EditDetails}" Click="OnEditDetailsClick" />
+                    </ui:SettingsCard>
+
+                    <TextBlock Margin="0,16,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Param_Parameters}" />
+                    <TextBlock Margin="0,0,0,4" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Param_ParametersDescription}" />
+                    <ItemsControl x:Name="ParametersList" Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ui:SettingsCard Margin="0,0,0,4" Header="{Binding Name}" Description="{Binding Description}" AutomationProperties.Name="{Binding Name}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Tag="{Binding}" Click="OnEditParameterClick" ToolTip="{x:Static r:Strings.Param_Edit}"
+                                                AutomationProperties.Name="{x:Static r:Strings.Param_Edit}">
+                                            <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Edit}" />
+                                        </Button>
+                                        <Button Margin="4,0,0,0" Tag="{Binding}" Click="OnRemoveParameterClick" ToolTip="{x:Static r:Strings.Param_Remove}"
+                                                AutomationProperties.Name="{x:Static r:Strings.Param_Remove}">
+                                            <ui:FontIcon FontSize="16" Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                                        </Button>
+                                    </StackPanel>
+                                </ui:SettingsCard>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button x:Name="AddParameterButton" HorizontalAlignment="Left" Click="OnAddParameterClick" AutomationProperties.Name="{x:Static r:Strings.Param_Add}">
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                            <ui:FontIcon FontSize="14" Icon="{x:Static ui:SegoeFluentIcons.Add}" />
+                            <TextBlock Text="{x:Static r:Strings.Param_Add}" />
+                        </ikw:SimpleStackPanel>
+                    </Button>
+
+                    <TextBlock Margin="0,16,0,4" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Component_Returns}" />
+                    <ui:SettingsCard Header="{x:Static r:Strings.Component_AsCondition}" Description="{x:Static r:Strings.Component_AsConditionDescription}">
+                        <ui:ToggleSwitch x:Name="ReturnsSwitch" Toggled="OnReturnsToggled" AutomationProperties.Name="{x:Static r:Strings.Component_AsCondition}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard x:Name="ReturnsCard" Header="{x:Static r:Strings.Component_WhatItFinds}" Description="{x:Static r:Strings.Component_WhatItFindsDescription}">
+                        <ComboBox x:Name="ReturnsBox" MinWidth="220" SelectionChanged="OnReturnsChanged" AutomationProperties.Name="{x:Static r:Strings.Component_WhatItFinds}" />
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
+
+                <ikw:SimpleStackPanel x:Name="MacroOptions" Margin="0,8,24,12" Spacing="4">
                     <ui:SettingsCard Header="{x:Static r:Strings.Editor_Enabled}">
                         <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="{x:Static r:Strings.Editor_Enabled}" />
                     </ui:SettingsCard>
@@ -363,6 +451,12 @@
                     <ui:SettingsCard Header="{x:Static r:Strings.MacroEditor_Speed}">
                         <!-- The index of MacroDefinition.SpeedSteps; its text is the speed (×0.25 to ×4) -->
                         <views:ValueSlider x:Name="SpeedSlider" Minimum="0" Maximum="4" Step="1" Label="{x:Static r:Strings.MacroEditor_Speed}" />
+                    </ui:SettingsCard>
+
+                    <!-- Shown when the macro has an If: how often its conditions look at the screen -->
+                    <ui:SettingsCard x:Name="ChecksCard" Header="{x:Static r:Strings.MacroEditor_ChecksPerSecond}"
+                                     Description="{x:Static r:Strings.MacroEditor_ChecksPerSecondDescription}" Visibility="Collapsed">
+                        <ComboBox x:Name="ChecksBox" MinWidth="160" AutomationProperties.Name="{x:Static r:Strings.MacroEditor_ChecksPerSecond}" />
                     </ui:SettingsCard>
 
                     <ui:SettingsCard Header="{x:Static r:Strings.Editor_Activation}" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
@@ -404,7 +498,20 @@
                             </ui:SettingsCard>
                         </ui:SettingsExpander.Items>
                     </views:SwitchSettingsExpander>
+
+                    <!-- Keeps the log of the last run (RunLog); View log when there is one -->
+                    <ui:SettingsCard Header="{x:Static r:Strings.Macro_Debug}" Description="{x:Static r:Strings.Macro_DebugDescription}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Bug}" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                            <Button x:Name="ViewLogButton" VerticalAlignment="Center" Content="{x:Static r:Strings.Macro_ViewLog}"
+                                    Click="OnViewLogClick" Visibility="Collapsed" />
+                            <ui:ToggleSwitch x:Name="DebugSwitch" AutomationProperties.Name="{x:Static r:Strings.Macro_Debug}" />
+                        </ikw:SimpleStackPanel>
+                    </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
+              </Grid>
             </ScrollViewer>
         </Grid>
 

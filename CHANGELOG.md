@@ -2,8 +2,92 @@
 
 ## Unreleased
 
+### Added
+- Macros can look at the screen: an **If** checks a pixel's color, an image or a text on the screen, or that it is not
+  there (one or all of them), waits for them as long as you choose, then plays its **Then** actions, or its **Else** actions or stops the
+  macro. A click inside Then can go where the image or text was found. The condition window says what PuppyMacro sees
+  as you change it, and takes pixels, images and areas from the screen. **Settings > Screen recognition** chooses the
+  graphics card or the processor, and AI apps can pick pixels, take images and draw areas too.
+- **Debug** in the macro editor keeps a log of each run of the macro: every key and click with a picture of the screen
+  just before it, what each If saw and where it went, why it ended. **View log** opens the last run, in the card and in
+  the macro's More options. Runs are kept 7 days; **Settings > Debug data** shows the space they take and deletes them.
+- AI apps can look at the screen, check a condition, record what you do and test a macro after you press Start, so they
+  can build and fix macros that look at the screen. What they capture is kept as files and the AI app opens only what it
+  needs (MCP resource links, or PuppyMacro's own tool for AI apps that cannot open them, also a part or a smaller copy of
+  a picture and some lines of a log), so its conversation does not fill up. A **Done** window says when you can go back to the
+  AI app. Two new permissions on the AI page, **Let AI apps see the screen** and **Let AI apps test macros**, are on by
+  default. Every AI request is kept 7 days with what was sent and answered: **Open debug** in the AI activity opens it.
+- **Library**: save the pieces of macros that work as components (Save as component), in collections for each app and
+  screen, and link them in other macros (Component in the macro editor): a linked row plays the component as it is in the
+  Library, so fixing it once fixes every macro that links it; Unlink makes it the macro's own rows again. The Library
+  (on the Macros page) keeps each component's History, refuses to delete what a macro links, and exports a collection
+  whole to share it; Import refuses a different version of a collection you have. AI apps search the Library before
+  building and save what works, so each macro they build helps the next one: at the start of each conversation
+  PuppyMacro tells them what the Library holds and that what exists is linked or extended, never made again.
+- **Components with parameters**: a component can take values from the row that calls it (a point, a number, a text, a
+  key, a color, an image, an area), so one component serves every slot of an inventory instead of one copy per slot. A
+  field of its actions takes a parameter with the list before it; each linked row gives its own values, or passes on
+  where a condition around it found something. Components can call other components, and a component that says what it
+  finds is also a condition (**Component** in Add condition). Edit a component's actions and parameters with **Edit** in
+  the Library; when a change affects the macros that call it, PuppyMacro asks one value for all of them and saves
+  everything together.
+- **Grid parameters**: cells all alike in rows, as an inventory, a keypad or a sheet, described once by the first and
+  the last cell, the columns and the rows. A click, a mouse button, a move or a pixel inside a component goes to one of
+  its cells, a number or one a parameter gives, so each row of a macro only says which cell. **Show the cells** marks
+  every cell on a picture of the screen to check the grid.
+- AI apps change only the part of a component that needs it and delete the components nothing uses any more: PuppyMacro
+  tells them to leave nothing behind, names in each answer the components a change left unused, and refuses to delete one
+  that a macro or another component uses. **Ask before deleting a loop, macro or remap** asks for components too, and
+  **Restore** in the AI activity puts a deleted component back in its collection.
+
+### Changed
+- The Library counts the components that call a component too ("Used in 2 macros and 1 component"), and **Delete** and
+  **Delete collection** are off, with a tooltip that names what uses them, while a macro or another component uses them.
+- A macro's Debug log names the line a text was found in, so a text found inside a longer line shows.
+- PuppyMacro's tools for AI apps are named `puppymacro_…`, have titles and follow the MCP specification 2025-11-25.
+- Claude's apps show "Claude" and the name each gives itself, so Claude Desktop's chat, its agent mode and Claude Code
+  read apart in the status bar and the AI activity, for example **Claude (claude-ai)**.
+- PuppyMacro asks Windows not to slow it down to save power (efficiency mode), so loops, macros and screen checks keep
+  their timing also while it waits in the tray.
+- When a PuppyMacro editor or dialog is open, AI apps are told which one, so they can tell you what to close, and a
+  macro's outline for AI apps starts with its settings that are not at their defaults.
+
 ### Fixed
 - Stopping a loop or macro while it pastes a text no longer loses the paste or pastes the previous clipboard.
+- Two pastes at the same moment (two loops, or a loop and a macro) no longer lose your clipboard: it always comes back.
+  A loop stopped during the Enter before a paste no longer pastes.
+- A long press in a macro no longer holds up the other loops, macros and remaps while it is held, and a click at a
+  point can no longer land elsewhere when another loop moves the pointer at the same moment.
+- Stop all now also stops the Test of an action in the macro editor, and the editor comes back.
+- A macro file with an empty entry in a list no longer stops PuppyMacro from starting, and the Code view, imports and AI
+  apps show such an entry as a problem on its line instead of failing.
+- A macro file without an Id, or a copy of a macro file made in File Explorer, no longer makes the macro appear twice.
+- A recorded tap shorter than a millisecond or a key held longer than a minute no longer makes a macro that the Code
+  view, AI apps and imports refuse.
+- Export offers a file name Windows can save for an item with a very long name.
+- AI apps: a wrong value for an argument (enabled, only, an Id, a text where a number goes, a value that is not one of
+  its choices, a number out of its range) is refused with the argument's name and what to change instead of turning an
+  item off, importing everything, being left out or failing without saying why.
+- Loops, macros and remaps press the arrow keys, Insert, Delete, Home, End, Page Up and Page Down as those keys: with
+  Num Lock on they typed the number pad's digits. Pause is pressed as Pause, not as the right Ctrl.
+- After you leave overlay mode with the panel's exit or Open PuppyMacro button, your next click in overlay mode is no
+  longer left held down in the app.
+- A remapped key, or a Hold loop's or macro's hotkey, released while a key field waits for a key or while you record
+  no longer leaves its target held or the loop running. With an editor open, a Stop all hotkey on the scroll wheel
+  stops a Test as the keyboard's does.
+- A recording stopped with a record hotkey that has Ctrl, Alt, Shift or Win no longer ends with that key held down,
+  and a long spin of the wheel is recorded as Scrolls the editor takes.
+- Importing a backup that is damaged, or whose files can't be replaced, leaves your data as it was.
+- Settings that another program holds open when PuppyMacro starts are no longer replaced by the defaults: they stay
+  as they are and nothing is saved until the next start. An empty entry in settings.json no longer stops PuppyMacro
+  from starting, and settings from version 1.0 get the Open PuppyMacro hotkey as every older file does.
+- A shared file with a name twice in one place is refused instead of failing, an image taken in the editor is kept
+  when the macro's save fails, and a text shortened in a list never cuts an emoji in half.
+- AI apps: an argument a tool doesn't take is refused instead of left out (a misspelled filter could change every
+  action); a Debug change, which only you make, is no longer confirmed nor announced as saved; a change in the third
+  decimal is saved; Restore of settings takes away a hotkey an AI app gave where you had none; an AI app can't see
+  your Library while AI access is off, nor what the screen showed through a run's log while Let AI apps see the screen
+  is off; their errors are always in English.
 
 ## 1.23.0
 

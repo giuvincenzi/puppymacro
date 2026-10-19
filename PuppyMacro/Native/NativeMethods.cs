@@ -208,6 +208,27 @@ internal static class NativeMethods
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
 
+    public const int ProcessPowerThrottling = 4;
+    public const uint PROCESS_POWER_THROTTLING_CURRENT_VERSION = 1;
+    public const uint PROCESS_POWER_THROTTLING_EXECUTION_SPEED = 0x1;
+    public const uint PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION = 0x4;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PROCESS_POWER_THROTTLING_STATE
+    {
+        public uint Version;
+        public uint ControlMask;
+        public uint StateMask;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool SetProcessInformation(IntPtr hProcess, int processInformationClass,
+        ref PROCESS_POWER_THROTTLING_STATE processInformation, uint processInformationSize);
+
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr GetCurrentProcess();
+
     /// <summary>The process that created a named pipe (the AI bridge lets that PuppyMacro come to the front).</summary>
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -219,6 +240,13 @@ internal static class NativeMethods
 
     [DllImport("user32.dll")]
     public static extern IntPtr WindowFromPoint(POINT point);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
+
+    /// <summary>MDT_EFFECTIVE_DPI = 0: the DPI Windows' scale gives the monitor (96 = 100%).</summary>
+    [DllImport("shcore.dll")]
+    public static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
 
     [DllImport("user32.dll")]
     public static extern IntPtr GetForegroundWindow();

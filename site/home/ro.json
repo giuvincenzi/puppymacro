@@ -23,10 +23,14 @@
   "ai_tag_mcp": "Compatibil MCP",
   "ai_tag_beta": "Beta",
   "ai_text": "Conectați aplicația AI, de exemplu Claude, și cereți simplu: „creează o macrocomandă care…”. Gata.",
+  "learn_title": "AI-ul învață aplicațiile dvs.",
+  "learn_text": "Ce funcționează devine o componentă: un buton de găsit, un câmp de completat. AI-ul o folosește când creează următoarea macrocomandă. Partajați-o într-o colecție.",
   "loops_title": "Bucle",
   "loops_text": "Apasă o tastă sau o combinație precum Ctrl+C, face clic (și dublu clic, într-un punct fix), ține apăsată o tastă sau un buton ori lipește un text, la intervale de la 10 ms la 24 h. Mai multe acțiuni, fiecare cu propriul interval.",
   "macros_title": "Macrocomenzi",
   "macros_text": "Înregistrați taste, clicuri, defilare și mișcări ale mouse-ului, apoi editați fiecare pas, într-o listă sau ca cod, cu sugestii și verificări pe loc. Redați o dată, de N ori sau în buclă, la viteze de la ×0,25 la ×4.",
+  "conditions_title": "Condiții pe ecran",
+  "conditions_text": "O macrocomandă poate aștepta culoarea unui pixel, o imagine sau un text pe ecran, apoi poate face clic acolo unde l-a găsit sau poate face altceva dacă nu apare. Rapid, și cu HDR.",
   "remap_title": "Remapare",
   "remap_text": "O tastă, un buton al mouse-ului sau o combinație precum Alt+J trimite altă tastă, alt buton sau altă combinație, în toate aplicațiile sau doar în cea aleasă. Și tastele Ctrl, Alt, Shift și Win pot fi remapate, separat pentru stânga și dreapta.",
   "overlay_title": "Mod suprapunere",
@@ -41,7 +45,7 @@
   "language_text": "În limba sistemului Windows sau în cea pe care o alegeți: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 și 中文.",
   "privacy_title": "Confidențialitate",
   "privacy_updates": "PuppyMacro nu colectează și nu trimite date personale. Cu opțiunea <strong>Căutare automată de actualizări</strong> activată (implicit), contactează GitHub la pornire și la fiecare 12 ore pentru a căuta și a descărca actualizări; acestor solicitări li se aplică <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a>. O puteți dezactiva din Setări > Date și actualizări.",
-  "privacy_ai": "PuppyMacro nu trimite nimic către servicii AI. Cu opțiunea <strong>Permiteți accesul AI</strong> activată (implicit este dezactivată), aplicațiile AI de pe PC-ul dvs. pe care le conectați pot citi buclele, macrocomenzile, remapările și setările dvs. prin PuppyMacro: ce citesc ajunge la furnizorul aplicației respective, conform politicii sale de confidențialitate.",
+  "privacy_ai": "PuppyMacro nu trimite nimic către servicii AI. Cu opțiunea <strong>Permiteți accesul AI</strong> activată (implicit este dezactivată), aplicațiile AI de pe PC-ul dvs. pe care le conectați pot citi buclele, macrocomenzile, remapările și setările dvs. prin PuppyMacro: ce citesc ajunge la furnizorul aplicației respective, conform politicii sale de confidențialitate. Cu <strong>Permiteți aplicațiilor AI să vadă ecranul</strong> (activată implicit), pot vedea și imagini ale ecranului dvs., pentru a crea macrocomenzi care îl privesc.",
   "footer_license": "Licență MIT",
   "footer_releases": "Toate versiunile"
 }

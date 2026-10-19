@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
+using PuppyMacro.Models;
 
 namespace PuppyMacro.Services.Ai;
 
@@ -125,9 +126,11 @@ internal static class AiJson
             : new List<(string Name, JsonNode? Value)>();
         var changes = set.EnumerateObject().Select(p => (p.Name, Value: JsonNode.Parse(p.Value.GetRawText()))).ToList();
         int count = 0;
-        foreach (JsonObject action in actions.OfType<JsonObject>())
+        // The actions as they are before any change: a new value can hold actions (an If's Then), never walked into.
+        foreach (JsonObject action in AllActions(actions, groupId, false).ToList())
         {
-            if (groupId != null && !string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase))
+            // A row linked to a Library component has only its link: it is left as it is.
+            if (action["Type"]?.GetValue<string>() == nameof(MacroActionType.Component))
                 continue;
             if (!match.All(m => action.ContainsKey(m.Name) && JsonNode.DeepEquals(action[m.Name], m.Value)))
                 continue;
@@ -142,6 +145,29 @@ internal static class AiJson
         if (count == 0)
             throw new FormatException("no action matches. get_item shows the actions.");
         return (root, count);
+    }
+
+    /// <summary>Every action of a macro's JSON, also those inside an If's Then and Else.</summary>
+    /// <summary>
+    /// Every action, those inside Then and Else too; with <paramref name="groupId"/>, only the group's: its own actions
+    /// (in whichever list the group is) and every action inside an If of the group, as the editor shows them under the
+    /// group (<paramref name="inGroup"/>: an If around is in it).
+    /// </summary>
+    private static IEnumerable<JsonObject> AllActions(JsonArray actions, string? groupId, bool inGroup)
+    {
+        foreach (JsonObject action in actions.OfType<JsonObject>().ToList())
+        {
+            bool mine = groupId == null || inGroup
+                        || string.Equals(action["GroupId"]?.GetValue<string>(), groupId, StringComparison.OrdinalIgnoreCase);
+            if (mine)
+                yield return action;
+            if (action["If"] is not JsonObject block)
+                continue;
+            foreach (string branch in new[] { "Then", "Else" })
+                if (block[branch] is JsonArray inner)
+                    foreach (JsonObject each in AllActions(inner, groupId, mine))
+                        yield return each;
+        }
     }
 
     private static void Apply(JsonNode root, string op, string path, JsonElement operation)

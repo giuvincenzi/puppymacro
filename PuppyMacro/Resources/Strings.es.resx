@@ -202,6 +202,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>Guía del usuario</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>No disponible en la compilación de desarrollo</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Datos guardados en {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Datos de depuración</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Registros e imágenes de la pantalla de las solicitudes de AI y de las macros con Debug activado, guardados 7 días en este equipo. Ocupan {0}.</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Eliminar los datos de depuración</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Todo excepto lo que está en curso ahora.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Eliminar todo</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>¿Eliminar los datos de depuración de PuppyMacro? Lo que está en curso ahora se conserva.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Las teclas de acceso rápido no funcionan en este momento:
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro sigue ejecutándose en la bandeja del sistema. Haz clic con el botón derecho en su icono para salir.</value></data>
@@ -352,6 +360,10 @@ Detalles: {1}</value></data>
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Desactivado: los elementos nuevos y cambiados por la AI se guardan al momento, listos para probar.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Preguntar antes de cambiar la configuración</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Tema, teclas de acceso rápido globales, panel de superposición, sonido</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>Permitir que las aplicaciones de AI vean la pantalla</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>Las imágenes de la pantalla, y lo que lee en ella una condición de una macro, van a la aplicación de AI y a su proveedor. Así puede crear macros que miran la pantalla.</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>Permitir que las aplicaciones de AI prueben macros</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>Cuando pulsas Comenzar, la aplicación de AI puede reproducir una macro guardada para ver cómo va. Detener todo la detiene.</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Iniciar PuppyMacro cuando una aplicación de AI lo necesite</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Desactivado: mientras PuppyMacro está cerrado, las aplicaciones de AI no pueden usarlo y te piden que lo abras.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Aplicaciones</value></data>
@@ -406,6 +418,7 @@ Detalles: {1}</value></data>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>Todos los tipos</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>Todos los resultados</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Restaurar</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Abrir depuración</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Detalles</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Aún no hay peticiones.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Ninguna petición coincide con los filtros.</value></data>
@@ -428,6 +441,10 @@ Detalles: {1}</value></data>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Presiona {0} cuando estés listo · {1} cancela</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Comenzar</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>Listo</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>Puedes volver a {0}.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>Puedes volver a tu aplicación de AI.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>Aceptar</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>Elegir un punto</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Haz clic en el punto al que debe ir el cursor</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>Cancelar</value></data>
@@ -495,6 +512,14 @@ Detalles: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Cualquier tecla o botón del mouse, como F2 o A. Para una combinación, mantén presionada primero Ctrl, Alt, Mayús o Win; el clic izquierdo y derecho, la rueda del mouse y Esc la necesitan. Mantener necesita una tecla de acceso rápido.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sonido</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Suena cuando la macro se inicia y se detiene</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Guarda el registro de cada ejecución de esta macro, con una imagen de la pantalla antes de cada paso, durante 7 días en este equipo.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Ver registro</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Registro de {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>La última ejecución de la macro, escrita en inglés para que puedas pegarla en cualquier sitio. Las imágenes de la pantalla están en su carpeta.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Registro</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copiar</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Abrir carpeta</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Este registro ya no está. Los registros se eliminan al cerrar PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Haz clic en un sonido para elegirlo y oír cómo suena al iniciar y al detener</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Guardar</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Cancelar</value></data>
@@ -990,6 +1015,20 @@ Detalles: {1}</value></data>
   <data name="Code_PathEmpty" xml:space="preserve"><value>Una ruta necesita al menos un punto.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Los tiempos deben empezar en 0 o más y nunca retroceder.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Escribe el texto que se pegará.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Solo una acción If tiene condiciones. Quita If o cambia Type a If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>Una acción If necesita sus condiciones y sus acciones en If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Agrega al menos una condición.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Ponle un nombre a la condición para que las acciones de Then puedan hacer clic donde se encontró.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>Otra condición de esta macro tiene el mismo nombre. Ponle a cada una su propio nombre.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Escribe el color como # seguido de seis dígitos hexadecimales, por ejemplo #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Toma la imagen que se buscará con Capturar de la pantalla.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Elige 10, 30 o 60 comprobaciones por segundo, o 0 para comprobar cada fotograma.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro no tiene esta imagen. Vuelve a tomarla con Capturar de la pantalla.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Escribe el texto que se buscará.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Texto en la pantalla busca en un área que dibujas tú o en toda la pantalla.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Solo Clic, Presionar botón del mouse sin soltar, Soltar botón del mouse y Mover a pueden ir adonde se encontró algo.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Esta acción va adonde una condición encontró su imagen o su texto, pero no está dentro del Then de esa condición. Muévela adentro o elige un punto fijo.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Esta acción va adonde una condición encontró su imagen o su texto, pero esa condición se cumple cuando no está en la pantalla, así que no encuentra ningún lugar. Elige un punto fijo.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Panel de superposición de PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Mover el panel</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Arrastra para mover el panel</value></data>
@@ -1116,4 +1155,443 @@ Detalles: {1}</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Cuadrícula</value></data>
   <data name="Table_State" xml:space="preserve"><value>Estado</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Elegir el píxel</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Haz clic en el píxel que quieres comprobar. También se toma su color.</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Capturar la imagen</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Arrastra alrededor de la imagen que quieres buscar. Vuelve a arrastrar para cambiarla.</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Dibujar el área de búsqueda</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Arrastra para marcar el área donde busca PuppyMacro. Cuanto más pequeña sea, más rápida será la búsqueda.</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Capturar imagen</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Usar esta área</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro no puede ver la pantalla en este momento. Inténtalo de nuevo dentro de un momento.</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>Esta área es toda de un mismo color, así que PuppyMacro nunca podría encontrarla como imagen. Arrastra alrededor de algo con más detalle o comprueba el color con una condición de tipo Color del píxel.</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Punto fijo</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Punto</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Donde se encuentre {0}</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Dentro de un If, la acción puede ir adonde una condición encontró su imagen o su texto, esté donde esté esta vez.</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Desplazamiento desde el centro</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Píxeles hacia la derecha y hacia abajo. Usa números negativos para ir hacia la izquierda o hacia arriba.</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Píxeles hacia la derecha</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Píxeles hacia abajo</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>donde se encuentre {0}</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Agregar condición</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Editar condición - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Color del píxel</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Imagen en la pantalla</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Texto en la pantalla</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Imagen</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Texto</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Condiciones</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Agregar condición</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Agrega una condición con Agregar condición.</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Quitar condición</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Quitar imagen</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Las acciones de Then usan este nombre para ir al lugar donde se encontró.</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Píxel</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Color</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Se toma de la pantalla al elegir el píxel.</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Tolerancia</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>Cuánto puede diferir el color de la pantalla. Con un 0% solo cuenta el mismo color.</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Imágenes</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>La condición se cumple cuando una de ellas está en la pantalla.</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Capturar en la pantalla</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Capturar otra imagen</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} píxeles, capturada en {2}, {3}</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro no tiene esta imagen. Vuelve a capturarla.</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Área de búsqueda</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>Alrededor de donde se capturó</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>Toda la pantalla</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>Un área que dibujo yo</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Cerca de donde se capturó la imagen, lo que es rápido. La encuentra aunque se mueva un poco.</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Dibuja el área con Dibujar en la pantalla.</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>En {0}, {1}, {2} × {3} píxeles. Cuanto más pequeña sea el área, más rápida será la búsqueda.</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Dibujar en la pantalla</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Dibuja el área de búsqueda con Dibujar en la pantalla.</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>Un poco más grande o más pequeña</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>Encuentra la imagen también cuando la aplicación la muestra un poco más grande o más pequeña, hasta un 15%. Tarda más.</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Similitud</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>Cuánto debe parecerse la pantalla a la imagen. Bájala un poco si la imagen cambia, por ejemplo con la luz o con efectos.</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Texto</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Coincidencia</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Indica si el texto encontrado puede tener otras palabras alrededor.</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Contiene el texto</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Exactamente estas palabras</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Coincidir mayúsculas y minúsculas</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Idioma</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>El idioma del texto de la pantalla. La lista muestra los idiomas que Windows puede leer en este PC.</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Idioma de Windows</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Idioma de Windows ({0})</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Ahora en la pantalla</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro lee el texto con el reconocimiento de texto de Windows, que es más lento que buscar una imagen. Úsalo cuando las palabras no cambian pero sí su aspecto, como la fuente, el color o el fondo. Mantén pequeña el área de búsqueda.</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>Cuándo ejecutar Then</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Ejecuta Then cuando se cumplen todas las condiciones, o en cuanto se cumple una de ellas.</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>Se cumplen todas</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>Se cumple una de ellas</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Espera</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>Mientras espera, PuppyMacro vuelve a comprobar cada vez que cambia la pantalla.</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Comprobar una vez</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Hasta</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>El tiempo que haga falta</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Segundos de espera</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Escribe cuántos segundos esperar, de 0,1 a 86.400.</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>Si las condiciones no se cumplen</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Justo después de comprobar una vez.</value></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>Después de esperar {0} segundo.</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>Después de esperar {0} segundos.</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>La macro espera hasta que se cumplan o hasta que la detengas.</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Ejecutar las acciones de Else</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Detener la macro</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Comprueba ahora las condiciones en la pantalla, sin ejecutar ninguna acción</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} es {2}, con un {3}% de tolerancia</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Elige el píxel en la pantalla.</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, {2}% de similitud</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Captura la imagen en la pantalla.</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Contiene "{0}", {1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exactamente "{0}", {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>Se cumple cuando</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>Una condición también puede cumplirse cuando algo no está, por ejemplo para esperar a que se cierre una ventana.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>El píxel tiene este color</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>El píxel no tiene este color</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>La imagen está en la pantalla</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>La imagen no está en la pantalla</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>El texto está en la pantalla</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>El texto no está en la pantalla</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} no es {2}, con un {3}% de tolerancia</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} no está en la pantalla, {1}, {2}% de similitud</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>No contiene "{0}", {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>No exactamente "{0}", {1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Escribe el texto que hay que buscar.</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>alrededor de donde se capturó</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>en toda la pantalla</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>en el área dibujada</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>Ahora el píxel coincide. Su color es {0}.</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>Ahora el píxel no coincide. Su color es {0}, con una diferencia del {1}%, mayor que la tolerancia del {2}%.</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>Encontrada ahora en {0}, {1}, con un {2}% de similitud.</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>Ahora la imagen no está en la pantalla. La coincidencia más cercana tiene un {0}% de similitud y esta condición necesita un {1}%.</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>Encontrado ahora en {0}, {1}.</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>"{0}" no está en la pantalla ahora. PuppyMacro leyó "{1}" en el área de búsqueda.</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>"{0}" no está en la pantalla ahora. PuppyMacro no leyó ningún texto en el área de búsqueda.</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro solo ve negro en esta área. Puede que la aplicación bloquee la captura de pantalla o que se ejecute en pantalla completa exclusiva. Prueba su modo ventana sin bordes o en ventana.</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows no puede leer texto en {0} en este PC. Agrega el idioma en la Configuración de Windows, en Hora e idioma › Idioma y región, y luego vuelve a elegirlo aquí.</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>El área de búsqueda está en una pantalla que ahora no está conectada. Vuelve a dibujar el área en una pantalla que tengas.</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>aún no hay condiciones</value></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} condición, debe cumplirse</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} condiciones, deben cumplirse todas</value></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} condición, basta con una</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} condiciones, basta con una</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>comprueba una vez</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>espera hasta {0} s</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>espera el tiempo que haga falta</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>el píxel en {0}, {1} es {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} está en la pantalla</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>"{0}" está en la pantalla</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>el píxel en {0}, {1} no es {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} no está en la pantalla</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>"{0}" no está en la pantalla</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>donde se encuentre {0}</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>cuando se cumplen las condiciones</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>cuando no se cumplen</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>no se reproduce, porque el If detiene la macro cuando sus condiciones no se cumplen</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · aún no hay acciones. Selecciona la rama y luego agrégalas.</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Las acciones nuevas van al final de {0} de #{1}</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>de {0} a {1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} o más</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>La acción #{0} va donde se encuentre {1}, pero ya no está dentro del Then de esa condición. Vuelve a ponerla dentro o elige un punto fijo.</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Comprobaciones por segundo</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>Cuántas veces por segundo miran la pantalla las condiciones mientras esperan. Menos comprobaciones dejan más recursos del equipo a otros programas; más comprobaciones detectan antes un cambio.</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>En cada fotograma</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Reconocimiento de pantalla</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Buscar imágenes con</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automático usa la tarjeta gráfica para las áreas grandes y el procesador para las pequeñas, que suele ser lo más rápido.</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automático</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Tarjeta gráfica</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Procesador</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>Pidió un píxel: {0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>Pidió una imagen: {0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>Pidió un área de búsqueda: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>Miró la pantalla: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>Comprobó una condición en la pantalla: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>Grabó lo que hiciste: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>Probó la macro {0}</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>Leyó un píxel de la pantalla: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>Tomó una imagen de la pantalla: {0}</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>Leyó el registro de la última ejecución de una macro</value></data>
+  <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Acción</value></data>
+  <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condición</value></data>
+  <data name="Condition_TextMenu" xml:space="preserve"><value>Texto en la pantalla (OCR)</value></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Volver a comprobar</value></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>Reintentar</value></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>Aún no se ha comprobado. Compruébala en la pantalla con el botón.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Una acción de Then va donde se encontró {0}. Cambia primero esa acción y luego quita la condición.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Una acción de Then va donde se encontró {0}, así que esta condición debe cumplirse cuando está en la pantalla. Cambia primero esa acción.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dos condiciones tienen el mismo Id. Dale a cada una el suyo.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Ponle un nombre.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>El concepto solo puede tener letras minúsculas, números y _, por ejemplo remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>Un componente necesita al menos una acción.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} está vinculado en estas macros: {1}. Desvincúlalo primero en ellas.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Algunos componentes de {0} están vinculados en estas macros: {1}. Desvincúlalos primero en ellas.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro no pudo leer la biblioteca, así que guardó una copia como library.invalid.json. No se puede cambiar la biblioteca hasta que se corrija el archivo.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Solo una fila vinculada a un componente tiene un ComponentId. Quita ComponentId o cambia Type a Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Elige el componente que quieres vincular con Agregar componente.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>La biblioteca ya no tiene este componente. Vincula otro con Agregar componente o elimina esta fila.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Una fila vinculada a un componente no tiene espera ni nombre propios: los tienen las acciones del componente. Quita DelayMs y Name.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Componente</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Agregar componente</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Componente · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Componente que falta</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Guardar como componente…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Desvincular</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Detén primero todos los bucles y macros: la biblioteca no cambia mientras algo se está ejecutando.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro no pudo guardar la biblioteca. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>Componente - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>Esta fila está vinculada: ejecuta el componente tal como está en la biblioteca y cambia cuando el componente cambia. Para cambiarla solo en esta macro, desvincúlala.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Colección</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Se usa en</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Sin usar</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>Lo que ejecuta</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Desvincular esta fila</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Abrir en la biblioteca</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Biblioteca</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>Buscar</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Importar</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Colecciones</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>Componentes</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Exportar colección</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Editar detalles</value></data>
+  <data name="Library_History" xml:space="preserve"><value>Historial</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>La biblioteca está vacía. Selecciona filas en una macro y usa Guardar como componente, o pide a tu aplicación de AI que guarde lo que funciona.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Agregar vinculados</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Cualquier aplicación</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Juego</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Oficina</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Navegador</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Creatividad</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Desarrollo</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat y correo</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Otro</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Encuentra algo</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Espera algo</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Lee un texto</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Reconoce el estado de la aplicación</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>Un punto</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Realiza una operación</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>¿Eliminar {0}?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>¿Eliminar {0} y todos sus componentes?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Cambiar nombre de la colección</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Cambiar nombre</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Eliminar colección</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>Historial - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Guardar como componente</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>Las acciones seleccionadas se convierten en un componente de la biblioteca, y estas filas quedan vinculadas a él.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>Lo que ves en la biblioteca y en la macro</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>Qué hace</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>Las aplicaciones de AI buscan los componentes por lo que hacen</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Concepto</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>En inglés, con letras minúsculas, números y _, como remove_one_affix. Las aplicaciones de AI lo usan para buscar.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>Descripción</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Opcional. Qué hace, en inglés, para las aplicaciones de AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Dónde se guarda y desde dónde se comparte</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>Nueva colección</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Nombre de la nueva colección</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Tipo de aplicación</value></data>
+  <data name="Library_App" xml:space="preserve"><value>Aplicación</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Su archivo .exe, como Diablo IV.exe. Déjalo vacío para cualquier aplicación.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Pantalla</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>El monitor en el que se tomaron sus puntos. En otra pantalla hay que cambiarlos.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2} %</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>Desconocida</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Acciones seleccionadas</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>Este archivo no se puede importar. La colección {0} que contiene es una versión distinta de la de tu biblioteca, y una colección se comparte completa, así que no se pueden mezclar. No se importó nada. Para importarlo, elimina primero tu colección si ninguna macro la usa, o pide un archivo hecho a partir de tu versión.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Este archivo no se puede importar. El componente {0} aparece dos veces en él, y un componente pertenece a una sola colección. No se importó nada.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>La colección {0} de este archivo no se puede importar. {1}</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Se usa en {0} macro</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Se usa en {0} macros</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Buscó en la biblioteca</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Leyó el componente {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Nuevo componente {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Componente {0} modificado</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>¿Guardar este nuevo componente en la biblioteca?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>¿Guardar los cambios de este componente? Todas las macros que lo vinculan ejecutarán el nuevo.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Solo las acciones de un componente pueden tomar el valor de un parámetro.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>{0} no puede tomar el valor de un parámetro. Aquí pueden hacerlo estos: {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Ningún campo de esta acción puede tomar el valor de un parámetro.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>{0} no se usa con la configuración actual de esta acción, así que no puede tomar el valor de un parámetro.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>El componente no tiene ningún parámetro llamado {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} es de tipo {1}, pero {2} admite el tipo {3}.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Solo un componente puede pasar uno de sus parámetros. En una macro, escribe el valor.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} no tiene ningún parámetro llamado {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} necesita un valor para {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Escribe un valor del tipo del parámetro, {"From": "a parameter of this component"} o {"Found": "a condition's Id"} con OffsetX y OffsetY si hace falta.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Solo una fila vinculada a un componente o una condición Componente tienen argumentos. Quita Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Solo un punto puede venir de donde una condición encontró algo, y {0} es de tipo {1}.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} no indica ningún lugar adonde ir: su componente comprueba un píxel, o algo que no está.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} no indica qué encuentra, así que no se puede usar como condición.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>Estos componentes se llamarían entre sí sin fin: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Los componentes pueden estar uno dentro de otro hasta {0} niveles, y aquí habría {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>El nombre de un parámetro empieza por una letra, seguida de letras, números o _, hasta 40 caracteres.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>Dos parámetros no pueden tener el mismo nombre.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>Un número necesita su unidad: Pixels, Ms, Seconds, Count o Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Solo un número tiene unidad. Quita Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Indica un ejemplo: el valor que muestra el editor y con el que se ejecuta una prueba.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Aquí escribe un valor, no {"From"} ni {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>Este componente no tiene la condición que indica Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>Lo que encuentra un componente no puede depender de un lugar encontrado fuera de él.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Escribe un punto como {"X": 100, "Y": 200}, en píxeles enteros.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Escribe un número.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Escribe un número entero.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Escribe un texto entre comillas.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>Aquí el texto no puede estar vacío.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Escribe una tecla igual que una tecla de acceso rápido, por ejemplo {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Aquí elige una tecla del teclado, no un botón del mouse.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Aquí la tecla va sola, sin Ctrl, Alt, Mayús ni Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Indica las imágenes como [{"Id": …, "X": …, "Y": …}], al menos una.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Escribe un área como {"X", "Y", "Width", "Height"}, en píxeles enteros.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>Ningún valor sirve para todos los campos a los que va este parámetro: sus límites no se superponen.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Punto</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Número</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Texto</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Tecla</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Color</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Imagen</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Área</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>píxeles</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>veces</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} imagen</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} imágenes</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>Con este cambio, {0} tendría un problema: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>Esta fila no se puede desvincular. Uno de sus valores es el lugar donde una condición encontró algo, y su componente usa ese valor como punto de un píxel, que no puede ser un lugar encontrado.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>Un valor</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>Desde {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>De dónde viene el valor</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>Valor</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>cada llamada pasa un valor</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} si se omite</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Su valor predeterminado, {0}</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Revisa el valor de {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>en {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Argumentos</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Los valores que esta llamada pasa al componente</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Componente</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condición a partir de un componente</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>Un componente de la biblioteca que indica qué encuentra</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Elegir</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>Aún no se eligió ningún componente</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>Lo encuentra</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>No lo encuentra</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} lo encuentra</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} no lo encuentra</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>Encontrado ahora en {0}, {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>Ahora se cumple.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Ahora no se cumple.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Parámetros</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>Los valores que cada llamada pasa a este componente. Un campo de sus acciones toma uno si eliges Desde en su lista.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>Agregar parámetro</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Editar parámetro</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Quitar parámetro</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Agregar parámetro</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Editar parámetro - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Letras, números y _, empezando por una letra. Las llamadas pasan el valor con este nombre.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>Tipo</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>El tipo de campo al que da un valor</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>Lo que mide el número. Solo puede ir donde se usa la misma unidad.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Píxeles</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Milisegundos (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Segundos (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Veces</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Porcentaje (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>Ejemplo</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>El valor de sus campos, el que muestra el editor y con el que se ejecuta una prueba</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Cada llamada pasa un valor</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>Si está desactivado, una llamada puede omitirlo y se usa el valor predeterminado.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>Valor predeterminado</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>El valor que se usa cuando una llamada lo omite</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Opcional, en inglés, para las aplicaciones de AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Revisa el ejemplo. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Revisa el valor predeterminado. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>Qué hace</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Editar componente - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Uso como condición</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Se puede usar como condición</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>Un If lo comprueba como una condición: se cumple cuando se cumple la condición que elijas aquí, y "Donde se encuentre …" va al lugar que encuentra esa condición.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>Qué encuentra</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>Una de sus condiciones</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Elige cuál de sus condiciones encuentra, o desactiva Se puede usar como condición.</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>Esta fila llama a un componente: lo ejecuta tal como está en la biblioteca, con los valores de abajo, que son propios de esta fila.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Actualizar las llamadas</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>Este cambio actualiza las llamadas</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>También cambia {0} llamada de {1}. Todo se guarda a la vez: si algo no se puede guardar, no cambia nada.</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>También cambian {0} llamadas de {1}. Todo se guarda a la vez: si algo no se puede guardar, no cambia nada.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. Las llamadas que no pasan un valor de este tipo reciben este, y cada llamada puede cambiarlo después.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>Se quita {0}</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Se elimina el valor que le pasa cada llamada.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} ahora se llama {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>Las llamadas mantienen su valor con el nuevo nombre.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Llamadas que cambian</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Macro</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Componente</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} llamada</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} llamadas</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Actualizar y guardar</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Escribe una cuadrícula como {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, en píxeles enteros.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Una cuadrícula tiene de 1 a {0} columnas y de 1 a {0} filas, y como máximo {1} celdas.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Con una sola columna, la primera y la última celda deben tener la misma X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Con una sola fila, la primera y la última celda deben tener la misma Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} es una cuadrícula, así que este punto necesita una celda. Indica cuál con Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Una celda solo se usa dentro de un componente, cuando el punto viene de un parámetro de tipo Cuadrícula.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Esta fila no se puede desvincular. Una de sus celdas está fuera de su cuadrícula.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Esta fila no se puede desvincular. Su cuadrícula es un valor fijo, pero su celda viene de un parámetro del componente que la contiene, y una fila normal no puede elegir una celda.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Cuadrícula</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} desde {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} celda, numerada fila por fila desde la esquina superior izquierda, empezando por 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} celdas, numeradas fila por fila desde la esquina superior izquierda, empezando por 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>La última celda, la número {0}, está en {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Primera celda</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>El punto que se usa en la celda de arriba a la izquierda</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Última celda</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>El mismo punto en la celda de abajo a la derecha</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Columnas</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Filas</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Mostrar las celdas</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Muestra en la pantalla el punto de cada celda con su número, para comprobar la cuadrícula</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Las celdas de la cuadrícula</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Cada círculo es el punto de una celda, con su número. Haz clic en cualquier lugar para cerrar.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Una celda de {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Celda</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Numeradas fila por fila desde la esquina superior izquierda, empezando por 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Cuadrícula de esta llamada</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>La cuadrícula que pasa esta llamada, por ejemplo para otro tamaño de pantalla</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>en la celda {0} de {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>En {3}, la celda {1} de {2} no existe. Esa cuadrícula solo tiene {0} celda.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>En {3}, la celda {1} de {2} no existe. Esa cuadrícula tiene {0} celdas.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} se usa en estos componentes: {1}. Primero deja de usarlo allí.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} está vinculado en estas macros: {1}, y se usa en estos componentes: {2}. Primero deja de usarlo allí.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Algunos componentes de {0} se usan en componentes de otras colecciones: {1}. Primero deja de usarlos allí.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Algunos componentes de {0} están vinculados en estas macros: {1}, y se usan en componentes de otras colecciones: {2}. Primero deja de usarlos allí.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Se usa en {0} componente</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Se usa en {0} componentes</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Se usa en {0} y {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} componente</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} componentes</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Eliminó el componente {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>¿Eliminar este componente de la biblioteca?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro no pudo abrir su archivo de configuración. Es posible que otro programa lo esté usando. Tus bucles, reasignaciones y configuración siguen en él, intactos. PuppyMacro se inició con la configuración predeterminada y no guardará ningún cambio hasta que vuelvas a iniciarlo.
+Detalles: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro no pudo abrir el archivo de configuración al iniciarse, así que no guarda nada para no modificar tu archivo. Vuelve a iniciar PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Colección de la biblioteca {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>{0} se cumple</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>{0} no se cumple</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>Después de esperar {0} s.</value></data>
 </root>

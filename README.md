@@ -37,3 +37,6 @@ See [.claude/rules/](.claude/rules/).
 - [Microsoft.Extensions.AI.Abstractions](https://github.com/dotnet/extensions),
   [Microsoft.Extensions.Logging.Abstractions and Microsoft.Extensions.DependencyInjection.Abstractions](https://github.com/dotnet/runtime)
   (.NET Foundation, MIT), used by the MCP SDK
+- [OpenCvSharp](https://github.com/shimat/opencvsharp) (OpenCvSharp4 and OpenCvSharp4.runtime.win.slim, Apache-2.0), with
+  [OpenCV](https://github.com/opencv/opencv) (Apache-2.0) and the third-party libraries built into its native library,
+  under their own licenses ([OpenCV's 3rdparty](https://github.com/opencv/opencv/tree/4.x/3rdparty))

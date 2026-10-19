@@ -211,6 +211,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>Ghidul utilizatorului</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Indisponibil în versiunea de dezvoltare</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Date salvate în {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Date de depanare</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Jurnale și imagini ale ecranului din cererile AI și din macrocomenzile cu Debug activat, păstrate 7 zile pe acest PC. Ocupă {0}.</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Ștergeți datele de depanare</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Totul, în afară de ce este în desfășurare acum.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Ștergeți tot</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Ștergeți datele de depanare ale PuppyMacro? Ce este în desfășurare acum rămâne.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Tastele rapide nu funcționează acum:
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro este încă în execuție în zona de notificare. Faceți clic dreapta pe pictograma sa pentru a ieși.</value></data>
@@ -372,6 +380,10 @@ Detalii: {1}</value></data>
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Dezactivat: elementele noi și modificate de AI sunt salvate imediat, gata de încercat.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Întreabă înainte de a modifica setările</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Temă, taste rapide globale, panou de suprapunere, sunet</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>Permiteți aplicațiilor AI să vadă ecranul</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>Imaginile ecranului și ce citește acolo o condiție a unei macrocomenzi ajung la aplicația AI și la furnizorul ei. Astfel poate crea macrocomenzi care privesc ecranul.</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>Permiteți aplicațiilor AI să testeze macrocomenzi</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>După ce apăsați Pornire, aplicația AI poate reda o macrocomandă salvată ca să vadă cum merge. Opriți tot o oprește.</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Pornește PuppyMacro când o aplicație AI are nevoie de el</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Dezactivat: cât timp PuppyMacro este închis, aplicațiile AI nu îl pot utiliza și vă spun să îl deschideți.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Aplicații</value></data>
@@ -426,6 +438,7 @@ Detalii: {1}</value></data>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>Toate tipurile</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>Toate rezultatele</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Restaurare</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Deschidere depanare</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Detalii</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Nicio cerere încă.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Nicio cerere nu corespunde filtrelor.</value></data>
@@ -448,6 +461,10 @@ Detalii: {1}</value></data>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Apăsați {0} când sunteți gata · {1} anulează</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Pornire</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>Gata</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>Puteți reveni la {0}.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>Puteți reveni la aplicația AI.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>OK</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>Alegeți un punct</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Faceți clic pe punctul la care trebuie să ajungă cursorul</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>Anulare</value></data>
@@ -516,6 +533,14 @@ Detalii: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Orice tastă sau buton al mouse-ului, cum ar fi F2 sau A. Pentru o combinație, țineți apăsat mai întâi Ctrl, Alt, Shift sau Win; clicul stânga și dreapta, rotița de defilare și Esc necesită una. Menținere necesită o tastă rapidă.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sunet</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Se redă când macrocomanda pornește și se oprește</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Păstrează jurnalul fiecărei rulări a acestei macrocomenzi, cu o imagine a ecranului înainte de fiecare pas, timp de 7 zile pe acest PC.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Vizualizare jurnal</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Jurnalul pentru {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>Ultima rulare a macrocomenzii, scrisă în engleză ca să o puteți lipi oriunde. Imaginile ecranului sunt în folderul ei.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Jurnal</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copiere</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Deschidere folder</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Acest jurnal nu mai există. Jurnalele se șterg când se închide PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Faceți clic pe un sunet pentru a-l alege și a auzi cum pornește și se oprește</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Salvare</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Anulare</value></data>
@@ -1023,6 +1048,20 @@ Detalii: {1}</value></data>
   <data name="Code_PathEmpty" xml:space="preserve"><value>Un traseu necesită cel puțin un punct.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Timpii trebuie să înceapă de la 0 sau mai mult și să nu scadă niciodată.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Introduceți textul de lipit.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Doar o acțiune If are condiții. Eliminați If sau setați Type la If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>O acțiune If are nevoie de condițiile și acțiunile ei în If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Adăugați cel puțin o condiție.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Dați un nume condiției, ca acțiunile din Then să poată face clic acolo unde a fost găsită.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>O altă condiție a acestei macrocomenzi are același nume. Dați fiecăreia un nume propriu.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Scrieți culoarea ca # urmat de șase cifre hexazecimale, de exemplu #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Capturați imaginea de căutat cu Capturare de pe ecran.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Alegeți 10, 30 sau 60 de verificări pe secundă sau 0 pentru fiecare cadru.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro nu are această imagine. Capturați-o din nou cu Capturare de pe ecran.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Introduceți textul de căutat.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Text pe ecran caută într-o zonă pe care o desenați sau pe tot ecranul.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Doar Clic, Buton mouse apăsat, Buton mouse eliberat și Mutare la pot merge acolo unde s-a găsit ceva.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Această acțiune merge acolo unde o condiție și-a găsit imaginea sau textul, dar nu se află în Then-ul acelei condiții. Mutați-o înăuntru sau alegeți un punct fix.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Această acțiune merge acolo unde o condiție și-a găsit imaginea sau textul, dar acea condiție este adevărată când nu este pe ecran, deci nu găsește niciun loc. Alegeți un punct fix.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Panou de suprapunere PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Mutare panou</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Glisați pentru a muta panoul</value></data>
@@ -1156,4 +1195,454 @@ Detalii: {1}</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Grilă</value></data>
   <data name="Table_State" xml:space="preserve"><value>Stare</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Editare</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Alegeți pixelul</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Faceți clic pe pixelul de verificat. Se preia și culoarea lui.</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Capturați imaginea</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Glisați în jurul imaginii de căutat. Glisați din nou pentru a o schimba.</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Desenați zona de căutare</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Glisați peste zona în care caută PuppyMacro. Cu cât zona este mai mică, cu atât căutarea este mai rapidă.</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Capturare imagine</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Utilizați această zonă</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro nu poate vedea ecranul acum. Încercați din nou peste câteva momente.</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>Această zonă are o singură culoare, așa că PuppyMacro nu ar putea s-o găsească niciodată ca imagine. Glisați în jurul unui element cu mai multe detalii sau verificați culoarea cu o condiție de tip Culoare pixel.</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Punct fix</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Punct</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Locul găsit de {0}</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Într-un If, acțiunea poate merge acolo unde o condiție și-a găsit imaginea sau textul, oriunde s-ar afla de data aceasta.</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Deplasare față de centru</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Pixeli spre dreapta și în jos. Utilizați numere negative pentru a merge spre stânga sau în sus.</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Pixeli spre dreapta</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Pixeli în jos</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>la locul găsit de {0}</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Adăugare condiție</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Editare condiție - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Culoare pixel</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Imagine pe ecran</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Text pe ecran</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Imagine</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Text</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Condiții</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Adăugare condiție</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Adăugați o condiție cu Adăugare condiție.</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Eliminare condiție</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Eliminare imagine</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Acțiunile din Then utilizează acest nume pentru a merge la locul găsit.</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Pixel</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Culoare</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Preluată de pe ecran când alegeți pixelul.</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Toleranță</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>Cât de mult poate diferi culoarea de pe ecran. La 0%, contează doar exact aceeași culoare.</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Imagini</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>Condiția este adevărată când una dintre ele apare pe ecran.</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Capturare de pe ecran</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Capturare altă imagine</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} pixeli, capturată la {2}, {3}</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro nu are această imagine. Capturați-o din nou.</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Zonă de căutare</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>În jurul locului unde a fost capturată</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>Tot ecranul</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>O zonă pe care o desenez</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Lângă locul unde a fost capturată imaginea, ceea ce este rapid. Imaginea este găsită chiar dacă se mută puțin.</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Desenați zona cu Desenare pe ecran.</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>La {0}, {1}, {2} × {3} pixeli. Cu cât zona este mai mică, cu atât căutarea este mai rapidă.</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Desenare pe ecran</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Desenați zona de căutare cu Desenare pe ecran.</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>Puțin mai mare sau mai mică</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>Găsește imaginea și când aplicația o afișează puțin mai mare sau mai mică, cu până la 15%. Durează mai mult.</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Asemănare</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>Cât de mult trebuie să semene ecranul cu imaginea. Micșorați puțin valoarea dacă imaginea se schimbă, de exemplu din cauza luminii sau a efectelor.</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Text</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Potrivire</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Dacă textul găsit poate avea și alte cuvinte în jurul lui.</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Conține textul</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Exact aceste cuvinte</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Potrivire litere mari și mici</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Limbă</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>Limba textului de pe ecran. Lista arată limbile pe care Windows le poate citi pe acest PC.</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Limba Windows</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Limba Windows ({0})</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Acum pe ecran</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro citește textul cu recunoașterea textului din Windows, care este mai lentă decât căutarea unei imagini. Utilizați-o când cuvintele rămân aceleași, dar aspectul lor se schimbă, de exemplu fontul, culoarea sau fundalul. Păstrați zona de căutare mică.</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>Când se execută Then</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Then se execută când toate condițiile sunt adevărate sau imediat ce una dintre ele este adevărată.</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>Toate sunt adevărate</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>Una dintre ele este adevărată</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Așteptare</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>În timp ce așteaptă, PuppyMacro verifică din nou de fiecare dată când se schimbă ecranul.</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Verificare o singură dată</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Până la</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>Cât este nevoie</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Secunde de așteptare</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Introduceți câte secunde să se aștepte, între 0,1 și 86.400.</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>Dacă condițiile nu sunt adevărate</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Imediat după o singură verificare.</value></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>După {0} secundă de așteptare.</value></data>
+  <data name="Condition_IfNotTrueAfter_few" xml:space="preserve"><value>După {0} secunde de așteptare.</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>După {0} de secunde de așteptare.</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>Macrocomanda așteaptă până când sunt adevărate sau până când o opriți.</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Executare acțiuni din Else</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Oprire macrocomandă</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Verifică acum condițiile pe ecran, fără a executa nicio acțiune</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} este {2}, cu o toleranță de {3}%</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Alegeți pixelul de pe ecran.</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, asemănare de {2}%</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Capturați imaginea de pe ecran.</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Conține „{0}”, {1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exact „{0}”, {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>Adevărată când</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>O condiție poate fi adevărată și atunci când ceva nu este acolo, de exemplu pentru a aștepta să se închidă o fereastră.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>Pixelul are această culoare</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>Pixelul nu are această culoare</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>Imaginea este pe ecran</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>Imaginea nu este pe ecran</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>Textul este pe ecran</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>Textul nu este pe ecran</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} nu este {2}, cu o toleranță de {3}%</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} nu este pe ecran, {1}, asemănare de {2}%</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Nu conține „{0}”, {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Nu exact „{0}”, {1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Scrieți textul de căutat.</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>în jurul locului unde a fost capturată</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>pe tot ecranul</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>în zona desenată</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>Pixelul se potrivește acum. Culoarea lui este {0}.</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>Pixelul nu se potrivește acum. Culoarea lui este {0}, cu o diferență de {1}%, mai mare decât toleranța de {2}%.</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>Găsită acum la {0}, {1}, cu o asemănare de {2}%.</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>Imaginea nu este pe ecran acum. Cea mai apropiată potrivire are o asemănare de {0}%, iar această condiție necesită {1}%.</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>Găsit acum la {0}, {1}.</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>„{0}” nu este pe ecran acum. PuppyMacro a citit „{1}” în zona de căutare.</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>„{0}” nu este pe ecran acum. PuppyMacro nu a citit niciun text în zona de căutare.</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro vede doar negru în această zonă. Este posibil ca aplicația să blocheze captura de ecran sau să ruleze pe ecran complet exclusiv. Încercați modul fără margini sau modul fereastră al aplicației.</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows nu poate citi text în {0} pe acest PC. Adăugați limba în Setări Windows, la Timp &amp; limbă › Limbă &amp; regiune, apoi alegeți-o din nou aici.</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>Zona de căutare se află pe un ecran care nu este conectat acum. Desenați din nou zona pe un ecran pe care îl aveți.</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>nicio condiție încă</value></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} condiție, toate adevărate</value></data>
+  <data name="MacroEditor_RowIfAll_few" xml:space="preserve"><value>{0} condiții, toate adevărate</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} de condiții, toate adevărate</value></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} condiție, ajunge una</value></data>
+  <data name="MacroEditor_RowIfAny_few" xml:space="preserve"><value>{0} condiții, ajunge una</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} de condiții, ajunge una</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>verifică o dată</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>așteaptă până la {0} s</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>așteaptă cât este nevoie</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>pixelul de la {0}, {1} este {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} este pe ecran</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>„{0}” este pe ecran</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>pixelul de la {0}, {1} nu este {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} nu este pe ecran</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>„{0}” nu este pe ecran</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>la locul găsit de {0}</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>când condițiile sunt adevărate</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>când nu sunt</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>nu se redă, deoarece If oprește macrocomanda când condițiile sale nu sunt adevărate</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · nicio acțiune încă. Selectați această ramură, apoi adăugați acțiuni.</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Acțiunile noi se adaugă la sfârșitul ramurii {0} din #{1}</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>între {0} și {1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} sau mai mult</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>Acțiunea #{0} merge la locul găsit de {1}, dar nu se mai află în Then-ul acelei condiții. Mutați-o înapoi înăuntru sau alegeți un punct fix.</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Verificări pe secundă</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>De câte ori pe secundă verifică condițiile ecranul cât timp așteaptă. Mai puține verificări lasă mai multe resurse ale computerului pentru alte programe, iar mai multe verificări observă mai repede o schimbare.</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>Fiecare cadru</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Recunoaștere ecran</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Căutare imagini cu</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automat utilizează placa grafică pentru zone mari și procesorul pentru zone mici, ceea ce este de obicei cel mai rapid.</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automat</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Placă grafică</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Procesor</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>A cerut un pixel: {0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>A cerut o imagine: {0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>A cerut o zonă de căutare: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>A privit ecranul: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>A verificat o condiție pe ecran: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>A înregistrat ce ați făcut: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>A testat macrocomanda {0}</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>A citit un pixel al ecranului: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>A preluat o imagine de pe ecran: {0}</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>A citit jurnalul ultimei rulări a unei macrocomenzi</value></data>
+  <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Acțiune</value></data>
+  <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condiție</value></data>
+  <data name="Condition_TextMenu" xml:space="preserve"><value>Text pe ecran (OCR)</value></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Verificare din nou</value></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>Reîncercare</value></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>Nu a fost verificată încă. Verificați-o pe ecran cu butonul.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>O acțiune din Then merge în locul găsit de {0}. Modificați mai întâi acea acțiune, apoi eliminați condiția.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>O acțiune din Then merge în locul găsit de {0}, deci această condiție trebuie să fie adevărată când este pe ecran. Modificați mai întâi acea acțiune.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Două condiții au același Id. Dați fiecăreia propriul Id.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Dați-i un nume.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>Conceptul poate conține doar litere mici, cifre și _, de exemplu remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>O componentă are nevoie de cel puțin o acțiune.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} este legată în aceste macrocomenzi: {1}. Anulați mai întâi legătura acolo.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Unele componente din {0} sunt legate în aceste macrocomenzi: {1}. Anulați mai întâi legăturile acolo.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro nu a putut citi biblioteca, așa că a păstrat o copie ca library.invalid.json. Biblioteca nu poate fi modificată până când fișierul nu este reparat.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Doar un rând legat de o componentă are un ComponentId. Eliminați ComponentId sau setați Type la Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Alegeți componenta de legat cu Adăugare componentă.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>Biblioteca nu mai conține această componentă. Legați alta cu Adăugare componentă sau ștergeți acest rând.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Un rând legat de o componentă nu are o așteptare sau un nume propriu: le au acțiunile componentei. Eliminați DelayMs și Name.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Componentă</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Adăugare componentă</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Componentă · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Componentă lipsă</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Salvare ca componentă…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Anulare legătură</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Opriți mai întâi toate buclele și macrocomenzile: biblioteca nu se schimbă cât timp rulează ceva.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro nu a putut salva biblioteca. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>Componentă - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>Acest rând este legat: rulează componenta așa cum este în bibliotecă și se schimbă când se schimbă componenta. Pentru a-l modifica doar în această macrocomandă, anulați legătura.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Colecție</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Folosită în</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Nefolosită</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>Ce rulează</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Anulați legătura acestui rând</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Deschideți în bibliotecă</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Bibliotecă</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>Căutare</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Import</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Colecții</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>Componente</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Export colecție</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Editare detalii</value></data>
+  <data name="Library_History" xml:space="preserve"><value>Istoric</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Ștergere</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Biblioteca este goală. Selectați rânduri dintr-o macrocomandă și folosiți Salvare ca componentă sau cereți aplicației AI să salveze ce funcționează.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Adăugare legate</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Orice aplicație</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Joc</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Birou</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Browser</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Creație</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Dezvoltare</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat și e-mail</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Altele</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Găsește ceva</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Așteaptă ceva</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Citește un text</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Recunoaște starea aplicației</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>Un punct</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Execută o operație</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>Ștergeți {0}?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>Ștergeți {0} și toate componentele sale?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Redenumire colecție</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Redenumire</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Ștergere colecție</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>Istoric - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Salvare ca componentă</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>Acțiunile selectate devin o componentă a bibliotecii, iar aceste rânduri sunt legate de ea.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>Ce citiți în bibliotecă și în macrocomandă</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>Ce face</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>Aplicațiile AI caută componentele după ce fac</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Concept</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>În engleză, cu litere mici, cifre și _, de exemplu remove_one_affix. Aplicațiile AI caută după el.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>Descriere</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Opțional. Ce face, în engleză, pentru aplicațiile AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Unde este păstrată și de unde se partajează</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>Colecție nouă</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Numele colecției noi</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Tipul aplicației</value></data>
+  <data name="Library_App" xml:space="preserve"><value>Aplicație</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Fișierul .exe, de exemplu Diablo IV.exe. Lăsați gol pentru orice aplicație.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Ecran</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>Monitorul pe care au fost luate punctele. Pe alt ecran trebuie modificate.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>Necunoscut</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Acțiuni selectate</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>Acest fișier nu poate fi importat. Colecția {0} din el este o versiune diferită de cea din biblioteca dvs., iar o colecție se partajează întreagă, așa că cele două nu pot fi combinate. Nu s-a importat nimic. Pentru a-l importa, ștergeți mai întâi colecția dvs. dacă nu o folosește nicio macrocomandă sau cereți un fișier creat din versiunea dvs.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Acest fișier nu poate fi importat. Componenta {0} apare de două ori în el, iar o componentă aparține unei singure colecții. Nu s-a importat nimic.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Colecția {0} din acest fișier nu poate fi importată. {1}</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Folosită în {0} macrocomandă</value></data>
+  <data name="Library_UsedInMacros_few" xml:space="preserve"><value>Folosită în {0} macrocomenzi</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Folosită în {0} de macrocomenzi</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>A căutat în bibliotecă</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>A citit componenta {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Componentă nouă {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Componenta {0} a fost modificată</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Salvați această componentă nouă în bibliotecă?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Salvați modificările acestei componente? Toate macrocomenzile legate de ea vor rula noua versiune.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Doar acțiunile unei componente pot prelua valoarea unui parametru.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>Câmpul {0} nu poate prelua valoarea unui parametru. Aici o pot prelua doar {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Nimic din această acțiune nu poate prelua valoarea unui parametru.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>Câmpul {0} nu este folosit așa cum este setată această acțiune, deci nu poate prelua valoarea unui parametru.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>Componenta nu are niciun parametru numit {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} este de tipul {1}, iar {2} acceptă tipul {3}.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Doar o componentă poate transmite mai departe unul dintre parametrii săi. Într-o macrocomandă, scrieți valoarea.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} nu are niciun parametru numit {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} are nevoie de o valoare pentru {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Scrieți o valoare de tipul parametrului, {"From": "un parametru al acestei componente"} sau {"Found": "Id-ul unei condiții"}, cu OffsetX și OffsetY dacă este nevoie.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Doar un rând legat de o componentă sau o condiție de tip Componentă are argumente. Eliminați Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Doar un punct poate proveni din locul în care o condiție a găsit ceva, iar {0} este de tipul {1}.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} nu oferă niciun loc în care să se meargă: componenta sa verifică un pixel sau ceva ce nu este acolo.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} nu spune ce găsește, deci nu poate servi drept condiție.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>Aceste componente s-ar apela una pe alta la nesfârșit: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Componentele pot fi incluse una în alta pe cel mult {0} niveluri, iar aici ar fi {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>Numele unui parametru începe cu o literă, urmată de litere, cifre sau _, și are cel mult 40 de caractere.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>Doi parametri nu pot avea același nume.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>Un număr are nevoie de unitatea sa: Pixels, Ms, Seconds, Count sau Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Doar un număr are unitate. Eliminați Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Dați un exemplu: valoarea pe care o afișează editorul și cu care rulează un test.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Aici scrieți o valoare, nu {"From"} sau {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>Această componentă nu are condiția indicată de Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>Ce găsește o componentă nu poate depinde de un loc găsit în afara ei.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Scrieți un punct ca {"X": 100, "Y": 200}, în pixeli întregi.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Scrieți un număr.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Scrieți un număr întreg.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Scrieți un text între ghilimele.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>Textul nu poate fi gol aici.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Scrieți o tastă așa cum se scrie o tastă rapidă, de exemplu {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Aici alegeți o tastă de pe tastatură, nu un buton al mouse-ului.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Aici tasta trebuie să fie singură, fără Ctrl, Alt, Shift sau Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Dați imaginile ca [{"Id": …, "X": …, "Y": …}], cel puțin una.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Scrieți o zonă ca {"X", "Y", "Width", "Height"}, în pixeli întregi.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>Nicio valoare nu se potrivește tuturor câmpurilor în care merge acest parametru, deoarece limitele lor nu se suprapun.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Punct</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Număr</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Text</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Tastă</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Culoare</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Imagine</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Zonă</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>pixeli</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>număr de ori</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} imagine</value></data>
+  <data name="Param_Images_few" xml:space="preserve"><value>{0} imagini</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} de imagini</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>Această modificare ar crea o problemă pentru {0}: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Una dintre valorile sale este locul în care o condiție a găsit ceva, iar componenta folosește acea valoare pentru punctul unui pixel, care nu poate prelua un loc găsit.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>O valoare</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>Din {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>De unde provine valoarea</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>Valoare</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>fiecare apel dă o valoare</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} dacă lipsește</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Valoarea implicită, {0}</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Verificați valoarea pentru {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>la {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Argumente</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Valorile pe care acest apel le dă componentei</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Componentă</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condiție dintr-o componentă</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>O componentă din bibliotecă ce spune ce găsește</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Alegere</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>Nicio componentă aleasă încă</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>Găsește ce caută</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>Nu găsește ce caută</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} găsește ce caută</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} nu găsește ce caută</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>Găsit acum la {0}, {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>Adevărată acum.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Nu este adevărată acum.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Parametri</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>Valorile pe care fiecare apel le dă acestei componente. Un câmp al acțiunilor ei preia una dintre ele când alegeți Din în lista sa.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>Adăugare parametru</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Editare parametru</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Eliminare parametru</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Adăugare parametru</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Editare parametru - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>Nume</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Litere, cifre și _, începând cu o literă. Apelurile dau valoarea după acest nume.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>Tip</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>Tipul de câmp căruia îi dă o valoare</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Unitate</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>Ce măsoară numărul. Poate fi folosit doar acolo unde se folosește aceeași unitate.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Pixeli</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Milisecunde (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Secunde (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Număr de ori</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Procent (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>Exemplu</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>Valoarea din câmpurile sale, pe care o afișează editorul și cu care rulează un test</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Fiecare apel dă o valoare</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>Când este dezactivat, un apel îl poate omite și se folosește valoarea implicită.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>Valoare implicită</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>Valoarea folosită când un apel îl omite</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Opțional, în engleză, pentru aplicațiile AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Verificați exemplul. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Verificați valoarea implicită. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>Ce face</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Editare componentă - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Utilizare ca o condiție</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Poate fi folosită ca o condiție</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>Un If o verifică drept condiție. Este adevărată când este adevărată condiția aleasă aici, iar „Locul găsit de …” merge acolo unde acea condiție găsește ce caută.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>Ce găsește</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>Una dintre condițiile ei</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Alegeți care dintre condițiile ei spune ce găsește sau dezactivați Poate fi folosită ca o condiție.</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>Acest rând apelează o componentă: o rulează așa cum este în bibliotecă, cu valorile de mai jos, care aparțin doar acestui rând.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Editare</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Actualizare apeluri</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>Această modificare actualizează apelurile</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>Această modificare schimbă și {0} apel la componenta {1}. Totul se salvează împreună: dacă ceva nu poate fi salvat, nu se schimbă nimic.</value></data>
+  <data name="Signature_Intro_few" xml:space="preserve"><value>Această modificare schimbă și {0} apeluri la componenta {1}. Totul se salvează împreună: dacă ceva nu poate fi salvat, nu se schimbă nimic.</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>Această modificare schimbă și {0} de apeluri la componenta {1}. Totul se salvează împreună: dacă ceva nu poate fi salvat, nu se schimbă nimic.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. Apelurile care nu dau o valoare de acest tip o primesc pe aceasta; fiecare apel o poate modifica ulterior.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>Parametrul {0} este eliminat</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Valoarea pe care o dă fiecare apel pentru el dispare.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} se numește acum {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>Apelurile își păstrează valoarea sub noul nume.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Apeluri care se modifică</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Macrocomandă</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Componentă</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} apel</value></data>
+  <data name="Signature_Calls_few" xml:space="preserve"><value>{0} apeluri</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} de apeluri</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Actualizare și salvare</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Scrieți o grilă ca {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, în pixeli întregi.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>O grilă are între 1 și {0} coloane, între 1 și {0} rânduri și cel mult {1} celule.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Când există o singură coloană, prima și ultima celulă trebuie să aibă același X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Când există un singur rând, prima și ultima celulă trebuie să aibă același Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} este o grilă, deci acest punct are nevoie de o celulă. Indicați care cu Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>O celulă se folosește doar într-o componentă, când punctul provine dintr-un parametru de tip Grilă.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Una dintre celulele sale se află în afara grilei sale.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Legătura acestui rând nu poate fi anulată. Grila sa este o valoare fixă, dar celula sa provine dintr-un parametru al componentei care îl conține, iar un rând obișnuit nu poate alege o celulă.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Grilă</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} de la {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} celulă, numerotată rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridCells_few" xml:space="preserve"><value>{0} celule, numerotate rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} de celule, numerotate rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>Ultima celulă, cu numărul {0}, se află la {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Prima celulă</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>Punctul de folosit în celula din stânga sus</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Ultima celulă</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>Același punct în celula din dreapta jos</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Coloane</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Rânduri</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Afișare celule</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Afișează pe ecran punctul fiecărei celule cu numărul ei, ca să verificați grila</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Celulele grilei</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Fiecare cerc este punctul unei celule, cu numărul ei. Faceți clic oriunde pentru a închide.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>O celulă din {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Celulă</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Numerotate rând cu rând din colțul din stânga sus, începând cu 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Grila acestui apel</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Grila pe care o dă acest apel, de exemplu pentru o altă dimensiune a ecranului</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>în celula {0} din {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are doar {0} celulă.</value></data>
+  <data name="Code_CellOutside_few" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are {0} celule.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>În {3}, celula {1} din {2} nu există. Grila respectivă are {0} de celule.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} este folosită de aceste componente: {1}. Mai întâi eliminați-o de acolo.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} este legată în aceste macrocomenzi: {1} și este folosită de aceste componente: {2}. Mai întâi eliminați-o de acolo.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Unele componente din {0} sunt folosite de componente din alte colecții: {1}. Mai întâi eliminați-le de acolo.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Unele componente din {0} sunt legate în aceste macrocomenzi: {1} și sunt folosite de componente din alte colecții: {2}. Mai întâi eliminați-le de acolo.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Folosită în {0} componentă</value></data>
+  <data name="Library_UsedInComponents_few" xml:space="preserve"><value>Folosită în {0} componente</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Folosită în {0} de componente</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Folosită în {0} și {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} componentă</value></data>
+  <data name="Library_ComponentCount_few" xml:space="preserve"><value>{0} componente</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} de componente</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>A șters componenta {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Ștergeți această componentă din bibliotecă?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro nu a putut deschide fișierul de setări. Este posibil ca un alt program să îl folosească. Buclele, remapările și setările dvs. sunt încă în el, neatinse. PuppyMacro a pornit cu setările implicite și nu salvează nicio modificare până când nu îl reporniți.
+Detalii: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro nu a putut deschide fișierul de setări la pornire, așa că nu salvează nimic, pentru a vă păstra fișierul așa cum este. Reporniți PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Colecția din bibliotecă {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>condiția {0} este adevărată</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>condiția {0} nu este adevărată</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>După {0} s de așteptare.</value></data>
 </root>

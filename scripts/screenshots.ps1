@@ -1,5 +1,6 @@
 # The create_release_pr workflow's take_screenshots: retakes the editor screenshots of the user guide (site/guide/img:
-# loop-editor.png, macro-editor.png, macro-editor-code.png, remap-editor.png; the main window on the AI page, ai-page.png)
+# loop-editor.png, macro-editor.png, macro-editor-code.png, condition-editor.png, remap-editor.png, the Library window
+# library.png; the main window on the AI page, ai-page.png)
 # and the home page's (site/assets/loops.png)
 # from the running development build (started before with scripts/dev.ps1 -Screenshots: PUPPYMACRO_SCREENSHOTS=1, so it
 # shows the sample data and no development build marks), on a screen of 1920 x 1080 (scripts/screen-resolution.ps1).
@@ -156,11 +157,43 @@ WaitFor { ByName $editor 'No problems.' } 'the Code view checked' | Out-Null
 Start-Sleep -Seconds 1
 Capture $editor (Join-Path $OutDir 'macro-editor-code.png')
 
+# The condition window of the sample's If: its row selected, then Edit action.
+$editor = OpenEditor 'Sample: accept when ready' 'Edit macro'
+$list = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'ActionList'))) } 'ActionList'
+$rows = $list.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
+$rows[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$edit = WaitFor { $editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'EditActionButton'))) } 'EditActionButton'
+$edit.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+# UI Automation shows a window under the window that owns it: the condition window is inside the macro editor.
+$condition = WaitFor { $editor.FindAll($TS::Children, (New-Object $PC($A::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window))) |
+    Where-Object { $_.Current.Name.StartsWith('Edit condition - ') } | Select-Object -First 1 } 'Edit condition'
+# Test checks the condition on the screen and shows what PuppyMacro sees. While a condition looks at the screen, and a few
+# seconds after, PuppyMacro's windows are left out of every capture (PrintWindow too): wait until they are back.
+$test = WaitFor { $condition.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'TestButton'))) } 'TestButton'
+$test.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Start-Sleep -Seconds 9
+Capture $condition (Join-Path $OutDir 'condition-editor.png')
+# Then the macro editor under it closes too.
+$editor.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'CancelButton'))).GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Start-Sleep -Milliseconds 800
+
 $remaps = WaitFor { ByName $main 'Remap' } 'Remap page'
 $remaps.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
 Start-Sleep -Seconds 1
 $editor = OpenEditor 'Sample: Caps Lock to Esc' 'Edit remap'
 Capture $editor (Join-Path $OutDir 'remap-editor.png')
+
+# The guide's Library (library.html): the Library window from the Macros page, with the samples' collection.
+$macrosPage = WaitFor { ByName $main 'Macros' } 'Macros page'
+$macrosPage.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+Start-Sleep -Seconds 1
+$libraryButton = WaitFor { $main.FindFirst($TS::Descendants, (New-Object $PC($A::AutomationIdProperty, 'LibraryButton'))) } 'Library button'
+$libraryButton.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+$library = WaitFor { $A::RootElement.FindAll($TS::Children, (New-Object $PC($A::ProcessIdProperty, $proc.Id))) |
+    Where-Object { $_.Current.Name -eq 'Library' } | Select-Object -First 1 } 'Library window'
+Capture $library (Join-Path $OutDir 'library.png')
+$library.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern).Close()
+Start-Sleep -Milliseconds 800
 
 $loops = ByName $main 'Loops'
 $loops.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()

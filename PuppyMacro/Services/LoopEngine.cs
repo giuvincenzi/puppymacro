@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Threading;
 using PuppyMacro.Models;
 using PuppyMacro.Native;
+using PuppyMacro.Services.Components;
 
 namespace PuppyMacro.Services;
 
@@ -19,16 +20,42 @@ internal sealed class EngineSnapshot
     public MacroDefinition[] Macros { get; init; } = Array.Empty<MacroDefinition>();
     public RemapDefinition[] Remaps { get; init; } = Array.Empty<RemapDefinition>();
 
-    public static EngineSnapshot From(AppSettings settings, MacroLibrary macros) => new()
+    /// <summary>The images of the macros' conditions, and where they are searched (Settings › Screen recognition).</summary>
+    public ImageStore? Images { get; init; }
+    public RecognitionDevice RecognitionDevice { get; init; }
+
+    /// <summary>
+    /// The macros whose calls to components fail the checks (a component the Library doesn't have, a wrong argument): they
+    /// can't play (their hotkey passes to the app).
+    /// </summary>
+    public IReadOnlySet<Guid> Unplayable { get; init; } = new HashSet<Guid>();
+
+    /// <summary>The Library's components, prepared once: what the macros' linked rows and Component conditions play.</summary>
+    public ComponentPrograms Components { get; init; } = ComponentPrograms.Empty;
+
+    /// <summary>
+    /// The snapshot of the data now: copies of the macros and the Library's components prepared once, here on the UI thread,
+    /// so playing never reads the Library.
+    /// </summary>
+    public static EngineSnapshot From(AppSettings settings, MacroLibrary macros)
     {
-        StopAll = settings.StopAllHotkey?.Clone(),
-        OverlayMode = settings.OverlayModeHotkey?.Clone(),
-        Record = settings.RecordHotkey?.Clone(),
-        OpenMain = settings.OpenMainHotkey?.Clone(),
-        Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
-        Macros = macros.Macros.Select(m => m.Clone()).ToArray(),
-        Remaps = settings.Remaps.Where(r => r.Enabled).Select(r => r.Clone()).ToArray(),
-    };
+        var copies = macros.Macros.Select(m => m.Clone()).ToList();
+        var signatures = new ComponentSignatures(macros.Library.AllComponents);
+        return new EngineSnapshot
+        {
+            StopAll = settings.StopAllHotkey?.Clone(),
+            OverlayMode = settings.OverlayModeHotkey?.Clone(),
+            Record = settings.RecordHotkey?.Clone(),
+            OpenMain = settings.OpenMainHotkey?.Clone(),
+            Loops = settings.Loops.Select(l => l.Clone()).ToArray(),
+            Macros = copies.ToArray(),
+            Remaps = settings.Remaps.Where(r => r.Enabled).Select(r => r.Clone()).ToArray(),
+            Images = macros.Images,
+            RecognitionDevice = settings.RecognitionDevice,
+            Unplayable = ComponentChecks.Unplayable(signatures, copies),
+            Components = ComponentPrograms.Prepare(signatures.All),
+        };
+    }
 }
 
 /// <summary>
@@ -108,12 +135,13 @@ internal sealed class LoopEngine : IDisposable
     private bool _recordMoves;
     private long _recordStart;
     private List<RawEvent> _recorded = new();
+
+    /// <summary>The modifiers whose press the recording has, so a release whose press came before it is left out.</summary>
+    private readonly HashSet<int> _recordedDown = new();
     private Action<List<RawEvent>>? _recordStopped;
 
     // ---- Clickable overlay panel ----
     private IReadOnlyList<PanelTarget>? _panelTargets;
-    private bool _swallowLeftUp;
-    private bool _swallowRightUp;
 
     // ---- Dragging the overlay panel by its move handle ----
     private bool _panelDragging;
@@ -126,6 +154,7 @@ internal sealed class LoopEngine : IDisposable
 
     // ---- The last app in front other than PuppyMacro (app-specific loops, macros and the overlay) ----
     private string? _foregroundApp;
+    private IntPtr _lastOtherWindow;
 
     private volatile bool _hotkeysSuspended;
 
@@ -168,12 +197,24 @@ internal sealed class LoopEngine : IDisposable
     public event Action<int>? RecordingProgress;
 
     /// <summary>
+    /// A key or button pressed while recording (the kind, its virtual-key code, X, Y, ms from the start), raised on a
+    /// thread-pool thread so the hook never waits: an AI app's recording takes the screen there.
+    /// </summary>
+    public event Action<RawEventKind, int, int, int, double>? RecordedInput;
+
+    /// <summary>
     /// Raised (asynchronously, on the UI thread) when another app comes in front, with its .exe name ("" when it
     /// cannot be read). PuppyMacro's own windows never count: the last other app stays.
     /// </summary>
     public event Action<string>? ForegroundAppChanged;
 
     /// <summary>The .exe name of the last app in front other than PuppyMacro; null until one is known.</summary>
+    /// <summary>The last window of another app that was in front (PuppyMacro's own windows never count).</summary>
+    public IntPtr LastOtherWindow
+    {
+        get { lock (_sync) return _lastOtherWindow; }
+    }
+
     public string? ForegroundApp
     {
         get { lock (_sync) return _foregroundApp; }
@@ -270,13 +311,19 @@ internal sealed class LoopEngine : IDisposable
 
     // ================= Macros =================
 
+    /// <summary>Starts a macro as the snapshot has it (with its components), whatever copy the caller holds.</summary>
     public void StartMacro(MacroDefinition macro)
     {
         lock (_sync)
         {
+            if (Playable(macro.Id) is not { } snapped)
+                return;
+            macro = snapped;
             if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
                 return;
-            var runner = new MacroRunner(macro, _paster);
+            // Debug on: the run writes its log (RunLog only queues, so this does not slow the hook that may call it).
+            var log = macro.Debug ? new RunLog(DebugStore.NewUserMacroRun(macro.Name), macro, "a run started by the user") : null;
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: log, programs: _snapshot.Components);
             runner.Exited += OnMacroExited;
             _runningMacros[macro.Id] = runner;
             runner.Start();
@@ -286,26 +333,68 @@ internal sealed class LoopEngine : IDisposable
     }
 
     /// <summary>
-    /// Plays <paramref name="action"/> once for the editor's Test (<see cref="MacroDefinition.ForTest"/>).
-    /// It is not a running macro: no sound, no state change. <paramref name="finished"/> runs on
-    /// the UI thread when it ends.
+    /// Plays a saved macro for an AI app's test (test_macro): a running macro as Play makes it (Stop all and its hotkey stop
+    /// it), always with its Debug log, saying <paramref name="why"/>. <paramref name="exited"/> runs on the macro's thread
+    /// when it ends. Null when it can't start (no actions, already running).
     /// </summary>
-    public void TestMacroAction(MacroAction action, Action finished)
+    public MacroRunner? StartMacroTest(MacroDefinition macro, string folder, string why, Action<MacroRunner> exited)
     {
-        var runner = new MacroRunner(MacroDefinition.ForTest(action), _paster);
-        runner.Exited += _ => _dispatcher.InvokeAsync(finished);
-        runner.Start();
+        lock (_sync)
+        {
+            if (Playable(macro.Id) is not { } snapped)
+                return null;
+            macro = snapped;
+            if (_runningMacros.ContainsKey(macro.Id) || macro.Actions.Count == 0)
+                return null;
+            var runner = new MacroRunner(macro, _paster, _snapshot.Images, _snapshot.RecognitionDevice, log: new RunLog(folder, macro, why),
+                programs: _snapshot.Components);
+            runner.Exited += OnMacroExited;
+            runner.Exited += exited;
+            _runningMacros[macro.Id] = runner;
+            runner.Start();
+            RequestSound(macro.SoundEnabled, macro.SoundName, start: true);
+            RaiseStateChanged();
+            return runner;
+        }
     }
+
+    /// <summary>
+    /// Plays <paramref name="action"/> once for the editor's Test (<see cref="MacroDefinition.ForTest"/>), with the
+    /// snapshot's components (a linked row plays its component). It runs as a macro of its own (no sound), so Stop all
+    /// stops it like any other. <paramref name="finished"/> runs on the UI thread when it ends, also when it is stopped.
+    /// </summary>
+    /// <param name="parameters">Inside a component's editor: its parameters, whose Examples the action's calls pass on.</param>
+    public void TestMacroAction(MacroAction action, Action finished, IEnumerable<ComponentParameter>? parameters = null)
+    {
+        lock (_sync)
+        {
+            var test = MacroDefinition.ForTest(action);
+            var runner = new MacroRunner(test, _paster, _snapshot.Images, _snapshot.RecognitionDevice,
+                programs: _snapshot.Components, arguments: parameters == null ? null : FrameArguments.Examples(parameters));
+            runner.Exited += OnMacroExited;
+            runner.Exited += _ => _dispatcher.InvokeAsync(finished);
+            _runningMacros[test.Id] = runner;
+            runner.Start();
+            RaiseStateChanged();
+        }
+    }
+
+    /// <summary>The snapshot's macro with this id, or null when it is not there or links a component the Library doesn't have.</summary>
+    private MacroDefinition? Playable(Guid id) =>
+        _snapshot.Unplayable.Contains(id) ? null : _snapshot.Macros.FirstOrDefault(m => m.Id == id);
 
     public void StopMacro(Guid macroId) => StopMacro(macroId, playSound: true);
 
-    private void StopMacro(Guid macroId, bool playSound)
+    /// <summary>Stops a macro, saying why in its Debug log (an AI app's test that reached its time limit).</summary>
+    public void StopMacro(Guid macroId, string why) => StopMacro(macroId, playSound: true, why);
+
+    private void StopMacro(Guid macroId, bool playSound, string? why = null)
     {
         lock (_sync)
         {
             if (!_runningMacros.Remove(macroId, out var runner))
                 return;
-            runner.Stop();
+            runner.Stop(why);
             if (playSound)
             {
                 var macro = _snapshot.Macros.FirstOrDefault(m => m.Id == macroId);
@@ -431,6 +520,7 @@ internal sealed class LoopEngine : IDisposable
         _recordMoves = recordMoves;
         _recording = true;
         _recorded = new List<RawEvent>();
+        _recordedDown.Clear();
         _recordStart = Stopwatch.GetTimestamp();
         UpdateMouseDetail();
         _dispatcher.InvokeAsync(() => started?.Invoke());
@@ -458,6 +548,8 @@ internal sealed class LoopEngine : IDisposable
     {
         double t = (Stopwatch.GetTimestamp() - _recordStart) * 1000.0 / Stopwatch.Frequency;
         _recorded.Add(new RawEvent(kind, vk, x, y, delta, t));
+        if (kind is RawEventKind.ButtonDown or RawEventKind.KeyDown && RecordedInput is { } recorded)
+            System.Threading.ThreadPool.QueueUserWorkItem(_ => recorded(kind, vk, x, y, t));
         if (_recorded.Count % 25 == 0 || kind != RawEventKind.Move)
         {
             int count = _recorded.Count;
@@ -535,14 +627,9 @@ internal sealed class LoopEngine : IDisposable
             if (_panelTargets != null && vk is KeyNames.VK_LBUTTON or KeyNames.VK_RBUTTON)
             {
                 bool left = vk == KeyNames.VK_LBUTTON;
-                if (kind == InputHook.MouseKind.ButtonUp && (left ? _swallowLeftUp : _swallowRightUp))
-                {
-                    if (left)
-                        _swallowLeftUp = false;
-                    else
-                        _swallowRightUp = false;
+                // The release of a press on the overlay: here, or in OnKey when overlay mode ended before it (its exit button).
+                if (kind == InputHook.MouseKind.ButtonUp && _swallowUp.Remove(vk))
                     return true;
-                }
                 if (kind == InputHook.MouseKind.ButtonDown && !_hotkeysSuspended && TargetAt(x, y) is PanelTarget target)
                 {
                     if (left && target.Id == PanelTarget.MoveOverlayId)
@@ -571,10 +658,7 @@ internal sealed class LoopEngine : IDisposable
                     }
                     if (target.PassThrough)
                         return false;
-                    if (left)
-                        _swallowLeftUp = true;
-                    else
-                        _swallowRightUp = true;
+                    _swallowUp.Add(vk);
                     return true;
                 }
             }
@@ -710,6 +794,11 @@ internal sealed class LoopEngine : IDisposable
             if (KeyNames.IsModifier(vk))
                 return OnModifier(vk, isDown, physicalModifierEvent, altGrCtrl);
 
+            // The release of a key PuppyMacro holds for something running (a remap's target, a Hold item's hotkey) comes
+            // first, whatever takes keys now (a key field waiting, a recording): otherwise the target or the item stays on.
+            if (!isDown && ReleaseOwned(vk) is bool owned)
+                return owned;
+
             // An AI request waits for the user to be ready: Enter or Esc alone, from any app, answers it; every other key
             // passes, so the user can open the right screen first (WatchReadyKeys). Not while PuppyMacro itself uses the
             // keys (a dialog or an editor open, a key field waiting, a recording). Only a press answers: the release of a
@@ -738,7 +827,17 @@ internal sealed class LoopEngine : IDisposable
                 {
                     _swallowUp.Add(vk);
                     if (_recording)
+                    {
+                        // The record hotkey's own modifiers, pressed last and still held: not part of the macro (their release
+                        // comes after the recording; played back they would stay down).
+                        while (_recorded.Count > 0 && _recorded[^1] is { Kind: RawEventKind.KeyDown } last && KeyNames.IsModifier(last.Vk)
+                               && _recordedDown.Contains(last.Vk))
+                        {
+                            _recordedDown.Remove(last.Vk);
+                            _recorded.RemoveAt(_recorded.Count - 1);
+                        }
                         StopRecording();
+                    }
                     else
                         BeginRecording(_recordMovesProvider?.Invoke() ?? true);
                     return Block();
@@ -756,27 +855,6 @@ internal sealed class LoopEngine : IDisposable
             {
                 if (_swallowUp.Remove(vk))
                     return Block();
-
-                if (_activeRemaps.Remove(vk, out var remapTarget))
-                {
-                    _injector.Post(() => SendRemapTarget(remapTarget, isDown: false));
-                    return true;
-                }
-
-                if (_heldHotkeys.Remove(vk))
-                {
-                    foreach (var loop in snap.Loops)
-                    {
-                        if (loop.Mode == ActivationMode.Hold && loop.Hotkey?.Vk == vk)
-                            StopLoop(loop.Id);
-                    }
-                    foreach (var macro in snap.Macros)
-                    {
-                        if (macro.Mode == ActivationMode.Hold && macro.Hotkey?.Vk == vk)
-                            StopMacro(macro.Id);
-                    }
-                    return Block();
-                }
 
                 // Released while a running loop holds it (pressed before the loop started): the
                 // release would let go of the loop's key.
@@ -804,6 +882,14 @@ internal sealed class LoopEngine : IDisposable
 
             if (!_hotkeysSuspended && RunHotkey(snap, pressed, canHold: true, run: true, allApps: !remapForApp))
             {
+                _heldHotkeys.Add(vk);
+                return Block();
+            }
+
+            // With an editor open, the Stop all hotkey still stops what runs: the editor's Test of an action.
+            if (_hotkeysSuspended && Matches(snap.StopAll, pressed) && (_running.Count > 0 || _runningMacros.Count > 0))
+            {
+                StopAll();
                 _heldHotkeys.Add(vk);
                 return Block();
             }
@@ -836,6 +922,33 @@ internal sealed class LoopEngine : IDisposable
     /// target and does not count as a modifier. While a key field waits for a modifier alone, pressing and releasing
     /// one alone captures it.
     /// </summary>
+    /// <summary>
+    /// Called with the lock held: the release of a key a remap is holding its target for, or of a Hold item's hotkey (its
+    /// loops and macros stop). True to block it; null when PuppyMacro holds nothing for this key.
+    /// </summary>
+    private bool? ReleaseOwned(int vk)
+    {
+        if (_activeRemaps.Remove(vk, out var remapTarget))
+        {
+            _injector.Post(() => SendRemapTarget(remapTarget, isDown: false));
+            return true;
+        }
+        if (!_heldHotkeys.Remove(vk))
+            return null;
+        var snap = _snapshot;
+        foreach (var loop in snap.Loops)
+        {
+            if (loop.Mode == ActivationMode.Hold && loop.Hotkey?.Vk == vk)
+                StopLoop(loop.Id);
+        }
+        foreach (var macro in snap.Macros)
+        {
+            if (macro.Mode == ActivationMode.Hold && macro.Hotkey?.Vk == vk)
+                StopMacro(macro.Id);
+        }
+        return Block();
+    }
+
     private bool OnModifier(int vk, bool isDown, bool physical, bool altGrCtrl)
     {
         if (!physical)
@@ -845,13 +958,14 @@ internal sealed class LoopEngine : IDisposable
                 && FindRemap(_snapshot, HotkeyBinding.FromKey(KeyNames.VK_RMENU)) != null;
         }
 
+        // The release of a remapped modifier releases its target, whatever takes keys now (as ReleaseOwned for other keys).
+        if (!isDown && _activeRemaps.Remove(vk, out var remapTarget))
+        {
+            _injector.Post(() => SendRemapTarget(remapTarget, isDown: false));
+            return true;
+        }
         if (_captureDone == null && !_recording)
         {
-            if (!isDown && _activeRemaps.Remove(vk, out var remapTarget))
-            {
-                _injector.Post(() => SendRemapTarget(remapTarget, isDown: false));
-                return true;
-            }
             if (isDown && _activeRemaps.TryGetValue(vk, out var repeating))
             {
                 // Auto-repeat of a remapped modifier: repeat the target key (not its modifiers).
@@ -872,8 +986,18 @@ internal sealed class LoopEngine : IDisposable
             _captureLoneModifier = ModifierTracker.Any || _captureLoneModifier != 0 ? -1 : vk;
 
         ModifierTracker.Update(vk, isDown);
+        // A modifier's release is recorded only after its press was (one held before the recording, such as the record
+        // hotkey's, would be a Key up with no Key down).
         if (_recording && !CursorGuard.IsOwnWindowForeground())
-            Record(isDown ? RawEventKind.KeyDown : RawEventKind.KeyUp, vk);
+        {
+            if (isDown)
+            {
+                _recordedDown.Add(vk);
+                Record(RawEventKind.KeyDown, vk);
+            }
+            else if (_recordedDown.Remove(vk))
+                Record(RawEventKind.KeyUp, vk);
+        }
 
         if (!isDown && _captureDone != null && _captureModifierAlone)
         {
@@ -946,7 +1070,7 @@ internal sealed class LoopEngine : IDisposable
                 return true;
             }
 
-            var macroTarget = snap.Macros.FirstOrDefault(m => m.Enabled && Usable(m.AppExe)
+            var macroTarget = snap.Macros.FirstOrDefault(m => m.Enabled && !snap.Unplayable.Contains(m.Id) && Usable(m.AppExe)
                 && Matches(m.Hotkey, pressed) && (canHold || m.Mode == ActivationMode.Toggle));
             if (macroTarget != null)
             {
@@ -996,6 +1120,14 @@ internal sealed class LoopEngine : IDisposable
                 _captureDone = null;
                 _captureCancelled = null;
                 _dispatcher.InvokeAsync(() => done(binding));
+                return Block();
+            }
+
+            // With an editor open, the Stop all hotkey still stops what runs (an editor's Test of an action), as in OnKey.
+            if (_hotkeysSuspended && !_recording && modifier && Matches(_snapshot.StopAll, CurrentBinding(vk))
+                && (_running.Count > 0 || _runningMacros.Count > 0))
+            {
+                StopAll();
                 return Block();
             }
 
@@ -1130,14 +1262,14 @@ internal sealed class LoopEngine : IDisposable
             foreach (var macro in snap.Macros)
             {
                 if (macro.Mode == ActivationMode.Hold)
-                    StopMacro(macro.Id, playSound: false);
+                    StopMacro(macro.Id, playSound: false,
+                        "stopped because the desktop changed (the lock screen, a UAC prompt or Ctrl+Alt+Del), so the release of its hotkey may never arrive");
             }
             foreach (var target in _activeRemaps.Values.ToList())
                 _injector.Post(() => SendRemapTarget(target, isDown: false));
             _activeRemaps.Clear();
             _heldHotkeys.Clear();
             _swallowUp.Clear();
-            _swallowLeftUp = false;
             ModifierTracker.Reset();
         }
     }
@@ -1151,7 +1283,10 @@ internal sealed class LoopEngine : IDisposable
         if (pid == 0 || pid == (uint)Environment.ProcessId)
             return; // PuppyMacro's own windows: the app before them stays the app in front
         lock (_sync)
+        {
+            _lastOtherWindow = window;
             OnForegroundApp(ExeName(pid));
+        }
     }
 
     /// <summary>
@@ -1177,7 +1312,8 @@ internal sealed class LoopEngine : IDisposable
             foreach (var loop in loops)
                 StopLoop(loop.Id, playSound: false);
             foreach (var macro in macros)
-                StopMacro(macro.Id, playSound: false);
+                StopMacro(macro.Id, playSound: false,
+                    $"stopped because another app came in front ({(appExe.Length == 0 ? "an app whose name can't be read" : appExe)}), and it plays only in {macro.AppExe}");
 
             _dispatcher.InvokeAsync(() => ForegroundAppChanged?.Invoke(appExe));
         }

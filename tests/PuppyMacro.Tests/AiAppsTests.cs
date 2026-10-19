@@ -251,15 +251,20 @@ public class AiAppsTests : IDisposable
     }
 
     [Theory]
-    [InlineData("claude-ai", null, "Claude Desktop")]
-    [InlineData("local-agent-mode-puppymacro-dev", null, "Claude Desktop")]
-    [InlineData("claude-code", null, "Claude Code")]
-    [InlineData("Visual Studio Code", null, "Visual Studio Code")]
-    [InlineData("codex-mcp-client", null, "Codex")]
-    [InlineData("my-agent", "My Agent", "My Agent")]
-    [InlineData("", null, "Unknown app")]
-    public void AI_apps_are_named_as_people_know_them(string name, string? title, string expected) =>
-        Assert.Equal(expected, AiServer.FriendlyName(new Implementation { Name = name, Title = title, Version = "1" }));
+    [InlineData("claude-ai", null, "Claude (claude-ai)", "ClaudeDesktop")]
+    [InlineData("local-agent-mode-puppymacro-dev", null, "Claude (local-agent-mode-puppymacro-dev)", "ClaudeDesktop")]
+    [InlineData("claude-code", null, "Claude (claude-code)", "Other")]
+    [InlineData("Visual Studio Code", null, "Visual Studio Code", "VsCode")]
+    [InlineData("codex-mcp-client", null, "Codex", "Codex")]
+    [InlineData("my-agent", "My Agent", "My Agent", "Other")]
+    [InlineData("", null, "Unknown app", "Other")]
+    public void AI_apps_are_named_as_people_know_them_and_Claude_s_apps_read_apart(string name, string? title, string expected, string kind)
+    {
+        var client = new Implementation { Name = name, Title = title, Version = "1" };
+        Assert.Equal(expected, AiServer.FriendlyName(client));
+        // Which card of the AI page it lights up, whatever its name shows.
+        Assert.Equal(kind, AiServer.KindOf(client).ToString());
+    }
 }
 
 public class AiActivityLogTests : IDisposable
@@ -369,58 +374,5 @@ public class AiActivityLogTests : IDisposable
         older.AllowAiAccess = true;
         store.TrySave(older, out _);
         Assert.True(new SettingsStore(path).Load(out _).AllowAiAccess);
-    }
-}
-
-public class AiCallLogTests : IDisposable
-{
-    private readonly TempFolder _folder = new();
-
-    public void Dispose() => _folder.Dispose();
-
-    private static AiCall Call(int i) => new(new DateTime(2026, 10, 11, 14, 0, 0).AddSeconds(i), 1.5, "Claude Desktop", "patch_item", 120, 80, "ok", 3);
-
-    [Fact]
-    public void Every_call_is_one_line_with_its_times_and_sizes()
-    {
-        string path = _folder.File("logs/ai-calls.jsonl");
-        var log = new AiCallLog(path);
-
-        log.Add(Call(0));
-        log.Add(Call(1) with { Tool = "get_item", Ops = null, Result = "error" });
-
-        string[] lines = File.ReadAllLines(path);
-        Assert.Equal(2, lines.Length);
-        Assert.Equal(new[] { "patch_item", "get_item" }, log.Entries().Select(c => c.Tool));
-        Assert.Equal(3, log.Entries()[0].Ops);
-        Assert.DoesNotContain("Ops", lines[1]);
-        Assert.NotEqual(0xEF, File.ReadAllBytes(path)[0]); // no BOM
-    }
-
-    [Fact]
-    public void The_oldest_lines_go_past_the_size_limit()
-    {
-        string path = _folder.File("ai-calls.jsonl");
-        var log = new AiCallLog(path, maxBytes: 4000);
-
-        for (int i = 0; i < 200; i++)
-            log.Add(Call(i));
-
-        AiCall[] entries = log.Entries();
-        Assert.True(new FileInfo(path).Length <= 4000);
-        Assert.InRange(entries.Length, 2, 199);
-        Assert.Equal(Call(199).Start, entries[^1].Start);
-    }
-
-    [Fact]
-    public void An_unreadable_line_is_skipped()
-    {
-        string path = _folder.File("ai-calls.jsonl");
-        var log = new AiCallLog(path);
-        log.Add(Call(0));
-        File.AppendAllText(path, "not json\n");
-        log.Add(Call(1));
-
-        Assert.Equal(2, log.Entries().Length);
     }
 }

@@ -139,11 +139,13 @@ public partial class MainWindow
         BackupGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("Backup");
         AboutGroup.IsExpanded = settings.ExpandedSettingsGroups.Contains("About");
         DataFolderText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Settings_DataSavedIn, AppPaths.DataFolder);
+        RefreshDebugData();
         RemapFilterBox.SelectedIndex = 0;
         UpdateRemapState();
         FilterBox.SelectedIndex = (int)settings.Filter;
         MacroFilterBox.SelectedIndex = 0;
         ThemeComboBox.SelectedIndex = (int)settings.Theme;
+        RecognitionDeviceComboBox.SelectedIndex = (int)settings.RecognitionDevice;
         FillLanguages();
         UpdateHotkeyLabels();
         UpdateLoopState();
@@ -312,6 +314,8 @@ public partial class MainWindow
         SettingsPage.Visibility = page == "Settings" ? Visibility.Visible : Visibility.Collapsed;
         if (page != "Settings")
             _engine.CancelCapture(); // a Settings hotkey field that waits stops
+        else
+            RefreshDebugData();
     }
 
     /// <summary>The overlay panel's options are off while the panel is off.</summary>
@@ -678,6 +682,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return;
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, null, PlaceFromEditor, recorded) { Owner = this };
+        PrepareEditor(editor);
         if (ShowMacroEditor(editor) != true || editor.Result == null)
             return;
         AddMacro(editor.Result);
@@ -713,6 +718,13 @@ public partial class MainWindow
         duplicate.Click += (_, _) => DuplicateMacro(item);
         var menu = new ContextMenu { PlacementTarget = button, Placement = PlacementMode.Bottom };
         menu.Items.Add(EditMenuItem(item));
+        // The log of its last run with Debug on (or of an AI app's test), kept in the debug data for its days.
+        if (DebugStore.LastRunOf(item.Definition.Id) is string lastRun)
+        {
+            var viewLog = new MenuItem { Header = Strings.Macro_ViewLog, Icon = new FontIcon { Icon = SegoeFluentIcons.Bug } };
+            viewLog.Click += (_, _) => ShowUserDialog(() => new DebugLogWindow(lastRun, item.Definition.Name) { Owner = this }.ShowDialog());
+            menu.Items.Add(viewLog);
+        }
         menu.Items.Add(new Separator());
         menu.Items.Add(duplicate);
         menu.Items.Add(export);
@@ -731,6 +743,7 @@ public partial class MainWindow
         if (_engine.AnyRunning)
             return false;
         var editor = new MacroEditorWindow(_engine, _settings, _macros, _sounds, item.Definition, PlaceFromEditor);
+        PrepareEditor(editor);
         if (forAi == null)
             editor.Owner = this;
         else
@@ -784,7 +797,8 @@ public partial class MainWindow
         _engine.StopMacro(item.Definition.Id);
         _macros.Delete(item.Definition);
         _macroItems.Remove(item);
-        SaveMacroOrder();
+        SaveMacroOrder(); // records the deletion in the History, which keeps the images
+        _macros.ReleaseUnusedImages();
         RefreshMacros();
         _overlayPanelWindow.RefreshList();
     }
@@ -818,6 +832,7 @@ public partial class MainWindow
         if (!_macros.TrySave(macro, out string? error))
             ShowSettingsError(string.Format(CultureInfo.CurrentCulture, Strings.Macros_SaveFailed, macro.Name, error));
         _itemHistory?.Record(macro.Id, MacroJson.Serialize(macro), _savedBy);
+        _macros.ReleaseUnusedImages();
     }
 
     private void SaveMacroOrder()
@@ -1095,6 +1110,14 @@ public partial class MainWindow
             return;
         _settings.Theme = (AppTheme)ThemeComboBox.SelectedIndex;
         App.ApplyTheme(_settings.Theme);
+        Save();
+    }
+
+    private void OnRecognitionDeviceChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_initializing || RecognitionDeviceComboBox.SelectedIndex < 0)
+            return;
+        _settings.RecognitionDevice = (RecognitionDevice)RecognitionDeviceComboBox.SelectedIndex;
         Save();
     }
 
@@ -1536,13 +1559,17 @@ public partial class MainWindow
 
     private void InitializeHistory()
     {
-        _itemHistory = new ItemHistory(AppPaths.HistoryFolder);
+        _itemHistory = new ItemHistory(AppPaths.HistoryFolder, images: _macros.Images);
         foreach (LoopDefinition loop in _settings.Loops)
             _itemHistory.Seed(loop.Id, LoopJson.Serialize(loop));
         foreach (MacroDefinition macro in _macros.Macros)
             _itemHistory.Seed(macro.Id, MacroJson.Serialize(macro));
         foreach (RemapDefinition remap in _settings.Remaps)
             _itemHistory.Seed(remap.Id, RemapJson.Serialize(remap));
+        foreach (var (id, json) in LibraryItems())
+            _itemHistory.Seed(id, json);
+        // Images no macro uses (taken and not saved, from an earlier session): the History keeps its own copies.
+        _macros.ReleaseUnusedImages();
     }
 
     /// <summary>
@@ -1559,7 +1586,7 @@ public partial class MainWindow
         foreach (RemapDefinition remap in _settings.Remaps)
             _itemHistory.Record(remap.Id, RemapJson.Serialize(remap), _savedBy);
         var existing = _settings.Loops.Select(l => l.Id).Concat(_settings.Remaps.Select(r => r.Id))
-            .Concat(_macros.Macros.Select(m => m.Id)).ToHashSet();
+            .Concat(_macros.Macros.Select(m => m.Id)).Concat(LibraryItems().Select(i => i.Id)).ToHashSet();
         foreach (Guid gone in _itemHistory.Known.Where(id => !existing.Contains(id)).ToList())
             _itemHistory.RecordDeleted(gone, _savedBy);
     }
@@ -1978,6 +2005,31 @@ public partial class MainWindow
         return names.Count == 1 ? names[0]
             : string.Format(CultureInfo.CurrentCulture, Strings.Main_ListLastAnd,
                 string.Join(Strings.ListSeparator, names.Take(names.Count - 1)), names[^1]);
+    }
+
+    /// <summary>The Debug data card's text with the space the debug data takes (counted off the UI thread).</summary>
+    private async void RefreshDebugData()
+    {
+        long bytes = await System.Threading.Tasks.Task.Run(DebugStore.Size);
+        string size = bytes >= 1L << 30
+            ? string.Format(CultureInfo.CurrentCulture, Strings.Settings_SizeGb, (bytes / (double)(1L << 30)).ToString("0.#", CultureInfo.CurrentCulture))
+            : string.Format(CultureInfo.CurrentCulture, Strings.Settings_SizeMb, Math.Ceiling(bytes / (double)(1L << 20)).ToString("0", CultureInfo.CurrentCulture));
+        DebugDataText.Text = string.Format(CultureInfo.CurrentCulture, Strings.Settings_DebugDataDescription, size);
+    }
+
+    private void OnOpenDebugFolderClick(object sender, RoutedEventArgs e)
+    {
+        System.IO.Directory.CreateDirectory(DebugStore.Root);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{DebugStore.Root}\""));
+    }
+
+    private async void OnDeleteDebugDataClick(object sender, RoutedEventArgs e)
+    {
+        if (ShowUserDialog(() => MessageBox.Show(this, Strings.Settings_DeleteDebugDataConfirm, Strings.Settings_DeleteDebugData,
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No, App.MessageBoxOptions) == MessageBoxResult.Yes) != true)
+            return;
+        await System.Threading.Tasks.Task.Run(() => DebugStore.DeleteOlderThan(TimeSpan.Zero, DateTime.UtcNow));
+        RefreshDebugData();
     }
 
     private void OnOpenDataFolderClick(object sender, RoutedEventArgs e)

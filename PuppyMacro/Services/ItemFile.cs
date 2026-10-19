@@ -49,6 +49,12 @@ internal sealed class ItemFileContent
 
     public List<ItemFileEntry> Entries { get; } = new();
 
+    /// <summary>The images of the file's macros, as Base64 by id (<c>Images</c> at the top of the file).</summary>
+    public Dictionary<string, string> Images { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>The file's Library collections this PuppyMacro doesn't have yet: added whole before the items.</summary>
+    public List<LibraryCollection> NewCollections { get; } = new();
+
     public IEnumerable<object> SelectedItems => Entries.Where(e => e.Selected && e.Item != null).Select(e => e.Item!);
 }
 
@@ -69,19 +75,55 @@ internal static class ItemFile
     /// <summary>This PuppyMacro's version, written in the files it exports.</summary>
     public static Version? AppVersion { get; } = typeof(ItemFile).Assembly.GetName().Version;
 
-    public static string Write(IEnumerable<object> items, Version? app)
+    /// <param name="images">Where the macros' images are: they go in the file (<c>Images</c>), so it is complete.</param>
+    /// <param name="library">The Library: the collections the macros link go in the file (<c>Collections</c>), whole.</param>
+    /// <param name="collections">Collections to share as well (Export collection), whole.</param>
+    public static string Write(IEnumerable<object> items, Version? app, ImageStore? images = null, ComponentLibrary? library = null,
+        IEnumerable<LibraryCollection>? collections = null)
     {
         var list = new JsonArray();
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        var shared = new List<LibraryCollection>(collections ?? Enumerable.Empty<LibraryCollection>());
         foreach (object item in items)
+        {
             list.Add(new JsonObject { ["Kind"] = KindName(item), ["Item"] = JsonNode.Parse(Serialize(item)) });
+            if (item is not MacroDefinition macro)
+                continue;
+            ids.UnionWith(ImageStore.IdsIn(macro));
+            foreach (Guid component in Components.ComponentSignatures.Callees(macro.Actions))
+                if (library?.Find(component) is { } found && !shared.Any(c => c.Id == found.Collection.Id))
+                    shared.Add(found.Collection);
+        }
+        // The collections their components call too, down every call: a file always has what its components need.
+        if (library != null)
+            shared = library.WithDependencies(shared);
         var root = new JsonObject
         {
             ["Format"] = CurrentFormat,
             ["App"] = app == null ? null : VersionText(app),
             ["Items"] = list,
         };
+        // Library collections, whole (a collection is never split): older versions read the file without them.
+        if (shared.Count > 0)
+        {
+            root["Collections"] = JsonNode.Parse(JsonSerializer.Serialize(shared, CodeJson.Options));
+            foreach (var collection in shared)
+                foreach (var component in collection.Components)
+                    ids.UnionWith(ImageStore.IdsIn(component));
+        }
+        // A new field around the items: older versions read Format 1 files without looking at it.
+        if (images?.Embed(ids) is { } embedded)
+        {
+            var node = new JsonObject();
+            foreach (var (id, base64) in embedded.OrderBy(e => e.Key, StringComparer.Ordinal))
+                node[id] = base64;
+            root["Images"] = node;
+        }
         return root.ToJsonString(CodeJson.Options);
     }
+
+    /// <summary>Keeps the images of a file being imported (before its macros are saved).</summary>
+    public static void AddImages(ItemFileContent content, MacroLibrary macros) => macros.Images.Restore(content.Images);
 
     /// <summary>
     /// Reads the file's items, checked as the Code views check them, and prepares the ones in <paramref name="only"/> (all
@@ -94,7 +136,8 @@ internal static class ItemFile
         JsonNode? root;
         try
         {
-            root = JsonNode.Parse(text);
+            // A name twice in one object is not an items file: JsonNode would otherwise throw where it first reads that object.
+            root = JsonNode.Parse(text, documentOptions: new JsonDocumentOptions { AllowDuplicateProperties = false });
         }
         catch (JsonException)
         {
@@ -112,13 +155,85 @@ internal static class ItemFile
             return new ItemFileContent { Error = newer ? update : Strings.ItemFile_NewerFormat, NeedsUpdate = true };
 
         var content = new ItemFileContent { App = app };
+        if (file["Images"] is JsonObject images)
+            foreach (var (id, value) in images)
+                if (value is JsonValue v && v.TryGetValue(out string? base64) && ImageStore.Embedded(id, base64) != null)
+                    content.Images[id] = base64; // only an image whose bytes are its id: another one is missing
+        // An image a macro or a component names is in the file, or already kept here.
+        bool HasImage(string image) => content.Images.ContainsKey(image) || macros.Images.Has(image);
+
+        var fileCollections = new List<LibraryCollection>();
+        if (file["Collections"] is JsonArray collections)
+        {
+            try
+            {
+                // A null where a collection, a component or a list goes is a damaged file, as for the items.
+                using var document = JsonDocument.Parse(collections.ToJsonString());
+                if (CodeJson.MisplacedNulls(document.RootElement, typeof(List<LibraryCollection>)).Count > 0)
+                    throw new JsonException("null where a value is needed");
+                fileCollections = document.RootElement.Deserialize<List<LibraryCollection>>(CodeJson.Options) ?? new();
+            }
+            catch (JsonException)
+            {
+                return new ItemFileContent { Error = newer ? update : Strings.ItemFile_NotItemsFile, NeedsUpdate = newer };
+            }
+            if (CollectionsProblem(fileCollections, macros.Library, HasImage, content.NewCollections) is string problem)
+                return new ItemFileContent { Error = newer ? update : problem, NeedsUpdate = newer };
+        }
+        // The items' calls are checked against the Library with the file's new collections in it.
+        var components = new Components.ComponentSignatures(macros.Library.AllComponents.Concat(content.NewCollections.SelectMany(c => c.Components)));
+
         var taken = new Taken(settings, macros);
         for (int index = 0; index < items.Count; index++)
-            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken));
+            content.Entries.Add(ReadEntry(items[index], index, only == null || only.Contains(index), newer ? update : null, taken, HasImage, components));
         return content;
     }
 
-    private static ItemFileEntry ReadEntry(JsonNode? node, int index, bool chosen, string? update, Taken taken)
+    /// <summary>
+    /// The file's collections against the Library (the user's decision: a collection is a package, its id never changes):
+    /// one the Library doesn't have is new (it must pass the Library's checks, its calls against the Library with the file's
+    /// new collections in it); one with the same id and the same content (<see cref="ComponentLibrary.Fingerprint"/>) is
+    /// already here; one with the same id and other content, a component that is here in another collection, or a component
+    /// id the file's new collections hold twice, refuses the whole file, saying which.
+    /// </summary>
+    private static string? CollectionsProblem(List<LibraryCollection> collections, ComponentLibrary library, Func<string, bool> hasImage,
+        List<LibraryCollection> added)
+    {
+        var newIds = new HashSet<Guid>();
+        foreach (var collection in collections)
+        {
+            if (library.FindCollection(collection.Id) is { } mine)
+            {
+                if (ComponentLibrary.Fingerprint(mine) != ComponentLibrary.Fingerprint(collection))
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportConflict, collection.Name);
+                continue;
+            }
+            foreach (var component in collection.Components)
+            {
+                if (library.Find(component.Id) is { } elsewhere)
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportConflict, elsewhere.Collection.Name);
+                // A component lives in one place: the file can't hold its id twice (in this collection or in another new one).
+                if (!newIds.Add(component.Id))
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportComponentTwice, component.Name);
+            }
+            if (ComponentLibrary.CheckCollection(collection) is string bad)
+                return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportCollectionProblem, collection.Name, bad);
+            collection.AppExe = AppScope.Normalize(collection.AppExe);
+            added.Add(collection);
+        }
+        var merged = library.AllComponents.Concat(added.SelectMany(c => c.Components)).ToList();
+        foreach (var collection in added)
+            foreach (var component in collection.Components)
+                if (ComponentLibrary.CheckComponent(component, hasImage, merged) is string problem)
+                {
+                    added.Clear();
+                    return string.Format(CultureInfo.CurrentCulture, Strings.Library_ImportCollectionProblem, collection.Name, problem);
+                }
+        return null;
+    }
+
+    private static ItemFileEntry ReadEntry(JsonNode? node, int index, bool chosen, string? update, Taken taken,
+        Func<string, bool> hasImage, Components.ComponentSignatures components)
     {
         string kindName = node is JsonObject o && o["Kind"] is JsonValue k && k.TryGetValue(out string? word) ? word : "";
         string kind = kindName.ToLowerInvariant();
@@ -143,7 +258,7 @@ internal static class ItemFile
         object? parsed = kind switch
         {
             "loop" => LoopJson.Parse(json, id, (_, _) => null, out problems),
-            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems),
+            "macro" => MacroJson.Parse(json, id, (_, _) => null, out problems, hasImage, components),
             _ => RemapJson.Parse(json, id, (_, _) => null, out problems, withoutSource: true),
         };
         if (parsed is RemapDefinition remapTitle)
@@ -276,6 +391,34 @@ internal static class ItemFile
         string.Format(CultureInfo.CurrentCulture, remap.AppExe == null ? Strings.Ai_RemapTitle : Strings.Ai_RemapTitleInApp,
             KeyNames.Format(remap.Source), KeyNames.Format(remap.Target), remap.AppExe);
 
+    /// <summary>
+    /// The longest name a file gets, before the extension: Windows takes 255 characters for a name and, in most apps, 260
+    /// for the whole path, so a long item name leaves room for the folder.
+    /// </summary>
+    public const int MaxFileNameLength = 100;
+
+    /// <summary>A name made safe for a file, with the extension ("Diablo IV 5120×1440.puppyitems").</summary>
+    public static string SafeFileName(string name)
+    {
+        foreach (char bad in System.IO.Path.GetInvalidFileNameChars())
+            name = name.Replace(bad, '_');
+        name = Shortened(name.Trim());
+        return (name.Length == 0 ? Strings.ItemFile_DefaultFileName : name) + Extension;
+    }
+
+    /// <summary>At most <see cref="MaxFileNameLength"/> characters, never cutting a letter made of more than one char.</summary>
+    private static string Shortened(string name)
+    {
+        if (name.Length <= MaxFileNameLength)
+            return name;
+        var shortened = new System.Text.StringBuilder();
+        TextElementEnumerator letters = StringInfo.GetTextElementEnumerator(name);
+        while (letters.MoveNext() && shortened.Length + letters.GetTextElement().Length <= MaxFileNameLength)
+            shortened.Append(letters.GetTextElement());
+        // Windows drops a space or a dot at the end of a file name.
+        return shortened.ToString().TrimEnd(' ', '.');
+    }
+
     /// <summary>A file name for these items: the item's name for one item, "PuppyMacro items" for more.</summary>
     public static string FileName(IReadOnlyList<object> items)
     {
@@ -289,7 +432,7 @@ internal static class ItemFile
         };
         foreach (char bad in System.IO.Path.GetInvalidFileNameChars())
             name = name.Replace(bad, ' ');
-        name = name.Replace('→', '-').Trim();
+        name = Shortened(name.Replace('→', '-').Trim());
         return (name.Length > 0 ? name : Strings.ItemFile_DefaultFileName) + Extension;
     }
 

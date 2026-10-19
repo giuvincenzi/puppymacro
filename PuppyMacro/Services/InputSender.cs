@@ -68,26 +68,41 @@ internal static class InputSender
     /// Held Ctrl/Alt/Shift/Win are released first so the target sees the plain key.
     /// They are never pressed again afterwards: re-pressing could leave a modifier stuck
     /// if the user lets go of it at the same moment.
+    /// The press and the release are each sent under <see cref="Gate"/>, the hold waits outside it: a hold never keeps
+    /// other loop rows, macros and remaps waiting. With <paramref name="x"/> and <paramref name="y"/>, a mouse button is
+    /// pressed at that point: the move and the press together under the lock, so another row cannot move the pointer in
+    /// between. The key is always released, also when <paramref name="stop"/> ends the hold.
     /// Returns false if <paramref name="stop"/> was signaled.
     /// </summary>
-    public static bool Tap(int vk, double holdMs, PreciseTimer timer, WaitHandle stop)
+    public static bool Tap(int vk, double holdMs, PreciseTimer timer, WaitHandle stop, int? x = null, int? y = null)
     {
         lock (Gate)
         {
             ReleaseHeldModifiers();
+            if (x is int px && y is int py)
+                MoveTo(px, py);
             Down(vk);
-            bool keepGoing = timer.Wait(holdMs, stop);
-            Up(vk);
-            return keepGoing;
         }
+        bool keepGoing;
+        try
+        {
+            keepGoing = timer.Wait(holdMs, stop);
+        }
+        finally
+        {
+            lock (Gate)
+                Up(vk);
+        }
+        return keepGoing;
     }
 
     /// <summary>
     /// Presses and releases a combination (Ctrl+C), holding the key for <paramref name="holdMs"/>: held
     /// Ctrl/Alt/Shift/Win are released first as by <see cref="Tap"/>, then the combination's modifiers go
     /// down on their side (either side: the left one), the key, and everything comes up again in reverse
-    /// order, also when <paramref name="stop"/> ends the wait. All under <see cref="Gate"/>, so nothing
-    /// else PuppyMacro sends lands between them. Modifiers in <paramref name="alreadyDown"/> (a macro's
+    /// order, also when <paramref name="stop"/> ends the wait. All under <see cref="Gate"/>, hold included, so nothing
+    /// else PuppyMacro sends lands between them: a key sent while the combination's modifiers are down would carry
+    /// them (Ctrl+ another key), the reason Hold down never holds a combination. Modifiers in <paramref name="alreadyDown"/> (a macro's
     /// Key down) are neither pressed nor released. Returns false if <paramref name="stop"/> was signaled.
     /// </summary>
     public static bool TapBinding(HotkeyBinding binding, double holdMs, PreciseTimer timer, WaitHandle stop,
@@ -134,13 +149,10 @@ internal static class InputSender
     }
 
     /// <summary>
-    /// A loop's press held longer than a tap (its Hold for): held modifiers released and the key pressed under
-    /// <see cref="Gate"/>, then the wait outside it, so other loop rows, macros and remaps are not held up for
-    /// the whole hold; the release under it again. Only for a key or button without modifiers (a combination
-    /// keeps the whole press under the lock, <see cref="TapBinding"/>). With <paramref name="x"/> and
-    /// <paramref name="y"/>, a mouse button is pressed there (the move and the press together under the lock).
+    /// Presses and keeps <paramref name="vk"/> down (held modifiers are released first); with <paramref name="x"/> and
+    /// <paramref name="y"/>, a mouse button at that point, the move and the press together under <see cref="Gate"/>.
     /// </summary>
-    public static bool PressFor(int vk, double holdMs, PreciseTimer timer, WaitHandle stop, int? x = null, int? y = null)
+    public static void PressAndHold(int vk, int? x = null, int? y = null)
     {
         lock (Gate)
         {
@@ -149,39 +161,18 @@ internal static class InputSender
                 MoveTo(px, py);
             Down(vk);
         }
-        bool keepGoing;
-        try
-        {
-            keepGoing = timer.Wait(holdMs, stop);
-        }
-        finally
-        {
-            lock (Gate)
-                Up(vk);
-        }
-        return keepGoing;
     }
 
     /// <summary>
-    /// Clicks <paramref name="vk"/> at a point: the move and the whole click under <see cref="Gate"/>, so another
-    /// loop row clicking elsewhere cannot move the pointer in between.
+    /// A mouse button down or up at a point (a macro's Mouse button down and up): the move and the button together under
+    /// <see cref="Gate"/>, so another loop row or macro cannot move the pointer in between.
     /// </summary>
-    public static bool TapAt(int vk, int x, int y, double holdMs, PreciseTimer timer, WaitHandle stop)
+    public static void SendAt(int vk, bool isDown, int x, int y)
     {
         lock (Gate)
         {
             MoveTo(x, y);
-            return Tap(vk, holdMs, timer, stop);
-        }
-    }
-
-    /// <summary>Presses and keeps <paramref name="vk"/> down (held modifiers are released first).</summary>
-    public static void PressAndHold(int vk)
-    {
-        lock (Gate)
-        {
-            ReleaseHeldModifiers();
-            Down(vk);
+            Send(vk, isDown);
         }
     }
 
@@ -314,6 +305,19 @@ internal static class InputSender
         return input;
     }
 
+    /// <summary>
+    /// The keys whose scan code is extended (E0), as KEYBDINPUT's documentation lists them: MapVirtualKey gives the arrows,
+    /// Insert, Delete, Home, End, Page Up and Page Down without E0 (measured on Windows 11), the same scan codes as the
+    /// number pad's keys, so without the flag Left would be Number pad 4.
+    /// </summary>
+    private static bool IsExtended(int vk) => vk is
+        0x21 or 0x22 or 0x23 or 0x24 or 0x25 or 0x26 or 0x27 or 0x28 // Page Up, Page Down, End, Home, the arrows
+        or 0x2C or 0x2D or 0x2E // Print Screen, Insert, Delete
+        or 0x5B or 0x5C or 0x5D // Windows keys, Menu
+        or 0x6F or 0x90 // number pad's Divide, Num Lock
+        or 0xA3 or 0xA5 // right Ctrl, right Alt
+        or >= 0xA6 and <= 0xB7; // browser, volume, media and launch keys
+
     private static NativeMethods.INPUT BuildKeyboard(int vk, bool isDown)
     {
         // Many fullscreen apps read scan codes, so send the scan code when Windows knows one.
@@ -321,16 +325,17 @@ internal static class InputSender
         uint flags;
         ushort scan = 0;
 
-        if (scanCode != 0)
+        // Pause's scan code is E1 1D 45, which one event can't carry (E0 1D is right Ctrl): it goes by its virtual-key code.
+        if (scanCode != 0 && (scanCode & 0xFF00) != 0xE100)
         {
             flags = NativeMethods.KEYEVENTF_SCANCODE;
-            if ((scanCode & 0xFF00) is 0xE000 or 0xE100)
+            if ((scanCode & 0xFF00) == 0xE000 || IsExtended(vk))
                 flags |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
             scan = (ushort)(scanCode & 0xFF);
         }
         else
         {
-            flags = 0; // fall back to the virtual-key code
+            flags = 0; // the virtual-key code
         }
 
         if (!isDown)

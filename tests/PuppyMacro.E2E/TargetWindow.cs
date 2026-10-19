@@ -191,6 +191,21 @@ public sealed class TargetWindow : IDisposable
 
     public IntPtr Handle { get; }
 
+    private PictureBox? _picture;
+
+    /// <summary>
+    /// Shows <paramref name="picture"/> at its size with its top-left corner at <paramref name="at"/> (screen pixels, inside the
+    /// click area), over the window's background: what a macro's image condition looks for. Clicks on it reach the window's log.
+    /// </summary>
+    public void ShowPicture(Bitmap picture, Point at) => OnWindowThread(() =>
+    {
+        _picture?.Dispose();
+        _picture = new PictureBox { Image = picture, SizeMode = PictureBoxSizeMode.AutoSize, Location = _form!.PointToClient(at) };
+        _form.Controls.Add(_picture);
+        _picture.BringToFront();
+        return 0;
+    });
+
     /// <summary>The text box's text (pasted text arrives there).</summary>
     public string Text
     {

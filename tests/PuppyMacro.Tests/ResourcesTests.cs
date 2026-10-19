@@ -21,11 +21,11 @@ public sealed class ResourcesTests
     /// Labels that are only a global word (i18n.md: the user decides which words are global): the same in every
     /// language, so no translation has them and every language shows the text of Strings.resx.
     /// </summary>
-    public static readonly string[] Global = { "Rail_Ai", "AiPage_Title" };
+    public static readonly string[] Global = { "Rail_Ai", "AiPage_Title", "Macro_If", "Macro_Then", "Macro_Else", "Macro_Debug" };
 
     /// <summary>Global words (i18n.md): written exactly as they are inside every translated sentence that has them.</summary>
     public static readonly string[] GlobalWords =
-        { "AI", "PuppyMacro", "MCP", "JSON", "Claude", "Codex", "Copilot", "GitHub", "Windows" };
+        { "AI", "PuppyMacro", "MCP", "JSON", "Claude", "Codex", "Copilot", "GitHub", "Windows", "Then", "Else" };
 
     private static string ResourcesFolder =>
         Path.Combine(Path.GetDirectoryName(ThisFile())!, "..", "..", "PuppyMacro", "Resources");

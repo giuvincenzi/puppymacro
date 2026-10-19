@@ -70,6 +70,18 @@ internal sealed class PreciseTimer : IDisposable
     public void Dispose() => _handle.Dispose();
 }
 
+/// <summary>
+/// The keys a loop's Paste text sends: Enter (before and after) and Ctrl+V. <see cref="ActionRunner"/> sends them with
+/// <see cref="InputSender"/>; a unit test gives its own, so a paste runs without pressing keys on the PC.
+/// </summary>
+internal interface IPasteKeys
+{
+    /// <summary>Presses and releases Enter as <see cref="InputSender.Tap"/> does; false when <paramref name="stop"/> ended the hold.</summary>
+    bool TapEnter(double holdMs, PreciseTimer timer, WaitHandle stop);
+
+    void SendPasteShortcut();
+}
+
 /// <summary>Runs one action of a loop on its own thread, at the action's interval.</summary>
 internal sealed class ActionRunner
 {
@@ -79,13 +91,25 @@ internal sealed class ActionRunner
 
     private readonly LoopAction _action;
     private readonly ClipboardPaster _paster;
+    private readonly IPasteKeys _pasteKeys;
     private readonly ManualResetEvent _stop = new(false);
     private volatile bool _stopRequested;
 
-    public ActionRunner(LoopAction action, ClipboardPaster paster)
+    public ActionRunner(LoopAction action, ClipboardPaster paster, IPasteKeys? pasteKeys = null)
     {
         _action = action.Clone();
         _paster = paster;
+        _pasteKeys = pasteKeys ?? SentPasteKeys.Instance;
+    }
+
+    private sealed class SentPasteKeys : IPasteKeys
+    {
+        public static readonly SentPasteKeys Instance = new();
+
+        public bool TapEnter(double holdMs, PreciseTimer timer, WaitHandle stop) =>
+            InputSender.Tap(KeyNames.VK_RETURN, holdMs, timer, stop);
+
+        public void SendPasteShortcut() => InputSender.SendPasteShortcut();
     }
 
     /// <summary>Raised on the runner thread when it ends.</summary>
@@ -130,6 +154,7 @@ internal sealed class ActionRunner
             {
                 // Held down for the whole time the loop runs; released when it stops. A mouse button with a
                 // fixed point is held there.
+                int? x = null, y = null;
                 if (_action.IsClick && _action.HasFixedPoint)
                 {
                     // Never on PuppyMacro's own windows: nothing is held, the row just waits for the stop.
@@ -138,9 +163,10 @@ internal sealed class ActionRunner
                         _stop.WaitOne();
                         return;
                     }
-                    InputSender.MoveTo(_action.X.Value, _action.Y.Value);
+                    (x, y) = (_action.X.Value, _action.Y.Value);
                 }
-                InputSender.PressAndHold(_action.KeyVk);
+                // The move and the press as one step, so another row cannot move the pointer in between.
+                InputSender.PressAndHold(_action.KeyVk, x, y);
                 try
                 {
                     _stop.WaitOne();
@@ -220,25 +246,17 @@ internal sealed class ActionRunner
     }
 
     /// <summary>
-    /// One press. A combination keeps the whole press under InputSender's lock; a longer Hold for than a tap
-    /// waits outside it, so other rows, macros and remaps go on meanwhile; a click at a fixed point moves there
-    /// with the press, so another row cannot move the pointer in between. A tap as before otherwise.
+    /// One press. A combination keeps the whole press under InputSender's lock; a key or button waits its Hold for
+    /// outside it, so other rows, macros and remaps go on meanwhile; a click at a fixed point moves there with the
+    /// press, so another row cannot move the pointer in between.
     /// </summary>
     private bool PressOnce(bool mouse, double holdMs, PreciseTimer timer)
     {
         if (!mouse && _action.HasModifiers)
             return InputSender.TapBinding(_action.Key, holdMs, timer, _stop);
-        bool tap = holdMs <= LoopAction.DefaultHoldMs;
-        if (mouse && _action.HasFixedPoint)
-        {
-            int x = _action.X!.Value, y = _action.Y!.Value;
-            return tap
-                ? InputSender.TapAt(_action.KeyVk, x, y, holdMs, timer, _stop)
-                : InputSender.PressFor(_action.KeyVk, holdMs, timer, _stop, x, y);
-        }
-        return tap
-            ? InputSender.Tap(_action.KeyVk, holdMs, timer, _stop)
-            : InputSender.PressFor(_action.KeyVk, holdMs, timer, _stop);
+        return mouse && _action.HasFixedPoint
+            ? InputSender.Tap(_action.KeyVk, holdMs, timer, _stop, _action.X!.Value, _action.Y!.Value)
+            : InputSender.Tap(_action.KeyVk, holdMs, timer, _stop);
     }
 
     private bool PasteText(PreciseTimer timer, double holdMs)
@@ -246,19 +264,23 @@ internal sealed class ActionRunner
         if (string.IsNullOrEmpty(_action.Text))
             return !_stop.WaitOne(0);
 
-        if (_action.EnterBefore)
-            InputSender.Tap(KeyNames.VK_RETURN, holdMs, timer, _stop);
+        // One paste at a time: another loop row or macro pasting meanwhile would change the clipboard under this one.
+        using var turn = _paster.TakeTurn(_stop);
+        if (turn == null)
+            return false;
+        if (_action.EnterBefore && !_pasteKeys.TapEnter(holdMs, timer, _stop))
+            return false; // stopped during Enter before: nothing is pasted
 
         var previous = _paster.Replace(_action.Text);
         try
         {
             // Once Ctrl+V is sent the paste always completes: a stop meanwhile must not restore the clipboard before the
             // target has read it (the paste would be lost or paste the previous clipboard). A stop skips only Enter after.
-            InputSender.SendPasteShortcut();
+            _pasteKeys.SendPasteShortcut();
             timer.WaitFully(PasteSettleMs);
 
             if (_action.EnterAfter && !_stop.WaitOne(0))
-                InputSender.Tap(KeyNames.VK_RETURN, holdMs, timer, _stop);
+                _pasteKeys.TapEnter(holdMs, timer, _stop);
 
             // Give the target time to read the clipboard before restoring it.
             timer.WaitFully(ClipboardRestoreDelayMs);

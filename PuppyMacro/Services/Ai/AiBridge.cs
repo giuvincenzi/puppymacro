@@ -129,6 +129,7 @@ internal static class AiBridge
     private static int AnswerWhileClosed(string message)
     {
         var options = AiServer.Options(AiTools.Definitions(), message,
+            _ => Task.FromResult(new AiTools.OpenedResource(null, message, false)),
             (_, _, _, _) => Task.FromResult(AiToolResult.Error(message)));
         try
         {

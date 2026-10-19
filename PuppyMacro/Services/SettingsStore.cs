@@ -24,6 +24,15 @@ internal sealed class SettingsStore
 
     public string FilePath => _path;
 
+    /// <summary>How long Load tries again to read a file another program holds open (an antivirus scan, a backup tool).</summary>
+    internal static TimeSpan ReadRetry { get; set; } = TimeSpan.FromSeconds(3);
+
+    /// <summary>
+    /// settings.json was there but could not be read at start (another program held it): the app runs on the defaults and
+    /// nothing is saved, so the user's file is never replaced by them.
+    /// </summary>
+    public bool Unread { get; private set; }
+
     /// <summary>Loads settings. On first run or invalid content, returns defaults and sets <paramref name="warning"/> if needed.</summary>
     public AppSettings Load(out string? warning)
     {
@@ -36,15 +45,48 @@ internal sealed class SettingsStore
             return defaults;
         }
 
+        // A file that can't be opened is not invalid content: tried again for a while, then left as it is.
+        string? json = null;
+        Exception? readError = null;
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        while (json == null)
+        {
+            try
+            {
+                json = File.ReadAllText(_path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                readError = ex;
+                if (clock.Elapsed >= ReadRetry)
+                    break;
+                System.Threading.Thread.Sleep(200);
+            }
+        }
+        if (json == null)
+        {
+            Unread = true;
+            // Read before the language is set (it is a setting): the defaults follow Windows' language, as this text does.
+            warning = string.Format(CultureInfo.CurrentCulture, Strings.App_SettingsUnread, readError!.Message);
+            return AppSettings.CreateDefault();
+        }
+
         try
         {
-            string json = File.ReadAllText(_path);
-            var settings = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions) ?? AppSettings.CreateDefault();
+            // A null where none can be (a list's entry) is left out, never a crash (data.md).
+            var settings = CodeJson.ReadFile<AppSettings>(json, JsonOptions) ?? AppSettings.CreateDefault();
+            // Version 1.0 wrote no SchemaVersion: such a file is of the first schema, not of the current one (the property's
+            // default), so every migration since runs on it.
+            using (var document = JsonDocument.Parse(json))
+            {
+                if (document.RootElement.ValueKind == JsonValueKind.Object && !document.RootElement.TryGetProperty(nameof(AppSettings.SchemaVersion), out _))
+                    settings.SchemaVersion = 1;
+            }
             Sanitize(settings);
             TrySave(settings, out _); // writes v1.0 files back in the current format
             return settings;
         }
-        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        catch (JsonException ex)
         {
             string backup = Path.ChangeExtension(_path, ".invalid.json");
             try { File.Copy(_path, backup, overwrite: true); } catch { /* best effort */ }
@@ -64,7 +106,7 @@ internal sealed class SettingsStore
     {
         try
         {
-            if (File.Exists(_path) && JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_path), JsonOptions) is { } settings)
+            if (File.Exists(_path) && CodeJson.ReadFile<AppSettings>(File.ReadAllText(_path), JsonOptions) is { } settings)
             {
                 Sanitize(settings);
                 return settings;
@@ -79,6 +121,11 @@ internal sealed class SettingsStore
     public bool TrySave(AppSettings settings, out string? error)
     {
         error = null;
+        if (Unread)
+        {
+            error = Strings.Settings_NotSavedUnread;
+            return false;
+        }
         try
         {
             string json = JsonSerializer.Serialize(settings, JsonOptions);

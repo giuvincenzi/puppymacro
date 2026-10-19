@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace PuppyMacro.Models;
 
@@ -15,6 +18,74 @@ public enum MacroActionType
     MovePath,
     Scroll,
     PasteText,
+    If,
+
+    /// <summary>A row linked to a <see cref="LibraryComponent"/> (<see cref="MacroAction.ComponentId"/>): it plays the component.</summary>
+    Component,
+}
+
+/// <summary>What a condition of an If action looks at.</summary>
+public enum ConditionKind
+{
+    Pixel,
+    Image,
+    Text,
+
+    /// <summary>
+    /// A Library component that says what it finds (<see cref="LibraryComponent.Returns"/>): true when that condition of it is,
+    /// with the component's arguments; it gives the place that condition found.
+    /// </summary>
+    Component,
+}
+
+/// <summary>Whether Then runs when all the conditions are true or when one of them is.</summary>
+public enum ConditionMatch
+{
+    All,
+    Any,
+}
+
+/// <summary>How long an If action waits for its conditions.</summary>
+public enum ConditionWait
+{
+    /// <summary>Checks once, without waiting.</summary>
+    Once,
+
+    /// <summary>Waits up to <see cref="MacroIf.WaitSeconds"/>.</summary>
+    UpTo,
+
+    /// <summary>Waits as long as it takes (until the macro is stopped).</summary>
+    Forever,
+}
+
+/// <summary>What an If action does when its conditions are not true in time.</summary>
+public enum ConditionFail
+{
+    /// <summary>Runs the Else actions, then goes on.</summary>
+    Else,
+
+    /// <summary>Stops the macro.</summary>
+    Stop,
+}
+
+/// <summary>Where an Image or Text condition looks.</summary>
+public enum SearchArea
+{
+    /// <summary>A little larger than where each image was taken.</summary>
+    Around,
+
+    /// <summary>The area the user drew (<see cref="MacroCondition.AreaX"/>…).</summary>
+    Drawn,
+
+    /// <summary>The whole screen whose bounds are <see cref="MacroCondition.AreaX"/>….</summary>
+    Screen,
+}
+
+/// <summary>How a Text condition compares the text it reads.</summary>
+public enum TextMatch
+{
+    Contains,
+    Exact,
 }
 
 public enum RepeatMode
@@ -38,6 +109,167 @@ public sealed class PathPoint
     public int X { get; set; }
     public int Y { get; set; }
     public double T { get; set; }
+}
+
+/// <summary>
+/// One condition of an If action. Only the fields of its <see cref="Kind"/> are set; the others keep their defaults and
+/// are left out of the file. Positions and areas are physical screen pixels.
+/// </summary>
+public sealed class MacroCondition
+{
+    private const JsonIgnoreCondition Default = JsonIgnoreCondition.WhenWritingDefault;
+    private const JsonIgnoreCondition Null = JsonIgnoreCondition.WhenWritingNull;
+
+    /// <summary>Lets a mouse action inside Then use where this condition found its image or text.</summary>
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public ConditionKind Kind { get; set; }
+
+    /// <summary>
+    /// True when what it looks for is not there: the pixel has another color, the image or the text is not on the screen.
+    /// It finds no place for the actions in Then. False in older files.
+    /// </summary>
+    [JsonIgnore(Condition = Default)]
+    public bool Not { get; set; }
+
+    /// <summary>Image and Text: the name the actions in Then use for where it was found.</summary>
+    [JsonIgnore(Condition = Null)]
+    public string? Name { get; set; }
+
+    /// <summary>Pixel: the point.</summary>
+    [JsonIgnore(Condition = Default)]
+    public int X { get; set; }
+
+    [JsonIgnore(Condition = Default)]
+    public int Y { get; set; }
+
+    /// <summary>
+    /// Pixel, inside a component whose Grid parameter gives the point (Bind "Point"): which of its cells, counted row by row
+    /// from the top left, starting at 1 (<see cref="MacroAction.Cell"/>). Null: the point is <see cref="X"/>, <see cref="Y"/>.
+    /// </summary>
+    [JsonIgnore(Condition = Null)]
+    public int? Cell { get; set; }
+
+    /// <summary>Pixel: the color, "#RRGGBB".</summary>
+    [JsonIgnore(Condition = Null)]
+    public string? Color { get; set; }
+
+    /// <summary>Pixel: how far each of red, green and blue may be from <see cref="Color"/>, in percent of 255.</summary>
+    [JsonIgnore(Condition = Default)]
+    public int Tolerance { get; set; }
+
+    /// <summary>Image: the images to look for; the condition is true when one of them is on the screen.</summary>
+    [JsonIgnore(Condition = Null)]
+    public List<ConditionImage>? Images { get; set; }
+
+    /// <summary>Image: also look for the images a little bigger or smaller (85% to 115%), when they change size.</summary>
+    [JsonIgnore(Condition = Default)]
+    public bool NearbySizes { get; set; }
+
+    /// <summary>Image and Text: where to look.</summary>
+    [JsonIgnore(Condition = Default)]
+    public SearchArea Area { get; set; }
+
+    /// <summary>The drawn area or the screen's bounds (<see cref="SearchArea.Drawn"/>, <see cref="SearchArea.Screen"/>).</summary>
+    [JsonIgnore(Condition = Default)]
+    public int AreaX { get; set; }
+
+    [JsonIgnore(Condition = Default)]
+    public int AreaY { get; set; }
+
+    [JsonIgnore(Condition = Default)]
+    public int AreaWidth { get; set; }
+
+    [JsonIgnore(Condition = Default)]
+    public int AreaHeight { get; set; }
+
+    /// <summary>Image: how closely the screen must look like the image, in percent.</summary>
+    [JsonIgnore(Condition = Default)]
+    public int Similarity { get; set; }
+
+    /// <summary>Text: the text to find.</summary>
+    [JsonIgnore(Condition = Null)]
+    public string? Text { get; set; }
+
+    [JsonIgnore(Condition = Default)]
+    public TextMatch TextMatch { get; set; }
+
+    [JsonIgnore(Condition = Default)]
+    public bool MatchCase { get; set; }
+
+    /// <summary>Text: the language of the text (a BCP 47 tag), or null for Windows' language.</summary>
+    [JsonIgnore(Condition = Null)]
+    public string? Language { get; set; }
+
+    /// <summary>Component: the <see cref="LibraryComponent.Id"/> whose returned condition this is.</summary>
+    [JsonIgnore(Condition = Null)]
+    public Guid? ComponentId { get; set; }
+
+    /// <summary>Component: the values of the component's parameters (<see cref="MacroAction.Arguments"/>).</summary>
+    [JsonIgnore(Condition = Null)]
+    public Dictionary<string, JsonNode?>? Arguments { get; set; }
+
+    /// <summary>
+    /// Inside a component: the fields of this condition that come from the component's parameters, by slot ("Point",
+    /// "Color"…) with the parameter's name (<c>Components.ComponentSlots</c>). The fields keep the parameter's Example.
+    /// </summary>
+    [JsonIgnore(Condition = Null)]
+    public Dictionary<string, string>? Bind { get; set; }
+
+    /// <summary>Image, Text and Component: it has a name and finds a place.</summary>
+    [JsonIgnore]
+    public bool Finds => Kind is ConditionKind.Image or ConditionKind.Text or ConditionKind.Component;
+
+    /// <summary>Whether a mouse action in Then can go where it was found: not when it is true for not being there.</summary>
+    [JsonIgnore]
+    public bool GivesPlace => Finds && !Not;
+
+    public MacroCondition Clone()
+    {
+        var copy = (MacroCondition)MemberwiseClone();
+        copy.Images = Images?.ConvertAll(i => i.Clone());
+        copy.Arguments = MacroAction.CloneArguments(Arguments);
+        copy.Bind = Bind == null ? null : new Dictionary<string, string>(Bind);
+        return copy;
+    }
+}
+
+/// <summary>One image of an Image condition and where it was taken (its top-left corner, physical pixels).</summary>
+public sealed class ConditionImage
+{
+    /// <summary>The SHA-256 of its PNG file in the data folder's images folder (64 lowercase hexadecimal digits).</summary>
+    public string Id { get; set; } = "";
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    public ConditionImage Clone() => (ConditionImage)MemberwiseClone();
+}
+
+/// <summary>
+/// An If action's conditions and branches: it checks the conditions, waiting as <see cref="Wait"/> says, then runs
+/// <see cref="Then"/>; when they are not true in time it runs <see cref="Else"/> or stops the macro.
+/// </summary>
+public sealed class MacroIf
+{
+    public List<MacroCondition> Conditions { get; set; } = new();
+    public ConditionMatch Match { get; set; }
+    public ConditionWait Wait { get; set; }
+
+    /// <summary>With <see cref="ConditionWait.UpTo"/>: the longest wait, in seconds (not changed by the macro's speed).</summary>
+    public double WaitSeconds { get; set; }
+
+    public ConditionFail OnFail { get; set; }
+    public List<MacroAction> Then { get; set; } = new();
+    public List<MacroAction> Else { get; set; } = new();
+
+    public MacroIf Clone()
+    {
+        var copy = (MacroIf)MemberwiseClone();
+        copy.Conditions = Conditions.ConvertAll(c => c.Clone());
+        copy.Then = Then.ConvertAll(a => a.Clone());
+        copy.Else = Else.ConvertAll(a => a.Clone());
+        return copy;
+    }
 }
 
 /// <summary>
@@ -88,6 +320,64 @@ public sealed class MacroAction : KeyModifierFields
     public bool EnterBefore { get; set; }
     public bool EnterAfter { get; set; }
 
+    /// <summary>If: its conditions and branches; null for the other types.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public MacroIf? If { get; set; }
+
+    /// <summary>
+    /// Click, MouseDown, MouseUp, MoveTo inside an If's Then: the <see cref="MacroCondition.Id"/> whose image or text
+    /// gives the point (its center, moved by <see cref="FoundOffsetX"/> / <see cref="FoundOffsetY"/>) instead of
+    /// <see cref="X"/> / <see cref="Y"/>; null = the fixed point.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? FoundId { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int FoundOffsetX { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int FoundOffsetY { get; set; }
+
+    /// <summary>
+    /// Click, MouseDown, MouseUp, MoveTo inside a component whose Grid parameter gives the point (Bind "Point"): which of its
+    /// cells, counted row by row from the top left, starting at 1; it can come from a Number parameter too (Bind "Cell").
+    /// <see cref="X"/>, <see cref="Y"/> keep that cell's point in the Example. Null: the point is <see cref="X"/>, <see cref="Y"/>.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Cell { get; set; }
+
+    /// <summary>Component: the <see cref="LibraryComponent.Id"/> it links; null for the other types.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? ComponentId { get; set; }
+
+    /// <summary>
+    /// Component: the value of each of the component's parameters, by name: a value of its type, <c>{"From": a parameter}</c>
+    /// (inside a component, that component's parameter) or <c>{"Found": a condition's Id, "OffsetX", "OffsetY"}</c> (a Point:
+    /// where an If around the row found it). A parameter left out takes its Default.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, JsonNode?>? Arguments { get; set; }
+
+    /// <summary>
+    /// Inside a component: the fields of this action that come from the component's parameters, by slot ("Point", "HoldMs"…)
+    /// with the parameter's name (<c>Components.ComponentSlots</c>). The fields keep the parameter's Example.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, string>? Bind { get; set; }
+
+    /// <summary>The actions of its Then and Else (an If's), none for the other types.</summary>
+    [JsonIgnore]
+    public IEnumerable<List<MacroAction>> Branches
+    {
+        get
+        {
+            if (If?.Then != null)
+                yield return If.Then;
+            if (If?.Else != null)
+                yield return If.Else;
+        }
+    }
+
     /// <summary>
     /// PressKey: the key with its Ctrl, Alt, Shift and Win (the other types have none); KeyDown, KeyUp: the key,
     /// which can be a modifier key alone.
@@ -107,8 +397,15 @@ public sealed class MacroAction : KeyModifierFields
     {
         var copy = (MacroAction)MemberwiseClone();
         copy.Path = Path.ConvertAll(p => new PathPoint { X = p.X, Y = p.Y, T = p.T });
+        copy.If = If?.Clone();
+        copy.Arguments = CloneArguments(Arguments);
+        copy.Bind = Bind == null ? null : new Dictionary<string, string>(Bind);
         return copy;
     }
+
+    /// <summary>A deep copy of a call's arguments (a <see cref="JsonNode"/> belongs to one parent).</summary>
+    public static Dictionary<string, JsonNode?>? CloneArguments(Dictionary<string, JsonNode?>? arguments) =>
+        arguments?.ToDictionary(p => p.Key, p => p.Value?.DeepClone());
 
     /// <summary>Time the step itself takes at ×1 speed (holds, paths, smooth moves).</summary>
     [System.Text.Json.Serialization.JsonIgnore]
@@ -150,6 +447,39 @@ public sealed class MacroGroup
     public MacroGroup Clone() => (MacroGroup)MemberwiseClone();
 }
 
+/// <summary>The shortest and the longest time of some actions at ×1, in milliseconds.</summary>
+public readonly record struct DurationRange(double MinMs, double MaxMs, bool Endless)
+{
+    public static DurationRange Of(IEnumerable<MacroAction> actions)
+    {
+        double min = 0, max = 0;
+        bool endless = false;
+        foreach (var action in actions)
+        {
+            var range = Of(action);
+            min += range.MinMs;
+            max += range.MaxMs;
+            endless |= range.Endless;
+        }
+        return new DurationRange(min, max, endless);
+    }
+
+    private static DurationRange Of(MacroAction action)
+    {
+        double own = action.DelayMs + action.DurationMs;
+        if (action.If is not { } block)
+            return new DurationRange(own, own, false);
+        var then = Of(block.Then);
+        double wait = block.Wait == ConditionWait.UpTo ? Math.Max(0, block.WaitSeconds) * 1000 : 0;
+        var fail = block.OnFail == ConditionFail.Else ? Of(block.Else) : default;
+        // True at once: Then right away. Never true: the whole wait, then Else (or the macro stops).
+        double min = Math.Min(then.MinMs, wait + fail.MinMs);
+        double max = Math.Max(wait + then.MaxMs, wait + fail.MaxMs);
+        bool endless = block.Wait == ConditionWait.Forever || then.Endless || fail.Endless;
+        return new DurationRange(own + min, own + max, endless);
+    }
+}
+
 /// <summary>A recorded or hand-made sequence of actions.</summary>
 public sealed class MacroDefinition
 {
@@ -172,6 +502,23 @@ public sealed class MacroDefinition
     public string SoundName { get; set; } = "Chime";
     public FloatingButton FloatingButton { get; set; } = new();
 
+    /// <summary>
+    /// How many times a second its screen conditions look while they wait; 0 = every new frame of the screen. More checks
+    /// notice changes sooner and use more of the computer.
+    /// </summary>
+    public int ChecksPerSecond { get; set; } = DefaultChecksPerSecond;
+
+    public const int DefaultChecksPerSecond = 30;
+
+    /// <summary>The values offered for <see cref="ChecksPerSecond"/> (0 = every frame).</summary>
+    public static readonly int[] ChecksPerSecondSteps = { 10, 30, 60, 0 };
+
+    /// <summary>
+    /// Keeps the log of its last run (<c>RunLog</c>): what each action did, what each If saw, pictures of the screen when
+    /// an If was not true and at the end. False in older files.
+    /// </summary>
+    public bool Debug { get; set; }
+
     /// <summary>Executable name (e.g. "Diablo IV.exe") it works in; null = all apps (<see cref="AppScope"/>).</summary>
     public string? AppExe { get; set; }
 
@@ -184,17 +531,41 @@ public sealed class MacroDefinition
     /// <summary>A click on it in the overlay also reaches the window under it.</summary>
     public bool OverlayClickPassesThrough { get; set; }
 
-    [System.Text.Json.Serialization.JsonIgnore]
-    public double TotalMs
+    /// <summary>
+    /// How long one round takes at ×1: the shortest and the longest. An If makes them differ (it may wait, then run Then
+    /// or Else); a wait as long as it takes makes the longest unknown (<see cref="DurationRange.Endless"/>).
+    /// </summary>
+    [JsonIgnore]
+    public DurationRange Duration => DurationRange.Of(Actions);
+
+    /// <summary>The shortest round at ×1 (<see cref="Duration"/>).</summary>
+    [JsonIgnore]
+    public double TotalMs => Duration.MinMs;
+
+    /// <summary>Every action, also those inside Then and Else, in playback order.</summary>
+    public static IEnumerable<MacroAction> Walk(IEnumerable<MacroAction> actions)
     {
-        get
+        foreach (var action in actions)
         {
-            double total = 0;
-            foreach (var a in Actions)
-                total += a.DelayMs + a.DurationMs;
-            return total;
+            yield return action;
+            foreach (var branch in action.Branches)
+                foreach (var inner in Walk(branch))
+                    yield return inner;
         }
     }
+
+    /// <summary>The macro's action lists: its own, then each Then and Else, in playback order.</summary>
+    public static IEnumerable<List<MacroAction>> Lists(List<MacroAction> actions)
+    {
+        yield return actions;
+        foreach (var action in actions)
+            foreach (var branch in action.Branches)
+                foreach (var list in Lists(branch))
+                    yield return list;
+    }
+
+    [JsonIgnore]
+    public IEnumerable<MacroAction> AllActions => Walk(Actions);
 
     public MacroDefinition Clone()
     {
@@ -241,6 +612,8 @@ public sealed class MacroDefinition
         SoundName = other.SoundName;
         FloatingButton = other.FloatingButton.Clone();
         AppExe = other.AppExe;
+        ChecksPerSecond = other.ChecksPerSecond;
+        Debug = other.Debug;
         ShowInOverlay = other.ShowInOverlay;
         HideInOverlayWhenDisabled = other.HideInOverlayWhenDisabled;
         OverlayClickPassesThrough = other.OverlayClickPassesThrough;
@@ -258,24 +631,34 @@ public sealed class MacroDefinition
         foreach (var group in groups)
             known.TryAdd(group.Id, group);
 
+        // A group lives in one list (the macro's own, or one Then or Else): its actions there are consecutive.
         var ordered = new List<MacroGroup>();
         var seen = new HashSet<Guid>();
-        Guid? previous = null;
-        foreach (var action in actions)
+        foreach (var list in Lists(actions))
         {
-            if (action.GroupId is Guid id)
+            Guid? previous = null;
+            foreach (var action in list)
             {
-                if (!known.TryGetValue(id, out var group))
-                    action.GroupId = null;
-                else if (id != previous && !seen.Add(id))
-                    action.GroupId = null;
-                else if (id != previous)
-                    ordered.Add(group);
+                if (action.GroupId is Guid id)
+                {
+                    if (!known.TryGetValue(id, out var group))
+                        action.GroupId = null;
+                    else if (id != previous && !seen.Add(id))
+                        action.GroupId = null;
+                    else if (id != previous)
+                        ordered.Add(group);
+                }
+                previous = action.GroupId;
             }
-            previous = action.GroupId;
         }
+        // Lists are walked list by list; the groups are listed in the order their first action plays.
+        var position = new Dictionary<Guid, int>();
+        int index = 0;
+        foreach (var action in Walk(actions))
+            if (action.GroupId is Guid id)
+                position.TryAdd(id, index++);
         groups.Clear();
-        groups.AddRange(ordered);
+        groups.AddRange(ordered.OrderBy(g => position[g.Id]));
     }
 
     public void NormalizeGroups() => NormalizeGroups(Actions, Groups);

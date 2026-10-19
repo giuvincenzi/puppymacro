@@ -14,6 +14,7 @@ using PuppyMacro.Models;
 using PuppyMacro.Native;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
+using PuppyMacro.Services.Components;
 using PuppyMacro.Views;
 using ContentDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog;
 using ToggleSplitButton = iNKORE.UI.WPF.Modern.Controls.ToggleSplitButton;
@@ -25,6 +26,7 @@ using FontIconData = iNKORE.UI.WPF.Modern.Common.IconKeys.FontIconData;
 using NumberBox = iNKORE.UI.WPF.Modern.Controls.NumberBox;
 using NumberBoxSpinButtonPlacementMode = iNKORE.UI.WPF.Modern.Controls.NumberBoxSpinButtonPlacementMode;
 using SegoeFluentIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.SegoeFluentIcons;
+using FluentSystemIcons = iNKORE.UI.WPF.Modern.Common.IconKeys.FluentSystemIcons;
 
 namespace PuppyMacro;
 
@@ -45,6 +47,7 @@ public partial class MacroEditorWindow
     private readonly ObservableCollection<MacroEditorItem> _items = new();
     private readonly Dictionary<MacroAction, MacroActionRowViewModel> _rowOf = new();
     private readonly Dictionary<Guid, MacroGroupViewModel> _headerOf = new();
+    private readonly Dictionary<(MacroAction Owner, bool IsElse), MacroBranchViewModel> _branchOf = new();
     private HotkeyBinding? _hotkey;
     private string _soundName;
     private bool _ready;
@@ -54,8 +57,10 @@ public partial class MacroEditorWindow
     private MacroEditorItem? _selectOnlyOnRelease;
     private ScrollViewer? _listScroll;
 
+    /// <param name="component">Component mode: the Library component to edit (from the Library), instead of a macro.</param>
     internal MacroEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, SoundService sounds,
-        MacroDefinition? existing, Func<EditedFloatingButton, Point?>? placeButton = null, IEnumerable<MacroAction>? recorded = null)
+        MacroDefinition? existing, Func<EditedFloatingButton, Point?>? placeButton = null, IEnumerable<MacroAction>? recorded = null,
+        LibraryComponent? component = null)
     {
         InitializeComponent();
         if (settings.MacroEditorWidth is double width)
@@ -68,6 +73,8 @@ public partial class MacroEditorWindow
         _macros = macros;
         _sounds = sounds;
 
+        if (component != null)
+            existing = new MacroDefinition { Id = component.Id, Name = component.Name, Actions = component.Actions.ConvertAll(a => a.Clone()) };
         var source = existing?.Clone() ?? new MacroDefinition();
         _editingId = existing?.Id ?? Guid.Empty;
         _itemId = existing?.Id ?? Guid.NewGuid();
@@ -90,6 +97,8 @@ public partial class MacroEditorWindow
         // The sounds by their names in the user's language; the id (the file's value) is the same position in SoundService.Names.
         SoundChoices.ItemsSource = SoundService.DisplayNames();
         SoundChoices.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnSoundClick), handledEventsToo: true);
+        if (component != null)
+            StartComponentMode(component);
         LoadMacro(source);
         SoundChoicesScroll.Attach(SoundScroll, () => SoundService.DisplayName(_soundName));
 
@@ -102,7 +111,12 @@ public partial class MacroEditorWindow
         Validate();
         Closing += (_, _) => RememberSize();
         KeyCaptureField.SetEngine(this, _engine); // the hotkey field waits for keys through it
-        Closed += (_, _) => _engine.CancelCapture();
+        Closed += (_, _) =>
+        {
+            _engine.CancelCapture();
+            // Images its conditions took are not held any more: the save that follows keeps those the macro uses.
+            _macros.Images.Unhold(this);
+        };
         Loaded += (_, _) => Activate(); // e.g. right after a recording, with the main window just restored
     }
 
@@ -118,6 +132,8 @@ public partial class MacroEditorWindow
         {
             if (HistoryRestore.Read<MacroDefinition>(version, _itemId) is not { } macro)
                 return;
+            // The images of that version's conditions come back from the History, as the AI activity's Restore does.
+            history.RestoreImages(_itemId, MacroJson.Serialize(macro));
             LoadMacro(macro);
             _code.ShowFormView();
             HistoryRestore.Notice(NoticeBar, version);
@@ -129,6 +145,8 @@ public partial class MacroEditorWindow
     private void LoadMacro(MacroDefinition source)
     {
         EnabledSwitch.IsOn = source.Enabled;
+        DebugSwitch.IsOn = source.Debug;
+        ViewLogButton.Visibility = DebugStore.LastRunOf(_itemId) != null ? Visibility.Visible : Visibility.Collapsed;
         _hotkey = source.Hotkey?.Clone();
         _soundName = source.SoundName;
 
@@ -136,7 +154,10 @@ public partial class MacroEditorWindow
         _list = new MacroEditList(source.Actions.ToList(), source.Groups);
         _rowOf.Clear();
         _headerOf.Clear();
+        _branchOf.Clear();
+        _checksPerSecond = source.ChecksPerSecond;
         Refresh();
+        LoadChecksPerSecond();
 
         OnceRadio.IsChecked = source.Repeat == RepeatMode.Once;
         LoopRadio.IsChecked = source.Repeat == RepeatMode.Loop;
@@ -169,6 +190,7 @@ public partial class MacroEditorWindow
             Id = _itemId,
             Name = NameBox.Text.Trim(),
             Actions = _list.Actions.Select(a => a.Clone()).ToList(),
+            ChecksPerSecond = SelectedChecksPerSecond,
             Groups = _list.Groups.Select(g => g.Clone()).ToList(),
             Repeat = TimesRadio.IsChecked == true ? RepeatMode.Times : LoopRadio.IsChecked == true ? RepeatMode.Loop : RepeatMode.Once,
             RepeatCount = (int)Math.Max(1, double.IsNaN(TimesBox.Value) ? 3 : Math.Round(TimesBox.Value)),
@@ -176,6 +198,7 @@ public partial class MacroEditorWindow
             Mode = IsHold ? ActivationMode.Hold : ActivationMode.Toggle,
             Hotkey = _hotkey is { IsSet: true } ? _hotkey.Clone() : null,
             Enabled = EnabledSwitch.IsOn,
+            Debug = DebugSwitch.IsOn,
             SoundEnabled = SoundSwitch.IsOn,
             SoundName = _soundName,
             FloatingButton = FloatingEditor.ToModel(),
@@ -186,6 +209,12 @@ public partial class MacroEditorWindow
         };
         macro.NormalizeGroups();
         return macro;
+    }
+
+    private void OnViewLogClick(object sender, RoutedEventArgs e)
+    {
+        if (DebugStore.LastRunOf(_itemId) is string folder)
+            new DebugLogWindow(folder, NameBox.Text.Trim()) { Owner = this }.ShowDialog();
     }
 
     // ================= Window size =================
@@ -228,28 +257,29 @@ public partial class MacroEditorWindow
             UpdateTotals();
     }
 
+    private MacroBranchViewModel BranchFor(MacroAction owner, bool isElse)
+    {
+        if (!_branchOf.TryGetValue((owner, isElse), out var branch))
+        {
+            branch = new MacroBranchViewModel(owner, isElse);
+            _branchOf[(owner, isElse)] = branch;
+        }
+        return branch;
+    }
+
     /// <summary>
-    /// Shows the list again after a change: group headers, then their rows (unless the group is
-    /// collapsed), numbers and totals. Items that stay keep their place, so the list does not
-    /// jump. <paramref name="select"/> replaces the selection.
+    /// Shows the list again after a change: the macro's actions, each If followed by its Then and Else with their actions
+    /// indented under them, group headers before their rows (unless the group is collapsed), numbers in playback order and
+    /// totals. Items that stay keep their place, so the list does not jump. <paramref name="select"/> replaces the
+    /// selection.
     /// </summary>
     private void Refresh(IEnumerable<MacroEditorItem>? select = null)
     {
         var wanted = new List<MacroEditorItem>();
-        MacroGroup? current = null;
-        for (int i = 0; i < _list.Actions.Count; i++)
-        {
-            var action = _list.Actions[i];
-            var row = RowFor(action);
-            row.Number = i + 1;
-            var group = _list.GroupOf(action);
-            if (group != null && group != current)
-                wanted.Add(HeaderFor(group));
-            current = group;
-            row.IsInGroup = group != null;
-            if (group is not { Collapsed: true })
-                wanted.Add(row);
-        }
+        var numbers = new Dictionary<MacroAction, int>(ReferenceEqualityComparer.Instance);
+        foreach (var action in _list.All)
+            numbers[action] = numbers.Count + 1;
+        AddRows(_list.Actions, 0, wanted, numbers);
 
         for (int i = 0; i < wanted.Count; i++)
         {
@@ -264,13 +294,16 @@ public partial class MacroEditorWindow
         while (_items.Count > wanted.Count)
             _items.RemoveAt(_items.Count - 1);
 
-        foreach (var gone in _rowOf.Keys.Except(_list.Actions).ToList())
+        var all = _list.All.ToHashSet(ReferenceEqualityComparer.Instance);
+        foreach (var gone in _rowOf.Keys.Where(a => !all.Contains(a)).ToList())
         {
             _rowOf[gone].PropertyChanged -= OnRowPropertyChanged;
             _rowOf.Remove(gone);
         }
         foreach (Guid gone in _headerOf.Keys.Except(_list.Groups.Select(g => g.Id)).ToList())
             _headerOf.Remove(gone);
+        foreach (var gone in _branchOf.Keys.Where(k => !all.Contains(k.Owner)).ToList())
+            _branchOf.Remove(gone);
 
         if (select != null)
         {
@@ -283,33 +316,133 @@ public partial class MacroEditorWindow
         }
 
         EmptyActionsText.Visibility = _list.Actions.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        ChecksCard.Visibility = HasConditions ? Visibility.Visible : Visibility.Collapsed;
+        if (IsComponent)
+        {
+            // What it finds is one of its conditions: the list follows the actions.
+            ShowReturns(_pendingReturn ?? SelectedReturn);
+            _pendingReturn = null;
+        }
         UpdateTotals();
         UpdateSelectionBar();
         Validate();
     }
 
+    /// <summary>The rows of one list (the macro's, a Then or an Else) at an indent, with the Ifs' branches inside.</summary>
+    private void AddRows(List<MacroAction> list, int indent, List<MacroEditorItem> wanted, Dictionary<MacroAction, int> numbers)
+    {
+        MacroGroup? current = null;
+        foreach (var action in list)
+        {
+            var row = RowFor(action);
+            row.Number = numbers[action];
+            var group = _list.GroupOf(action);
+            if (group != null && group != current)
+            {
+                var header = HeaderFor(group);
+                header.Indent = indent;
+                wanted.Add(header);
+            }
+            current = group;
+            if (group is { Collapsed: true })
+                continue;
+            row.Indent = indent + (group != null ? 1 : 0);
+            row.FoundName = action.FoundId is Guid id ? ConditionName(id) : "";
+            (row.ComponentName, row.ComponentDetail) = LinkInfo(action);
+            wanted.Add(row);
+            if (action.If is not { } block)
+                continue;
+            var then = BranchFor(action, isElse: false);
+            then.Indent = row.Indent + 1;
+            wanted.Add(then);
+            AddRows(block.Then, row.Indent + 2, wanted, numbers);
+            // Stop the macro: its Else shows greyed, saying the If stops the macro instead; its actions are kept, not shown.
+            var otherwise = BranchFor(action, isElse: true);
+            otherwise.Indent = row.Indent + 1;
+            otherwise.Stops = block.OnFail != ConditionFail.Else;
+            wanted.Add(otherwise);
+            if (!otherwise.Stops)
+                AddRows(block.Else, row.Indent + 2, wanted, numbers);
+        }
+    }
+
+    /// <summary>
+    /// A linked row's component name and what it is: its values when it has parameters ("Slot 3986, 1056 · Settle 150 ms"),
+    /// otherwise "Component · Diablo IV 5120×1440 · 4 actions"; empty for other rows.
+    /// </summary>
+    private (string Name, string Detail) LinkInfo(MacroAction action)
+    {
+        if (action.Type != MacroActionType.Component)
+            return ("", "");
+        if (action.ComponentId is not Guid id || _macros.Library.Find(id) is not { } found)
+            return ("", Strings.Code_ComponentMissing);
+        var (collection, component) = found;
+        if (component.Parameters.Count > 0)
+            return (component.Name, ArgumentsText(component, action.Arguments));
+        int count = MacroDefinition.Walk(component.Actions).Count();
+        return (component.Name, string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_RowComponent, collection.Name, Count(count)));
+    }
+
+    /// <summary>"Slot 3986, 1056 · Settle from Hold · Remove where Remove Affix was found": a call's values, in the parameters' order.</summary>
+    private string ArgumentsText(LibraryComponent component, Dictionary<string, System.Text.Json.Nodes.JsonNode?>? arguments) =>
+        string.Join(" · ", component.Parameters.Select(p =>
+        {
+            var argument = arguments?.GetValueOrDefault(p.Name);
+            string value = ComponentValues.Reference(argument) switch
+            {
+                { From: string from } => string.Format(CultureInfo.CurrentCulture, Strings.Param_FromParameter, from),
+                { Found: Guid condition } => string.Format(CultureInfo.CurrentCulture, Strings.Action_PositionFound, ConditionName(condition)),
+                _ => ComponentValues.Describe(argument ?? p.Default, p.Type, p.Unit),
+            };
+            return string.Format(CultureInfo.CurrentCulture, Strings.Param_ArgumentShown, p.Name, value);
+        }));
+
+    /// <summary>The name of the condition with this Id, anywhere in the macro.</summary>
+    private string ConditionName(Guid id) =>
+        _list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).FirstOrDefault(c => c.Id == id)?.Name ?? "";
+
+    private bool HasConditions => _list.All.Any(a => a.Type == MacroActionType.If);
+
     private void UpdateTotals()
     {
         foreach (var group in _list.Groups)
         {
-            int first = _list.FirstIndex(group) + 1, last = _list.LastIndex(group) + 1;
             var actions = _list.ActionsOf(group);
+            if (actions.Count == 0)
+                continue;
+            int first = RowFor(actions[0]).Number, last = RowFor(actions[^1]).Number;
             string range = first == last
                 ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_ActionNumber, first)
                 : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_ActionRange, first, last);
             HeaderFor(group).Info = string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_GroupInfo,
-                range, Count(actions.Count), MacroItemViewModel.FormatDuration(actions.Sum(Duration)));
+                range, Count(MacroDefinition.Walk(actions).Count()), DurationText(DurationRange.Of(actions)));
         }
-        double total = _list.Actions.Sum(Duration);
+        foreach (var branch in _branchOf.Values)
+        {
+            int count = MacroDefinition.Walk(branch.List).Count();
+            string when = branch.IsElse ? Strings.MacroEditor_ElseInfo : Strings.MacroEditor_ThenInfo;
+            branch.Info = branch.Stops ? Strings.MacroEditor_ElseNotPlayed
+                : count == 0 ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_BranchEmpty, when)
+                : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_BranchInfo, when, Count(count));
+        }
+        string total = DurationText(DurationRange.Of(_list.Actions));
+        int all = _list.All.Count();
         TotalText.Text = _list.Groups.Count == 0
-            ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_Total,
-                Count(_list.Actions.Count), MacroItemViewModel.FormatDuration(total))
+            ? string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_Total, Count(all), total)
             : string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_TotalInGroups,
-                Count(_list.Actions.Count), Plurals.Format("MacroEditor_GroupCount", _list.Groups.Count),
-                MacroItemViewModel.FormatDuration(total));
+                Count(all), Plurals.Format("MacroEditor_GroupCount", _list.Groups.Count), total);
     }
 
-    private static double Duration(MacroAction action) => action.DelayMs + action.DurationMs;
+    /// <summary>"2.1 s"; with conditions "1.4 s to 36.4 s", or "1.4 s or more" when one waits as long as it takes.</summary>
+    private static string DurationText(DurationRange range)
+    {
+        string min = MacroItemViewModel.FormatDuration(range.MinMs);
+        if (range.Endless)
+            return string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_DurationAtLeast, min);
+        if (range.MaxMs > range.MinMs)
+            return string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_DurationRange, min, MacroItemViewModel.FormatDuration(range.MaxMs));
+        return min;
+    }
 
     private static string Count(int actions) => Plurals.Format("MacroEditor_ActionCount", actions);
 
@@ -336,17 +469,25 @@ public partial class MacroEditorWindow
 
     private List<MacroGroup> SelectedGroups => SelectedItems.OfType<MacroGroupViewModel>().Select(h => h.Group).ToList();
 
-    /// <summary>Where new actions go: after the last selected row (in its group) or group, or at the end.</summary>
-    private (int Index, MacroGroup? Into) InsertPoint()
+    /// <summary>Where new actions go.</summary>
+    private sealed record InsertAt(List<MacroAction> List, int Index, MacroGroup? Into);
+
+    /// <summary>
+    /// Where new actions go: after the last selected row (in its list and group) or group, at the end of a selected Then or
+    /// Else, or at the end of the macro.
+    /// </summary>
+    private InsertAt InsertPoint()
     {
         switch (SelectedItems.LastOrDefault())
         {
             case MacroGroupViewModel header:
-                return (_list.LastIndex(header.Group) + 1, null);
-            case MacroActionRowViewModel row:
-                return (_list.Actions.IndexOf(row.Action) + 1, _list.GroupOf(row.Action));
+                return new InsertAt(_list.ListOf(header.Group), _list.LastIndex(header.Group) + 1, null);
+            case MacroBranchViewModel branch:
+                return new InsertAt(branch.List, branch.List.Count, null);
+            case MacroActionRowViewModel row when _list.ListOf(row.Action) is { } list:
+                return new InsertAt(list, list.IndexOf(row.Action) + 1, _list.GroupOf(row.Action));
             default:
-                return (_list.Actions.Count, null);
+                return new InsertAt(_list.Actions, _list.Actions.Count, null);
         }
     }
 
@@ -355,6 +496,7 @@ public partial class MacroEditorWindow
         SelectedItems.LastOrDefault() switch
         {
             MacroGroupViewModel header => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_InsertAfterGroup, header.Name),
+            MacroBranchViewModel branch => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_InsertInBranch, branch.Name, RowFor(branch.Owner).Number),
             MacroActionRowViewModel row when _list.GroupOf(row.Action) is { } group =>
                 string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_InsertAfterInGroup, row.Number, group.Name),
             MacroActionRowViewModel row => string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_InsertAfter, row.Number),
@@ -373,10 +515,15 @@ public partial class MacroEditorWindow
         foreach (var button in new[] { DuplicateButton, CopyButton, DeleteButton })
             button.IsEnabled = any;
         // A group alone is already a group.
-        GroupButton.IsEnabled = any && SelectedGroup == null;
+        GroupButton.IsEnabled = any && SelectedGroup == null && _list.CanGroup(SelectedActions, SelectedGroups);
         PasteButton.IsEnabled = s_clipboard is { IsEmpty: false };
-        TestActionButton.IsEnabled = SelectedRow != null;
-        EditActionButton.IsEnabled = SelectedRow != null || SelectedGroup != null;
+        // An If is not played by Test: its Then would run on whatever is on the screen. An action that goes where an If found
+        // something has no place to go alone, so it has no Test (the user's choice: not shown).
+        TestActionButton.IsEnabled = SelectedRow is { Action.Type: not MacroActionType.If };
+        TestActionButton.Visibility = SelectedRow is { Action.FoundId: not null } ? Visibility.Collapsed : Visibility.Visible;
+        SaveAsComponentButton.IsEnabled = CanSaveAsComponent();
+        UnlinkButton.IsEnabled = SelectedActions.Any(a => a.Type == MacroActionType.Component && LinkedComponent(a) != null);
+        EditActionButton.IsEnabled = SelectedRow != null || SelectedGroup != null || SelectedBranch != null;
         RenameGroupButton.IsEnabled = SelectedGroup != null;
         UngroupButton.IsEnabled = SelectedGroup != null;
         // Each one only while a group is in the other state.
@@ -392,6 +539,10 @@ public partial class MacroEditorWindow
     private MacroGroupViewModel? SelectedGroup =>
         SelectedItems is [MacroGroupViewModel header] ? header : null;
 
+    /// <summary>The selected Then or Else, when exactly its header and nothing else is selected.</summary>
+    private MacroBranchViewModel? SelectedBranch =>
+        SelectedItems is [MacroBranchViewModel branch] ? branch : null;
+
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         UpdateSelectionBar();
@@ -403,9 +554,9 @@ public partial class MacroEditorWindow
     {
         var block = new ActionBlock();
         block.Actions.AddRange(actions);
-        var (index, into) = InsertPoint();
-        var inserted = _list.Insert(block, index, into);
-        Refresh(ItemsFor(inserted, into));
+        var at = InsertPoint();
+        var inserted = _list.Insert(block, at.List, at.Index, at.Into);
+        Refresh(ItemsFor(inserted, at.Into));
     }
 
     private void OnAddActionClick(object sender, RoutedEventArgs e)
@@ -441,19 +592,275 @@ public partial class MacroEditorWindow
             Y = cursor.Y,
             Smooth = type == MacroActionType.MoveTo,
         };
-        var (index, into) = InsertPoint();
-        action.GroupId = into?.Id;
-        var dialog = new MacroActionWindow(_engine, action, isNew: true,
-            MacroJson.AllowedGroupIds(_list.Actions, index, replacing: false), GroupNames()) { Owner = this };
+        AddNew(action);
+    }
+
+    /// <summary>Opens the action window for a new action and puts it at the insert point when it is saved.</summary>
+    private void AddNew(MacroAction action)
+    {
+        var at = InsertPoint();
+        action.GroupId = at.Into?.Id;
+        var dialog = ActionWindow(action, isNew: true, at.List, at.Index);
         if (dialog.ShowDialog() != true || dialog.Result is not { } added)
             return;
         // Its group: the insert point's, or the one chosen in the Code view (always next to its actions).
         MacroGroup? group = _list.Groups.FirstOrDefault(g => g.Id == added.GroupId);
         var block = new ActionBlock();
         block.Actions.Add(added);
-        var inserted = _list.Insert(block, index, group);
+        var inserted = _list.Insert(block, at.List, at.Index, group);
         Refresh(ItemsFor(inserted, group));
     }
+
+    /// <summary>The action window for an action of <paramref name="list"/> at <paramref name="index"/>.</summary>
+    private MacroActionWindow ActionWindow(MacroAction action, bool isNew, List<MacroAction> list, int index) =>
+        new(_engine, action, isNew, MacroJson.AllowedGroupIds(list, index, replacing: !isNew), GroupNames(),
+            MacroJson.FoundAt(_list.Actions, list, _macros.Library.Signatures()), _macros.Images, _settings.RecognitionDevice,
+            // The other Ifs' condition names (not this one's own), so a new condition gets a name of its own.
+            _list.All.Where(a => !ReferenceEquals(a, action)).SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
+                .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim()).ToList(),
+            _macros, EditingParameters) { Owner = this };
+
+    /// <summary>Add condition: the kinds, each opens the condition window with one condition of it (Component: after picking it).</summary>
+    private void OnAddConditionClick(object sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu { PlacementTarget = AddConditionButton, Placement = PlacementMode.Bottom };
+        foreach (var (kind, icon) in new (ConditionKind, FontIconData)[]
+                 {
+                     (ConditionKind.Pixel, SegoeFluentIcons.Eyedropper),
+                     (ConditionKind.Image, SegoeFluentIcons.Photo2),
+                     (ConditionKind.Text, FluentSystemIcons.ScanText_20_Regular),
+                     (ConditionKind.Component, SegoeFluentIcons.Link),
+                 })
+        {
+            var item = new MenuItem { Header = ConditionViewModel.MenuName(kind), Icon = new FontIcon { Icon = icon } };
+            item.Click += (_, _) => AddCondition(kind);
+            menu.Items.Add(item);
+        }
+        menu.IsOpen = true;
+    }
+
+    private void AddCondition(ConditionKind kind)
+    {
+        var conditions = new List<MacroCondition>();
+        if (kind == ConditionKind.Component)
+        {
+            // The Library's components that say what they find: each chosen one is a condition, its arguments its examples.
+            var picker = new LibraryWindow(_macros, LibraryWindow.Mode.Pick, appExe: SelectedApp, onlyConditions: true) { Owner = this };
+            if (picker.ShowDialog() != true)
+                return;
+            foreach (var component in picker.Picked.Select(id => _macros.Library.Find(id)?.Component).OfType<LibraryComponent>())
+                conditions.Add(new MacroCondition
+                {
+                    Kind = ConditionKind.Component,
+                    Name = NewConditionName(kind, component.Name, conditions),
+                    ComponentId = component.Id,
+                    Arguments = ArgumentViewModel.Starting(component),
+                });
+            if (conditions.Count == 0)
+                return;
+        }
+        else
+        {
+            var condition = ConditionViewModel.New(kind);
+            if (kind != ConditionKind.Pixel)
+                condition.Name = NewConditionName(kind);
+            conditions.Add(condition);
+        }
+        AddNew(new MacroAction
+        {
+            Type = MacroActionType.If,
+            DelayMs = _list.Actions.Count == 0 ? 0 : 50,
+            If = new MacroIf { Conditions = conditions, Wait = ConditionWait.UpTo, WaitSeconds = 5 },
+        });
+    }
+
+    // ---- Library ----
+
+    /// <summary>
+    /// The main window's one way to change the Library (Save as component, the component's own Save with the macros whose
+    /// calls change), set when the editor opens.
+    /// </summary>
+    internal Func<Func<ComponentLibrary, string?>, IReadOnlyList<MacroDefinition>?, string?>? SaveLibrary { get; set; }
+
+    /// <summary>Opens the Library over the editor (manage), with this macro's links counted as uses; set when the editor opens.</summary>
+    internal Action<Window, MacroDefinition>? OpenLibrary { get; set; }
+
+    private LibraryComponent? LinkedComponent(MacroAction row) =>
+        row.ComponentId is Guid id ? _macros.Library.Find(id)?.Component : null;
+
+    /// <summary>Add component: the Library to pick from; the chosen components come in as linked rows at the insert point.</summary>
+    private void OnAddComponentClick(object sender, RoutedEventArgs e)
+    {
+        var picker = new LibraryWindow(_macros, LibraryWindow.Mode.Pick, appExe: SelectedApp) { Owner = this };
+        if (picker.ShowDialog() != true || picker.Picked.Count == 0)
+            return;
+        // Each call starts with its component's examples: it works at once, and the user changes what differs.
+        InsertActions(picker.Picked.Select(id => new MacroAction
+        {
+            Type = MacroActionType.Component,
+            ComponentId = id,
+            Arguments = _macros.Library.Find(id) is { } found ? ArgumentViewModel.Starting(found.Component) : null,
+        }));
+    }
+
+    /// <summary>
+    /// A linked row opens its component, read only but for the row's values (its arguments, with Save), with Unlink this row
+    /// and Open in Library.
+    /// </summary>
+    private void OpenLinked(MacroActionRowViewModel row)
+    {
+        if (row.Action.ComponentId is not Guid id || _macros.Library.Find(id) is not { } found || _list.ListOf(row.Action) is not { } list)
+            return;
+        var signatures = _macros.Library.Signatures();
+        var arguments = ArgumentViewModel.For(found.Component, row.Action.Arguments, signatures, EditingParameters,
+            MacroJson.FoundAt(_list.Actions, list, signatures), _macros.Images);
+        var window = new ComponentWindow(found.Collection, found.Component,
+            _macros.Library.CallersOf(id, _macros.Macros, new[] { BuildMacro() }), canUnlink: true, arguments, _engine) { Owner = this };
+        if (window.ShowDialog() != true)
+            return;
+        switch (window.Choice)
+        {
+            case ComponentWindowChoice.Save:
+                row.Action.Arguments = window.Arguments;
+                row.Replace(row.Action);
+                Refresh();
+                break;
+            case ComponentWindowChoice.Unlink:
+                Unlink(new[] { row.Action });
+                break;
+            case ComponentWindowChoice.OpenLibrary:
+                OpenLibrary?.Invoke(this, BuildMacro());
+                Refresh();
+                break;
+        }
+    }
+
+    /// <summary>Selected rows that can become one component: one run of actions in one list (linked rows stay linked inside it).</summary>
+    private bool CanSaveAsComponent()
+    {
+        var actions = SelectedActions;
+        return SaveLibrary != null && actions.Count > 0 && SelectedGroups.Count == 0 && _list.CanGroup(actions, SelectedGroups)
+            && _list.ListOf(actions[0]) is { } list && Consecutive(list, actions);
+    }
+
+    private static bool Consecutive(List<MacroAction> list, List<MacroAction> actions)
+    {
+        var indexes = actions.Select(a => list.IndexOf(a)).OrderBy(i => i).ToList();
+        return indexes[0] >= 0 && indexes.Zip(indexes.Skip(1)).All(p => p.Second == p.First + 1);
+    }
+
+    /// <summary>
+    /// Save as component: the selected actions become a component of the Library (saved at once) and are replaced by one
+    /// row linked to it, in their place and group. What they took from outside them becomes a parameter, which the row
+    /// passes on: a place found by a condition around them (a Point the row gives with Found), a parameter of the component
+    /// being edited (the row passes it on with From).
+    /// </summary>
+    private void OnSaveAsComponentClick(object sender, RoutedEventArgs e)
+    {
+        if (!CanSaveAsComponent() || SaveLibrary == null)
+            return;
+        var list = _list.ListOf(SelectedActions[0])!;
+        var actions = SelectedActions.OrderBy(a => list.IndexOf(a)).ToList();
+        var outside = _list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).GroupBy(c => c.Id)
+            .ToDictionary(g => g.Key, g => g.First().Name ?? "");
+        var (copies, parameters, arguments) = ComponentEdits.Lift(actions, EditingParameters, outside);
+        foreach (var copy in MacroDefinition.Walk(copies))
+            copy.GroupId = null;
+        var dialog = ComponentDetailsWindow.ForSave(copies, _macros.Library, _macros.Images.Has, SelectedApp, parameters);
+        dialog.Owner = this;
+        if (dialog.ShowDialog() != true || dialog.Details is not { } details)
+            return;
+        var component = new LibraryComponent { Actions = copies, Parameters = parameters };
+        details.ApplyTo(component);
+        string? problem = SaveLibrary(library =>
+        {
+            if (details.NewCollection is { } created)
+            {
+                if (ComponentLibrary.CheckCollection(created) is string bad)
+                    return bad;
+                library.Collections.Add(created);
+            }
+            if (library.FindCollection(details.CollectionId ?? Guid.Empty) is not { } collection)
+                return Strings.Library_NameMissing;
+            collection.Components.Add(component);
+            return ComponentLibrary.CheckComponent(component, _macros.Images.Has, library.AllComponents);
+        }, null);
+        if (problem != null)
+        {
+            ShowLibraryProblem(problem);
+            return;
+        }
+        int index = list.IndexOf(actions[0]);
+        MacroGroup? group = _list.GroupOf(actions[0]);
+        _list.Remove(actions, Array.Empty<MacroGroup>());
+        var block = new ActionBlock();
+        block.Actions.Add(new MacroAction { Type = MacroActionType.Component, ComponentId = component.Id, Arguments = arguments });
+        var inserted = _list.Insert(block, list, Math.Min(index, list.Count), group);
+        Refresh(ItemsFor(inserted, group));
+    }
+
+    private void OnUnlinkClick(object sender, RoutedEventArgs e) =>
+        Unlink(SelectedActions.Where(a => a.Type == MacroActionType.Component).ToList());
+
+    /// <summary>
+    /// Unlink: each linked row becomes the component's actions as they are now, normal rows of this macro, one level, with
+    /// the row's values in their fields (<see cref="ComponentEdits.Unlink"/>); a row whose values have no such place is
+    /// left linked, saying why.
+    /// </summary>
+    private void Unlink(IReadOnlyList<MacroAction> rows)
+    {
+        var shown = new List<MacroEditorItem>();
+        foreach (var row in rows)
+        {
+            if (LinkedComponent(row) is not { } component || _list.ListOf(row) is not { } list)
+                continue;
+            if (ComponentEdits.Unlink(row, component, out string? problem) is not { } actions)
+            {
+                ShowLibraryProblem(problem!);
+                continue;
+            }
+            int index = list.IndexOf(row);
+            MacroGroup? group = _list.GroupOf(row);
+            _list.Remove(new[] { row }, Array.Empty<MacroGroup>());
+            var block = new ActionBlock();
+            block.Actions.AddRange(actions);
+            var inserted = _list.Insert(block, list, Math.Min(index, list.Count), group);
+            shown.AddRange(ItemsFor(inserted, group));
+        }
+        Refresh(shown);
+    }
+
+    private async void ShowLibraryProblem(string problem)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = Strings.Library_Title,
+            Content = new TextBlock { Text = problem, TextWrapping = TextWrapping.Wrap },
+            CloseButtonText = Strings.Editor_Close,
+            DefaultButton = ContentDialogButton.Close,
+        };
+        await dialog.ShowAsync(this);
+    }
+
+    /// <summary>
+    /// "Image 1", "Text 2" (a Component condition: its component's name, then "Rare item 2"): a name no condition of the
+    /// macro has (nor <paramref name="also"/>, the ones being added with it).
+    /// </summary>
+    private string NewConditionName(ConditionKind kind, string? baseName = null, IEnumerable<MacroCondition>? also = null)
+    {
+        var names = _list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).Concat(also ?? Enumerable.Empty<MacroCondition>())
+            .Select(c => c.Name?.Trim() ?? "")
+            .ToHashSet(StringComparer.CurrentCultureIgnoreCase);
+        if (baseName != null && !names.Contains(baseName))
+            return baseName;
+        for (int n = baseName == null ? 1 : 2; ; n++)
+        {
+            string name = string.Format(CultureInfo.CurrentCulture, Strings.Condition_NewName, baseName ?? ConditionViewModel.KindShortName(kind), n);
+            if (!names.Contains(name))
+                return name;
+        }
+    }
+
 
     private Dictionary<Guid, string> GroupNames() => _list.Groups.ToDictionary(g => g.Id, g => g.Name);
 
@@ -464,24 +871,31 @@ public partial class MacroEditorWindow
             EditRow(row);
         else if (SelectedGroup is { } header)
             RenameGroup(header);
+        else if (SelectedBranch is { } branch)
+            EditRow(RowFor(branch.Owner));
     }
 
     private void EditRow(MacroActionRowViewModel row)
     {
+        if (row.IsLinked)
+        {
+            OpenLinked(row);
+            return;
+        }
         if (!row.IsEditable)
         {
             EditDelay(row);
             return;
         }
-        int index = _list.Actions.IndexOf(row.Action);
-        if (index < 0)
+        if (_list.ListOf(row.Action) is not { } list || list.IndexOf(row.Action) is not (>= 0 and var index))
             return;
-        var dialog = new MacroActionWindow(_engine, row.Action, isNew: false,
-            MacroJson.AllowedGroupIds(_list.Actions, index, replacing: true), GroupNames()) { Owner = this };
+        var dialog = ActionWindow(row.Action, isNew: false, list, index);
         if (dialog.ShowDialog() != true || dialog.Result is not { } edited)
             return;
         // GroupId: the same, or another one allowed by the Code view (the groups stay together).
-        _list.Actions[index] = edited;
+        list[index] = edited;
+        // The action's Code view may have moved Then's or Else's actions between groups.
+        _list.Normalize();
         _rowOf.Remove(row.Action);
         _rowOf[edited] = row;
         row.Replace(edited);
@@ -534,6 +948,9 @@ public partial class MacroEditorWindow
         menu.Items.Add(MenuCommand(Strings.MacroEditor_Ungroup, SegoeFluentIcons.RemoveFrom, UngroupButton.IsEnabled, OnUngroupClick, ""));
         menu.Items.Add(MenuCommand(Strings.MacroEditor_RenameGroup, SegoeFluentIcons.Rename, RenameGroupButton.IsEnabled, OnRenameGroupClick, ""));
         menu.Items.Add(new Separator());
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_SaveAsComponent, SegoeFluentIcons.Library, SaveAsComponentButton.IsEnabled, OnSaveAsComponentClick, ""));
+        menu.Items.Add(MenuCommand(Strings.MacroEditor_Unlink, FluentSystemIcons.LinkDismiss_20_Regular, UnlinkButton.IsEnabled, OnUnlinkClick, ""));
+        menu.Items.Add(new Separator());
         menu.Items.Add(MenuCommand(Strings.MacroEditor_Copy, SegoeFluentIcons.Copy, CopyButton.IsEnabled, OnCopySelectedClick, Strings.Keys_Ctrl + "+C"));
         menu.Items.Add(MenuCommand(Strings.MacroEditor_Paste, SegoeFluentIcons.Paste, PasteButton.IsEnabled, OnPasteClick, Strings.Keys_Ctrl + "+V"));
         menu.Items.Add(new Separator());
@@ -578,8 +995,11 @@ public partial class MacroEditorWindow
 
     private void OnTestActionClick(object sender, RoutedEventArgs e)
     {
-        if (SelectedRow is { } row)
-            ActionTestSession.Run(_engine, row.Action, this);
+        if (SelectedRow is not { } row)
+            return;
+        // A linked row plays its component as the Library has it (the engine's snapshot); inside a component, with the
+        // examples of its parameters.
+        ActionTestSession.Run(_engine, row.Action, this, EditingParameters);
     }
 
     /// <summary>Double-click: an action opens Edit, a group opens or closes.</summary>
@@ -597,6 +1017,10 @@ public partial class MacroEditorWindow
             case ListViewItem { DataContext: MacroGroupViewModel header }:
                 header.IsCollapsed = !header.IsCollapsed;
                 Refresh();
+                e.Handled = true;
+                break;
+            case ListViewItem { DataContext: MacroBranchViewModel branch }:
+                EditRow(RowFor(branch.Owner));
                 e.Handled = true;
                 break;
         }
@@ -709,9 +1133,9 @@ public partial class MacroEditorWindow
         var block = _list.Copy(SelectedActions, SelectedGroups);
         if (block.IsEmpty)
             return;
-        var (index, into) = InsertPoint();
-        var inserted = _list.Insert(block, index, into);
-        Refresh(ItemsFor(inserted, into));
+        var at = InsertPoint();
+        var inserted = _list.Insert(block, at.List, at.Index, at.Into);
+        Refresh(ItemsFor(inserted, at.Into));
     }
 
     private void CopySelected()
@@ -720,6 +1144,8 @@ public partial class MacroEditorWindow
         if (block.IsEmpty)
             return;
         s_clipboard = block;
+        // The copied Ifs' images stay while they can be pasted, even if their macro is deleted meanwhile.
+        _macros.Images.Hold(typeof(MacroEditorWindow), ImageStore.IdsIn(new MacroDefinition { Actions = block.Actions }));
         UpdateSelectionBar();
     }
 
@@ -727,9 +1153,9 @@ public partial class MacroEditorWindow
     {
         if (s_clipboard is not { IsEmpty: false } block)
             return;
-        var (index, into) = InsertPoint();
-        var inserted = _list.Insert(block, index, into);
-        Refresh(ItemsFor(inserted, into));
+        var at = InsertPoint();
+        var inserted = _list.Insert(block, at.List, at.Index, at.Into);
+        Refresh(ItemsFor(inserted, at.Into));
     }
 
     private void DeleteSelected()
@@ -793,7 +1219,7 @@ public partial class MacroEditorWindow
     private sealed record DragPayload(List<MacroAction> Actions, List<MacroGroup> Groups);
 
     /// <summary>Where a drop puts the dragged actions, and where its indicator is drawn.</summary>
-    private sealed record DropTarget(int Index, MacroGroup? Into, MacroEditorItem Line, bool Before);
+    private sealed record DropTarget(List<MacroAction> List, int Index, MacroGroup? Into, MacroEditorItem Line, bool Before);
 
     private static bool IsInsideInteractiveControl(DependencyObject? source)
     {
@@ -877,22 +1303,30 @@ public partial class MacroEditorWindow
         switch (item)
         {
             case MacroActionRowViewModel row:
-                if (moved.Contains(row.Action))
+                if (moved.Contains(row.Action) || _list.ListOf(row.Action) is not { } list)
                     return null;
-                int index = _list.Actions.IndexOf(row.Action);
-                target = new DropTarget(upperHalf ? index : index + 1, _list.GroupOf(row.Action), row, upperHalf);
+                int index = list.IndexOf(row.Action);
+                target = new DropTarget(list, upperHalf ? index : index + 1, _list.GroupOf(row.Action), row, upperHalf);
                 break;
             case MacroGroupViewModel header:
                 if (payload.Groups.Contains(header.Group))
                     return null;
                 var group = header.Group;
+                var groupList = _list.ListOf(group);
                 target = upperHalf
-                    ? new DropTarget(_list.FirstIndex(group), null, header, Before: true)
-                    : new DropTarget(group.Collapsed ? _list.LastIndex(group) + 1 : _list.FirstIndex(group), group, header, Before: false);
+                    ? new DropTarget(groupList, _list.FirstIndex(group), null, header, Before: true)
+                    : new DropTarget(groupList, group.Collapsed ? _list.LastIndex(group) + 1 : _list.FirstIndex(group), group, header, Before: false);
+                break;
+            case MacroBranchViewModel branch:
+                // At the start of the Then or Else, under its header.
+                target = new DropTarget(branch.List, 0, null, branch, Before: false);
                 break;
             default:
                 return null;
         }
+        // An If never goes inside its own Then or Else.
+        if (moved.Any(a => MacroDefinition.Lists(new List<MacroAction> { a }).Skip(1).Any(l => ReferenceEquals(l, target.List))))
+            return null;
         // Groups are never nested.
         return target.Into != null && payload.Groups.Count > 0 ? null : target;
     }
@@ -921,7 +1355,7 @@ public partial class MacroEditorWindow
                 DataContext: MacroEditorItem item,
             } container)
             return TargetAt(item, e.GetPosition(container).Y < container.ActualHeight / 2, payload);
-        return new DropTarget(_list.Actions.Count, null, _items[^1], Before: false);
+        return new DropTarget(_list.Actions, _list.Actions.Count, null, _items[^1], Before: false);
     }
 
     private void OnListDragOver(object sender, DragEventArgs e)
@@ -946,7 +1380,7 @@ public partial class MacroEditorWindow
         var target = TargetFor(e);
         ClearDropIndicators();
         if (target != null && e.Data.GetData(typeof(DragPayload)) is DragPayload payload)
-            MoveTo(payload, target.Index, target.Into);
+            MoveTo(payload, target.List, target.Index, target.Into);
     }
 
 
@@ -963,10 +1397,10 @@ public partial class MacroEditorWindow
             _listScroll.LineDown();
     }
 
-    private void MoveTo(DragPayload payload, int index, MacroGroup? into)
+    private void MoveTo(DragPayload payload, List<MacroAction> list, int index, MacroGroup? into)
     {
         var selected = SelectedItems;
-        if (_list.Move(payload.Actions, payload.Groups, index, into))
+        if (_list.Move(payload.Actions, payload.Groups, list, index, into))
             Refresh(selected);
     }
 
@@ -1010,6 +1444,23 @@ public partial class MacroEditorWindow
             ? Strings.MacroEditor_HoldHint
             : Strings.Editor_ToggleHint;
     }
+
+    // ================= Checks per second =================
+
+    private int _checksPerSecond = MacroDefinition.DefaultChecksPerSecond;
+
+    /// <summary>The choices: 10, 30, 60, Every frame (MacroDefinition.ChecksPerSecondSteps).</summary>
+    private void LoadChecksPerSecond()
+    {
+        ChecksBox.ItemsSource = MacroDefinition.ChecksPerSecondSteps
+            .Select(n => n == 0 ? Strings.MacroEditor_ChecksEveryFrame : n.ToString(CultureInfo.CurrentCulture)).ToList();
+        int index = Array.IndexOf(MacroDefinition.ChecksPerSecondSteps, _checksPerSecond);
+        ChecksBox.SelectedIndex = index >= 0 ? index : Array.IndexOf(MacroDefinition.ChecksPerSecondSteps, MacroDefinition.DefaultChecksPerSecond);
+    }
+
+    private int SelectedChecksPerSecond => ChecksBox.SelectedIndex >= 0
+        ? MacroDefinition.ChecksPerSecondSteps[ChecksBox.SelectedIndex]
+        : MacroDefinition.DefaultChecksPerSecond;
 
     // ================= Sound =================
 
@@ -1080,6 +1531,16 @@ public partial class MacroEditorWindow
             return Strings.Editor_EnterName;
         if (_list.Actions.Count == 0)
             return Strings.MacroEditor_NoActionsError;
+        if (ConditionsProblem() is string conditionsProblem)
+            return conditionsProblem;
+        // The calls to components and the fields from parameters, as the Library checks them.
+        string? callProblem = null;
+        ComponentChecks.CheckCalls(_list.Actions, "Actions", new CallScope(_macros.Library.Signatures(), EditingParameters, _macros.Images.Has),
+            (_, message) => callProblem ??= message);
+        if (callProblem != null)
+            return callProblem;
+        if (IsComponent)
+            return ComponentProblem();
         if (AppScopeCard.ValidationError is string appError)
             return NoAppError(appError);
         if (_hotkey == null || !_hotkey.IsSet)
@@ -1087,6 +1548,32 @@ public partial class MacroEditorWindow
         if (HotkeyRules.Problem(_hotkey, hold: IsHold) is string problem)
             return problem;
         return HotkeyConflict(_hotkey, SelectedApp);
+    }
+
+    /// <summary>
+    /// What the conditions need before Save, as the Code view checks it: names of conditions used once, and every action
+    /// that goes where a condition found something still inside that condition's Then.
+    /// </summary>
+    private string? ConditionsProblem()
+    {
+        var names = _list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>())
+            .Where(c => c.Finds && !string.IsNullOrWhiteSpace(c.Name)).Select(c => c.Name!.Trim()).ToList();
+        if (names.Count != names.Distinct(StringComparer.CurrentCultureIgnoreCase).Count())
+            return Strings.Code_ConditionNameTwice;
+        // An image a condition names that PuppyMacro does not have (an If pasted after its macro and image were deleted).
+        if (_list.All.SelectMany(a => a.If?.Conditions ?? new List<MacroCondition>()).SelectMany(c => c.Images ?? new List<ConditionImage>())
+            .Any(i => !_macros.Images.Has(i.Id)))
+            return Strings.Code_ImageMissing;
+        if (_list.All.Any(a => a.Type == MacroActionType.Component && LinkedComponent(a) == null))
+            return Strings.Code_ComponentMissing;
+        var signatures = _macros.Library.Signatures();
+        foreach (var action in _list.All)
+        {
+            if (action.FoundId is not Guid id || _list.ListOf(action) is not { } list || MacroJson.FoundAt(_list.Actions, list, signatures).ContainsKey(id))
+                continue;
+            return string.Format(CultureInfo.CurrentCulture, Strings.MacroEditor_FoundOutside, RowFor(action).Number, ConditionName(id));
+        }
+        return null;
     }
 
     private void Validate()
@@ -1102,6 +1589,25 @@ public partial class MacroEditorWindow
     private void OnSaveClick(object sender, RoutedEventArgs e)
     {
         SaveButton.Focus(); // commit the delay field being edited
+        if (IsComponent)
+        {
+            if (_code.IsCode)
+            {
+                if (_code.Read() is not MacroDefinition fromCode)
+                {
+                    Validate();
+                    return;
+                }
+                LoadMacro(fromCode);
+            }
+            if (GetValidationError() != null)
+            {
+                Validate();
+                return;
+            }
+            SaveComponent();
+            return;
+        }
         if (_code.IsCode)
         {
             if (_code.Read() is not MacroDefinition fromCode)
@@ -1153,10 +1659,15 @@ public partial class MacroEditorWindow
 
     private CodeViewSwitch<MacroDefinition> CreateCodeSwitch()
     {
-        var code = new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
-            CodeSchema.ForMacro(_itemId), BuildMacro, MacroJson.Serialize,
-            (string text, out List<CodeProblem> problems) => MacroJson.Parse(text, _itemId, HotkeyConflict, out problems),
-            LoadMacro, Validate);
+        // Component mode: the component's JSON (its parameters and what it finds too), read back as the Library reads it.
+        var code = IsComponent
+            ? new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
+                CodeSchema.ForComponent(_itemId), BuildMacro, ComponentJson, ParseComponentJson, LoadMacro, Validate)
+            : new CodeViewSwitch<MacroDefinition>(ViewBar, CodeView, ListBody, CancelButton, ErrorText, SaveButton,
+                CodeSchema.ForMacro(_itemId), BuildMacro, MacroJson.Serialize,
+                (string text, out List<CodeProblem> problems) => MacroJson.Parse(text, _itemId, HotkeyConflict, out problems, _macros.Images.Has,
+                    _macros.Library.Signatures()),
+                LoadMacro, Validate);
         code.Opening += () =>
         {
             _engine.CancelCapture();

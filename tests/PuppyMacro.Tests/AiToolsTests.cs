@@ -9,6 +9,7 @@ using PuppyMacro.Models;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
+using PuppyMacro.Services.Screen;
 using Xunit;
 
 namespace PuppyMacro.Tests;
@@ -27,7 +28,7 @@ internal sealed class FakeAiHost : IAiHost
     public HashSet<Guid> Running { get; } = new();
     public bool AnyRunning => Running.Count > 0;
     public bool OverlayModeActive { get; set; }
-    public bool UserIsEditing { get; set; }
+    public string? UserHasOpen { get; set; }
 
     /// <summary>Set: the user's windows (confirmation, ready) wait until the test completes it.</summary>
     public TaskCompletionSource<bool>? Hold { get; set; }
@@ -49,8 +50,41 @@ internal sealed class FakeAiHost : IAiHost
 
     public Task<T> Ui<T>(Func<Task<T>> action) => action();
 
+    public string? SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
+        IReadOnlyList<MacroDefinition>? macros = null, IReadOnlyList<LibraryComponent>? callers = null)
+    {
+        // The calls the new signature changed, saved with it.
+        foreach (var macro in macros ?? Array.Empty<MacroDefinition>())
+            if (Macros.Find(macro.Id) is { } saved)
+                saved.CopyFrom(macro);
+        foreach (var caller in callers ?? Array.Empty<LibraryComponent>())
+            if (Macros.Library.Find(caller.Id) is { } calling)
+                calling.Collection.Components[calling.Collection.Components.IndexOf(calling.Component)] = caller.Clone();
+        if (Macros.Library.Find(component.Id) is { } found)
+        {
+            found.Collection.Components[found.Collection.Components.IndexOf(found.Component)] = component.Clone();
+            return null;
+        }
+        if (created == null)
+            return "no collection";
+        var collection = Macros.Library.FindCollection(created.Id) ?? created;
+        if (!Macros.Library.Collections.Contains(collection))
+            Macros.Library.Collections.Add(collection);
+        collection.Components.Add(component.Clone());
+        return null;
+    }
+
+    public string? AddCollections(IReadOnlyList<LibraryCollection> collections, string app)
+    {
+        foreach (var collection in collections)
+            if (Macros.Library.FindCollection(collection.Id) == null)
+                Macros.Library.Collections.Add(collection.Clone());
+        return null;
+    }
+
     public void Save(object item, string app)
     {
+        AiTools.KeepUsersDebug(item, Macros); // as the app's IAiHost.Save (MainWindow.Ai.cs)
         Saved.Add((item, app));
         switch (item)
         {
@@ -69,6 +103,16 @@ internal sealed class FakeAiHost : IAiHost
                 Settings.Remaps.Add(remap);
                 break;
         }
+    }
+
+    public string? DeleteComponent(Guid id, string app)
+    {
+        if (Macros.Library.Find(id) is not { } found)
+            return null;
+        if (Macros.Library.CanDeleteComponent(found.Component, Macros.Macros) is string used)
+            return used;
+        found.Collection.Components.Remove(found.Component);
+        return null;
     }
 
     public void Delete(Guid id, string app)
@@ -112,6 +156,15 @@ internal sealed class FakeAiHost : IAiHost
 
     public Task<(AiAnswer Answer, string? Exe)> PickApp(string app, string message) =>
         Task.FromResult<(AiAnswer, string?)>((AiAnswer.Done, "notepad.exe"));
+
+    /// <summary>As the window: a pixel at 640, 360 (#3BD16F), an image of 40 × 20 taken at 100, 200, an area at 10, 20, 300 × 200.</summary>
+    public Task<(AiAnswer Answer, AiScreenPick? Pick)> PickOnScreen(string app, string message, AiScreenPickKind kind) =>
+        Task.FromResult<(AiAnswer, AiScreenPick?)>((AiAnswer.Done, kind switch
+        {
+            AiScreenPickKind.Pixel => new AiScreenPick(640, 360, 1, 1, Color: "#3BD16F"),
+            AiScreenPickKind.Image => new AiScreenPick(100, 200, 40, 20, ImageId: Macros.Images.Add(new byte[] { 1, 2, 3 })),
+            _ => new AiScreenPick(10, 20, 300, 200),
+        }));
 
     public Task<(AiAnswer Answer, HotkeyBinding? Keys)> CaptureKeys(string app, AiAsk ask) =>
         Task.FromResult<(AiAnswer, HotkeyBinding?)>((AiAnswer.Done, new HotkeyBinding { Vk = 0x58, Ctrl = true }));
@@ -168,8 +221,67 @@ internal sealed class FakeAiHost : IAiHost
 
     public void StopAll() => StoppedAll = true;
     public IReadOnlyList<string> RunningApps() => new[] { "notepad.exe" };
+
+    /// <summary>What Now on the screen saw: by default the image found at 10, 20, 97% similar.</summary>
+    public ConditionReport Report { get; set; } = new(true, new OpenCvSharp.Point(10, 20), 0.97);
+    public List<MacroCondition> Checked { get; } = new();
+
+    public Task<ConditionReport> CheckCondition(MacroCondition condition)
+    {
+        Checked.Add(condition);
+        return Task.FromResult(Report);
+    }
+
+    /// <summary>One monitor of 800 × 600 at 0, 0: gray, with a pattern at 100, 100 (40 × 40) and a white pixel at 5, 5.</summary>
+    public static OpenCvSharp.Mat Screen()
+    {
+        var picture = new OpenCvSharp.Mat(600, 800, OpenCvSharp.MatType.CV_8UC3, OpenCvSharp.Scalar.All(128));
+        for (int y = 100; y < 140; y++)
+            for (int x = 100; x < 140; x++)
+                picture.Set(y, x, new OpenCvSharp.Vec3b((byte)(x * 5), (byte)(y * 3), (byte)((x + y) * 2)));
+        picture.Set(5, 5, new OpenCvSharp.Vec3b(255, 255, 255));
+        return picture;
+    }
+
+    public Task<List<(OpenCvSharp.Rect Bounds, OpenCvSharp.Mat Picture)>> TakeScreen() =>
+        Task.FromResult(new List<(OpenCvSharp.Rect, OpenCvSharp.Mat)> { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) });
+
+    public AiAnswer RecordAnswer { get; set; } = AiAnswer.Done;
+
+    /// <summary>As the recorder: Press A, then a click at 120, 120 on the pattern, each with the screen at that moment.</summary>
+    public Task<(AiAnswer Answer, AiRecording? Recording)> Record(string app, bool mouseMovement) =>
+        Task.FromResult<(AiAnswer, AiRecording?)>(RecordAnswer != AiAnswer.Done ? (RecordAnswer, null) : (AiAnswer.Done, new AiRecording(
+            new List<MacroAction>
+            {
+                new() { Type = MacroActionType.PressKey, Vk = 0x41 },
+                new() { Type = MacroActionType.Click, Vk = 1, X = 120, Y = 120, DelayMs = 500 },
+            },
+            new List<AiRecordedInput>
+            {
+                new("Key down A", false, 0, 0, 100, new() { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) }),
+                new("Click Left at 120,120", true, 120, 120, 600, new() { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) }),
+            })));
+
+    public List<(Guid Id, double MaxSeconds, string Folder)> Tested { get; } = new();
+
+    /// <summary>As a test run: its log, in the call's folder, says it pressed A (with a picture) and ended.</summary>
+    public Task<AiTestRun?> TestMacro(Guid id, string app, double maxSeconds, string folder)
+    {
+        Tested.Add((id, maxSeconds, folder));
+        var log = new RunLog(folder, Macros.Find(id), $"a test by {app}");
+        log.Event("#1 Press A, held 50 ms", new List<(OpenCvSharp.Rect, OpenCvSharp.Mat)> { (new OpenCvSharp.Rect(0, 0, 800, 600), Screen()) });
+        log.End("finished");
+        RunLog.WaitWritten(TimeSpan.FromSeconds(10));
+        return Task.FromResult<AiTestRun?>(new AiTestRun("finished", folder));
+    }
+
+    public List<string> FinishedFor { get; } = new();
+
+    public void Finished(string app) => FinishedFor.Add(app);
 }
 
+// DebugStore.Root is one folder for the whole process: these classes set it, one at a time.
+[Collection(nameof(DebugStore))]
 public class AiToolsTests : IDisposable
 {
     private const string App = "Claude Desktop";
@@ -183,6 +295,7 @@ public class AiToolsTests : IDisposable
     public AiToolsTests()
     {
         AiTools.WaitStep = TimeSpan.FromMilliseconds(300);
+        DebugStore.Root = _folder.File("debug");
         _settings.AllowAiAccess = true;
         _settings.Loops.Clear();
         _host = new FakeAiHost(_settings, new MacroLibrary(_folder.File("macros")));
@@ -192,8 +305,10 @@ public class AiToolsTests : IDisposable
 
     public void Dispose() => _folder.Dispose();
 
+    /// <summary>A tool by its name without the prefix ("get_item") or its full one.</summary>
     private Task<AiToolResult> Call(string tool, object? args = null) =>
-        _tools.Call(tool, JsonSerializer.SerializeToElement(args ?? new { }), App, TestContext.Current.CancellationToken);
+        _tools.Call(tool.StartsWith(AiTools.Prefix, StringComparison.Ordinal) ? tool : AiTools.Name(tool),
+            JsonSerializer.SerializeToElement(args ?? new { }), App, TestContext.Current.CancellationToken);
 
     private static readonly HotkeyBinding CtrlX = new() { Vk = 0x58, Ctrl = true };
 
@@ -204,8 +319,17 @@ public class AiToolsTests : IDisposable
     private static readonly object Asking = new
     {
         title = "Pick the Send button",
-        label = "The Send button",
+        count = 1,
+        labels = new[] { "The Send button" },
         confirmed_steps = Plan,
+        description = "We are making a macro that sends a message.",
+        steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
+    };
+
+    /// <summary>What every request that opens a window takes (pick_points also takes count, labels and confirmed_steps).</summary>
+    private static readonly object AskingWindow = new
+    {
+        title = "Pick the Send button",
         description = "We are making a macro that sends a message.",
         steps = new[] { "Open the chat", "Press Enter", "Click the Send button" },
     };
@@ -680,7 +804,7 @@ public class AiToolsTests : IDisposable
     [Fact]
     public async Task A_pick_waits_until_the_user_is_ready_then_gives_the_points()
     {
-        AiToolResult one = await Call("pick_point", Asking);
+        AiToolResult one = await Call("pick_points", Asking);
         AiToolResult three = await Call("pick_points", new
         {
             confirmed_steps = Plan,
@@ -691,7 +815,7 @@ public class AiToolsTests : IDisposable
             steps = new[] { "Click the 3 items" },
         });
 
-        Assert.Equal("{\"X\":640,\"Y\":360}", one.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", one.Text);
         using JsonDocument points = JsonDocument.Parse(three.Text);
         Assert.Equal(3, points.RootElement.GetArrayLength());
         Assert.Equal(new[] { "The Send button" }, _host.PointsAsked[0]);
@@ -706,7 +830,7 @@ public class AiToolsTests : IDisposable
     {
         _host.ReadyAnswer = AiAnswer.Cancelled;
 
-        AiToolResult result = await Call("pick_point", Asking);
+        AiToolResult result = await Call("pick_points", Asking);
 
         Assert.Contains("cancelled", result.Text);
         Assert.Empty(_host.PointsAsked);
@@ -716,10 +840,11 @@ public class AiToolsTests : IDisposable
     public async Task Interactions_need_a_title_a_description_and_steps()
     {
         string[] steps = { "Click it" };
-        Assert.True((await Call("pick_point", new { label = "It", title = "Pick", description = "", steps })).IsError);
-        Assert.True((await Call("pick_point", new { confirmed_steps = Plan, title = "Pick", description = "Why", steps })).IsError); // no label
-        Assert.True((await Call("pick_point", new { label = "It", title = "Pick", description = "Why", steps })).IsError); // no steps confirmed
-        Assert.True((await Call("pick_point", new { confirmed_steps = new[] { " " }, label = "It", title = "Pick", description = "Why", steps })).IsError);
+        string[] it = { "It" };
+        Assert.True((await Call("pick_points", new { count = 1, labels = it, title = "Pick", description = "", steps })).IsError);
+        Assert.True((await Call("pick_points", new { confirmed_steps = Plan, count = 1, title = "Pick", description = "Why", steps })).IsError); // no label
+        Assert.True((await Call("pick_points", new { count = 1, labels = it, title = "Pick", description = "Why", steps })).IsError); // no steps confirmed
+        Assert.True((await Call("pick_points", new { confirmed_steps = new[] { " " }, count = 1, labels = it, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_points", new { count = 2, labels = new[] { "One", "" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_points", new { count = 3, labels = new[] { "One", "Two" }, title = "Pick", description = "Why", steps })).IsError);
         Assert.True((await Call("pick_app", new { title = "", description = "Why", steps })).IsError);
@@ -734,7 +859,7 @@ public class AiToolsTests : IDisposable
         string title = new('T', 300);
         string description = new('D', 2000);
 
-        await Call("pick_point", new { confirmed_steps = Plan, label = "It", title, description, steps = new[] { "Click it" } });
+        await Call("pick_points", new { confirmed_steps = Plan, count = 1, labels = new[] { "It" }, title, description, steps = new[] { "Click it" } });
 
         Assert.Equal(title, _host.ReadyShown[0].Title);
         Assert.Equal(description, _host.ReadyShown[0].Description);
@@ -813,11 +938,37 @@ public class AiToolsTests : IDisposable
     [Fact]
     public async Task App_and_key_requests_give_what_the_user_picked_or_pressed()
     {
-        AiToolResult app = await Call("pick_app", Asking);
-        AiToolResult keys = await Call("capture_hotkey", Asking);
+        AiToolResult app = await Call("pick_app", AskingWindow);
+        AiToolResult keys = await Call("capture_hotkey", AskingWindow);
 
         Assert.Contains("notepad.exe", app.Text);
         Assert.StartsWith(KeyNames.Format(CtrlX), keys.Text);
+    }
+
+    [Fact]
+    public async Task Screen_picks_give_a_pixel_and_its_color_an_image_kept_by_PuppyMacro_and_an_area()
+    {
+        AiToolResult pixel = await Call("pick_pixel", AskingWindow);
+        AiToolResult image = await Call("take_image", AskingWindow);
+        AiToolResult area = await Call("draw_area", AskingWindow);
+
+        Assert.False(pixel.IsError || image.IsError || area.IsError);
+        Assert.Equal("{\"X\":640,\"Y\":360,\"Color\":\"#3BD16F\"}", pixel.Text);
+        string id = JsonDocument.Parse(image.Text).RootElement.GetProperty("Id").GetString()!;
+        Assert.True(_host.Macros.Images.Has(id));
+        Assert.Contains("\"X\":100,\"Y\":200,\"Width\":40,\"Height\":20", image.Text);
+        Assert.Equal("{\"AreaX\":10,\"AreaY\":20,\"AreaWidth\":300,\"AreaHeight\":200}", area.Text);
+    }
+
+    [Fact]
+    public async Task Screen_recognition_is_a_setting_AI_apps_read_and_change()
+    {
+        AiToolResult read = await Call("get_settings", new { });
+        AiToolResult changed = await Call("update_settings", new { settings = new { RecognitionDevice = "Cpu" } });
+
+        Assert.Contains("\"RecognitionDevice\"", read.Text);
+        Assert.False(changed.IsError, changed.Text);
+        Assert.Equal(RecognitionDevice.Cpu, _host.Applied.Last().RecognitionDevice);
     }
 
     [Fact]
@@ -825,9 +976,9 @@ public class AiToolsTests : IDisposable
     {
         _host.Hold = new TaskCompletionSource<bool>();
 
-        AiToolResult first = await Call("pick_point", Asking);
+        AiToolResult first = await Call("pick_points", Asking);
         string id = RequestId(first);
-        AiToolResult other = await Call("pick_app", Asking);
+        AiToolResult other = await Call("pick_app", AskingWindow);
         AiToolResult stillWaiting = await Call("wait_for_user", new { request_id = id });
         _host.Hold.SetResult(true);
         AiToolResult answer = await Call("wait_for_user", new { request_id = id });
@@ -837,7 +988,7 @@ public class AiToolsTests : IDisposable
         Assert.True(other.IsError);
         Assert.Contains($"request_id \"{id}\"", other.Text);
         Assert.StartsWith("Waiting", stillWaiting.Text);
-        Assert.Equal("{\"X\":640,\"Y\":360}", answer.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", answer.Text);
         Assert.True((await Call("wait_for_user", new { request_id = id })).IsError); // given once
     }
 
@@ -845,22 +996,22 @@ public class AiToolsTests : IDisposable
     public async Task An_answer_not_taken_yet_is_kept_when_another_request_starts()
     {
         _host.Hold = new TaskCompletionSource<bool>();
-        string id = RequestId(await Call("pick_point", Asking));
+        string id = RequestId(await Call("pick_points", Asking));
         _host.Hold.SetResult(true);
         _host.Hold = null;
 
-        AiToolResult app = await Call("pick_app", Asking);
+        AiToolResult app = await Call("pick_app", AskingWindow);
         AiToolResult answer = await Call("wait_for_user", new { request_id = id });
 
         Assert.False(app.IsError, app.Text);
-        Assert.Equal("{\"X\":640,\"Y\":360}", answer.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", answer.Text);
     }
 
     [Fact]
     public async Task Only_the_app_that_asked_gets_the_answer()
     {
         _host.Hold = new TaskCompletionSource<bool>();
-        string id = RequestId(await Call("pick_point", Asking));
+        string id = RequestId(await Call("pick_points", Asking));
         _host.Hold.SetResult(true);
 
         AiToolResult other = await _tools.Call("wait_for_user", JsonSerializer.SerializeToElement(new { request_id = id }), "Codex",
@@ -868,30 +1019,38 @@ public class AiToolsTests : IDisposable
         AiToolResult mine = await Call("wait_for_user", new { request_id = id });
 
         Assert.True(other.IsError);
-        Assert.Equal("{\"X\":640,\"Y\":360}", mine.Text);
+        Assert.Equal("[{\"X\":640,\"Y\":360}]", mine.Text);
     }
 
     [Fact]
-    public async Task Nothing_runs_while_the_user_has_a_PuppyMacro_window_open()
+    public async Task Nothing_runs_while_the_user_has_a_PuppyMacro_window_open_and_the_answer_names_it()
     {
-        _host.UserIsEditing = true;
+        _host.UserHasOpen = "the macro editor of \"Salvage\"";
 
         AiToolResult result = await Call("save_remap", CtrlXToA);
+        AiToolResult picked = await Call("pick_app", new { title = "Pick", description = "Why", steps = new[] { "Click it" } });
+        using JsonDocument overview = JsonDocument.Parse((await Call("get_overview", new { })).Text);
 
         Assert.True(result.IsError);
-        Assert.Contains("PuppyMacro window open", result.Text);
+        Assert.StartsWith("The user has the macro editor of \"Salvage\" open in PuppyMacro.", result.Text);
+        Assert.True(picked.IsError);
+        Assert.Contains("the macro editor of \"Salvage\"", picked.Text);
         Assert.Empty(_host.Saved);
+        Assert.Empty(_host.ReadyShown);
+        Assert.True(overview.RootElement.GetProperty("UserIsEditing").GetBoolean());
+        Assert.Equal("the macro editor of \"Salvage\"", overview.RootElement.GetProperty("UserHasOpen").GetString());
     }
 
     [Fact]
-    public async Task Stop_all_stops_everything_but_nothing_can_be_started()
+    public async Task Stop_all_stops_everything_and_only_a_test_plays_a_macro()
     {
         AiToolResult result = await Call("stop_all");
 
         Assert.True(_host.StoppedAll);
         Assert.False(result.IsError);
-        Assert.DoesNotContain(_tools.All, t => t.Name.StartsWith("start", StringComparison.Ordinal) || t.Name.StartsWith("test", StringComparison.Ordinal));
-        Assert.Contains("Not available: starting, stopping or testing loops and macros", AiTools.Instructions);
+        // An AI app plays a macro only as a test, after the user's Start (test_macro): nothing starts loops or macros.
+        Assert.DoesNotContain(_tools.All, t => t.Name.StartsWith("puppymacro_start", StringComparison.Ordinal));
+        Assert.Contains(_tools.All, t => t.Name == "puppymacro_test_macro");
     }
 
     [Fact]
@@ -1086,5 +1245,225 @@ public class AiToolsTests : IDisposable
         Assert.Equal(farm.Id, Assert.Single(Assert.Single(_host.ExportShown)));
         Assert.Equal("The user exported 1 item to Farm.puppyitems.", exported.Text);
         Assert.True(unknown.IsError);
+    }
+
+    // ================= Arguments: a wrong one is an error naming it =================
+
+    /// <summary>
+    /// An argument of the wrong type, an unknown value of a list of values, a number out of its range or an argument that
+    /// goes with another one left out: an input error (isError) that names the argument, never read as left out (ID: a new
+    /// Id, for the tools that read the arguments before looking for the item).
+    /// </summary>
+    [Theory]
+    [InlineData("get_item", """{"id":"ID","path":5}""", "\"path\"")]
+    [InlineData("get_item", """{"id":"ID","outline":true,"path":"/Actions/0"}""", "\"path\"")]
+    [InlineData("get_item", """{"id":"ID","outline_depth":2}""", "\"outline_depth\"")]
+    [InlineData("get_item", """{"id":"ID","outline":true,"outline_depth":30}""", "\"outline_depth\"")]
+    [InlineData("get_item", """{"id":5}""", "\"id\"")]
+    [InlineData("get_overview", """{"limit":0}""", "\"limit\"")]
+    [InlineData("get_overview", """{"offset":-1}""", "\"offset\"")]
+    [InlineData("get_overview", """{"words":["diablo"]}""", "\"words\"")]
+    [InlineData("get_schema", """{"kind":"button"}""", "\"kind\"")]
+    [InlineData("get_schema", """{"kind":1}""", "\"kind\"")]
+    [InlineData("get_help", """{"topic":2}""", "\"topic\"")]
+    [InlineData("check_hotkey", """{"hotkey":{"Vk":112},"for":"macro"}""", "\"for\"")]
+    [InlineData("check_hotkey", """{"hotkey":{"Vk":112},"mode":"Press"}""", "\"mode\"")]
+    [InlineData("check_hotkey", """{"hotkey":{"Vk":112},"app":5}""", "\"app\"")]
+    [InlineData("check_hotkey", """{"hotkey":"F1"}""", "\"hotkey\"")]
+    [InlineData("search_library", """{"domain":"games"}""", "\"domain\"")]
+    [InlineData("search_library", """{"purpose":"click"}""", "\"purpose\"")]
+    [InlineData("search_library", """{"app":3}""", "\"app\"")]
+    [InlineData("search_library", """{"collection":7}""", "\"collection\"")]
+    [InlineData("search_library", """{"limit":500}""", "\"limit\"")]
+    [InlineData("update_actions", """{"id":"ID","set":{"DelayMs":5},"group":3}""", "\"group\"")]
+    [InlineData("update_settings", """{"settings":{"Theme":true}}""", "\"settings\"")]
+    [InlineData("import_items", """{"content":"{}","only":["a"]}""", "\"only\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"count":"2","labels":["A","B"]}""", "\"count\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"count":1,"labels":"A"}""", "\"labels\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"count":1,"labels":[1]}""", "\"labels\"")]
+    [InlineData("pick_points", """{"title":"T","description":"D","steps":["S"],"confirmed_steps":"C","count":1,"labels":["A"]}""", "\"confirmed_steps\"")]
+    [InlineData("pick_app", """{"title":"T","description":"D","steps":"Click it"}""", "\"steps\"")]
+    [InlineData("pick_app", """{"title":"T","description":"D","steps":["Click it",2]}""", "\"steps\"")]
+    [InlineData("pick_app", """{"title":5,"description":"D","steps":["S"]}""", "\"title\"")]
+    [InlineData("pick_pixel", """{"title":"T","description":"D","steps":["S"],"x":5,"y":6}""", "\"x\"")]
+    [InlineData("pick_pixel", """{"snapshot_id":5,"x":5,"y":6}""", "\"snapshot_id\"")]
+    [InlineData("take_image", """{"title":"T","description":"D","steps":["S"],"area":{"X":0,"Y":0,"Width":9,"Height":9}}""", "\"area\"")]
+    [InlineData("test_macro", """{"id":"ID","title":"T","description":"D","steps":["S"]}""", "\"confirmed_steps\"")]
+    [InlineData("test_macro", """{"id":"ID","title":"T","description":"D","steps":["S"],"confirmed_steps":["C"],"max_seconds":900}""", "\"max_seconds\"")]
+    [InlineData("record_macro", """{"title":"T","description":"D","steps":["S"],"mouse_movement":"yes"}""", "\"mouse_movement\"")]
+    [InlineData("wait_for_user", """{"request_id":5}""", "\"request_id\"")]
+    [InlineData("wait_for_user", """{}""", "\"request_id\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"renamed":"Slot"}""", "\"renamed\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"renamed":{"Old":5}}""", "\"renamed.Old\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"call_values":3}""", "\"call_values\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"collection":"Diablo"}""", "\"collection\"")]
+    [InlineData("save_component", """{"component":{"Name":"X"},"collection":{"name":"Diablo","app":5}}""", "\"collection.app\"")]
+    [InlineData("open_item", """{"id":"ID","title":"T","description":["D"]}""", "\"description\"")]
+    public async Task A_wrong_argument_is_an_error_that_names_it(string tool, string args, string named)
+    {
+        AiToolResult result = await _tools.Call(AiTools.Name(tool),
+            JsonDocument.Parse(args.Replace("ID", Guid.NewGuid().ToString(), StringComparison.Ordinal)).RootElement,
+            App, TestContext.Current.CancellationToken);
+
+        Assert.True(result.IsError, result.Text);
+        Assert.Contains(named, result.Text);
+        Assert.Empty(_host.ReadyShown);
+        Assert.Empty(_host.Saved);
+    }
+
+    [Fact]
+    public async Task An_argument_left_out_or_null_keeps_meaning_not_given_and_values_are_read_in_any_case()
+    {
+        AiToolResult nulls = await Call("check_hotkey", new { hotkey = new { Vk = 0x87 }, @for = (string?)null, mode = (string?)null, app = (string?)null });
+        AiToolResult hold = await Call("check_hotkey", new { hotkey = new { Vk = 0x87 }, @for = "HOTKEY", mode = "hold" });
+        AiToolResult search = await Call("search_library", new { domain = "Game", purpose = (string?)null, collection = "" });
+
+        Assert.False(nulls.IsError, nulls.Text);
+        Assert.False(hold.IsError, hold.Text);
+        Assert.False(search.IsError, search.Text);
+    }
+
+    [Fact]
+    public async Task The_name_of_a_debug_folder_never_fails_on_a_wrong_id()
+    {
+        Assert.Null(await _tools.SubjectOf(JsonSerializer.SerializeToElement(new { id = 5 })));
+        Assert.Null(await _tools.SubjectOf(JsonSerializer.SerializeToElement(new { id = "abc" })));
+    }
+
+    [Fact]
+    public async Task A_picture_s_area_that_is_not_an_object_is_an_error_naming_it()
+    {
+        AiToolResult look = await Call("look_at_screen", new { title = "T", description = "D", steps = new[] { "S" } });
+        string uri = DebugStore.UriOf(Assert.Single(look.Files, f => f.EndsWith(".png", StringComparison.Ordinal)));
+
+        AiToolResult read = await Call("read_resource", new { uri, area = "all" });
+
+        Assert.True(read.IsError, read.Text);
+        Assert.Contains("\"area\" must be an object", read.Text);
+    }
+
+    [Fact]
+    public void The_first_answer_gives_the_global_rules_and_what_the_Library_holds()
+    {
+        // An empty Library: the rules, and that it has no components yet.
+        string empty = _tools.FirstAnswer();
+        Assert.StartsWith("PuppyMacro's rules for AI apps:\n- ", empty);
+        Assert.All(AiTools.GlobalRules, rule => Assert.Contains("- " + rule, empty));
+        Assert.Contains("never duplicate what already exists", empty);
+        Assert.EndsWith("The user's Library has no components yet.", empty);
+
+        static LibraryComponent Point(string concept) => new()
+        {
+            Name = concept, Purpose = ComponentPurpose.Point, Concept = concept,
+            Actions = { new MacroAction { Type = MacroActionType.Click, Vk = 0x01, X = 5, Y = 6 } },
+        };
+        _host.Macros.Library.Collections.Add(new LibraryCollection
+        {
+            Name = "Diablo IV", Domain = LibraryDomain.Game, AppExe = "Diablo IV.exe", Components = { Point("slot"), Point("cube") },
+        });
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "General", Domain = LibraryDomain.Other, Components = { Point("any") } });
+        _host.Macros.Library.Collections.Add(new LibraryCollection { Name = "Empty", Domain = LibraryDomain.Other });
+
+        string full = _tools.FirstAnswer();
+        Assert.Contains("The user's Library has components that already work: \"Diablo IV\" (Diablo IV.exe) 2, \"General\" (any app) 1. " +
+            "puppymacro_search_library lists them with what each takes.", full);
+        Assert.DoesNotContain("\"Empty\"", full); // a collection without components says nothing
+    }
+
+    [Fact]
+    public void The_instructions_give_the_global_rules_too()
+    {
+        Assert.Contains("PuppyMacro's rules for AI apps:", AiTools.InstructionsText);
+        Assert.All(AiTools.GlobalRules, rule => Assert.Contains("- " + rule, AiTools.InstructionsText));
+    }
+
+    [Fact]
+    public async Task A_changed_component_never_moves_to_another_collection()
+    {
+        var component = new LibraryComponent
+        {
+            Name = "Slot", Purpose = ComponentPurpose.Point, Concept = "slot",
+            Actions = { new MacroAction { Type = MacroActionType.Click, Vk = 0x01, X = 5, Y = 6 } },
+        };
+        var collection = new LibraryCollection { Name = "Diablo", Domain = LibraryDomain.Game, Components = { component } };
+        _host.Macros.Library.Collections.Add(collection);
+        object item = new { Name = "Slot", Purpose = "Point", Concept = "slot", Actions = new[] { new { Type = "Click", Vk = 1, X = 7, Y = 8 } } };
+
+        AiToolResult moved = await Call("save_component", new { id = component.Id.ToString(), collection = new { name = "Other" }, component = item });
+        AiToolResult kept = await Call("save_component", new { id = component.Id.ToString(), collection = new { id = collection.Id.ToString() }, component = item });
+
+        Assert.True(moved.IsError);
+        Assert.Contains("never moves to another collection", moved.Text);
+        Assert.False(kept.IsError, kept.Text);
+        Assert.Equal(7, Assert.Single(collection.Components).Actions[0].X);
+    }
+
+    // ================= get_item's outline =================
+
+    [Fact]
+    public async Task The_outline_starts_with_the_macro_s_settings_that_differ_from_their_defaults()
+    {
+        var plain = new MacroDefinition { Name = "Plain", Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 65 } } };
+        var tuned = new MacroDefinition
+        {
+            Name = "Salvage", Hotkey = new HotkeyBinding { Vk = 0x74 }, Mode = ActivationMode.Hold, Repeat = RepeatMode.Loop,
+            ChecksPerSecond = 60, Debug = true, AppExe = "Diablo IV.exe",
+            Actions = { new MacroAction { Type = MacroActionType.PressKey, Vk = 65 } },
+        };
+        _host.Macros.Macros.Add(plain);
+        _host.Macros.Macros.Add(tuned);
+
+        string[] plainLines = (await Call("get_item", new { id = plain.Id.ToString(), outline = true })).Text.Split('\n');
+        string[] tunedLines = (await Call("get_item", new { id = tuned.Id.ToString(), outline = true })).Text.Split('\n');
+
+        Assert.Equal("Settings: all at their defaults", plainLines[0]);
+        Assert.StartsWith("/Actions/0 PressKey", plainLines[1]);
+        Assert.StartsWith("Settings: ", tunedLines[0]);
+        foreach (string setting in new[] { "Hotkey F5", "Mode Hold", "Repeat Loop", "ChecksPerSecond 60", "Debug on", "AppExe Diablo IV.exe" })
+            Assert.Contains(setting, tunedLines[0]);
+        Assert.DoesNotContain("Salvage", tunedLines[0]);
+        Assert.DoesNotContain("Actions", tunedLines[0]);
+        Assert.StartsWith("/Actions/0 PressKey", tunedLines[1]);
+    }
+
+    [Fact]
+    public void The_settings_line_names_a_loop_s_and_a_remap_s_settings_too()
+    {
+        var loop = new LoopDefinition { Name = "Spam", Enabled = false, Hotkey = new HotkeyBinding { Vk = 0x74 } };
+        var remap = new RemapDefinition { Source = CtrlX.Clone(), Target = new HotkeyBinding { Vk = 0x41 } };
+
+        string loopLine = AiTools.SettingsLine(loop);
+        string remapLine = AiTools.SettingsLine(remap);
+
+        Assert.Contains("Enabled off", loopLine);
+        Assert.Contains("Hotkey F5", loopLine);
+        Assert.DoesNotContain("Spam", loopLine);
+        Assert.Contains("Source ", remapLine);
+        Assert.Contains("Target A", remapLine);
+    }
+
+    // ================= Instructions =================
+
+    [Fact]
+    public void The_instructions_and_save_component_name_every_type_a_parameter_can_have_and_a_grid_s_cell()
+    {
+        string saveComponent = AiTools.Definitions().Single(t => t.Name == AiTools.Name("save_component")).Description;
+        foreach (string text in new[] { AiTools.Instructions, saveComponent })
+        {
+            foreach (var type in Enum.GetValues<ParameterType>())
+                Assert.Contains(type.ToString(), text);
+            Assert.Contains("Cell", text);
+        }
+    }
+
+    [Fact]
+    public void The_instructions_and_save_component_say_a_shared_value_can_be_one_parameter_passed_down()
+    {
+        string saveComponent = AiTools.Definitions().Single(t => t.Name == AiTools.Name("save_component")).Description;
+        foreach (string text in new[] { AiTools.Instructions, saveComponent })
+        {
+            Assert.Contains("passed down with {\"From\"}", text);
+            Assert.Contains("a Default copied into each component has to be changed in each", text);
+        }
     }
 }

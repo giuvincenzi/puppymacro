@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,8 @@ using PuppyMacro.Models;
 using PuppyMacro.Resources;
 using PuppyMacro.Services;
 using PuppyMacro.Services.Ai;
+using PuppyMacro.Services.Screen;
+using PuppyMacro.Native;
 using PuppyMacro.Views;
 
 namespace PuppyMacro;
@@ -53,7 +56,7 @@ public partial class MainWindow : IAiHost
         _aiLog = new AiActivityLog(AppPaths.AiActivityFile);
         _aiLog.Load();
         _aiTools = new AiTools(this, _aiLog);
-        _aiServer = new AiServer(_aiTools, _aiLog, () => _settings.AllowAiAccess, new AiCallLog(AppPaths.AiCallsFile));
+        _aiServer = new AiServer(_aiTools, _aiLog, () => _settings.AllowAiAccess);
         _aiLog.Changed += () => Dispatcher.InvokeAsync(RefreshAiPage);
         _aiServer.ClientsChanged += () => Dispatcher.InvokeAsync(RefreshAiPage);
         _aiServer.Start();
@@ -62,6 +65,8 @@ public partial class MainWindow : IAiHost
         AiAskDeleteSwitch.IsOn = _settings.AiAskBeforeDeleting;
         AiAskChangeSwitch.IsOn = _settings.AiAskBeforeChanging;
         AiAskSettingsSwitch.IsOn = _settings.AiAskBeforeSettings;
+        AiSeeScreenSwitch.IsOn = _settings.AiSeeScreen;
+        AiTestMacrosSwitch.IsOn = _settings.AiTestMacros;
         AiStartSwitch.IsOn = _settings.AiStartWhenNeeded;
         // The apps' settings change outside PuppyMacro (Install in VS Code, a restart of Claude Desktop): looked at again
         // while the page shows.
@@ -110,6 +115,8 @@ public partial class MainWindow : IAiHost
         _settings.AiAskBeforeDeleting = AiAskDeleteSwitch.IsOn;
         _settings.AiAskBeforeChanging = AiAskChangeSwitch.IsOn;
         _settings.AiAskBeforeSettings = AiAskSettingsSwitch.IsOn;
+        _settings.AiSeeScreen = AiSeeScreenSwitch.IsOn;
+        _settings.AiTestMacros = AiTestMacrosSwitch.IsOn;
         _settings.AiStartWhenNeeded = AiStartSwitch.IsOn;
         Save();
     }
@@ -164,14 +171,14 @@ public partial class MainWindow : IAiHost
     {
         string exe = AppPaths.ExecutablePath;
         bool access = _settings.AllowAiAccess;
-        AiClient? Live(string name) => clients.FirstOrDefault(c => c.Name == name);
+        AiClient? Live(AiAppKind kind) => clients.FirstOrDefault(c => c.Kind == kind);
         static string Since(AiClient client) =>
             string.Format(CultureInfo.CurrentCulture, Strings.AiApps_ConnectedSince, client.Since.ToString("t", CultureInfo.CurrentCulture));
 
         string claudeConfig = AiApps.ClaudeConfigPath(AppDataFolder, LocalAppDataFolder);
         bool claudeInstalled = AiApps.ClaudeInstalled(AppDataFolder, LocalAppDataFolder);
         bool claudeAdded = AiApps.ClaudeHas(claudeConfig, exe);
-        AiClient? claude = Live("Claude Desktop");
+        AiClient? claude = Live(AiAppKind.ClaudeDesktop);
         string? claudeExe = AiApps.ClaudeExe(LocalAppDataFolder, _claudeStoreFolder);
         if (claudeExe == null && claudeInstalled)
         {
@@ -181,13 +188,13 @@ public partial class MainWindow : IAiHost
 
         string? codeExe = AiApps.VsCodeExe(LocalAppDataFolder, ProgramFilesFolder);
         bool codeAdded = AiApps.VsCodeHas(AiApps.VsCodeConfigPath(AppDataFolder), exe);
-        AiClient? code = Live("Visual Studio Code");
+        AiClient? code = Live(AiAppKind.VsCode);
 
         bool codexInstalled = AiApps.CodexInstalled(UserProfileFolder);
         bool codexAdded = AiApps.CodexHas(AiApps.CodexConfigPath(UserProfileFolder), exe);
-        AiClient? codex = Live("Codex");
+        AiClient? codex = Live(AiAppKind.Codex);
 
-        var others = clients.Where(c => c.Name is not ("Claude Desktop" or "Visual Studio Code" or "Codex")).Select(c => c.Name).Distinct().ToList();
+        var others = clients.Where(c => c.Kind == AiAppKind.Other).Select(c => c.Name).Distinct().ToList();
         return new List<AiAppTile>
         {
             new()
@@ -380,6 +387,34 @@ public partial class MainWindow : IAiHost
             }
             else
             {
+                // A deleted component: Before is its collection with only it, so it goes back where it was, with its
+                // collection if that was deleted too.
+                if (entry.ItemKind == "collection")
+                {
+                    if (JsonSerializer.Deserialize<LibraryCollection>(entry.Before, CodeJson.Options) is not { Components: [var deleted] } collection)
+                        return Strings.AiActivity_CantRestore;
+                    // Back already (restored from its History): nothing to put back.
+                    if (Library.Find(deleted.Id) == null)
+                    {
+                        _itemHistory?.RestoreImages(deleted.Id, CodeJson.Serialize(deleted));
+                        if (SaveComponent(deleted, collection) is string notRestored)
+                            return notRestored;
+                    }
+                    _aiLog.MarkRestored(entry);
+                    return null;
+                }
+                if (entry.ItemKind == "component")
+                {
+                    if (JsonSerializer.Deserialize<LibraryComponent>(entry.Before, CodeJson.Options) is not { } component)
+                        return Strings.AiActivity_CantRestore;
+                    // The images of the version before the change, from the component's History, as for a macro.
+                    if (entry.ItemId is Guid componentId)
+                        _itemHistory?.RestoreImages(componentId, entry.Before);
+                    if (SaveComponent(component, null) is string notRestored)
+                        return notRestored;
+                    _aiLog.MarkRestored(entry);
+                    return null;
+                }
                 object? item = entry.ItemKind switch
                 {
                     "loop" => JsonSerializer.Deserialize<LoopDefinition>(entry.Before, CodeJson.Options),
@@ -389,6 +424,12 @@ public partial class MainWindow : IAiHost
                 };
                 if (item == null)
                     return Strings.AiActivity_CantRestore;
+                // A macro version that links a component the Library doesn't have any more can't play: not restored.
+                if (item is MacroDefinition linking && Library.Missing(linking).Count > 0)
+                    return Strings.Code_ComponentMissing;
+                // The images of the version before the change: the item's History keeps them.
+                if (item is MacroDefinition && entry.ItemId is Guid restoredId)
+                    _itemHistory?.RestoreImages(restoredId, entry.Before);
                 SaveItem(item);
             }
         }
@@ -414,14 +455,67 @@ public partial class MainWindow : IAiHost
 
     /// <summary>
     /// An editor, a confirmation, the placement overlay or a recording (they all suspend the hotkeys), or another dialog
-    /// (<see cref="ShowUserDialog"/>) is open.
+    /// (<see cref="ShowUserDialog"/>) is open: PuppyMacro's windows on the screen, named in English for the AI app (i18n.md),
+    /// or a dialog of this window (a confirmation, a file dialog, a message), which is not a window of its own.
     /// </summary>
-    bool IAiHost.UserIsEditing => _engine.HotkeysSuspended || _userDialogs > 0;
+    string? IAiHost.UserHasOpen
+    {
+        get
+        {
+            if (!_engine.HotkeysSuspended && _userDialogs == 0)
+                return null;
+            var open = Application.Current.Windows.OfType<Window>()
+                .Where(w => w != this && w.IsVisible && w is not (OverlayPanelWindow or FloatingButtonWindow or AiFinishedWindow))
+                .Select(EnglishName)
+                .ToList();
+            return open.Count == 0
+                ? "a dialog in PuppyMacro's main window (a confirmation, a file dialog or a message)"
+                : string.Join(" and ", open);
+        }
+    }
+
+    /// <summary>"the macro editor of \"Salvage\"", "the library window": a window as an AI app reads it, in English.</summary>
+    private static string EnglishName(Window window)
+    {
+        static string Of(string what, string name) => string.IsNullOrWhiteSpace(name) ? $"the {what}" : $"the {what} of \"{name.Trim()}\"";
+        switch (window)
+        {
+            case LoopEditorWindow loop:
+                return Of("loop editor", loop.NameBox.Text);
+            case MacroEditorWindow macro:
+                return Of("macro editor", macro.NameBox.Text);
+            case RemapEditorWindow remap:
+                return Of("remap editor", remap.NoteBox.Text);
+        }
+        // The others by their kind: "MacroActionWindow" is "the macro action window", "AiActivityWindow" "the AI activity window".
+        string kind = System.Text.RegularExpressions.Regex.Replace(window.GetType().Name, "(?<=[a-z])(?=[A-Z])", " ").ToLowerInvariant();
+        return "the " + (kind.StartsWith("ai ", StringComparison.Ordinal) ? "AI" + kind[2..] : kind);
+    }
 
     Task<T> IAiHost.Ui<T>(Func<Task<T>> action) => Dispatcher.InvokeAsync(action).Task.Unwrap();
 
+    // Why not in English: it is the AI app's answer (i18n.md); a saved change shows in the user's language.
+    string? IAiHost.AddCollections(IReadOnlyList<LibraryCollection> collections, string app) =>
+        SavingAs(app, () => AddCollections(collections, CultureInfo.InvariantCulture));
+
+    string? IAiHost.SaveComponent(LibraryComponent component, LibraryCollection? created, string app,
+        IReadOnlyList<MacroDefinition>? macros, IReadOnlyList<LibraryComponent>? callers) =>
+        SavingAs(app, () => SaveComponent(component, created, macros, callers, CultureInfo.InvariantCulture));
+
+    string? IAiHost.DeleteComponent(Guid id, string app) => SavingAs(app, () => SaveLibrary(library =>
+    {
+        if (library.Find(id) is not { } found)
+            return null;
+        // Checked again here, in the answer's language: meanwhile a macro may have started to use it.
+        if (library.CanDeleteComponent(found.Component, _macros.Macros) is string used)
+            return used;
+        found.Collection.Components.Remove(found.Component);
+        return null;
+    }, onlyAdds: false, refusals: CultureInfo.InvariantCulture));
+
     void IAiHost.Save(object item, string app) => SavingAs(app, () =>
     {
+        AiTools.KeepUsersDebug(item, _macros);
         SaveItem(item);
         return true;
     });
@@ -495,6 +589,8 @@ public partial class MainWindow : IAiHost
             OpacitySlider.Value = opacity;
         if (values.SoundVolume is int volume)
             VolumeSlider.Value = volume;
+        if (values.RecognitionDevice is RecognitionDevice device)
+            RecognitionDeviceComboBox.SelectedIndex = (int)device;
         if (values.StopAllHotkey is { IsSet: true } stopAll)
             _settings.StopAllHotkey = stopAll.Clone();
         if (values.OverlayModeHotkey is { IsSet: true } overlay)
@@ -503,6 +599,8 @@ public partial class MainWindow : IAiHost
             _settings.RecordHotkey = record.Clone();
         if (values.OpenMainHotkey is { IsSet: true } openMain)
             _settings.OpenMainHotkey = openMain.Clone();
+        else if (values.OpenMainHotkey is { IsSet: false })
+            _settings.OpenMainHotkey = null; // a Restore of "none" (AiTools.RestoreSettings): changes refuse an unset hotkey
         UpdateHotkeyLabels();
         Save();
     }
@@ -552,6 +650,29 @@ public partial class MainWindow : IAiHost
         var picker = new PickPointWindow(pickApp: true, askedBy: app, reason: message);
         AiAnswer answer = ShowForAi(picker);
         return Task.FromResult((answer, answer == AiAnswer.Done ? picker.ResultApp : null));
+    }
+
+    Task<(AiAnswer Answer, AiScreenPick? Pick)> IAiHost.PickOnScreen(string app, string message, AiScreenPickKind kind)
+    {
+        var mode = kind switch { AiScreenPickKind.Image => ScreenPickMode.Image, AiScreenPickKind.Area => ScreenPickMode.Area, _ => ScreenPickMode.Pixel };
+        if (ScreenPickWindow.Create(mode, out _, app, message) is not { } picker)
+            return Task.FromResult<(AiAnswer, AiScreenPick?)>((AiAnswer.Cancelled, null));
+        AiAnswer answer = ShowForAi(picker);
+        AiScreenPick? pick = null;
+        if (answer == AiAnswer.Done && picker.PickedPixel is { } pixel)
+            pick = new AiScreenPick(pixel.X, pixel.Y, 1, 1, Color: pixel.Color);
+        else if (answer == AiAnswer.Done && picker.PickedArea is { } area)
+            pick = new AiScreenPick(area.Area.X, area.Area.Y, area.Area.Width, area.Area.Height,
+                ImageId: area.Png is { } png ? TakeForAi(png) : null);
+        return Task.FromResult((pick == null && answer == AiAnswer.Done ? AiAnswer.Cancelled : answer, pick));
+    }
+
+    /// <summary>An image an AI app took: held until PuppyMacro closes, so it is there when the AI saves the macro that uses it.</summary>
+    private string TakeForAi(byte[] png)
+    {
+        string id = _macros.Images.Add(png);
+        _macros.Images.HoldAlso(typeof(AiTools), id);
+        return id;
     }
 
     Task<(AiAnswer Answer, HotkeyBinding? Keys)> IAiHost.CaptureKeys(string app, AiAsk ask)
@@ -640,10 +761,135 @@ public partial class MainWindow : IAiHost
 
     IReadOnlyList<string> IAiHost.RunningApps() => AppWindows.RunningApps();
 
+    Task<ConditionReport> IAiHost.CheckCondition(MacroCondition condition)
+    {
+        // Off the UI thread, as the condition window checks (text recognition can take a moment).
+        var device = _settings.RecognitionDevice;
+        var images = _macros.Images;
+        return Task.Run(() =>
+        {
+            using var checker = new ConditionChecker(ScreenCapture.Shared, images, device, 0);
+            return checker.Inspect(condition);
+        });
+    }
+
+    Task<List<(OpenCvSharp.Rect Bounds, OpenCvSharp.Mat Picture)>> IAiHost.TakeScreen() => Task.Run(() =>
+    {
+        using var snapshot = ScreenSnapshot.Take();
+        return snapshot.Monitors.Select(m => (m.Bounds, m.Picture.Clone())).ToList();
+    });
+
+    /// <summary>
+    /// The recorder for an AI app: every monitor's capture runs while it records, so each key press and click takes every
+    /// monitor's picture at once (on a thread-pool thread: the input hook never waits). The main window is hidden
+    /// meanwhile, as for the user's own recording, and shown again only if it was visible.
+    /// </summary>
+    Task<(AiAnswer Answer, AiRecording? Recording)> IAiHost.Record(string app, bool mouseMovement)
+    {
+        var result = new TaskCompletionSource<(AiAnswer, AiRecording?)>();
+        var watches = ScreenCapture.MonitorBounds().Select(b => ScreenCapture.Shared.Start(b)).OfType<IScreenWatch>().ToList();
+        var inputs = new List<AiRecordedInput>();
+        int copying = 0;
+        void OnInput(RawEventKind kind, int vk, int x, int y, double t)
+        {
+            Interlocked.Increment(ref copying);
+            try
+            {
+                var screen = new List<(OpenCvSharp.Rect, OpenCvSharp.Mat)>();
+                foreach (var watch in watches.Where(w => !w.Failed && w.Version > 0))
+                {
+                    try
+                    {
+                        if (watch.Copy(watch.Bounds) is { } picture)
+                            screen.Add((watch.Bounds, picture));
+                    }
+                    catch (Exception ex) when (ex is not OutOfMemoryException)
+                    {
+                        CaptureLog.Write($"a recorded input's picture failed: {ex.Message}");
+                    }
+                }
+                bool click = kind == RawEventKind.ButtonDown;
+                string what = Loc.English(() => click ? $"Click {KeyNames.Get(vk)} at {x},{y}" : $"Key down {KeyNames.Get(vk)}");
+                lock (inputs)
+                    inputs.Add(new AiRecordedInput(what, click, x, y, t, screen));
+            }
+            finally
+            {
+                Interlocked.Decrement(ref copying);
+            }
+        }
+        _engine.RecordedInput += OnInput;
+        bool wasVisible = IsVisible;
+        RecordingSession.RunForAi(_engine, _settings, mouseMovement,
+            hide: () => { if (wasVisible) Hide(); },
+            restore: () => { if (wasVisible) Show(); },
+            done: events =>
+            {
+                _engine.RecordedInput -= OnInput;
+                _ = Task.Run(async () =>
+                {
+                    // The last inputs' pictures may still be on their way.
+                    for (int waited = 0; Volatile.Read(ref copying) > 0 && waited < 2000; waited += 20)
+                        await Task.Delay(20);
+                    foreach (var watch in watches)
+                        watch.Dispose();
+                    List<AiRecordedInput> taken;
+                    lock (inputs)
+                        taken = inputs.OrderBy(i => i.TimeMs).ToList();
+                    if (events == null)
+                    {
+                        foreach (var input in taken)
+                            foreach (var (_, picture) in input.Screen)
+                                picture.Dispose();
+                        result.SetResult((AiAnswer.Cancelled, null));
+                    }
+                    else
+                    {
+                        result.SetResult((AiAnswer.Done, new AiRecording(MacroBuilder.Build(events), taken)));
+                    }
+                });
+            });
+        return result.Task;
+    }
+
+    /// <summary>
+    /// An AI app's test (test_macro): the app the user brought in front gets the front back from the ready window (its
+    /// Start may have activated PuppyMacro), then the macro plays as Play would, always logged, until it ends, Stop all or
+    /// the time limit.
+    /// </summary>
+    async Task<AiTestRun?> IAiHost.TestMacro(Guid id, string app, double maxSeconds, string folder)
+    {
+        if (_macros.Find(id) is not { } macro || _engine.AnyRunning)
+            return null;
+        NativeMethods.GetWindowThreadProcessId(NativeMethods.GetForegroundWindow(), out uint pid);
+        if (pid == (uint)Environment.ProcessId && _engine.LastOtherWindow != IntPtr.Zero)
+            NativeMethods.SetForegroundWindow(_engine.LastOtherWindow);
+        await Task.Delay(300);
+        var ended = new TaskCompletionSource();
+        MacroRunner? runner = _engine.StartMacroTest(macro, folder, $"a test by {app}", _ => ended.TrySetResult());
+        if (runner == null)
+            return null;
+        if (await Task.WhenAny(ended.Task, Task.Delay(TimeSpan.FromSeconds(maxSeconds))) != ended.Task)
+        {
+            _engine.StopMacro(id, $"stopped at the test's time limit of {maxSeconds.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)} s");
+            await Task.WhenAny(ended.Task, Task.Delay(5000));
+        }
+        // The last lines and pictures are written by the debug writer.
+        await Task.Run(() => RunLog.WaitWritten(TimeSpan.FromSeconds(30)));
+        return new AiTestRun(runner.EndReason ?? "it was still ending", folder);
+    }
+
+    /// <summary>The window that says the AI app's request on the screen is over (the app's own name, or none).</summary>
+    void IAiHost.Finished(string app)
+    {
+        var window = new AiFinishedWindow(app);
+        window.Show();
+    }
+
     /// <summary>Dialogs open that do not suspend the hotkeys (file dialogs, AI activity, Import's confirmation).</summary>
     private int _userDialogs;
 
-    /// <summary>Shows a dialog that does not suspend the hotkeys: meanwhile AI requests wait (<see cref="IAiHost.UserIsEditing"/>).</summary>
+    /// <summary>Shows a dialog that does not suspend the hotkeys: meanwhile AI requests wait (<see cref="IAiHost.UserHasOpen"/>).</summary>
     private bool? ShowUserDialog(Func<bool?> show)
     {
         _userDialogs++;
@@ -665,7 +911,7 @@ public partial class MainWindow : IAiHost
     private AiAnswer ShowForAi(Window dialog)
     {
         // The picker and the placement screen cover the screen, are topmost and must stay so, and activate themselves.
-        if (dialog is not (PickPointWindow or PlacementWindow))
+        if (dialog is not (PickPointWindow or PlacementWindow or ScreenPickWindow))
         {
             dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             AiWindow.BringToFront(dialog);

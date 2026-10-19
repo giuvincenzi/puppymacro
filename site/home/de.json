@@ -23,10 +23,14 @@
   "ai_tag_mcp": "MCP-fähig",
   "ai_tag_beta": "Beta",
   "ai_text": "Verbinden Sie Ihre AI-App, z. B. Claude, und sagen Sie einfach: „Erstelle ein Makro, das …“. Fertig.",
+  "learn_title": "Ihre AI lernt Ihre Apps kennen",
+  "learn_text": "Was funktioniert, wird zur Komponente: eine zu findende Schaltfläche, ein auszufüllendes Feld. Ihre AI nutzt sie, wenn sie Ihr nächstes Makro erstellt. Teilen Sie sie als Sammlung.",
   "loops_title": "Schleifen",
   "loops_text": "Wiederholen Sie eine Taste oder eine Kombination wie Strg+C, einen Klick (auch doppelt, an einer festen Stelle), eine gedrückt gehaltene Taste oder Maustaste oder einen Text zum Einfügen, im Abstand von 10 ms bis 24 h. Mehrere Aktionen, jede mit eigenem Timer.",
   "macros_title": "Makros",
   "macros_text": "Zeichnen Sie Tasten, Klicks, Scrollen und Mausbewegungen auf, und bearbeiten Sie dann jeden Schritt, in einer Liste oder als Code mit Vorschlägen und Live-Prüfung. Einmal, N-mal oder endlos abspielen, mit ×0,25 bis ×4 Geschwindigkeit.",
+  "conditions_title": "Bedingungen auf dem Bildschirm",
+  "conditions_text": "Ein Makro kann auf eine Pixelfarbe, ein Bild oder einen Text auf dem Bildschirm warten und dann dort klicken, wo es gefunden wurde, oder etwas anderes tun, wenn nichts erscheint. Schnell, auch mit HDR.",
   "remap_title": "Neu zuordnen",
   "remap_text": "Eine Taste, eine Maustaste oder eine Kombination wie Alt+J sendet eine andere Taste, Maustaste oder Kombination, in allen Apps oder nur in der App Ihrer Wahl. Auch Strg, Alt, Umschalt und Win lassen sich neu zuordnen, links und rechts getrennt.",
   "overlay_title": "Overlay-Modus",
@@ -41,7 +45,7 @@
   "language_text": "In Ihrer Windows-Sprache oder der Sprache Ihrer Wahl: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 und 中文.",
   "privacy_title": "Datenschutz",
   "privacy_updates": "PuppyMacro sammelt und sendet keine personenbezogenen Daten. Mit <strong>Automatisch nach Updates suchen</strong> (standardmäßig aktiviert) verbindet es sich beim Start und alle 12 Stunden mit GitHub, um Updates zu suchen und herunterzuladen; für diese Anfragen gilt die <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">Allgemeine Datenschutzerklärung für GitHub</a>. Sie können das unter Einstellungen > Daten und Updates ausschalten.",
-  "privacy_ai": "PuppyMacro sendet nichts an AI-Dienste. Ist <strong>AI-Zugriff erlauben</strong> aktiviert (standardmäßig aus), können die AI-Apps auf Ihrem PC, die Sie verbinden, Ihre Schleifen, Makros, Neuzuordnungen und Einstellungen über PuppyMacro lesen: Was sie lesen, geht an den Anbieter der jeweiligen App und unterliegt dessen Datenschutzrichtlinie.",
+  "privacy_ai": "PuppyMacro sendet nichts an AI-Dienste. Ist <strong>AI-Zugriff erlauben</strong> aktiviert (standardmäßig aus), können die AI-Apps auf Ihrem PC, die Sie verbinden, Ihre Schleifen, Makros, Neuzuordnungen und Einstellungen über PuppyMacro lesen: Was sie lesen, geht an den Anbieter der jeweiligen App und unterliegt dessen Datenschutzrichtlinie. Mit <strong>AI-Apps den Bildschirm sehen lassen</strong> (standardmäßig an) können sie auch Bilder Ihres Bildschirms sehen, um Makros zu erstellen, die auf ihn schauen.",
   "footer_license": "MIT-Lizenz",
   "footer_releases": "Alle Versionen"
 }

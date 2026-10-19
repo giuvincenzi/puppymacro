@@ -187,9 +187,7 @@ public sealed class LoopItemViewModel : INotifyPropertyChanged, IListItem
                 ? Plurals.Format("Loops_KeyTimesEvery", action.Times, what, interval)
                 : string.Format(CultureInfo.CurrentCulture, Strings.Loops_KeyEvery, what, interval);
 
-        string text = action.Text.Replace("\r", " ").Replace("\n", " ").Trim();
-        if (text.Length > 28)
-            text = text[..28] + "…";
+        string text = TextCut.Shorten(action.Text.Replace("\r", " ").Replace("\n", " ").Trim(), 28);
         return string.Format(CultureInfo.CurrentCulture, Strings.Loops_PastesEvery, text, interval);
     }
 

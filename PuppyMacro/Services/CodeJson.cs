@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using PuppyMacro.Models;
 using PuppyMacro.Resources;
 
@@ -55,15 +58,24 @@ internal static class CodeJson
         var locator = new Locator(text);
 
         // Syntax first: the reader knows the exact line and column.
+        List<string> nulls;
         try
         {
             using var document = JsonDocument.Parse(text);
+            nulls = MisplacedNulls(document.RootElement, typeof(T));
         }
         catch (JsonException ex)
         {
             problems.Add(locator.SyntaxProblem(ex));
             return null;
         }
+
+        // A null where the model has no null (an entry of a list, a field): a problem at its path, before the checks get it.
+        var checker = new Checker(locator, problems);
+        foreach (string path in nulls)
+            checker.Add(path, Strings.Code_NeedsValue);
+        if (problems.Count > 0)
+            return null;
 
         T? value;
         try
@@ -81,8 +93,135 @@ internal static class CodeJson
             return null;
         }
 
-        check(value, new Checker(locator, problems));
+        check(value, checker);
         return problems.Count > 0 ? null : value;
+    }
+
+    /// <summary>
+    /// Reads a data file (a macro file, library.json) as it is loaded: a null where the model has no null is left out, so
+    /// the field keeps its default and a list loses that entry (a null holds nothing to keep). The strict reading of the
+    /// Code views makes each of them a problem instead (<see cref="Read{T}"/>). Throws <see cref="JsonException"/> when the
+    /// text is not JSON or does not fit the model.
+    /// </summary>
+    public static T? ReadFile<T>(string text) where T : class => ReadFile<T>(text, Options);
+
+    /// <summary>The same with a file's own options (settings.json's).</summary>
+    public static T? ReadFile<T>(string text, JsonSerializerOptions options) where T : class
+    {
+        using var document = JsonDocument.Parse(text);
+        return JsonSerializer.Deserialize<T>(WithoutMisplacedNulls(document.RootElement, typeof(T)), options);
+    }
+
+    /// <summary>The same JSON without the nulls <see cref="MisplacedNulls"/> finds.</summary>
+    public static byte[] WithoutMisplacedNulls(JsonElement root, Type type)
+    {
+        using var stream = new System.IO.MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream))
+            Walk(root, type, null, "", new NullabilityInfoContext(), new List<string>(), writer);
+        return stream.ToArray();
+    }
+
+    /// <summary>
+    /// The paths ("Actions[2].If.Conditions[0]") of every null of <paramref name="root"/> where <paramref name="type"/> (as
+    /// the data files and <see cref="StrictOptions"/> read it) has no null: an entry of a list or of a dictionary whose
+    /// entries are never null, or a field that is never null. The one place that finds them, for every kind of item: the
+    /// strict reading lets a null entry of a list through (RespectNullableAnnotations covers only properties), and the
+    /// checks after it, like the code that loads a file, expect none.
+    /// </summary>
+    public static List<string> MisplacedNulls(JsonElement root, Type type)
+    {
+        var found = new List<string>();
+        Walk(root, type, null, "", new NullabilityInfoContext(), found, null);
+        return found;
+    }
+
+    /// <summary>Finds the misplaced nulls of <paramref name="element"/> and, with a <paramref name="writer"/>, writes it without them.</summary>
+    private static void Walk(JsonElement element, Type type, NullabilityInfo? nullability, string path, NullabilityInfoContext context,
+        List<string> found, Utf8JsonWriter? writer)
+    {
+        JsonTypeInfo info = StrictOptions.GetTypeInfo(type);
+        switch (info.Kind)
+        {
+            case JsonTypeInfoKind.Object when element.ValueKind == JsonValueKind.Object:
+                writer?.WriteStartObject();
+                foreach (JsonProperty member in element.EnumerateObject())
+                {
+                    string at = path.Length == 0 ? member.Name : $"{path}.{member.Name}";
+                    JsonPropertyInfo? property = info.Properties.FirstOrDefault(p => p.Name == member.Name);
+                    if (property == null)
+                    {
+                        // An unknown property: the reading decides.
+                        if (writer != null)
+                            member.WriteTo(writer);
+                        continue;
+                    }
+                    if (member.Value.ValueKind == JsonValueKind.Null && !property.IsSetNullable)
+                    {
+                        found.Add(at);
+                        continue;
+                    }
+                    writer?.WritePropertyName(member.Name);
+                    NullabilityInfo? inner = property.AttributeProvider switch
+                    {
+                        PropertyInfo p => context.Create(p),
+                        FieldInfo f => context.Create(f),
+                        _ => null,
+                    };
+                    Walk(member.Value, property.PropertyType, inner, at, context, found, writer);
+                }
+                writer?.WriteEndObject();
+                break;
+            case JsonTypeInfoKind.Enumerable when element.ValueKind == JsonValueKind.Array && info.ElementType is Type elementType:
+            {
+                NullabilityInfo? entry = nullability?.ElementType ?? nullability?.GenericTypeArguments.FirstOrDefault();
+                bool mayBeNull = MayBeNull(elementType, entry);
+                writer?.WriteStartArray();
+                int i = 0;
+                foreach (JsonElement item in element.EnumerateArray())
+                {
+                    string at = $"{path}[{i++}]";
+                    if (item.ValueKind == JsonValueKind.Null && !mayBeNull)
+                        found.Add(at);
+                    else
+                        Walk(item, elementType, entry, at, context, found, writer);
+                }
+                writer?.WriteEndArray();
+                break;
+            }
+            case JsonTypeInfoKind.Dictionary when element.ValueKind == JsonValueKind.Object && info.ElementType is Type valueType:
+            {
+                NullabilityInfo? entry = nullability?.GenericTypeArguments is { Length: 2 } arguments ? arguments[1] : null;
+                bool mayBeNull = MayBeNull(valueType, entry);
+                writer?.WriteStartObject();
+                foreach (JsonProperty member in element.EnumerateObject())
+                {
+                    string at = path.Length == 0 ? member.Name : $"{path}.{member.Name}";
+                    if (member.Value.ValueKind == JsonValueKind.Null && !mayBeNull)
+                    {
+                        found.Add(at);
+                        continue;
+                    }
+                    writer?.WritePropertyName(member.Name);
+                    Walk(member.Value, valueType, entry, at, context, found, writer);
+                }
+                writer?.WriteEndObject();
+                break;
+            }
+            default:
+                if (writer != null)
+                    element.WriteTo(writer);
+                break;
+        }
+    }
+
+    /// <summary>An entry of this type can be null: a Nullable value, or a reference not marked as never null.</summary>
+    private static bool MayBeNull(Type type, NullabilityInfo? nullability)
+    {
+        if (type.IsValueType)
+            return Nullable.GetUnderlyingType(type) != null;
+        if (nullability != null)
+            return nullability.ReadState != NullabilityState.NotNull;
+        return type == typeof(object) || typeof(JsonNode).IsAssignableFrom(type);
     }
 
     /// <summary>Adds problems at the line of a path ("Actions[2].Vk").</summary>

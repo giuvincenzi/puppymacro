@@ -1,0 +1,63 @@
+<p>A macro can look at the screen before it goes on: an <strong>If</strong> checks one or more conditions, waits for them as you choose, then plays the actions in its <strong>Then</strong>, or the actions in its <strong>Else</strong>, or stops the macro. A click inside <strong>Then</strong> can go where an image or a text was found, wherever it is that time.</p>
+<figure class="shot">
+  <img src="img/condition-editor.png" alt="The condition window of an If with a Pixel color condition that waits up to 30 seconds" loading="lazy">
+  <figcaption>A condition says what PuppyMacro sees now, as you change it.</figcaption>
+</figure>
+
+<h3>Add a condition</h3>
+<ol>
+  <li>In the macro editor, select where the If goes (as for a new action), then select <strong>Condition</strong> (the + button next to <strong>Action</strong>) and choose <strong>Pixel color</strong>, <strong>Image on screen</strong> or <strong>Text on screen (OCR)</strong>.</li>
+  <li>The condition window opens with that condition. Pick the pixel, take the image or write the text (below), then choose when to run <strong>Then</strong>.</li>
+  <li>Select <strong>Save</strong>. In the list, the If is a row with <strong>Then</strong> under it (and <strong>Else</strong> when the If runs it). Select <strong>Then</strong> or <strong>Else</strong> and add actions: they go at its end. You can also drag actions onto them. <kbd>Alt</kbd>+<kbd>Up</kbd> / <kbd>Alt</kbd>+<kbd>Down</kbd> at the top or bottom of a Then or Else move the actions out of it, and pass over an If instead of entering it.</li>
+</ol>
+<p><strong>Edit</strong>, or a double-click on the If or on its <strong>Then</strong> or <strong>Else</strong>, opens the condition window again. <strong>Add condition</strong> in that window adds more conditions to the same If, and each one has <strong>Remove condition</strong>. An If can be inside another If's Then or Else, and groups work inside them too.</p>
+
+<h3>The conditions</h3>
+<ul>
+  <li><strong>Pixel color</strong>: the color of one point of the screen. <strong>Pick on screen</strong> shows a still picture of the screen with the pixels around the pointer enlarged: click the pixel, and its position and color are taken. <strong>Tolerance</strong> is how much red, green and blue may each differ (5% by default; at 0% only the same color counts).</li>
+  <li><strong>Image on screen</strong>: a picture to find. <strong>Take on screen</strong> shows a still picture of the screen: drag around the image (a button or an icon works best: small, and only what always looks the same), then <strong>Take image</strong>; <strong>Retry</strong> removes the rectangle so you can drag again on the same picture. An area all of one color is refused, as PuppyMacro could never find it as an image: check its color with a pixel instead. <strong>Take another image</strong> adds more pictures: the condition is true when one of them is on the screen (for example the same button lit and unlit). <strong>Similarity</strong> is how closely the screen must look like the image (90% by default; lower it a little when light or effects change it). It counts in whole percent, as <strong>Now on the screen</strong> shows it: at 100% the image must be identical. <strong>A little bigger or smaller</strong> also finds the image from 85% to 115% of its size, and takes longer.</li>
+  <li><strong>Text on screen</strong>: words, read with Windows' own text recognition, in a <strong>Language</strong> Windows can read on the PC (<strong>Windows language</strong> by default; add others in Windows Settings &gt; Time &amp; language &gt; Language &amp; region). <strong>Match</strong>: <strong>Contains the text</strong> (also inside longer words) or <strong>Exactly these words</strong>; <strong>Match uppercase and lowercase</strong>. Spaces and the punctuation around words do not count. It is slower than an image: use it when the words stay the same but their font, color or background change, and keep the search area small.</li>
+</ul>
+<p>Each kind has its strengths. A pixel is the fastest and uses almost nothing, but breaks when the color shifts a little (light, effects, a highlight under the pointer). An image is the most reliable when it is small and distinctive, like a button or an icon; an area of one flat color can't be found as an image (a pixel fits it). A text is the slowest, and reads only the languages Windows has on the PC.</p>
+<p>Each condition starts with <strong>True when</strong>: what it looks for is there (<strong>The pixel has this color</strong>, <strong>The image is on the screen</strong>, <strong>The text is on the screen</strong>, the default) or it is not (<strong>The pixel doesn't have this color</strong>, <strong>The image isn't on the screen</strong>, <strong>The text isn't on the screen</strong>), for example to wait until a window closes or a loading icon goes away. With <strong>Up to</strong> or <strong>As long as it takes</strong>, such a condition waits for it to go away. A part of the screen PuppyMacro cannot see (no monitor there any more) never makes it true. It finds nothing, so the actions in Then cannot go where it was found: while one of them does, it stays on "is on the screen".</p>
+<p>Image and Text conditions have a <strong>Name</strong> (for example <em>Accept button</em>), which the actions in Then use. Two conditions of one macro cannot have the same name.</p>
+
+<h3>Where to look</h3>
+<ul>
+  <li><strong>Search area</strong> of an image: <strong>Around where it was taken</strong> (the default: the place it was taken, larger by the image's size on every side, so it still finds the image if it moves a little; the fastest), <strong>The whole screen</strong> (the monitor where it was taken) or <strong>An area I draw</strong> (<strong>Draw on screen</strong>: drag the area, then <strong>Use this area</strong>, or <strong>Retry</strong> to drag again). A text has <strong>The whole screen</strong> or <strong>An area I draw</strong>.</li>
+  <li>When the image or text is found more than once, the most similar one counts; equally similar, the highest on the screen, then the one most to the left.</li>
+  <li>PuppyMacro sees the screen as it is shown, also with HDR on: an image taken with HDR off is found with HDR on, and the other way round. Take the image again after changing the screen's resolution or scale, or the app's size.</li>
+  <li>The mouse pointer is not part of what PuppyMacro sees, but anything the app draws under the pointer (a highlight, a tooltip) is. If the pointer can cover what a condition looks for, add a <strong>Move to</strong> elsewhere before the If.</li>
+  <li>While a condition looks at the screen, PuppyMacro's own windows are left out of what it sees (on Windows 10 version 2004 or later), and so out of your own screenshots and recordings in that moment and for a few seconds after.</li>
+</ul>
+
+<h3>When to run Then</h3>
+<ul>
+  <li><strong>Conditions</strong> (with more than one): <strong>All of them are true</strong> or <strong>One of them is true</strong>.</li>
+  <li><strong>Wait</strong>: <strong>Check once</strong>, <strong>Up to</strong> a number of seconds, or <strong>As long as it takes</strong> (until the conditions are true or you stop the macro). While it waits, PuppyMacro checks again every time the screen changes. The macro's Speed does not change the wait.</li>
+  <li><strong>If the conditions aren't true</strong>: <strong>Run the Else actions</strong> or <strong>Stop the macro</strong>. Stop the macro ends the whole macro: the actions after the If, another If among them, and the next rounds do not play. To go on to the next action instead, choose Run the Else actions and leave Else empty. With Stop the macro, the list shows the If's <strong>Else</strong> greyed, saying it is not played; actions you had put in it are kept for when you choose Run the Else actions again.</li>
+</ul>
+<p>Each condition has <strong>Now on the screen</strong>, which says what PuppyMacro sees a moment after you change it: <em>Found now at 1812, 1210, 97% similar</em>, how far the pixel's color is, or what text it read. Opening a condition does not check it: until then the card says <em>Not checked yet</em>. <strong>Check again</strong> (its ⟳ button) checks that condition on the screen as it is now, and <strong>Test</strong> in the condition window checks all of them, without playing any action. If it sees only black, the app may block screen capture or run in exclusive fullscreen: use its borderless or windowed mode.</p>
+
+<h3>When a click or a move does nothing</h3>
+<p>The If is true and its Then plays, but the mouse does not move or click: the app in front probably runs as administrator (Task Manager usually does, and so do many installers and some games). Windows then drops the keys and the mouse input PuppyMacro sends, without any error. Bring another app to the front, or run PuppyMacro as administrator too (see <a href="good-to-know.html">Good to know</a>).</p>
+
+<h3>Click where it was found</h3>
+<p>Inside <strong>Then</strong>, a <strong>Click</strong>, <strong>Mouse button down</strong>, <strong>Mouse button up</strong> or <strong>Move to</strong> has a <strong>Position</strong> list: <strong>Fixed point</strong>, with its <strong>Point</strong> under it, or <strong>Where … was found</strong> for each Image or Text condition of the Ifs around it (not those true when it isn't on the screen). It then goes to the center of what that condition found this time, moved by <strong>Move from the center</strong> (pixels to the right and down; negative numbers go left or up). With <strong>One of them is true</strong>, an action that goes where a condition that was not found is skipped. Moved out of that If's Then, the action can't be saved until it goes back inside or gets a fixed point.</p>
+
+<h3>Examples</h3>
+<ul>
+  <li><strong>Wait for a button, then click it</strong>: an If with an Image condition of the button, <strong>Up to</strong> 10 seconds; in Then a <strong>Click</strong> with Position <strong>Where … was found</strong>. It clicks the button wherever it shows up, as soon as it shows up.</li>
+  <li><strong>Repeat until something happens</strong>: the macro on <strong>Loop</strong>, its actions first, then an If that checks once whether the thing happened (for example a "Done" text) with <strong>True when</strong> … isn't on the screen and <strong>Stop the macro</strong>: while it isn't there the macro goes on with the next round; when it shows up the macro stops.</li>
+  <li><strong>Several checks in a row</strong>: each If on <strong>Run the Else actions</strong>, with Else empty when nothing has to happen, so the macro goes on to the next If.</li>
+  <li><strong>Wait until something goes away</strong>: a condition with <strong>True when</strong> … isn't on the screen (a loading icon, a window), <strong>As long as it takes</strong>.</li>
+</ul>
+
+<h3>Checks per second</h3>
+<p>A macro with an If has <strong>Checks per second</strong> in the editor: how many times a second its conditions look at the screen while they wait (10, 30 by default, 60, or <strong>Every frame</strong>). Fewer checks leave more of the computer to other programs, more checks notice a change sooner. The macro's duration in the editor shows the shortest and the longest time, or "or more" when a condition waits as long as it takes.</p>
+
+<h3>Screen recognition</h3>
+<p><strong>Settings &gt; Screen recognition &gt; Look for images with</strong>: <strong>Automatic</strong> (the graphics card for large areas, the processor for small ones, usually the fastest), <strong>Graphics card</strong> or <strong>Processor</strong>.</p>
+
+<h3>Images and your data</h3>
+<p>The images of the conditions are kept in the <code>images</code> folder of the data folder, are in every backup and go with the macros you share. An image no macro uses any more is deleted when a macro is saved; the History keeps a copy, so <strong>Restore this version</strong> brings it back.</p>

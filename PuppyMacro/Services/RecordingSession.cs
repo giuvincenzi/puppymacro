@@ -77,4 +77,42 @@ internal static class RecordingSession
             bar.StartCountdown(CountdownSeconds, engine.StartRecordingNow);
         bar.Show();
     }
+
+    /// <summary>
+    /// An AI app's recording (record_macro): no prompt (the ready window asked the user), the bar's countdown, then
+    /// recording until Stop. <paramref name="done"/> gets the events, or null when the countdown was cancelled.
+    /// </summary>
+    public static void RunForAi(LoopEngine engine, AppSettings settings, bool mouseMovement, Action hide, Action restore,
+        Action<List<RawEvent>?> done)
+    {
+        bool previousSuspended = engine.HotkeysSuspended;
+        engine.HotkeysSuspended = true;
+        var bar = new RecordingBarWindow(KeyNames.Format(settings.RecordHotkey));
+        Action<int> progress = bar.SetCount;
+
+        void Finish()
+        {
+            engine.RecordingProgress -= progress;
+            bar.Close();
+            engine.HotkeysSuspended = previousSuspended;
+            restore();
+        }
+
+        engine.ArmRecording(() => mouseMovement, started: bar.ShowRecording, stopped: events =>
+        {
+            Finish();
+            done(events);
+        });
+        bar.StopRequested += engine.StopRecording;
+        bar.CountdownCancelled += () =>
+        {
+            engine.DisarmRecording();
+            Finish();
+            done(null);
+        };
+        engine.RecordingProgress += progress;
+        hide();
+        bar.StartCountdown(CountdownSeconds, engine.StartRecordingNow);
+        bar.Show();
+    }
 }

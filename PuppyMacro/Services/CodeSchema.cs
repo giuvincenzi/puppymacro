@@ -53,6 +53,76 @@ internal static class CodeSchema
         ["MacroAction.Text"] = "PasteText: the text to paste.",
         ["MacroAction.EnterBefore"] = "PasteText: press Enter before pasting.",
         ["MacroAction.EnterAfter"] = "PasteText: press Enter after pasting.",
+        ["MacroAction.If"] = "If: its conditions, how long it waits for them, and the actions of Then and Else. Only on If actions.",
+        ["MacroAction.FoundId"] = "Click, MouseDown, MouseUp, MoveTo inside an If's Then: the Id of an Image or Text condition of that If (or of an If around it); the action goes to the center of what it found, moved by FoundOffsetX and FoundOffsetY, instead of X, Y. Null = X, Y.",
+        ["MacroAction.FoundOffsetX"] = "With FoundId: pixels to the right of the center of what was found (negative: to the left).",
+        ["MacroAction.FoundOffsetY"] = "With FoundId: pixels below the center of what was found (negative: above).",
+        ["MacroAction.Cell"] = "Click, MouseDown, MouseUp, MoveTo inside a component, with Bind \"Point\" to a Grid parameter: which cell of the grid, counted row by row from the top left, starting at 1 (Bind \"Cell\" to a Number Count parameter gives it per call). X, Y keep that cell's point in the Example. Every call must reach a cell its grid has. Null: the point is X, Y.",
+        ["MacroAction.ComponentId"] = "Component: the Id of the Library component this row calls; it plays the component's actions as they are in the Library, with Arguments. Only on Component rows, which have no DelayMs or Name of their own.",
+        ["MacroAction.Arguments"] = "Component rows: the value of each of the component's Parameters, by name: a value of its type (Point {\"X\", \"Y\"} in physical pixels; Number, in its Unit; Text; Key, written as a hotkey; Color \"#RRGGBB\"; Image [{\"Id\", \"X\", \"Y\"}]; Area {\"X\", \"Y\", \"Width\", \"Height\"}; Grid {\"First\": {\"X\", \"Y\"}, \"Last\": {\"X\", \"Y\"}, \"Columns\", \"Rows\"}), " +
+            "{\"From\": \"a parameter\"} (inside a component: one of its own parameters of the same type, passed on) or " +
+            "{\"Found\": \"a condition's Id\", \"OffsetX\": 0, \"OffsetY\": 0} (a Point: where an Image, Text or Component condition of an If " +
+            "around the row found something, this time). A parameter with a Default can be left out.",
+        ["MacroAction.Bind"] = "Inside a component only: fields of this action that take a value of one of the component's Parameters, by slot " +
+            "(\"Point\": \"Slot\"). Slots: DelayMs (Number, Ms) on every action but a Component row; PressKey: Key, HoldMs (Ms), Repeat " +
+            "(Count), RepeatPauseMs (Ms); KeyDown, KeyUp: Key (alone); Click: Point (without FoundId), HoldMs, Repeat, RepeatPauseMs; " +
+            "MouseDown, MouseUp, MoveTo: Point (without FoundId); Scroll: ScrollSteps (Count); PasteText: Text; If: WaitSeconds " +
+            "(Seconds, with Wait UpTo). The parameter has the slot's type and unit, except Point, which also takes a Grid when the " +
+            "action has a Cell; then Cell (Count) can take a Number too. The fields keep the parameter's Example.",
+
+        ["MacroIf.Conditions"] = "What to check on the screen. At least one.",
+        ["MacroIf.Match"] = "All: Then runs when every condition is true. Any: when at least one is.",
+        ["MacroIf.Wait"] = "Once: checks once, without waiting. UpTo: checks every time the screen changes, up to WaitSeconds. Forever: waits as long as it takes.",
+        ["MacroIf.WaitSeconds"] = "With Wait UpTo: the longest wait, in seconds. The macro's Speed does not change it.",
+        ["MacroIf.OnFail"] = "When the conditions are not true in time: Else runs the Else actions, then the macro goes on; Stop stops the macro.",
+        ["MacroIf.Then"] = "Actions run when the conditions are true, then the macro goes on after the If.",
+        ["MacroIf.Else"] = "Actions run when the conditions are not true in time (OnFail Else).",
+
+        ["MacroCondition.Id"] = "Referenced by FoundId of the mouse actions in Then. A new one for a new condition.",
+        ["MacroCondition.Kind"] = "Pixel: a pixel has a color. Image: an image is on the screen. Text: a text is on the screen (Windows' text recognition, slower). Component: a Library component that says what it finds (Returns), with Arguments.",
+        ["MacroCondition.ComponentId"] = "Component: the Id of a Library component with Returns: true when the condition it returns is, checked with Arguments as the If checks any condition; it gives FoundId the place that condition finds (an Image or Text without Not there).",
+        ["MacroCondition.Arguments"] = "Component: the values of the component's Parameters, written as a Component row's Arguments.",
+        ["MacroCondition.Bind"] = "Inside a component only: fields of this condition that take a value of one of the component's Parameters, by slot. Pixel: Point (a Point, or a Grid with Cell), Cell (Count), Color, Tolerance (Number, Percent); Image: Images, Similarity (Percent), Area (with Area Drawn or Screen); Text: Text, Area. The fields keep the parameter's Example.",
+        ["MacroCondition.Cell"] = "Pixel inside a component, with Bind \"Point\" to a Grid parameter: which cell of the grid, counted row by row from the top left, starting at 1 (Bind \"Cell\" gives it per call). Null: the point is X, Y.",
+        ["MacroCondition.Not"] = "True when what it looks for is not there: Pixel, the pixel has another color; Image, none of the images is on the screen; Text, the text is not on the screen. Its If's Up to then waits for it to go away. A condition with Not gives no place to FoundId. False by default.",
+        ["MacroCondition.Name"] = "Image, Text, Component: a name of your choice, unique in the macro, shown where the actions use what it found.",
+
+        ["LibraryComponent.Id"] = "The component's id: rows and conditions call it by it. It never changes.",
+        ["LibraryComponent.Name"] = "The name people read, in the user's words (\"Remove one affix\").",
+        ["LibraryComponent.Purpose"] = "Find (recognizes something), Wait (waits until something shows or goes), Read (reads a text), State (which screen the app is in), Point (where to click or move), Act (a sequence that does an operation).",
+        ["LibraryComponent.Concept"] = "The last part of its structured name, in English: lowercase letters, digits and _ (\"remove_one_affix\").",
+        ["LibraryComponent.Description"] = "A short English description, for AI apps (optional).",
+        ["LibraryComponent.Parameters"] = "Its signature: the values a call gives it, each bound to fields of its actions (Bind). Empty: it takes none.",
+        ["LibraryComponent.Returns"] = "What it finds, when it can be used as a Component condition: one of its conditions (Found, its Id). Null: it can't be a condition.",
+        ["LibraryComponent.Actions"] = "Its actions, as a macro's, self-contained: a FoundId or a {\"Found\"} argument uses a condition inside it; what comes from outside comes as a parameter. Rows of type Component call other components (no loop, at most 10 levels).",
+        ["ComponentParameter.Name"] = "Letters, digits and _, starting with a letter, up to 40; unique in the component. Calls give the value by this name.",
+        ["ComponentParameter.Type"] = "Point, Number (with Unit), Text, Key, Color, Image, Area or Grid: a slot takes only its own type. A Grid is cells all alike in rows, as an inventory, {\"First\": {\"X\", \"Y\"}, \"Last\": {\"X\", \"Y\"}, \"Columns\", \"Rows\"} (the same point of the top-left and of the bottom-right cell; 1 to 1000 columns and rows, at most 10000 cells; with one column First.X = Last.X, with one row First.Y = Last.Y); a Point slot takes one of its cells (Cell).",
+        ["ComponentParameter.Unit"] = "Number only: Pixels, Ms, Seconds, Count or Percent; a slot takes only its own unit.",
+        ["ComponentParameter.Example"] = "A value of its type: what its bound fields hold, the editor shows and a test of the component plays.",
+        ["ComponentParameter.Default"] = "The value, of its type, that a call leaving it out gives; left out (null): every call gives one.",
+        ["ComponentParameter.Description"] = "A short English description, for AI apps (optional).",
+        ["ComponentReturns.Found"] = "The Id of one of its conditions: a Component condition calling it is true when that one is, and finds the place it finds.",
+        ["MacroCondition.X"] = "Pixel: the pixel's screen position, in physical pixels.",
+        ["MacroCondition.Y"] = "Pixel: the pixel's screen position, in physical pixels.",
+        ["MacroCondition.Color"] = "Pixel: the color, as # and six hexadecimal digits (#3BD16F).",
+        ["MacroCondition.Tolerance"] = "Pixel: how much red, green and blue may each differ from Color, in percent of 255; 0 = exactly Color. Usually 5.",
+        ["MacroCondition.Images"] = "Image: the images to look for, taken by the user in PuppyMacro (only the user can take one). True when one of them is on the screen; the first found is where the actions in Then go.",
+        ["MacroCondition.NearbySizes"] = "Image: also look for the images a little bigger or smaller (85% to 115%), for things that change size (zoom, distance). Slower.",
+        ["ConditionImage.Id"] = "The image's id (64 hexadecimal digits).",
+        ["ConditionImage.X"] = "Where the image was taken (its top-left corner), in physical pixels; Area Around looks near it.",
+        ["ConditionImage.Y"] = "Where the image was taken (its top-left corner), in physical pixels.",
+        ["MacroDefinition.Debug"] = "Keeps the log of the macro's last run: each action, what each If saw and where it went, why it ended, and pictures of the screen when an If was not true and at the end. In English, in a folder that holds only the last run and is deleted when PuppyMacro closes; get_last_run reads it. Writing it does not slow the macro. A test_macro run is always logged, Debug or not.",
+        ["MacroDefinition.ChecksPerSecond"] = "How many times a second its screen conditions look while they wait: 10, 30, 60, or 0 for every new frame. More checks notice changes sooner and use more of the computer.",
+        ["MacroCondition.Area"] = "Image, Text: where to look. Around (Image only): a little larger than where each image was taken (it does not follow a window that moves). Drawn: the area AreaX, AreaY, AreaWidth, AreaHeight. Screen: the whole screen with those bounds. A smaller area is faster.",
+        ["MacroCondition.AreaX"] = "Area Drawn or Screen: left edge, in physical pixels.",
+        ["MacroCondition.AreaY"] = "Area Drawn or Screen: top edge, in physical pixels.",
+        ["MacroCondition.AreaWidth"] = "Area Drawn or Screen: width, in physical pixels.",
+        ["MacroCondition.AreaHeight"] = "Area Drawn or Screen: height, in physical pixels.",
+        ["MacroCondition.Similarity"] = "Image: how closely the screen must look like the image, in percent. Usually 90.",
+        ["MacroCondition.Text"] = "Text: the text to look for.",
+        ["MacroCondition.TextMatch"] = "Text: Contains (other words may be around it) or Exact (a line with only this text).",
+        ["MacroCondition.MatchCase"] = "Text: uppercase and lowercase must match.",
+        ["MacroCondition.Language"] = "Text: the language of the text, as a tag like \"en-US\" (one of the languages Windows can read on this PC); null = Windows' language.",
 
         ["MacroGroup.Id"] = "Referenced by the actions' GroupId.",
         ["MacroGroup.Name"] = "Name shown in the editor.",
@@ -137,6 +207,20 @@ internal static class CodeSchema
         ["MacroAction.Y"] = MacroJson.Coordinate,
         ["MacroAction.SmoothSpeed"] = MacroJson.SmoothSpeed,
         ["MacroAction.ScrollSteps"] = MacroJson.ScrollSteps,
+        ["MacroAction.FoundOffsetX"] = MacroJson.Coordinate,
+        ["MacroAction.FoundOffsetY"] = MacroJson.Coordinate,
+        ["MacroAction.Cell"] = (1, Components.GridValue.MaxCells),
+        ["MacroCondition.Cell"] = (1, Components.GridValue.MaxCells),
+        ["MacroCondition.X"] = MacroJson.Coordinate,
+        ["MacroCondition.Y"] = MacroJson.Coordinate,
+        ["MacroCondition.Tolerance"] = MacroJson.Tolerance,
+        ["MacroCondition.Similarity"] = MacroJson.Similarity,
+        ["ConditionImage.X"] = MacroJson.Coordinate,
+        ["ConditionImage.Y"] = MacroJson.Coordinate,
+        ["MacroCondition.AreaX"] = MacroJson.Coordinate,
+        ["MacroCondition.AreaY"] = MacroJson.Coordinate,
+        ["MacroCondition.AreaWidth"] = MacroJson.AreaSize,
+        ["MacroCondition.AreaHeight"] = MacroJson.AreaSize,
         ["FloatingButton.Opacity"] = (AppSettings.MinOpacity, AppSettings.MaxOpacity),
         ["PathPoint.T"] = (0, double.MaxValue),
         ["LoopAction.KeyVk"] = (0, 254),
@@ -161,12 +245,18 @@ internal static class CodeSchema
         [MacroActionType.MovePath] = "Follow a recorded mouse path (Path).",
         [MacroActionType.Scroll] = "Turn the scroll wheel ScrollSteps notches in ScrollDirection.",
         [MacroActionType.PasteText] = "Paste Text, with Enter before or after if set.",
+        [MacroActionType.If] = "Check the screen (If.Conditions), waiting as If.Wait says, then run If.Then, or If.Else (or stop) when the conditions are not true in time.",
+        [MacroActionType.Component] = "Call a Library component (ComponentId) with Arguments: it plays as it is in the Library, changing when it changes.",
     };
 
     /// <summary>A whole macro: its Id is the only value allowed, and suggested.</summary>
     /// <param name="withDefaults">Each field's default value too (for AI apps, which read items without them: get_item).</param>
     public static string ForMacro(System.Guid id, bool withDefaults = false) =>
         Build(typeof(MacroDefinition), schema => FixId(schema, id), withDefaults);
+
+    /// <summary>A Library component: its Id is the only value allowed, and suggested.</summary>
+    public static string ForComponent(System.Guid id, bool withDefaults = false) =>
+        Build(typeof(LibraryComponent), schema => FixId(schema, id), withDefaults);
 
     /// <summary>A loop: its Id is the only value allowed, and suggested. The fields of version 1.0 are left out.</summary>
     public static string ForLoop(System.Guid id, bool withDefaults = false) => Build(typeof(LoopDefinition), schema =>
@@ -239,15 +329,23 @@ internal static class CodeSchema
 
     private static JsonNode Transform(JsonSchemaExporterContext context, JsonNode node)
     {
-        // Enums are read by CodeJson's own converter, so the exporter only says "true" (anything).
-        if (context.TypeInfo.Type.IsEnum)
+        // Enums are read by CodeJson's own converter, so the exporter only says "true" (anything); a nullable one (a
+        // parameter's Unit) can also be left out.
+        System.Type? nullableEnum = System.Nullable.GetUnderlyingType(context.TypeInfo.Type) is { IsEnum: true } underlying ? underlying : null;
+        if (context.TypeInfo.Type.IsEnum || nullableEnum != null)
         {
+            var names = System.Enum.GetNames(nullableEnum ?? context.TypeInfo.Type).Select(n => (JsonNode?)JsonValue.Create(n)).ToList();
+            if (nullableEnum != null)
+                names.Add(null);
             node = new JsonObject
             {
-                ["type"] = "string",
-                ["enum"] = new JsonArray(System.Enum.GetNames(context.TypeInfo.Type).Select(n => (JsonNode?)JsonValue.Create(n)).ToArray()),
+                ["type"] = nullableEnum != null ? new JsonArray("string", "null") : "string",
+                ["enum"] = new JsonArray(names.ToArray()),
             };
         }
+        // Any JSON value (a parameter's Example and Default) is "true": an object, so its description fits.
+        if (node is JsonValue { } any && any.GetValueKind() == System.Text.Json.JsonValueKind.True && context.PropertyInfo != null)
+            node = new JsonObject();
         if (node is not JsonObject schema)
             return node;
 
@@ -268,6 +366,9 @@ internal static class CodeSchema
             }
             switch (key)
             {
+                case "MacroDefinition.ChecksPerSecond":
+                    schema["enum"] = new JsonArray(MacroDefinition.ChecksPerSecondSteps.Select(c => (JsonNode)JsonValue.Create(c)).ToArray());
+                    break;
                 case "MacroDefinition.Speed":
                     schema["enum"] = new JsonArray(MacroDefinition.SpeedSteps.Select(s => (JsonNode)JsonValue.Create(s)).ToArray());
                     break;
@@ -279,6 +380,23 @@ internal static class CodeSchema
                     schema["maxLength"] = FloatingButton.MaxLabelLength;
                     break;
             }
+        }
+
+        // WaitSeconds counts only with Wait UpTo (once or as long as it takes leave it 0): its range only then, as MacroJson checks.
+        if (context.TypeInfo.Type == typeof(MacroIf) && schema.ContainsKey("properties"))
+        {
+            schema["if"] = new JsonObject
+            {
+                ["properties"] = new JsonObject { ["Wait"] = new JsonObject { ["const"] = nameof(ConditionWait.UpTo) } },
+                ["required"] = new JsonArray("Wait"),
+            };
+            schema["then"] = new JsonObject
+            {
+                ["properties"] = new JsonObject
+                {
+                    ["WaitSeconds"] = new JsonObject { ["minimum"] = MacroJson.WaitSeconds.Min, ["maximum"] = MacroJson.WaitSeconds.Max },
+                },
+            };
         }
 
         // Descriptions of the action types in the Ctrl+Space list (a Monaco/VS Code schema extension).

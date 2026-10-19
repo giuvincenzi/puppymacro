@@ -1,0 +1,103 @@
+<Window
+    x:Class="PuppyMacro.ComponentDetailsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:r="clr-namespace:PuppyMacro.Resources"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Width="640"
+    Height="680"
+    MinWidth="480"
+    MinHeight="420"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.SystemBackdropType="Mica">
+
+    <!-- Save as component (approved: the Design canvas "PuppyMacro Library"), and a component's details in the Library -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24,4,24,16">
+                <TextBlock x:Name="InfoText" Margin="0,0,0,12" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static r:Strings.Library_SaveAsInfo}" />
+                <ui:SettingsCard Header="{x:Static r:Strings.Library_Name}" Description="{x:Static r:Strings.Library_NameDescription}" Margin="0,0,0,4">
+                    <TextBox x:Name="NameBox" MinWidth="240" MaxLength="100" TextChanged="OnNameChanged"
+                             AutomationProperties.Name="{x:Static r:Strings.Library_Name}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Library_Purpose}" Description="{x:Static r:Strings.Library_PurposeDescription}" Margin="0,0,0,4">
+                    <ComboBox x:Name="PurposeBox" MinWidth="240" AutomationProperties.Name="{x:Static r:Strings.Library_Purpose}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Library_Concept}" Description="{x:Static r:Strings.Library_ConceptDescription}" Margin="0,0,0,4">
+                    <TextBox x:Name="ConceptBox" MinWidth="240" MaxLength="80" TextChanged="OnConceptChanged"
+                             AutomationProperties.Name="{x:Static r:Strings.Library_Concept}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="{x:Static r:Strings.Library_Description}" Description="{x:Static r:Strings.Library_DescriptionDescription}"
+                                 ContentAlignment="Vertical" HorizontalContentAlignment="Stretch" Margin="0,0,0,4">
+                    <TextBox x:Name="DescriptionBox" MaxLength="500" TextWrapping="Wrap" AcceptsReturn="False"
+                             AutomationProperties.Name="{x:Static r:Strings.Library_Description}" />
+                </ui:SettingsCard>
+
+                <StackPanel x:Name="CollectionPanel">
+                    <TextBlock Margin="0,20,0,8" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Library_Collection}" />
+                    <ui:SettingsCard Header="{x:Static r:Strings.Library_Collection}" Description="{x:Static r:Strings.Library_CollectionDescription}" Margin="0,0,0,4">
+                        <ComboBox x:Name="CollectionBox" MinWidth="240" SelectionChanged="OnCollectionChanged"
+                                  AutomationProperties.Name="{x:Static r:Strings.Library_Collection}" />
+                    </ui:SettingsCard>
+                    <StackPanel x:Name="NewCollectionPanel">
+                        <ui:SettingsCard Header="{x:Static r:Strings.Library_NewCollectionName}" Margin="0,0,0,4">
+                            <TextBox x:Name="CollectionNameBox" MinWidth="240" MaxLength="100" TextChanged="OnNameChanged"
+                                     AutomationProperties.Name="{x:Static r:Strings.Library_NewCollectionName}" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Library_Domain}" Margin="0,0,0,4">
+                            <ComboBox x:Name="DomainBox" MinWidth="240" AutomationProperties.Name="{x:Static r:Strings.Library_Domain}" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Library_App}" Description="{x:Static r:Strings.Library_AppDescription}" Margin="0,0,0,4">
+                            <TextBox x:Name="AppBox" MinWidth="240" MaxLength="260" AutomationProperties.Name="{x:Static r:Strings.Library_App}" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard x:Name="ScreenCard" Header="{x:Static r:Strings.Library_Screen}" Description="{x:Static r:Strings.Library_ScreenDescription}">
+                            <TextBlock x:Name="ScreenText" />
+                        </ui:SettingsCard>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel x:Name="ActionsPanel">
+                    <TextBlock Margin="0,20,0,8" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Library_SelectedActions}" />
+                    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="16,4">
+                        <ItemsControl x:Name="ActionsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="{Binding Indent}" Padding="0,8" TextWrapping="Wrap">
+                                        <Run Text="{Binding Title, Mode=OneWay}" />
+                                        <Run Text="  " />
+                                        <Run Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Detail, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="1" Padding="24,16" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="ErrorText" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0"
+                           Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
+                <Button x:Name="SaveButton" Grid.Column="1" MinWidth="120" Style="{StaticResource AccentButtonStyle}" Content="{x:Static r:Strings.Editor_Save}"
+                        IsDefault="True" Click="OnSaveClick" />
+                <Button Grid.Column="3" MinWidth="120" Content="{x:Static r:Strings.Editor_Cancel}" IsCancel="True" Click="OnCancelClick" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -23,10 +23,14 @@
   "ai_tag_mcp": "Gati për MCP",
   "ai_tag_beta": "Beta",
   "ai_text": "Lidhni aplikacionin tuaj AI, si Claude, dhe thjesht kërkoni: „krijo një makro që…“. Gati.",
+  "learn_title": "AI juaj mëson aplikacionet tuaja",
+  "learn_text": "Ajo që funksionon bëhet komponent: një buton për t’u gjetur, një fushë për t’u plotësuar. AI juaj e përdor kur krijon makron tuaj të radhës. Ndajeni në një koleksion.",
   "loops_title": "Ciklet",
   "loops_text": "Shtyp një tast ose një kombinim si Ctrl+C, klikon (edhe dy herë, në një pikë fikse), mban shtypur një tast ose buton, ose ngjit një tekst, me intervale nga 10 ms deri në 24 orë. Disa veprime, secili me kohëmatësin e vet.",
   "macros_title": "Makrot",
   "macros_text": "Regjistroni tastet, klikimet, lëvizjet e rrotës dhe të miut, pastaj redaktoni çdo hap, në listë ose si kod, me sugjerime dhe kontrolle në çast. Luajini një herë, N herë ose në cikël, me shpejtësi nga ×0,25 deri në ×4.",
+  "conditions_title": "Kushte në ekran",
+  "conditions_text": "Një makro mund të presë ngjyrën e një pikseli, një imazh ose një tekst në ekran, pastaj të klikojë aty ku u gjet, ose të bëjë diçka tjetër kur nuk shfaqet. E shpejtë, edhe me HDR.",
   "remap_title": "Ricakto",
   "remap_text": "Një tast, një buton i miut ose një kombinim si Alt+J dërgon një tast, buton ose kombinim tjetër, në të gjitha aplikacionet ose vetëm në atë që zgjidhni. Edhe Ctrl, Alt, Shift dhe Win mund të ricaktohen, majtas dhe djathtas veçmas.",
   "overlay_title": "Regjimi i mbivendosjes",
@@ -41,7 +45,7 @@
   "language_text": "Në gjuhën e Windows-it tuaj ose në atë që zgjidhni: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 dhe 中文.",
   "privacy_title": "Privatësia",
   "privacy_updates": "PuppyMacro nuk mbledh dhe nuk dërgon të dhëna personale. Kur opsioni <strong>Kontrollo automatikisht për përditësime</strong> është aktiv (si parazgjedhje), lidhet me GitHub kur niset dhe çdo 12 orë për të kontrolluar dhe shkarkuar përditësimet; për këto kërkesa zbatohet <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a>. Mund ta çaktivizoni te Cilësimet > Të dhënat dhe përditësimet.",
-  "privacy_ai": "PuppyMacro nuk dërgon asgjë te shërbimet AI. Kur opsioni <strong>Lejo qasjen AI</strong> është aktiv (si parazgjedhje është joaktiv), aplikacionet AI në PC-në tuaj që lidhni mund të lexojnë ciklet, makrot, ricaktimet dhe cilësimet tuaja përmes PuppyMacro: ajo që lexojnë shkon te ofruesi i atij aplikacioni, sipas politikës së tij të privatësisë.",
+  "privacy_ai": "PuppyMacro nuk dërgon asgjë te shërbimet AI. Kur opsioni <strong>Lejo qasjen AI</strong> është aktiv (si parazgjedhje është joaktiv), aplikacionet AI në PC-në tuaj që lidhni mund të lexojnë ciklet, makrot, ricaktimet dhe cilësimet tuaja përmes PuppyMacro: ajo që lexojnë shkon te ofruesi i atij aplikacioni, sipas politikës së tij të privatësisë. Me <strong>Lejo aplikacionet AI të shohin ekranin</strong> (aktiv si parazgjedhje), ato mund të shohin edhe pamje të ekranit tuaj, për të krijuar makro që e shohin atë.",
   "footer_license": "Licenca MIT",
   "footer_releases": "Të gjitha versionet"
 }

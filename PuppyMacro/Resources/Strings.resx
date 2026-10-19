@@ -216,6 +216,14 @@
   <!-- ===== MainWindow.xaml.cs ===== -->
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Not available in the development build</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Data saved in {0}</value><comment>{0}: the data folder's path.</comment></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Debug data</value><comment>Settings card: the debug data (AI requests and macros with Debug on)</comment></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Logs and pictures of the screen from AI requests and from macros with Debug on, kept 7 days on this PC. They take {0}.</value><comment>Under Debug data: {0} the space it takes (Settings_SizeMb or Settings_SizeGb)</comment></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value><comment>A size in megabytes: {0} the number</comment></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value><comment>A size in gigabytes: {0} the number</comment></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Delete the debug data</value><comment>Settings card: deletes the debug data</comment></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Everything except what is in progress now.</value><comment>Under Delete the debug data</comment></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Delete all</value><comment>Button: deletes all the debug data</comment></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Delete PuppyMacro's debug data? What is in progress now stays.</value><comment>Confirmation before deleting the debug data</comment></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Hotkeys don't work right now:
 {0}</value><comment>{0}: the error from Windows.</comment></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro is still running in the system tray. Right-click its icon to exit.</value></data>
@@ -377,6 +385,10 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Off: the AI's new and changed items are saved at once, ready to try.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Ask before changing settings</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Theme, global hotkeys, overlay panel, sound</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>Let AI apps see the screen</value><comment>AI page permission: AI apps get pictures of the screen</comment></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>Pictures of the screen, and what a macro's condition reads there, go to the AI app and its provider. With them it can build macros that look at the screen.</value><comment>Description of Let AI apps see the screen</comment></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>Let AI apps test macros</value><comment>AI page permission: AI apps can play a macro to test it</comment></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>After you press Start, the AI app can play a saved macro to see how it goes. Stop all stops it.</value><comment>Description of Let AI apps test macros</comment></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Start PuppyMacro when an AI app needs it</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Off: while PuppyMacro is closed, AI apps can't use it and tell you to open it.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Apps</value></data>
@@ -436,6 +448,7 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>All types</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>All results</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Restore</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Open debug</value><comment>Button in the AI activity window: opens the request's folder in the debug data</comment></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Details</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>No requests yet.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>No requests match the filters.</value></data>
@@ -460,6 +473,10 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value><comment>A step's number.</comment></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Press {0} when you're ready · {1} cancels</value><comment>{0}: the Enter key, {1}: the Esc key, each shown as a keycap.</comment></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Start</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>Done</value><comment>Title of the window shown when an AI app's request on the user's screen is over</comment></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>You can go back to {0}.</value><comment>In the Done window: {0} the AI app's name, as it gave it (Claude Desktop, Visual Studio Code…)</comment></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>You can go back to your AI app.</value><comment>In the Done window, when the AI app gave no name</comment></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>OK</value><comment>Button that closes the Done window</comment></data>
   <!-- ===== PickPointWindow.xaml(.cs) ===== -->
   <data name="Pick_Title" xml:space="preserve"><value>Pick a point</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Click the point the cursor should go to</value></data>
@@ -531,6 +548,15 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Any key or mouse button, like F2 or A. For a combination, hold Ctrl, Alt, Shift or Win first; left and right click, the scroll wheel and Esc need one. Hold needs a hotkey.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Sound</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Plays when the macro starts and stops</value></data>
+  <data name="Macro_Debug" xml:space="preserve"><value>Debug</value><comment>GLOBAL: the macro editor's Debug card, the same in every language</comment></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Keeps a log of each run of this macro, with a picture of the screen before each step, for 7 days on this PC.</value><comment>Description of the macro editor's Debug card. If is a global word</comment></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>View log</value><comment>Button and menu item: opens the Debug log of a macro's last run</comment></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Log of {0}</value><comment>Title of the Debug log window: {0} the macro's name</comment></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>The last run of the macro, written in English so you can paste it anywhere. The pictures of the screen are in its folder.</value><comment>Under the Debug log window's title</comment></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Log</value><comment>Accessible name of the Debug log's text</comment></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Copy</value><comment>Button: copies the Debug log</comment></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Open folder</value><comment>Button: opens the Debug log's folder in File Explorer</comment></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>This log isn't there any more. Logs are deleted when PuppyMacro closes.</value><comment>In the Debug log window when the log is not there any more</comment></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Click a sound to choose it and hear how it starts and stops</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Save</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Cancel</value></data>
@@ -1059,6 +1085,20 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Code_PathEmpty" xml:space="preserve"><value>A path needs at least one point.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Times must start at 0 or more and never go back.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Enter the text to paste.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Only an If action has conditions. Remove If, or change Type to If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>An If action needs its conditions and actions in If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Add at least one condition.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Give the condition a name, so the actions in Then can click where it was found.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>Another condition of this macro has the same name. Give each one its own name.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Write the color as # and six hexadecimal digits, like #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Take the image to look for with Take on screen.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Choose 10, 30 or 60 checks a second, or 0 for every frame.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro doesn't have this image. Take it again with Take on screen.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Enter the text to look for.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Text on screen looks in an area you draw or in the whole screen.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Only Click, Mouse button down, Mouse button up and Move to can go where something was found.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>This action goes where a condition found its image or text, but it isn't inside that condition's Then. Move it inside, or choose a fixed point.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>This action goes where a condition found its image or text, but that condition is true when it isn't on the screen, so it finds no place. Choose a fixed point.</value><comment>Code view check: an action uses where a condition found something, but that condition is true when it is not on the screen</comment></data>
   <!-- ===== Views/OverlayPanel.xaml(.cs), OverlayPanelWindow.xaml ===== -->
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>PuppyMacro overlay panel</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Move the panel</value></data>
@@ -1200,4 +1240,446 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Grid</value><comment>A view of the Loops, Macros and Remap pages: tiles.</comment></data>
   <data name="Table_State" xml:space="preserve"><value>State</value><comment>A column of the tables: Running, Idle, Disabled…</comment></data>
   <data name="Card_Edit" xml:space="preserve"><value>Edit</value><comment>The first command of a loop's, macro's or remap's More options menu: opens its editor.</comment></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Pick the pixel</value><comment>Title of the full-screen window that picks a pixel</comment></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Click the pixel to check. Its color is taken too.</value><comment>Instructions while picking a pixel</comment></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Take the image</value><comment>Title of the full-screen window that takes an image</comment></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Drag around the image to look for. Drag again to change it.</value><comment>Instructions while taking an image</comment></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Draw the search area</value><comment>Title of the full-screen window that draws a search area</comment></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Drag the area where PuppyMacro looks. A smaller area is faster.</value><comment>Instructions while drawing a search area</comment></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Take image</value><comment>Button: takes the rectangle drawn as the image to look for</comment></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Use this area</value><comment>Button: uses the rectangle drawn as the search area</comment></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value><comment>Size of the rectangle drawn: {0} width, {1} height, in pixels</comment></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value><comment>Next to the enlarged pixels: {0} the color (#RRGGBB), {1} X, {2} Y</comment></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro can't see the screen right now. Try again in a moment.</value><comment>The screen could not be captured for a pick</comment></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>This area is all one color, so PuppyMacro could never find it as an image. Drag around something with more detail, or check the color with a Pixel color condition.</value><comment>Instructions on the full-screen pick when the rectangle drawn as an image is all one color</comment></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Fixed point</value><comment>Position choice of a mouse action: the X and Y written in the action</comment></data>
+  <data name="Action_Point" xml:space="preserve"><value>Point</value><comment>Header of the card with X, Y and Pick on screen under Position, when Fixed point is chosen</comment></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Where {0} was found</value><comment>Position choice of a mouse action inside an If: {0} the name of the condition (an image or a text)</comment></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Inside an If, the action can go where a condition found its image or text, wherever it is this time.</value><comment>Description of the Position card of a mouse action inside an If</comment></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Move from the center</value><comment>Card header: how far from the center of what was found the action goes</comment></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Pixels to the right and down. Use negative numbers to go left or up.</value><comment>Description of Move from the center</comment></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Pixels to the right</value><comment>Accessible name of the X field of Move from the center</comment></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Pixels down</value><comment>Accessible name of the Y field of Move from the center</comment></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>where {0} was found</value><comment>Part of an action's summary: {0} the name of the condition whose image or text it goes to</comment></data>
+  <data name="Macro_If" xml:space="preserve"><value>If</value><comment>GLOBAL. The If action of a macro (the user's choice: If, Then and Else stay as they are in every language)</comment></data>
+  <data name="Macro_Then" xml:space="preserve"><value>Then</value><comment>GLOBAL. The actions an If runs when its conditions are true</comment></data>
+  <data name="Macro_Else" xml:space="preserve"><value>Else</value><comment>GLOBAL. The actions an If runs when its conditions are not true</comment></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Add condition</value><comment>Title of the window that adds an If</comment></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Edit condition - {0}</value><comment>Title of the window that edits an If: {0} its name or what it checks</comment></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Pixel color</value><comment>A kind of condition: the color of one pixel</comment></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Image on screen</value><comment>A kind of condition: an image shown on the screen</comment></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Text on screen</value><comment>A kind of condition: a text shown on the screen</comment></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Image</value><comment>The start of a new image condition's name, as in "Image 1"</comment></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Text</value><comment>The start of a new text condition's name, as in "Text 1"</comment></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value><comment>A new condition's name: {0} Image or Text, {1} a number</comment></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Conditions</value><comment>Section title in the condition window, and the card choosing All or Any</comment></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Add condition</value><comment>Button that adds a condition, with the three kinds in its menu</comment></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Add a condition with Add condition.</value><comment>Shown while an If has no conditions</comment></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Remove condition</value><comment>Button that removes a condition</comment></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Remove image</value><comment>Button that removes one image of an image condition</comment></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Name</value><comment>Card header of an image or text condition's name</comment></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>The actions in Then use this name to go where it was found.</value><comment>Description of a condition's name</comment></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Pixel</value><comment>Card header: the point whose color is checked</comment></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Color</value><comment>Card header: the pixel's color</comment></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Taken from the screen when you pick the pixel.</value><comment>Description of the pixel's color</comment></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Tolerance</value><comment>Card header: how much the color may differ</comment></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>How much the color on the screen may differ. At 0% only the same color counts.</value><comment>Description of Tolerance</comment></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Images</value><comment>Card header: the images an image condition looks for</comment></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>The condition is true when one of them is on the screen.</value><comment>Description of Images</comment></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Take on screen</value><comment>Button that takes the image to look for from the screen</comment></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Take another image</value><comment>Button that adds another image the condition can find</comment></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} pixels, taken at {2}, {3}</value><comment>Under an image: {0} width, {1} height, {2} X, {3} Y where it was taken</comment></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro doesn't have this image. Take it again.</value><comment>Under an image that is not in PuppyMacro's data</comment></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Search area</value><comment>Card header: where the image or the text is looked for</comment></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>Around where it was taken</value><comment>Search area choice</comment></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>The whole screen</value><comment>Search area choice</comment></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>An area I draw</value><comment>Search area choice</comment></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Near where the image was taken, which is fast. It still finds the image if it moves a little.</value><comment>Description of Search area: Around where it was taken</comment></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Draw the area with Draw on screen.</value><comment>Description of Search area before an area is drawn</comment></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>At {0}, {1}, {2} × {3} pixels. A smaller area is faster.</value><comment>Description of Search area: {0} X, {1} Y, {2} width, {3} height</comment></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Draw on screen</value><comment>Button that draws the search area on the screen</comment></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Draw the search area with Draw on screen.</value><comment>Problem: the condition has no area to look in</comment></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>A little bigger or smaller</value><comment>Card header: also finds the image from 85% to 115% of its size</comment></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>Finds the image also when the app shows it a little bigger or smaller, up to 15%. It takes longer.</value><comment>Description of A little bigger or smaller</comment></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Similarity</value><comment>Card header: how closely the screen must look like the image</comment></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>How closely the screen must look like the image. Lower it a little if the image changes, for example with light or effects.</value><comment>Description of Similarity</comment></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Text</value><comment>Card header: the text to find</comment></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Match</value><comment>Card header: whether the text found may have other words around it</comment></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Whether the text found may have other words around it.</value><comment>Description of Match</comment></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Contains the text</value><comment>Match choice</comment></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Exactly these words</value><comment>Match choice</comment></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Match uppercase and lowercase</value><comment>Card header of a switch</comment></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Language</value><comment>Card header: the language of the text on the screen</comment></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>The language of the text on the screen. The list shows the languages Windows can read on this PC.</value><comment>Description of Language</comment></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Windows language</value><comment>Language choice: the language Windows uses</comment></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Windows language ({0})</value><comment>Language choice: {0} the name of the language Windows uses</comment></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Now on the screen</value><comment>Card header: what PuppyMacro sees now for this condition</comment></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro reads the text with Windows' text recognition, which is slower than looking for an image. Use it when the words stay the same but their look changes, like the font, color or background. Keep the search area small.</value><comment>Shown in the condition window when it has a Text condition</comment></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>When to run Then</value><comment>Section title. Then is a global word: keep it as it is</comment></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Run Then when all the conditions are true, or as soon as one of them is.</value><comment>Description of the card choosing All or Any. Then is a global word</comment></data>
+  <data name="Condition_All" xml:space="preserve"><value>All of them are true</value><comment>Choice: every condition must be true</comment></data>
+  <data name="Condition_Any" xml:space="preserve"><value>One of them is true</value><comment>Choice: one condition is enough</comment></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Wait</value><comment>Card header: how long the macro waits for the conditions</comment></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>While it waits, PuppyMacro checks again every time the screen changes.</value><comment>Description of Wait</comment></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Check once</value><comment>Wait choice: no waiting</comment></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Up to</value><comment>Wait choice, followed by a number of seconds</comment></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>As long as it takes</value><comment>Wait choice: until the conditions are true or the macro is stopped</comment></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Seconds to wait</value><comment>Accessible name of the seconds field of Wait</comment></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Enter how many seconds to wait, from 0.1 to 86,400.</value><comment>Problem: the seconds to wait are not valid</comment></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>If the conditions aren't true</value><comment>Card header: what happens when the conditions are not true</comment></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Right after checking once.</value><comment>Description of If the conditions aren't true, with Check once</comment></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>After waiting {0} second.</value><comment>Description of If the conditions aren't true: {0} seconds</comment></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>After waiting {0} seconds.</value><comment>Description of If the conditions aren't true: {0} seconds</comment></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>The macro waits until they are true or you stop it.</value><comment>Description of If the conditions aren't true, with As long as it takes</comment></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Run the Else actions</value><comment>Choice: run the actions in Else. Else is a global word</comment></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Stop the macro</value><comment>Choice: the macro ends there</comment></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Checks the conditions on the screen now, without running any action</value><comment>Tooltip of Test in the condition window</comment></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} is {2}, with {3}% tolerance</value><comment>Under a pixel condition: {0} X, {1} Y, {2} color, {3} tolerance</comment></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Pick the pixel on the screen.</value><comment>Under a pixel condition without a color</comment></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, {2}% similar</value><comment>Under an image condition: {0} its name, {1} where it looks, {2} similarity</comment></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Take the image on the screen.</value><comment>Under an image condition without an image</comment></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Contains “{0}”, {1}</value><comment>Under a text condition: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Exactly “{0}”, {1}</value><comment>Under a text condition: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>True when</value><comment>Card header at the top of a condition: whether it is true when what it looks for is there or when it is not</comment></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>A condition can also be true when something isn't there, for example to wait until a window closes.</value><comment>Description of the True when card</comment></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>The pixel has this color</value><comment>True when choice of a pixel condition</comment></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>The pixel doesn't have this color</value><comment>True when choice of a pixel condition</comment></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>The image is on the screen</value><comment>True when choice of an image condition</comment></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>The image isn't on the screen</value><comment>True when choice of an image condition</comment></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>The text is on the screen</value><comment>True when choice of a text condition</comment></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>The text isn't on the screen</value><comment>True when choice of a text condition</comment></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} isn't {2}, with {3}% tolerance</value><comment>Under a pixel condition true when the pixel has another color: {0} X, {1} Y, {2} color, {3} tolerance</comment></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} isn't on the screen, {1}, {2}% similar</value><comment>Under an image condition true when the image is not on the screen: {0} its name, {1} where it looks, {2} similarity</comment></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Doesn't contain “{0}”, {1}</value><comment>Under a text condition true when the text is not on the screen: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Not exactly “{0}”, {1}</value><comment>Under a text condition (Exact) true when the text is not on the screen: {0} the text, {1} where it looks</comment></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Write the text to find.</value><comment>Under a text condition without text</comment></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>around where it was taken</value><comment>Part of a summary: where the image is looked for</comment></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>on the whole screen</value><comment>Part of a summary: where it is looked for</comment></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>in the area drawn</value><comment>Part of a summary: where it is looked for</comment></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>The pixel matches now. It is {0}.</value><comment>What PuppyMacro sees now: {0} the color</comment></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>The pixel doesn't match now. It is {0}, which differs by {1}%, more than the {2}% tolerance.</value><comment>What PuppyMacro sees now: {0} color, {1} difference, {2} tolerance</comment></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>Found now at {0}, {1}, {2}% similar.</value><comment>What PuppyMacro sees now: {0} X, {1} Y of the center, {2} similarity</comment></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>The image isn't on the screen now. The closest match is {0}% similar, and this condition needs {1}%.</value><comment>What PuppyMacro sees now: {0} best similarity, {1} the similarity needed</comment></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>Found now at {0}, {1}.</value><comment>What PuppyMacro sees now: {0} X, {1} Y of the text's center</comment></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>“{0}” isn't on the screen now. PuppyMacro read “{1}” in the search area.</value><comment>What PuppyMacro sees now: {0} the text looked for, {1} the text read</comment></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>“{0}” isn't on the screen now. PuppyMacro read no text in the search area.</value><comment>What PuppyMacro sees now: {0} the text looked for</comment></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro sees only black in this area. The app may block screen capture, or it may run in exclusive fullscreen. Try its borderless or windowed mode.</value><comment>What PuppyMacro sees now</comment></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows can't read {0} text on this PC. Add the language in Windows Settings, under Time &amp; language › Language &amp; region, then choose it here again.</value><comment>{0} the language's name</comment></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>The search area is on a screen that isn't connected now. Draw the area again on a screen you have.</value><comment>What PuppyMacro sees now</comment></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>no conditions yet</value><comment>Detail of an If row without conditions</comment></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} condition, all true</value><comment>Detail of an If row: {0} conditions that must all be true</comment></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} conditions, all true</value><comment>Detail of an If row: {0} conditions that must all be true</comment></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} condition, one is enough</value><comment>Detail of an If row: {0} conditions, one of them true is enough</comment></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} conditions, one is enough</value><comment>Detail of an If row: {0} conditions, one of them true is enough</comment></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>checks once</value><comment>Detail of an If row: it does not wait</comment></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>waits up to {0} s</value><comment>Detail of an If row: {0} seconds</comment></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>waits as long as it takes</value><comment>Detail of an If row</comment></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>the pixel at {0}, {1} is {2}</value><comment>Detail of an If row: {0} X, {1} Y, {2} color</comment></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} is on the screen</value><comment>Detail of an If row: {0} the image condition's name</comment></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>“{0}” is on the screen</value><comment>Detail of an If row: {0} the text</comment></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>the pixel at {0}, {1} isn't {2}</value><comment>Detail of an If row whose pixel condition is true when the pixel has another color: {0} X, {1} Y, {2} color</comment></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} isn't on the screen</value><comment>Detail of an If row whose image condition is true when the image is not on the screen: {0} the condition's name</comment></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>“{0}” isn't on the screen</value><comment>Detail of an If row whose text condition is true when the text is not on the screen: {0} the text</comment></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>where {0} was found</value><comment>Detail of a mouse action row: {0} the condition whose image or text it goes to</comment></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>when the conditions are true</value><comment>What Then means, after its name</comment></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>when they aren't</value><comment>What Else means, after its name</comment></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>not played, because the If stops the macro when its conditions aren't true</value><comment>Details of an Else its If never plays, after the word Else (a global word)</comment></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value><comment>Details of a Then or Else: {0} when it runs, {1} how many actions ("3 actions")</comment></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · no actions yet. Select it, then add them.</value><comment>Details of an empty Then or Else: {0} when it runs</comment></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>New actions go at the end of {0} of #{1}</value><comment>{0} Then or Else (global words), {1} the number of its If</comment></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>{0} to {1}</value><comment>How long the macro takes with conditions: {0} the shortest, {1} the longest</comment></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} or more</value><comment>How long the macro takes when a condition waits as long as it takes: {0} the shortest</comment></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>Action #{0} goes where {1} was found, but it isn't inside that condition's Then anymore. Move it back inside, or choose a fixed point.</value><comment>{0} the action's number, {1} the condition's name. Then is a global word</comment></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Checks per second</value><comment>Card header in the macro editor, shown when the macro has an If</comment></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>How many times a second the conditions look at the screen while they wait. Fewer checks leave more of the computer to other programs, more checks notice a change sooner.</value><comment>Description of Checks per second</comment></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>Every frame</value><comment>Checks per second choice: every time the screen shows a new image</comment></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Screen recognition</value><comment>Settings section about how the macros' conditions look at the screen</comment></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Look for images with</value><comment>Settings card: where the images of the macros' conditions are searched</comment></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automatic uses the graphics card for large areas and the processor for small ones, which is usually the fastest.</value><comment>Description of Look for images with</comment></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automatic</value><comment>Choice of Look for images with</comment></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Graphics card</value><comment>Choice of Look for images with</comment></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Processor</value><comment>Choice of Look for images with</comment></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>Asked for a pixel: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>Asked for an image: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>Asked for a search area: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>Looked at the screen: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>Checked a condition on the screen: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>Recorded what you did: {0}</value><comment>AI activity: {0} the title the AI app wrote</comment></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>Tested the macro {0}</value><comment>AI activity: {0} the macro's name in quotes</comment></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>Read a pixel of the screen: {0}</value><comment>AI activity: {0} the pixel's position and color</comment></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>Took an image from the screen: {0}</value><comment>AI activity: {0} where the image was taken and its size</comment></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>Read the log of a macro's last run</value><comment>AI activity: an AI app read the log of a macro's last run</comment></data>
+  <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Action</value><comment>Label under the + of the macro editor's button that adds an action (short: the button's name is Add action)</comment></data>
+  <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Condition</value><comment>Label under the + of the macro editor's button that adds a condition (short: the button's name is Add condition)</comment></data>
+  <data name="Condition_TextMenu" xml:space="preserve"><value>Text on screen (OCR)</value><comment>The Text on screen condition in the Add condition menus: OCR, text recognition, stays as it is</comment></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Check again</value><comment>Button (an icon) on the card that says what PuppyMacro sees now: looks at the screen again</comment></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>Retry</value><comment>Button on the full-screen pick: removes the rectangle drawn so it can be drawn again</comment></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>Not checked yet. Check it on the screen with the button.</value><comment>The card that says what PuppyMacro sees now, before the first check</comment></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>An action in Then goes where {0} was found. Change that action first, then remove the condition.</value><comment>Shown when removing a condition that an action uses: {0} the condition's name. Then is a global word</comment></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>An action in Then goes where {0} was found, so this condition must be true when it's on the screen. Change that action first.</value><comment>Shown when choosing that a condition is true when it isn't on the screen while an action uses where it was found: {0} the condition's name. Then is a global word</comment></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Two conditions have the same Id. Give each one its own.</value><comment>Code view check: two conditions share an Id</comment></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Give it a name.</value><comment>A Library collection or component without a name</comment></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>The concept can only have lowercase letters, digits and _, for example remove_one_affix.</value><comment>A component's concept (the last part of its structured name) has other characters; remove_one_affix stays as it is</comment></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>A component needs at least one action.</value><comment>A component with no actions</comment></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} is linked in these macros: {1}. Unlink it there first.</value><comment>Deleting a linked component: {0} the component's name, {1} the macros that link it, joined by ListSeparator</comment></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Some components of {0} are linked in these macros: {1}. Unlink them there first.</value><comment>Deleting a collection with linked components: {0} the collection's name, {1} the macros that link them, joined by ListSeparator</comment></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro couldn't read the Library, so it kept a copy as library.invalid.json. The Library can't be changed until the file is fixed.</value><comment>library.json could not be read; library.invalid.json is a file name and stays as it is</comment></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Only a linked component row has a ComponentId. Remove ComponentId, or change Type to Component.</value><comment>Code view: ComponentId on an action that is not a linked component row; ComponentId, Type and Component are JSON names and stay as they are</comment></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Choose the component to link with Add component.</value><comment>Code view: a linked component row without the component it links; Add component is the macro editor's button</comment></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>The Library doesn't have this component any more. Link another one with Add component, or delete this row.</value><comment>Code view and editor: a linked row whose component is no longer in the Library; Add component is the macro editor's button</comment></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>A linked component row has no wait or name of its own: the component's actions have them. Remove DelayMs and Name.</value><comment>Code view: a linked component row with a wait or a name; DelayMs and Name are JSON names and stay as they are</comment></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Component</value><comment>Label under the + of the macro editor's button that adds a Library component (short: the button's name is Add component)</comment></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Add component</value><comment>Button and window: add a Library component to the macro, linked</comment></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Component · {0} · {1}</value><comment>A macro row linked to a component: {0} its collection, {1} how many actions (MacroEditor_ActionCount)</comment></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Missing component</value><comment>A macro row linked to a component the Library no longer has</comment></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Save as component…</value><comment>Command: the selected actions become a Library component</comment></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Unlink</value><comment>Command: a linked row becomes the component's actions, normal rows of this macro</comment></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Stop all loops and macros first: the Library doesn't change while something runs.</value><comment>The Library can't change while a loop or macro runs</comment></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro couldn't save the Library. {0}</value><comment>library.json could not be saved: {0} the system's error</comment></data>
+  <data name="Component_Title" xml:space="preserve"><value>Component - {0}</value><comment>Title of a component's window: {0} the component's name</comment></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>This row is linked: it plays the component as it is in the Library, and changes when the component changes. To change it only in this macro, unlink it.</value><comment>Note in the window of a row linked to a component</comment></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Collection</value><comment>A Library collection (header of a card and a field)</comment></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Used in</value><comment>Card header: the macros that link a component and the components that call it</comment></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Not used</value><comment>A component no macro links and no other component calls</comment></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>What it plays</value><comment>Title above a component's actions</comment></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Unlink this row</value><comment>Button in a linked row's window</comment></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Open in Library</value><comment>Button in a linked row's window</comment></data>
+  <data name="Library_Title" xml:space="preserve"><value>Library</value><comment>The Library: its window, its button on the Macros page</comment></data>
+  <data name="Library_Search" xml:space="preserve"><value>Search</value><comment>Placeholder of the Library's search box</comment></data>
+  <data name="Library_Import" xml:space="preserve"><value>Import</value><comment>Library window's button: import a .puppyitems file</comment></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Collections</value><comment>Title of the Library's list of collections</comment></data>
+  <data name="Library_Components" xml:space="preserve"><value>Components</value><comment>Name of the Library's list of components (screen readers)</comment></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Export collection</value><comment>Button: save a collection, whole, in a .puppyitems file</comment></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Edit details</value><comment>Button: change a component's name, purpose, concept and description</comment></data>
+  <data name="Library_History" xml:space="preserve"><value>History</value><comment>Button: a component's History</comment></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Delete</value><comment>Button: delete a component</comment></data>
+  <data name="Library_Empty" xml:space="preserve"><value>The Library is empty. Select rows in a macro and use Save as component, or ask your AI app to save what works.</value><comment>The Library has no collections yet; Save as component and AI are as in the app</comment></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Add linked</value><comment>Button of the Library in pick mode: adds the chosen components to the macro as linked rows</comment></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Any app</value><comment>A collection for any app (no app chosen)</comment></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Game</value><comment>Kind of app of a collection</comment></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Office</value><comment>Kind of app of a collection: spreadsheets, documents, business apps</comment></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Browser</value><comment>Kind of app of a collection: websites and web apps</comment></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Creative</value><comment>Kind of app of a collection: graphics, video, audio</comment></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Development</value><comment>Kind of app of a collection: programming</comment></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat and email</value><comment>Kind of app of a collection: chat and email</comment></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value><comment>Kind of app of a collection: Windows and its windows</comment></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Other</value><comment>Kind of app of a collection: any other</comment></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Finds something</value><comment>What a component does: it recognizes something on the screen</comment></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Waits for something</value><comment>What a component does: it waits until something shows or goes away</comment></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Reads a text</value><comment>What a component does: it reads a text on the screen</comment></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Tells the app's state</value><comment>What a component does: it tells which screen or state the app is in</comment></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>A point</value><comment>What a component does: a point to click or move to</comment></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Does an operation</value><comment>What a component does: an operation, a sequence of actions</comment></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>Delete {0}?</value><comment>Confirmation: {0} the component's name</comment></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>Delete {0} and all its components?</value><comment>Confirmation: {0} the collection's name</comment></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Rename collection</value><comment>Menu item and window title</comment></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Rename</value><comment>Button that renames</comment></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Delete collection</value><comment>Menu item</comment></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>History - {0}</value><comment>Window title: {0} the component's name</comment></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Save as component</value><comment>Window title</comment></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>The selected actions become a component in the Library, and these rows are linked to it.</value><comment>Note in Save as component</comment></data>
+  <data name="Library_Name" xml:space="preserve"><value>Name</value><comment>Field: a component's name</comment></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>What you read in the Library and in the macro</value><comment>Under Name</comment></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>What it does</value><comment>Field: what a component does</comment></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>AI apps look for components by what they do</value><comment>Under What it does</comment></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Concept</value><comment>Field: the end of a component's structured name, in English</comment></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>In English, lowercase letters, digits and _, like remove_one_affix. AI apps search by it.</value><comment>Under Concept; remove_one_affix stays as it is</comment></data>
+  <data name="Library_Description" xml:space="preserve"><value>Description</value><comment>Field: a component's short description</comment></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Optional. What it does, in English, for AI apps.</value><comment>Under Description</comment></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Where it is kept and shared from</value><comment>Under Collection in Save as component</comment></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>New collection</value><comment>Choice in the Collection list: make a new collection</comment></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Name of the new collection</value><comment>Field: the new collection's name</comment></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Kind of app</value><comment>Field: what kind of app a collection is for</comment></data>
+  <data name="Library_App" xml:space="preserve"><value>App</value><comment>Field: the app a collection is for</comment></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Its .exe, like Diablo IV.exe. Leave it empty for any app.</value><comment>Under App; Diablo IV.exe stays as it is</comment></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Screen</value><comment>Field: the screen a collection was made on</comment></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>The monitor its points were taken on. On another screen they need changing.</value><comment>Under Screen</comment></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2}%</value><comment>A monitor: {0} width and {1} height in pixels, {2} Windows' scale in percent</comment></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>Not known</value><comment>The screen could not be read</comment></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Selected actions</value><comment>Title above the actions that become a component</comment></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>This file can't be imported. The collection {0} in it is a different version from the one in your Library, and a collection is shared whole, so the two can't be mixed. Nothing was imported. To import it, delete your collection first if no macro uses it, or ask for a file made from your version.</value><comment>Import refused: {0} the collection's name</comment></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>This file can't be imported. The component {0} is in it twice, and a component belongs to only one collection. Nothing was imported.</value><comment>Import refused: the file holds one component twice (in one collection or in two); {0} the component's name</comment></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>The collection {0} in this file can't be imported. {1}</value><comment>Import refused: {0} the collection's name, {1} what is wrong (a sentence)</comment></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Used in {0} macro</value><comment>How many macros link a component: {0} the number</comment></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Used in {0} macros</value><comment>How many macros link a component: {0} the number</comment></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Searched the Library</value><comment>AI activity: an AI app searched the Library</comment></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Read the component {0}</value><comment>AI activity: an AI app read a Library component; {0} its name</comment></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>New component {0}</value><comment>AI activity and confirmation: a new Library component; {0} its name</comment></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Changed component {0}</value><comment>AI activity and confirmation: a Library component changed; {0} its name</comment></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Save this new component in the Library?</value><comment>Confirmation title: an AI app saves a new Library component</comment></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Save the changes to this component? Every macro that links it will play the new one.</value><comment>Confirmation title: an AI app changes a Library component (every macro that links it follows)</comment></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Only the actions of a component can take a parameter's value.</value><comment>Code view: a Bind on an action of a macro (only a Library component has parameters)</comment></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>{0} can't take a parameter's value. Here these can: {1}.</value><comment>Code view: a Bind names a field that can't come from a parameter; {0} the field's JSON name, {1} the JSON names of the fields that can (they stay as they are)</comment></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Nothing of this action can take a parameter's value.</value><comment>Code view: a Bind on an action with no field that can come from a parameter (a linked row)</comment></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>{0} isn't used the way this action is set, so it can't take a parameter's value.</value><comment>Code view: a Bind on a field the action doesn't use now (WaitSeconds without Up to, a point when the click goes where a condition found something); {0} the field's JSON name</comment></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>The component has no parameter called {0}.</value><comment>Code view: a Bind or an argument names a parameter the component doesn't have; {0} the name</comment></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} is of type {1}, and {2} takes type {3}.</value><comment>Code view: a parameter given to a field or parameter of another type; {0} the parameter's name, {1} its type (Param_Type…), {2} the field or parameter it goes to, {3} that one's type</comment></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Only a component can pass on one of its parameters. In a macro, write the value.</value><comment>Code view: an argument {"From": …} in a macro, which has no parameters</comment></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} has no parameter called {1}.</value><comment>Code view: an argument for a parameter the called component doesn't have; {0} the component's name, {1} the parameter</comment></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} needs a value for {1}.</value><comment>Code view: a call leaves out a parameter that has no default; {0} the component's name, {1} the parameter</comment></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Write a value of the parameter's type, {"From": "a parameter of this component"}, or {"Found": "a condition's Id"} with OffsetX and OffsetY if needed.</value><comment>Code view: an argument object that is neither a value nor a correct From or Found; the JSON stays as it is</comment></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Only a linked component row or a Component condition has arguments. Remove Arguments.</value><comment>Code view: Arguments on another kind of action or condition; Arguments is a JSON name</comment></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Only a point can come from where a condition found something, and {0} is of type {1}.</value><comment>Code view: a {"Found"} argument for a parameter that isn't a Point; {0} the parameter, {1} its type</comment></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} gives no place to go to: what its component checks is a pixel, or something that isn't there.</value><comment>Code view: "Where … was found" names a Component condition that finds no place; {0} the condition's name</comment></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} doesn't say what it finds, so it can't be used as a condition.</value><comment>Code view: a Component condition whose component has no Returns; {0} the component's name</comment></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>These components would call each other in a loop: {0}.</value><comment>Code view and Library: a component that would end up calling itself; {0} the components' names joined by arrows</comment></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Components can be inside each other at most {0} levels deep, and here there would be {1}.</value><comment>Code view and Library: too many components inside each other; {0} the most allowed, {1} how many there would be</comment></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>A parameter's name starts with a letter, then letters, digits or _, up to 40 characters.</value><comment>Code view: a parameter's name that isn't valid</comment></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>Two parameters can't have the same name.</value><comment>Code view: two parameters of a component with the same name</comment></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>A number needs its unit: Pixels, Ms, Seconds, Count or Percent.</value><comment>Code view: a Number parameter without Unit; the unit names are JSON values and stay as they are</comment></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Only a number has a unit. Remove Unit.</value><comment>Code view: a parameter that isn't a Number has a Unit; Unit is a JSON name</comment></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Give an example: the value the editor shows and a test plays.</value><comment>Code view: a parameter without Example</comment></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Here write a value, not {"From"} or {"Found"}.</value><comment>Code view: a parameter's Example or Default written as a reference; the JSON stays as it is</comment></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>This component doesn't have the condition that Returns names.</value><comment>Code view: Returns.Found names a condition the component doesn't have; Returns is a JSON name</comment></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>What a component finds can't depend on a place found outside it.</value><comment>Code view: the condition a component returns is a Component condition with a Found argument</comment></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Write a point as {"X": 100, "Y": 200}, in whole pixels.</value><comment>Code view: a value that isn't a point; the JSON stays as it is</comment></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Write a number.</value><comment>Code view: a value that isn't a number</comment></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Write a whole number.</value><comment>Code view: a number with decimals where only whole numbers go</comment></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Write a text in quotes.</value><comment>Code view: a value that isn't a text</comment></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>The text can't be empty here.</value><comment>Code view: an empty text where a text is needed</comment></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Write a key as a hotkey is written, for example {"Vk": 65}.</value><comment>Code view: a value that isn't a key; the JSON stays as it is</comment></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Choose a key of the keyboard here, not a mouse button.</value><comment>Code view: a mouse button where a keyboard key goes</comment></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Here the key goes alone, without Ctrl, Alt, Shift or Win.</value><comment>Code view: a key with modifiers where only a key goes (Key down, Key up)</comment></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Give the images as [{"Id": …, "X": …, "Y": …}], at least one.</value><comment>Code view: a value that isn't a list of images; the JSON stays as it is</comment></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Write an area as {"X", "Y", "Width", "Height"}, in whole pixels.</value><comment>Code view: a value that isn't an area; the JSON stays as it is</comment></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>No value fits every field this parameter goes to: their limits don't overlap.</value><comment>Code view: a Number parameter bound to fields whose limits leave no value</comment></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Point</value><comment>A component parameter's type: a point on the screen</comment></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Number</value><comment>A component parameter's type: a number</comment></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Text</value><comment>A component parameter's type: a text</comment></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Key</value><comment>A component parameter's type: a key of the keyboard</comment></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Color</value><comment>A component parameter's type: a color</comment></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Image</value><comment>A component parameter's type: the images an Image condition looks for</comment></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Area</value><comment>A component parameter's type: a part of the screen</comment></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value><comment>A Number parameter's type with its unit; {0} Param_TypeNumber, {1} the unit (Param_Unit…)</comment></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>pixels</value><comment>The unit of a Number parameter: pixels</comment></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>times</value><comment>The unit of a Number parameter: a count (how many times)</comment></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} image</value><comment>A value of type Image: how many images; {0} the number</comment></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} images</value><comment>A value of type Image: how many images; {0} the number</comment></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>This change would leave {0} with a problem: {1}</value><comment>Library: a change refused because a macro or component would no longer work; {0} its name, {1} the problem</comment></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>This row can't be unlinked: one of its values is where a condition found something, and its component uses that value for a pixel's point, which can't take a found place.</value><comment>Macro editor: Unlink refused for a row whose Found argument goes to a pixel condition's point</comment></data>
+  <data name="Param_AValue" xml:space="preserve"><value>A value</value><comment>Where a field's or an argument's value comes from: a value written here (not a parameter's)</comment></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>From {0}</value><comment>Where a field's or an argument's value comes from: {0} the name of a parameter of the component being edited</comment></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>Where the value comes from</value><comment>Accessible name of the list that chooses where a field's or an argument's value comes from</comment></data>
+  <data name="Param_Value" xml:space="preserve"><value>Value</value><comment>Accessible name of a parameter's value field</comment></data>
+  <data name="Param_Required" xml:space="preserve"><value>every call gives a value</value><comment>After a parameter's type: the parameter has no default</comment></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} when left out</value><comment>After a parameter's type: {0} its default value</comment></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Its default, {0}</value><comment>Where an argument's value comes from: the parameter's default; {0} that value</comment></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Check the value of {0}. {1}</value><comment>A call's argument can't be used: {0} the parameter's name, {1} why (a sentence)</comment></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>at {0}</value><comment>Summary of a mouse action whose point is a parameter's value: {0} the parameter's name</comment></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Arguments</value><comment>The values a call gives a component's parameters</comment></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>The values this call gives the component</value><comment>Under Arguments</comment></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Component</value><comment>A kind of condition: a Library component that says what it finds</comment></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Condition from component</value><comment>The Component condition in the Add condition menus: an If uses a Library component that says what it finds (the user's name)</comment></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>A Library component that says what it finds</value><comment>Under the Component card of a Component condition</comment></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Choose</value><comment>Button: choose the Library component a Component condition calls</comment></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>No component chosen yet</value><comment>A Component condition without its component</comment></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>It finds it</value><comment>True when choice of a Component condition</comment></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>It doesn't find it</value><comment>True when choice of a Component condition</comment></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} finds it</value><comment>Under a Component condition: {0} the component's name</comment></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} doesn't find it</value><comment>Under a Component condition with Not: {0} the component's name</comment></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>Found now at {0}, {1}.</value><comment>What PuppyMacro sees now for a Component condition: {0} X, {1} Y</comment></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>True now.</value><comment>What PuppyMacro sees now for a Component condition</comment></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Not true now.</value><comment>What PuppyMacro sees now for a Component condition</comment></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Parameters</value><comment>Title over a component's parameters in its editor</comment></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>The values each call gives this component. A field of its actions takes one with its list, From.</value><comment>Under Parameters in a component's editor; From is the start of the lists' choices (Param_FromParameter)</comment></data>
+  <data name="Param_Add" xml:space="preserve"><value>Add parameter</value><comment>Button: add a parameter to a component</comment></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Edit parameter</value><comment>Button (icon) and its tooltip: edit a parameter</comment></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Remove parameter</value><comment>Button (icon) and its tooltip: remove a parameter; its fields keep their values</comment></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Add parameter</value><comment>Title of the window that adds a parameter</comment></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Edit parameter - {0}</value><comment>Title of the window that edits a parameter: {0} its name</comment></data>
+  <data name="Param_Name" xml:space="preserve"><value>Name</value><comment>A parameter's name</comment></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Letters, digits and _, starting with a letter. Calls give the value by this name.</value><comment>Under a parameter's name</comment></data>
+  <data name="Param_Type" xml:space="preserve"><value>Type</value><comment>A parameter's type</comment></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>The kind of field it gives a value to</value><comment>Under a parameter's type</comment></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Unit</value><comment>A number parameter's unit</comment></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>What the number counts. It can only go where the same unit goes.</value><comment>Under a number parameter's unit</comment></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Pixels</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Milliseconds (ms)</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Seconds (s)</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Times</value><comment>A number parameter's unit in the list: a count</comment></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Percent (%)</value><comment>A number parameter's unit in the list</comment></data>
+  <data name="Param_Example" xml:space="preserve"><value>Example</value><comment>A parameter's example value</comment></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>The value its fields hold, what the editor shows and a test plays</value><comment>Under a parameter's example</comment></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Every call gives a value</value><comment>Switch of a parameter: on, it has no default</comment></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>When it's off, a call can leave it out and the default is used.</value><comment>Under Every call gives a value</comment></data>
+  <data name="Param_Default" xml:space="preserve"><value>Default</value><comment>A parameter's default value</comment></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>The value a call that leaves it out gives</value><comment>Under a parameter's default</comment></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Optional, in English, for AI apps</value><comment>Under a parameter's description</comment></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Check the example. {0}</value><comment>A parameter's example can't be used: {0} why (a sentence)</comment></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Check the default. {0}</value><comment>A parameter's default can't be used: {0} why (a sentence)</comment></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value><comment>A call's value on its row in the macro editor: {0} the parameter's name, {1} its value ("Slot 3986, 1056")</comment></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>What it does</value><comment>Card of a component's editor: its purpose and structured name, with Edit details</comment></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Edit component - {0}</value><comment>Title of the macro editor editing a component: {0} its name</comment></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Used as a condition</value><comment>Title over what a component finds, in its editor</comment></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Can be used as a condition</value><comment>Switch of a component: it says what it finds, so a Component condition can call it</comment></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>An If checks it as a condition: true when the condition you choose here is, and "Where … was found" goes where that condition finds it.</value><comment>Under Can be used as a condition; Where … was found is the action's Position choice</comment></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>What it finds</value><comment>The condition of a component that a Component condition checks</comment></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>One of its conditions</value><comment>Under What it finds</comment></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Choose which of its conditions it finds, or turn off Can be used as a condition.</value><comment>A component used as a condition without its condition chosen</comment></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>This row calls a component: it plays it as it is in the Library, with the values below, which are this row's own.</value><comment>Information on the window of a linked row whose component has parameters</comment></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Edit</value><comment>Library: edit a component's actions, parameters and what it finds in the macro editor</comment></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Update the calls</value><comment>Title of the window that updates a component's calls</comment></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>This change updates the calls</value><comment>Heading of the window that updates a component's calls</comment></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>{0} call of {1} changes with it. Everything is saved together: if something can't be saved, nothing changes.</value><comment>{0} how many calls, {1} the component's name</comment></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>{0} calls of {1} change with it. Everything is saved together: if something can't be saved, nothing changes.</value><comment>{0} how many calls, {1} the component's name</comment></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. The calls that don't give a value of this kind get this one; each call can change it later.</value><comment>A parameter every call now needs: {0} its type</comment></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0} is taken out</value><comment>A parameter removed: {0} its name</comment></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Every call's value for it goes.</value><comment>Under a parameter removed</comment></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} is now {1}</value><comment>A parameter renamed: {0} its old name, {1} the new one</comment></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>The calls keep their value under the new name.</value><comment>Under a parameter renamed</comment></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Calls that change</value><comment>Title over the macros and components whose calls change</comment></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Macro</value><comment>What calls a component: a macro</comment></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Component</value><comment>What calls a component: another component</comment></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} call</value><comment>How many calls a macro or component has: {0} the number</comment></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} calls</value><comment>How many calls a macro or component has: {0} the number</comment></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Update and save</value><comment>Button: update the calls and save the component</comment></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Write a grid as {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, in whole pixels.</value><comment>Code view: a value that is not a grid; the JSON stays as it is</comment></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>A grid has 1 to {0} columns and 1 to {0} rows, and at most {1} cells.</value><comment>Code view: a grid with too few or too many columns, rows or cells; {0} the most columns or rows, {1} the most cells</comment></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>With one column, the first and the last cell must have the same X.</value><comment>Code view: a grid of one column whose first and last cell are not one above the other</comment></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>With one row, the first and the last cell must have the same Y.</value><comment>Code view: a grid of one row whose first and last cell are not side by side</comment></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} is a grid, so this point needs a cell. Say which one with Cell.</value><comment>Code view: a point bound to a Grid parameter without a Cell; {0} the parameter's name. "Cell" is a JSON property name: keep it.</comment></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>A cell is used only inside a component, when the point comes from a Grid parameter.</value><comment>Code view: a Cell on an action or condition whose point does not come from a Grid parameter</comment></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>This row can't be unlinked. One of its cells isn't in its grid.</value><comment>Macro editor: Unlink refused because a cell is outside its grid</comment></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>This row can't be unlinked. Its grid is a value, but its cell comes from a parameter of the component around it, and a normal row can't choose a cell.</value><comment>Macro editor: Unlink refused because the grid would become one point while the cell still changes per call</comment></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Grid</value><comment>A parameter's type: cells all alike in rows, as an inventory</comment></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} from {2}, {3}</value><comment>A grid in a few words; {0} columns, {1} rows, {2} and {3} the X and Y of the first cell</comment></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} cell, counted row by row from the top left, starting at 1</value><comment>A grid: how many cells it has and how they are numbered; {0} the number</comment></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} cells, counted row by row from the top left, starting at 1</value><comment>A grid: how many cells it has and how they are numbered; {0} the number</comment></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>The last cell, {0}, is at {1}, {2}.</value><comment>A grid: where its last cell is; {0} its number, {1} and {2} its X and Y in pixels</comment></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>First cell</value><comment>A grid: the cell at the top left</comment></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>The point to use in the cell at the top left</value><comment>A grid: what to pick for the first cell</comment></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Last cell</value><comment>A grid: the cell at the bottom right</comment></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>The same point in the cell at the bottom right</value><comment>A grid: what to pick for the last cell (the same spot as in the first one)</comment></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Columns</value><comment>A grid: how many cells in each row</comment></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Rows</value><comment>A grid: how many rows of cells</comment></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Show the cells</value><comment>Button: marks every cell of the grid on a picture of the screen</comment></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>See every cell's point on the screen with its number, to check the grid</value><comment>Tooltip of Show the cells</comment></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>The grid's cells</value><comment>Title of the window that shows a grid's cells over the screen</comment></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Each ring is a cell's point, with its number. Click anywhere to close.</value><comment>Shown over the screen while a grid's cells are marked</comment></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>A cell of {0}</value><comment>Position list, inside a component: the point is one of the cells of a Grid parameter; {0} the parameter's name</comment></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Cell</value><comment>Card title: which cell of the grid the point is</comment></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Counted row by row from the top left, starting at 1</value><comment>Under the Cell card</comment></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Its grid</value><comment>Card title under a Grid argument given as a value: the grid this call gives</comment></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>The grid this call gives, for example for another screen size</value><comment>Under Its grid</comment></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>at cell {0} of {1}</value><comment>An action's summary, inside a component: its point is a cell of a Grid parameter; {0} the cell (a number, or the Number parameter that gives it), {1} the Grid parameter's name</comment></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>In {3}, cell {1} of {2} doesn't exist. That grid has only {0} cell.</value><comment>Code view: a call reaches a cell its grid does not have; {0} how many cells the grid has, {1} the cell number, {2} the Grid parameter's name, {3} the component's name</comment></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>In {3}, cell {1} of {2} doesn't exist. That grid has {0} cells.</value><comment>Code view: a call reaches a cell its grid does not have; {0} how many cells the grid has, {1} the cell number, {2} the Grid parameter's name, {3} the component's name</comment></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} is used by these components: {1}. Stop using it there first.</value><comment>Deleting a component other components call: {0} the component's name, {1} the components that call it, joined by ListSeparator</comment></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} is linked in these macros: {1}, and used by these components: {2}. Stop using it there first.</value><comment>Deleting a component macros link and other components call: {0} the component's name, {1} the macros, {2} the components, each joined by ListSeparator</comment></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Some components of {0} are used by components of other collections: {1}. Stop using them there first.</value><comment>Deleting a collection whose components other collections' components call: {0} the collection's name, {1} those components, joined by ListSeparator</comment></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Some components of {0} are linked in these macros: {1}, and used by components of other collections: {2}. Stop using them there first.</value><comment>Deleting a collection whose components macros link and other collections' components call: {0} the collection's name, {1} the macros, {2} the components, each joined by ListSeparator</comment></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Used in {0} component</value><comment>How many other components call a component (and no macro links it): {0} the number</comment></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Used in {0} components</value><comment>How many other components call a component (and no macro links it): {0} the number</comment></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Used in {0} and {1}</value><comment>A component that macros link and other components call: {0} how many macros (Macros_Count: "2 macros"), {1} how many components (Library_ComponentCount: "1 component")</comment></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} component</value><comment>Inside Library_UsedInMacrosAndComponents: {0} the number</comment></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} components</value><comment>Inside Library_UsedInMacrosAndComponents: {0} the number</comment></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Deleted component {0}</value><comment>AI activity: an AI app deleted a Library component; {0} its name</comment></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Delete this component from the Library?</value><comment>Confirmation title: an AI app deletes a Library component</comment></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro could not open its settings file: another program may be using it. Your loops, remaps and settings are still in it, untouched. PuppyMacro started with the default settings and saves no change until it is started again.
+Details: {0}</value><comment>Start warning: settings.json was there but could not be opened (held by another program); {0}: the error.</comment></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro could not open the settings file when it started, so it saves nothing, to keep your file as it is. Start PuppyMacro again.</value><comment>Why a save of the settings was refused: settings.json could not be read at start (inside Settings_SaveFailed).</comment></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Library collection {0}</value><comment>A line of the confirmation of an AI app's import: a Library collection the file adds with the items; {0} its name (as Ai_Item_macro names a macro)</comment></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>{0} is true</value><comment>Detail of an If row: {0} the name of its condition from a component</comment></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>{0} isn't true</value><comment>Detail of an If row whose condition from a component is true when that condition is not: {0} its name</comment></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>After waiting {0} s.</value><comment>Description of If the conditions aren't true, for a wait with tenths of a second (whole seconds use Condition_IfNotTrueAfter): {0} the seconds, like "0.5"</comment></data>
 </root>

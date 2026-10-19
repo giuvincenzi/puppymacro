@@ -23,10 +23,14 @@
   "ai_tag_mcp": "MCP 지원",
   "ai_tag_beta": "베타",
   "ai_text": "Claude 같은 AI 앱을 연결하고 \"…하는 매크로 만들어 줘\"라고 요청하기만 하면 끝입니다.",
+  "learn_title": "AI가 내 앱을 익힙니다",
+  "learn_text": "잘 작동하는 것은 구성 요소가 됩니다. 찾아야 할 버튼, 채워야 할 입력란 같은 것들이죠. AI는 다음 매크로를 만들 때 이를 사용합니다. 컬렉션으로 공유하세요.",
   "loops_title": "루프",
   "loops_text": "키나 Ctrl+C 같은 조합 누르기, 클릭(두 번 클릭, 고정된 위치 클릭도 가능), 키나 단추를 누르고 있기, 텍스트 붙여넣기를 10ms에서 24시간 간격으로 반복합니다. 여러 동작을 각각 자체 타이머로 실행할 수 있습니다.",
   "macros_title": "매크로",
   "macros_text": "키, 클릭, 스크롤, 마우스 이동을 녹화한 다음 모든 단계를 편집할 수 있습니다. 목록에서 편집하거나, 자동 완성과 실시간 검사가 지원되는 코드로 편집하세요. 한 번, N번 또는 계속 재생할 수 있고 속도는 ×0.25에서 ×4까지입니다.",
+  "conditions_title": "화면 조건",
+  "conditions_text": "매크로는 픽셀 색, 이미지 또는 텍스트가 화면에 나타날 때까지 기다렸다가 찾은 곳을 클릭하고, 나타나지 않으면 다른 동작을 할 수 있습니다. HDR에서도 빠릅니다.",
   "remap_title": "다시 매핑",
   "remap_text": "키, 마우스 단추 또는 Alt+J 같은 조합을 누르면 다른 키, 단추 또는 조합이 입력됩니다. 모든 앱에서 또는 선택한 앱에서만 적용할 수 있습니다. Ctrl, Alt, Shift, Win도 왼쪽과 오른쪽을 구분해 다시 매핑할 수 있습니다.",
   "overlay_title": "오버레이 모드",
@@ -41,7 +45,7 @@
   "language_text": "Windows 표시 언어나 직접 선택한 언어로 사용할 수 있습니다. English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어, 中文.",
   "privacy_title": "개인정보 보호",
   "privacy_updates": "PuppyMacro는 개인 데이터를 수집하거나 보내지 않습니다. <strong>자동으로 업데이트 확인</strong>(기본값: 켜짐)을 사용하면 시작할 때와 12시간마다 GitHub에 연결해 업데이트를 확인하고 다운로드합니다. 이 요청에는 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub 일반 개인정보처리방침</a>이 적용됩니다. 설정 > 데이터 및 업데이트에서 끌 수 있습니다.",
-  "privacy_ai": "PuppyMacro는 AI 서비스에 아무것도 보내지 않습니다. <strong>AI 액세스 허용</strong>을 켜면(기본값: 꺼짐) 연결한 PC의 AI 앱이 PuppyMacro를 통해 루프, 매크로, 다시 매핑 및 설정을 읽을 수 있습니다. 읽은 내용은 해당 앱의 제공업체로 전송되며, 제공업체의 개인정보처리방침이 적용됩니다.",
+  "privacy_ai": "PuppyMacro는 AI 서비스에 아무것도 보내지 않습니다. <strong>AI 액세스 허용</strong>을 켜면(기본값: 꺼짐) 연결한 PC의 AI 앱이 PuppyMacro를 통해 루프, 매크로, 다시 매핑 및 설정을 읽을 수 있습니다. 읽은 내용은 해당 앱의 제공업체로 전송되며, 제공업체의 개인정보처리방침이 적용됩니다. <strong>AI 앱이 화면을 볼 수 있도록 허용</strong>이 켜져 있으면(기본값: 켜짐) 화면을 보는 매크로를 만들기 위해 화면 이미지도 볼 수 있습니다.",
   "footer_license": "MIT 라이선스",
   "footer_releases": "모든 릴리스"
 }

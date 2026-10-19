@@ -108,7 +108,15 @@ public partial class AiActivityWindow
         string detail = row?.DetailText ?? "";
         DetailText.Text = detail;
         RestoreButton.Visibility = row?.CanRestore == true ? Visibility.Visible : Visibility.Collapsed;
-        DetailCard.Visibility = detail.Length > 0 || row?.CanRestore == true ? Visibility.Visible : Visibility.Collapsed;
+        bool debug = row?.Entry.DebugFolder is string folder && System.IO.Directory.Exists(folder);
+        OpenDebugButton.Visibility = debug ? Visibility.Visible : Visibility.Collapsed;
+        DetailCard.Visibility = detail.Length > 0 || row?.CanRestore == true || debug ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void OnOpenDebugClick(object sender, RoutedEventArgs e)
+    {
+        if (ActivityList.SelectedItem is AiActivityRow { Entry.DebugFolder: string folder } && System.IO.Directory.Exists(folder))
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{folder}\""));
     }
 
     private void OnRestoreClick(object sender, RoutedEventArgs e)

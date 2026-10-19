@@ -211,7 +211,7 @@ public class AppTests
 
         // Name the click: the commands act on the selected actions.
         list.Items[0].Select();
-        app.Find(editor, "Edit action").AsButton().Invoke();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
         Window action = ChildDialog(editor, "Edit click");
         app.FindById(action, "ActionNameBox").AsTextBox().Text = "E2E click";
         app.FindById(action, "SaveButton").AsButton().Invoke();
@@ -220,7 +220,7 @@ public class AppTests
         // Select both actions and group them.
         list.Items[0].Select();
         list.Items[1].AddToSelection();
-        app.FindById(editor, "GroupButton").AsButton().Invoke();
+        app.EditorCommand(editor, "GroupButton").AsButton().Invoke();
         Window group = ChildDialog(editor, "Group actions");
         app.FindById(group, "GroupNameBox").AsTextBox().Text = "E2E group";
         app.FindById(group, "OkButton").AsButton().Invoke();
@@ -228,7 +228,7 @@ public class AppTests
 
         // Duplicate the group: select its row, then Duplicate.
         list.Items.First(i => i.Name.StartsWith("Group E2E group")).Select();
-        app.FindById(editor, "DuplicateButton").AsButton().Invoke();
+        app.EditorCommand(editor, "DuplicateButton").AsButton().Invoke();
         AutomationElement total = app.FindById(editor, "TotalText");
         Assert.True(Retry.WhileFalse(() => total.Name.StartsWith("4 actions in 2 groups"), AppSession.Timeout).Success, total.Name);
 
@@ -284,17 +284,7 @@ public class AppTests
     /// A command in the editor's ⋯ menu, opening it first when it is closed. The menu is a popup: its own
     /// top-level window, so the command is looked for among PuppyMacro's windows.
     /// </summary>
-    private static AutomationElement MoreCommand(AppSession app, Window editor, string automationId)
-    {
-        AutomationElement? Shown() => app.Automation.GetDesktop()
-            .FindFirstDescendant(cf => cf.ByAutomationId(automationId).And(cf.ByProcessId(app.ProcessId))) is { IsOffscreen: false } command
-            ? command : null;
-        if (Shown() is { } open)
-            return open;
-        // ⋯ is a ToggleButton bound to the bar's IsOverflowOpen (iNKORE's CommandBar template).
-        app.FindById(editor, "MoreButton").AsToggleButton().Toggle();
-        return Retry.WhileNull(Shown, AppSession.Timeout, throwOnTimeout: true, timeoutMessage: $"\"{automationId}\" not shown in ⋯").Result!;
-    }
+    private static AutomationElement MoreCommand(AppSession app, Window editor, string automationId) => app.EditorCommand(editor, automationId);
 
     [Fact]
     public void An_action_is_tested_from_its_window_and_from_its_row()
@@ -333,7 +323,7 @@ public class AppTests
 
         // Test from the list: select the action, then Test; the editor moves out of the way, then comes back.
         list.Items.First(i => i.Name.StartsWith("3. Press F24")).Select();
-        app.Find(editor, "Test action").AsButton().Invoke();
+        app.EditorCommand(editor, "TestActionButton").AsButton().Invoke();
         AssertMovesAwayAndBack(app, editor, editorPlace);
     }
 
@@ -624,7 +614,7 @@ public class AppTests
         Window editor = app.Dialog("Edit macro");
 
         app.FindById(editor, "ActionList").AsListBox().Items[0].Select();
-        app.Find(editor, "Edit action").AsButton().Invoke();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
         Window action = ChildDialog(editor, "Edit click");
         OpenCodeView(app, action);
         Assert.True(app.FindById(action, "TestButton").IsEnabled);
@@ -798,7 +788,7 @@ public class AppTests
         app.EditItem("Sample: click and scroll");
         Window editor = app.Dialog("Edit macro");
         app.FindById(editor, "ActionList").AsListBox().Items[0].Select();
-        app.Find(editor, "Edit action").AsButton().Invoke();
+        app.EditorCommand(editor, "EditActionButton").AsButton().Invoke();
         Window action = ChildDialog(editor, "Edit click");
         DetectWith(app, action, MouseButton.XButton1, "Back (X1)");
         app.FindById(action, "CancelButton").AsButton().Invoke();

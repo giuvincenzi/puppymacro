@@ -21,6 +21,7 @@ namespace PuppyMacro;
 public partial class App : Application
 {
     private Mutex? _singleInstance;
+    private Timer? _debugCleaner;
     private bool _ownsMutex;
 
     // Starting PuppyMacro while it runs signals this event: the running instance shows its window.
@@ -84,6 +85,29 @@ public partial class App : Application
     /// <summary>The mutex a running PuppyMacro holds (one at a time; the AI bridge checks it to know PuppyMacro is open).</summary>
     public const string SingleInstanceName = "PuppyMacro.SingleInstance";
 
+    /// <summary>
+    /// Asks Windows never to slow PuppyMacro down for power: no EcoQoS (slower cores and clock, less even timings) and its
+    /// timer resolution kept also while its windows are hidden in the tray (Windows 11 may ignore it otherwise). The
+    /// documented opt-out of SetProcessInformation; idle, PuppyMacro uses no processor, so it costs no battery then.
+    /// </summary>
+    private static void KeepFullSpeed()
+    {
+        var state = new NativeMethods.PROCESS_POWER_THROTTLING_STATE
+        {
+            Version = NativeMethods.PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+            ControlMask = NativeMethods.PROCESS_POWER_THROTTLING_EXECUTION_SPEED | NativeMethods.PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION,
+            StateMask = 0,
+        };
+        // The timer flag is from Windows 11: when Windows refuses the pair, the speed alone.
+        if (!NativeMethods.SetProcessInformation(NativeMethods.GetCurrentProcess(), NativeMethods.ProcessPowerThrottling, ref state,
+                (uint)System.Runtime.InteropServices.Marshal.SizeOf<NativeMethods.PROCESS_POWER_THROTTLING_STATE>()))
+        {
+            state.ControlMask = NativeMethods.PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
+            NativeMethods.SetProcessInformation(NativeMethods.GetCurrentProcess(), NativeMethods.ProcessPowerThrottling, ref state,
+                (uint)System.Runtime.InteropServices.Marshal.SizeOf<NativeMethods.PROCESS_POWER_THROTTLING_STATE>());
+        }
+    }
+
     [STAThread]
     private static void Main()
     {
@@ -95,6 +119,16 @@ public partial class App : Application
             return;
         }
 
+#if DEBUG
+        // The screen recognition's tuning bench (development build only): measures, writes the results, opens them, exits.
+        if (Environment.GetEnvironmentVariable(Services.Screen.RecognitionBench.Variable) is { Length: > 0 } bench)
+        {
+            // On an MTA thread, as the capture's graphics card objects must be (ScreenCapture.Mta).
+            System.Threading.Tasks.Task.Run(() => Services.Screen.RecognitionBench.Run(bench)).GetAwaiter().GetResult();
+            return;
+        }
+#endif
+
         // Handles install, update and uninstall hooks (it exits the process for those),
         // and applies an update that was downloaded but not applied yet.
         VelopackApp.Build()
@@ -105,6 +139,7 @@ public partial class App : Application
             })
             .Run();
 
+        KeepFullSpeed();
         var app = new App();
         app.InitializeComponent();
         app.Run();
@@ -157,6 +192,21 @@ public partial class App : Application
             return;
         }
 
+        // The debug data older than its days goes, now and every hour; nothing goes when PuppyMacro closes or crashes. Not
+        // while Delete debug data runs (it deletes everything). An error here is only this hour's cleaning lost: on the
+        // timer's thread it would end PuppyMacro.
+        _debugCleaner = new Timer(_ =>
+        {
+            try
+            {
+                DebugStore.TryDeleteOlderThan(DebugStore.Life, DateTime.UtcNow);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+            }
+        }, null, TimeSpan.Zero, TimeSpan.FromHours(1));
+
         _showWindowRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowEventName);
         _showWindowWait = ThreadPool.RegisterWaitForSingleObject(_showWindowRequest,
             (_, _) => Dispatcher.InvokeAsync(() => (MainWindow as MainWindow)?.ShowFromTray()),
@@ -197,6 +247,8 @@ public partial class App : Application
         var macros = new MacroLibrary(AppPaths.MacrosFolder);
         macros.Load(settings.MacroOrder, out string? macroWarning);
         warning ??= macroWarning;
+        macros.Library.Load(out string? libraryWarning);
+        warning ??= libraryWarning;
         if (settings.LoadedSchemaVersion < 6 && !macros.FillButtonOpacity(settings.OverlayPanelOpacity))
             warning ??= Strings.App_MacrosNotUpdated;
         if (SettingsStore.AddOpenMainHotkey(settings, macros))
@@ -210,6 +262,7 @@ public partial class App : Application
         if (!IsDevBuild)
             FileTypes.Register();
 
+        Services.Screen.CaptureExclusion.Start(Dispatcher);
         var window = new MainWindow(store, settings, macros);
         MainWindow = window;
         ApplyTheme(settings.Theme);
@@ -342,6 +395,7 @@ public partial class App : Application
         _showWindowRequest?.Dispose();
         _showBackupSettingsWait?.Unregister(null);
         _showBackupSettingsRequest?.Dispose();
+        _debugCleaner?.Dispose();
         if (_ownsMutex)
             _singleInstance?.ReleaseMutex();
         _singleInstance?.Dispose();

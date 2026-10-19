@@ -62,7 +62,10 @@ public sealed class AiActivity
     /// <summary>The loop, macro or remap it changed or deleted (null: none, or the settings).</summary>
     public Guid? ItemId { get; set; }
 
-    /// <summary>"loop", "macro", "remap" or "settings": what <see cref="Before"/> is.</summary>
+    /// <summary>
+    /// "loop", "macro", "remap", "settings", "component" (a changed one) or "collection" (a deleted component: its
+    /// collection with only it): what <see cref="Before"/> is.
+    /// </summary>
     public string? ItemKind { get; set; }
 
     /// <summary>The item (or the settings) before this change, JSON: Restore puts it back. Null for something new.</summary>
@@ -70,6 +73,12 @@ public sealed class AiActivity
 
     /// <summary>The user put <see cref="Before"/> back.</summary>
     public bool Restored { get; set; }
+
+    /// <summary>
+    /// The request's folder in the debug data (<c>DebugStore</c>: what the AI app sent and got, and what it captured), for
+    /// Open debug; null for older entries. The folder lasts its days there, the entry longer.
+    /// </summary>
+    public string? DebugFolder { get; set; }
 }
 
 /// <summary>
@@ -126,7 +135,7 @@ internal sealed class AiActivityLog
     public List<AiActivity> Entries()
     {
         lock (_sync)
-            return _entries.OrderByDescending(e => e.Time).ToList();
+            return Enumerable.Reverse(_entries).ToList(); // in the order they came, not by Time: the clock can go back
     }
 
     /// <summary>Adds an entry with the current time and saves the file.</summary>
@@ -146,6 +155,7 @@ internal sealed class AiActivityLog
             ItemId = itemId,
             ItemKind = itemKind,
             Before = before,
+            DebugFolder = DebugCall.Current?.Folder,
         };
         lock (_sync)
         {
@@ -183,7 +193,7 @@ internal sealed class AiActivityLog
     {
         var kept = new List<AiActivity>();
         long size = 2; // [ ]
-        foreach (AiActivity entry in entries.OrderByDescending(e => e.Time))
+        foreach (AiActivity entry in Enumerable.Reverse(entries)) // newest first, in the order they came
         {
             size += ItemHistory.SizeInList(JsonSerializer.Serialize(entry, JsonOptions));
             if (size > _maxBytes && kept.Count > 0)

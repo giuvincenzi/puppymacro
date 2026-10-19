@@ -30,8 +30,8 @@ paths:
     personal token with it would be a secret only for this.
 - Titles and descriptions say "PC" and never name Windows versions; the requirements say "Windows 10 / 11" (the home's badge, the structured data's
   `operatingSystem`, the guide's install page).
-- The slogan, "A good puppy for everything you repeat.", is not the title: it stays in English in every language
-  (only `en.json` has it, `site.ps1` stops when a translation adds it).
+- The slogan is not the title: it stays in English in every language (only `en.json` has it, `site.ps1` stops when a
+  translation adds it).
 
 ## Search engines
 
@@ -39,27 +39,22 @@ paths:
   account, verified by the `google-site-verification` meta tag in `site/index.html`. Never delete or change the tag: the
   property stays verified only while Google finds it.
 - Bing Webmaster Tools: the site imported from Search Console (no tag of its own).
-- `scripts/site.ps1` writes, with `$SiteUrl` as the one place the site's address is written:
-  - `sitemap.xml`: the home page in every language and the newest guide (submitted in Search Console). A project site on
-    `github.io` has no `robots.txt` of its own (it would be at `giuvincenzi.github.io/robots.txt`);
-  - a canonical link on every page: each home its own address, a guide page of any version the same page of the newest
-    guide (or itself when the newest guide has no such section);
-  - `hreflang` links between the home pages, English as `x-default`;
-  - link previews (Open Graph, `assets/loops.png`) and, on each home, the `SoftwareApplication` structured data.
+- `scripts/site.ps1` writes, with `$SiteUrl` as the one place the site's address is written: `sitemap.xml` (submitted
+  in Search Console; a project site on `github.io` has no `robots.txt` of its own), a canonical link on every page (a
+  guide page of any version points to the same page of the newest guide), `hreflang` links between the home pages
+  (English as `x-default`), link previews and structured data.
 
 ## The home page's languages
 
-- The home page is in the app's 13 languages: English at the site's root, the others in a folder each (`/it/`,
-  `/pt-br/`, `/zh-hans/`…), listed in `$HomeLanguages` of `site.ps1` with their flag and writing direction. Arabic runs
-  right to left. The guide stays in English: its pages have the English header and no language menu.
+- The home page is in the app's languages: English at the site's root, the others in a folder each, listed in
+  `$HomeLanguages` of `site.ps1` with their flag and writing direction. Arabic runs right to left. The guide stays in
+  English: its pages have the English header and no language menu.
 - Every text of the home is in `site/home/<code>.json`, the same keys as `en.json` (except the slogan): `site.ps1` stops
   when a key is missing or added. Translations follow `i18n.md`.
-- The language menu in the header: the current language's round flag and name; a click opens the languages in a grid of
-  two columns, by their own names. Flags from flag-icons (MIT, square SVGs copied in `site/assets/flags` with its
-  license), the United Kingdom's for English; Arabic, spoken in many countries, shows the letter "ع".
-- The English home shows a banner when the browser prefers one of the other languages and the visitor has not chosen one
-  yet: "This page is also available in …", with buttons to switch or to stay in English (`site.js`). The choice is
-  remembered in the browser. The page never changes language by itself: search engines read the English one.
+- The language menu in the header shows flags from flag-icons (MIT, copied in `site/assets/flags` with its license),
+  the United Kingdom's for English; Arabic, spoken in many countries, shows the letter "ع".
+- The English home offers the browser's preferred language in a banner (`site.js`); the choice is remembered in the
+  browser. The page never changes language by itself: search engines read the English one.
 
 ## MCP Registry
 

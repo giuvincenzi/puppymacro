@@ -438,6 +438,38 @@ public sealed class LoopEngineTests : IDisposable
 
     // ---- Remaps and modifier sides (remap targets: F24 only) ----
 
+    /// <summary>
+    /// With an editor open (hotkeys suspended) the Stop all hotkey still stops what runs (an editor's Test of an action),
+    /// and is blocked; with nothing running it passes to the editor, and the other hotkeys stay suspended.
+    /// </summary>
+    [Fact]
+    public void While_hotkeys_are_suspended_only_Stop_all_works_and_only_when_something_runs()
+    {
+        const int F22 = 0x85;
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F22));
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop }, StopAll = HotkeyBinding.FromKey(F23) });
+        _engine.StartLoop(loop);
+        _engine.HotkeysSuspended = true;
+
+        Assert.True(Press(F23));
+        Assert.True(Release(F23));
+        Assert.False(_engine.IsRunning(loop.Id));
+
+        // Nothing runs: the key is the editor's.
+        Assert.False(Press(F23));
+        Assert.False(Release(F23));
+
+        // The loop's own hotkey stays suspended.
+        Assert.False(Press(F22));
+        Assert.False(Release(F22));
+        Assert.False(_engine.IsRunning(loop.Id));
+
+        _engine.HotkeysSuspended = false;
+        Assert.True(Press(F22));
+        Assert.True(Release(F22));
+        Assert.True(_engine.IsRunning(loop.Id));
+    }
+
     private static RemapDefinition Remap(HotkeyBinding source) => new() { Source = source, Target = HotkeyBinding.FromKey(F24) };
 
     private bool Press(int vk) => _engine.OnKey(vk, isDown: true, physicalModifierEvent: true);

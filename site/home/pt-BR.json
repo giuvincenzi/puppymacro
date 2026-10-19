@@ -23,10 +23,14 @@
   "ai_tag_mcp": "Pronto para MCP",
   "ai_tag_beta": "Beta",
   "ai_text": "Conecte seu aplicativo de AI, como o Claude, e é só pedir: “crie uma macro que…”. Pronto.",
+  "learn_title": "Sua AI aprende seus aplicativos",
+  "learn_text": "O que funciona vira um componente: um botão para encontrar, um campo para preencher. Sua AI o usa quando cria sua próxima macro. Compartilhe em uma coleção.",
   "loops_title": "Loops",
   "loops_text": "Pressiona uma tecla ou uma combinação como Ctrl+C, clica (também com clique duplo ou em um ponto fixo), mantém uma tecla ou um botão pressionado ou cola um texto, em intervalos de 10 ms a 24 h. Várias ações, cada uma com seu próprio intervalo.",
   "macros_title": "Macros",
   "macros_text": "Grave teclas, cliques, rolagem e movimentos do mouse e depois edite cada passo, em uma lista ou como código, com sugestões e verificação em tempo real. Reproduza uma vez, N vezes ou em loop, com velocidade de ×0,25 a ×4.",
+  "conditions_title": "Condições na tela",
+  "conditions_text": "Uma macro pode esperar a cor de um pixel, uma imagem ou um texto na tela e clicar onde ele aparece, ou fazer outra coisa se ele não aparecer. É rápida, também com HDR.",
   "remap_title": "Remapear",
   "remap_text": "Uma tecla, um botão do mouse ou uma combinação como Alt+J envia outra tecla, outro botão ou outra combinação, em todos os aplicativos ou só no aplicativo que você escolher. Ctrl, Alt, Shift e Win também podem ser remapeadas, com esquerda e direita separadas.",
   "overlay_title": "Modo de sobreposição",
@@ -41,7 +45,7 @@
   "language_text": "No idioma do seu Windows ou no que você escolher: English, Italiano, Français, Español, Deutsch, Português, Română, Shqip, Русский, العربية, 日本語, 한국어 e 中文.",
   "privacy_title": "Privacidade",
   "privacy_updates": "O PuppyMacro não coleta nem envia dados pessoais. Com <strong>Verificar se há atualizações automaticamente</strong> ativado (o padrão), ele se conecta ao GitHub ao ser iniciado e a cada 12 horas para procurar e baixar atualizações; a <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">Declaração Geral de Privacidade do GitHub</a> se aplica a essas solicitações. Você pode desativar essa opção em Configurações > Dados e atualizações.",
-  "privacy_ai": "O PuppyMacro não envia nada a serviços de AI. Com <strong>Permitir acesso de AI</strong> ativado (desativado por padrão), os aplicativos de AI do seu PC que você conectar podem ler seus loops, macros, remapeamentos e configurações por meio do PuppyMacro: o que eles leem vai para o provedor desse aplicativo, de acordo com a política de privacidade dele.",
+  "privacy_ai": "O PuppyMacro não envia nada a serviços de AI. Com <strong>Permitir acesso de AI</strong> ativado (desativado por padrão), os aplicativos de AI do seu PC que você conectar podem ler seus loops, macros, remapeamentos e configurações por meio do PuppyMacro: o que eles leem vai para o provedor desse aplicativo, de acordo com a política de privacidade dele. Com <strong>Permitir que aplicativos de AI vejam a tela</strong> (ativado por padrão), eles também podem ver imagens da sua tela, para criar macros que olham para ela.",
   "footer_license": "Licença MIT",
   "footer_releases": "Todas as versões"
 }

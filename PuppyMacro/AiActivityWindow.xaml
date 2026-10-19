@@ -58,6 +58,9 @@
                 <!-- What an AI app changed or deleted comes back as it was -->
                 <Button x:Name="RestoreButton" DockPanel.Dock="Right" Margin="12,0,0,0" VerticalAlignment="Top" Content="{x:Static r:Strings.AiActivity_Restore}"
                         Visibility="Collapsed" Click="OnRestoreClick" />
+                <!-- The request's folder in the debug data: what the AI app sent and got, while it is kept -->
+                <Button x:Name="OpenDebugButton" DockPanel.Dock="Right" Margin="12,0,0,0" VerticalAlignment="Top" Content="{x:Static r:Strings.AiActivity_OpenDebug}"
+                        Visibility="Collapsed" Click="OnOpenDebugClick" />
                 <ui:ScrollViewerEx VerticalScrollBarVisibility="Auto">
                     <TextBox x:Name="DetailText" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"
                              AutomationProperties.Name="{x:Static r:Strings.AiActivity_Details}" />

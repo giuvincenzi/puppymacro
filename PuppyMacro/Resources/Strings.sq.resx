@@ -208,6 +208,14 @@
   <data name="Settings_UserGuide" xml:space="preserve"><value>Udhëzuesi i përdoruesit</value></data>
   <data name="Settings_NotInDevBuild" xml:space="preserve"><value>Nuk ofrohet në versionin e zhvillimit</value></data>
   <data name="Settings_DataSavedIn" xml:space="preserve"><value>Të dhënat ruhen në {0}</value></data>
+  <data name="Settings_DebugData" xml:space="preserve"><value>Të dhënat e korrigjimit</value></data>
+  <data name="Settings_DebugDataDescription" xml:space="preserve"><value>Regjistra dhe pamje të ekranit nga kërkesat AI dhe nga makrot me Debug aktiv, të ruajtura 7 ditë në këtë PC. Zënë {0}.</value></data>
+  <data name="Settings_SizeMb" xml:space="preserve"><value>{0} MB</value></data>
+  <data name="Settings_SizeGb" xml:space="preserve"><value>{0} GB</value></data>
+  <data name="Settings_DeleteDebugData" xml:space="preserve"><value>Fshi të dhënat e korrigjimit</value></data>
+  <data name="Settings_DeleteDebugDataDescription" xml:space="preserve"><value>Gjithçka, përveç asaj që është në zhvillim tani.</value></data>
+  <data name="Settings_DeleteAll" xml:space="preserve"><value>Fshi të gjitha</value></data>
+  <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Të fshihen të dhënat e korrigjimit të PuppyMacro? Ajo që është në zhvillim tani mbetet.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Tastet e shpejta nuk funksionojnë tani:
 {0}</value></data>
   <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro vazhdon të ekzekutohet në zonën e njoftimeve. Klikoni me të djathtën ikonën e tij për të dalë.</value></data>
@@ -359,6 +367,10 @@ Detajet: {1}</value></data>
   <data name="AiPage_AskChangeDescription" xml:space="preserve"><value>Joaktiv: elementet e reja dhe të ndryshuara nga AI ruhen menjëherë, gati për t'u provuar.</value></data>
   <data name="AiPage_AskSettings" xml:space="preserve"><value>Pyet para ndryshimit të cilësimeve</value></data>
   <data name="AiPage_AskSettingsDescription" xml:space="preserve"><value>Tema, tastet e shpejta globale, paneli i mbivendosjes, tingulli</value></data>
+  <data name="AiPage_SeeScreen" xml:space="preserve"><value>Lejo aplikacionet AI të shohin ekranin</value></data>
+  <data name="AiPage_SeeScreenDescription" xml:space="preserve"><value>Pamjet e ekranit, dhe çfarë lexon aty një kusht i makros, shkojnë te aplikacioni AI dhe ofruesi i tij. Me to mund të krijojë makro që shohin ekranin.</value></data>
+  <data name="AiPage_TestMacros" xml:space="preserve"><value>Lejo aplikacionet AI të provojnë makrot</value></data>
+  <data name="AiPage_TestMacrosDescription" xml:space="preserve"><value>Pasi shtypni Nis, aplikacioni AI mund të luajë një makro të ruajtur për të parë si shkon. Ndal të gjitha e ndalon.</value></data>
   <data name="AiPage_StartWhenNeeded" xml:space="preserve"><value>Nis PuppyMacro kur një aplikacion AI ka nevojë</value></data>
   <data name="AiPage_StartWhenNeededDescription" xml:space="preserve"><value>Joaktiv: kur PuppyMacro është i mbyllur, aplikacionet AI nuk mund ta përdorin dhe ju thonë ta hapni.</value></data>
   <data name="AiPage_Apps" xml:space="preserve"><value>Aplikacionet</value></data>
@@ -413,6 +425,7 @@ Detajet: {1}</value></data>
   <data name="AiActivity_AllTypes" xml:space="preserve"><value>Të gjitha llojet</value></data>
   <data name="AiActivity_AllResults" xml:space="preserve"><value>Të gjitha rezultatet</value></data>
   <data name="AiActivity_Restore" xml:space="preserve"><value>Rikthe</value></data>
+  <data name="AiActivity_OpenDebug" xml:space="preserve"><value>Hap korrigjimin</value></data>
   <data name="AiActivity_Details" xml:space="preserve"><value>Detajet</value></data>
   <data name="AiActivity_NoRequests" xml:space="preserve"><value>Ende nuk ka kërkesa.</value></data>
   <data name="AiActivity_NoMatch" xml:space="preserve"><value>Asnjë kërkesë nuk përputhet me filtrat.</value></data>
@@ -435,6 +448,10 @@ Detajet: {1}</value></data>
   <data name="AiReady_StepNumber" xml:space="preserve"><value>{0}.</value></data>
   <data name="AiReady_Hint" xml:space="preserve"><value>Shtypni {0} kur të jeni gati · {1} anulon</value></data>
   <data name="AiReady_Start" xml:space="preserve"><value>Nis</value></data>
+  <data name="AiFinished_Title" xml:space="preserve"><value>U krye</value></data>
+  <data name="AiFinished_BackTo" xml:space="preserve"><value>Mund të ktheheni te {0}.</value></data>
+  <data name="AiFinished_BackToAiApp" xml:space="preserve"><value>Mund të ktheheni te aplikacioni juaj AI.</value></data>
+  <data name="AiFinished_Ok" xml:space="preserve"><value>OK</value></data>
   <data name="Pick_Title" xml:space="preserve"><value>Zgjidh një pikë</value></data>
   <data name="Pick_ClickPoint" xml:space="preserve"><value>Klikoni pikën ku duhet të shkojë kursori</value></data>
   <data name="Pick_Cancel" xml:space="preserve"><value>Anulo</value></data>
@@ -503,6 +520,14 @@ Detajet: {1}</value></data>
   <data name="Editor_HotkeyHelp" xml:space="preserve"><value>Çdo tast ose buton i miut, si F2 ose A. Për një kombinim, mbani fillimisht shtypur Ctrl, Alt, Shift ose Win; klikimi majtas dhe djathtas, rrota e miut dhe Esc kanë nevojë për një të tillë. Mbajtja ka nevojë për një tast të shpejtë.</value></data>
   <data name="Editor_Sound" xml:space="preserve"><value>Tingulli</value></data>
   <data name="MacroEditor_SoundDescription" xml:space="preserve"><value>Luhet kur makroja niset dhe ndalet</value></data>
+  <data name="Macro_DebugDescription" xml:space="preserve"><value>Ruan regjistrin e çdo ekzekutimi të kësaj makroje, me një pamje të ekranit para çdo hapi, për 7 ditë në këtë PC.</value></data>
+  <data name="Macro_ViewLog" xml:space="preserve"><value>Shiko regjistrin</value></data>
+  <data name="DebugLog_Title" xml:space="preserve"><value>Regjistri i {0}</value></data>
+  <data name="DebugLog_Description" xml:space="preserve"><value>Ekzekutimi i fundit i makros, i shkruar në anglisht që ta ngjitni kudo. Pamjet e ekranit janë në dosjen e saj.</value></data>
+  <data name="DebugLog_Log" xml:space="preserve"><value>Regjistri</value></data>
+  <data name="DebugLog_Copy" xml:space="preserve"><value>Kopjo</value></data>
+  <data name="DebugLog_OpenFolder" xml:space="preserve"><value>Hap dosjen</value></data>
+  <data name="DebugLog_None" xml:space="preserve"><value>Ky regjistër nuk ekziston më. Regjistrat fshihen kur mbyllet PuppyMacro.</value></data>
   <data name="Editor_SoundChoose" xml:space="preserve"><value>Klikoni një tingull për ta zgjedhur dhe për të dëgjuar si niset dhe ndalet</value></data>
   <data name="Editor_Save" xml:space="preserve"><value>Ruaj</value></data>
   <data name="Editor_Cancel" xml:space="preserve"><value>Anulo</value></data>
@@ -1000,6 +1025,20 @@ Detajet: {1}</value></data>
   <data name="Code_PathEmpty" xml:space="preserve"><value>Një shteg ka nevojë për të paktën një pikë.</value></data>
   <data name="Code_PathTimes" xml:space="preserve"><value>Kohët duhet të nisin nga 0 ose më shumë dhe të mos kthehen kurrë pas.</value></data>
   <data name="Code_EnterPasteText" xml:space="preserve"><value>Shkruani tekstin për t'u ngjitur.</value></data>
+  <data name="Code_OnlyIfHasConditions" xml:space="preserve"><value>Vetëm një veprim If ka kushte. Hiqni If ose vendosni Type në If.</value></data>
+  <data name="Code_IfNeedsConditions" xml:space="preserve"><value>Një veprim If ka nevojë për kushtet dhe veprimet e tij në If.</value></data>
+  <data name="Code_AddCondition" xml:space="preserve"><value>Shtoni të paktën një kusht.</value></data>
+  <data name="Code_EnterConditionName" xml:space="preserve"><value>Jepini kushtit një emër, që veprimet në Then të mund të klikojnë aty ku u gjet.</value></data>
+  <data name="Code_ConditionNameTwice" xml:space="preserve"><value>Një kusht tjetër i këtij makroje ka të njëjtin emër. Jepini secilit një emër të vetin.</value></data>
+  <data name="Code_ConditionColor" xml:space="preserve"><value>Shkruajeni ngjyrën si # e ndjekur nga gjashtë shifra heksadecimale, p.sh. #3BD16F.</value></data>
+  <data name="Code_TakeImage" xml:space="preserve"><value>Kapni imazhin që do të kërkohet me Kap nga ekrani.</value></data>
+  <data name="Code_ChecksPerSecond" xml:space="preserve"><value>Zgjidhni 10, 30 ose 60 kontrolle në sekondë, ose 0 për çdo kuadër.</value></data>
+  <data name="Code_ImageMissing" xml:space="preserve"><value>PuppyMacro nuk e ka këtë imazh. Kapeni sërish me Kap nga ekrani.</value></data>
+  <data name="Code_EnterConditionText" xml:space="preserve"><value>Shkruani tekstin që do të kërkohet.</value></data>
+  <data name="Code_TextArea" xml:space="preserve"><value>Tekst në ekran kërkon në një zonë që vizatoni ju ose në gjithë ekranin.</value></data>
+  <data name="Code_FoundOnlyMouse" xml:space="preserve"><value>Vetëm Klikim, Butoni i miut poshtë, Butoni i miut lart dhe Zhvendos te mund të shkojnë aty ku u gjet diçka.</value></data>
+  <data name="Code_FoundOutside" xml:space="preserve"><value>Ky veprim shkon aty ku një kusht gjeti imazhin ose tekstin e tij, por nuk është brenda Then të atij kushti. Zhvendoseni brenda ose zgjidhni një pikë fikse.</value></data>
+  <data name="Code_FoundNot" xml:space="preserve"><value>Ky veprim shkon aty ku një kusht gjeti imazhin ose tekstin e tij, por ai kusht është i vërtetë kur nuk është në ekran, prandaj nuk gjen asnjë vend. Zgjidhni një pikë fikse.</value></data>
   <data name="Overlay_WindowTitle" xml:space="preserve"><value>Paneli i mbivendosjes së PuppyMacro</value></data>
   <data name="Overlay_MovePanel" xml:space="preserve"><value>Zhvendos panelin</value></data>
   <data name="Overlay_MovePanelTip" xml:space="preserve"><value>Zvarriteni për të zhvendosur panelin</value></data>
@@ -1126,4 +1165,443 @@ Detajet: {1}</value></data>
   <data name="Main_ViewGrid" xml:space="preserve"><value>Rrjetë</value></data>
   <data name="Table_State" xml:space="preserve"><value>Gjendja</value></data>
   <data name="Card_Edit" xml:space="preserve"><value>Redakto</value></data>
+  <data name="ScreenPick_PixelTitle" xml:space="preserve"><value>Zgjidhni pikselin</value></data>
+  <data name="ScreenPick_Pixel" xml:space="preserve"><value>Klikoni pikselin që do të kontrollohet. Merret edhe ngjyra e tij.</value></data>
+  <data name="ScreenPick_ImageTitle" xml:space="preserve"><value>Kapni imazhin</value></data>
+  <data name="ScreenPick_Image" xml:space="preserve"><value>Zvarritni rreth imazhit që do të kërkohet. Zvarritni sërish për ta ndryshuar.</value></data>
+  <data name="ScreenPick_AreaTitle" xml:space="preserve"><value>Vizatoni zonën e kërkimit</value></data>
+  <data name="ScreenPick_Area" xml:space="preserve"><value>Zvarritni mbi zonën ku do të kërkojë PuppyMacro. Sa më e vogël zona, aq më i shpejtë kërkimi.</value></data>
+  <data name="ScreenPick_TakeImage" xml:space="preserve"><value>Kap imazhin</value></data>
+  <data name="ScreenPick_UseArea" xml:space="preserve"><value>Përdor këtë zonë</value></data>
+  <data name="ScreenPick_Size" xml:space="preserve"><value>{0} × {1}</value></data>
+  <data name="ScreenPick_PixelInfo" xml:space="preserve"><value>{0}  {1}, {2}</value></data>
+  <data name="ScreenPick_NoScreen" xml:space="preserve"><value>PuppyMacro nuk e sheh dot ekranin tani. Provoni sërish pas pak.</value></data>
+  <data name="ScreenPick_OneColor" xml:space="preserve"><value>Kjo zonë është e gjitha me një ngjyrë, ndaj PuppyMacro nuk do ta gjente dot kurrë si imazh. Zvarritni rreth diçkaje me më shumë detaje, ose kontrolloni ngjyrën me një kusht të llojit Ngjyra e pikselit.</value></data>
+  <data name="Action_PositionFixed" xml:space="preserve"><value>Pikë fikse</value></data>
+  <data name="Action_Point" xml:space="preserve"><value>Pika</value></data>
+  <data name="Action_PositionFound" xml:space="preserve"><value>Aty ku u gjet {0}</value></data>
+  <data name="Action_PositionDescription" xml:space="preserve"><value>Brenda një If, veprimi mund të shkojë aty ku një kusht gjeti imazhin ose tekstin e tij, kudo që të ndodhet këtë herë.</value></data>
+  <data name="Action_MoveFromCenter" xml:space="preserve"><value>Zhvendosje nga qendra</value></data>
+  <data name="Action_MoveFromCenterDescription" xml:space="preserve"><value>Piksela djathtas dhe poshtë. Përdorni numra negativë për të shkuar majtas ose lart.</value></data>
+  <data name="Action_MoveRight" xml:space="preserve"><value>Piksela djathtas</value></data>
+  <data name="Action_MoveDown" xml:space="preserve"><value>Piksela poshtë</value></data>
+  <data name="Action_SummaryWhereFound" xml:space="preserve"><value>aty ku u gjet {0}</value></data>
+  <data name="ActionWindow_Add_If" xml:space="preserve"><value>Shto kusht</value></data>
+  <data name="ActionWindow_Edit_If" xml:space="preserve"><value>Redakto kushtin - {0}</value></data>
+  <data name="Condition_Pixel" xml:space="preserve"><value>Ngjyra e pikselit</value></data>
+  <data name="Condition_Image" xml:space="preserve"><value>Imazh në ekran</value></data>
+  <data name="Condition_Text" xml:space="preserve"><value>Tekst në ekran</value></data>
+  <data name="Condition_ImageShort" xml:space="preserve"><value>Imazh</value></data>
+  <data name="Condition_TextShort" xml:space="preserve"><value>Tekst</value></data>
+  <data name="Condition_NewName" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Condition_Conditions" xml:space="preserve"><value>Kushtet</value></data>
+  <data name="Condition_Add" xml:space="preserve"><value>Shto kusht</value></data>
+  <data name="Condition_NoneYet" xml:space="preserve"><value>Shtoni një kusht me Shto kusht.</value></data>
+  <data name="Condition_Remove" xml:space="preserve"><value>Hiq kushtin</value></data>
+  <data name="Condition_RemoveImage" xml:space="preserve"><value>Hiq imazhin</value></data>
+  <data name="Condition_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="Condition_NameDescription" xml:space="preserve"><value>Veprimet në Then e përdorin këtë emër për të shkuar aty ku u gjet.</value></data>
+  <data name="Condition_PixelCard" xml:space="preserve"><value>Pikseli</value></data>
+  <data name="Condition_Color" xml:space="preserve"><value>Ngjyra</value></data>
+  <data name="Condition_ColorDescription" xml:space="preserve"><value>Merret nga ekrani kur zgjidhni pikselin.</value></data>
+  <data name="Condition_Tolerance" xml:space="preserve"><value>Toleranca</value></data>
+  <data name="Condition_ToleranceDescription" xml:space="preserve"><value>Sa mund të ndryshojë ngjyra në ekran. Në 0% vlen vetëm e njëjta ngjyrë.</value></data>
+  <data name="Condition_Images" xml:space="preserve"><value>Imazhet</value></data>
+  <data name="Condition_ImagesDescription" xml:space="preserve"><value>Kushti plotësohet kur njëri prej tyre shfaqet në ekran.</value></data>
+  <data name="Condition_TakeOnScreen" xml:space="preserve"><value>Kap nga ekrani</value></data>
+  <data name="Condition_TakeAnother" xml:space="preserve"><value>Kap një imazh tjetër</value></data>
+  <data name="Condition_ImageInfo" xml:space="preserve"><value>{0} × {1} piksela, kapur në {2}, {3}</value></data>
+  <data name="Condition_ImageMissing" xml:space="preserve"><value>PuppyMacro nuk e ka këtë imazh. Kapeni sërish.</value></data>
+  <data name="Condition_SearchArea" xml:space="preserve"><value>Zona e kërkimit</value></data>
+  <data name="Condition_AreaAround" xml:space="preserve"><value>Rreth vendit ku u kap</value></data>
+  <data name="Condition_AreaScreen" xml:space="preserve"><value>I gjithë ekrani</value></data>
+  <data name="Condition_AreaDrawn" xml:space="preserve"><value>Një zonë që vizatoj unë</value></data>
+  <data name="Condition_AreaAroundDescription" xml:space="preserve"><value>Pranë vendit ku u kap imazhi, gjë që është e shpejtë. Imazhi gjendet edhe nëse lëviz pak.</value></data>
+  <data name="Condition_AreaNotDrawn" xml:space="preserve"><value>Vizatoni zonën me Vizato në ekran.</value></data>
+  <data name="Condition_AreaInfo" xml:space="preserve"><value>Në {0}, {1}, {2} × {3} piksela. Sa më e vogël zona, aq më i shpejtë kërkimi.</value></data>
+  <data name="Condition_DrawOnScreen" xml:space="preserve"><value>Vizato në ekran</value></data>
+  <data name="Condition_DrawArea" xml:space="preserve"><value>Vizatoni zonën e kërkimit me Vizato në ekran.</value></data>
+  <data name="Condition_NearbySizes" xml:space="preserve"><value>Pak më i madh ose më i vogël</value></data>
+  <data name="Condition_NearbySizesDescription" xml:space="preserve"><value>E gjen imazhin edhe kur aplikacioni e shfaq pak më të madh ose më të vogël, deri në 15%. Kërkon më shumë kohë.</value></data>
+  <data name="Condition_Similarity" xml:space="preserve"><value>Ngjashmëria</value></data>
+  <data name="Condition_SimilarityDescription" xml:space="preserve"><value>Sa shumë duhet t'i ngjajë ekrani imazhit. Uleni pak nëse imazhi ndryshon, për shembull nga drita ose efektet.</value></data>
+  <data name="Condition_TextCard" xml:space="preserve"><value>Teksti</value></data>
+  <data name="Condition_Match" xml:space="preserve"><value>Përputhja</value></data>
+  <data name="Condition_MatchDescription" xml:space="preserve"><value>Nëse teksti i gjetur mund të ketë fjalë të tjera përreth.</value></data>
+  <data name="Condition_MatchContains" xml:space="preserve"><value>Përmban tekstin</value></data>
+  <data name="Condition_MatchExact" xml:space="preserve"><value>Pikërisht këto fjalë</value></data>
+  <data name="Condition_MatchCase" xml:space="preserve"><value>Dallo shkronjat e mëdha nga të voglat</value></data>
+  <data name="Condition_Language" xml:space="preserve"><value>Gjuha</value></data>
+  <data name="Condition_LanguageDescription" xml:space="preserve"><value>Gjuha e tekstit në ekran. Lista tregon gjuhët që Windows mund të lexojë në këtë PC.</value></data>
+  <data name="Condition_WindowsLanguage" xml:space="preserve"><value>Gjuha e Windows</value></data>
+  <data name="Condition_WindowsLanguageNamed" xml:space="preserve"><value>Gjuha e Windows ({0})</value></data>
+  <data name="Condition_Now" xml:space="preserve"><value>Tani në ekran</value></data>
+  <data name="Condition_TextNotice" xml:space="preserve"><value>PuppyMacro e lexon tekstin me njohjen e tekstit të Windows, që është më e ngadaltë se kërkimi i një imazhi. Përdoreni kur fjalët mbeten të njëjta, por pamja e tyre ndryshon, si fonti, ngjyra ose sfondi. Mbajeni të vogël zonën e kërkimit.</value></data>
+  <data name="Condition_WhenThen" xml:space="preserve"><value>Kur të ekzekutohet Then</value></data>
+  <data name="Condition_MatchAllAnyDescription" xml:space="preserve"><value>Ekzekuto Then kur plotësohen të gjitha kushtet, ose sapo të plotësohet njëri prej tyre.</value></data>
+  <data name="Condition_All" xml:space="preserve"><value>Plotësohen të gjitha</value></data>
+  <data name="Condition_Any" xml:space="preserve"><value>Plotësohet njëri prej tyre</value></data>
+  <data name="Condition_Wait" xml:space="preserve"><value>Pritja</value></data>
+  <data name="Condition_WaitDescription" xml:space="preserve"><value>Gjatë pritjes, PuppyMacro kontrollon sërish sa herë që ndryshon ekrani.</value></data>
+  <data name="Condition_WaitOnce" xml:space="preserve"><value>Kontrollo një herë</value></data>
+  <data name="Condition_WaitUpTo" xml:space="preserve"><value>Deri në</value></data>
+  <data name="Condition_WaitForever" xml:space="preserve"><value>Sa të jetë e nevojshme</value></data>
+  <data name="Condition_WaitSecondsName" xml:space="preserve"><value>Sekondat e pritjes</value></data>
+  <data name="Condition_WaitSeconds" xml:space="preserve"><value>Shkruani sa sekonda të pritet, nga 0,1 deri në 86 400.</value></data>
+  <data name="Condition_IfNotTrue" xml:space="preserve"><value>Nëse kushtet nuk plotësohen</value></data>
+  <data name="Condition_IfNotTrueOnce" xml:space="preserve"><value>Menjëherë pas kontrollit të vetëm.</value></data>
+  <data name="Condition_IfNotTrueAfter_one" xml:space="preserve"><value>Pasi pret {0} sekondë.</value></data>
+  <data name="Condition_IfNotTrueAfter_other" xml:space="preserve"><value>Pasi pret {0} sekonda.</value></data>
+  <data name="Condition_IfNotTrueForever" xml:space="preserve"><value>Makroja pret derisa të plotësohen ose derisa ta ndalni.</value></data>
+  <data name="Condition_RunElse" xml:space="preserve"><value>Ekzekuto veprimet e Else</value></data>
+  <data name="Condition_StopMacro" xml:space="preserve"><value>Ndal makron</value></data>
+  <data name="Condition_TestTooltip" xml:space="preserve"><value>Kontrollon tani kushtet në ekran, pa ekzekutuar asnjë veprim</value></data>
+  <data name="Condition_PixelSummary" xml:space="preserve"><value>{0}, {1} është {2}, me tolerancë {3}%</value></data>
+  <data name="Condition_PixelNotPicked" xml:space="preserve"><value>Zgjidhni pikselin në ekran.</value></data>
+  <data name="Condition_ImageSummary" xml:space="preserve"><value>{0}, {1}, ngjashmëri {2}%</value></data>
+  <data name="Condition_ImageNotTaken" xml:space="preserve"><value>Kapni imazhin në ekran.</value></data>
+  <data name="Condition_TextSummaryContains" xml:space="preserve"><value>Përmban "{0}", {1}</value></data>
+  <data name="Condition_TextSummaryExact" xml:space="preserve"><value>Pikërisht "{0}", {1}</value></data>
+  <data name="Condition_TrueWhen" xml:space="preserve"><value>E vërtetë kur</value></data>
+  <data name="Condition_TrueWhenDescription" xml:space="preserve"><value>Një kusht mund të jetë i vërtetë edhe kur diçka nuk është aty, për shembull për të pritur derisa të mbyllet një dritare.</value></data>
+  <data name="Condition_PixelHas" xml:space="preserve"><value>Pikseli ka këtë ngjyrë</value></data>
+  <data name="Condition_PixelHasNot" xml:space="preserve"><value>Pikseli nuk ka këtë ngjyrë</value></data>
+  <data name="Condition_ImageIs" xml:space="preserve"><value>Imazhi është në ekran</value></data>
+  <data name="Condition_ImageIsNot" xml:space="preserve"><value>Imazhi nuk është në ekran</value></data>
+  <data name="Condition_TextIs" xml:space="preserve"><value>Teksti është në ekran</value></data>
+  <data name="Condition_TextIsNot" xml:space="preserve"><value>Teksti nuk është në ekran</value></data>
+  <data name="Condition_PixelSummaryNot" xml:space="preserve"><value>{0}, {1} nuk është {2}, me tolerancë {3}%</value></data>
+  <data name="Condition_ImageSummaryNot" xml:space="preserve"><value>{0} nuk është në ekran, {1}, ngjashmëri {2}%</value></data>
+  <data name="Condition_TextSummaryContainsNot" xml:space="preserve"><value>Nuk përmban "{0}", {1}</value></data>
+  <data name="Condition_TextSummaryExactNot" xml:space="preserve"><value>Jo pikërisht "{0}", {1}</value></data>
+  <data name="Condition_TextNotWritten" xml:space="preserve"><value>Shkruani tekstin që do të kërkohet.</value></data>
+  <data name="Condition_AreaAroundShort" xml:space="preserve"><value>rreth vendit ku u kap</value></data>
+  <data name="Condition_AreaScreenShort" xml:space="preserve"><value>në gjithë ekranin</value></data>
+  <data name="Condition_AreaDrawnShort" xml:space="preserve"><value>në zonën e vizatuar</value></data>
+  <data name="Condition_PixelMatches" xml:space="preserve"><value>Pikseli përputhet tani. Është {0}.</value></data>
+  <data name="Condition_PixelDiffers" xml:space="preserve"><value>Pikseli nuk përputhet tani. Është {0}, që ndryshon me {1}%, më shumë se toleranca prej {2}%.</value></data>
+  <data name="Condition_ImageFoundNow" xml:space="preserve"><value>U gjet tani në {0}, {1}, ngjashmëri {2}%.</value></data>
+  <data name="Condition_ImageNotNow" xml:space="preserve"><value>Imazhi nuk është në ekran tani. Përputhja më e afërt ka ngjashmëri {0}%, ndërsa ky kusht kërkon {1}%.</value></data>
+  <data name="Condition_TextFoundNow" xml:space="preserve"><value>U gjet tani në {0}, {1}.</value></data>
+  <data name="Condition_TextNotNow" xml:space="preserve"><value>"{0}" nuk është në ekran tani. PuppyMacro lexoi "{1}" në zonën e kërkimit.</value></data>
+  <data name="Condition_TextNotNowNothing" xml:space="preserve"><value>"{0}" nuk është në ekran tani. PuppyMacro nuk lexoi asnjë tekst në zonën e kërkimit.</value></data>
+  <data name="Condition_Black" xml:space="preserve"><value>PuppyMacro sheh vetëm të zezë në këtë zonë. Aplikacioni mund ta bllokojë kapjen e ekranit ose mund të jetë në ekran të plotë ekskluziv. Provoni modalitetin pa korniza ose në dritare.</value></data>
+  <data name="Condition_NoLanguage" xml:space="preserve"><value>Windows nuk mund të lexojë tekst në {0} në këtë PC. Shtoni gjuhën te Cilësimet e Windows, në Koha dhe gjuha › Gjuha dhe rajoni, pastaj zgjidheni sërish këtu.</value></data>
+  <data name="Condition_NoMonitor" xml:space="preserve"><value>Zona e kërkimit është në një ekran që nuk është i lidhur tani. Vizatojeni sërish zonën në një ekran që keni.</value></data>
+  <data name="MacroEditor_RowIfNoConditions" xml:space="preserve"><value>ende pa kushte</value></data>
+  <data name="MacroEditor_RowIfAll_one" xml:space="preserve"><value>{0} kusht, duhen të gjitha</value></data>
+  <data name="MacroEditor_RowIfAll_other" xml:space="preserve"><value>{0} kushte, duhen të gjitha</value></data>
+  <data name="MacroEditor_RowIfAny_one" xml:space="preserve"><value>{0} kusht, mjafton njëri</value></data>
+  <data name="MacroEditor_RowIfAny_other" xml:space="preserve"><value>{0} kushte, mjafton njëri</value></data>
+  <data name="MacroEditor_RowIfOnce" xml:space="preserve"><value>kontrollon një herë</value></data>
+  <data name="MacroEditor_RowIfUpTo" xml:space="preserve"><value>pret deri në {0} s</value></data>
+  <data name="MacroEditor_RowIfForever" xml:space="preserve"><value>pret sa të jetë e nevojshme</value></data>
+  <data name="MacroEditor_RowIfPixel" xml:space="preserve"><value>pikseli në {0}, {1} është {2}</value></data>
+  <data name="MacroEditor_RowIfImage" xml:space="preserve"><value>{0} është në ekran</value></data>
+  <data name="MacroEditor_RowIfText" xml:space="preserve"><value>"{0}" është në ekran</value></data>
+  <data name="MacroEditor_RowIfPixelNot" xml:space="preserve"><value>pikseli në {0}, {1} nuk është {2}</value></data>
+  <data name="MacroEditor_RowIfImageNot" xml:space="preserve"><value>{0} nuk është në ekran</value></data>
+  <data name="MacroEditor_RowIfTextNot" xml:space="preserve"><value>"{0}" nuk është në ekran</value></data>
+  <data name="MacroEditor_RowWhereFound" xml:space="preserve"><value>aty ku u gjet {0}</value></data>
+  <data name="MacroEditor_ThenInfo" xml:space="preserve"><value>kur kushtet plotësohen</value></data>
+  <data name="MacroEditor_ElseInfo" xml:space="preserve"><value>kur nuk plotësohen</value></data>
+  <data name="MacroEditor_ElseNotPlayed" xml:space="preserve"><value>nuk luhet, sepse If e ndalon makron kur kushtet e tij nuk janë të vërteta</value></data>
+  <data name="MacroEditor_BranchInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="MacroEditor_BranchEmpty" xml:space="preserve"><value>{0} · ende pa veprime. Përzgjidheni, pastaj shtojini.</value></data>
+  <data name="MacroEditor_InsertInBranch" xml:space="preserve"><value>Veprimet e reja shkojnë në fund të {0} te #{1}</value></data>
+  <data name="MacroEditor_DurationRange" xml:space="preserve"><value>{0} deri në {1}</value></data>
+  <data name="MacroEditor_DurationAtLeast" xml:space="preserve"><value>{0} ose më shumë</value></data>
+  <data name="MacroEditor_FoundOutside" xml:space="preserve"><value>Veprimi #{0} shkon aty ku u gjet {1}, por nuk është më brenda Then të atij kushti. Zhvendoseni sërish brenda ose zgjidhni një pikë fikse.</value></data>
+  <data name="MacroEditor_ChecksPerSecond" xml:space="preserve"><value>Kontrolle në sekondë</value></data>
+  <data name="MacroEditor_ChecksPerSecondDescription" xml:space="preserve"><value>Sa herë në sekondë i shohin ekranin kushtet gjatë pritjes. Me më pak kontrolle u mbetet më shumë kompjuter programeve të tjera, me më shumë kontrolle një ndryshim vihet re më shpejt.</value></data>
+  <data name="MacroEditor_ChecksEveryFrame" xml:space="preserve"><value>Çdo kuadër</value></data>
+  <data name="Settings_ScreenRecognition" xml:space="preserve"><value>Njohja e ekranit</value></data>
+  <data name="Settings_RecognitionDevice" xml:space="preserve"><value>Kërko imazhet me</value></data>
+  <data name="Settings_RecognitionDeviceDescription" xml:space="preserve"><value>Automatike përdor kartën grafike për zonat e mëdha dhe procesorin për të voglat, që zakonisht është më e shpejta.</value></data>
+  <data name="Settings_RecognitionAutomatic" xml:space="preserve"><value>Automatike</value></data>
+  <data name="Settings_RecognitionGpu" xml:space="preserve"><value>Karta grafike</value></data>
+  <data name="Settings_RecognitionCpu" xml:space="preserve"><value>Procesori</value></data>
+  <data name="Ai_AskedPixel" xml:space="preserve"><value>Kërkoi një piksel: {0}</value></data>
+  <data name="Ai_AskedImage" xml:space="preserve"><value>Kërkoi një imazh: {0}</value></data>
+  <data name="Ai_AskedArea" xml:space="preserve"><value>Kërkoi një zonë kërkimi: {0}</value></data>
+  <data name="Ai_LookedAtScreen" xml:space="preserve"><value>Pa ekranin: {0}</value></data>
+  <data name="Ai_CheckedCondition" xml:space="preserve"><value>Kontrolloi një kusht në ekran: {0}</value></data>
+  <data name="Ai_Recorded" xml:space="preserve"><value>Regjistroi atë që bëtë: {0}</value></data>
+  <data name="Ai_TestedMacro" xml:space="preserve"><value>Provoi makron {0}</value></data>
+  <data name="Ai_ReadPixel" xml:space="preserve"><value>Lexoi një piksel të ekranit: {0}</value></data>
+  <data name="Ai_TookImage" xml:space="preserve"><value>Mori një imazh nga ekrani: {0}</value></data>
+  <data name="Ai_ReadLastRun" xml:space="preserve"><value>Lexoi regjistrin e ekzekutimit të fundit të një makroje</value></data>
+  <data name="MacroEditor_ActionButton" xml:space="preserve"><value>Veprim</value></data>
+  <data name="MacroEditor_ConditionButton" xml:space="preserve"><value>Kusht</value></data>
+  <data name="Condition_TextMenu" xml:space="preserve"><value>Tekst në ekran (OCR)</value></data>
+  <data name="Condition_CheckAgain" xml:space="preserve"><value>Kontrollo përsëri</value></data>
+  <data name="ScreenPick_Retry" xml:space="preserve"><value>Provo përsëri</value></data>
+  <data name="Condition_NotChecked" xml:space="preserve"><value>Ende e pakontrolluar. Kontrollojeni në ekran me butonin.</value></data>
+  <data name="Condition_UsedByThen" xml:space="preserve"><value>Një veprim në Then shkon aty ku u gjet {0}. Ndryshoni fillimisht atë veprim, pastaj hiqni kushtin.</value></data>
+  <data name="Condition_UsedByThenNot" xml:space="preserve"><value>Një veprim në Then shkon aty ku u gjet {0}, prandaj ky kusht duhet të jetë i vërtetë kur është në ekran. Ndryshoni fillimisht atë veprim.</value></data>
+  <data name="Code_ConditionIdTwice" xml:space="preserve"><value>Dy kushte kanë të njëjtin Id. Jepini secilit Id-në e vet.</value></data>
+  <data name="Library_NameMissing" xml:space="preserve"><value>Jepini një emër.</value></data>
+  <data name="Library_ConceptInvalid" xml:space="preserve"><value>Koncepti mund të ketë vetëm shkronja të vogla, shifra dhe _, për shembull remove_one_affix.</value></data>
+  <data name="Library_NoActions" xml:space="preserve"><value>Një komponent ka nevojë për të paktën një veprim.</value></data>
+  <data name="Library_ComponentInUse" xml:space="preserve"><value>{0} është i lidhur në këto makro: {1}. Fillimisht shkëputeni atje.</value></data>
+  <data name="Library_CollectionInUse" xml:space="preserve"><value>Disa komponentë të {0} janë të lidhur në këto makro: {1}. Fillimisht shkëputini atje.</value></data>
+  <data name="Library_FileUnreadable" xml:space="preserve"><value>PuppyMacro nuk mundi ta lexonte bibliotekën, prandaj ruajti një kopje si library.invalid.json. Biblioteka nuk mund të ndryshohet derisa skedari të rregullohet.</value></data>
+  <data name="Code_ComponentIdOnlyLinks" xml:space="preserve"><value>Vetëm një rresht i lidhur me një komponent ka ComponentId. Hiqni ComponentId ose ndryshoni Type në Component.</value></data>
+  <data name="Code_ChooseComponent" xml:space="preserve"><value>Zgjidhni komponentin që do të lidhni me Shto komponent.</value></data>
+  <data name="Code_ComponentMissing" xml:space="preserve"><value>Biblioteka nuk e ka më këtë komponent. Lidhni një tjetër me Shto komponent ose fshini këtë rresht.</value></data>
+  <data name="Code_ComponentOnlyLink" xml:space="preserve"><value>Një rresht i lidhur me një komponent nuk ka pritje ose emër të vetin: i kanë veprimet e komponentit. Hiqni DelayMs dhe Name.</value></data>
+  <data name="MacroEditor_ComponentButton" xml:space="preserve"><value>Komponent</value></data>
+  <data name="Library_AddComponent" xml:space="preserve"><value>Shto komponent</value></data>
+  <data name="MacroEditor_RowComponent" xml:space="preserve"><value>Komponent · {0} · {1}</value></data>
+  <data name="MacroEditor_RowComponentMissing" xml:space="preserve"><value>Komponent që mungon</value></data>
+  <data name="MacroEditor_SaveAsComponent" xml:space="preserve"><value>Ruaje si komponent…</value></data>
+  <data name="MacroEditor_Unlink" xml:space="preserve"><value>Shkëput</value></data>
+  <data name="Library_StopFirst" xml:space="preserve"><value>Fillimisht ndalni të gjitha ciklet dhe makrot: biblioteka nuk ndryshon ndërsa diçka është në ekzekutim.</value></data>
+  <data name="Library_SaveFailed" xml:space="preserve"><value>PuppyMacro nuk mundi ta ruante bibliotekën. {0}</value></data>
+  <data name="Component_Title" xml:space="preserve"><value>Komponent - {0}</value></data>
+  <data name="Component_LinkedInfo" xml:space="preserve"><value>Ky rresht është i lidhur: ekzekuton komponentin ashtu siç është në bibliotekë dhe ndryshon kur ndryshon komponenti. Për ta ndryshuar vetëm në këtë makro, shkëputeni.</value></data>
+  <data name="Library_Collection" xml:space="preserve"><value>Koleksion</value></data>
+  <data name="Library_UsedIn" xml:space="preserve"><value>Përdoret në</value></data>
+  <data name="Library_NotUsed" xml:space="preserve"><value>Nuk përdoret</value></data>
+  <data name="Component_WhatItPlays" xml:space="preserve"><value>Çfarë ekzekuton</value></data>
+  <data name="Component_UnlinkRow" xml:space="preserve"><value>Shkëput këtë rresht</value></data>
+  <data name="Component_OpenInLibrary" xml:space="preserve"><value>Hap në bibliotekë</value></data>
+  <data name="Library_Title" xml:space="preserve"><value>Biblioteka</value></data>
+  <data name="Library_Search" xml:space="preserve"><value>Kërko</value></data>
+  <data name="Library_Import" xml:space="preserve"><value>Importo</value></data>
+  <data name="Library_Collections" xml:space="preserve"><value>Koleksione</value></data>
+  <data name="Library_Components" xml:space="preserve"><value>Komponentë</value></data>
+  <data name="Library_ExportCollection" xml:space="preserve"><value>Eksporto koleksionin</value></data>
+  <data name="Library_EditDetails" xml:space="preserve"><value>Redakto detajet</value></data>
+  <data name="Library_History" xml:space="preserve"><value>Historiku</value></data>
+  <data name="Library_Delete" xml:space="preserve"><value>Fshi</value></data>
+  <data name="Library_Empty" xml:space="preserve"><value>Biblioteka është bosh. Zgjidhni rreshta në një makro dhe përdorni Ruaje si komponent, ose kërkojini aplikacionit tuaj AI të ruajë atë që funksionon.</value></data>
+  <data name="Library_AddLinked" xml:space="preserve"><value>Shto të lidhur</value></data>
+  <data name="Library_AnyApp" xml:space="preserve"><value>Çdo aplikacion</value></data>
+  <data name="Library_Domain_Game" xml:space="preserve"><value>Lojë</value></data>
+  <data name="Library_Domain_Office" xml:space="preserve"><value>Zyrë</value></data>
+  <data name="Library_Domain_Browser" xml:space="preserve"><value>Shfletues</value></data>
+  <data name="Library_Domain_Creative" xml:space="preserve"><value>Krijimtari</value></data>
+  <data name="Library_Domain_Dev" xml:space="preserve"><value>Zhvillim</value></data>
+  <data name="Library_Domain_Chat" xml:space="preserve"><value>Chat dhe email</value></data>
+  <data name="Library_Domain_System" xml:space="preserve"><value>Windows</value></data>
+  <data name="Library_Domain_Other" xml:space="preserve"><value>Tjetër</value></data>
+  <data name="Library_Purpose_Find" xml:space="preserve"><value>Gjen diçka</value></data>
+  <data name="Library_Purpose_Wait" xml:space="preserve"><value>Pret diçka</value></data>
+  <data name="Library_Purpose_Read" xml:space="preserve"><value>Lexon një tekst</value></data>
+  <data name="Library_Purpose_State" xml:space="preserve"><value>Njeh gjendjen e aplikacionit</value></data>
+  <data name="Library_Purpose_Point" xml:space="preserve"><value>Një pikë</value></data>
+  <data name="Library_Purpose_Act" xml:space="preserve"><value>Kryen një veprim</value></data>
+  <data name="Library_DeleteComponentConfirm" xml:space="preserve"><value>Të fshihet {0}?</value></data>
+  <data name="Library_DeleteCollectionConfirm" xml:space="preserve"><value>Të fshihet {0} me të gjithë komponentët e tij?</value></data>
+  <data name="Library_RenameCollection" xml:space="preserve"><value>Riemërto koleksionin</value></data>
+  <data name="Library_Rename" xml:space="preserve"><value>Riemërto</value></data>
+  <data name="Library_DeleteCollection" xml:space="preserve"><value>Fshi koleksionin</value></data>
+  <data name="Library_HistoryTitle" xml:space="preserve"><value>Historiku - {0}</value></data>
+  <data name="Library_SaveAsTitle" xml:space="preserve"><value>Ruaje si komponent</value></data>
+  <data name="Library_SaveAsInfo" xml:space="preserve"><value>Veprimet e zgjedhura bëhen një komponent i bibliotekës dhe këto rreshta lidhen me të.</value></data>
+  <data name="Library_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="Library_NameDescription" xml:space="preserve"><value>Ajo që lexoni në bibliotekë dhe në makro</value></data>
+  <data name="Library_Purpose" xml:space="preserve"><value>Çfarë bën</value></data>
+  <data name="Library_PurposeDescription" xml:space="preserve"><value>Aplikacionet AI i kërkojnë komponentët sipas asaj që bëjnë</value></data>
+  <data name="Library_Concept" xml:space="preserve"><value>Koncepti</value></data>
+  <data name="Library_ConceptDescription" xml:space="preserve"><value>Në anglisht, me shkronja të vogla, shifra dhe _, si remove_one_affix. Aplikacionet AI kërkojnë sipas tij.</value></data>
+  <data name="Library_Description" xml:space="preserve"><value>Përshkrimi</value></data>
+  <data name="Library_DescriptionDescription" xml:space="preserve"><value>Opsionale. Çfarë bën, në anglisht, për aplikacionet AI.</value></data>
+  <data name="Library_CollectionDescription" xml:space="preserve"><value>Ku ruhet dhe nga ku ndahet</value></data>
+  <data name="Library_NewCollection" xml:space="preserve"><value>Koleksion i ri</value></data>
+  <data name="Library_NewCollectionName" xml:space="preserve"><value>Emri i koleksionit të ri</value></data>
+  <data name="Library_Domain" xml:space="preserve"><value>Lloji i aplikacionit</value></data>
+  <data name="Library_App" xml:space="preserve"><value>Aplikacioni</value></data>
+  <data name="Library_AppDescription" xml:space="preserve"><value>Skedari i tij .exe, si Diablo IV.exe. Lëreni bosh për çdo aplikacion.</value></data>
+  <data name="Library_Screen" xml:space="preserve"><value>Ekrani</value></data>
+  <data name="Library_ScreenDescription" xml:space="preserve"><value>Monitori ku janë marrë pikat e tij. Në një ekran tjetër duhen ndryshuar.</value></data>
+  <data name="Library_ScreenValue" xml:space="preserve"><value>{0} × {1} px, {2}%</value></data>
+  <data name="Library_ScreenUnknown" xml:space="preserve"><value>I panjohur</value></data>
+  <data name="Library_SelectedActions" xml:space="preserve"><value>Veprimet e zgjedhura</value></data>
+  <data name="Library_ImportConflict" xml:space="preserve"><value>Ky skedar nuk mund të importohet. Koleksioni {0} në të është një version tjetër nga ai në bibliotekën tuaj, dhe një koleksion ndahet i plotë, prandaj të dy nuk mund të përzihen. Nuk u importua asgjë. Për ta importuar, fillimisht fshini koleksionin tuaj nëse nuk e përdor asnjë makro, ose kërkoni një skedar të bërë nga versioni juaj.</value></data>
+  <data name="Library_ImportComponentTwice" xml:space="preserve"><value>Ky skedar nuk mund të importohet. Komponenti {0} gjendet dy herë në të, ndërsa një komponent i përket vetëm një koleksioni. Nuk u importua asgjë.</value></data>
+  <data name="Library_ImportCollectionProblem" xml:space="preserve"><value>Koleksioni {0} në këtë skedar nuk mund të importohet. {1}</value></data>
+  <data name="Library_UsedInMacros_one" xml:space="preserve"><value>Përdoret në {0} makro</value></data>
+  <data name="Library_UsedInMacros_other" xml:space="preserve"><value>Përdoret në {0} makro</value></data>
+  <data name="Ai_SearchedLibrary" xml:space="preserve"><value>Kërkoi në bibliotekë</value></data>
+  <data name="Ai_ReadComponent" xml:space="preserve"><value>Lexoi komponentin {0}</value></data>
+  <data name="Ai_NewComponent" xml:space="preserve"><value>Komponent i ri {0}</value></data>
+  <data name="Ai_ChangedComponent" xml:space="preserve"><value>Komponenti {0} u ndryshua</value></data>
+  <data name="Ai_ConfirmNewComponent" xml:space="preserve"><value>Të ruhet ky komponent i ri në bibliotekë?</value></data>
+  <data name="Ai_ConfirmChangedComponent" xml:space="preserve"><value>Të ruhen ndryshimet e këtij komponenti? Të gjitha makrot që e lidhin do të ekzekutojnë të riun.</value></data>
+  <data name="Code_BindOnlyComponent" xml:space="preserve"><value>Vetëm veprimet e një komponenti mund të marrin vlerën e një parametri.</value></data>
+  <data name="Code_BindNoSlot" xml:space="preserve"><value>Fusha {0} nuk mund të marrë vlerën e një parametri. Këtu mund ta marrin vetëm {1}.</value></data>
+  <data name="Code_BindNoSlotHere" xml:space="preserve"><value>Asgjë në këtë veprim nuk mund të marrë vlerën e një parametri.</value></data>
+  <data name="Code_BindUnused" xml:space="preserve"><value>Fusha {0} nuk përdoret ashtu siç është caktuar ky veprim, prandaj nuk mund të marrë vlerën e një parametri.</value></data>
+  <data name="Code_NoParameter" xml:space="preserve"><value>Komponenti nuk ka asnjë parametër me emrin {0}.</value></data>
+  <data name="Code_ParameterType" xml:space="preserve"><value>{0} ka llojin {1}, ndërsa {2} pranon llojin {3}.</value></data>
+  <data name="Code_FromOutside" xml:space="preserve"><value>Vetëm një komponent mund të kalojë më tej një nga parametrat e tij. Në një makro, shkruani vlerën.</value></data>
+  <data name="Code_ArgumentUnknown" xml:space="preserve"><value>{0} nuk ka asnjë parametër me emrin {1}.</value></data>
+  <data name="Code_ArgumentMissing" xml:space="preserve"><value>{0} ka nevojë për një vlerë për {1}.</value></data>
+  <data name="Code_ArgumentReference" xml:space="preserve"><value>Shkruani një vlerë të llojit të parametrit, {"From": "një parametër i këtij komponenti"} ose {"Found": "Id-ja e një kushti"}, me OffsetX dhe OffsetY nëse nevojitet.</value></data>
+  <data name="Code_ArgumentsOnlyCalls" xml:space="preserve"><value>Vetëm një rresht i lidhur me një komponent ose një kusht i llojit Komponent ka argumente. Hiqni Arguments.</value></data>
+  <data name="Code_FoundNotPoint" xml:space="preserve"><value>Vetëm një pikë mund të vijë nga vendi ku një kusht gjeti diçka, ndërsa {0} ka llojin {1}.</value></data>
+  <data name="Code_FoundNoPlace" xml:space="preserve"><value>{0} nuk jep asnjë vend ku të shkohet: komponenti i tij kontrollon një piksel ose diçka që nuk është aty.</value></data>
+  <data name="Code_ComponentNoReturns" xml:space="preserve"><value>{0} nuk tregon çfarë gjen, prandaj nuk mund të përdoret si kusht.</value></data>
+  <data name="Code_ComponentCycle" xml:space="preserve"><value>Këta komponentë do ta thërrisnin njëri-tjetrin pa fund: {0}.</value></data>
+  <data name="Code_ComponentTooDeep" xml:space="preserve"><value>Komponentët mund të jenë njëri brenda tjetrit deri në {0} nivele, ndërsa këtu do të ishin {1}.</value></data>
+  <data name="Code_ParameterName" xml:space="preserve"><value>Emri i një parametri fillon me një shkronjë, e ndjekur nga shkronja, shifra ose _, dhe ka deri në 40 karaktere.</value></data>
+  <data name="Code_ParameterNameTwice" xml:space="preserve"><value>Dy parametra nuk mund të kenë të njëjtin emër.</value></data>
+  <data name="Code_ParameterUnit" xml:space="preserve"><value>Një numër ka nevojë për njësinë e tij: Pixels, Ms, Seconds, Count ose Percent.</value></data>
+  <data name="Code_ParameterNoUnit" xml:space="preserve"><value>Vetëm një numër ka njësi. Hiqni Unit.</value></data>
+  <data name="Code_ParameterExample" xml:space="preserve"><value>Jepni një shembull: vlerën që shfaq redaktori dhe me të cilën ekzekutohet një test.</value></data>
+  <data name="Code_ParameterValueOnly" xml:space="preserve"><value>Këtu shkruani një vlerë, jo {"From"} ose {"Found"}.</value></data>
+  <data name="Code_ReturnsMissing" xml:space="preserve"><value>Ky komponent nuk e ka kushtin që përmend Returns.</value></data>
+  <data name="Code_ReturnsFoundOutside" xml:space="preserve"><value>Ajo që gjen një komponent nuk mund të varet nga një vend i gjetur jashtë tij.</value></data>
+  <data name="Code_ValuePoint" xml:space="preserve"><value>Shkruajeni një pikë si {"X": 100, "Y": 200}, në piksela të plotë.</value></data>
+  <data name="Code_ValueNumber" xml:space="preserve"><value>Shkruani një numër.</value></data>
+  <data name="Code_ValueWhole" xml:space="preserve"><value>Shkruani një numër të plotë.</value></data>
+  <data name="Code_ValueText" xml:space="preserve"><value>Shkruani një tekst në thonjëza.</value></data>
+  <data name="Code_ValueTextEmpty" xml:space="preserve"><value>Teksti nuk mund të jetë bosh këtu.</value></data>
+  <data name="Code_ValueKey" xml:space="preserve"><value>Shkruajeni një tast ashtu siç shkruhet një tast i shpejtë, për shembull {"Vk": 65}.</value></data>
+  <data name="Code_ValueKeyboard" xml:space="preserve"><value>Këtu zgjidhni një tast të tastierës, jo një buton të miut.</value></data>
+  <data name="Code_ValueKeyAlone" xml:space="preserve"><value>Këtu tasti shkon vetëm, pa Ctrl, Alt, Shift ose Win.</value></data>
+  <data name="Code_ValueImage" xml:space="preserve"><value>Jepini imazhet si [{"Id": …, "X": …, "Y": …}], të paktën një.</value></data>
+  <data name="Code_ValueArea" xml:space="preserve"><value>Shkruajeni një zonë si {"X", "Y", "Width", "Height"}, në piksela të plotë.</value></data>
+  <data name="Code_ValueNoRoom" xml:space="preserve"><value>Asnjë vlerë nuk u përshtatet të gjitha fushave ku shkon ky parametër, sepse kufijtë e tyre nuk mbivendosen.</value></data>
+  <data name="Param_TypePoint" xml:space="preserve"><value>Pikë</value></data>
+  <data name="Param_TypeNumber" xml:space="preserve"><value>Numër</value></data>
+  <data name="Param_TypeText" xml:space="preserve"><value>Tekst</value></data>
+  <data name="Param_TypeKey" xml:space="preserve"><value>Tast</value></data>
+  <data name="Param_TypeColor" xml:space="preserve"><value>Ngjyrë</value></data>
+  <data name="Param_TypeImage" xml:space="preserve"><value>Imazh</value></data>
+  <data name="Param_TypeArea" xml:space="preserve"><value>Zonë</value></data>
+  <data name="Param_TypeWithUnit" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="Param_UnitPixels" xml:space="preserve"><value>piksela</value></data>
+  <data name="Param_UnitCount" xml:space="preserve"><value>herë</value></data>
+  <data name="Param_Images_one" xml:space="preserve"><value>{0} imazh</value></data>
+  <data name="Param_Images_other" xml:space="preserve"><value>{0} imazhe</value></data>
+  <data name="Library_ChangeBreaks" xml:space="preserve"><value>Ky ndryshim do ta linte {0} me një problem: {1}</value></data>
+  <data name="Library_UnlinkFoundPixel" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Një nga vlerat e tij është vendi ku një kusht gjeti diçka, dhe komponenti e përdor atë vlerë për pikën e një pikseli, e cila nuk mund të marrë një vend të gjetur.</value></data>
+  <data name="Param_AValue" xml:space="preserve"><value>Një vlerë</value></data>
+  <data name="Param_FromParameter" xml:space="preserve"><value>Nga {0}</value></data>
+  <data name="Param_ValueFrom" xml:space="preserve"><value>Nga vjen vlera</value></data>
+  <data name="Param_Value" xml:space="preserve"><value>Vlera</value></data>
+  <data name="Param_Required" xml:space="preserve"><value>çdo thirrje jep një vlerë</value></data>
+  <data name="Param_DefaultIs" xml:space="preserve"><value>{0} kur mungon</value></data>
+  <data name="Param_ItsDefault" xml:space="preserve"><value>Vlera e parazgjedhur, {0}</value></data>
+  <data name="Param_ArgumentProblem" xml:space="preserve"><value>Kontrolloni vlerën për {0}. {1}</value></data>
+  <data name="Param_SummaryAtParameter" xml:space="preserve"><value>në {0}</value></data>
+  <data name="Param_Arguments" xml:space="preserve"><value>Argumentet</value></data>
+  <data name="Param_ArgumentsDescription" xml:space="preserve"><value>Vlerat që kjo thirrje i jep komponentit</value></data>
+  <data name="Condition_Component" xml:space="preserve"><value>Komponent</value></data>
+  <data name="Condition_ComponentMenu" xml:space="preserve"><value>Kusht nga një komponent</value></data>
+  <data name="Condition_ComponentDescription" xml:space="preserve"><value>Një komponent i bibliotekës që tregon çfarë gjen</value></data>
+  <data name="Condition_ChooseComponent" xml:space="preserve"><value>Zgjidh</value></data>
+  <data name="Condition_NoComponent" xml:space="preserve"><value>Ende nuk është zgjedhur asnjë komponent</value></data>
+  <data name="Condition_ComponentFinds" xml:space="preserve"><value>E gjen</value></data>
+  <data name="Condition_ComponentFindsNot" xml:space="preserve"><value>Nuk e gjen</value></data>
+  <data name="Condition_ComponentSummary" xml:space="preserve"><value>{0} e gjen</value></data>
+  <data name="Condition_ComponentSummaryNot" xml:space="preserve"><value>{0} nuk e gjen</value></data>
+  <data name="Condition_ComponentFoundNow" xml:space="preserve"><value>U gjet tani në {0}, {1}.</value></data>
+  <data name="Condition_ComponentTrueNow" xml:space="preserve"><value>I vërtetë tani.</value></data>
+  <data name="Condition_ComponentNotNow" xml:space="preserve"><value>Nuk është i vërtetë tani.</value></data>
+  <data name="Param_Parameters" xml:space="preserve"><value>Parametrat</value></data>
+  <data name="Param_ParametersDescription" xml:space="preserve"><value>Vlerat që i jep çdo thirrje këtij komponenti. Një fushë e veprimeve të tij merr njërën prej tyre kur zgjidhni "Nga" në listën e saj.</value></data>
+  <data name="Param_Add" xml:space="preserve"><value>Shto parametër</value></data>
+  <data name="Param_Edit" xml:space="preserve"><value>Redakto parametrin</value></data>
+  <data name="Param_Remove" xml:space="preserve"><value>Hiq parametrin</value></data>
+  <data name="Param_AddTitle" xml:space="preserve"><value>Shto parametër</value></data>
+  <data name="Param_EditTitle" xml:space="preserve"><value>Redakto parametrin - {0}</value></data>
+  <data name="Param_Name" xml:space="preserve"><value>Emri</value></data>
+  <data name="Param_NameDescription" xml:space="preserve"><value>Shkronja, shifra dhe _, duke filluar me një shkronjë. Thirrjet e japin vlerën me këtë emër.</value></data>
+  <data name="Param_Type" xml:space="preserve"><value>Lloji</value></data>
+  <data name="Param_TypeDescription" xml:space="preserve"><value>Lloji i fushës të cilës i jep një vlerë</value></data>
+  <data name="Param_Unit" xml:space="preserve"><value>Njësia</value></data>
+  <data name="Param_UnitDescription" xml:space="preserve"><value>Çfarë mat numri. Mund të përdoret vetëm aty ku përdoret e njëjta njësi.</value></data>
+  <data name="Param_UnitPixelsTitle" xml:space="preserve"><value>Piksela</value></data>
+  <data name="Param_UnitMsTitle" xml:space="preserve"><value>Milisekonda (ms)</value></data>
+  <data name="Param_UnitSecondsTitle" xml:space="preserve"><value>Sekonda (s)</value></data>
+  <data name="Param_UnitCountTitle" xml:space="preserve"><value>Herë</value></data>
+  <data name="Param_UnitPercentTitle" xml:space="preserve"><value>Përqindje (%)</value></data>
+  <data name="Param_Example" xml:space="preserve"><value>Shembulli</value></data>
+  <data name="Param_ExampleDescription" xml:space="preserve"><value>Vlera që mbajnë fushat e tij, që shfaq redaktori dhe me të cilën ekzekutohet një test</value></data>
+  <data name="Param_EveryCall" xml:space="preserve"><value>Çdo thirrje jep një vlerë</value></data>
+  <data name="Param_EveryCallDescription" xml:space="preserve"><value>Kur është çaktivizuar, një thirrje mund ta lërë jashtë dhe përdoret vlera e parazgjedhur.</value></data>
+  <data name="Param_Default" xml:space="preserve"><value>Vlera e parazgjedhur</value></data>
+  <data name="Param_DefaultDescription" xml:space="preserve"><value>Vlera që përdoret kur një thirrje e lë jashtë</value></data>
+  <data name="Param_DescriptionDescription" xml:space="preserve"><value>Opsionale, në anglisht, për aplikacionet AI</value></data>
+  <data name="Param_ExampleProblem" xml:space="preserve"><value>Kontrolloni shembullin. {0}</value></data>
+  <data name="Param_DefaultProblem" xml:space="preserve"><value>Kontrolloni vlerën e parazgjedhur. {0}</value></data>
+  <data name="Param_ArgumentShown" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Component_WhatItDoes" xml:space="preserve"><value>Çfarë bën</value></data>
+  <data name="Component_EditTitle" xml:space="preserve"><value>Redakto komponentin - {0}</value></data>
+  <data name="Component_Returns" xml:space="preserve"><value>Përdorimi si kusht</value></data>
+  <data name="Component_AsCondition" xml:space="preserve"><value>Mund të përdoret si kusht</value></data>
+  <data name="Component_AsConditionDescription" xml:space="preserve"><value>Një If e kontrollon si kusht. Është i vërtetë kur është i vërtetë kushti që zgjidhni këtu, dhe "Aty ku u gjet …" shkon aty ku e gjen ai kusht.</value></data>
+  <data name="Component_WhatItFinds" xml:space="preserve"><value>Çfarë gjen</value></data>
+  <data name="Component_WhatItFindsDescription" xml:space="preserve"><value>Një nga kushtet e tij</value></data>
+  <data name="Component_ChooseWhatItFinds" xml:space="preserve"><value>Zgjidhni cili nga kushtet e tij tregon çfarë gjen, ose çaktivizoni Mund të përdoret si kusht.</value></data>
+  <data name="Component_LinkedInfoArguments" xml:space="preserve"><value>Ky rresht thërret një komponent: e ekzekuton ashtu siç është në bibliotekë, me vlerat më poshtë, që janë vetëm të këtij rreshti.</value></data>
+  <data name="Library_Edit" xml:space="preserve"><value>Redakto</value></data>
+  <data name="Signature_Title" xml:space="preserve"><value>Përditëso thirrjet</value></data>
+  <data name="Signature_Heading" xml:space="preserve"><value>Ky ndryshim përditëson thirrjet</value></data>
+  <data name="Signature_Intro_one" xml:space="preserve"><value>Me këtë ndryshim ndryshon edhe {0} thirrje e komponentit {1}. Gjithçka ruhet së bashku: nëse diçka nuk mund të ruhet, nuk ndryshon asgjë.</value></data>
+  <data name="Signature_Intro_other" xml:space="preserve"><value>Me këtë ndryshim ndryshojnë edhe {0} thirrje të komponentit {1}. Gjithçka ruhet së bashku: nëse diçka nuk mund të ruhet, nuk ndryshon asgjë.</value></data>
+  <data name="Signature_NeedsValueDescription" xml:space="preserve"><value>{0}. Thirrjet që nuk japin një vlerë të këtij lloji marrin këtë; çdo thirrje mund ta ndryshojë më vonë.</value></data>
+  <data name="Signature_Removed" xml:space="preserve"><value>{0} hiqet</value></data>
+  <data name="Signature_RemovedDescription" xml:space="preserve"><value>Vlera që i jep çdo thirrje hiqet.</value></data>
+  <data name="Signature_Renamed" xml:space="preserve"><value>{0} tani quhet {1}</value></data>
+  <data name="Signature_RenamedDescription" xml:space="preserve"><value>Thirrjet e ruajnë vlerën e tyre me emrin e ri.</value></data>
+  <data name="Signature_Changing" xml:space="preserve"><value>Thirrjet që ndryshojnë</value></data>
+  <data name="Signature_Macro" xml:space="preserve"><value>Makro</value></data>
+  <data name="Signature_Component" xml:space="preserve"><value>Komponent</value></data>
+  <data name="Signature_Calls_one" xml:space="preserve"><value>{0} thirrje</value></data>
+  <data name="Signature_Calls_other" xml:space="preserve"><value>{0} thirrje</value></data>
+  <data name="Signature_UpdateAndSave" xml:space="preserve"><value>Përditëso dhe ruaj</value></data>
+  <data name="Code_ValueGrid" xml:space="preserve"><value>Shkruajeni një rrjetë si {"First": {"X", "Y"}, "Last": {"X", "Y"}, "Columns", "Rows"}, në piksela të plotë.</value></data>
+  <data name="Code_GridSize" xml:space="preserve"><value>Një rrjetë ka nga 1 deri në {0} kolona dhe nga 1 deri në {0} rreshta, dhe të shumtën {1} qeliza.</value></data>
+  <data name="Code_GridOneColumn" xml:space="preserve"><value>Kur ka vetëm një kolonë, qeliza e parë dhe e fundit duhet të kenë të njëjtin X.</value></data>
+  <data name="Code_GridOneRow" xml:space="preserve"><value>Kur ka vetëm një rresht, qeliza e parë dhe e fundit duhet të kenë të njëjtin Y.</value></data>
+  <data name="Code_GridNeedsCell" xml:space="preserve"><value>{0} është një rrjetë, prandaj kjo pikë ka nevojë për një qelizë. Tregoni se cila me Cell.</value></data>
+  <data name="Code_CellWithoutGrid" xml:space="preserve"><value>Një qelizë përdoret vetëm brenda një komponenti, kur pika vjen nga një parametër i llojit Rrjetë.</value></data>
+  <data name="Library_UnlinkCellOutside" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Një nga qelizat e tij është jashtë rrjetës së vet.</value></data>
+  <data name="Library_UnlinkCellFrom" xml:space="preserve"><value>Ky rresht nuk mund të shkëputet. Rrjeta e tij është një vlerë fikse, por qeliza e tij vjen nga një parametër i komponentit që e përmban, dhe një rresht i zakonshëm nuk mund të zgjedhë një qelizë.</value></data>
+  <data name="Param_TypeGrid" xml:space="preserve"><value>Rrjetë</value></data>
+  <data name="Param_GridValue" xml:space="preserve"><value>{0} × {1} nga {2}, {3}</value></data>
+  <data name="Param_GridCells_one" xml:space="preserve"><value>{0} qelizë, e numëruar rresht pas rreshti nga këndi lart majtas, duke filluar nga 1</value></data>
+  <data name="Param_GridCells_other" xml:space="preserve"><value>{0} qeliza, të numëruara rresht pas rreshti nga këndi lart majtas, duke filluar nga 1</value></data>
+  <data name="Param_GridLast" xml:space="preserve"><value>Qeliza e fundit, numri {0}, ndodhet te {1}, {2}.</value></data>
+  <data name="Param_GridFirst" xml:space="preserve"><value>Qeliza e parë</value></data>
+  <data name="Param_GridFirstDescription" xml:space="preserve"><value>Pika që do të përdoret në qelizën lart majtas</value></data>
+  <data name="Param_GridLastCell" xml:space="preserve"><value>Qeliza e fundit</value></data>
+  <data name="Param_GridLastCellDescription" xml:space="preserve"><value>E njëjta pikë në qelizën poshtë djathtas</value></data>
+  <data name="Param_GridColumns" xml:space="preserve"><value>Kolonat</value></data>
+  <data name="Param_GridRows" xml:space="preserve"><value>Rreshtat</value></data>
+  <data name="Param_ShowCells" xml:space="preserve"><value>Shfaq qelizat</value></data>
+  <data name="Param_ShowCellsTooltip" xml:space="preserve"><value>Shfaq në ekran pikën e çdo qelize me numrin e saj, për të kontrolluar rrjetën</value></data>
+  <data name="ScreenPick_CellsTitle" xml:space="preserve"><value>Qelizat e rrjetës</value></data>
+  <data name="ScreenPick_Cells" xml:space="preserve"><value>Çdo rreth është pika e një qelize, me numrin e saj. Klikoni kudo për ta mbyllur.</value></data>
+  <data name="Action_PositionCell" xml:space="preserve"><value>Një qelizë e {0}</value></data>
+  <data name="Action_Cell" xml:space="preserve"><value>Qeliza</value></data>
+  <data name="Action_CellDescription" xml:space="preserve"><value>Të numëruara rresht pas rreshti nga këndi lart majtas, duke filluar nga 1</value></data>
+  <data name="Param_GridArgument" xml:space="preserve"><value>Rrjeta e kësaj thirrjeje</value></data>
+  <data name="Param_GridArgumentDescription" xml:space="preserve"><value>Rrjeta që jep kjo thirrje, për shembull për një madhësi tjetër ekrani</value></data>
+  <data name="Action_SummaryAtCell" xml:space="preserve"><value>te qeliza {0} e {1}</value></data>
+  <data name="Code_CellOutside_one" xml:space="preserve"><value>Në {3}, qeliza {1} e {2} nuk ekziston. Ajo rrjetë ka vetëm {0} qelizë.</value></data>
+  <data name="Code_CellOutside_other" xml:space="preserve"><value>Në {3}, qeliza {1} e {2} nuk ekziston. Ajo rrjetë ka {0} qeliza.</value></data>
+  <data name="Library_ComponentCalled" xml:space="preserve"><value>{0} përdoret nga këta komponentë: {1}. Fillimisht hiqeni prej andej.</value></data>
+  <data name="Library_ComponentInUseAndCalled" xml:space="preserve"><value>{0} është i lidhur në këto makro: {1} dhe përdoret nga këta komponentë: {2}. Fillimisht hiqeni prej andej.</value></data>
+  <data name="Library_CollectionCalled" xml:space="preserve"><value>Disa komponentë të {0} përdoren nga komponentë të koleksioneve të tjera: {1}. Fillimisht hiqini prej andej.</value></data>
+  <data name="Library_CollectionInUseAndCalled" xml:space="preserve"><value>Disa komponentë të {0} janë të lidhur në këto makro: {1} dhe përdoren nga komponentë të koleksioneve të tjera: {2}. Fillimisht hiqini prej andej.</value></data>
+  <data name="Library_UsedInComponents_one" xml:space="preserve"><value>Përdoret në {0} komponent</value></data>
+  <data name="Library_UsedInComponents_other" xml:space="preserve"><value>Përdoret në {0} komponentë</value></data>
+  <data name="Library_UsedInMacrosAndComponents" xml:space="preserve"><value>Përdoret në {0} dhe {1}</value></data>
+  <data name="Library_ComponentCount_one" xml:space="preserve"><value>{0} komponent</value></data>
+  <data name="Library_ComponentCount_other" xml:space="preserve"><value>{0} komponentë</value></data>
+  <data name="Ai_DeletedComponent" xml:space="preserve"><value>Fshiu komponentin {0}</value></data>
+  <data name="Ai_ConfirmDeleteComponent" xml:space="preserve"><value>Të fshihet ky komponent nga biblioteka?</value></data>
+  <data name="App_SettingsUnread" xml:space="preserve"><value>PuppyMacro nuk mundi ta hapte skedarin e cilësimeve. Ndoshta po e përdor një program tjetër. Ciklet, ricaktimet dhe cilësimet tuaja janë ende aty, të paprekura. PuppyMacro u nis me cilësimet e parazgjedhura dhe nuk ruan asnjë ndryshim derisa ta nisni përsëri.
+Detajet: {0}</value></data>
+  <data name="Settings_NotSavedUnread" xml:space="preserve"><value>PuppyMacro nuk mundi ta hapte skedarin e cilësimeve kur u nis, prandaj nuk ruan asgjë, që skedari juaj të mbetet siç është. Niseni përsëri PuppyMacro.</value></data>
+  <data name="Ai_ImportCollection" xml:space="preserve"><value>Koleksioni i bibliotekës {0}</value></data>
+  <data name="MacroEditor_RowIfComponent" xml:space="preserve"><value>{0} plotësohet</value></data>
+  <data name="MacroEditor_RowIfComponentNot" xml:space="preserve"><value>{0} nuk plotësohet</value></data>
+  <data name="Condition_IfNotTrueAfterSeconds" xml:space="preserve"><value>Pasi pret {0} s.</value></data>
 </root>

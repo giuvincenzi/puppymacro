@@ -214,6 +214,22 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Image_search_runs_automatically_in_older_files_and_with_an_unknown_value()
+    {
+        AppSettings older = LoadJson("""{ "SchemaVersion": 8 }""", out string? warning);
+        Assert.Null(warning);
+        Assert.Equal(RecognitionDevice.Automatic, older.RecognitionDevice);
+
+        AppSettings unknown = LoadJson("""{ "SchemaVersion": 8, "SoundVolume": 40, "RecognitionDevice": "Npu" }""", out warning);
+        Assert.Null(warning);
+        Assert.Equal(40, unknown.SoundVolume);
+        Assert.Equal(RecognitionDevice.Automatic, unknown.RecognitionDevice);
+
+        AppSettings gpu = LoadJson("""{ "SchemaVersion": 8, "RecognitionDevice": "Gpu" }""", out _);
+        Assert.Equal(RecognitionDevice.Gpu, gpu.RecognitionDevice);
+    }
+
+    [Fact]
     public void Each_list_page_keeps_its_view_and_older_or_unknown_values_get_the_page_default()
     {
         AppSettings older = LoadJson("""{ "SchemaVersion": 7 }""", out string? warning);
@@ -246,8 +262,10 @@ public class SettingsStoreTests : IDisposable
     [Fact]
     public void The_macro_editor_size_is_kept_and_invalid_sizes_are_dropped()
     {
-        AppSettings kept = LoadJson("""{ "MacroEditorWidth": 800, "MacroEditorHeight": 1000 }""", out _);
-        AppSettings dropped = LoadJson("""{ "MacroEditorWidth": -5, "MacroEditorHeight": 0 }""", out _);
+        // A file of today: every save since 1.6 writes its SchemaVersion (one without it is of version 1.0).
+        string schema = $"\"SchemaVersion\": {AppSettings.CurrentSchemaVersion}";
+        AppSettings kept = LoadJson($$"""{ {{schema}}, "MacroEditorWidth": 800, "MacroEditorHeight": 1000 }""", out _);
+        AppSettings dropped = LoadJson($$"""{ {{schema}}, "MacroEditorWidth": -5, "MacroEditorHeight": 0 }""", out _);
         AppSettings missing = LoadJson("""{ "SchemaVersion": 4 }""", out _);
 
         Assert.Equal(800, kept.MacroEditorWidth);

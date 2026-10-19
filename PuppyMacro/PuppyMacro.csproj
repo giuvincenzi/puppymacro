@@ -22,6 +22,8 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <DebugType>embedded</DebugType>
+    <!-- Services/Screen reads captured frames and GPU buffers through pointers. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +34,13 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
     <!-- The MCP server AI apps use (Services/Ai): the official C# SDK, its core only (no generic host). -->
     <PackageReference Include="ModelContextProtocol.Core" Version="2.2.0" />
+    <!-- The macros' Image conditions (Services/Screen): template matching on the processor. The slim runtime: OpenCV's
+         core and imgproc without video, dnn and GUI. -->
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
+    <PackageReference Include="OpenCvSharp4.runtime.win.slim" Version="4.13.0.20260627" />
+    <!-- Declarations of the Windows APIs Services/Screen uses (DXGI, Direct3D 11, display config), written at build time
+         from NativeMethods.txt: nothing is shipped. -->
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.363" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- The app's texts (i18n.md): Strings.resx in English, Strings.<language>.resx the translations. The Strings class
