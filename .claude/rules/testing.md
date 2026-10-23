@@ -162,6 +162,16 @@ GitHub runs at most 20 jobs at once for the whole account (all pull requests and
 wait in a queue, they do not fail. Never rename `e2e_test` without changing the ruleset in the same moment
 (`build-and-release.md`).
 
+## When a test fails
+
+**A failing test is a bug until proven otherwise** (the user's decision): fix the code, not the test. A test already on
+`main` is changed only when the behavior it checks changes on purpose, in a change the user approved, and the plan or
+the pull request says which test changes and why; it is never loosened to pass (fewer checks, wider margins, longer
+waits, skipped). When the test itself looks wrong (it checks something false, or it is flaky), say why with the
+evidence and ask before changing it: for an end-to-end test on GitHub the evidence is in its group's artifact (above,
+"When an end-to-end test fails on GitHub"). A test written in the same change, not on `main` yet, is part of that work
+and is fixed like its code.
+
 ## When to add and run tests
 
 - New logic outside the UI (models, storage, migrations, input decisions): add unit tests in
