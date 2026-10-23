@@ -755,7 +755,9 @@ public class AppTests
         Assert.Equal(ToggleState.Off, plainSwitch.AsToggleButton().ToggleState);
         Assert.True(app.Has(plain, "Available when both what you press and what is sent have Ctrl, Alt, Shift or Win."));
         app.FindById(plain, "CancelButton").AsButton().Invoke();
-        Assert.True(Retry.WhileTrue(() => plain.IsAvailable, AppSession.Timeout, ignoreException: true).Success, "the editor did not close");
+        // The main window, hidden while an editor is open, comes back when it closes.
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the editor did not close");
 
         // Modifiers on both sides: on, and turned off it is saved off.
         app.EditItem("E2E keep");
