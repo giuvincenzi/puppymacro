@@ -522,6 +522,9 @@
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>키 또는 조합을 누르세요(Esc를 누르면 취소)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>메모(선택 사항)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>예: 측면 단추로 새로 고침</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>보조키 계속 누르기</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Ctrl, Alt, Shift 또는 Win을 누르고 있는 동안 보내는 보조키도 계속 눌린 상태로 유지되므로, Alt+Tab처럼 키를 다시 누를 수 있습니다.</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>누를 키와 보낼 키 모두에 Ctrl, Alt, Shift 또는 Win이 있을 때 사용할 수 있습니다.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>동작</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>이 동작을 뒤에 있는 창에서 한 번 재생합니다</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>이름(선택 사항)</value></data>

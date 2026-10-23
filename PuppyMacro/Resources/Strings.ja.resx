@@ -522,6 +522,9 @@
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>キーまたは組み合わせを押してください (Esc でキャンセル)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>メモ (省略可能)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>例: サイド ボタンで更新</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>修飾キーを押したままにする</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Ctrl、Alt、Shift、Win を押している間は、送信する修飾キーも押したままになるので、Alt+Tab のようにキーを続けて押せます。</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>押すキーと送信するキーの両方に Ctrl、Alt、Shift、Win のいずれかが含まれる場合に使用できます。</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>アクション</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>このアクションを背後のウィンドウで 1 回再生します</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>名前 (省略可能)</value></data>

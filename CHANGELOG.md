@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Added
+- **Keep modifiers held** in the remap editor: when both the keys pressed and the keys sent have Ctrl, Alt, Shift or Win,
+  those sent stay held for as long as you hold yours. On by default.
+
+### Fixed
+- A remap such as Ctrl+Tab → Alt+Tab now works like the real Alt+Tab: with Ctrl held, each Tab moves to the next window
+  in the switcher, instead of closing it at once.
+- When PuppyMacro closes while a remap holds a key, the key is released after everything sent before it, so it can no
+  longer stay down.
+
 ## 1.24.1
 
 ### Fixed

@@ -29,6 +29,8 @@ paths:
   the migration there, with a test on an old file. Never break existing user data. New installs get the defaults of
   `AppSettings.CreateDefault`; existing files keep theirs.
 - A hotkey's modifier side missing from a file means either side, so older files keep working as before.
+- A remap's `KeepModifiersHeld` missing from a file means on (the user's choice: on by default for every remap, the
+  older ones too; no migration). It matters only when both its keys have modifiers.
 - The Open PuppyMacro global hotkey (the only global hotkey that can be cleared) is added to a file from before schema 8
   only if no loop, macro, remap or other global hotkey already uses it (global hotkeys come first). A file of schema 8
   without it keeps none (the user cleared it).

@@ -73,6 +73,13 @@
                                                ItemName="key" Prompt="{x:Static r:Strings.RemapEditor_KeyPrompt}"
                                                ValueChanged="OnTargetFieldChanged" Rejected="ShowError" />
                     </ui:SettingsCard>
+
+                    <!-- Keep modifiers held: only when both keys have Ctrl, Alt, Shift or Win (off and greyed otherwise) -->
+                    <ui:SettingsCard x:Name="KeepModifiersCard" Header="{x:Static r:Strings.RemapEditor_KeepModifiers}"
+                                     Description="{x:Static r:Strings.RemapEditor_KeepModifiersDescription}">
+                        <ui:ToggleSwitch x:Name="KeepModifiersSwitch" AutomationProperties.Name="{x:Static r:Strings.RemapEditor_KeepModifiers}"
+                                         Toggled="OnKeepModifiersToggled" />
+                    </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
 
                 <ikw:SimpleStackPanel Grid.Column="1" Margin="0,4,24,12" Spacing="4">

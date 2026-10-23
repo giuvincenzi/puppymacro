@@ -722,8 +722,19 @@ public sealed class RemapDefinition
     /// <summary>Executable name (e.g. "Diablo IV.exe"); null = all apps (<see cref="AppScope"/>).</summary>
     public string? AppExe { get; set; }
 
+    /// <summary>
+    /// While the source's Ctrl, Alt, Shift or Win are held, the target's stay held too (Ctrl + Tab → Alt + Tab: Tab again
+    /// moves on in the Alt + Tab switcher). Only when both have modifiers (<see cref="CanKeepModifiersHeld"/>). On by
+    /// default, also in files from before it.
+    /// </summary>
+    public bool KeepModifiersHeld { get; set; } = true;
+
     public string Note { get; set; } = "";
     public bool Enabled { get; set; } = true;
+
+    /// <summary>Keep modifiers held applies: both the source and the target have Ctrl, Alt, Shift or Win.</summary>
+    [JsonIgnore]
+    public bool CanKeepModifiersHeld => Source?.HasModifiers == true && Target?.HasModifiers == true;
 
     // ---- Before schema 7 the source was a single key; read once and converted by SettingsStore ----
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -742,6 +753,7 @@ public sealed class RemapDefinition
         Source = other.Source?.Clone();
         Target = other.Target?.Clone();
         AppExe = other.AppExe;
+        KeepModifiersHeld = other.KeepModifiersHeld;
         Note = other.Note;
         Enabled = other.Enabled;
     }
