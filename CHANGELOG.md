@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.25.0
+
 ### Added
 - **Keep modifiers held** in the remap editor: when both the keys pressed and the keys sent have Ctrl, Alt, Shift or Win,
   those sent stay held for as long as you hold yours. On by default.
