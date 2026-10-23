@@ -557,6 +557,9 @@
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Нажмите клавишу или сочетание (Esc — отмена)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>Примечание (необязательно)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>например, Обновление боковой кнопкой</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Удерживать клавиши-модификаторы</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Пока вы удерживаете Ctrl, Alt, Shift или Win, отправляемые клавиши-модификаторы тоже остаются нажатыми, поэтому клавишу можно нажимать снова, как в Alt+Tab.</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Доступно, когда и нажимаемое, и отправляемое сочетание содержат Ctrl, Alt, Shift или Win.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>Действие</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Выполнить это действие один раз в окне позади</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>Имя (необязательно)</value></data>

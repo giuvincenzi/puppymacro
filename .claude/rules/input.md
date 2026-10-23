@@ -18,7 +18,17 @@ paths:
   not take Alt+J), or a modifier key alone by its left or right code (Right Alt). Its target can also be a
   modifier key alone; modifiers in a target are sent on their side (`Any`: the left one).
 - A source with modifiers (Alt+J): the remap releases the modifiers held before the target, and does not press them
-  again.
+  again while the remap lasts.
+- **Keep modifiers held** (`RemapDefinition.KeepModifiersHeld`, `Services/RemapHold.cs`; the user's decision), only
+  when both source and target have modifiers: the target's modifiers stay held while the user holds the source's, as
+  Ctrl+Tab → Alt+Tab needs for the switcher. The source's key again sends only the target's key, whatever app is in
+  front; releasing **any one** of the source's modifiers releases **all** the target's (there is no one to one match
+  between them); the source's key with a modifier added (Shift+Tab) and mouse buttons pass and keep the hold. Any
+  other key ends it: the target's modifiers released, the source's still held pressed again, then the key, so the app
+  gets Ctrl+C, not Alt+C. This is the one case where PuppyMacro presses a modifier again for the user: everything of a
+  hold goes through the injector in order, and the physical release of a modifier pressed again is blocked and sent
+  after that press, so it never comes before it (the cause of the stuck keys). Off: the target's modifiers are released
+  with its key, as before. The injector sends everything it has before PuppyMacro closes, releases last.
 - **Modifier state comes only from physical key events** (`ModifierTracker`, updated by the
   hook). Injected events (`LLKHF_INJECTED`) and AltGr's fake left Ctrl never change it. Do not use `GetAsyncKeyState`
   for this.

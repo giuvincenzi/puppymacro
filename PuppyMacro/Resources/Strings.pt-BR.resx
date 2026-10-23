@@ -572,6 +572,9 @@ Detalhes: {1}</value></data>
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Pressione a tecla ou combinação (Esc cancela)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>Observação (opcional)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>por exemplo, Atualizar com o botão lateral</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Manter as teclas modificadoras pressionadas</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Enquanto você mantém Ctrl, Alt, Shift ou Win pressionada, as teclas modificadoras enviadas também continuam pressionadas, então você pode pressionar a tecla de novo, como no Alt+Tab.</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Disponível quando tanto a combinação que você pressiona quanto a que é enviada incluem Ctrl, Alt, Shift ou Win.</value></data>
   <!-- ===== MacroActionWindow.xaml ===== -->
   <data name="ActionWindow_Title" xml:space="preserve"><value>Ação</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Reproduzir esta ação uma vez na janela de trás</value></data>

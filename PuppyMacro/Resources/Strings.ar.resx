@@ -587,6 +587,9 @@
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>اضغط على المفتاح أو مجموعة المفاتيح (Esc للإلغاء)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>ملاحظة (اختيارية)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>مثال: التحديث بالزر الجانبي</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>إبقاء مفاتيح التعديل مضغوطة</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>ما دمت تضغط باستمرار على Ctrl أو Alt أو Shift أو Win، تظل المفاتيح المرسلة مضغوطة أيضًا، لذا يمكنك الضغط على المفتاح مرة أخرى كما في Alt+Tab.</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>متاح عندما تحتوي مجموعة المفاتيح التي تضغط عليها والمجموعة المرسلة كلتاهما على Ctrl أو Alt أو Shift أو Win.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>الإجراء</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>تشغيل هذا الإجراء مرة واحدة في النافذة الموجودة خلفه</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>الاسم (اختياري)</value></data>

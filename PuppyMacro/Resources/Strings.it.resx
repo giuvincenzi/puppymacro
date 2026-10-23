@@ -544,6 +544,9 @@ Dettagli: {1}</value></data>
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Premi il tasto o la combinazione (Esc annulla)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>Nota (facoltativa)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>ad es. Aggiorna con il tasto laterale</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Mantieni premuti i tasti modificatori</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Finché tieni premuto Ctrl, Alt, Maiusc o Win, restano premuti anche i tasti modificatori inviati, così puoi premere di nuovo il tasto, come con Alt+Tab.</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Disponibile quando sia la combinazione che premi sia quella inviata includono Ctrl, Alt, Maiusc o Win.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>Azione</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Riproduci una volta questa azione nella finestra sottostante</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>Nome (facoltativo)</value></data>

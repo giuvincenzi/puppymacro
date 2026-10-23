@@ -729,6 +729,50 @@ public class AppTests
             "the remap was not saved with Alt on either side");
     }
 
+    /// <summary>
+    /// Keep modifiers held: on and free to change when both keys have modifiers, off and greyed when one has none, and off
+    /// is saved. The keys it holds are unit tested (RemapHoldTests): a test cannot press a real Ctrl (testing.md).
+    /// </summary>
+    [Fact]
+    public void Keep_modifiers_held_is_on_with_modifiers_on_both_sides_greyed_without_and_saved_off()
+    {
+        using var app = new AppSession(seed => seed.Settings.Remaps.AddRange(new[]
+        {
+            new RemapDefinition
+            {
+                Source = new HotkeyBinding { Vk = Vk.F22, Ctrl = true }, Target = new HotkeyBinding { Vk = Vk.F23, Alt = true },
+                Note = "E2E keep",
+            },
+            new RemapDefinition { Source = HotkeyBinding.FromKey(Vk.F20), Target = new HotkeyBinding { Vk = Vk.F21, Alt = true }, Note = "E2E plain" },
+        }));
+        app.GoTo("Remap");
+
+        // No modifier on the key pressed: off and greyed, and it says when it is available.
+        app.EditItem("E2E plain");
+        Window plain = app.Dialog("Edit remap");
+        AutomationElement plainSwitch = app.FindById(plain, "KeepModifiersSwitch");
+        Assert.False(plainSwitch.IsEnabled);
+        Assert.Equal(ToggleState.Off, plainSwitch.AsToggleButton().ToggleState);
+        Assert.True(app.Has(plain, "Available when both what you press and what is sent have Ctrl, Alt, Shift or Win."));
+        app.FindById(plain, "CancelButton").AsButton().Invoke();
+        // The main window, hidden while an editor is open, comes back when it closes.
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the editor did not close");
+
+        // Modifiers on both sides: on, and turned off it is saved off.
+        app.EditItem("E2E keep");
+        Window keep = app.Dialog("Edit remap");
+        var keepSwitch = app.FindById(keep, "KeepModifiersSwitch").AsToggleButton();
+        Assert.True(keepSwitch.IsEnabled);
+        Assert.Equal(ToggleState.On, keepSwitch.ToggleState);
+        keepSwitch.Toggle();
+        Assert.True(Retry.WhileFalse(() => keepSwitch.ToggleState == ToggleState.Off, AppSession.Timeout).Success, "the switch did not turn off");
+        app.FindById(keep, "SaveButton").AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSession.SettingsFile), Seed.JsonOptions)!
+            .Remaps.Single(r => r.Note == "E2E keep").KeepModifiersHeld == false, AppSession.Timeout).Success,
+            "Keep modifiers held was not saved off");
+    }
+
     [Fact]
     public void The_loop_editor_adds_each_action_from_its_bar_with_its_options_and_Enabled_is_saved()
     {

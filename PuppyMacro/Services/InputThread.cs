@@ -125,5 +125,11 @@ internal sealed class Injector : IDisposable
             _queue.Add(work);
     }
 
-    public void Dispose() => _queue.CompleteAdding();
+    /// <summary>Takes no more work, and waits (at most a second) for the work it has to be sent: nothing comes after it.</summary>
+    public void Dispose()
+    {
+        _queue.CompleteAdding();
+        if (Thread.CurrentThread != _thread)
+            _thread.Join(1000);
+    }
 }

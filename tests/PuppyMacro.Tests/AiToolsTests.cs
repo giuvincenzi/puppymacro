@@ -478,6 +478,18 @@ public class AiToolsTests : IDisposable
         Assert.Equal("Once", properties.GetProperty("Repeat").GetProperty("default").GetString());
     }
 
+    /// <summary>Keep modifiers held reaches AI apps through the remap's schema: on by default, and when it applies.</summary>
+    [Fact]
+    public async Task The_remap_schema_says_when_Keep_modifiers_held_applies_and_that_it_is_on()
+    {
+        AiToolResult schema = await Call("get_schema", new { kind = "remap" });
+
+        using JsonDocument doc = JsonDocument.Parse(schema.Text);
+        JsonElement keep = doc.RootElement.GetProperty("properties").GetProperty("KeepModifiersHeld");
+        Assert.True(keep.GetProperty("default").GetBoolean());
+        Assert.Contains("both Source and Target", keep.GetProperty("description").GetString());
+    }
+
     [Fact]
     public async Task The_schema_has_no_id_since_PuppyMacro_gives_it()
     {

@@ -535,6 +535,9 @@ Détails : {1}</value></data>
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Appuyez sur la touche ou la combinaison (Échap pour annuler)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>Note (facultatif)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>par ex. Actualiser avec le bouton latéral</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Maintenir les touches de modification enfoncées</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Tant que vous maintenez Ctrl, Alt, Maj ou Win, les touches de modification envoyées restent elles aussi enfoncées. Vous pouvez ainsi appuyer de nouveau sur la touche, comme avec Alt+Tab.</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Disponible quand la combinaison sur laquelle vous appuyez et celle qui est envoyée comportent toutes deux Ctrl, Alt, Maj ou Win.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>Action</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Lire cette action une fois dans la fenêtre située derrière</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>Nom (facultatif)</value></data>

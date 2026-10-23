@@ -22,6 +22,9 @@ public partial class RemapEditorWindow
     private readonly CodeViewSwitch<RemapDefinition> _code;
     private HotkeyBinding? _source;
     private HotkeyBinding? _target;
+
+    // Keep modifiers held as saved: the switch shows it only while it applies (both keys with modifiers), else off.
+    private bool _keepModifiers = true;
     private bool _ready;
 
     internal RemapEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, RemapDefinition? existing)
@@ -86,6 +89,7 @@ public partial class RemapEditorWindow
         EnabledSwitch.IsOn = source.Enabled;
         _source = source.Source?.Clone();
         _target = source.Target?.Clone();
+        _keepModifiers = source.KeepModifiersHeld;
         AppScopeCard.Load(source.AppExe);
         NoteBox.Text = source.Note;
         UpdateLabels();
@@ -99,6 +103,7 @@ public partial class RemapEditorWindow
         Source = _source?.Clone(),
         Target = _target?.Clone(),
         AppExe = AppScopeCard.AppExe,
+        KeepModifiersHeld = _keepModifiers,
         Note = (NoteBox.Text ?? "").Trim(),
         Enabled = EnabledSwitch.IsOn,
     };
@@ -111,11 +116,33 @@ public partial class RemapEditorWindow
     {
         SourceField.Value = _source?.Clone();
         TargetField.Value = _target?.Clone();
+        UpdateKeepModifiers();
+    }
+
+    /// <summary>
+    /// Keep modifiers held: on or off as saved while both keys have Ctrl, Alt, Shift or Win; otherwise off and greyed, its
+    /// description saying when it applies. The saved value stays, for when both have them again.
+    /// </summary>
+    private void UpdateKeepModifiers()
+    {
+        bool applies = _source?.HasModifiers == true && _target?.HasModifiers == true;
+        // The card is disabled before the switch changes, so the change is not taken as the user's (OnKeepModifiersToggled).
+        KeepModifiersCard.IsEnabled = false;
+        KeepModifiersSwitch.IsOn = applies && _keepModifiers;
+        KeepModifiersCard.IsEnabled = applies;
+        KeepModifiersCard.Description = applies ? Strings.RemapEditor_KeepModifiersDescription : Strings.RemapEditor_KeepModifiersUnavailable;
+    }
+
+    private void OnKeepModifiersToggled(object sender, RoutedEventArgs e)
+    {
+        if (KeepModifiersCard.IsEnabled)
+            _keepModifiers = KeepModifiersSwitch.IsOn;
     }
 
     private void OnSourceFieldChanged(object? sender, EventArgs e)
     {
         _source = SourceField.Value?.Clone();
+        UpdateKeepModifiers();
         Validate();
     }
 
@@ -129,6 +156,7 @@ public partial class RemapEditorWindow
     private void OnTargetFieldChanged(object? sender, EventArgs e)
     {
         _target = TargetField.Value?.Clone();
+        UpdateKeepModifiers();
         Validate();
     }
 

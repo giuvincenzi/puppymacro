@@ -535,6 +535,9 @@ Details: {1}</value></data>
   <data name="RemapEditor_KeyPrompt" xml:space="preserve"><value>Drücken Sie die Taste oder Tastenkombination (Esc bricht ab)</value></data>
   <data name="RemapEditor_Note" xml:space="preserve"><value>Notiz (optional)</value></data>
   <data name="RemapEditor_NotePlaceholder" xml:space="preserve"><value>z. B. Aktualisieren mit Seitentaste</value></data>
+  <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Zusatztasten gedrückt halten</value></data>
+  <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Solange Sie Strg, Alt, Umschalt oder Win gedrückt halten, bleiben auch die gesendeten Zusatztasten gedrückt, sodass Sie die Taste erneut drücken können, wie bei Alt+Tab.</value></data>
+  <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Verfügbar, wenn sowohl die gedrückte als auch die gesendete Tastenkombination Strg, Alt, Umschalt oder Win enthalten.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>Aktion</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Diese Aktion einmal im dahinterliegenden Fenster abspielen</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>Name (optional)</value></data>

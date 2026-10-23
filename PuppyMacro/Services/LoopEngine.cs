@@ -114,6 +114,19 @@ internal sealed class LoopEngine : IDisposable
     // Remaps currently held: source key (the main key, or the modifier key of a modifier alone) -> target sent.
     private readonly Dictionary<int, HotkeyBinding> _activeRemaps = new();
 
+    // The remap that keeps its target's modifiers held while the source's are (Keep modifiers held).
+    private readonly RemapHold _hold = new();
+
+    // Modifiers the hold pressed again when another key ended it: their physical release is blocked and sent after that
+    // press, in order, so it never comes before it (a modifier left down).
+    private readonly HashSet<int> _pressedAgain = new();
+
+    // The keys of a hold's targets held down: source key -> target key, released with the source key (also after the hold).
+    private readonly Dictionary<int, int> _holdKeysDown = new();
+
+    // Where the keys of a hold go: null, SendInput on the injector; the unit tests keep them (they never send modifiers).
+    private readonly Action<IReadOnlyList<KeyStep>>? _holdKeysForTests;
+
     private Action<HotkeyBinding>? _captureDone;
     private Action? _captureCancelled;
     private bool _captureAllowsPrimaryMouse;
@@ -163,6 +176,13 @@ internal sealed class LoopEngine : IDisposable
         _snapshot = snapshot;
         _dispatcher = dispatcher;
         _paster = new ClipboardPaster(dispatcher);
+    }
+
+    /// <summary>The unit tests' engine: the keys a remap's hold sends go to <paramref name="holdKeys"/> instead.</summary>
+    internal LoopEngine(EngineSnapshot snapshot, Dispatcher dispatcher, Action<IReadOnlyList<KeyStep>> holdKeys)
+        : this(snapshot, dispatcher)
+    {
+        _holdKeysForTests = holdKeys;
     }
 
     /// <summary>Raised (asynchronously, on the UI thread) when any loop or macro starts or stops.</summary>
@@ -789,131 +809,174 @@ internal sealed class LoopEngine : IDisposable
     {
         lock (_sync)
         {
-            bool isMouse = KeyNames.IsMouse(vk);
-
             if (KeyNames.IsModifier(vk))
                 return OnModifier(vk, isDown, physicalModifierEvent, altGrCtrl);
 
-            // The release of a key PuppyMacro holds for something running (a remap's target, a Hold item's hotkey) comes
-            // first, whatever takes keys now (a key field waiting, a recording): otherwise the target or the item stays on.
-            if (!isDown && ReleaseOwned(vk) is bool owned)
-                return owned;
-
-            // An AI request waits for the user to be ready: Enter or Esc alone, from any app, answers it; every other key
-            // passes, so the user can open the right screen first (WatchReadyKeys). Not while PuppyMacro itself uses the
-            // keys (a dialog or an editor open, a key field waiting, a recording). Only a press answers: the release of a
-            // key held before is the app's (the press's own release is swallowed).
-            if (_readyEnter != null && isDown && vk is KeyNames.VK_RETURN or KeyNames.VK_ESCAPE && !ModifierTracker.Any
-                && !_hotkeysSuspended && _captureDone == null && !_recording)
+            // A key that ends a remap's hold (Ctrl + C after Ctrl + Tab → Alt + Tab): the target's modifiers are released
+            // and the source's pressed again first; a key that passes is sent after them, so the app gets Ctrl + C.
+            bool afterHold = isDown && _hold.Active && !_hold.Continues(vk) && !_activeRemaps.ContainsKey(vk)
+                && !_holdKeysDown.ContainsKey(vk);
+            if (afterHold)
+                EndHold(pressAgain: true);
+            bool blocked = OnOtherKey(vk, isDown);
+            if (afterHold && !blocked)
             {
-                Action answer = vk == KeyNames.VK_RETURN ? _readyEnter : _readyEscape!;
-                _readyEnter = _readyEscape = null;
-                _swallowUp.Add(vk);
-                _dispatcher.InvokeAsync(answer);
-                return Block();
+                SendHoldKeys(new List<KeyStep> { new(vk, true) });
+                return true;
             }
+            return blocked;
+        }
+    }
 
-            if (_captureDone != null)
-                return HandleCapture(vk, isDown);
+    // A key or mouse button that is not a modifier. Called with the lock held.
+    private bool OnOtherKey(int vk, bool isDown)
+    {
+        bool isMouse = KeyNames.IsMouse(vk);
 
-            var snap = _snapshot;
+        // The release of a key PuppyMacro holds for something running (a remap's target, a Hold item's hotkey) comes
+        // first, whatever takes keys now (a key field waiting, a recording): otherwise the target or the item stays on.
+        if (!isDown && ReleaseOwned(vk) is bool owned)
+            return owned;
 
-            // Record hotkey: starts an armed recording or stops a running one.
-            if (_recordArmedStart != null || _recording)
+        // An AI request waits for the user to be ready: Enter or Esc alone, from any app, answers it; every other key
+        // passes, so the user can open the right screen first (WatchReadyKeys). Not while PuppyMacro itself uses the
+        // keys (a dialog or an editor open, a key field waiting, a recording). Only a press answers: the release of a
+        // key held before is the app's (the press's own release is swallowed).
+        if (_readyEnter != null && isDown && vk is KeyNames.VK_RETURN or KeyNames.VK_ESCAPE && !ModifierTracker.Any
+            && !_hotkeysSuspended && _captureDone == null && !_recording)
+        {
+            Action answer = vk == KeyNames.VK_RETURN ? _readyEnter : _readyEscape!;
+            _readyEnter = _readyEscape = null;
+            _swallowUp.Add(vk);
+            _dispatcher.InvokeAsync(answer);
+            return Block();
+        }
+
+        if (_captureDone != null)
+            return HandleCapture(vk, isDown);
+
+        var snap = _snapshot;
+
+        // Record hotkey: starts an armed recording or stops a running one.
+        if (_recordArmedStart != null || _recording)
+        {
+            if (!isDown && _swallowUp.Remove(vk))
+                return Block();
+            if (isDown && Matches(snap.Record, CurrentBinding(vk)))
             {
-                if (!isDown && _swallowUp.Remove(vk))
-                    return Block();
-                if (isDown && Matches(snap.Record, CurrentBinding(vk)))
-                {
-                    _swallowUp.Add(vk);
-                    if (_recording)
-                    {
-                        // The record hotkey's own modifiers, pressed last and still held: not part of the macro (their release
-                        // comes after the recording; played back they would stay down).
-                        while (_recorded.Count > 0 && _recorded[^1] is { Kind: RawEventKind.KeyDown } last && KeyNames.IsModifier(last.Vk)
-                               && _recordedDown.Contains(last.Vk))
-                        {
-                            _recordedDown.Remove(last.Vk);
-                            _recorded.RemoveAt(_recorded.Count - 1);
-                        }
-                        StopRecording();
-                    }
-                    else
-                        BeginRecording(_recordMovesProvider?.Invoke() ?? true);
-                    return Block();
-                }
+                _swallowUp.Add(vk);
                 if (_recording)
                 {
-                    // Everything else is recorded and passes through. Mouse buttons come from the mouse hook.
-                    if (!isMouse && !CursorGuard.IsOwnWindowForeground())
-                        Record(isDown ? RawEventKind.KeyDown : RawEventKind.KeyUp, vk);
-                    return false;
+                    // The record hotkey's own modifiers, pressed last and still held: not part of the macro (their release
+                    // comes after the recording; played back they would stay down).
+                    while (_recorded.Count > 0 && _recorded[^1] is { Kind: RawEventKind.KeyDown } last && KeyNames.IsModifier(last.Vk)
+                           && _recordedDown.Contains(last.Vk))
+                    {
+                        _recordedDown.Remove(last.Vk);
+                        _recorded.RemoveAt(_recorded.Count - 1);
+                    }
+                    StopRecording();
                 }
+                else
+                    BeginRecording(_recordMovesProvider?.Invoke() ?? true);
+                return Block();
             }
-
-            if (!isDown)
+            if (_recording)
             {
-                if (_swallowUp.Remove(vk))
-                    return Block();
-
-                // Released while a running loop holds it (pressed before the loop started): the
-                // release would let go of the loop's key.
-                if (IsHeldByLoop(vk))
-                    return Block();
+                // Everything else is recorded and passes through. Mouse buttons come from the mouse hook.
+                if (!isMouse && !CursorGuard.IsOwnWindowForeground())
+                    Record(isDown ? RawEventKind.KeyDown : RawEventKind.KeyUp, vk);
                 return false;
             }
+        }
 
-            // Auto-repeat of a hotkey we already handled.
-            if (_heldHotkeys.Contains(vk))
+        if (!isDown)
+        {
+            if (_swallowUp.Remove(vk))
                 return Block();
 
-            // Auto-repeat of a remapped key: repeat the target key (not its modifiers).
-            if (_activeRemaps.TryGetValue(vk, out var repeating))
-            {
-                if (!KeyNames.IsMouse(repeating.Vk))
-                    _injector.Post(() => InputSender.Down(repeating.Vk));
-                return true;
-            }
-
-            var pressed = CurrentBinding(vk);
-            // A remap for the app in front wins over the loops and macros for all apps, as an item for that app does.
-            var remap = FindRemap(snap, pressed);
-            bool remapForApp = remap is { AppExe: not null, Target.IsSet: true };
-
-            if (!_hotkeysSuspended && RunHotkey(snap, pressed, canHold: true, run: true, allApps: !remapForApp))
-            {
-                _heldHotkeys.Add(vk);
-                return Block();
-            }
-
-            // With an editor open, the Stop all hotkey still stops what runs: the editor's Test of an action.
-            if (_hotkeysSuspended && Matches(snap.StopAll, pressed) && (_running.Count > 0 || _runningMacros.Count > 0))
-            {
-                StopAll();
-                _heldHotkeys.Add(vk);
-                return Block();
-            }
-
-            // A running loop holds this key down (Hold down row): the physical press changes
-            // nothing, and its release would let go of the loop's key. Swallow both.
+            // Released while a running loop holds it (pressed before the loop started): the
+            // release would let go of the loop's key.
             if (IsHeldByLoop(vk))
-            {
-                _swallowUp.Add(vk);
                 return Block();
-            }
-
-            // Remaps: an app-specific remap wins over an "all apps" one. A source with modifiers (Alt + A): the
-            // modifiers held for it are released first, so the app gets only the target.
-            if (remap?.Target is { IsSet: true } target)
-            {
-                _activeRemaps[vk] = target;
-                bool releaseHeld = pressed.HasModifiers;
-                _injector.Post(() => SendRemapTarget(target, isDown: true, releaseHeld));
-                return true;
-            }
-
             return false;
         }
+
+        // Auto-repeat of a hotkey we already handled.
+        if (_heldHotkeys.Contains(vk))
+            return Block();
+
+        // Auto-repeat of a remapped key: repeat the target key (not its modifiers).
+        if (_activeRemaps.TryGetValue(vk, out var repeating))
+        {
+            if (!KeyNames.IsMouse(repeating.Vk))
+                _injector.Post(() => InputSender.Down(repeating.Vk));
+            return true;
+        }
+        if (_holdKeysDown.TryGetValue(vk, out int repeatingKey))
+        {
+            if (!KeyNames.IsMouse(repeatingKey))
+                SendHoldKeys(new List<KeyStep> { new(repeatingKey, true) });
+            return true;
+        }
+
+        var pressed = CurrentBinding(vk);
+
+        // The source again while its remap holds the target's modifiers: only the target's key (Tab again in the Alt + Tab
+        // switcher), whatever app is in front now.
+        if (_hold.IsSourceAgain(pressed))
+        {
+            _holdKeysDown[vk] = _hold.TargetVk;
+            SendHoldKeys(_hold.Again());
+            return true;
+        }
+
+        // A remap for the app in front wins over the loops and macros for all apps, as an item for that app does.
+        var remap = FindRemap(snap, pressed);
+        bool remapForApp = remap is { AppExe: not null, Target.IsSet: true };
+
+        if (!_hotkeysSuspended && RunHotkey(snap, pressed, canHold: true, run: true, allApps: !remapForApp))
+        {
+            _heldHotkeys.Add(vk);
+            return Block();
+        }
+
+        // With an editor open, the Stop all hotkey still stops what runs: the editor's Test of an action.
+        if (_hotkeysSuspended && Matches(snap.StopAll, pressed) && (_running.Count > 0 || _runningMacros.Count > 0))
+        {
+            StopAll();
+            _heldHotkeys.Add(vk);
+            return Block();
+        }
+
+        // A running loop holds this key down (Hold down row): the physical press changes
+        // nothing, and its release would let go of the loop's key. Swallow both.
+        if (IsHeldByLoop(vk))
+        {
+            _swallowUp.Add(vk);
+            return Block();
+        }
+
+        // Remaps: an app-specific remap wins over an "all apps" one. A source with modifiers (Alt + A): the
+        // modifiers held for it are released first, so the app gets only the target.
+        if (remap?.Target is { IsSet: true } target)
+        {
+            if (_hold.Active)
+                EndHold(pressAgain: false);
+            if (RemapHold.Applies(remap))
+            {
+                // Its key alone is released with the source's key; its modifiers with the source's (EndHold).
+                _holdKeysDown[vk] = target.Vk;
+                SendHoldKeys(_hold.Start(remap, ModifierTracker.HeldKeys()));
+                return true;
+            }
+            _activeRemaps[vk] = target;
+            bool releaseHeld = pressed.HasModifiers;
+            _injector.Post(() => SendRemapTarget(target, isDown: true, releaseHeld));
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -933,6 +996,11 @@ internal sealed class LoopEngine : IDisposable
             _injector.Post(() => SendRemapTarget(remapTarget, isDown: false));
             return true;
         }
+        if (_holdKeysDown.Remove(vk, out int heldKey))
+        {
+            SendHoldKeys(new List<KeyStep> { new(heldKey, false) });
+            return true;
+        }
         if (!_heldHotkeys.Remove(vk))
             return null;
         var snap = _snapshot;
@@ -950,6 +1018,67 @@ internal sealed class LoopEngine : IDisposable
     }
 
     private bool OnModifier(int vk, bool isDown, bool physical, bool altGrCtrl)
+    {
+        if (physical && !isDown)
+        {
+            // One of the source's modifiers released: the hold ends, the target's modifiers are released.
+            if (_hold.EndsWith(vk))
+                EndHold(pressAgain: false);
+            // A modifier the hold pressed again: its release goes after that press.
+            if (_pressedAgain.Remove(vk))
+            {
+                if (!OnModifierEvent(vk, isDown, physical, altGrCtrl))
+                    SendHoldKeys(new List<KeyStep> { new(vk, false) });
+                return true;
+            }
+        }
+        return OnModifierEvent(vk, isDown, physical, altGrCtrl);
+    }
+
+    /// <summary>
+    /// Ends the remap's hold: the target's modifiers are released and, with <paramref name="pressAgain"/> (another key
+    /// pressed), the source's modifiers still held are pressed again. Called with the lock held.
+    /// </summary>
+    private void EndHold(bool pressAgain)
+    {
+        var steps = _hold.End(pressAgain ? ModifierTracker.HeldKeys() : null);
+        foreach (var step in steps)
+        {
+            if (step.Down)
+                _pressedAgain.Add(step.Vk);
+        }
+        SendHoldKeys(steps);
+    }
+
+    /// <summary>
+    /// Sends the keys of a remap's hold on the injector, after what it already has and in order: a press never comes after
+    /// the release that follows it.
+    /// </summary>
+    private void SendHoldKeys(List<KeyStep> steps)
+    {
+        if (steps.Count == 0)
+            return;
+        if (_holdKeysForTests != null)
+            _holdKeysForTests(steps);
+        else
+            _injector.Post(() => InputSender.Send(steps));
+    }
+
+    /// <summary>
+    /// Ends the hold and releases the modifiers it pressed again (the desktop changed, PuppyMacro closes: the releases of
+    /// the keys held may never come). Called with the lock held.
+    /// </summary>
+    private List<KeyStep> ReleaseHold()
+    {
+        var steps = _holdKeysDown.Values.Select(vk => new KeyStep(vk, false)).ToList();
+        _holdKeysDown.Clear();
+        steps.AddRange(_hold.End());
+        steps.AddRange(_pressedAgain.Select(vk => new KeyStep(vk, false)));
+        _pressedAgain.Clear();
+        return steps;
+    }
+
+    private bool OnModifierEvent(int vk, bool isDown, bool physical, bool altGrCtrl)
     {
         if (!physical)
         {
@@ -1268,6 +1397,7 @@ internal sealed class LoopEngine : IDisposable
             foreach (var target in _activeRemaps.Values.ToList())
                 _injector.Post(() => SendRemapTarget(target, isDown: false));
             _activeRemaps.Clear();
+            SendHoldKeys(ReleaseHold());
             _heldHotkeys.Clear();
             _swallowUp.Clear();
             ModifierTracker.Reset();
@@ -1352,11 +1482,13 @@ internal sealed class LoopEngine : IDisposable
         StopAll();
         lock (_sync)
         {
-            foreach (var target in _activeRemaps.Values)
-                SendRemapTarget(target, isDown: false);
+            // On the injector, after what it still has: sent at once, a release could come before its own press.
+            foreach (var target in _activeRemaps.Values.ToList())
+                _injector.Post(() => SendRemapTarget(target, isDown: false));
             _activeRemaps.Clear();
+            SendHoldKeys(ReleaseHold());
         }
         _input?.Dispose();
-        _injector.Dispose();
+        _injector.Dispose(); // sends everything it has, then ends
     }
 }

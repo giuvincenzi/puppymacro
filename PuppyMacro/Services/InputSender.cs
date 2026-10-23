@@ -7,6 +7,9 @@ using PuppyMacro.Native;
 
 namespace PuppyMacro.Services;
 
+/// <summary>A key or mouse button pressed (<paramref name="Down"/>) or released.</summary>
+internal readonly record struct KeyStep(int Vk, bool Down);
+
 /// <summary>Sends key and mouse button events with SendInput.</summary>
 internal static class InputSender
 {
@@ -54,7 +57,7 @@ internal static class InputSender
     }
 
     /// <summary>Unassigned key used to stop Alt/Win from opening menus (same idea as AutoHotkey's menu mask key).</summary>
-    private const int MaskKeyVk = 0xE8;
+    public const int MaskKeyVk = 0xE8;
 
     /// <summary>Serializes injected input, so loops running in parallel never mix modifier states.</summary>
     private static readonly object Gate = new();
@@ -183,30 +186,45 @@ internal static class InputSender
     /// </summary>
     public static void SendBinding(HotkeyBinding binding, bool isDown, bool releaseHeld = false)
     {
-        int ctrl = binding.CtrlSide == ModifierSide.Right ? KeyNames.VK_RCONTROL : KeyNames.VK_LCONTROL;
-        int alt = binding.AltSide == ModifierSide.Right ? KeyNames.VK_RMENU : KeyNames.VK_LMENU;
-        int shift = binding.ShiftSide == ModifierSide.Right ? KeyNames.VK_RSHIFT : KeyNames.VK_LSHIFT;
-        int win = binding.WinSide == ModifierSide.Right ? KeyNames.VK_RWIN : KeyNames.VK_LWIN;
+        var modifiers = ModifierKeys(binding);
         lock (Gate)
         {
             if (isDown)
             {
                 if (releaseHeld)
                     ReleaseHeldModifiers();
-                if (binding.Ctrl) Down(ctrl);
-                if (binding.Alt) Down(alt);
-                if (binding.Shift) Down(shift);
-                if (binding.Win) Down(win);
+                foreach (int vk in modifiers)
+                    Down(vk);
                 Down(binding.Vk);
             }
             else
             {
                 Up(binding.Vk);
-                if (binding.Win) Up(win);
-                if (binding.Shift) Up(shift);
-                if (binding.Alt) Up(alt);
-                if (binding.Ctrl) Up(ctrl);
+                for (int i = modifiers.Count - 1; i >= 0; i--)
+                    Up(modifiers[i]);
             }
+        }
+    }
+
+    /// <summary>The keys of <paramref name="binding"/>'s modifiers in the order they are pressed (Ctrl, Alt, Shift, Win), each
+    /// on its side (either side: the left one).</summary>
+    public static List<int> ModifierKeys(HotkeyBinding binding)
+    {
+        var keys = new List<int>(4);
+        if (binding.Ctrl) keys.Add(binding.CtrlSide == ModifierSide.Right ? KeyNames.VK_RCONTROL : KeyNames.VK_LCONTROL);
+        if (binding.Alt) keys.Add(binding.AltSide == ModifierSide.Right ? KeyNames.VK_RMENU : KeyNames.VK_LMENU);
+        if (binding.Shift) keys.Add(binding.ShiftSide == ModifierSide.Right ? KeyNames.VK_RSHIFT : KeyNames.VK_LSHIFT);
+        if (binding.Win) keys.Add(binding.WinSide == ModifierSide.Right ? KeyNames.VK_RWIN : KeyNames.VK_LWIN);
+        return keys;
+    }
+
+    /// <summary>Sends <paramref name="steps"/> in order, together: nothing another loop, macro or remap sends comes between.</summary>
+    public static void Send(IReadOnlyList<KeyStep> steps)
+    {
+        lock (Gate)
+        {
+            foreach (var step in steps)
+                Send(step.Vk, step.Down);
         }
     }
 
