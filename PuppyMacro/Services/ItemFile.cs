@@ -285,6 +285,10 @@ internal static class ItemFile
                 break;
             case RemapDefinition remap:
                 remap.Enabled = false;
+                // A remap from a version before Pass extra modifiers (every file since writes it): it worked as one with
+                // the option off, so it comes in off, as an older settings.json is moved to (SettingsStore, schema 9).
+                if (!item.ContainsKey(nameof(RemapDefinition.PassExtraModifiers)))
+                    remap.PassExtraModifiers = false;
                 if (remap.Source is { IsSet: true } source)
                     remap.Source = taken.RemapHotkey(source, remap.AppExe, notes, chosen);
                 else

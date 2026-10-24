@@ -490,6 +490,18 @@ public class AiToolsTests : IDisposable
         Assert.Contains("both Source and Target", keep.GetProperty("description").GetString());
     }
 
+    /// <summary>Pass extra modifiers reaches AI apps through the remap's schema: on for a new remap, and when it applies.</summary>
+    [Fact]
+    public async Task The_remap_schema_says_when_Pass_extra_modifiers_applies_and_that_it_is_on()
+    {
+        AiToolResult schema = await Call("get_schema", new { kind = "remap" });
+
+        using JsonDocument doc = JsonDocument.Parse(schema.Text);
+        JsonElement pass = doc.RootElement.GetProperty("properties").GetProperty("PassExtraModifiers");
+        Assert.True(pass.GetProperty("default").GetBoolean());
+        Assert.Contains("Source is a key or a button", pass.GetProperty("description").GetString());
+    }
+
     [Fact]
     public async Task The_schema_has_no_id_since_PuppyMacro_gives_it()
     {

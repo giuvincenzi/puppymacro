@@ -531,7 +531,10 @@ public sealed class LoopEngineTests : IDisposable
     [Fact]
     public void A_remap_of_a_key_alone_does_not_take_the_key_with_a_modifier()
     {
-        _engine.Publish(new EngineSnapshot { Remaps = new[] { Remap(HotkeyBinding.FromKey(F23)) } });
+        // Pass extra modifiers off, as every remap saved before it: the source matches exactly.
+        RemapDefinition exact = Remap(HotkeyBinding.FromKey(F23));
+        exact.PassExtraModifiers = false;
+        _engine.Publish(new EngineSnapshot { Remaps = new[] { exact } });
 
         Press(LCtrl);
         Assert.False(Press(F23));

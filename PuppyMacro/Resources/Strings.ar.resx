@@ -590,6 +590,9 @@
   <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>إبقاء مفاتيح التعديل مضغوطة</value></data>
   <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>ما دمت تضغط باستمرار على Ctrl أو Alt أو Shift أو Win، تظل المفاتيح المرسلة مضغوطة أيضًا، لذا يمكنك الضغط على المفتاح مرة أخرى كما في Alt+Tab.</value></data>
   <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>متاح عندما تحتوي مجموعة المفاتيح التي تضغط عليها والمجموعة المرسلة كلتاهما على Ctrl أو Alt أو Shift أو Win.</value></data>
+  <data name="RemapEditor_PassExtras" xml:space="preserve"><value>تمرير مفاتيح التعديل الإضافية</value></data>
+  <data name="RemapEditor_PassExtrasDescription" xml:space="preserve"><value>تُرسَل مفاتيح Ctrl أو Alt أو Shift أو Win التي تضغط عليها باستمرار إضافةً إلى هذه المفاتيح مع ما يتم إرساله، لذا يرسل Shift+Alt+A المفتاحين Shift+سهم لليسار.</value></data>
+  <data name="RemapEditor_PassExtrasUnavailable" xml:space="preserve"><value>متاح عندما تضغط على مفتاح أو زر، وليس على Ctrl أو Alt أو Shift أو Win بمفرده.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>الإجراء</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>تشغيل هذا الإجراء مرة واحدة في النافذة الموجودة خلفه</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>الاسم (اختياري)</value></data>

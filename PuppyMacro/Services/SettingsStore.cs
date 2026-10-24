@@ -277,6 +277,9 @@ internal sealed class SettingsStore
             }
             if (remap.Id == Guid.Empty)
                 remap.Id = Guid.NewGuid();
+            // Schema 9: Pass extra modifiers is on for new remaps; those saved before keep working as they did.
+            if (settings.SchemaVersion < 9)
+                remap.PassExtraModifiers = false;
             remap.Note ??= "";
             remap.AppExe = AppScope.Normalize(remap.AppExe);
         }
