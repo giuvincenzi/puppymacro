@@ -187,6 +187,7 @@ internal static class CodeSchema
         ["RemapDefinition.Source"] = "The key, mouse button or combination you press (Vk 65 = A, 112 = F1, 5 = back button), or Ctrl, Alt, Shift or Win alone by its key (160, 161 Shift; 162, 163 Ctrl; 164, 165 Alt; 91, 92 Win).",
         ["RemapDefinition.Target"] = "The key, mouse button or combination sent instead, or Ctrl, Alt, Shift or Win alone by its key.",
         ["RemapDefinition.AppExe"] = "File name of the app it works in, like \"notepad.exe\"; null for all apps.",
+        ["RemapDefinition.PassExtraModifiers"] = "Only when Source is a key or a button, not Ctrl, Alt, Shift or Win alone. On (the default for a new remap): the Source also works with other Ctrl, Alt, Shift or Win held, and those reach the app with the Target (Source Alt+A, Target Left: Shift+Alt+A sends Shift+Left); an exact match, another remap or a hotkey, always wins. Off: only the exact Source works.",
         ["RemapDefinition.KeepModifiersHeld"] = "Only when both Source and Target have Ctrl, Alt, Shift or Win. On (the default): the Target's stay held while the Source's are, so its key can be pressed again (Ctrl+Tab sending Alt+Tab moves on in the Alt+Tab switcher at each Tab); releasing any of the Source's releases them all, and another key gets the Source's back. Off: the Target's are released with its key.",
         ["RemapDefinition.Note"] = "Optional note shown in the Remap list.",
         ["RemapDefinition.Enabled"] = "Off: the key works as usual.",

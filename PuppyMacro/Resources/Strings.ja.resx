@@ -525,6 +525,9 @@
   <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>修飾キーを押したままにする</value></data>
   <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Ctrl、Alt、Shift、Win を押している間は、送信する修飾キーも押したままになるので、Alt+Tab のようにキーを続けて押せます。</value></data>
   <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>押すキーと送信するキーの両方に Ctrl、Alt、Shift、Win のいずれかが含まれる場合に使用できます。</value></data>
+  <data name="RemapEditor_PassExtras" xml:space="preserve"><value>追加の修飾キーも送信する</value></data>
+  <data name="RemapEditor_PassExtrasDescription" xml:space="preserve"><value>これらのキーに加えて押している Ctrl、Alt、Shift、Win も一緒に送信されます。たとえば Shift+Alt+A では Shift+左矢印 が送信されます。</value></data>
+  <data name="RemapEditor_PassExtrasUnavailable" xml:space="preserve"><value>押すのがキーまたはボタンの場合に使用できます。Ctrl、Alt、Shift、Win だけの場合は使用できません。</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>アクション</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>このアクションを背後のウィンドウで 1 回再生します</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>名前 (省略可能)</value></data>

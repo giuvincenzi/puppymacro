@@ -25,6 +25,9 @@ public partial class RemapEditorWindow
 
     // Keep modifiers held as saved: the switch shows it only while it applies (both keys with modifiers), else off.
     private bool _keepModifiers = true;
+
+    // Pass extra modifiers as saved (on for a new remap): shown only while the source is a key or a button, else off.
+    private bool _passExtras = true;
     private bool _ready;
 
     internal RemapEditorWindow(LoopEngine engine, AppSettings settings, MacroLibrary macros, RemapDefinition? existing)
@@ -90,6 +93,7 @@ public partial class RemapEditorWindow
         _source = source.Source?.Clone();
         _target = source.Target?.Clone();
         _keepModifiers = source.KeepModifiersHeld;
+        _passExtras = source.PassExtraModifiers;
         AppScopeCard.Load(source.AppExe);
         NoteBox.Text = source.Note;
         UpdateLabels();
@@ -104,6 +108,7 @@ public partial class RemapEditorWindow
         Target = _target?.Clone(),
         AppExe = AppScopeCard.AppExe,
         KeepModifiersHeld = _keepModifiers,
+        PassExtraModifiers = _passExtras,
         Note = (NoteBox.Text ?? "").Trim(),
         Enabled = EnabledSwitch.IsOn,
     };
@@ -116,14 +121,15 @@ public partial class RemapEditorWindow
     {
         SourceField.Value = _source?.Clone();
         TargetField.Value = _target?.Clone();
-        UpdateKeepModifiers();
+        UpdateOptions();
     }
 
     /// <summary>
-    /// Keep modifiers held: on or off as saved while both keys have Ctrl, Alt, Shift or Win; otherwise off and greyed, its
-    /// description saying when it applies. The saved value stays, for when both have them again.
+    /// The options that depend on the keys: Keep modifiers held while both keys have Ctrl, Alt, Shift or Win, Pass extra
+    /// modifiers while the key pressed is a key or a button. Each is on or off as saved while it applies; otherwise off and
+    /// greyed, its description saying when it applies. The saved value stays, for when it applies again.
     /// </summary>
-    private void UpdateKeepModifiers()
+    private void UpdateOptions()
     {
         bool applies = _source?.HasModifiers == true && _target?.HasModifiers == true;
         // The card is disabled before the switch changes, so the change is not taken as the user's (OnKeepModifiersToggled).
@@ -131,6 +137,13 @@ public partial class RemapEditorWindow
         KeepModifiersSwitch.IsOn = applies && _keepModifiers;
         KeepModifiersCard.IsEnabled = applies;
         KeepModifiersCard.Description = applies ? Strings.RemapEditor_KeepModifiersDescription : Strings.RemapEditor_KeepModifiersUnavailable;
+
+        // Pass extra modifiers, the same way: only while the source is a key or a button.
+        bool passes = _source is { IsSet: true, IsModifierAlone: false };
+        PassExtrasCard.IsEnabled = false;
+        PassExtrasSwitch.IsOn = passes && _passExtras;
+        PassExtrasCard.IsEnabled = passes;
+        PassExtrasCard.Description = passes ? Strings.RemapEditor_PassExtrasDescription : Strings.RemapEditor_PassExtrasUnavailable;
     }
 
     private void OnKeepModifiersToggled(object sender, RoutedEventArgs e)
@@ -139,10 +152,16 @@ public partial class RemapEditorWindow
             _keepModifiers = KeepModifiersSwitch.IsOn;
     }
 
+    private void OnPassExtrasToggled(object sender, RoutedEventArgs e)
+    {
+        if (PassExtrasCard.IsEnabled)
+            _passExtras = PassExtrasSwitch.IsOn;
+    }
+
     private void OnSourceFieldChanged(object? sender, EventArgs e)
     {
         _source = SourceField.Value?.Clone();
-        UpdateKeepModifiers();
+        UpdateOptions();
         Validate();
     }
 
@@ -156,7 +175,7 @@ public partial class RemapEditorWindow
     private void OnTargetFieldChanged(object? sender, EventArgs e)
     {
         _target = TargetField.Value?.Clone();
-        UpdateKeepModifiers();
+        UpdateOptions();
         Validate();
     }
 

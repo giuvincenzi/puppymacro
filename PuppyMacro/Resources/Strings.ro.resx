@@ -560,6 +560,9 @@ Detalii: {1}</value></data>
   <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Menține apăsate tastele de modificare</value></data>
   <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Cât timp țineți apăsat Ctrl, Alt, Shift sau Win, rămân apăsate și tastele de modificare trimise, așa că puteți apăsa din nou tasta, ca la Alt+Tab.</value></data>
   <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Disponibil când atât combinația pe care o apăsați, cât și cea trimisă conțin Ctrl, Alt, Shift sau Win.</value></data>
+  <data name="RemapEditor_PassExtras" xml:space="preserve"><value>Transmite tastele de modificare suplimentare</value></data>
+  <data name="RemapEditor_PassExtrasDescription" xml:space="preserve"><value>Tastele Ctrl, Alt, Shift sau Win pe care le țineți apăsate în plus față de acestea sunt adăugate la ceea ce se trimite, așa că Shift+Alt+A trimite Shift+Săgeată stânga.</value></data>
+  <data name="RemapEditor_PassExtrasUnavailable" xml:space="preserve"><value>Disponibil când apăsați o tastă sau un buton, nu Ctrl, Alt, Shift sau Win singure.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>Acțiune</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Redă o dată această acțiune în fereastra din spate</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>Nume (opțional)</value></data>

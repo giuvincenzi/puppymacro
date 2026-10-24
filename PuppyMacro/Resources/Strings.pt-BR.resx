@@ -575,6 +575,9 @@ Detalhes: {1}</value></data>
   <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Manter as teclas modificadoras pressionadas</value></data>
   <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Enquanto você mantém Ctrl, Alt, Shift ou Win pressionada, as teclas modificadoras enviadas também continuam pressionadas, então você pode pressionar a tecla de novo, como no Alt+Tab.</value></data>
   <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Disponível quando tanto a combinação que você pressiona quanto a que é enviada incluem Ctrl, Alt, Shift ou Win.</value></data>
+  <data name="RemapEditor_PassExtras" xml:space="preserve"><value>Repassar teclas modificadoras extras</value></data>
+  <data name="RemapEditor_PassExtrasDescription" xml:space="preserve"><value>As teclas Ctrl, Alt, Shift ou Win que você mantém pressionadas além destas são enviadas junto, então Shift+Alt+A envia Shift+Seta para a esquerda.</value></data>
+  <data name="RemapEditor_PassExtrasUnavailable" xml:space="preserve"><value>Disponível quando você pressiona uma tecla ou um botão, não Ctrl, Alt, Shift ou Win sozinha.</value></data>
   <!-- ===== MacroActionWindow.xaml ===== -->
   <data name="ActionWindow_Title" xml:space="preserve"><value>Ação</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Reproduzir esta ação uma vez na janela de trás</value></data>

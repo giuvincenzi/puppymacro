@@ -773,6 +773,47 @@ public class AppTests
             "Keep modifiers held was not saved off");
     }
 
+    /// <summary>
+    /// Pass extra modifiers: on for a remap of a key, off and greyed for a modifier alone, and off is saved. The keys it
+    /// sends are unit tested (RemapExtrasTests): a test cannot press a real Ctrl, Alt or Shift (testing.md).
+    /// </summary>
+    [Fact]
+    public void Pass_extra_modifiers_is_on_for_a_key_greyed_for_a_modifier_alone_and_saved_off()
+    {
+        const int RightAlt = 0xA5;
+        using var app = new AppSession(seed => seed.Settings.Remaps.AddRange(new[]
+        {
+            new RemapDefinition { Source = HotkeyBinding.FromKey(Vk.F22), Target = HotkeyBinding.FromKey(Vk.F23), Note = "E2E extras" },
+            new RemapDefinition { Source = HotkeyBinding.FromKey(RightAlt), Target = HotkeyBinding.FromKey(Vk.F21), Note = "E2E modifier" },
+        }));
+        app.GoTo("Remap");
+
+        // A modifier alone: off and greyed, and it says when it is available.
+        app.EditItem("E2E modifier");
+        Window modifier = app.Dialog("Edit remap");
+        AutomationElement modifierSwitch = app.FindById(modifier, "PassExtrasSwitch");
+        Assert.False(modifierSwitch.IsEnabled);
+        Assert.Equal(ToggleState.Off, modifierSwitch.AsToggleButton().ToggleState);
+        Assert.True(app.Has(modifier, "Available when what you press is a key or a button, not Ctrl, Alt, Shift or Win alone."));
+        app.FindById(modifier, "CancelButton").AsButton().Invoke();
+        // The main window, hidden while an editor is open, comes back when it closes.
+        Assert.True(Retry.WhileTrue(() => !app.MainWindow.IsAvailable || app.MainWindow.IsOffscreen, AppSession.Timeout).Success,
+            "the editor did not close");
+
+        // A key: on, and turned off it is saved off.
+        app.EditItem("E2E extras");
+        Window extras = app.Dialog("Edit remap");
+        var extrasSwitch = app.FindById(extras, "PassExtrasSwitch").AsToggleButton();
+        Assert.True(extrasSwitch.IsEnabled);
+        Assert.Equal(ToggleState.On, extrasSwitch.ToggleState);
+        extrasSwitch.Toggle();
+        Assert.True(Retry.WhileFalse(() => extrasSwitch.ToggleState == ToggleState.Off, AppSession.Timeout).Success, "the switch did not turn off");
+        app.FindById(extras, "SaveButton").AsButton().Invoke();
+        Assert.True(Retry.WhileFalse(() => JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSession.SettingsFile), Seed.JsonOptions)!
+            .Remaps.Single(r => r.Note == "E2E extras").PassExtraModifiers == false, AppSession.Timeout).Success,
+            "Pass extra modifiers was not saved off");
+    }
+
     [Fact]
     public void The_loop_editor_adds_each_action_from_its_bar_with_its_options_and_Enabled_is_saved()
     {

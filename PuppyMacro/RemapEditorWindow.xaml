@@ -80,6 +80,13 @@
                         <ui:ToggleSwitch x:Name="KeepModifiersSwitch" AutomationProperties.Name="{x:Static r:Strings.RemapEditor_KeepModifiers}"
                                          Toggled="OnKeepModifiersToggled" />
                     </ui:SettingsCard>
+
+                    <!-- Pass extra modifiers: only when the key pressed is a key or a button (off and greyed for a modifier alone) -->
+                    <ui:SettingsCard x:Name="PassExtrasCard" Header="{x:Static r:Strings.RemapEditor_PassExtras}"
+                                     Description="{x:Static r:Strings.RemapEditor_PassExtrasDescription}">
+                        <ui:ToggleSwitch x:Name="PassExtrasSwitch" AutomationProperties.Name="{x:Static r:Strings.RemapEditor_PassExtras}"
+                                         Toggled="OnPassExtrasToggled" />
+                    </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
 
                 <ikw:SimpleStackPanel Grid.Column="1" Margin="0,4,24,12" Spacing="4">

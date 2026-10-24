@@ -140,6 +140,10 @@ public sealed class HotkeyBinding
     [JsonIgnore]
     public bool HasModifiers => Ctrl || Alt || Shift || Win;
 
+    /// <summary>A modifier key alone, by its side: left or right Ctrl, Alt, Shift or Win.</summary>
+    [JsonIgnore]
+    public bool IsModifierAlone => !HasModifiers && Vk is >= 0xA0 and <= 0xA5 or 0x5B or 0x5C;
+
     public static HotkeyBinding FromKey(int vk) => new() { Vk = vk };
 
     /// <summary>The same key, modifiers and sides.</summary>
@@ -157,6 +161,18 @@ public sealed class HotkeyBinding
         IsSet && pressed.Vk == Vk && pressed.Ctrl == Ctrl && pressed.Alt == Alt && pressed.Shift == Shift && pressed.Win == Win
         && Accepts(Ctrl, CtrlSide, pressed.CtrlSide) && Accepts(Alt, AltSide, pressed.AltSide)
         && Accepts(Shift, ShiftSide, pressed.ShiftSide) && Accepts(Win, WinSide, pressed.WinSide);
+
+    /// <summary>
+    /// The keys pressed are this hotkey with other modifiers held too (Shift + Alt + A for Alt + A): the same key, each of
+    /// this hotkey's modifiers held on a side it accepts, and at least one more. False for an exact match (<see cref="Matches"/>).
+    /// </summary>
+    public bool MatchesWithExtras(HotkeyBinding pressed) =>
+        IsSet && pressed.Vk == Vk
+        && (!Ctrl || pressed.Ctrl && Accepts(true, CtrlSide, pressed.CtrlSide))
+        && (!Alt || pressed.Alt && Accepts(true, AltSide, pressed.AltSide))
+        && (!Shift || pressed.Shift && Accepts(true, ShiftSide, pressed.ShiftSide))
+        && (!Win || pressed.Win && Accepts(true, WinSide, pressed.WinSide))
+        && (pressed.Ctrl && !Ctrl || pressed.Alt && !Alt || pressed.Shift && !Shift || pressed.Win && !Win);
 
     /// <summary>Some key presses would start both: the same key and modifiers, on sides that are not opposite.</summary>
     public bool Overlaps(HotkeyBinding? other) =>
@@ -528,7 +544,7 @@ public sealed class LoopDefinition
 /// <summary>Everything persisted in settings.json.</summary>
 public sealed class AppSettings
 {
-    public const int CurrentSchemaVersion = 8;
+    public const int CurrentSchemaVersion = 9;
     public const int DefaultRecordVk = 0x77;    // F8
 
     /// <summary>Stop all for new installs: Alt+Shift+S. Existing files keep their hotkey.</summary>
@@ -729,12 +745,23 @@ public sealed class RemapDefinition
     /// </summary>
     public bool KeepModifiersHeld { get; set; } = true;
 
+    /// <summary>
+    /// The source also works with other Ctrl, Alt, Shift or Win held, and those go with the target (Alt + A → Left:
+    /// Shift + Alt + A sends Shift + Left). Only when the source is a key or a button (<see cref="CanPassExtraModifiers"/>);
+    /// an exact match (another remap, a hotkey) always wins. On for new remaps; off for those saved before it (schema 9).
+    /// </summary>
+    public bool PassExtraModifiers { get; set; } = true;
+
     public string Note { get; set; } = "";
     public bool Enabled { get; set; } = true;
 
     /// <summary>Keep modifiers held applies: both the source and the target have Ctrl, Alt, Shift or Win.</summary>
     [JsonIgnore]
     public bool CanKeepModifiersHeld => Source?.HasModifiers == true && Target?.HasModifiers == true;
+
+    /// <summary>Pass extra modifiers applies: the source is a key or a button, not Ctrl, Alt, Shift or Win alone.</summary>
+    [JsonIgnore]
+    public bool CanPassExtraModifiers => Source is { IsSet: true, IsModifierAlone: false };
 
     // ---- Before schema 7 the source was a single key; read once and converted by SettingsStore ----
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -754,6 +781,7 @@ public sealed class RemapDefinition
         Target = other.Target?.Clone();
         AppExe = other.AppExe;
         KeepModifiersHeld = other.KeepModifiersHeld;
+        PassExtraModifiers = other.PassExtraModifiers;
         Note = other.Note;
         Enabled = other.Enabled;
     }

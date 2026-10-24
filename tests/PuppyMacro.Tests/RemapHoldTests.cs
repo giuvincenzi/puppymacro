@@ -176,9 +176,11 @@ public sealed class RemapHoldTests : IDisposable
     private static HotkeyBinding AltF24 => new() { Vk = F24, Alt = true };
 
     /// <summary>Ctrl held, the source pressed and released: Alt + F24 sent, Alt still held.</summary>
-    private void StartHold()
+    private void StartHold(bool passExtras = true)
     {
-        Publish(Remap(CtrlF23, AltF24));
+        RemapDefinition remap = Remap(CtrlF23, AltF24);
+        remap.PassExtraModifiers = passExtras;
+        Publish(remap);
         Assert.False(Press(LCtrl));
         Assert.True(Press(F23));
         Assert.Equal(new[] { Up(LCtrl), Down(LAlt), Down(F24) }, Sent());
@@ -226,7 +228,8 @@ public sealed class RemapHoldTests : IDisposable
     [Fact]
     public void Shift_added_to_the_source_passes_with_the_target_modifiers_still_held()
     {
-        StartHold();
+        // Pass extra modifiers off, as every remap saved before it: Ctrl + Shift + F23 is not the source and passes.
+        StartHold(passExtras: false);
 
         Assert.False(Press(LShift));
         Assert.False(Press(F23)); // Ctrl + Shift + F23: not the source, it passes (the app gets Alt + Shift + F23)
