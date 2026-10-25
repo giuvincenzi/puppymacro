@@ -124,8 +124,12 @@ internal sealed class LoopEngine : IDisposable
     // The keys of a hold's targets held down: source key -> target key, released with the source key (also after the hold).
     private readonly Dictionary<int, int> _holdKeysDown = new();
 
-    // Where the keys of a hold go: null, SendInput on the injector; the unit tests keep them (they never send modifiers).
-    private readonly Action<IReadOnlyList<KeyStep>>? _holdKeysForTests;
+    // Remaps held that a source with extra modifiers started (Pass extra modifiers): source key -> what releases its target.
+    private readonly Dictionary<int, (int TargetVk, List<int> Modifiers)> _extraKeysDown = new();
+
+    // Where the keys of a hold or of extra modifiers go: null, SendInput on the injector; the unit tests keep them (they
+    // never send modifiers).
+    private readonly Action<IReadOnlyList<KeyStep>>? _remapKeysForTests;
 
     private Action<HotkeyBinding>? _captureDone;
     private Action? _captureCancelled;
@@ -182,7 +186,7 @@ internal sealed class LoopEngine : IDisposable
     internal LoopEngine(EngineSnapshot snapshot, Dispatcher dispatcher, Action<IReadOnlyList<KeyStep>> holdKeys)
         : this(snapshot, dispatcher)
     {
-        _holdKeysForTests = holdKeys;
+        _remapKeysForTests = holdKeys;
     }
 
     /// <summary>Raised (asynchronously, on the UI thread) when any loop or macro starts or stops.</summary>
@@ -815,13 +819,13 @@ internal sealed class LoopEngine : IDisposable
             // A key that ends a remap's hold (Ctrl + C after Ctrl + Tab → Alt + Tab): the target's modifiers are released
             // and the source's pressed again first; a key that passes is sent after them, so the app gets Ctrl + C.
             bool afterHold = isDown && _hold.Active && !_hold.Continues(vk) && !_activeRemaps.ContainsKey(vk)
-                && !_holdKeysDown.ContainsKey(vk);
+                && !_holdKeysDown.ContainsKey(vk) && !_extraKeysDown.ContainsKey(vk);
             if (afterHold)
                 EndHold(pressAgain: true);
             bool blocked = OnOtherKey(vk, isDown);
             if (afterHold && !blocked)
             {
-                SendHoldKeys(new List<KeyStep> { new(vk, true) });
+                SendRemapKeys(new List<KeyStep> { new(vk, true) });
                 return true;
             }
             return blocked;
@@ -916,7 +920,13 @@ internal sealed class LoopEngine : IDisposable
         if (_holdKeysDown.TryGetValue(vk, out int repeatingKey))
         {
             if (!KeyNames.IsMouse(repeatingKey))
-                SendHoldKeys(new List<KeyStep> { new(repeatingKey, true) });
+                SendRemapKeys(new List<KeyStep> { new(repeatingKey, true) });
+            return true;
+        }
+        if (_extraKeysDown.TryGetValue(vk, out var repeatingExtra))
+        {
+            if (!KeyNames.IsMouse(repeatingExtra.TargetVk))
+                SendRemapKeys(new List<KeyStep> { new(repeatingExtra.TargetVk, true) });
             return true;
         }
 
@@ -927,7 +937,7 @@ internal sealed class LoopEngine : IDisposable
         if (_hold.IsSourceAgain(pressed))
         {
             _holdKeysDown[vk] = _hold.TargetVk;
-            SendHoldKeys(_hold.Again());
+            SendRemapKeys(_hold.Again());
             return true;
         }
 
@@ -957,17 +967,43 @@ internal sealed class LoopEngine : IDisposable
             return Block();
         }
 
+        // Pass extra modifiers, only when nothing matched these keys exactly (a remap, a hotkey): the source with other
+        // modifiers held too. The source again while its remap holds (Shift + Ctrl + Tab, Ctrl + Tab → Alt + Tab) sends
+        // only the target's key, so the hold goes on; otherwise the remap that has the most of these modifiers starts.
+        bool withExtras = false;
+        if (remap?.Target is not { IsSet: true })
+        {
+            if (_hold.IsSourceAgainWithExtras(pressed))
+            {
+                _holdKeysDown[vk] = _hold.TargetVk;
+                SendRemapKeys(_hold.Again());
+                return true;
+            }
+            remap = FindRemapWithExtras(snap, pressed);
+            withExtras = remap != null;
+        }
+
         // Remaps: an app-specific remap wins over an "all apps" one. A source with modifiers (Alt + A): the
         // modifiers held for it are released first, so the app gets only the target.
         if (remap?.Target is { IsSet: true } target)
         {
             if (_hold.Active)
                 EndHold(pressAgain: false);
+            var held = ModifierTracker.HeldKeys();
+            // With extra modifiers, only the source's own are released: the others stay with the target.
+            var sourceKeys = withExtras ? RemapExtras.SourceKeys(remap.Source!, held) : held;
             if (RemapHold.Applies(remap))
             {
                 // Its key alone is released with the source's key; its modifiers with the source's (EndHold).
                 _holdKeysDown[vk] = target.Vk;
-                SendHoldKeys(_hold.Start(remap, ModifierTracker.HeldKeys()));
+                SendRemapKeys(_hold.Start(remap, sourceKeys, held.Except(sourceKeys).ToList()));
+                return true;
+            }
+            if (withExtras)
+            {
+                var steps = RemapExtras.Press(remap.Source!, target, held, out var pressedModifiers);
+                _extraKeysDown[vk] = (target.Vk, pressedModifiers);
+                SendRemapKeys(steps);
                 return true;
             }
             _activeRemaps[vk] = target;
@@ -998,7 +1034,12 @@ internal sealed class LoopEngine : IDisposable
         }
         if (_holdKeysDown.Remove(vk, out int heldKey))
         {
-            SendHoldKeys(new List<KeyStep> { new(heldKey, false) });
+            SendRemapKeys(new List<KeyStep> { new(heldKey, false) });
+            return true;
+        }
+        if (_extraKeysDown.Remove(vk, out var extra))
+        {
+            SendRemapKeys(RemapExtras.Release(extra.TargetVk, extra.Modifiers));
             return true;
         }
         if (!_heldHotkeys.Remove(vk))
@@ -1028,7 +1069,7 @@ internal sealed class LoopEngine : IDisposable
             if (_pressedAgain.Remove(vk))
             {
                 if (!OnModifierEvent(vk, isDown, physical, altGrCtrl))
-                    SendHoldKeys(new List<KeyStep> { new(vk, false) });
+                    SendRemapKeys(new List<KeyStep> { new(vk, false) });
                 return true;
             }
         }
@@ -1047,30 +1088,32 @@ internal sealed class LoopEngine : IDisposable
             if (step.Down)
                 _pressedAgain.Add(step.Vk);
         }
-        SendHoldKeys(steps);
+        SendRemapKeys(steps);
     }
 
     /// <summary>
     /// Sends the keys of a remap's hold on the injector, after what it already has and in order: a press never comes after
     /// the release that follows it.
     /// </summary>
-    private void SendHoldKeys(List<KeyStep> steps)
+    private void SendRemapKeys(List<KeyStep> steps)
     {
         if (steps.Count == 0)
             return;
-        if (_holdKeysForTests != null)
-            _holdKeysForTests(steps);
+        if (_remapKeysForTests != null)
+            _remapKeysForTests(steps);
         else
             _injector.Post(() => InputSender.Send(steps));
     }
 
     /// <summary>
-    /// Ends the hold and releases the modifiers it pressed again (the desktop changed, PuppyMacro closes: the releases of
-    /// the keys held may never come). Called with the lock held.
+    /// Ends the hold and releases the modifiers it pressed again, and the targets started with extra modifiers (the
+    /// desktop changed, PuppyMacro closes: the releases of the keys held may never come). Called with the lock held.
     /// </summary>
     private List<KeyStep> ReleaseHold()
     {
-        var steps = _holdKeysDown.Values.Select(vk => new KeyStep(vk, false)).ToList();
+        var steps = _extraKeysDown.Values.SelectMany(e => RemapExtras.Release(e.TargetVk, e.Modifiers)).ToList();
+        _extraKeysDown.Clear();
+        steps.AddRange(_holdKeysDown.Values.Select(vk => new KeyStep(vk, false)));
         _holdKeysDown.Clear();
         steps.AddRange(_hold.End());
         steps.AddRange(_pressedAgain.Select(vk => new KeyStep(vk, false)));
@@ -1314,6 +1357,39 @@ internal sealed class LoopEngine : IDisposable
         return forAllApps;
     }
 
+    /// <summary>
+    /// The remap with Pass extra modifiers whose source is <paramref name="pressed"/> with other modifiers held too: one for
+    /// the app in front before one for all apps, then the one whose source has the most of the modifiers held (Shift +
+    /// Alt + A: Alt + Shift + A's own remap is an exact match; Alt + A's comes before A's).
+    /// </summary>
+    private RemapDefinition? FindRemapWithExtras(EngineSnapshot snap, HotkeyBinding pressed)
+    {
+        RemapDefinition? best = null;
+        bool bestForApp = false;
+        int bestCount = -1;
+        string? foreground = null;
+        foreach (var remap in snap.Remaps)
+        {
+            if (!RemapExtras.Applies(remap) || remap.Target is not { IsSet: true } || !remap.Source!.MatchesWithExtras(pressed))
+                continue;
+            bool forApp = remap.AppExe != null;
+            if (forApp)
+            {
+                foreground ??= ForegroundExeName() ?? "";
+                if (!string.Equals(foreground, remap.AppExe, StringComparison.OrdinalIgnoreCase))
+                    continue;
+            }
+            int count = (remap.Source.Ctrl ? 1 : 0) + (remap.Source.Alt ? 1 : 0) + (remap.Source.Shift ? 1 : 0) + (remap.Source.Win ? 1 : 0);
+            if (best == null || forApp && !bestForApp || forApp == bestForApp && count > bestCount)
+            {
+                best = remap;
+                bestForApp = forApp;
+                bestCount = count;
+            }
+        }
+        return best;
+    }
+
     private static void SendRemapTarget(HotkeyBinding target, bool isDown, bool releaseHeld = false) =>
         InputSender.SendBinding(target, isDown, releaseHeld);
 
@@ -1397,7 +1473,7 @@ internal sealed class LoopEngine : IDisposable
             foreach (var target in _activeRemaps.Values.ToList())
                 _injector.Post(() => SendRemapTarget(target, isDown: false));
             _activeRemaps.Clear();
-            SendHoldKeys(ReleaseHold());
+            SendRemapKeys(ReleaseHold());
             _heldHotkeys.Clear();
             _swallowUp.Clear();
             ModifierTracker.Reset();
@@ -1486,7 +1562,7 @@ internal sealed class LoopEngine : IDisposable
             foreach (var target in _activeRemaps.Values.ToList())
                 _injector.Post(() => SendRemapTarget(target, isDown: false));
             _activeRemaps.Clear();
-            SendHoldKeys(ReleaseHold());
+            SendRemapKeys(ReleaseHold());
         }
         _input?.Dispose();
         _injector.Dispose(); // sends everything it has, then ends

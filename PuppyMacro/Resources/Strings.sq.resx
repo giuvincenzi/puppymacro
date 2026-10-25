@@ -547,6 +547,9 @@ Detajet: {1}</value></data>
   <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Mbaji të shtypur tastet modifikuese</value></data>
   <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>Sa kohë që mbani shtypur Ctrl, Alt, Shift ose Win, mbeten të shtypura edhe ato që dërgohen, kështu që mund ta shtypni sërish tastin, si te Alt+Tab.</value></data>
   <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>E disponueshme kur edhe ajo që shtypni, edhe ajo që dërgohet kanë Ctrl, Alt, Shift ose Win.</value></data>
+  <data name="RemapEditor_PassExtras" xml:space="preserve"><value>Dërgo edhe tastet modifikuese shtesë</value></data>
+  <data name="RemapEditor_PassExtrasDescription" xml:space="preserve"><value>Tastet Ctrl, Alt, Shift ose Win që mbani shtypur përveç këtyre dërgohen bashkë me atë që dërgohet, kështu që Shift+Alt+A dërgon Shift+Majtas.</value></data>
+  <data name="RemapEditor_PassExtrasUnavailable" xml:space="preserve"><value>E disponueshme kur shtypni një tast ose buton, jo kur shtypni vetëm Ctrl, Alt, Shift ose Win.</value></data>
   <data name="ActionWindow_Title" xml:space="preserve"><value>Veprimi</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Luaj këtë veprim një herë në dritaren prapa</value></data>
   <data name="ActionWindow_Name" xml:space="preserve"><value>Emri (opsional)</value></data>

@@ -15,6 +15,7 @@ internal sealed class RemapHold
 {
     private HotkeyBinding? _source;
     private int _targetVk;
+    private bool _passExtras;
     private List<int> _sourceModifiers = new();
     private List<int> _targetModifiers = new();
 
@@ -28,16 +29,19 @@ internal sealed class RemapHold
     public static bool Applies(RemapDefinition remap) => remap.KeepModifiersHeld && remap.CanKeepModifiersHeld;
 
     /// <summary>
-    /// Starts holding <paramref name="remap"/>'s target, its source just pressed with <paramref name="held"/> (the modifier
-    /// keys physically held: the source's). Those are released first, so the app gets only the target (behind the mask
-    /// key: Alt or Win released alone would open a menu); they are not pressed again while the hold lasts.
+    /// Starts holding <paramref name="remap"/>'s target, its source just pressed with <paramref name="held"/> (the source's
+    /// modifier keys physically held). Those are released first, so the app gets only the target (behind the mask key: Alt
+    /// or Win released alone would open a menu); they are not pressed again while the hold lasts. <paramref name="extras"/>:
+    /// the other modifiers held (Pass extra modifiers), left down for the app; a target modifier among them is not pressed.
     /// </summary>
-    public List<KeyStep> Start(RemapDefinition remap, IReadOnlyList<int> held)
+    public List<KeyStep> Start(RemapDefinition remap, IReadOnlyList<int> held, IReadOnlyList<int>? extras = null)
     {
         _source = remap.Source!.Clone();
         _targetVk = remap.Target!.Vk;
+        _passExtras = RemapExtras.Applies(remap);
         _sourceModifiers = held.ToList();
-        _targetModifiers = InputSender.ModifierKeys(remap.Target);
+        _targetModifiers = InputSender.ModifierKeys(remap.Target)
+            .Where(vk => extras?.Any(e => RemapExtras.SameModifier(e, vk)) != true).ToList();
 
         var steps = new List<KeyStep>();
         if (held.Any(IsAltOrWin))
@@ -53,6 +57,12 @@ internal sealed class RemapHold
 
     /// <summary>The source pressed again (<paramref name="pressed"/>: the key with the modifiers held), exactly as it started.</summary>
     public bool IsSourceAgain(HotkeyBinding pressed) => _source?.Matches(pressed) == true;
+
+    /// <summary>
+    /// The source pressed again with other modifiers held too, when its remap passes them (Shift + Ctrl + Tab for Ctrl + Tab
+    /// → Alt + Tab: the extra Shift is the user's and is down, so the app gets Alt + Shift + Tab).
+    /// </summary>
+    public bool IsSourceAgainWithExtras(HotkeyBinding pressed) => _passExtras && _source?.MatchesWithExtras(pressed) == true;
 
     /// <summary>The target's key again, its modifiers still held (Tab again in the switcher).</summary>
     public List<KeyStep> Again() => new() { new KeyStep(_targetVk, true) };
@@ -83,6 +93,7 @@ internal sealed class RemapHold
 
         _source = null;
         _targetVk = 0;
+        _passExtras = false;
         _sourceModifiers = new List<int>();
         _targetModifiers = new List<int>();
         return steps;

@@ -578,6 +578,9 @@ Details: {1}</value><comment>{0}: the old file's name; {1}: the error.</comment>
   <data name="RemapEditor_KeepModifiers" xml:space="preserve"><value>Keep modifiers held</value></data>
   <data name="RemapEditor_KeepModifiersDescription" xml:space="preserve"><value>While you hold your Ctrl, Alt, Shift or Win, the ones sent stay held too, so you can press the key again, as in Alt+Tab.</value></data>
   <data name="RemapEditor_KeepModifiersUnavailable" xml:space="preserve"><value>Available when both what you press and what is sent have Ctrl, Alt, Shift or Win.</value></data>
+  <data name="RemapEditor_PassExtras" xml:space="preserve"><value>Pass extra modifiers</value></data>
+  <data name="RemapEditor_PassExtrasDescription" xml:space="preserve"><value>Ctrl, Alt, Shift or Win you hold besides these keys go with what is sent, so Shift+Alt+A sends Shift+Left.</value></data>
+  <data name="RemapEditor_PassExtrasUnavailable" xml:space="preserve"><value>Available when what you press is a key or a button, not Ctrl, Alt, Shift or Win alone.</value></data>
   <!-- ===== MacroActionWindow.xaml ===== -->
   <data name="ActionWindow_Title" xml:space="preserve"><value>Action</value></data>
   <data name="ActionWindow_TestTooltip" xml:space="preserve"><value>Play this action once in the window behind</value></data>

@@ -17,6 +17,14 @@ paths:
 - A remap's source (`RemapDefinition.Source`) is a binding too, matched the same way (a remap of J does
   not take Alt+J), or a modifier key alone by its left or right code (Right Alt). Its target can also be a
   modifier key alone; modifiers in a target are sent on their side (`Any`: the left one).
+- **Pass extra modifiers** (`RemapDefinition.PassExtraModifiers`, `Services/RemapExtras.cs`; the user's decision), for a
+  source that is a key or a button: the one exception to exact matching. Only when nothing matches the keys exactly (a
+  remap, a hotkey: an exact match always wins), a remap whose source is the same key with part of the modifiers held
+  (`HotkeyBinding.MatchesWithExtras`) applies: the one for the app in front first, then the one with the most of them.
+  Only the source's own modifiers are released for the app; the extra ones stay down, as the user holds them, so the
+  app gets them with the target (Alt+A → Left: Shift+Alt+A gives Shift+Left). Nothing is pressed for the user: a target
+  modifier the user already holds as an extra is neither pressed nor released. With Keep modifiers held the hold starts
+  the same way, and the source again with extra modifiers sends only the target's key.
 - A source with modifiers (Alt+J): the remap releases the modifiers held before the target, and does not press them
   again while the remap lasts.
 - **Keep modifiers held** (`RemapDefinition.KeepModifiersHeld`, `Services/RemapHold.cs`; the user's decision), only

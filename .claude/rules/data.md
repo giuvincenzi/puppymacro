@@ -31,6 +31,9 @@ paths:
 - A hotkey's modifier side missing from a file means either side, so older files keep working as before.
 - A remap's `KeepModifiersHeld` missing from a file means on (the user's choice: on by default for every remap, the
   older ones too; no migration). It matters only when both its keys have modifiers.
+- A remap's `PassExtraModifiers` is on for new remaps (the model's default: the editor, the Code view, AI apps) and off
+  for the remaps that existed before it (the user's choice: they keep working as they did): schema 9 turns it off in an
+  older settings.json, and a remap of a `.puppyitems` file without the field (every file since writes it) comes in off.
 - The Open PuppyMacro global hotkey (the only global hotkey that can be cleared) is added to a file from before schema 8
   only if no loop, macro, remap or other global hotkey already uses it (global hotkeys come first). A file of schema 8
   without it keeps none (the user cleared it).
