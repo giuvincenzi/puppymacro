@@ -815,21 +815,26 @@ public class AppTests
     }
 
     /// <summary>
-    /// At its size when it opens, the remap editor shows every card of its left column whole, above Save and Cancel: the
-    /// last one, Pass extra modifiers, was cut off by the bar when it was added (the 1.26.0 release pull request's
-    /// screenshot).
+    /// No card of the remap editor is out of reach: its left column scrolls when the window is smaller than its cards (the
+    /// runner's 1024 x 768 screen narrows it, and the cards wrap), and scrolled to the end its last card, Pass extra
+    /// modifiers, is whole above Save. It was cut off by the bar when it was added, with nothing to scroll (the 1.26.0
+    /// release pull request's screenshot). At the release screenshots' 1920 x 1080 the window opens with all cards shown.
     /// </summary>
     [Fact]
-    public void The_remap_editor_opens_with_every_card_above_Save_and_Cancel()
+    public void The_remap_editor_shows_its_last_card_whole_scrolling_when_the_window_is_too_small()
     {
         using var app = new AppSession();
         app.GoTo("Remap");
         app.EditItem("Sample: Caps Lock to Esc");
         Window editor = app.Dialog("Edit remap");
 
-        System.Drawing.Rectangle lastCard = app.FindById(editor, "PassExtrasCard").BoundingRectangle;
-        System.Drawing.Rectangle save = app.FindById(editor, "SaveButton").BoundingRectangle;
-        Assert.True(lastCard.Bottom <= save.Top, $"Pass extra modifiers ends at {lastCard.Bottom}, Save starts at {save.Top}");
+        var scroll = app.FindById(editor, "KeysScroll").Patterns.Scroll.Pattern;
+        if (scroll.VerticallyScrollable.Value)
+            scroll.SetScrollPercent(-1, 100); // -1: the horizontal position stays
+        AutomationElement lastCard = app.FindById(editor, "PassExtrasCard");
+        int saveTop = app.FindById(editor, "SaveButton").BoundingRectangle.Top;
+        Assert.True(Retry.WhileFalse(() => lastCard.BoundingRectangle.Bottom <= saveTop, AppSession.Timeout).Success,
+            $"Pass extra modifiers ends at {lastCard.BoundingRectangle.Bottom}, Save starts at {saveTop}");
         app.FindById(editor, "CancelButton").AsButton().Invoke();
     }
 

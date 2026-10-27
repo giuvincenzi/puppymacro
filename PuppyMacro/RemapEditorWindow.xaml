@@ -56,7 +56,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Each column scrolls, as the loop editor's: a window smaller than its cards never cuts them -->
-                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer x:Name="KeysScroll" Grid.Column="0" VerticalScrollBarVisibility="Auto">
                     <ikw:SimpleStackPanel Margin="24,4,24,12" Spacing="4">
                         <!-- Source -->
                         <ui:SettingsCard Header="{x:Static r:Strings.RemapEditor_WhenIPress}"
