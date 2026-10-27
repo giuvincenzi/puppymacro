@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.26.0
+
 ### Added
 - **Pass extra modifiers** in the remap editor: a remap also works with other Ctrl, Alt, Shift or Win held, and those
   reach the app with what is sent (Alt+A → Left: Shift+Alt+A selects with Shift+Left). On for new remaps; remaps made
