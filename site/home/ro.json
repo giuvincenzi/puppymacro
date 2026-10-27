@@ -15,8 +15,9 @@
   "banner_stay": "Continuați în engleză",
   "badge": "Gratuit · Open source · Windows 10 / 11",
   "download_button": "Descărcați pentru Windows",
-  "guide_button": "Citiți ghidul (în engleză)",
-  "fine_print": "Versiunea {version} · se actualizează singur · se instalează fără drepturi de administrator · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">toate versiunile</a>",
+  "guide_button": "Citiți ghidul",
+  "star_button": "Dați o stea pe GitHub",
+  "fine_print": "Versiunea {version}",
   "screenshot_alt": "Pagina Bucle din PuppyMacro, cu trei bucle",
   "zoom_close": "Închidere",
   "features_title": "Tot ce repetați, într-un singur loc",
@@ -48,5 +49,7 @@
   "privacy_updates": "PuppyMacro nu colectează și nu trimite date personale. Cu opțiunea <strong>Căutare automată de actualizări</strong> activată (implicit), contactează GitHub la pornire și la fiecare 12 ore pentru a căuta și a descărca actualizări; acestor solicitări li se aplică <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a>. O puteți dezactiva din Setări > Date și actualizări.",
   "privacy_ai": "PuppyMacro nu trimite nimic către servicii AI. Cu opțiunea <strong>Permiteți accesul AI</strong> activată (implicit este dezactivată), aplicațiile AI de pe PC-ul dvs. pe care le conectați pot citi buclele, macrocomenzile, remapările și setările dvs. prin PuppyMacro: ce citesc ajunge la furnizorul aplicației respective, conform politicii sale de confidențialitate. Cu <strong>Permiteți aplicațiilor AI să vadă ecranul</strong> (activată implicit), pot vedea și imagini ale ecranului dvs., pentru a crea macrocomenzi care îl privesc.",
   "footer_license": "Licență MIT",
-  "footer_releases": "Toate versiunile"
+  "footer_releases": "Toate versiunile",
+  "feedback_link": "Raportați o eroare sau propuneți o idee",
+  "feedback_link": "Raportați o eroare sau propuneți o idee"
 }

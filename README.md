@@ -19,6 +19,10 @@ Auto clicker, macros and hotkeys for PC. AI-ready. Automate clicks, keys and tex
 
 AI apps on your PC can build them through MCP, with the PuppyMacro app installed.
 
+## Feedback
+
+Found a bug or have an idea? [Open an issue](https://github.com/giuvincenzi/puppymacro/issues/new/choose).
+
 ## Development
 
 See [.claude/rules/](.claude/rules/).

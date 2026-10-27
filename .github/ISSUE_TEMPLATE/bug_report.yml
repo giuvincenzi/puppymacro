@@ -1,0 +1,45 @@
+name: Bug report
+description: Something in PuppyMacro does not work as it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happens
+      description: What goes wrong, and where in PuppyMacro.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What to do, step by step, to see it happen.
+      placeholder: |
+        1. Open …
+        2. Press …
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+  - type: input
+    id: version
+    attributes:
+      label: PuppyMacro version
+      description: Shown in Settings > About.
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Screenshots or log
+      description: >-
+        Drag screenshots here. For a macro, its log helps: turn on Debug in the macro's editor, run the macro again,
+        then View log > Copy and paste it here. It names your macros and apps: read it before you send it.

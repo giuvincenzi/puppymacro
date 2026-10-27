@@ -15,8 +15,9 @@
   "banner_stay": "英語のまま読む",
   "badge": "無料 · オープンソース · Windows 10 / 11",
   "download_button": "Windows 版をダウンロード",
-  "guide_button": "ガイドを読む (英語)",
-  "fine_print": "バージョン {version} · 自動で更新 · 管理者権限なしでインストール · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">すべてのリリース</a>",
+  "guide_button": "ガイドを読む",
+  "star_button": "GitHub でスターを付ける",
+  "fine_print": "バージョン {version}",
   "screenshot_alt": "3 つのループが表示された PuppyMacro のループ ページ",
   "zoom_close": "閉じる",
   "features_title": "繰り返しの操作は、すべてここで",
@@ -48,5 +49,7 @@
   "privacy_updates": "PuppyMacro が個人データを収集、送信することはありません。<strong>更新を自動的に確認する</strong> (既定でオン) が有効な場合、起動時と 12 時間ごとに GitHub に接続して、更新の確認とダウンロードを行います。これらの通信には <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub の一般プライバシー ステートメント</a>が適用されます。この機能は [設定] > [データと更新] でオフにできます。",
   "privacy_ai": "PuppyMacro が AI サービスに何かを送信することはありません。<strong>AI アクセスを許可する</strong> をオンにすると (既定ではオフ)、接続した PC 上の AI アプリが PuppyMacro を通じてループ、マクロ、リマップ、設定を読み取れます。読み取られた内容はそのアプリの提供元に送られ、提供元のプライバシー ポリシーが適用されます。 <strong>AI アプリに画面の表示を許可する</strong> がオン (既定でオン) のときは、画面を見るマクロを作成するために、画面の画像も表示できます。",
   "footer_license": "MIT ライセンス",
-  "footer_releases": "すべてのリリース"
+  "footer_releases": "すべてのリリース",
+  "feedback_link": "バグの報告・アイデアの提案",
+  "feedback_link": "バグの報告・アイデアの提案"
 }

@@ -15,8 +15,9 @@
   "banner_stay": "Weiter auf Englisch",
   "badge": "Kostenlos · Open Source · Windows 10 / 11",
   "download_button": "Für Windows herunterladen",
-  "guide_button": "Anleitung lesen (auf Englisch)",
-  "fine_print": "Version {version} · aktualisiert sich selbst · Installation ohne Administratorrechte · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">alle Versionen</a>",
+  "guide_button": "Anleitung lesen",
+  "star_button": "Auf GitHub einen Stern geben",
+  "fine_print": "Version {version}",
   "screenshot_alt": "Die Seite „Schleifen“ von PuppyMacro mit drei Schleifen",
   "zoom_close": "Schließen",
   "features_title": "Alles, was Sie wiederholen, an einem Ort",
@@ -48,5 +49,7 @@
   "privacy_updates": "PuppyMacro sammelt und sendet keine personenbezogenen Daten. Mit <strong>Automatisch nach Updates suchen</strong> (standardmäßig aktiviert) verbindet es sich beim Start und alle 12 Stunden mit GitHub, um Updates zu suchen und herunterzuladen; für diese Anfragen gilt die <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">Allgemeine Datenschutzerklärung für GitHub</a>. Sie können das unter Einstellungen > Daten und Updates ausschalten.",
   "privacy_ai": "PuppyMacro sendet nichts an AI-Dienste. Ist <strong>AI-Zugriff erlauben</strong> aktiviert (standardmäßig aus), können die AI-Apps auf Ihrem PC, die Sie verbinden, Ihre Schleifen, Makros, Neuzuordnungen und Einstellungen über PuppyMacro lesen: Was sie lesen, geht an den Anbieter der jeweiligen App und unterliegt dessen Datenschutzrichtlinie. Mit <strong>AI-Apps den Bildschirm sehen lassen</strong> (standardmäßig an) können sie auch Bilder Ihres Bildschirms sehen, um Makros zu erstellen, die auf ihn schauen.",
   "footer_license": "MIT-Lizenz",
-  "footer_releases": "Alle Versionen"
+  "footer_releases": "Alle Versionen",
+  "feedback_link": "Fehler melden oder Idee vorschlagen",
+  "feedback_link": "Fehler melden oder Idee vorschlagen"
 }

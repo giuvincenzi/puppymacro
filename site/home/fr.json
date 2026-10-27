@@ -15,8 +15,9 @@
   "banner_stay": "Rester en anglais",
   "badge": "Gratuit · Open source · Windows 10 / 11",
   "download_button": "Télécharger pour Windows",
-  "guide_button": "Lire le guide (en anglais)",
-  "fine_print": "Version {version} · mises à jour automatiques · s’installe sans droits d’administrateur · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">toutes les versions</a>",
+  "guide_button": "Lire le guide",
+  "star_button": "Ajouter une étoile sur GitHub",
+  "fine_print": "Version {version}",
   "screenshot_alt": "La page Boucles de PuppyMacro avec trois boucles",
   "zoom_close": "Fermer",
   "features_title": "Tout ce que vous répétez, au même endroit",
@@ -48,5 +49,7 @@
   "privacy_updates": "PuppyMacro ne collecte ni n’envoie aucune donnée personnelle. Avec <strong>Rechercher automatiquement les mises à jour</strong> (activé par défaut), il contacte GitHub au démarrage puis toutes les 12 heures pour rechercher et télécharger les mises à jour ; la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">Déclaration de confidentialité générale GitHub</a> s’applique à ces requêtes. Vous pouvez le désactiver dans Paramètres > Données et mises à jour.",
   "privacy_ai": "PuppyMacro n’envoie rien aux services d’AI. Avec <strong>Autoriser l’accès AI</strong> activé (désactivé par défaut), les applications d’AI de votre PC que vous connectez peuvent lire vos boucles, macros, remappages et paramètres via PuppyMacro : ce qu’elles lisent est transmis au fournisseur de cette application, selon sa propre politique de confidentialité. Avec <strong>Autoriser les applications d’AI à voir l’écran</strong> (activé par défaut), elles peuvent aussi voir des images de votre écran, pour créer des macros qui le regardent.",
   "footer_license": "Licence MIT",
-  "footer_releases": "Toutes les versions"
+  "footer_releases": "Toutes les versions",
+  "feedback_link": "Signaler un bug ou proposer une idée",
+  "feedback_link": "Signaler un bug ou proposer une idée"
 }

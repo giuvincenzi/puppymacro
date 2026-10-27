@@ -146,9 +146,15 @@ function Set-NavTexts([string]$html, $texts) {
         Replace('{{NAV_DOWNLOAD}}', (Encode $texts['nav_download']))
 }
 
+# The links under the home's buttons and in the footer: the same ones in both places.
+function Get-ProjectLinks($texts) {
+    "<a href=""https://github.com/giuvincenzi/puppymacro/releases"">$(Encode $texts['footer_releases'])</a> &middot; " +
+        "<a href=""https://github.com/giuvincenzi/puppymacro/issues/new/choose"">$(Encode $texts['feedback_link'])</a>"
+}
+
 function Set-FooterTexts([string]$html, $texts) {
     $html.Replace('{{FOOTER_LICENSE}}', (Encode $texts['footer_license'])).
-        Replace('{{FOOTER_RELEASES}}', (Encode $texts['footer_releases']))
+        Replace('{{PROJECT_LINKS}}', (Get-ProjectLinks $texts))
 }
 
 $work = Join-Path ([System.IO.Path]::GetTempPath()) ("puppymacro-site-" + [guid]::NewGuid().ToString('N'))
@@ -217,6 +223,7 @@ try {
             Replace('{{HEADER}}', (Set-NavTexts $homeHeader $texts)).
             Replace('{{BANNER}}', $banner).
             Replace('{{FOOTER}}', (Set-FooterTexts $footer $texts)).
+            Replace('{{PROJECT_LINKS}}', (Get-ProjectLinks $texts)).
             Replace('{{ALTERNATES}}', ($alternates -join "`n")).
             Replace('{{PAGE_URL}}', $language.Url).
             Replace('{{LANG}}', $language.Code).

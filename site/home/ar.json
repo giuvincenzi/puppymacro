@@ -15,8 +15,9 @@
   "banner_stay": "المتابعة بالإنجليزية",
   "badge": "مجاني · مفتوح المصدر · Windows 10 / 11",
   "download_button": "تنزيل لـ Windows",
-  "guide_button": "قراءة الدليل (بالإنجليزية)",
-  "fine_print": "الإصدار {version} · يحدّث نفسه تلقائيًا · يُثبَّت دون صلاحيات المسؤول · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">كل الإصدارات</a>",
+  "guide_button": "قراءة الدليل",
+  "star_button": "إضافة نجمة على GitHub",
+  "fine_print": "الإصدار {version}",
   "screenshot_alt": "صفحة الحلقات في PuppyMacro وفيها ثلاث حلقات",
   "zoom_close": "إغلاق",
   "features_title": "كل ما تكرره، في مكان واحد",
@@ -48,5 +49,7 @@
   "privacy_updates": "لا يجمع PuppyMacro أي بيانات شخصية ولا يرسلها. عند تشغيل <strong>التحقق من وجود تحديثات تلقائيًا</strong> (مُشغَّل افتراضيًا)، يتصل بـ GitHub عند بدء تشغيله وكل 12 ساعة للتحقق من التحديثات وتنزيلها، وتخضع هذه الطلبات لـ <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a>. يمكنك إيقاف تشغيله من الإعدادات > البيانات والتحديثات.",
   "privacy_ai": "لا يرسل PuppyMacro أي شيء إلى خدمات AI. عند تشغيل <strong>السماح بوصول AI</strong> (مُوقَف افتراضيًا)، يمكن لتطبيقات AI التي توصلها على الكمبيوتر قراءة حلقاتك ووحدات الماكرو وعمليات إعادة التعيين والإعدادات عبر PuppyMacro: وما تقرؤه يذهب إلى مزوّد ذلك التطبيق، ويخضع لسياسة الخصوصية الخاصة به. ومع تشغيل <strong>السماح لتطبيقات AI برؤية الشاشة</strong> (مُشغَّل افتراضيًا)، يمكنها أيضًا رؤية صور شاشتك، لإنشاء ماكرو يراقبها.",
   "footer_license": "ترخيص MIT",
-  "footer_releases": "كل الإصدارات"
+  "footer_releases": "كل الإصدارات",
+  "feedback_link": "الإبلاغ عن خطأ أو اقتراح فكرة",
+  "feedback_link": "الإبلاغ عن خطأ أو اقتراح فكرة"
 }

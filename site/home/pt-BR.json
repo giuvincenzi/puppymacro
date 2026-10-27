@@ -15,8 +15,9 @@
   "banner_stay": "Continuar em inglês",
   "badge": "Gratuito · Código aberto · Windows 10 / 11",
   "download_button": "Baixar para Windows",
-  "guide_button": "Ler o guia (em inglês)",
-  "fine_print": "Versão {version} · se atualiza sozinho · instala sem privilégios de administrador · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">todas as versões</a>",
+  "guide_button": "Ler o guia",
+  "star_button": "Dar uma estrela no GitHub",
+  "fine_print": "Versão {version}",
   "screenshot_alt": "A página Loops do PuppyMacro com três loops",
   "zoom_close": "Fechar",
   "features_title": "Tudo o que você repete, em um só lugar",
@@ -48,5 +49,7 @@
   "privacy_updates": "O PuppyMacro não coleta nem envia dados pessoais. Com <strong>Verificar se há atualizações automaticamente</strong> ativado (o padrão), ele se conecta ao GitHub ao ser iniciado e a cada 12 horas para procurar e baixar atualizações; a <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">Declaração Geral de Privacidade do GitHub</a> se aplica a essas solicitações. Você pode desativar essa opção em Configurações > Dados e atualizações.",
   "privacy_ai": "O PuppyMacro não envia nada a serviços de AI. Com <strong>Permitir acesso de AI</strong> ativado (desativado por padrão), os aplicativos de AI do seu PC que você conectar podem ler seus loops, macros, remapeamentos e configurações por meio do PuppyMacro: o que eles leem vai para o provedor desse aplicativo, de acordo com a política de privacidade dele. Com <strong>Permitir que aplicativos de AI vejam a tela</strong> (ativado por padrão), eles também podem ver imagens da sua tela, para criar macros que olham para ela.",
   "footer_license": "Licença MIT",
-  "footer_releases": "Todas as versões"
+  "footer_releases": "Todas as versões",
+  "feedback_link": "Relatar um bug ou sugerir uma ideia",
+  "feedback_link": "Relatar um bug ou sugerir uma ideia"
 }

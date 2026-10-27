@@ -15,8 +15,9 @@
   "banner_stay": "Seguir en inglés",
   "badge": "Gratis · Código abierto · Windows 10 / 11",
   "download_button": "Descargar para Windows",
-  "guide_button": "Leer la guía (en inglés)",
-  "fine_print": "Versión {version} · actualizaciones automáticas · se instala sin permisos de administrador · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">todas las versiones</a>",
+  "guide_button": "Leer la guía",
+  "star_button": "Dar una estrella en GitHub",
+  "fine_print": "Versión {version}",
   "screenshot_alt": "La página Bucles de PuppyMacro con tres bucles",
   "zoom_close": "Cerrar",
   "features_title": "Todo lo que repites, en un solo lugar",
@@ -48,5 +49,7 @@
   "privacy_updates": "PuppyMacro no recopila ni envía datos personales. Con <strong>Buscar actualizaciones automáticamente</strong> (activado de forma predeterminada), se conecta a GitHub al iniciarse y cada 12 horas para buscar y descargar actualizaciones; a esas solicitudes se aplica la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">Declaración de privacidad general de GitHub</a>. Puedes desactivarlo en Configuración > Datos y actualizaciones.",
   "privacy_ai": "PuppyMacro no envía nada a servicios de AI. Con <strong>Permitir el acceso de AI</strong> activado (está desactivado de forma predeterminada), las aplicaciones de AI de tu equipo que conectes pueden leer tus bucles, macros, reasignaciones y configuración a través de PuppyMacro: lo que leen va al proveedor de esa aplicación, según su propia política de privacidad. Con <strong>Permitir que las aplicaciones de AI vean la pantalla</strong> (activado de forma predeterminada), también pueden ver imágenes de tu pantalla, para crear macros que la miran.",
   "footer_license": "Licencia MIT",
-  "footer_releases": "Todas las versiones"
+  "footer_releases": "Todas las versiones",
+  "feedback_link": "Informar de un error o sugerir una idea",
+  "feedback_link": "Informar de un error o sugerir una idea"
 }
