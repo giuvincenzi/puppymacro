@@ -1,0 +1,15 @@
+name: Idea or feedback
+description: Something you would like PuppyMacro to do, or to do differently.
+labels: [feedback]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you would like
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it would help you
+      description: What you are trying to do, and how you do it today.

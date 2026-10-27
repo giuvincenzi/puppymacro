@@ -17,7 +17,7 @@
   "download_button": "Scarica per Windows",
   "guide_button": "Leggi la guida",
   "star_button": "Lascia una stella su GitHub",
-  "fine_print": "Versione {version} · aggiornamenti automatici · si installa senza diritti di amministratore · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">tutte le versioni</a>",
+  "fine_print": "Versione {version}",
   "screenshot_alt": "La pagina Loop di PuppyMacro con tre loop",
   "zoom_close": "Chiudi",
   "features_title": "Tutto ciò che ripeti, in un unico posto",
@@ -49,5 +49,7 @@
   "privacy_updates": "PuppyMacro non raccoglie né invia dati personali. Con l’opzione <strong>Verifica automaticamente la disponibilità di aggiornamenti</strong> (attiva per impostazione predefinita), contatta GitHub all’avvio e ogni 12 ore per cercare e scaricare gli aggiornamenti; a queste richieste si applica il <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a>. Puoi disattivarla in Impostazioni > Dati e aggiornamenti.",
   "privacy_ai": "PuppyMacro non invia nulla ai servizi di AI. Con l’opzione <strong>Consenti accesso AI</strong> attiva (è disattivata per impostazione predefinita), le app di AI sul tuo PC che colleghi possono leggere loop, macro, rimappature e impostazioni tramite PuppyMacro: ciò che leggono va al fornitore di quell’app, secondo la sua informativa sulla privacy. Con <strong>Consenti alle app di AI di vedere lo schermo</strong> (attiva per impostazione predefinita), possono vedere anche le immagini del tuo schermo, per creare macro che lo guardano.",
   "footer_license": "Licenza MIT",
-  "footer_releases": "Tutte le versioni"
+  "footer_releases": "Tutte le versioni",
+  "feedback_link": "Segnala un bug o proponi un'idea",
+  "feedback_link": "Segnala un bug o proponi un'idea"
 }

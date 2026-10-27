@@ -17,7 +17,7 @@
   "download_button": "Windows용 다운로드",
   "guide_button": "가이드 보기",
   "star_button": "GitHub에서 스타 주기",
-  "fine_print": "버전 {version} · 자동 업데이트 · 관리자 권한 없이 설치 · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">모든 릴리스</a>",
+  "fine_print": "버전 {version}",
   "screenshot_alt": "루프 3개가 있는 PuppyMacro의 루프 페이지",
   "zoom_close": "닫기",
   "features_title": "반복하는 모든 작업을 한곳에서",
@@ -49,5 +49,7 @@
   "privacy_updates": "PuppyMacro는 개인 데이터를 수집하거나 보내지 않습니다. <strong>자동으로 업데이트 확인</strong>(기본값: 켜짐)을 사용하면 시작할 때와 12시간마다 GitHub에 연결해 업데이트를 확인하고 다운로드합니다. 이 요청에는 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub 일반 개인정보처리방침</a>이 적용됩니다. 설정 > 데이터 및 업데이트에서 끌 수 있습니다.",
   "privacy_ai": "PuppyMacro는 AI 서비스에 아무것도 보내지 않습니다. <strong>AI 액세스 허용</strong>을 켜면(기본값: 꺼짐) 연결한 PC의 AI 앱이 PuppyMacro를 통해 루프, 매크로, 다시 매핑 및 설정을 읽을 수 있습니다. 읽은 내용은 해당 앱의 제공업체로 전송되며, 제공업체의 개인정보처리방침이 적용됩니다. <strong>AI 앱이 화면을 볼 수 있도록 허용</strong>이 켜져 있으면(기본값: 켜짐) 화면을 보는 매크로를 만들기 위해 화면 이미지도 볼 수 있습니다.",
   "footer_license": "MIT 라이선스",
-  "footer_releases": "모든 릴리스"
+  "footer_releases": "모든 릴리스",
+  "feedback_link": "버그 신고 또는 아이디어 제안",
+  "feedback_link": "버그 신고 또는 아이디어 제안"
 }

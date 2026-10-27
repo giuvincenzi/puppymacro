@@ -12,6 +12,8 @@ in the DNS of `gviam.app`, which is verified in the maintainer's GitHub account)
 - `site/_header.html`, `site/_footer.html`: shared header and footer, with the texts of the page's language. On phones
   the header stays on one line (brand, the language's flag, a menu button that opens the links and Download); the
   header's popups open across the whole width, so they never leave the screen.
+- The links to all releases and to open an issue (bug or idea, `.github/ISSUE_TEMPLATE/`) are one piece,
+  `Get-ProjectLinks` in `scripts/site.ps1`, shown under the home's buttons and in the footer of every page.
 - `site/guide/sections.txt`: guide sections in order (`file|Title`). One file per section,
   `site/guide/<file>.html`, with the section content only; `site/guide/_page.html` is the
   page around it (sticky sidebar, version select, previous/next).
@@ -36,7 +38,8 @@ in the DNS of `gviam.app`, which is verified in the maintainer's GitHub account)
 
 `README.md` is short: it presents PuppyMacro and links to the website, the user guide and the download, and never
 repeats what the website or the guide already say. Its title and description come from `site/home/en.json` and are
-checked by the test workflow (`discoverability.md`). It ends with "Development" (see `.claude/rules/`) and "License",
+checked by the test workflow (`discoverability.md`). It ends with "Feedback" (a link to open an issue), "Development"
+(see `.claude/rules/`) and "License",
 with the third-party components the app ships (NuGet packages in `PuppyMacro/PuppyMacro.csproj` and their dependencies,
 files in `PuppyMacro/Assets/`) and the attribution their licenses ask for.
 

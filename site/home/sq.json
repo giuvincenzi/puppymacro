@@ -17,7 +17,7 @@
   "download_button": "Shkarko për Windows",
   "guide_button": "Lexo udhëzuesin",
   "star_button": "Jep një yll në GitHub",
-  "fine_print": "Versioni {version} · përditësohet vetë · instalohet pa të drejta administratori · <a href=\"https://github.com/giuvincenzi/puppymacro/releases\">të gjitha versionet</a>",
+  "fine_print": "Versioni {version}",
   "screenshot_alt": "Faqja Ciklet e PuppyMacro me tre cikle",
   "zoom_close": "Mbyll",
   "features_title": "Gjithçka që përsëritni, në një vend",
@@ -49,5 +49,7 @@
   "privacy_updates": "PuppyMacro nuk mbledh dhe nuk dërgon të dhëna personale. Kur opsioni <strong>Kontrollo automatikisht për përditësime</strong> është aktiv (si parazgjedhje), lidhet me GitHub kur niset dhe çdo 12 orë për të kontrolluar dhe shkarkuar përditësimet; për këto kërkesa zbatohet <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub General Privacy Statement</a>. Mund ta çaktivizoni te Cilësimet > Të dhënat dhe përditësimet.",
   "privacy_ai": "PuppyMacro nuk dërgon asgjë te shërbimet AI. Kur opsioni <strong>Lejo qasjen AI</strong> është aktiv (si parazgjedhje është joaktiv), aplikacionet AI në PC-në tuaj që lidhni mund të lexojnë ciklet, makrot, ricaktimet dhe cilësimet tuaja përmes PuppyMacro: ajo që lexojnë shkon te ofruesi i atij aplikacioni, sipas politikës së tij të privatësisë. Me <strong>Lejo aplikacionet AI të shohin ekranin</strong> (aktiv si parazgjedhje), ato mund të shohin edhe pamje të ekranit tuaj, për të krijuar makro që e shohin atë.",
   "footer_license": "Licenca MIT",
-  "footer_releases": "Të gjitha versionet"
+  "footer_releases": "Të gjitha versionet",
+  "feedback_link": "Raporto një gabim ose propozo një ide",
+  "feedback_link": "Raporto një gabim ose propozo një ide"
 }
