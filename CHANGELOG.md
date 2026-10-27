@@ -7,6 +7,10 @@
   reach the app with what is sent (Alt+A → Left: Shift+Alt+A selects with Shift+Left). On for new remaps; remaps made
   before keep working as they did.
 
+### Fixed
+- The remap editor opens tall enough to show all its options, and its columns scroll when the window is made smaller,
+  instead of cutting off what does not fit.
+
 ## 1.25.0
 
 ### Added

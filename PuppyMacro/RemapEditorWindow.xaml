@@ -12,7 +12,7 @@
     ui:TitleBar.MaximizeButtonAvailability="Collapsed"
     Title="{x:Static r:Strings.RemapEditor_AddTitle}"
     Width="1140"
-    Height="560"
+    Height="640"
     MinWidth="880"
     MinHeight="440"
     ResizeMode="CanResize"
@@ -55,53 +55,58 @@
                     <ColumnDefinition Width="520" />
                 </Grid.ColumnDefinitions>
 
-                <ikw:SimpleStackPanel Grid.Column="0" Margin="24,4,24,12" Spacing="4">
-                    <!-- Source -->
-                    <ui:SettingsCard Header="{x:Static r:Strings.RemapEditor_WhenIPress}"
-                                     Description="{x:Static r:Strings.RemapEditor_KeyDescription}"
-                                     ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                        <views:KeyCaptureField x:Name="SourceField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
-                                               ItemName="key" Prompt="{x:Static r:Strings.RemapEditor_KeyPrompt}"
-                                               ValueChanged="OnSourceFieldChanged" Rejected="ShowError" />
-                    </ui:SettingsCard>
+                <!-- Each column scrolls, as the loop editor's: a window smaller than its cards never cuts them -->
+                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                    <ikw:SimpleStackPanel Margin="24,4,24,12" Spacing="4">
+                        <!-- Source -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.RemapEditor_WhenIPress}"
+                                         Description="{x:Static r:Strings.RemapEditor_KeyDescription}"
+                                         ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                            <views:KeyCaptureField x:Name="SourceField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
+                                                   ItemName="key" Prompt="{x:Static r:Strings.RemapEditor_KeyPrompt}"
+                                                   ValueChanged="OnSourceFieldChanged" Rejected="ShowError" />
+                        </ui:SettingsCard>
 
-                    <!-- Target -->
-                    <ui:SettingsCard Header="{x:Static r:Strings.RemapEditor_SendInstead}"
-                                     Description="{x:Static r:Strings.RemapEditor_KeyDescription}"
-                                     ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                        <views:KeyCaptureField x:Name="TargetField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
-                                               ItemName="key" Prompt="{x:Static r:Strings.RemapEditor_KeyPrompt}"
-                                               ValueChanged="OnTargetFieldChanged" Rejected="ShowError" />
-                    </ui:SettingsCard>
+                        <!-- Target -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.RemapEditor_SendInstead}"
+                                         Description="{x:Static r:Strings.RemapEditor_KeyDescription}"
+                                         ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                            <views:KeyCaptureField x:Name="TargetField" AllowPrimaryMouse="True" AllowModifierAlone="True" CanClear="False"
+                                                   ItemName="key" Prompt="{x:Static r:Strings.RemapEditor_KeyPrompt}"
+                                                   ValueChanged="OnTargetFieldChanged" Rejected="ShowError" />
+                        </ui:SettingsCard>
 
-                    <!-- Keep modifiers held: only when both keys have Ctrl, Alt, Shift or Win (off and greyed otherwise) -->
-                    <ui:SettingsCard x:Name="KeepModifiersCard" Header="{x:Static r:Strings.RemapEditor_KeepModifiers}"
-                                     Description="{x:Static r:Strings.RemapEditor_KeepModifiersDescription}">
-                        <ui:ToggleSwitch x:Name="KeepModifiersSwitch" AutomationProperties.Name="{x:Static r:Strings.RemapEditor_KeepModifiers}"
-                                         Toggled="OnKeepModifiersToggled" />
-                    </ui:SettingsCard>
+                        <!-- Keep modifiers held: only when both keys have Ctrl, Alt, Shift or Win (off and greyed otherwise) -->
+                        <ui:SettingsCard x:Name="KeepModifiersCard" Header="{x:Static r:Strings.RemapEditor_KeepModifiers}"
+                                         Description="{x:Static r:Strings.RemapEditor_KeepModifiersDescription}">
+                            <ui:ToggleSwitch x:Name="KeepModifiersSwitch" AutomationProperties.Name="{x:Static r:Strings.RemapEditor_KeepModifiers}"
+                                             Toggled="OnKeepModifiersToggled" />
+                        </ui:SettingsCard>
 
-                    <!-- Pass extra modifiers: only when the key pressed is a key or a button (off and greyed for a modifier alone) -->
-                    <ui:SettingsCard x:Name="PassExtrasCard" Header="{x:Static r:Strings.RemapEditor_PassExtras}"
-                                     Description="{x:Static r:Strings.RemapEditor_PassExtrasDescription}">
-                        <ui:ToggleSwitch x:Name="PassExtrasSwitch" AutomationProperties.Name="{x:Static r:Strings.RemapEditor_PassExtras}"
-                                         Toggled="OnPassExtrasToggled" />
-                    </ui:SettingsCard>
-                </ikw:SimpleStackPanel>
+                        <!-- Pass extra modifiers: only when the key pressed is a key or a button (off and greyed for a modifier alone) -->
+                        <ui:SettingsCard x:Name="PassExtrasCard" Header="{x:Static r:Strings.RemapEditor_PassExtras}"
+                                         Description="{x:Static r:Strings.RemapEditor_PassExtrasDescription}">
+                            <ui:ToggleSwitch x:Name="PassExtrasSwitch" AutomationProperties.Name="{x:Static r:Strings.RemapEditor_PassExtras}"
+                                             Toggled="OnPassExtrasToggled" />
+                        </ui:SettingsCard>
+                    </ikw:SimpleStackPanel>
+                </ScrollViewer>
 
-                <ikw:SimpleStackPanel Grid.Column="1" Margin="0,4,24,12" Spacing="4">
-                    <!-- Scope -->
-                    <ui:SettingsCard Header="{x:Static r:Strings.Editor_Enabled}">
-                        <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="{x:Static r:Strings.Editor_Enabled}" />
-                    </ui:SettingsCard>
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                    <ikw:SimpleStackPanel Margin="0,4,24,12" Spacing="4">
+                        <!-- Scope -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.Editor_Enabled}">
+                            <ui:ToggleSwitch x:Name="EnabledSwitch" AutomationProperties.Name="{x:Static r:Strings.Editor_Enabled}" />
+                        </ui:SettingsCard>
 
-                    <views:AppScopeEditor x:Name="AppScopeCard" Changed="OnAppScopeChanged" />
+                        <views:AppScopeEditor x:Name="AppScopeCard" Changed="OnAppScopeChanged" />
 
-                    <!-- Note -->
-                    <ui:SettingsCard Header="{x:Static r:Strings.RemapEditor_Note}" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
-                        <TextBox x:Name="NoteBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.RemapEditor_NotePlaceholder}" />
-                    </ui:SettingsCard>
-                </ikw:SimpleStackPanel>
+                        <!-- Note -->
+                        <ui:SettingsCard Header="{x:Static r:Strings.RemapEditor_Note}" ContentAlignment="Vertical" HorizontalContentAlignment="Stretch">
+                            <TextBox x:Name="NoteBox" ui:ControlHelper.PlaceholderText="{x:Static r:Strings.RemapEditor_NotePlaceholder}" />
+                        </ui:SettingsCard>
+                    </ikw:SimpleStackPanel>
+                </ScrollViewer>
             </Grid>
         </Grid>
     </DockPanel>

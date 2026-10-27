@@ -814,6 +814,25 @@ public class AppTests
             "Pass extra modifiers was not saved off");
     }
 
+    /// <summary>
+    /// At its size when it opens, the remap editor shows every card of its left column whole, above Save and Cancel: the
+    /// last one, Pass extra modifiers, was cut off by the bar when it was added (the 1.26.0 release pull request's
+    /// screenshot).
+    /// </summary>
+    [Fact]
+    public void The_remap_editor_opens_with_every_card_above_Save_and_Cancel()
+    {
+        using var app = new AppSession();
+        app.GoTo("Remap");
+        app.EditItem("Sample: Caps Lock to Esc");
+        Window editor = app.Dialog("Edit remap");
+
+        System.Drawing.Rectangle lastCard = app.FindById(editor, "PassExtrasCard").BoundingRectangle;
+        System.Drawing.Rectangle save = app.FindById(editor, "SaveButton").BoundingRectangle;
+        Assert.True(lastCard.Bottom <= save.Top, $"Pass extra modifiers ends at {lastCard.Bottom}, Save starts at {save.Top}");
+        app.FindById(editor, "CancelButton").AsButton().Invoke();
+    }
+
     [Fact]
     public void The_loop_editor_adds_each_action_from_its_bar_with_its_options_and_Enabled_is_saved()
     {
