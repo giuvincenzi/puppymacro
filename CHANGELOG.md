@@ -10,6 +10,10 @@
 ### Changed
 - The website moved to [puppymacro.gviam.app](https://puppymacro.gviam.app/). The old address takes you there.
 
+### Fixed
+- The remap editor opens tall enough to show all its options, and its columns scroll when the window is made smaller,
+  instead of cutting off what does not fit.
+
 ## 1.25.0
 
 ### Added
