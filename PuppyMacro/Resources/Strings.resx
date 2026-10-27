@@ -125,6 +125,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>These settings can't be restored: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Theme</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Close to system tray</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Start in the system tray</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Overlay panel</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Click items in the panel</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Overlay panel opacity</value></data>
@@ -178,6 +179,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Keep running in the system tray when you close the window</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Start with Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Starts in the system tray when you sign in</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Start in the system tray</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>Opens in the system tray, without the window, when you start PuppyMacro</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Hotkeys and overlay</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Hotkeys</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Stop every loop and macro</value></data>

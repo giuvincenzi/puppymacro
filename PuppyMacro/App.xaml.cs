@@ -266,7 +266,9 @@ public partial class App : Application
         var window = new MainWindow(store, settings, macros);
         MainWindow = window;
         ApplyTheme(settings.Theme);
-        if (startInTray && itemsFile == null)
+        // Start in the system tray (the setting) is for a plain start: a file to import, Settings › Backup asked for or the
+        // restart after an Import show the window.
+        if (itemsFile == null && (startInTray || (settings.StartInTray && !restarting && !showBackupSettings)))
             window.StartInTray();
         else
             window.Show();

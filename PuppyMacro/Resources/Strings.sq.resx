@@ -120,6 +120,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Këto cilësime nuk mund të rikthehen: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Tema</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Mbyll në zonën e njoftimeve</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Nis në zonën e njoftimeve</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Paneli i mbivendosjes</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Kliko elementet në panel</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Patejdukshmëria e panelit të mbivendosjes</value></data>
@@ -171,6 +172,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Vazhdon të ekzekutohet në zonën e njoftimeve kur mbyllni dritaren</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Nis me Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Niset në zonën e njoftimeve kur hyni</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Nis në zonën e njoftimeve</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>Hapet në zonën e njoftimeve, pa dritaren, kur nisni PuppyMacro</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Tastet e shpejta dhe mbivendosja</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Tastet e shpejta</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Ndal çdo cikël dhe makro</value></data>

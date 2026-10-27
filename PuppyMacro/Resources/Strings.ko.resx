@@ -112,6 +112,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>다음 설정은 복원할 수 없습니다: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>테마</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>닫을 때 시스템 트레이로 이동</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>시스템 트레이에서 시작</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>오버레이 패널</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>패널의 항목 클릭</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>오버레이 패널 불투명도</value></data>
@@ -161,6 +162,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>창을 닫아도 시스템 트레이에서 계속 실행됩니다</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Windows 시작 시 실행</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>로그인하면 시스템 트레이에서 시작됩니다</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>시스템 트레이에서 시작</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>PuppyMacro를 실행하면 창 없이 시스템 트레이에서 시작됩니다</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>바로 가기 키 및 오버레이</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>바로 가기 키</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>모든 루프와 매크로 중지</value></data>

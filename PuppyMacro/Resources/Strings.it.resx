@@ -120,6 +120,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Queste impostazioni non possono essere ripristinate: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Tema</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Chiudi nell'area di notifica</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Avvia nell'area di notifica</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Pannello overlay</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Clic sugli elementi nel pannello</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Opacità del pannello overlay</value></data>
@@ -171,6 +172,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Resta in esecuzione nell'area di notifica quando chiudi la finestra</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Avvia con Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Si avvia nell'area di notifica quando accedi</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Avvia nell'area di notifica</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>Si apre nell'area di notifica, senza la finestra, quando avvii PuppyMacro</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Tasti di scelta rapida e overlay</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Tasti di scelta rapida</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Arresta tutti i loop e le macro</value></data>

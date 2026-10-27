@@ -491,6 +491,27 @@ public class AppTests
     }
 
     [Fact]
+    public void Start_in_the_system_tray_starts_with_no_window_and_its_switch_turns_it_off()
+    {
+        using var app = new AppSession(seed =>
+        {
+            seed.Settings.StartInTray = true;
+            seed.Settings.OpenMainHotkey = HotkeyBinding.FromKey(Vk.F14);
+        }, inTray: true);
+        using var target = new TargetWindow();
+
+        Assert.False(app.MainWindowShown(), "the main window showed although Start in the system tray is on");
+        app.OpenWithHotkey(target, Vk.F14);
+
+        app.GoTo("Settings");
+        ToggleButton startInTray = app.FindById(app.MainWindow, "StartInTraySwitch").AsToggleButton();
+        Assert.Equal(ToggleState.On, startInTray.ToggleState);
+        startInTray.Toggle(); // UI Automation: no click, works off screen
+        Assert.True(Retry.WhileFalse(() => File.ReadAllText(AppSession.SettingsFile).Contains("\"StartInTray\": false"),
+            AppSession.Timeout).Success, "Start in the system tray was not saved off");
+    }
+
+    [Fact]
     public void Overlay_mode_hides_the_window_and_its_hotkey_leaves_it_in_the_tray()
     {
         using var app = new AppSession();

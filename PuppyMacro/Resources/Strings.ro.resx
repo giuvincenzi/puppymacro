@@ -123,6 +123,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Aceste setări nu pot fi restaurate: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Temă</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Închidere în zona de notificare</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Pornire în zona de notificare</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Panou de suprapunere</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Clic pe elementele din panou</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Opacitatea panoului de suprapunere</value></data>
@@ -174,6 +175,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Rămâne în execuție în zona de notificare când închideți fereastra</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Pornire odată cu Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Pornește în zona de notificare când vă conectați</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Pornire în zona de notificare</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>Se deschide în zona de notificare, fără fereastră, când porniți PuppyMacro</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Taste rapide și suprapunere</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Taste rapide</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Oprește toate buclele și macrocomenzile</value></data>

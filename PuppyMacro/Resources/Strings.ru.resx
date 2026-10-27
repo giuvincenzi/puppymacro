@@ -123,6 +123,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Эти параметры нельзя восстановить: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Тема</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Сворачивать в область уведомлений</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Запускать в области уведомлений</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Панель наложения</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Щелчок по элементам на панели</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Непрозрачность панели наложения</value></data>
@@ -174,6 +175,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Продолжать работу в области уведомлений после закрытия окна</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Запускать вместе с Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Запуск в области уведомлений при входе в систему</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Запускать в области уведомлений</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>При запуске PuppyMacro открывается в области уведомлений, без окна</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Горячие клавиши и наложение</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Горячие клавиши</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Остановить все циклы и макросы</value></data>

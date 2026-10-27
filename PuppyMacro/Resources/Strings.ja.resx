@@ -112,6 +112,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>次の設定は復元できません: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>テーマ</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>閉じるときにシステム トレイに格納</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>システム トレイで起動</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>オーバーレイ パネル</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>パネルの項目をクリック</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>オーバーレイ パネルの不透明度</value></data>
@@ -161,6 +162,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>ウィンドウを閉じても、システム トレイで実行し続けます</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Windows の起動時に開始</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>サインイン時にシステム トレイで起動します</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>システム トレイで起動</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>PuppyMacro を起動すると、ウィンドウを表示せずにシステム トレイで開きます</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>ホットキーとオーバーレイ</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>ホットキー</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>すべてのループとマクロを停止します</value></data>

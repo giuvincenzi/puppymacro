@@ -581,6 +581,8 @@ public partial class MainWindow : IAiHost
             ThemeComboBox.SelectedIndex = (int)theme;
         if (values.CloseToTray is bool tray)
             CloseToTraySwitch.IsOn = tray;
+        if (values.StartInTray is bool startInTray)
+            StartInTraySwitch.IsOn = startInTray;
         if (values.ShowOverlayPanel is bool panel)
             ShowPanelSwitch.IsOn = panel;
         if (values.ClickItemsInPanel is bool click)

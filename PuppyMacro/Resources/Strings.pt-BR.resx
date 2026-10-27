@@ -125,6 +125,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Estas configurações não podem ser restauradas: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Tema</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Fechar para a bandeja do sistema</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Iniciar na bandeja do sistema</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Painel de sobreposição</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Clicar nos itens do painel</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Opacidade do painel de sobreposição</value></data>
@@ -178,6 +179,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Continuar em execução na bandeja do sistema quando você fechar a janela</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Iniciar com o Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Inicia na bandeja do sistema quando você entra</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Iniciar na bandeja do sistema</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>Abre na bandeja do sistema, sem a janela, quando você inicia o PuppyMacro</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Teclas de atalho e sobreposição</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Teclas de atalho</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Parar todos os loops e macros</value></data>

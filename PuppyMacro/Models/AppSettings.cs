@@ -593,6 +593,9 @@ public sealed class AppSettings
     /// <summary>Start in the system tray when the user signs in to Windows.</summary>
     public bool StartWithWindows { get; set; }
 
+    /// <summary>Start in the system tray, without the window, also when the user opens PuppyMacro.</summary>
+    public bool StartInTray { get; set; }
+
     /// <summary>Check GitHub for a new version at startup and every few hours.</summary>
     public bool CheckForUpdates { get; set; } = true;
 

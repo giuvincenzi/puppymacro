@@ -192,6 +192,15 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Files_without_Start_in_the_system_tray_show_the_window_at_start()
+    {
+        AppSettings settings = LoadJson("""{ "SchemaVersion": 6, "StartWithWindows": true }""", out _);
+
+        Assert.False(settings.StartInTray);
+        Assert.True(settings.StartWithWindows);
+    }
+
+    [Fact]
     public void Files_without_the_updates_setting_check_for_updates()
     {
         AppSettings settings = LoadJson("""{ "SchemaVersion": 4 }""", out _);
