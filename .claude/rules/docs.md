@@ -1,7 +1,10 @@
 # Documentation and website
 
-Website: `https://giuvincenzi.github.io/puppymacro/`. Sources in `site/`, built by
+Website: `https://puppymacro.gviam.app/`. Sources in `site/`, built by
 `scripts/site.ps1`, published to GitHub Pages by the `publish_release` workflow (job `publish_site`).
+The address is the repository's custom domain (Settings › Pages; a CNAME record `puppymacro` → `giuvincenzi.github.io`
+in the DNS of `gviam.app`, which is verified in the maintainer's GitHub account). GitHub sends the old address
+`https://giuvincenzi.github.io/puppymacro/` to it, so old links and the apps installed before keep working.
 
 - `site/index.html`: the home page (features, privacy), a template filled once per language with the texts of
   `site/home/<code>.json` (placeholders: `scripts/site.ps1`). The home is translated, the guide only in English

@@ -35,12 +35,12 @@ paths:
 
 ## Search engines
 
-- Google Search Console: a "URL prefix" property for `https://giuvincenzi.github.io/puppymacro/` in the maintainer's
-  account, verified by the `google-site-verification` meta tag in `site/index.html`. Never delete or change the tag: the
-  property stays verified only while Google finds it.
+- Google Search Console: a "Domain" property for `gviam.app` in the maintainer's account, verified by a TXT record in
+  the domain's DNS. The `google-site-verification` meta tag in `site/index.html` verifies the "URL prefix" property of
+  the old address: keep it until the "Domain" property is verified.
 - Bing Webmaster Tools: the site imported from Search Console (no tag of its own).
 - `scripts/site.ps1` writes, with `$SiteUrl` as the one place the site's address is written: `sitemap.xml` (submitted
-  in Search Console; a project site on `github.io` has no `robots.txt` of its own), a canonical link on every page (a
+  in Search Console), a canonical link on every page (a
   guide page of any version points to the same page of the newest guide), `hreflang` links between the home pages
   (English as `x-default`), link previews and structured data.
 

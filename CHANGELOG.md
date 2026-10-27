@@ -7,6 +7,9 @@
   reach the app with what is sent (Alt+A → Left: Shift+Alt+A selects with Shift+Left). On for new remaps; remaps made
   before keep working as they did.
 
+### Changed
+- The website moved to [puppymacro.gviam.app](https://puppymacro.gviam.app/). The old address takes you there.
+
 ## 1.25.0
 
 ### Added
