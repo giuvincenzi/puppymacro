@@ -8,8 +8,8 @@
   <a href="https://github.com/giuvincenzi/puppymacro/actions/workflows/test.yml?query=branch%3Amain"><img src="https://badgen.net/github/checks/giuvincenzi/puppymacro/main?label=CI" alt="CI"></a>
 </p>
 <p align="center">
-  🌐 <a href="https://giuvincenzi.github.io/puppymacro/">Website</a> ·
-  📖 <a href="https://giuvincenzi.github.io/puppymacro/guide/latest/">User guide</a> ·
+  🌐 <a href="https://puppymacro.gviam.app/">Website</a> ·
+  📖 <a href="https://puppymacro.gviam.app/guide/latest/">User guide</a> ·
   ⬇️ <a href="https://github.com/giuvincenzi/puppymacro/releases/latest/download/PuppyMacro-win-Setup.exe">Download for Windows</a>
 </p>
 

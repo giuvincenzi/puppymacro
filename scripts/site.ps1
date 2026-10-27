@@ -17,7 +17,7 @@ Set-Location $root
 if (-not $Output) { $Output = if ($Preview) { 'site-preview' } else { '_site' } }
 $utf8 = New-Object System.Text.UTF8Encoding $false
 # Where GitHub Pages publishes the site: canonical links, link previews and sitemap.xml need absolute URLs.
-$SiteUrl = 'https://giuvincenzi.github.io/puppymacro/'
+$SiteUrl = 'https://puppymacro.gviam.app/'
 
 function Read-Text([string]$path) { [System.IO.File]::ReadAllText($path, $utf8) }
 function Write-Text([string]$path, [string]$text) {

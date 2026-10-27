@@ -26,9 +26,9 @@ $server = [ordered]@{
     title = 'PuppyMacro'
     description = $description
     version = $version
-    websiteUrl = 'https://giuvincenzi.github.io/puppymacro/guide/latest/ai.html'
+    websiteUrl = 'https://puppymacro.gviam.app/guide/latest/ai.html'
     repository = [ordered]@{ url = 'https://github.com/giuvincenzi/puppymacro'; source = 'github'; id = '1409153612' }
-    icons = @([ordered]@{ src = 'https://giuvincenzi.github.io/puppymacro/assets/logo.png'; mimeType = 'image/png'; sizes = @('256x256') })
+    icons = @([ordered]@{ src = 'https://puppymacro.gviam.app/assets/logo.png'; mimeType = 'image/png'; sizes = @('256x256') })
 }
 [System.IO.File]::WriteAllText($Output, (ConvertTo-Json $server -Depth 5), $utf8)
 Write-Host "$Output written: $($server.name) $version"
