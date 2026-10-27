@@ -115,7 +115,7 @@
   <data name="Ai_NoneValue" xml:space="preserve"><value>Ninguno</value></data>
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Esta configuración no se puede restaurar: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Tema</value></data>
-  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Cerrar en la bandeja del sistema</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Cerrar a la bandeja del sistema</value></data>
   <data name="AiSetting_StartInTray" xml:space="preserve"><value>Iniciar en la bandeja del sistema</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Panel de superposición</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Hacer clic en los elementos del panel</value></data>
@@ -162,7 +162,7 @@
   <data name="Settings_General" xml:space="preserve"><value>General</value></data>
   <data name="Settings_Theme" xml:space="preserve"><value>Tema</value></data>
   <data name="Settings_ThemeDescription" xml:space="preserve"><value>Sistema sigue la configuración de Windows</value></data>
-  <data name="Settings_CloseToTray" xml:space="preserve"><value>Cerrar en la bandeja del sistema</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>Cerrar a la bandeja del sistema</value></data>
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Seguir ejecutándose en la bandeja del sistema al cerrar la ventana</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Iniciar con Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Se inicia en la bandeja del sistema al iniciar sesión</value></data>
