@@ -958,7 +958,7 @@
                         </Border>
 
                         <ikw:SimpleStackPanel Margin="0,12,0,0" Orientation="Horizontal" Spacing="8">
-                            <ui:HyperlinkButton Content="{x:Static r:Strings.AiPage_HowToUse}" NavigateUri="https://giuvincenzi.github.io/puppymacro/guide/latest/ai.html" />
+                            <ui:HyperlinkButton Content="{x:Static r:Strings.AiPage_HowToUse}" NavigateUri="https://puppymacro.gviam.app/guide/latest/ai.html" />
                         </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
                 </ui:ScrollViewerEx>
@@ -1179,7 +1179,7 @@
                             </ui:SettingsExpander.Description>
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard x:Name="UserGuideButton" Header="{x:Static r:Strings.Settings_UserGuide}" IsClickEnabled="True"
-                                                 Tag="https://giuvincenzi.github.io/puppymacro/guide/latest/" Click="OnOpenLinkClick">
+                                                 Tag="https://puppymacro.gviam.app/guide/latest/" Click="OnOpenLinkClick">
                                     <ui:SettingsCard.ActionIcon>
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenInNewWindow}" />
                                     </ui:SettingsCard.ActionIcon>

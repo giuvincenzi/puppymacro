@@ -117,7 +117,7 @@ if ($sign) {
     # rest, up to 20 files per call and never in parallel: the first call logs in, the next ones
     # reuse its session (parallel logins with the same TOTP code are refused).
     $pack += @(
-        '--signTemplate', 'ssign --name PuppyMacro --url https://giuvincenzi.github.io/puppymacro/ {{file...}}',
+        '--signTemplate', 'ssign --name PuppyMacro --url https://puppymacro.gviam.app/ {{file...}}',
         '--signParallel', '20'
     )
 }
