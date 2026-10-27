@@ -112,6 +112,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>无法还原以下设置：{0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>主题</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>关闭到系统托盘</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>在系统托盘中启动</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>覆盖面板</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>在面板中单击项目</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>覆盖面板不透明度</value></data>
@@ -161,6 +162,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>关闭窗口后继续在系统托盘中运行</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>随 Windows 启动</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>登录时在系统托盘中启动</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>在系统托盘中启动</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>启动 PuppyMacro 时不显示窗口，直接在系统托盘中运行</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>热键和覆盖层</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>热键</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>停止所有循环和宏</value></data>

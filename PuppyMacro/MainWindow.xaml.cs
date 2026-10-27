@@ -121,6 +121,7 @@ public partial class MainWindow
         SetPanelOptionsEnabled(settings.ShowOverlayPanel);
         CloseToTraySwitch.IsOn = settings.CloseToTray;
         StartWithWindowsSwitch.IsOn = settings.StartWithWindows;
+        StartInTraySwitch.IsOn = settings.StartInTray;
         if (App.IsDevBuild)
         {
             // The Run entry belongs to the installed app.
@@ -1877,6 +1878,14 @@ public partial class MainWindow
         if (_initializing)
             return;
         _settings.CloseToTray = CloseToTraySwitch.IsOn;
+        Save();
+    }
+
+    private void OnStartInTrayChanged(object sender, RoutedEventArgs e)
+    {
+        if (_initializing)
+            return;
+        _settings.StartInTray = StartInTraySwitch.IsOn;
         Save();
     }
 

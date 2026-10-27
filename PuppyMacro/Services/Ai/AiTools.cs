@@ -1168,6 +1168,7 @@ internal sealed partial class AiTools
         {
             Theme = wanted.Theme != null ? now.Theme : null,
             CloseToTray = wanted.CloseToTray != null ? now.CloseToTray : null,
+            StartInTray = wanted.StartInTray != null ? now.StartInTray : null,
             StopAllHotkey = wanted.StopAllHotkey != null ? now.StopAllHotkey : null,
             OverlayModeHotkey = wanted.OverlayModeHotkey != null ? now.OverlayModeHotkey : null,
             RecordHotkey = wanted.RecordHotkey != null ? now.RecordHotkey : null,
@@ -1235,6 +1236,8 @@ internal sealed partial class AiTools
             changes.Add(new(Phrase.Of("AiSetting_Theme"), Theme(s.Theme), Theme(theme)));
         if (wanted.CloseToTray is bool tray && tray != s.CloseToTray)
             changes.Add(new(Phrase.Of("AiSetting_CloseToTray"), OnOff(s.CloseToTray), OnOff(tray)));
+        if (wanted.StartInTray is bool startInTray && startInTray != s.StartInTray)
+            changes.Add(new(Phrase.Of("AiSetting_StartInTray"), OnOff(s.StartInTray), OnOff(startInTray)));
         if (wanted.ShowOverlayPanel is bool panel && panel != s.ShowOverlayPanel)
             changes.Add(new(Phrase.Of("AiSetting_OverlayPanel"), OnOff(s.ShowOverlayPanel), OnOff(panel)));
         if (wanted.ClickItemsInPanel is bool click && click != s.ClickItemsInPanel)

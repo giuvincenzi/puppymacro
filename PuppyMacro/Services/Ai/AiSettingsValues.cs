@@ -12,6 +12,7 @@ public sealed class AiSettingsValues
 {
     public AppTheme? Theme { get; set; }
     public bool? CloseToTray { get; set; }
+    public bool? StartInTray { get; set; }
     public HotkeyBinding? StopAllHotkey { get; set; }
     public HotkeyBinding? OverlayModeHotkey { get; set; }
     public HotkeyBinding? RecordHotkey { get; set; }
@@ -28,6 +29,7 @@ public sealed class AiSettingsValues
     {
         Theme = s.Theme,
         CloseToTray = s.CloseToTray,
+        StartInTray = s.StartInTray,
         StopAllHotkey = s.StopAllHotkey?.Clone(),
         OverlayModeHotkey = s.OverlayModeHotkey?.Clone(),
         RecordHotkey = s.RecordHotkey?.Clone(),

@@ -126,7 +126,8 @@
   <data name="Ai_NoneValue" xml:space="preserve"><value>بلا</value></data>
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>يتعذر استعادة هذه الإعدادات: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>السمة</value></data>
-  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>الإغلاق إلى علبة النظام</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>التصغير إلى علبة النظام عند الإغلاق</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>البدء في علبة النظام</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>لوحة التراكب</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>النقر على العناصر في اللوحة</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>عتامة لوحة التراكب</value></data>
@@ -172,10 +173,12 @@
   <data name="Settings_General" xml:space="preserve"><value>عام</value></data>
   <data name="Settings_Theme" xml:space="preserve"><value>السمة</value></data>
   <data name="Settings_ThemeDescription" xml:space="preserve"><value>يتبع "النظام" إعداد Windows</value></data>
-  <data name="Settings_CloseToTray" xml:space="preserve"><value>الإغلاق إلى علبة النظام</value></data>
-  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>متابعة التشغيل في علبة النظام عند إغلاق النافذة</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>التصغير إلى علبة النظام عند الإغلاق</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>يستمر في العمل في علبة النظام عند إغلاق النافذة</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>البدء مع Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>يبدأ في علبة النظام عند تسجيل الدخول</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>البدء في علبة النظام</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>عند تشغيل PuppyMacro، يبدأ في علبة النظام دون إظهار النافذة</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>مفاتيح التشغيل السريع والتراكب</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>مفاتيح التشغيل السريع</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>إيقاف كل حلقة وكل ماكرو</value></data>

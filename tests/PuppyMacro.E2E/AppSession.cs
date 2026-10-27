@@ -37,7 +37,11 @@ public sealed class AppSession : IDisposable
     /// The language of the app (PUPPYMACRO_LANGUAGE): English by default, whatever Windows' language, so the
     /// tests find controls by their English text.
     /// </param>
-    public AppSession(Action<Seed>? seed = null, string language = "en")
+    /// <param name="inTray">
+    /// The app starts in the system tray (the seed's Start in the system tray): it is waited for until it is idle, with no
+    /// <see cref="MainWindow"/> until <see cref="OpenWithHotkey"/>.
+    /// </param>
+    public AppSession(Action<Seed>? seed = null, string language = "en", bool inTray = false)
     {
         TargetWindow.LastOpening = null; // this test's own, in its .uia.txt
         foreach (Process running in Process.GetProcessesByName("PuppyMacro"))
@@ -58,14 +62,43 @@ public sealed class AppSession : IDisposable
         start.Environment["PUPPYMACRO_LANGUAGE"] = language;
         _app = Application.Launch(start);
         Automation = new UIA3Automation();
-        // The window exists before its content, and an element taken that early can keep showing
-        // no content: take it again until it shows the first page (its Add loop button, by name in every language).
-        MainWindow = Retry.WhileNull(() =>
-            {
-                Window? window = _app.GetMainWindow(Automation, TimeSpan.FromSeconds(1));
-                return window?.FindFirstDescendant(cf => cf.ByAutomationId("AddLoopButton")) != null ? window : null;
-            }, TimeSpan.FromSeconds(30), throwOnTimeout: true, ignoreException: true,
-            timeoutMessage: "the main window did not show its content").Result!;
+        if (inTray)
+            _app.WaitWhileBusy(TimeSpan.FromSeconds(30)); // started: a window it would show is there by now
+        else
+            MainWindow = TakeMainWindow(TimeSpan.FromSeconds(30));
+    }
+
+    /// <summary>
+    /// The main window, taken again until it shows the first page (its Add loop button, by name in every language): the
+    /// window exists before its content, and an element taken that early can keep showing no content.
+    /// </summary>
+    private Window TakeMainWindow(TimeSpan timeout) => Retry.WhileNull(() =>
+        {
+            Window? window = _app.GetMainWindow(Automation, TimeSpan.FromSeconds(1));
+            return window?.FindFirstDescendant(cf => cf.ByAutomationId("AddLoopButton")) != null ? window : null;
+        }, timeout, throwOnTimeout: true, ignoreException: true,
+        timeoutMessage: "the main window did not show its content").Result!;
+
+    /// <summary>Whether the main window is on the screen (not in the system tray).</summary>
+    public bool MainWindowShown() =>
+        NotYet(() => _app.GetMainWindow(Automation, TimeSpan.FromSeconds(1))) is { IsAvailable: true, IsOffscreen: false };
+
+    /// <summary>
+    /// Started <c>inTray</c>: presses <paramref name="openHotkey"/> (the seed's Open PuppyMacro) in <paramref name="target"/>
+    /// until the main window shows, as the hotkeys work only once PuppyMacro has started them, then takes it as
+    /// <see cref="MainWindow"/>.
+    /// </summary>
+    public void OpenWithHotkey(TargetWindow target, int openHotkey)
+    {
+        Assert.True(Retry.WhileFalse(() =>
+        {
+            if (MainWindowShown())
+                return true;
+            target.Activate();
+            target.Tap(openHotkey);
+            return Retry.WhileFalse(MainWindowShown, TimeSpan.FromSeconds(2)).Success;
+        }, TimeSpan.FromSeconds(30)).Success, "the Open PuppyMacro hotkey did not open the main window from the tray");
+        MainWindow = TakeMainWindow(Timeout);
     }
 
     public static string DataFolder =>
@@ -99,7 +132,7 @@ public sealed class AppSession : IDisposable
 
     public UIA3Automation Automation { get; }
 
-    public Window MainWindow { get; }
+    public Window MainWindow { get; private set; } = null!;
 
     public int ProcessId => _app.ProcessId;
 

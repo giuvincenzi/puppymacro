@@ -122,7 +122,8 @@
   <data name="Ai_NoneValue" xml:space="preserve"><value>Niciuna</value></data>
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Aceste setări nu pot fi restaurate: {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Temă</value></data>
-  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Închidere în zona de notificare</value></data>
+  <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Închidere în bara de sistem</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Pornire în bara de sistem</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Panou de suprapunere</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Clic pe elementele din panou</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Opacitatea panoului de suprapunere</value></data>
@@ -170,10 +171,12 @@
   <data name="Settings_General" xml:space="preserve"><value>General</value></data>
   <data name="Settings_Theme" xml:space="preserve"><value>Temă</value></data>
   <data name="Settings_ThemeDescription" xml:space="preserve"><value>Sistem urmează setarea Windows</value></data>
-  <data name="Settings_CloseToTray" xml:space="preserve"><value>Închidere în zona de notificare</value></data>
-  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Rămâne în execuție în zona de notificare când închideți fereastra</value></data>
+  <data name="Settings_CloseToTray" xml:space="preserve"><value>Închidere în bara de sistem</value></data>
+  <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Rămâne în execuție în bara de sistem când închideți fereastra</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Pornire odată cu Windows</value></data>
-  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Pornește în zona de notificare când vă conectați</value></data>
+  <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Pornește în bara de sistem când vă conectați</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Pornire în bara de sistem</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>Se deschide în bara de sistem, fără fereastră, când porniți PuppyMacro</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Taste rapide și suprapunere</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Taste rapide</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Oprește toate buclele și macrocomenzile</value></data>
@@ -221,7 +224,7 @@
   <data name="Settings_DeleteDebugDataConfirm" xml:space="preserve"><value>Ștergeți datele de depanare ale PuppyMacro? Ce este în desfășurare acum rămâne.</value></data>
   <data name="Main_HotkeysNotWorking" xml:space="preserve"><value>Tastele rapide nu funcționează acum:
 {0}</value></data>
-  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro este încă în execuție în zona de notificare. Faceți clic dreapta pe pictograma sa pentru a ieși.</value></data>
+  <data name="Tray_StillRunning" xml:space="preserve"><value>PuppyMacro este încă în execuție în bara de sistem. Faceți clic dreapta pe pictograma sa pentru a ieși.</value></data>
   <data name="Tray_Open" xml:space="preserve"><value>Deschidere PuppyMacro</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Ieșire</value></data>
   <data name="Main_RunningCount_one" xml:space="preserve"><value>{0} în execuție</value></data>

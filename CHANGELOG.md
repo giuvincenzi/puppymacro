@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+- **Start in the system tray** in Settings › General: PuppyMacro starts in the system tray, without the window, also
+  when you open it yourself. Off by default.
+
 ## 1.26.0
 
 ### Added

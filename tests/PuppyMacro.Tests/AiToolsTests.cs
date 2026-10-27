@@ -996,6 +996,21 @@ public class AiToolsTests : IDisposable
     }
 
     [Fact]
+    public async Task Start_in_the_system_tray_is_a_setting_AI_apps_read_and_change()
+    {
+        AiToolResult read = await Call("get_settings", new { });
+        AiToolResult changed = await Call("update_settings", new { settings = new { StartInTray = true } });
+
+        Assert.Contains("\"StartInTray\": false", read.Text);
+        Assert.False(changed.IsError, changed.Text);
+        Assert.Contains("Start in the system tray: Off → On", Assert.Single(_host.Confirmed).Lines);
+        Assert.True(Assert.Single(_host.Applied).StartInTray);
+        AiSettingsValues before = JsonSerializer.Deserialize<AiSettingsValues>(_log.Entries().First().Before!, CodeJson.Options)!;
+        Assert.False(before.StartInTray);
+        Assert.Null(before.CloseToTray);
+    }
+
+    [Fact]
     public async Task A_user_who_takes_long_gets_a_request_id_and_wait_for_user_gives_the_answer()
     {
         _host.Hold = new TaskCompletionSource<bool>();

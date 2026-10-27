@@ -1005,6 +1005,13 @@
                             </ui:SettingsCard.Description>
                             <ui:ToggleSwitch x:Name="StartWithWindowsSwitch" Toggled="OnStartWithWindowsChanged" />
                         </ui:SettingsCard>
+                        <ui:SettingsCard Header="{x:Static r:Strings.Settings_StartInTray}"
+                                         Description="{x:Static r:Strings.Settings_StartInTrayDescription}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Up}" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <ui:ToggleSwitch x:Name="StartInTraySwitch" Toggled="OnStartInTrayChanged" />
+                        </ui:SettingsCard>
 
                         <!-- Hotkeys and overlay -->
                         <TextBlock Margin="0,33,10,5" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Static r:Strings.Settings_HotkeysAndOverlay}" />

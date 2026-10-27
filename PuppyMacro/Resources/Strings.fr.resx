@@ -115,6 +115,7 @@
   <data name="Ai_CantRestoreSettings" xml:space="preserve"><value>Impossible de restaurer ces paramètres : {0}</value></data>
   <data name="AiSetting_Theme" xml:space="preserve"><value>Thème</value></data>
   <data name="AiSetting_CloseToTray" xml:space="preserve"><value>Fermer dans la zone de notification</value></data>
+  <data name="AiSetting_StartInTray" xml:space="preserve"><value>Démarrer dans la zone de notification</value></data>
   <data name="AiSetting_OverlayPanel" xml:space="preserve"><value>Panneau de superposition</value></data>
   <data name="AiSetting_ClickItemsInPanel" xml:space="preserve"><value>Cliquer sur les éléments du panneau</value></data>
   <data name="AiSetting_OverlayPanelOpacity" xml:space="preserve"><value>Opacité du panneau de superposition</value></data>
@@ -164,6 +165,8 @@
   <data name="Settings_CloseToTrayDescription" xml:space="preserve"><value>Continuer à s'exécuter dans la zone de notification quand vous fermez la fenêtre</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Démarrer avec Windows</value></data>
   <data name="Settings_StartWithWindowsDescription" xml:space="preserve"><value>Démarre dans la zone de notification quand vous vous connectez</value></data>
+  <data name="Settings_StartInTray" xml:space="preserve"><value>Démarrer dans la zone de notification</value></data>
+  <data name="Settings_StartInTrayDescription" xml:space="preserve"><value>S'ouvre dans la zone de notification, sans fenêtre, quand vous lancez PuppyMacro</value></data>
   <data name="Settings_HotkeysAndOverlay" xml:space="preserve"><value>Raccourcis et superposition</value></data>
   <data name="Settings_Hotkeys" xml:space="preserve"><value>Raccourcis</value></data>
   <data name="Settings_StopAllDescription" xml:space="preserve"><value>Arrêter toutes les boucles et macros</value></data>
