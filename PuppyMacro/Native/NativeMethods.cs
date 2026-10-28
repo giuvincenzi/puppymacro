@@ -397,6 +397,25 @@ internal static class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool CloseHandle(IntPtr hObject);
 
+    // ---------------- Integrity level of a process ----------------
+    public const uint TOKEN_QUERY = 0x0008;
+    public const int TokenIntegrityLevel = 25;
+
+    [DllImport("advapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool OpenProcessToken(IntPtr processHandle, uint desiredAccess, out IntPtr tokenHandle);
+
+    [DllImport("advapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetTokenInformation(IntPtr tokenHandle, int tokenInformationClass, IntPtr tokenInformation,
+        int tokenInformationLength, out int returnLength);
+
+    [DllImport("advapi32.dll")]
+    public static extern IntPtr GetSidSubAuthorityCount(IntPtr sid);
+
+    [DllImport("advapi32.dll")]
+    public static extern IntPtr GetSidSubAuthority(IntPtr sid, uint subAuthority);
+
     // ---------------- System tray icon ----------------
     public const uint NIM_ADD = 0x0;
     public const uint NIM_MODIFY = 0x1;

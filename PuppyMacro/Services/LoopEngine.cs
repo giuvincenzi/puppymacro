@@ -173,6 +173,9 @@ internal sealed class LoopEngine : IDisposable
     private string? _foregroundApp;
     private IntPtr _lastOtherWindow;
 
+    // The window in front belongs to an app run as administrator (PuppyMacro not): the hooks get none of its keys.
+    private bool _adminWindowInFront;
+
     private volatile bool _hotkeysSuspended;
 
     public LoopEngine(EngineSnapshot snapshot, Dispatcher dispatcher)
@@ -1454,7 +1457,28 @@ internal sealed class LoopEngine : IDisposable
     }
 
     // Input thread: the desktop changed (UAC, Ctrl+Alt+Del, lock). Releases may never arrive.
-    private void OnDesktopSwitch()
+    private void OnDesktopSwitch() => ForgetHeldKeys(
+        "stopped because the desktop changed (the lock screen, a UAC prompt or Ctrl+Alt+Del), so the release of its hotkey may never arrive");
+
+    /// <summary>
+    /// A window of an app run as administrator (PuppyMacro not) came in front or left it. While it is in front Windows
+    /// gives the hooks none of the keys, so the releases of the keys held when it came (Ctrl + Shift + Esc opening Task
+    /// Manager) never arrive: when it leaves, what is held is forgotten, as after a desktop switch. Internal for the unit
+    /// tests.
+    /// </summary>
+    internal void OnAdminWindowInFront(bool inFront)
+    {
+        lock (_sync)
+        {
+            bool left = _adminWindowInFront && !inFront;
+            _adminWindowInFront = inFront;
+            if (left)
+                ForgetHeldKeys("stopped because an app run as administrator was in front, so the release of its hotkey may never have arrived");
+        }
+    }
+
+    // The releases of the keys held may never arrive: Hold items stop, remaps and holds are released, modifiers forgotten.
+    private void ForgetHeldKeys(string macroStopReason)
     {
         lock (_sync)
         {
@@ -1467,8 +1491,7 @@ internal sealed class LoopEngine : IDisposable
             foreach (var macro in snap.Macros)
             {
                 if (macro.Mode == ActivationMode.Hold)
-                    StopMacro(macro.Id, playSound: false,
-                        "stopped because the desktop changed (the lock screen, a UAC prompt or Ctrl+Alt+Del), so the release of its hotkey may never arrive");
+                    StopMacro(macro.Id, playSound: false, macroStopReason);
             }
             foreach (var target in _activeRemaps.Values.ToList())
                 _injector.Post(() => SendRemapTarget(target, isDown: false));
@@ -1486,6 +1509,7 @@ internal sealed class LoopEngine : IDisposable
         if (window == IntPtr.Zero)
             return;
         NativeMethods.GetWindowThreadProcessId(window, out uint pid);
+        OnAdminWindowInFront(pid != 0 && AppWindows.IsAboveOwnIntegrity(pid));
         if (pid == 0 || pid == (uint)Environment.ProcessId)
             return; // PuppyMacro's own windows: the app before them stays the app in front
         lock (_sync)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using PuppyMacro.Native;
 
@@ -49,6 +50,60 @@ internal static class AppWindows
         finally
         {
             NativeMethods.CloseHandle(process);
+        }
+    }
+
+    private static readonly int? OwnIntegrity = IntegrityLevel(NativeMethods.GetCurrentProcess());
+
+    /// <summary>
+    /// The process runs at a higher integrity level than PuppyMacro (an app run as administrator while PuppyMacro is
+    /// not): while its window is in front, Windows gives PuppyMacro's hooks none of the keys. False when either level
+    /// cannot be read.
+    /// </summary>
+    public static bool IsAboveOwnIntegrity(uint pid)
+    {
+        if (OwnIntegrity is not int own)
+            return false;
+        IntPtr process = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
+        if (process == IntPtr.Zero)
+            return false;
+        try
+        {
+            return IntegrityLevel(process) > own;
+        }
+        finally
+        {
+            NativeMethods.CloseHandle(process);
+        }
+    }
+
+    /// <summary>The integrity level (the last sub-authority of the token's label, 0x2000 medium, 0x3000 high); null when it cannot be read.</summary>
+    private static int? IntegrityLevel(IntPtr process)
+    {
+        if (!NativeMethods.OpenProcessToken(process, NativeMethods.TOKEN_QUERY, out IntPtr token))
+            return null;
+        try
+        {
+            NativeMethods.GetTokenInformation(token, NativeMethods.TokenIntegrityLevel, IntPtr.Zero, 0, out int size);
+            if (size <= 0)
+                return null;
+            IntPtr buffer = Marshal.AllocHGlobal(size);
+            try
+            {
+                if (!NativeMethods.GetTokenInformation(token, NativeMethods.TokenIntegrityLevel, buffer, size, out _))
+                    return null;
+                IntPtr sid = Marshal.ReadIntPtr(buffer); // TOKEN_MANDATORY_LABEL.Label.Sid
+                int count = Marshal.ReadByte(NativeMethods.GetSidSubAuthorityCount(sid));
+                return count == 0 ? null : Marshal.ReadInt32(NativeMethods.GetSidSubAuthority(sid, (uint)(count - 1)));
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(buffer);
+            }
+        }
+        finally
+        {
+            NativeMethods.CloseHandle(token);
         }
     }
 
