@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Fixed
+- Hotkeys work again after you open Task Manager, or another app run as administrator, with a shortcut such as
+  Ctrl+Shift+Esc. Before, PuppyMacro kept Ctrl and Shift as if they were still held, and no hotkey worked until it was
+  restarted.
+
 ## 1.27.0
 
 ### Added

@@ -8,7 +8,8 @@ namespace PuppyMacro.Tests;
 
 /// <summary>
 /// LoopEngine's decisions on input that the other LoopEngine classes do not cover: AltGr's fake left Ctrl with other
-/// modifiers held, the app in front for remaps against loops, the desktop switch. Only decisions (OnKey); the only key
+/// modifiers held, the app in front for remaps against loops, the desktop switch, an app run as administrator in front.
+/// Only decisions (OnKey); the only key
 /// sent is F24 (a remap's target). ModifierTracker is static: same collection as its own tests.
 /// </summary>
 [Collection(nameof(ModifierTracker))]
@@ -110,5 +111,56 @@ public sealed class LoopEngineInputTests : IDisposable
 
         Assert.False(ModifierTracker.Any);
         Assert.False(Release(F23));
+    }
+
+    /// <summary>
+    /// Ctrl + Shift + Esc opens Task Manager, run as administrator: the releases of Ctrl and Shift go to it and the hooks
+    /// never get them. When it leaves the front they are forgotten, so a hotkey without modifiers works again.
+    /// </summary>
+    [Fact]
+    public void An_admin_window_leaving_the_front_forgets_the_modifiers_held_when_it_came()
+    {
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+        Assert.False(Press(LCtrl));
+        Assert.False(Press(LShift));
+
+        _engine.OnAdminWindowInFront(true);
+        Assert.True(ModifierTracker.Ctrl && ModifierTracker.Shift); // still held while it is in front
+        _engine.OnAdminWindowInFront(false);
+
+        Assert.False(ModifierTracker.Any);
+        Assert.True(Press(F23));
+        Assert.True(Release(F23));
+        Assert.True(_engine.IsRunning(loop.Id));
+    }
+
+    /// <summary>A hotkey whose release went to the admin window starts its loop again: its next press is not an auto-repeat.</summary>
+    [Fact]
+    public void An_admin_window_leaving_the_front_forgets_a_hotkey_held_when_it_came()
+    {
+        LoopDefinition loop = TapLoop(HotkeyBinding.FromKey(F23));
+        _engine.Publish(new EngineSnapshot { Loops = new[] { loop } });
+        Assert.True(Press(F23));
+        Assert.True(_engine.IsRunning(loop.Id));
+
+        _engine.OnAdminWindowInFront(true);
+        _engine.OnAdminWindowInFront(false);
+
+        Assert.True(Press(F23));
+        Assert.True(Release(F23));
+        Assert.False(_engine.IsRunning(loop.Id));
+    }
+
+    /// <summary>Between windows that are not run as administrator nothing is forgotten: a modifier held stays held.</summary>
+    [Fact]
+    public void Other_windows_coming_in_front_keep_the_modifiers_held()
+    {
+        Assert.False(Press(LCtrl));
+
+        _engine.OnAdminWindowInFront(false);
+        _engine.OnAdminWindowInFront(false);
+
+        Assert.True(ModifierTracker.Ctrl);
     }
 }

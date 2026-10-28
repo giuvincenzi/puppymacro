@@ -40,6 +40,11 @@ paths:
 - **Modifier state comes only from physical key events** (`ModifierTracker`, updated by the
   hook). Injected events (`LLKHF_INJECTED`) and AltGr's fake left Ctrl never change it. Do not use `GetAsyncKeyState`
   for this.
+- The releases of the keys held can be lost: on a desktop switch (lock screen, UAC, Ctrl+Alt+Del), and while a window
+  of an app at a higher integrity level than PuppyMacro is in front (an app run as administrator while PuppyMacro is
+  not: Windows gives the hooks none of its keys; Ctrl+Shift+Esc opens Task Manager that way). After the switch, and
+  when that window leaves the front, the engine forgets what is held (`LoopEngine.ForgetHeldKeys`): the modifiers,
+  the hotkeys and remaps held, the Hold loops and macros. A level that cannot be read never counts as higher.
 - Everything PuppyMacro sends carries `InputSender.Signature` in `dwExtraInfo`; the hook
   ignores those events, so loops/macros/remaps never trigger hotkeys or recording.
 - A combination (a loop's or a macro's Press key with Ctrl, Alt, Shift or Win) is sent as: held modifiers released,
