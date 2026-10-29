@@ -1,0 +1,61 @@
+# Investigation only, never merged: runs BlankWindowRepro on a GitHub Windows machine at each push to this branch.
+name: repro_blank_window
+
+on:
+  push:
+    branches: [repro-blank-window]
+
+permissions:
+  contents: read
+
+jobs:
+  repro:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v7
+
+      - name: install_dotnet
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: log_graphics
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName PresentationCore
+          Write-Host "WPF render tier: $([System.Windows.Media.RenderCapability]::Tier -shr 16)"
+          Get-CimInstance Win32_VideoController | ForEach-Object { Write-Host "Video: $($_.Name) $($_.DriverVersion) $($_.CurrentHorizontalResolution)x$($_.CurrentVerticalResolution)" }
+
+      - name: install_dxcap
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          Add-WindowsCapability -Online -Name Tools.Graphics.DirectX~~~~0.0.1.0
+          Write-Host "dxcap: $(Test-Path $env:WINDIR\System32\dxcap.exe)"
+
+      - name: build_dev_app
+        run: dotnet build tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj -c Debug
+
+      - name: minimize_other_windows
+        shell: pwsh
+        run: |
+          (New-Object -ComObject Shell.Application).MinimizeAll()
+          Start-Sleep -Seconds 2
+
+      - name: run_repro
+        env:
+          E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots
+        run: |
+          dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build --filter-class PuppyMacro.E2E.BlankWindowRepro \
+            --output Detailed
+
+      - name: save_screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: repro_screenshots_attempt_${{ github.run_attempt }}
+          path: ${{ runner.temp }}/e2e_screenshots
