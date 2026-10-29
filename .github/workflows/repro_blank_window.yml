@@ -1,4 +1,5 @@
-# Investigation only, never merged: runs BlankWindowRepro on a GitHub Windows machine at each push to this branch.
+# Investigation only, never merged: runs BlankWindowRepro on GitHub Windows machines at each push to this branch, one test
+# per machine (a forced GPU reset can leave a machine hung).
 name: repro_blank_window
 
 on:
@@ -10,8 +11,18 @@ permissions:
 
 jobs:
   repro:
+    name: repro_${{ matrix.test }}
+    strategy:
+      fail-fast: false
+      matrix:
+        test:
+          - Overlay_on_and_off_many_times_then_open
+          - Display_change_while_hidden_in_overlay_mode
+          - Gpu_reset_while_hidden_in_overlay_mode
+          - Gpu_reset_while_hidden_then_open_and_resize
+          - Gpu_reset_while_shown
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
     defaults:
       run:
         shell: bash
@@ -32,6 +43,7 @@ jobs:
           Get-CimInstance Win32_VideoController | ForEach-Object { Write-Host "Video: $($_.Name) $($_.DriverVersion) $($_.CurrentHorizontalResolution)x$($_.CurrentVerticalResolution)" }
 
       - name: install_dxcap
+        if: startsWith(matrix.test, 'Gpu_')
         continue-on-error: true
         shell: pwsh
         run: |
@@ -48,28 +60,29 @@ jobs:
           Start-Sleep -Seconds 2
 
       - name: run_repro
-        timeout-minutes: 15
+        timeout-minutes: 8
         env:
           E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots
         run: |
-          dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build --filter-class PuppyMacro.E2E.BlankWindowRepro \
-            --output Detailed
+          mkdir -p "$E2E_SCREENSHOTS"
+          touch "$E2E_SCREENSHOTS/repro.log"
+          tail -F "$E2E_SCREENSHOTS/repro.log" &
+          dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build \
+            --filter-method "PuppyMacro.E2E.BlankWindowRepro.${{ matrix.test }}" --output Detailed
 
-      - name: print_repro_log
+      - name: save_screenshots
         if: always()
-        run: cat "$RUNNER_TEMP/e2e_screenshots/repro.log" || true
+        timeout-minutes: 3
+        uses: actions/upload-artifact@v7
+        with:
+          name: repro_${{ matrix.test }}_attempt_${{ github.run_attempt }}
+          path: ${{ runner.temp }}/e2e_screenshots
 
       - name: print_gpu_resets
         if: always()
+        timeout-minutes: 2
         shell: pwsh
         run: |
           # 4101: "Display driver ... stopped responding and has successfully recovered" (a TDR)
           Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = 4101 } -ErrorAction SilentlyContinue |
             ForEach-Object { Write-Host "$($_.TimeCreated.ToUniversalTime().ToString('HH:mm:ss')) $($_.Id) $($_.Message)" }
-
-      - name: save_screenshots
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: repro_screenshots_attempt_${{ github.run_attempt }}
-          path: ${{ runner.temp }}/e2e_screenshots
