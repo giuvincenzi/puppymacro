@@ -173,7 +173,7 @@ public class BlankWindowRepro
         using var target = new TargetWindow();
         AssertDrawn(app, "start");
         RunDxcapTdr(dxcap!);
-        Thread.Sleep(5000);
+        Thread.Sleep(30000); // a capture of the screen in the seconds after the reset hangs the runner
         AssertDrawn(app, "after GPU reset");
     }
 

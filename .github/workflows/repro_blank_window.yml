@@ -11,15 +11,21 @@ permissions:
 
 jobs:
   repro:
-    name: repro_${{ matrix.test }}_${{ matrix.mode }}
+    name: repro_${{ matrix.test }}_${{ matrix.mode }}_${{ matrix.rep }}
     strategy:
       fail-fast: false
       matrix:
         test:
           - Gpu_reset_while_hidden_in_overlay_mode
-        # PUPPYMACRO_REPRO_MODE: none (the app as it is), software (RenderOptions.ProcessRenderMode SoftwareOnly),
-        # rerender (the main window's HwndTarget.RenderMode set to software and back each time it is shown)
-        mode: [none, rerender, rerender-stay, rerender-late]
+          - Gpu_reset_while_hidden_then_open_and_resize
+        # PUPPYMACRO_REPRO_MODE: none (the app as it is), rerender (the main window's HwndTarget.RenderMode set to software
+        # and back each time it is shown), rerender-frame (back only after a frame rendered in software)
+        mode: [rerender, rerender-frame]
+        rep: [1, 2, 3]
+        include:
+          - test: Gpu_reset_while_shown
+            mode: none
+            rep: 1
     runs-on: windows-latest
     timeout-minutes: 25
     defaults:
@@ -75,7 +81,7 @@ jobs:
         timeout-minutes: 3
         uses: actions/upload-artifact@v7
         with:
-          name: repro_${{ matrix.test }}_${{ matrix.mode }}_attempt_${{ github.run_attempt }}
+          name: repro_${{ matrix.test }}_${{ matrix.mode }}_${{ matrix.rep }}_attempt_${{ github.run_attempt }}
           path: ${{ runner.temp }}/e2e_screenshots
 
       - name: print_gpu_resets

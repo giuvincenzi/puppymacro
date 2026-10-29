@@ -268,6 +268,26 @@ public partial class App : Application
         if (reproMode == "software")
             System.Windows.Media.RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
         var window = new MainWindow(store, settings, macros);
+        if (reproMode == "rerender-frame")
+        {
+            // Software until a frame was rendered with it, then back to the default: a new render target on the device.
+            window.IsVisibleChanged += (_, e) =>
+            {
+                if (e.NewValue is not true || System.Windows.Interop.HwndSource.FromVisual(window)?.CompositionTarget is not System.Windows.Interop.HwndTarget target)
+                    return;
+                target.RenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
+                int frames = 0;
+                void OnRendering(object? s, EventArgs a)
+                {
+                    if (++frames < 2)
+                        return;
+                    System.Windows.Media.CompositionTarget.Rendering -= OnRendering;
+                    target.RenderMode = System.Windows.Interop.RenderMode.Default;
+                }
+                System.Windows.Media.CompositionTarget.Rendering += OnRendering;
+                window.InvalidateVisual();
+            };
+        }
         if (reproMode is "rerender" or "rerender-stay" or "rerender-late")
         {
             // Each time the window is shown again, its render target is made again (software, then back to the default).
