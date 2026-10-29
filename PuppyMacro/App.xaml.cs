@@ -264,9 +264,21 @@ public partial class App : Application
 
         Services.Screen.CaptureExclusion.Start(Dispatcher);
         // Investigation only (branch repro-blank-window).
-        if (Environment.GetEnvironmentVariable("PUPPYMACRO_REPRO_NO_BITMAPCACHE") == "1")
-            iNKORE.UI.WPF.Modern.Common.ShadowAssist.UseBitmapCache = false;
+        string? reproMode = Environment.GetEnvironmentVariable("PUPPYMACRO_REPRO_MODE");
+        if (reproMode == "software")
+            System.Windows.Media.RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
         var window = new MainWindow(store, settings, macros);
+        if (reproMode == "rerender")
+        {
+            // Each time the window is shown again, its render target is made again (software, then back to the default).
+            window.IsVisibleChanged += (_, e) =>
+            {
+                if (e.NewValue is not true || System.Windows.Interop.HwndSource.FromVisual(window)?.CompositionTarget is not System.Windows.Interop.HwndTarget target)
+                    return;
+                target.RenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
+                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () => target.RenderMode = System.Windows.Interop.RenderMode.Default);
+            };
+        }
         MainWindow = window;
         ApplyTheme(settings.Theme);
         // Start in the system tray (the setting) is for a plain start: a file to import, Settings › Backup asked for or the

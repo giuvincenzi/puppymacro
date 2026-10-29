@@ -120,12 +120,28 @@ public class BlankWindowRepro
         target.Activate();
         target.Tap(Vk.F14);
         WaitShown(app);
-        AssertDrawn(app, "after GPU reset, opened");
+        bool opened = Drawn(app, "after GPU reset, opened");
         IntPtr hwnd = app.MainWindow.Properties.NativeWindowHandle.Value;
         SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 1000, 740, 0x0004 | 0x0010); // SWP_NOZORDER | SWP_NOACTIVATE
         Thread.Sleep(1000);
-        AssertDrawn(app, "after GPU reset, resized");
+        Drawn(app, "after GPU reset, resized");
+        // Does it come back by itself? Overlay on and open again (hidden and shown), then minimized and restored.
+        target.Activate();
+        target.Tap(Vk.F24);
+        WaitHidden(app);
+        target.Tap(Vk.F14);
+        WaitShown(app);
+        Drawn(app, "after GPU reset, hidden and shown again");
+        ShowWindow(hwnd, 6); // SW_MINIMIZE
+        Thread.Sleep(1500);
+        ShowWindow(hwnd, 9); // SW_RESTORE
+        Thread.Sleep(1500);
+        Drawn(app, "after GPU reset, minimized and restored");
+        Assert.True(opened, "after GPU reset, opened: the main window drew nothing");
     }
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int cmd);
 
     [DllImport("user32.dll")]
     private static extern bool SetWindowPos(IntPtr hWnd, IntPtr after, int x, int y, int cx, int cy, uint flags);
@@ -177,7 +193,10 @@ public class BlankWindowRepro
     /// under it. A window that drew nothing has the backdrop only, a handful of colors; one that drew its content, text,
     /// icons and cards, has many.
     /// </summary>
-    private static void AssertDrawn(AppSession app, string when)
+    private static void AssertDrawn(AppSession app, string when) =>
+        Assert.True(Drawn(app, when), $"{when}: the main window drew nothing");
+
+    private static bool Drawn(AppSession app, string when)
     {
         int colors = 0;
         bool drawn = Retry.WhileFalse(() =>
@@ -187,7 +206,7 @@ public class BlankWindowRepro
         }, TimeSpan.FromSeconds(6)).Success;
         Colors(app, when, save: true);
         Log($"{when}: {colors} colors, drawn {drawn}");
-        Assert.True(drawn, $"{when}: the main window drew nothing ({colors} colors)");
+        return drawn;
     }
 
     private static int Colors(AppSession app, string when, bool save)
