@@ -268,6 +268,8 @@ public partial class App : Application
         if (reproMode == "software")
             System.Windows.Media.RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
         var window = new MainWindow(store, settings, macros);
+        if (Environment.GetEnvironmentVariable("PUPPYMACRO_REPRO_TRACE") == "1")
+            ReproTrace.Attach(window);
         if (reproMode == "rerender-frame")
         {
             // Software until a frame was rendered with it, then back to the default: a new render target on the device.

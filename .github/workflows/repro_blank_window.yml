@@ -18,14 +18,9 @@ jobs:
         test:
           - Gpu_reset_while_hidden_in_overlay_mode
           - Gpu_reset_while_hidden_then_open_and_resize
-        # PUPPYMACRO_REPRO_MODE: none (the app as it is), rerender (the main window's HwndTarget.RenderMode set to software
-        # and back each time it is shown), rerender-frame (back only after a frame rendered in software)
-        mode: [rerender, rerender-frame]
-        rep: [1, 2, 3]
-        include:
-          - test: Gpu_reset_while_shown
-            mode: none
-            rep: 1
+        # PUPPYMACRO_REPRO_MODE: none (the app as it is); PUPPYMACRO_REPRO_TRACE logs the main window's rendering state
+        mode: [none]
+        rep: [1, 2]
     runs-on: windows-latest
     timeout-minutes: 25
     defaults:
@@ -69,10 +64,11 @@ jobs:
         env:
           E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots
           PUPPYMACRO_REPRO_MODE: ${{ matrix.mode }}
+          PUPPYMACRO_REPRO_TRACE: '1'
         run: |
           mkdir -p "$E2E_SCREENSHOTS"
-          touch "$E2E_SCREENSHOTS/repro.log"
-          tail -F "$E2E_SCREENSHOTS/repro.log" &
+          touch "$E2E_SCREENSHOTS/repro.log" "$E2E_SCREENSHOTS/app-trace.log"
+          tail -F "$E2E_SCREENSHOTS/repro.log" "$E2E_SCREENSHOTS/app-trace.log" &
           dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build \
             --filter-method "PuppyMacro.E2E.BlankWindowRepro.${{ matrix.test }}" --output Detailed
 
