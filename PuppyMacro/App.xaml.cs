@@ -270,6 +270,10 @@ public partial class App : Application
         var window = new MainWindow(store, settings, macros);
         if (Environment.GetEnvironmentVariable("PUPPYMACRO_REPRO_TRACE") == "1")
             ReproTrace.Attach(window);
+        if (reproMode is "no-mica" or "no-modern")
+            iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper.SetSystemBackdropType(window, iNKORE.UI.WPF.Modern.Helpers.Styles.BackdropType.None);
+        if (reproMode == "no-modern")
+            iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper.SetUseModernWindowStyle(window, false);
         if (reproMode == "sw-main")
         {
             // The main window drawn in software from the start (HwndTarget.RenderMode, per window).
