@@ -270,6 +270,26 @@ public partial class App : Application
         var window = new MainWindow(store, settings, macros);
         if (Environment.GetEnvironmentVariable("PUPPYMACRO_REPRO_TRACE") == "1")
             ReproTrace.Attach(window);
+        if (reproMode == "ctl-window")
+        {
+            // A plain WPF window in PuppyMacro's process, hidden and shown with the main window, topmost on the right edge.
+            var panel = new System.Windows.Controls.StackPanel { Background = System.Windows.Media.Brushes.DarkRed };
+            foreach (var brush in new[] { System.Windows.Media.Brushes.Yellow, System.Windows.Media.Brushes.Cyan, System.Windows.Media.Brushes.Lime })
+                panel.Children.Add(new System.Windows.Controls.Border { Background = brush, Height = 40, Margin = new Thickness(6) });
+            panel.Children.Add(new System.Windows.Controls.TextBlock { Text = "Ctl", Foreground = System.Windows.Media.Brushes.White, FontSize = 20 });
+            var control = new Window
+            {
+                WindowStyle = WindowStyle.None, ResizeMode = ResizeMode.NoResize, ShowInTaskbar = false, Topmost = true,
+                WindowStartupLocation = WindowStartupLocation.Manual, Left = 950, Top = 100, Width = 70, Height = 300, Content = panel,
+            };
+            window.IsVisibleChanged += (_, e) =>
+            {
+                if (e.NewValue is true)
+                    control.Show();
+                else
+                    control.Hide();
+            };
+        }
         if (reproMode is "no-mica" or "no-modern")
             iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper.SetSystemBackdropType(window, iNKORE.UI.WPF.Modern.Helpers.Styles.BackdropType.None);
         if (reproMode == "no-modern")

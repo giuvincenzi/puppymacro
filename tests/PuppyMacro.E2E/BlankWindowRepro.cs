@@ -99,6 +99,7 @@ public class BlankWindowRepro
         target.Tap(Vk.F14);
         WaitShown(app);
         bool opened = Drawn(app, "after GPU reset, opened");
+        Log($"ctl area after: {AreaColors(new Rectangle(950, 100, 70, 300), "ctl area after")} colors");
         target.Activate();
         target.Tap(Vk.F24);
         WaitHidden(app);
@@ -128,6 +129,7 @@ public class BlankWindowRepro
         using var app = new AppSession(SeedOverlay);
         using var target = new TargetWindow();
         AssertDrawn(app, "start");
+        Log($"ctl area start: {AreaColors(new Rectangle(950, 100, 70, 300), "ctl area start")} colors");
         target.Activate();
         target.Tap(Vk.F24);
         WaitHidden(app);
@@ -139,6 +141,7 @@ public class BlankWindowRepro
         target.Tap(Vk.F14);
         WaitShown(app);
         bool opened = Drawn(app, "after GPU reset, opened");
+        Log($"ctl area after: {AreaColors(new Rectangle(950, 100, 70, 300), "ctl area after")} colors");
         IntPtr hwnd = app.MainWindow.Properties.NativeWindowHandle.Value;
         SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 1000, 740, 0x0004 | 0x0010); // SWP_NOZORDER | SWP_NOACTIVATE
         Thread.Sleep(1000);
@@ -326,10 +329,8 @@ public class BlankWindowRepro
         for (int y = 0; y < bitmap.Height; y++)
             for (int x = 0; x < bitmap.Width; x++)
             {
-                // The content outside the target window, under the title bar (drawn by Windows without the modern style): the strip on
-                // the right with the switches and the strip at the bottom. A window drawn empty has one color there.
-                int sx = window.Left + x, sy = window.Top + y;
-                if (sy < covered.Top || covered.Contains(sx, sy) || x >= bitmap.Width - 4 || y >= bitmap.Height - 4)
+                // Only the title bar's strip, above the target window: a window drawn empty has one color there.
+                if (y < 4 || window.Top + y >= covered.Top || x < 4 || x >= bitmap.Width - 4)
                     continue;
                 seen.Add(bitmap.GetPixel(x, y).ToArgb() & 0xF8F8F8);
             }

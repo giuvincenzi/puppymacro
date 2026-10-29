@@ -16,9 +16,9 @@ jobs:
       fail-fast: false
       matrix:
         test:
-          - Gpu_reset_control_other_windows
-        # PUPPYMACRO_REPRO_MODE: none (the app as it is); PUPPYMACRO_REPRO_TRACE logs the main window's rendering state
-        mode: [none]
+          - Gpu_reset_while_hidden_then_open_and_resize
+        # PUPPYMACRO_REPRO_MODE: ctl-window (a plain WPF window in PuppyMacro's process, hidden and shown with the main window)
+        mode: [ctl-window]
         rep: [1, 2, 3]
     runs-on: windows-latest
     timeout-minutes: 25
