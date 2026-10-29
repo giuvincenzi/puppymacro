@@ -189,31 +189,30 @@ public class BlankWindowRepro
     {
         string? dxcap = FindDxcap();
         Assert.SkipWhen(dxcap == null, "dxcap is not installed");
-        var formArea = new Rectangle(60, 60, 400, 300);
         var wpfArea = new Rectangle(520, 60, 400, 300);
-
-        System.Windows.Forms.Form? form = null;
-        var formReady = new ManualResetEventSlim();
-        var formThread = new Thread(() =>
-        {
-            form = new System.Windows.Forms.Form
-            {
-                StartPosition = System.Windows.Forms.FormStartPosition.Manual, Bounds = formArea, TopMost = true,
-                Text = "Control Forms", BackColor = Color.DarkGreen,
-            };
-            for (int i = 0; i < 6; i++)
-                form.Controls.Add(new System.Windows.Forms.Button { Text = $"Button {i}", Left = 10, Top = 10 + i * 40, Width = 150 });
-            form.Shown += (_, _) => formReady.Set();
-            System.Windows.Forms.Application.Run(form);
-        });
-        formThread.SetApartmentState(ApartmentState.STA);
-        formThread.Start();
-        Assert.True(formReady.Wait(10000));
+        // CONTROL_VARIANT: plain, pmv2 (the process per-monitor v2 DPI aware, as PuppyMacro's manifest), layered (a hidden
+        // AllowsTransparency window in the process, as the overlay panel), both.
+        string variant = Environment.GetEnvironmentVariable("CONTROL_VARIANT") ?? "plain";
+        if (variant is "pmv2" or "both")
+            Log($"SetProcessDpiAwarenessContext(PMv2): {SetProcessDpiAwarenessContext(new IntPtr(-4))}, error {Marshal.GetLastWin32Error()}");
+        Log($"variant {variant}, thread DPI awareness context {GetThreadDpiAwarenessContext()}");
 
         System.Windows.Window? wpf = null;
+        System.Windows.Window? layered = null;
         var wpfReady = new ManualResetEventSlim();
         var wpfThread = new Thread(() =>
         {
+            if (variant is "layered" or "both")
+            {
+                layered = new System.Windows.Window
+                {
+                    WindowStyle = System.Windows.WindowStyle.None, AllowsTransparency = true, Background = System.Windows.Media.Brushes.Transparent,
+                    WindowStartupLocation = System.Windows.WindowStartupLocation.Manual, Left = 60, Top = 400, Width = 200, Height = 100,
+                    Topmost = true, ShowInTaskbar = false,
+                    Content = new System.Windows.Controls.Border { Background = System.Windows.Media.Brushes.Orange, CornerRadius = new System.Windows.CornerRadius(12) },
+                };
+                layered.Show();
+            }
             var panel = new System.Windows.Controls.StackPanel { Background = System.Windows.Media.Brushes.DarkRed };
             for (int i = 0; i < 6; i++)
                 panel.Children.Add(new System.Windows.Controls.Button { Content = $"WPF button {i}", Margin = new System.Windows.Thickness(8) });
@@ -231,22 +230,29 @@ public class BlankWindowRepro
         Assert.True(wpfReady.Wait(10000));
         Thread.Sleep(1000);
 
-        int formStart = AreaColors(formArea, "control forms start"), wpfStart = AreaColors(wpfArea, "control wpf start");
-        form!.Invoke(() => form.Hide());
-        wpf!.Dispatcher.Invoke(() => wpf.Hide());
+        int wpfStart = AreaColors(wpfArea, "control wpf start");
+        wpf!.Dispatcher.Invoke(() =>
+        {
+            wpf.Hide();
+            layered?.Hide();
+        });
         Thread.Sleep(1000);
         RunDxcapTdr(dxcap!);
         Thread.Sleep(25000); // a capture of the screen in the seconds after the reset hangs the runner
-        form.Invoke(() => form.Show());
         wpf.Dispatcher.Invoke(() => wpf.Show());
         Thread.Sleep(3000);
-        int formAfter = AreaColors(formArea, "control forms after reset"), wpfAfter = AreaColors(wpfArea, "control wpf after reset");
-        Log($"control: forms {formStart} -> {formAfter} colors, wpf {wpfStart} -> {wpfAfter} colors");
+        int wpfAfter = AreaColors(wpfArea, "control wpf after reset");
+        Log($"control {variant}: wpf {wpfStart} -> {wpfAfter} colors");
 
-        form.Invoke(() => form.Close());
-        wpf.Dispatcher.Invoke(() => { wpf.Close(); wpf.Dispatcher.InvokeShutdown(); });
-        Assert.True(formAfter > 8 && wpfAfter > 8, $"forms {formAfter}, wpf {wpfAfter} colors after the reset");
+        wpf.Dispatcher.Invoke(() => { wpf.Close(); layered?.Close(); wpf.Dispatcher.InvokeShutdown(); });
+        Assert.True(wpfAfter > 8, $"{variant}: wpf {wpfAfter} colors after the reset");
     }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool SetProcessDpiAwarenessContext(IntPtr value);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetThreadDpiAwarenessContext();
 
     private static int AreaColors(Rectangle area, string when)
     {

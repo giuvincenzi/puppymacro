@@ -16,10 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         test:
-          - Gpu_reset_while_hidden_then_open_and_resize
-        # PUPPYMACRO_REPRO_MODE: ctl-window (a plain WPF window in PuppyMacro's process, hidden and shown with the main window)
-        mode: [ctl-window]
-        rep: [1, 2, 3]
+          - Gpu_reset_control_other_windows
+        # CONTROL_VARIANT of the control test (no PuppyMacro): plain, pmv2, layered, both
+        mode: [plain, pmv2, layered, both]
+        rep: [1, 2]
     runs-on: windows-latest
     timeout-minutes: 25
     defaults:
@@ -64,6 +64,7 @@ jobs:
           E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots
           PUPPYMACRO_REPRO_MODE: ${{ matrix.mode }}
           PUPPYMACRO_REPRO_TRACE: '1'
+          CONTROL_VARIANT: ${{ matrix.mode }}
         run: |
           mkdir -p "$E2E_SCREENSHOTS"
           touch "$E2E_SCREENSHOTS/repro.log" "$E2E_SCREENSHOTS/app-trace.log"
