@@ -263,6 +263,9 @@ public partial class App : Application
             FileTypes.Register();
 
         Services.Screen.CaptureExclusion.Start(Dispatcher);
+        // Investigation only (branch repro-blank-window).
+        if (Environment.GetEnvironmentVariable("PUPPYMACRO_REPRO_NO_BITMAPCACHE") == "1")
+            iNKORE.UI.WPF.Modern.Common.ShadowAssist.UseBitmapCache = false;
         var window = new MainWindow(store, settings, macros);
         MainWindow = window;
         ApplyTheme(settings.Theme);

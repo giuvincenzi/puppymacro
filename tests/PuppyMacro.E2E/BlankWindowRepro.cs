@@ -55,11 +55,15 @@ public class BlankWindowRepro
     public void Display_change_while_hidden_in_overlay_mode()
     {
         using var app = new AppSession(SeedOverlay);
-        using var target = new TargetWindow();
-        AssertDrawn(app, "start");
-        target.Activate();
-        target.Tap(Vk.F24);
-        WaitHidden(app);
+        using (var first = new TargetWindow())
+        {
+            AssertDrawn(app, "start");
+            first.Activate();
+            first.Tap(Vk.F24);
+            WaitHidden(app);
+            first.Tap(Vk.F24); // overlay off: the main window stays hidden
+            TargetWindow.Quiet(1);
+        }
         try
         {
             Log($"set 800x600: {Display.Set(800, 600)}");
@@ -70,6 +74,8 @@ public class BlankWindowRepro
             Log($"set 1024x768: {Display.Set(1024, 768)}");
             Thread.Sleep(3000);
         }
+        // A new target window: the display change moved the old one.
+        using var target = new TargetWindow();
         target.Activate();
         target.Tap(Vk.F14);
         WaitShown(app);
@@ -177,7 +183,7 @@ public class BlankWindowRepro
         bool drawn = Retry.WhileFalse(() =>
         {
             colors = Colors(app, when, save: false);
-            return colors > 40;
+            return colors > 8;
         }, TimeSpan.FromSeconds(6)).Success;
         Colors(app, when, save: true);
         Log($"{when}: {colors} colors, drawn {drawn}");
@@ -201,7 +207,8 @@ public class BlankWindowRepro
         for (int y = 0; y < bitmap.Height; y++)
             for (int x = 0; x < bitmap.Width; x++)
             {
-                if (covered.Contains(window.Left + x, window.Top + y))
+                // Only the title bar's strip, above the target window: a window drawn empty has one color there.
+                if (window.Top + y < window.Top + 4 || window.Top + y >= covered.Top || x < 4 || x >= bitmap.Width - 4)
                     continue;
                 seen.Add(bitmap.GetPixel(x, y).ToArgb() & 0xF8F8F8);
             }
