@@ -268,15 +268,18 @@ public partial class App : Application
         if (reproMode == "software")
             System.Windows.Media.RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
         var window = new MainWindow(store, settings, macros);
-        if (reproMode == "rerender")
+        if (reproMode is "rerender" or "rerender-stay" or "rerender-late")
         {
             // Each time the window is shown again, its render target is made again (software, then back to the default).
-            window.IsVisibleChanged += (_, e) =>
+            window.IsVisibleChanged += async (_, e) =>
             {
                 if (e.NewValue is not true || System.Windows.Interop.HwndSource.FromVisual(window)?.CompositionTarget is not System.Windows.Interop.HwndTarget target)
                     return;
+                if (reproMode == "rerender-late")
+                    await System.Threading.Tasks.Task.Delay(500);
                 target.RenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
-                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () => target.RenderMode = System.Windows.Interop.RenderMode.Default);
+                if (reproMode != "rerender-stay")
+                    _ = Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () => target.RenderMode = System.Windows.Interop.RenderMode.Default);
             };
         }
         MainWindow = window;

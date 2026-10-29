@@ -95,10 +95,29 @@ public class BlankWindowRepro
         WaitHidden(app);
         RunDxcapTdr(dxcap!);
         Thread.Sleep(5000);
+        SaveScreen("after GPU reset, overlay panel"); // does a window shown during the reset draw again?
         target.Activate();
         target.Tap(Vk.F14);
         WaitShown(app);
-        AssertDrawn(app, "after GPU reset");
+        bool opened = Drawn(app, "after GPU reset, opened");
+        target.Activate();
+        target.Tap(Vk.F24);
+        WaitHidden(app);
+        target.Tap(Vk.F14);
+        WaitShown(app);
+        Drawn(app, "after GPU reset, hidden and shown again");
+        Assert.True(opened, "after GPU reset, opened: the main window drew nothing");
+    }
+
+    private static void SaveScreen(string when)
+    {
+        if (Environment.GetEnvironmentVariable("E2E_SCREENSHOTS") is not { Length: > 0 } folder)
+            return;
+        using var bitmap = new Bitmap(1024, 768);
+        using (Graphics g = Graphics.FromImage(bitmap))
+            g.CopyFromScreen(Point.Empty, Point.Empty, bitmap.Size);
+        bitmap.Save(Path.Combine(folder, $"screen-{DateTime.UtcNow:HHmmss.fff}-{when.Replace(' ', '_').Replace(',', '_')}.png"), ImageFormat.Png);
+        Log($"{when}: screen saved");
     }
 
     /// <summary>The issue's steps: after the reset, the window is resized.</summary>

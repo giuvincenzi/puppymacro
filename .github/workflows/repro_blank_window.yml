@@ -17,10 +17,9 @@ jobs:
       matrix:
         test:
           - Gpu_reset_while_hidden_in_overlay_mode
-          - Gpu_reset_while_hidden_then_open_and_resize
         # PUPPYMACRO_REPRO_MODE: none (the app as it is), software (RenderOptions.ProcessRenderMode SoftwareOnly),
         # rerender (the main window's HwndTarget.RenderMode set to software and back each time it is shown)
-        mode: [none, software, rerender]
+        mode: [none, rerender, rerender-stay, rerender-late]
     runs-on: windows-latest
     timeout-minutes: 25
     defaults:
