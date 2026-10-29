@@ -270,6 +270,18 @@ public partial class App : Application
         var window = new MainWindow(store, settings, macros);
         if (Environment.GetEnvironmentVariable("PUPPYMACRO_REPRO_TRACE") == "1")
             ReproTrace.Attach(window);
+        if (reproMode == "sw-main")
+        {
+            // The main window drawn in software from the start (HwndTarget.RenderMode, per window).
+            void SetSoftware()
+            {
+                if (System.Windows.Interop.HwndSource.FromHwnd(new System.Windows.Interop.WindowInteropHelper(window).EnsureHandle())?.CompositionTarget
+                    is System.Windows.Interop.HwndTarget target)
+                    target.RenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
+            }
+            window.SourceInitialized += (_, _) => SetSoftware();
+            SetSoftware();
+        }
         if (reproMode == "rerender-frame")
         {
             // Software until a frame was rendered with it, then back to the default: a new render target on the device.
