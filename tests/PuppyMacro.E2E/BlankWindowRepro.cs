@@ -95,7 +95,6 @@ public class BlankWindowRepro
         WaitHidden(app);
         RunDxcapTdr(dxcap!);
         Thread.Sleep(5000);
-        SaveScreen("after GPU reset, overlay panel"); // does a window shown during the reset draw again?
         target.Activate();
         target.Tap(Vk.F14);
         WaitShown(app);
