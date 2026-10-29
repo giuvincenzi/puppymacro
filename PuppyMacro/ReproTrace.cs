@@ -48,8 +48,15 @@ internal static class ReproTrace
 
     private static void Hook(Window window)
     {
+        HwndSource? found = HwndSource.FromHwnd(new WindowInteropHelper(window).Handle);
+        if (found == null)
         {
-            var source = (HwndSource)PresentationSource.FromVisual(window)!;
+            Write("no HwndSource yet: waiting for Loaded");
+            window.Loaded += (_, _) => Hook(window);
+            return;
+        }
+        {
+            HwndSource source = found;
             source.AddHook((IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) =>
             {
                 string? name = Name((uint)msg);
