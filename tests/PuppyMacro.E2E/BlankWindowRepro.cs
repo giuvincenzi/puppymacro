@@ -244,8 +244,10 @@ public class BlankWindowRepro
         for (int y = 0; y < bitmap.Height; y++)
             for (int x = 0; x < bitmap.Width; x++)
             {
-                // Only the title bar's strip, above the target window: a window drawn empty has one color there.
-                if (window.Top + y < window.Top + 4 || window.Top + y >= covered.Top || x < 4 || x >= bitmap.Width - 4)
+                // The content outside the target window, under the title bar (drawn by Windows without the modern style): the strip on
+                // the right with the switches and the strip at the bottom. A window drawn empty has one color there.
+                int sx = window.Left + x, sy = window.Top + y;
+                if (sy < covered.Top || covered.Contains(sx, sy) || x >= bitmap.Width - 4 || y >= bitmap.Height - 4)
                     continue;
                 seen.Add(bitmap.GetPixel(x, y).ToArgb() & 0xF8F8F8);
             }
