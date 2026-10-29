@@ -11,6 +11,7 @@ permissions:
 jobs:
   repro:
     runs-on: windows-latest
+    timeout-minutes: 30
     defaults:
       run:
         shell: bash
@@ -47,11 +48,24 @@ jobs:
           Start-Sleep -Seconds 2
 
       - name: run_repro
+        timeout-minutes: 15
         env:
           E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots
         run: |
           dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build --filter-class PuppyMacro.E2E.BlankWindowRepro \
             --output Detailed
+
+      - name: print_repro_log
+        if: always()
+        run: cat "$RUNNER_TEMP/e2e_screenshots/repro.log" || true
+
+      - name: print_gpu_resets
+        if: always()
+        shell: pwsh
+        run: |
+          # 4101: "Display driver ... stopped responding and has successfully recovered" (a TDR)
+          Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = 4101 } -ErrorAction SilentlyContinue |
+            ForEach-Object { Write-Host "$($_.TimeCreated.ToUniversalTime().ToString('HH:mm:ss')) $($_.Id) $($_.Message)" }
 
       - name: save_screenshots
         if: always()

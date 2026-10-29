@@ -24,6 +24,12 @@ public class BlankWindowRepro
         seed.Settings.OverlayPanelX = 80;
         seed.Settings.OverlayPanelY = 80;
         seed.Settings.OpenMainHotkey = HotkeyBinding.FromKey(Vk.F14);
+        // Cards with their switches (ToggleSwitch keeps a BitmapCache, dotnet/wpf#2158).
+        for (int i = 0; i < 4; i++)
+        {
+            seed.Settings.Loops.Add(Playback.Loop($"Repro loop {i}", null, Playback.Every(Vk.F17, 300)));
+            seed.Macros.Add(Playback.Macro($"Repro macro {i}", null, Playback.Press(Vk.F16)));
+        }
     }
 
     [Fact]
@@ -56,12 +62,12 @@ public class BlankWindowRepro
         WaitHidden(app);
         try
         {
-            Console.WriteLine($"set 800x600: {Display.Set(800, 600)}");
+            Log($"set 800x600: {Display.Set(800, 600)}");
             Thread.Sleep(3000);
         }
         finally
         {
-            Console.WriteLine($"set 1024x768: {Display.Set(1024, 768)}");
+            Log($"set 1024x768: {Display.Set(1024, 768)}");
             Thread.Sleep(3000);
         }
         target.Activate();
@@ -89,6 +95,35 @@ public class BlankWindowRepro
         AssertDrawn(app, "after GPU reset");
     }
 
+    /// <summary>The issue's steps: after the reset, the window is resized.</summary>
+    [Fact]
+    public void Gpu_reset_while_hidden_then_open_and_resize()
+    {
+        string? dxcap = FindDxcap();
+        Assert.SkipWhen(dxcap == null, "dxcap is not installed");
+        using var app = new AppSession(SeedOverlay);
+        using var target = new TargetWindow();
+        AssertDrawn(app, "start");
+        target.Activate();
+        target.Tap(Vk.F24);
+        WaitHidden(app);
+        target.Tap(Vk.F24); // overlay off: the main window stays hidden, no window of PuppyMacro is shown
+        TargetWindow.Quiet(1);
+        RunDxcapTdr(dxcap!);
+        Thread.Sleep(5000);
+        target.Activate();
+        target.Tap(Vk.F14);
+        WaitShown(app);
+        AssertDrawn(app, "after GPU reset, opened");
+        IntPtr hwnd = app.MainWindow.Properties.NativeWindowHandle.Value;
+        SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 1000, 740, 0x0004 | 0x0010); // SWP_NOZORDER | SWP_NOACTIVATE
+        Thread.Sleep(1000);
+        AssertDrawn(app, "after GPU reset, resized");
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr after, int x, int y, int cx, int cy, uint flags);
+
     [Fact]
     public void Gpu_reset_while_shown()
     {
@@ -110,10 +145,19 @@ public class BlankWindowRepro
 
     private static void RunDxcapTdr(string dxcap)
     {
-        using Process p = Process.Start(new ProcessStartInfo(dxcap, "-forcetdr") { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true })!;
-        string output = p.StandardOutput.ReadToEnd() + p.StandardError.ReadToEnd();
-        p.WaitForExit(30000);
-        Console.WriteLine($"dxcap -forcetdr: exit {p.ExitCode}: {output}");
+        using Process p = Process.Start(new ProcessStartInfo(dxcap, "-forcetdr") { UseShellExecute = false })!;
+        bool exited = p.WaitForExit(20000);
+        if (!exited)
+            p.Kill();
+        Log($"dxcap -forcetdr: {(exited ? $"exit {p.ExitCode}" : "killed after 20 s")}");
+    }
+
+    /// <summary>xUnit keeps a passing test's output to itself: the log is a file, printed by the workflow.</summary>
+    private static void Log(string line)
+    {
+        string folder = Environment.GetEnvironmentVariable("E2E_SCREENSHOTS") is { Length: > 0 } f ? f : Path.GetTempPath();
+        Directory.CreateDirectory(folder);
+        File.AppendAllText(Path.Combine(folder, "repro.log"), $"{DateTime.UtcNow:HH:mm:ss.fff} {TestContext.Current.Test?.TestDisplayName}: {line}\n");
     }
 
     private static void WaitHidden(AppSession app) =>
@@ -136,7 +180,7 @@ public class BlankWindowRepro
             return colors > 40;
         }, TimeSpan.FromSeconds(6)).Success;
         Colors(app, when, save: true);
-        Console.WriteLine($"{when}: {colors} colors, drawn {drawn}");
+        Log($"{when}: {colors} colors, drawn {drawn}");
         Assert.True(drawn, $"{when}: the main window drew nothing ({colors} colors)");
     }
 
