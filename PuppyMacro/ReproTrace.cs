@@ -39,7 +39,15 @@ internal static class ReproTrace
         _displayAvailability = RegisterWindowMessage("DisplayDevicesAvailabilityChanged");
         _needsRePresent = RegisterWindowMessage("NeedsRePresentOnWake");
         _updateSettings = RegisterWindowMessage("UpdateWindowSettings");
-        window.SourceInitialized += (_, _) =>
+        Write($"trace on, handle {new WindowInteropHelper(window).Handle}");
+        if (new WindowInteropHelper(window).Handle != IntPtr.Zero)
+            Hook(window);
+        else
+            window.SourceInitialized += (_, _) => Hook(window);
+    }
+
+    private static void Hook(Window window)
+    {
         {
             var source = (HwndSource)PresentationSource.FromVisual(window)!;
             source.AddHook((IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) =>
@@ -60,7 +68,7 @@ internal static class ReproTrace
                 last = now;
             };
             timer.Start();
-        };
+        }
     }
 
     private static string? Name(uint msg) => msg switch
@@ -96,8 +104,9 @@ internal static class ReproTrace
         {
             File.AppendAllText(_file!, $"{DateTime.UtcNow.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)} {line}\n");
         }
-        catch (IOException)
+        catch (Exception ex)
         {
+            try { File.AppendAllText(Path.Combine(Path.GetTempPath(), "app-trace-error.log"), ex + "\n"); } catch (Exception) { }
         }
     }
 }
