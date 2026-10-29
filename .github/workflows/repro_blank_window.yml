@@ -16,11 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         test:
-          - Gpu_reset_while_hidden_in_overlay_mode
-          - Gpu_reset_while_hidden_then_open_and_resize
+          - Gpu_reset_control_other_windows
         # PUPPYMACRO_REPRO_MODE: none (the app as it is); PUPPYMACRO_REPRO_TRACE logs the main window's rendering state
-        mode: [no-mica, no-modern]
-        rep: [1, 2]
+        mode: [none]
+        rep: [1, 2, 3]
     runs-on: windows-latest
     timeout-minutes: 25
     defaults:

@@ -12,6 +12,8 @@
     <RootNamespace>PuppyMacro.E2E</RootNamespace>
     <!-- Screen.WorkingArea and the target window (TargetWindow) -->
     <UseWindowsForms>true</UseWindowsForms>
+    <!-- Investigation only (BlankWindowRepro): a plain WPF window as a control -->
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>

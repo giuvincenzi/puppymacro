@@ -177,6 +177,88 @@ public class BlankWindowRepro
         AssertDrawn(app, "after GPU reset");
     }
 
+    /// <summary>
+    /// Control without PuppyMacro: a Windows Forms window and a plain WPF window of the test process, hidden during the
+    /// reset and shown after it. If they come back empty too, the forced reset breaks every hidden window on this machine.
+    /// </summary>
+    [Fact]
+    public void Gpu_reset_control_other_windows()
+    {
+        string? dxcap = FindDxcap();
+        Assert.SkipWhen(dxcap == null, "dxcap is not installed");
+        var formArea = new Rectangle(60, 60, 400, 300);
+        var wpfArea = new Rectangle(520, 60, 400, 300);
+
+        System.Windows.Forms.Form? form = null;
+        var formReady = new ManualResetEventSlim();
+        var formThread = new Thread(() =>
+        {
+            form = new System.Windows.Forms.Form
+            {
+                StartPosition = System.Windows.Forms.FormStartPosition.Manual, Bounds = formArea, TopMost = true,
+                Text = "Control Forms", BackColor = Color.DarkGreen,
+            };
+            for (int i = 0; i < 6; i++)
+                form.Controls.Add(new System.Windows.Forms.Button { Text = $"Button {i}", Left = 10, Top = 10 + i * 40, Width = 150 });
+            form.Shown += (_, _) => formReady.Set();
+            System.Windows.Forms.Application.Run(form);
+        });
+        formThread.SetApartmentState(ApartmentState.STA);
+        formThread.Start();
+        Assert.True(formReady.Wait(10000));
+
+        System.Windows.Window? wpf = null;
+        var wpfReady = new ManualResetEventSlim();
+        var wpfThread = new Thread(() =>
+        {
+            var panel = new System.Windows.Controls.StackPanel { Background = System.Windows.Media.Brushes.DarkRed };
+            for (int i = 0; i < 6; i++)
+                panel.Children.Add(new System.Windows.Controls.Button { Content = $"WPF button {i}", Margin = new System.Windows.Thickness(8) });
+            wpf = new System.Windows.Window
+            {
+                WindowStartupLocation = System.Windows.WindowStartupLocation.Manual, Left = wpfArea.Left, Top = wpfArea.Top,
+                Width = wpfArea.Width, Height = wpfArea.Height, Topmost = true, Title = "Control WPF", Content = panel,
+            };
+            wpf.ContentRendered += (_, _) => wpfReady.Set();
+            wpf.Show();
+            System.Windows.Threading.Dispatcher.Run();
+        });
+        wpfThread.SetApartmentState(ApartmentState.STA);
+        wpfThread.Start();
+        Assert.True(wpfReady.Wait(10000));
+        Thread.Sleep(1000);
+
+        int formStart = AreaColors(formArea, "control forms start"), wpfStart = AreaColors(wpfArea, "control wpf start");
+        form!.Invoke(() => form.Hide());
+        wpf!.Dispatcher.Invoke(() => wpf.Hide());
+        Thread.Sleep(1000);
+        RunDxcapTdr(dxcap!);
+        Thread.Sleep(25000); // a capture of the screen in the seconds after the reset hangs the runner
+        form.Invoke(() => form.Show());
+        wpf.Dispatcher.Invoke(() => wpf.Show());
+        Thread.Sleep(3000);
+        int formAfter = AreaColors(formArea, "control forms after reset"), wpfAfter = AreaColors(wpfArea, "control wpf after reset");
+        Log($"control: forms {formStart} -> {formAfter} colors, wpf {wpfStart} -> {wpfAfter} colors");
+
+        form.Invoke(() => form.Close());
+        wpf.Dispatcher.Invoke(() => { wpf.Close(); wpf.Dispatcher.InvokeShutdown(); });
+        Assert.True(formAfter > 8 && wpfAfter > 8, $"forms {formAfter}, wpf {wpfAfter} colors after the reset");
+    }
+
+    private static int AreaColors(Rectangle area, string when)
+    {
+        using var bitmap = new Bitmap(area.Width, area.Height);
+        using (Graphics g = Graphics.FromImage(bitmap))
+            g.CopyFromScreen(area.Location, Point.Empty, area.Size);
+        var seen = new HashSet<int>();
+        for (int y = 0; y < bitmap.Height; y++)
+            for (int x = 0; x < bitmap.Width; x++)
+                seen.Add(bitmap.GetPixel(x, y).ToArgb() & 0xF8F8F8);
+        if (Environment.GetEnvironmentVariable("E2E_SCREENSHOTS") is { Length: > 0 } folder)
+            bitmap.Save(Path.Combine(folder, $"area-{DateTime.UtcNow:HHmmss.fff}-{when.Replace(' ', '_')}.png"), ImageFormat.Png);
+        return seen.Count;
+    }
+
     private static string? FindDxcap()
     {
         string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "dxcap.exe");
