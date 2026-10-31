@@ -1,5 +1,5 @@
-# Investigation only, never merged: runs BlankWindowRepro on GitHub Windows machines at each push to this branch, one test
-# per machine (a forced GPU reset can leave a machine hung).
+# Investigation only, never merged: runs the repro tests on GitHub Windows machines at each push to this branch, one test
+# per machine.
 name: repro_blank_window
 
 on:
@@ -11,17 +11,18 @@ permissions:
 
 jobs:
   repro:
-    name: repro_${{ matrix.test }}_${{ matrix.mode }}_${{ matrix.rep }}
+    name: repro_${{ matrix.test }}_anim_${{ matrix.anim }}
     strategy:
       fail-fast: false
       matrix:
         test:
-          - Gpu_reset_control_other_windows
-        # CONTROL_VARIANT of the control test (no PuppyMacro): plain, pmv2, layered, both
-        mode: [plain, pmv2, layered, both]
-        rep: [1, 2]
+          - Open_then_overlay_after_a_short_delay
+          - Overlay_toggled_quickly_with_open_in_between
+          - Toggled_over_a_fullscreen_window_then_leaving_it
+        # Windows' animation effects (Settings > Accessibility > Visual effects): on as on the user's PC, off to compare
+        anim: ['on', 'off']
     runs-on: windows-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     defaults:
       run:
         shell: bash
@@ -34,20 +35,18 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: log_graphics
+      - name: set_animation_effects
         shell: pwsh
         run: |
-          Add-Type -AssemblyName PresentationCore
-          Write-Host "WPF render tier: $([System.Windows.Media.RenderCapability]::Tier -shr 16)"
-          Get-CimInstance Win32_VideoController | ForEach-Object { Write-Host "Video: $($_.Name) $($_.DriverVersion) $($_.CurrentHorizontalResolution)x$($_.CurrentVerticalResolution)" }
-
-      - name: install_dxcap
-        if: startsWith(matrix.test, 'Gpu_')
-        continue-on-error: true
-        shell: pwsh
-        run: |
-          Add-WindowsCapability -Online -Name Tools.Graphics.DirectX~~~~0.0.1.0
-          Write-Host "dxcap: $(Test-Path $env:WINDIR\System32\dxcap.exe)"
+          Add-Type -Namespace Win32 -Name Spi -MemberDefinition '
+            [DllImport("user32.dll")] public static extern bool SystemParametersInfo(uint a, uint p, System.IntPtr v, uint w);
+            [DllImport("user32.dll")] public static extern bool SystemParametersInfo(uint a, uint p, ref int v, uint w);'
+          $on = '${{ matrix.anim }}' -eq 'on'
+          # SPI_SETCLIENTAREAANIMATION (0x1043): pvParam is the BOOL itself; SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
+          [void][Win32.Spi]::SystemParametersInfo(0x1043, 0, [System.IntPtr]([int]$on), 3)
+          $v = 0; [void][Win32.Spi]::SystemParametersInfo(0x1042, 0, [ref]$v, 0)
+          Write-Host "Animation effects now: $v"
+          Get-CimInstance Win32_OperatingSystem | ForEach-Object { Write-Host "OS: $($_.Caption) $($_.Version)" }
 
       - name: build_dev_app
         run: dotnet build tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj -c Debug
@@ -59,32 +58,20 @@ jobs:
           Start-Sleep -Seconds 2
 
       - name: run_repro
-        timeout-minutes: 8
+        timeout-minutes: 20
         env:
           E2E_SCREENSHOTS: ${{ runner.temp }}/e2e_screenshots
-          PUPPYMACRO_REPRO_MODE: ${{ matrix.mode }}
-          PUPPYMACRO_REPRO_TRACE: '1'
-          CONTROL_VARIANT: ${{ matrix.mode }}
         run: |
           mkdir -p "$E2E_SCREENSHOTS"
-          touch "$E2E_SCREENSHOTS/repro.log" "$E2E_SCREENSHOTS/app-trace.log"
-          tail -F "$E2E_SCREENSHOTS/repro.log" "$E2E_SCREENSHOTS/app-trace.log" &
+          touch "$E2E_SCREENSHOTS/repro.log"
+          tail -F "$E2E_SCREENSHOTS/repro.log" &
           dotnet test --project tests/PuppyMacro.E2E/PuppyMacro.E2E.csproj --no-build \
-            --filter-method "PuppyMacro.E2E.BlankWindowRepro.${{ matrix.test }}" --output Detailed
+            --filter-method "PuppyMacro.E2E.GhostFrameRepro.${{ matrix.test }}" --output Detailed
 
       - name: save_screenshots
         if: always()
         timeout-minutes: 3
         uses: actions/upload-artifact@v7
         with:
-          name: repro_${{ matrix.test }}_${{ matrix.mode }}_${{ matrix.rep }}_attempt_${{ github.run_attempt }}
+          name: repro_${{ matrix.test }}_anim_${{ matrix.anim }}_attempt_${{ github.run_attempt }}
           path: ${{ runner.temp }}/e2e_screenshots
-
-      - name: print_gpu_resets
-        if: always()
-        timeout-minutes: 2
-        shell: pwsh
-        run: |
-          # 4101: "Display driver ... stopped responding and has successfully recovered" (a TDR)
-          Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = 4101 } -ErrorAction SilentlyContinue |
-            ForEach-Object { Write-Host "$($_.TimeCreated.ToUniversalTime().ToString('HH:mm:ss')) $($_.Id) $($_.Message)" }
