@@ -36,6 +36,7 @@ public class GhostFrameRepro
         using var app = new AppSession(Seed);
         IntPtr main = app.MainWindow.Properties.NativeWindowHandle.Value;
         LogSettings();
+        TakeReference(main);
         int ghosts = 0, rounds = 0;
         foreach (int delay in new[] { 0, 20, 50, 80, 120, 160, 220, 300, 500 })
             for (int i = 0; i < 3; i++)
@@ -72,6 +73,7 @@ public class GhostFrameRepro
         using var app = new AppSession(Seed);
         IntPtr main = app.MainWindow.Properties.NativeWindowHandle.Value;
         LogSettings();
+        TakeReference(main);
         var random = new Random(42);
         int ghosts = 0;
         for (int i = 0; i < 40; i++)
@@ -107,6 +109,7 @@ public class GhostFrameRepro
         using var app = new AppSession(Seed);
         IntPtr main = app.MainWindow.Properties.NativeWindowHandle.Value;
         LogSettings();
+        TakeReference(main);
         using var game = new GameWindow();
         var random = new Random(7);
         int ghosts = 0;
@@ -149,6 +152,39 @@ public class GhostFrameRepro
     /// The main window is hidden, yet its title bar strip on the screen is not the black desktop the runner has under it:
     /// the DWM still shows its frame. Saves the strip and the whole screen when it happens.
     /// </summary>
+    /// <summary>The main window's title strip on the screen right after its first, clean hide: what is under it.</summary>
+    private static Bitmap? _reference;
+
+    private static Bitmap Strip(IntPtr main)
+    {
+        GetWindowRect(main, out RECT r);
+        var strip = Rectangle.FromLTRB(r.Left + 8, r.Top + 4, r.Right - 8, r.Top + 36);
+        strip.Intersect(new Rectangle(0, 0, 1024, 768));
+        var bitmap = new Bitmap(strip.Width, strip.Height);
+        using (Graphics g = Graphics.FromImage(bitmap))
+            g.CopyFromScreen(strip.Location, Point.Empty, strip.Size);
+        return bitmap;
+    }
+
+    /// <summary>Hides the main window once (overlay on, then off) and keeps what its title strip shows then.</summary>
+    private static void TakeReference(IntPtr main)
+    {
+        Key(Vk.F24);
+        WaitVisible(main, false);
+        Thread.Sleep(1500);
+        _reference = Strip(main);
+        Save(_reference, "reference");
+        Key(Vk.F24);
+        Thread.Sleep(300);
+        Key(Vk.F14);
+        WaitVisible(main, true, 2000);
+        Thread.Sleep(600);
+    }
+
+    /// <summary>
+    /// The main window is hidden, yet its title strip on the screen differs from the reference taken after a clean hide: the
+    /// DWM still shows its frame. Saves the strip and the whole screen when it happens.
+    /// </summary>
     private static bool Ghost(IntPtr main, string when)
     {
         if (IsWindowVisible(main))
@@ -156,31 +192,34 @@ public class GhostFrameRepro
             Log($"{when}: main visible, not checked");
             return false;
         }
-        GetWindowRect(main, out RECT r);
-        var strip = Rectangle.FromLTRB(r.Left + 8, r.Top + 4, r.Right - 8, r.Top + 36);
-        strip.Intersect(new Rectangle(0, 0, 1024, 768));
-        using var bitmap = new Bitmap(strip.Width, strip.Height);
-        using (Graphics g = Graphics.FromImage(bitmap))
-            g.CopyFromScreen(strip.Location, Point.Empty, strip.Size);
-        int lit = 0;
-        for (int y = 0; y < bitmap.Height; y++)
-            for (int x = 0; x < bitmap.Width; x++)
+        using Bitmap now = Strip(main);
+        int changed = 0, total = Math.Min(now.Width, _reference!.Width) * Math.Min(now.Height, _reference.Height);
+        for (int y = 0; y < Math.Min(now.Height, _reference.Height); y++)
+            for (int x = 0; x < Math.Min(now.Width, _reference.Width); x++)
             {
-                Color c = bitmap.GetPixel(x, y);
-                if (c.R + c.G + c.B > 30)
-                    lit++;
+                Color a = now.GetPixel(x, y), b = _reference.GetPixel(x, y);
+                if (Math.Abs(a.R - b.R) + Math.Abs(a.G - b.G) + Math.Abs(a.B - b.B) > 40)
+                    changed++;
             }
-        bool ghost = lit > strip.Width * strip.Height / 4;
-        Log($"{when}: hidden, {lit} lit pixels of {strip.Width * strip.Height} in the title strip{(ghost ? " GHOST" : "")}");
-        if (ghost && Environment.GetEnvironmentVariable("E2E_SCREENSHOTS") is { Length: > 0 } folder)
+        bool ghost = changed > total / 5;
+        Log($"{when}: hidden, {changed} of {total} pixels of the title strip differ from the reference{(ghost ? " GHOST" : "")}");
+        if (ghost)
         {
-            Directory.CreateDirectory(folder);
+            Save(now, $"ghost-strip-{when}");
             using var screen = new Bitmap(1024, 768);
             using (Graphics g = Graphics.FromImage(screen))
                 g.CopyFromScreen(Point.Empty, Point.Empty, screen.Size);
-            screen.Save(Path.Combine(folder, $"ghost-{DateTime.UtcNow:HHmmss.fff}-{when}.png"), ImageFormat.Png);
+            Save(screen, $"ghost-screen-{when}");
         }
         return ghost;
+    }
+
+    private static void Save(Bitmap bitmap, string name)
+    {
+        if (Environment.GetEnvironmentVariable("E2E_SCREENSHOTS") is not { Length: > 0 } folder)
+            return;
+        Directory.CreateDirectory(folder);
+        bitmap.Save(Path.Combine(folder, $"{DateTime.UtcNow:HHmmss.fff}-{name}.png"), ImageFormat.Png);
     }
 
     private static void LogSettings()
